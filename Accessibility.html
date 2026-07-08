@@ -1,0 +1,1161 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Fraunces:ital,wght@0,300;0,400;1,300;1,400&display=swap');
+
+:root {
+  --ink: #1a1f2e;
+  --ink-mid: #3a4260;
+  --ink-soft: #6b7494;
+  --sky: #3b6fe0;
+  --sky-light: #e8effe;
+  --sky-dark: #2a52b5;
+  --teal: #0e9e7e;
+  --teal-light: #e0f5ef;
+  --amber: #d97a10;
+  --amber-light: #fef3e2;
+  --surface: #ffffff;
+  --page: #f4f6fb;
+  --border: rgba(26,31,46,0.1);
+  --border-mid: rgba(26,31,46,0.2);
+  --focus: 3px solid #3b6fe0;
+  --radius: 10px;
+}
+
+[data-scheme="high-contrast"] { --page:#000; --surface:#111; --ink:#fff; --ink-mid:#eee; --ink-soft:#bbb; --sky:#ffe000; --sky-light:#333; --border:rgba(255,255,0,0.4); }
+[data-scheme="dark"] { --page:#0f1117; --surface:#1a1f2e; --ink:#e6eaf5; --ink-mid:#a8b3d0; --ink-soft:#6b7494; --sky:#6b9ef5; --sky-light:#1e2640; --border:rgba(255,255,255,0.1); }
+[data-scheme="warm"] { --page:#fffbf2; --surface:#fff9ee; --ink:#2d1f00; --ink-mid:#5c4010; --ink-soft:#9a7340; --sky:#c96a00; --sky-light:#fef0d8; --border:rgba(45,31,0,0.12); }
+[data-scheme="focus"] { --page:#f0f4ff; --surface:#fff; --ink:#1a2060; --ink-mid:#2a3280; --sky:#1a2060; --sky-light:#dde4ff; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--page);
+  color: var(--ink);
+  line-height: 1.65;
+}
+
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+
+/* TOP BAR */
+.topbar {
+  background: var(--ink);
+  padding: 10px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar-logo-mark {
+  width: 32px; height: 32px;
+  background: var(--sky);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.topbar-logo-mark i { font-size: 18px; color: #fff; }
+
+.topbar-brand {
+  font-family: 'Fraunces', serif;
+  font-size: 17px;
+  font-weight: 400;
+  color: #fff;
+}
+
+.topbar-tagline {
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.3px;
+  display: none;
+}
+
+.assist-btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.abtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 0.5px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.85);
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.abtn:hover, .abtn.on { background: var(--sky); border-color: var(--sky); color: #fff; }
+.abtn i { font-size: 15px; }
+
+/* NAV */
+.nav {
+  background: var(--surface);
+  border-bottom: 0.5px solid var(--border);
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 16px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ink-soft);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.nav a:hover { color: var(--ink); border-bottom-color: var(--sky); }
+.nav a.active { color: var(--sky); border-bottom-color: var(--sky); font-weight: 500; }
+.nav a i { font-size: 16px; }
+
+.nav-spacer { flex: 1; }
+
+.nav-cta {
+  background: var(--sky);
+  color: #fff !important;
+  padding: 8px 20px !important;
+  border-radius: 6px;
+  border: none !important;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+}
+
+.nav-cta:hover { background: var(--sky-dark) !important; color: #fff !important; }
+
+/* HERO */
+.hero {
+  padding: 52px 32px 48px;
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 48px;
+  align-items: center;
+  background: var(--surface);
+  border-bottom: 0.5px solid var(--border);
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: var(--sky-light);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--sky-dark);
+  margin-bottom: 18px;
+}
+
+.hero-eyebrow i { font-size: 14px; }
+
+h1.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: 48px;
+  font-weight: 300;
+  line-height: 1.1;
+  color: var(--ink);
+  margin-bottom: 18px;
+}
+
+h1.hero-title em {
+  font-style: italic;
+  color: var(--sky);
+}
+
+.hero-body {
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--ink-mid);
+  max-width: 520px;
+  margin-bottom: 28px;
+  line-height: 1.75;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 24px;
+  background: var(--sky);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover { background: var(--sky-dark); }
+.btn-primary i { font-size: 18px; }
+
+.btn-outline {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 24px;
+  background: transparent;
+  color: var(--ink);
+  border: 0.5px solid var(--border-mid);
+  border-radius: 8px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-outline:hover { background: var(--page); }
+.btn-outline i { font-size: 18px; }
+
+/* THEME PANEL (right of hero) */
+.theme-panel {
+  background: var(--page);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+
+.theme-panel-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.theme-panel-sub {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-bottom: 18px;
+}
+
+.theme-swatches {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.swatch {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.15s, border-color 0.15s;
+  display: flex;
+  align-items: flex-end;
+  padding: 5px;
+  overflow: hidden;
+  position: relative;
+}
+
+.swatch:hover { transform: scale(1.05); }
+.swatch.active { border-color: var(--sky); }
+
+.swatch-label {
+  font-size: 9px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.9);
+  line-height: 1.2;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.swatch-check {
+  position: absolute;
+  top: 5px; right: 5px;
+  width: 16px; height: 16px;
+  background: var(--sky);
+  border-radius: 50%;
+  display: none;
+  align-items: center; justify-content: center;
+}
+
+.swatch.active .swatch-check { display: flex; }
+.swatch-check i { font-size: 10px; color: #fff; }
+
+.access-sliders { display: flex; flex-direction: column; gap: 14px; }
+
+.slider-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.slider-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--ink-mid);
+}
+
+.slider-val {
+  font-weight: 500;
+  color: var(--sky);
+}
+
+input[type=range] {
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  -webkit-appearance: none;
+  background: var(--border-mid);
+  outline: none;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--sky);
+  cursor: pointer;
+  border: 2px solid #fff;
+}
+
+/* STATS */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border-top: 0.5px solid var(--border);
+  border-bottom: 0.5px solid var(--border);
+}
+
+.stat-cell {
+  background: var(--surface);
+  padding: 20px 24px;
+  text-align: center;
+}
+
+.stat-num {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--sky);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-lbl {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--ink-soft);
+  letter-spacing: 0.3px;
+}
+
+/* FEATURES */
+.section {
+  padding: 52px 32px;
+}
+
+.sec-header {
+  margin-bottom: 32px;
+}
+
+.sec-eyebrow {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 8px;
+}
+
+.sec-title {
+  font-family: 'Fraunces', serif;
+  font-size: 32px;
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.sec-title em { font-style: italic; color: var(--sky); }
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.feat-card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  transition: border-color 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.feat-card:hover { border-color: var(--border-mid); }
+
+.feat-icon-wrap {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.feat-icon-wrap.blue { background: var(--sky-light); }
+.feat-icon-wrap.blue i { color: var(--sky-dark); }
+.feat-icon-wrap.teal { background: var(--teal-light); }
+.feat-icon-wrap.teal i { color: var(--teal); }
+.feat-icon-wrap.amber { background: var(--amber-light); }
+.feat-icon-wrap.amber i { color: var(--amber); }
+.feat-icon-wrap i { font-size: 22px; }
+
+.feat-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.feat-desc {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--ink-soft);
+  line-height: 1.7;
+  flex: 1;
+}
+
+.feat-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--sky);
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: 'Outfit', sans-serif;
+  padding: 0;
+  transition: gap 0.15s;
+}
+
+.feat-link:hover { gap: 8px; }
+.feat-link i { font-size: 14px; }
+
+/* PROPERTY LISTINGS — ACCESSIBLE */
+.listings-section {
+  padding: 0 32px 52px;
+}
+
+.prop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.prop-card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.prop-card:hover { border-color: var(--border-mid); }
+
+.prop-img {
+  height: 160px;
+  background: var(--sky-light);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+
+.prop-img img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+.prop-access-badges {
+  position: absolute;
+  bottom: 8px; left: 8px;
+  display: flex; gap: 4px;
+}
+
+.access-badge {
+  padding: 3px 8px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 500;
+  border-radius: 4px;
+  display: flex; align-items: center; gap: 3px;
+}
+
+.access-badge i { font-size: 11px; }
+
+.prop-body { padding: 16px; }
+
+.prop-price {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+
+.prop-price span { font-size: 12px; font-weight: 400; color: var(--ink-soft); }
+
+.prop-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.prop-loc {
+  font-size: 12px;
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.prop-loc i { font-size: 14px; color: var(--sky); }
+
+.prop-meta {
+  display: flex; gap: 12px;
+  padding-top: 12px;
+  border-top: 0.5px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.prop-meta-item {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.prop-meta-item i { font-size: 13px; color: var(--teal); }
+
+.prop-apply {
+  width: 100%;
+  margin-top: 14px;
+  padding: 10px;
+  background: transparent;
+  border: 0.5px solid var(--sky);
+  color: var(--sky);
+  border-radius: 6px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.prop-apply:hover { background: var(--sky); color: #fff; }
+
+/* ASSISTIVE SETTINGS PANEL */
+.settings-section {
+  padding: 0 32px 52px;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.setting-card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+}
+
+.setting-card-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.setting-card-title i { font-size: 18px; color: var(--sky); }
+
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 0.5px solid var(--border);
+  font-size: 13px;
+  color: var(--ink-mid);
+}
+
+.toggle-row:last-of-type { border-bottom: none; }
+
+.tog {
+  position: relative;
+  width: 40px; height: 22px;
+  flex-shrink: 0;
+}
+
+.tog input { opacity: 0; width: 0; height: 0; }
+
+.tog-slider {
+  position: absolute;
+  inset: 0;
+  background: var(--border-mid);
+  border-radius: 11px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.tog-slider::before {
+  content: '';
+  position: absolute;
+  width: 16px; height: 16px;
+  left: 3px; top: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.tog input:checked + .tog-slider { background: var(--sky); }
+.tog input:checked + .tog-slider::before { transform: translateX(18px); }
+
+/* KEYBOARD SHORTCUT CARD */
+.shortcut-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 16px;
+  align-items: center;
+  font-size: 12px;
+  color: var(--ink-mid);
+}
+
+.kkey {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  background: var(--page);
+  border: 0.5px solid var(--border-mid);
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+/* FOOTER */
+footer {
+  background: var(--ink);
+  padding: 40px 32px 20px;
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 32px;
+}
+
+.footer-brand {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.footer-desc {
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.7;
+  margin-bottom: 20px;
+  max-width: 280px;
+}
+
+.footer-social {
+  display: flex; gap: 8px;
+}
+
+.fsoc {
+  width: 34px; height: 34px;
+  border: 0.5px solid rgba(255,255,255,0.15);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.fsoc:hover { background: rgba(255,255,255,0.08); }
+.fsoc i { font-size: 16px; color: rgba(255,255,255,0.6); }
+
+.footer-col-title {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 16px;
+}
+
+.footer-links { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+.footer-links a { font-size: 13px; color: rgba(255,255,255,0.55); text-decoration: none; transition: color 0.2s; }
+.footer-links a:hover { color: #fff; }
+
+.footer-bottom {
+  border-top: 0.5px solid rgba(255,255,255,0.08);
+  padding-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: rgba(255,255,255,0.3);
+}
+
+.footer-bottom a { color: rgba(59,111,224,0.7); text-decoration: none; }
+
+/* FEEDBACK TOAST */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  background: var(--ink);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 24px;
+  font-size: 13px;
+  font-weight: 400;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 9999;
+  white-space: nowrap;
+}
+
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Fraunces:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+
+<h2 class="sr-only">Mwarokin Estates — Accessibility-first property platform for people with disabilities and diverse abilities</h2>
+
+<div id="mainWrap">
+
+<!-- TOP ASSISTIVE BAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo-mark"><i class="ti ti-accessible" aria-hidden="true"></i></div>
+    <span class="topbar-brand">Mwarokin Estates</span>
+    <span class="topbar-tagline">Accessibility-First Platform</span>
+  </div>
+  <div class="assist-btns">
+    <button class="abtn" id="btnSR" onclick="toggleFeature('SR','Screen reader')" aria-label="Toggle screen reader">
+      <i class="ti ti-volume" aria-hidden="true"></i> Screen reader
+    </button>
+    <button class="abtn" id="btnVC" onclick="toggleFeature('VC','Voice control')" aria-label="Toggle voice control">
+      <i class="ti ti-microphone" aria-hidden="true"></i> Voice control
+    </button>
+    <button class="abtn" id="btnKB" onclick="toggleFeature('KB','Keyboard nav')" aria-label="Toggle keyboard navigation">
+      <i class="ti ti-keyboard" aria-hidden="true"></i> Keyboard nav
+    </button>
+    <button class="abtn" id="btnTTS" onclick="toggleFeature('TTS','Text to speech')" aria-label="Toggle text to speech">
+      <i class="ti ti-ear" aria-hidden="true"></i> Text to speech
+    </button>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" role="navigation" aria-label="Main navigation">
+  <a href="#" class="active"><i class="ti ti-home" aria-hidden="true"></i> Home</a>
+  <a href="#"><i class="ti ti-building" aria-hidden="true"></i> Properties</a>
+  <a href="#"><i class="ti ti-map-pin" aria-hidden="true"></i> Neighbourhoods</a>
+  <a href="#"><i class="ti ti-user" aria-hidden="true"></i> My Profile</a>
+  <a href="#"><i class="ti ti-credit-card" aria-hidden="true"></i> Payments</a>
+  <a href="#"><i class="ti ti-tools" aria-hidden="true"></i> Services</a>
+  <div class="nav-spacer"></div>
+  <a href="#" class="nav-cta" onclick="sendPrompt('I want to apply for an accessible rental property on Mwarokin Estates')">Apply now ↗</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" aria-labelledby="heroTitle">
+  <div>
+    <div class="hero-eyebrow"><i class="ti ti-wheelchair" aria-hidden="true"></i> Abled with disabilities — inclusive living</div>
+    <h1 class="hero-title" id="heroTitle">Every person<br>deserves a <em>home</em><br>they can thrive in.</h1>
+    <p class="hero-body">Mwarokin Estates is fully designed for people with diverse abilities. From screen readers to motor access features — we put inclusive design at the heart of every rental experience.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="sendPrompt('Find me an accessible rental property on Mwarokin Estates')">
+        <i class="ti ti-search" aria-hidden="true"></i> Find accessible homes
+      </button>
+      <button class="btn-outline" onclick="sendPrompt('Tell me about accessibility features on Mwarokin Estates')">
+        <i class="ti ti-info-circle" aria-hidden="true"></i> How it works
+      </button>
+    </div>
+  </div>
+
+  <div class="theme-panel" role="region" aria-label="Visual accessibility settings">
+    <div class="theme-panel-title">Visual theme</div>
+    <div class="theme-panel-sub">Choose a display mode that works best for you</div>
+
+    <div class="theme-swatches">
+      <div class="swatch active" style="background:#3b6fe0;" onclick="setScheme('default',this)" aria-label="Default blue theme">
+        <div class="swatch-check"><i class="ti ti-check" aria-hidden="true"></i></div>
+        <div class="swatch-label">Default</div>
+      </div>
+      <div class="swatch" style="background:#000;" onclick="setScheme('high-contrast',this)" aria-label="High contrast theme">
+        <div class="swatch-check"><i class="ti ti-check" aria-hidden="true"></i></div>
+        <div class="swatch-label">High contrast</div>
+      </div>
+      <div class="swatch" style="background:#1a1f2e;" onclick="setScheme('dark',this)" aria-label="Dark mode theme">
+        <div class="swatch-check"><i class="ti ti-check" aria-hidden="true"></i></div>
+        <div class="swatch-label">Dark mode</div>
+      </div>
+      <div class="swatch" style="background:#c96a00;" onclick="setScheme('warm',this)" aria-label="Warm tone theme">
+        <div class="swatch-check"><i class="ti ti-check" aria-hidden="true"></i></div>
+        <div class="swatch-label">Warm tone</div>
+      </div>
+      <div class="swatch" style="background:#1a2060;" onclick="setScheme('focus',this)" aria-label="Focus mode theme">
+        <div class="swatch-check"><i class="ti ti-check" aria-hidden="true"></i></div>
+        <div class="swatch-label">Focus mode</div>
+      </div>
+      <div class="swatch" style="background:#0e9e7e;" onclick="resetScheme(this)" aria-label="Reset to default">
+        <div class="swatch-check"><i class="ti ti-check" aria-hidden="true"></i></div>
+        <div class="swatch-label">Reset</div>
+      </div>
+    </div>
+
+    <div class="access-sliders">
+      <div class="slider-row">
+        <div class="slider-label-row">
+          <span>Text size</span>
+          <span class="slider-val" id="tsVal">100%</span>
+        </div>
+        <input type="range" min="80" max="180" step="5" value="100" oninput="applyText(this.value)">
+      </div>
+      <div class="slider-row">
+        <div class="slider-label-row">
+          <span>Line spacing</span>
+          <span class="slider-val" id="lsVal">1.65</span>
+        </div>
+        <input type="range" min="1.2" max="2.5" step="0.05" value="1.65" oninput="applySpacing(this.value)">
+      </div>
+      <div class="slider-row">
+        <div class="slider-label-row">
+          <span>Letter spacing</span>
+          <span class="slider-val" id="letVal">0em</span>
+        </div>
+        <input type="range" min="0" max="0.15" step="0.01" value="0" oninput="applyLetterSpacing(this.value)">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-row" role="region" aria-label="Platform statistics">
+  <div class="stat-cell"><div class="stat-num">100%</div><div class="stat-lbl">WCAG 2.1 compliant</div></div>
+  <div class="stat-cell"><div class="stat-num">8</div><div class="stat-lbl">Assistive modes</div></div>
+  <div class="stat-cell"><div class="stat-num">240+</div><div class="stat-lbl">Accessible listings</div></div>
+  <div class="stat-cell"><div class="stat-num">54</div><div class="stat-lbl">African countries</div></div>
+</div>
+
+<!-- ACCESSIBILITY FEATURES -->
+<section class="section" aria-labelledby="featuresTitle">
+  <div class="sec-header">
+    <div class="sec-eyebrow">Assistive technology</div>
+    <h2 class="sec-title" id="featuresTitle">Built for <em>every ability</em></h2>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feat-card">
+      <div class="feat-icon-wrap blue"><i class="ti ti-volume" aria-hidden="true"></i></div>
+      <div class="feat-title">Advanced screen reader</div>
+      <p class="feat-desc">Natural voice synthesis with customisable speed, pitch, and language. Navigate every element by keyboard with rich ARIA labels throughout.</p>
+      <button class="feat-link" onclick="sendPrompt('How does the Mwarokin screen reader work?')">Configure <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+    </div>
+
+    <div class="feat-card">
+      <div class="feat-icon-wrap teal"><i class="ti ti-microphone" aria-hidden="true"></i></div>
+      <div class="feat-title">Voice navigation</div>
+      <p class="feat-desc">Say "find properties", "apply now", or "go to payments" and navigate the entire platform hands-free with context-aware commands.</p>
+      <button class="feat-link" onclick="sendPrompt('How do I set up voice navigation on Mwarokin Estates?')">Train commands <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+    </div>
+
+    <div class="feat-card">
+      <div class="feat-icon-wrap amber"><i class="ti ti-eye" aria-hidden="true"></i></div>
+      <div class="feat-title">Vision customisation</div>
+      <p class="feat-desc">High contrast, colour-blind safe, low vision, and dyslexia-friendly modes. Adjust text size, spacing, and tracking at any time.</p>
+      <button class="feat-link" onclick="sendPrompt('Tell me about Mwarokin vision accessibility options')">Explore themes <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+    </div>
+
+    <div class="feat-card">
+      <div class="feat-icon-wrap teal"><i class="ti ti-hand-click" aria-hidden="true"></i></div>
+      <div class="feat-title">Motor accessibility</div>
+      <p class="feat-desc">Switch access, eye tracking integration, sip-and-puff compatibility, and customisable gesture controls for users with limited motor ability.</p>
+      <button class="feat-link" onclick="sendPrompt('How does motor accessibility work on Mwarokin?')">Setup <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+    </div>
+
+    <div class="feat-card">
+      <div class="feat-icon-wrap blue"><i class="ti ti-ear" aria-hidden="true"></i></div>
+      <div class="feat-title">Hearing support</div>
+      <p class="feat-desc">Visual alerts, real-time captions, sign language overlay options, and vibration feedback for all audio content and notifications.</p>
+      <button class="feat-link" onclick="sendPrompt('Configure hearing support on Mwarokin Estates')">Configure <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+    </div>
+
+    <div class="feat-card">
+      <div class="feat-icon-wrap amber"><i class="ti ti-brain" aria-hidden="true"></i></div>
+      <div class="feat-title">Cognitive support</div>
+      <p class="feat-desc">Simplified layouts, reading guides, distraction-free mode, plain-language summaries, and step-by-step guided application flows.</p>
+      <button class="feat-link" onclick="sendPrompt('Enable cognitive support features on Mwarokin')">Enable <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+    </div>
+  </div>
+</section>
+
+<!-- ACCESSIBLE PROPERTY LISTINGS -->
+<section class="listings-section" aria-labelledby="listingsTitle">
+  <div class="sec-header">
+    <div class="sec-eyebrow">Accessible properties</div>
+    <h2 class="sec-title" id="listingsTitle">Homes built <em>for you</em></h2>
+  </div>
+
+  <div class="prop-grid">
+    <div class="prop-card" tabindex="0">
+      <div class="prop-img">
+        <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&q=80" alt="Accessible ground-floor apartment in Westlands">
+        <div class="prop-access-badges">
+          <div class="access-badge"><i class="ti ti-wheelchair" aria-hidden="true"></i> Wheelchair</div>
+          <div class="access-badge"><i class="ti ti-elevator" aria-hidden="true"></i> Lift</div>
+        </div>
+      </div>
+      <div class="prop-body">
+        <div class="prop-price">KSh 45,000 <span>/ month</span></div>
+        <div class="prop-title">Ground-floor apartment</div>
+        <div class="prop-loc"><i class="ti ti-map-pin" aria-hidden="true"></i> Westlands, Nairobi</div>
+        <div class="prop-meta">
+          <div class="prop-meta-item"><i class="ti ti-bed" aria-hidden="true"></i> 2 beds</div>
+          <div class="prop-meta-item"><i class="ti ti-bath" aria-hidden="true"></i> 2 baths</div>
+          <div class="prop-meta-item"><i class="ti ti-accessible" aria-hidden="true"></i> Step-free</div>
+        </div>
+        <button class="prop-apply" onclick="sendPrompt('Apply for the accessible ground-floor apartment in Westlands')">Apply for this home</button>
+      </div>
+    </div>
+
+    <div class="prop-card" tabindex="0">
+      <div class="prop-img">
+        <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&q=80" alt="Sensory-friendly studio in Kileleshwa">
+        <div class="prop-access-badges">
+          <div class="access-badge"><i class="ti ti-ear" aria-hidden="true"></i> Visual alerts</div>
+          <div class="access-badge"><i class="ti ti-brightness" aria-hidden="true"></i> Low-glare</div>
+        </div>
+      </div>
+      <div class="prop-body">
+        <div class="prop-price">KSh 28,000 <span>/ month</span></div>
+        <div class="prop-title">Sensory-friendly studio</div>
+        <div class="prop-loc"><i class="ti ti-map-pin" aria-hidden="true"></i> Kileleshwa, Nairobi</div>
+        <div class="prop-meta">
+          <div class="prop-meta-item"><i class="ti ti-bed" aria-hidden="true"></i> 1 bed</div>
+          <div class="prop-meta-item"><i class="ti ti-bath" aria-hidden="true"></i> 1 bath</div>
+          <div class="prop-meta-item"><i class="ti ti-heart" aria-hidden="true"></i> Calm design</div>
+        </div>
+        <button class="prop-apply" onclick="sendPrompt('Apply for the sensory-friendly studio in Kileleshwa')">Apply for this home</button>
+      </div>
+    </div>
+
+    <div class="prop-card" tabindex="0">
+      <div class="prop-img">
+        <img src="https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=600&q=80" alt="Wide-doorway family house in Kilimani">
+        <div class="prop-access-badges">
+          <div class="access-badge"><i class="ti ti-door" aria-hidden="true"></i> Wide doors</div>
+          <div class="access-badge"><i class="ti ti-bath" aria-hidden="true"></i> Roll-in shower</div>
+        </div>
+      </div>
+      <div class="prop-body">
+        <div class="prop-price">KSh 85,000 <span>/ month</span></div>
+        <div class="prop-title">Adapted family house</div>
+        <div class="prop-loc"><i class="ti ti-map-pin" aria-hidden="true"></i> Kilimani, Nairobi</div>
+        <div class="prop-meta">
+          <div class="prop-meta-item"><i class="ti ti-bed" aria-hidden="true"></i> 3 beds</div>
+          <div class="prop-meta-item"><i class="ti ti-bath" aria-hidden="true"></i> 2 baths</div>
+          <div class="prop-meta-item"><i class="ti ti-wheelchair" aria-hidden="true"></i> Fully adapted</div>
+        </div>
+        <button class="prop-apply" onclick="sendPrompt('Apply for the adapted family house in Kilimani')">Apply for this home</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ASSISTIVE SETTINGS PANEL -->
+<section class="settings-section" aria-labelledby="settingsTitle">
+  <div class="sec-header">
+    <div class="sec-eyebrow">Your preferences</div>
+    <h2 class="sec-title" id="settingsTitle">Customise <em>your experience</em></h2>
+  </div>
+
+  <div class="settings-grid">
+    <div class="setting-card">
+      <div class="setting-card-title"><i class="ti ti-eye" aria-hidden="true"></i> Visual settings</div>
+      <div class="toggle-row"><span>Reduce motion</span><label class="tog"><input type="checkbox"><span class="tog-slider"></span></label></div>
+      <div class="toggle-row"><span>Focus highlight</span><label class="tog"><input type="checkbox" checked><span class="tog-slider"></span></label></div>
+      <div class="toggle-row"><span>Reading guide</span><label class="tog"><input type="checkbox" onchange="toast('Reading guide ' + (this.checked?'on':'off'))"><span class="tog-slider"></span></label></div>
+      <div class="toggle-row"><span>Underline links</span><label class="tog"><input type="checkbox" onchange="toast('Links ' + (this.checked?'underlined':'default'))"><span class="tog-slider"></span></label></div>
+    </div>
+
+    <div class="setting-card">
+      <div class="setting-card-title"><i class="ti ti-volume" aria-hidden="true"></i> Audio settings</div>
+      <div class="toggle-row"><span>Text to speech</span><label class="tog"><input type="checkbox"><span class="tog-slider"></span></label></div>
+      <div class="toggle-row"><span>Audio descriptions</span><label class="tog"><input type="checkbox"><span class="tog-slider"></span></label></div>
+      <div class="toggle-row"><span>Auto-read alerts</span><label class="tog"><input type="checkbox" checked><span class="tog-slider"></span></label></div>
+      <div class="toggle-row"><span>Sound effects</span><label class="tog"><input type="checkbox" checked><span class="tog-slider"></span></label></div>
+    </div>
+
+    <div class="setting-card">
+      <div class="setting-card-title"><i class="ti ti-keyboard" aria-hidden="true"></i> Keyboard shortcuts</div>
+      <div class="shortcut-grid">
+        <span class="kkey">Alt + S</span><span>Screen reader</span>
+        <span class="kkey">Alt + V</span><span>Voice control</span>
+        <span class="kkey">Alt + R</span><span>Reading guide</span>
+        <span class="kkey">Alt + D</span><span>Simplify page</span>
+        <span class="kkey">Alt + A</span><span>Settings panel</span>
+        <span class="kkey">Tab</span><span>Next element</span>
+      </div>
+    </div>
+
+    <div class="setting-card">
+      <div class="setting-card-title"><i class="ti ti-hand-click" aria-hidden="true"></i> Input & navigation</div>
+      <div class="toggle-row"><span>Voice commands</span><label class="tog"><input type="checkbox"><span class="tog-slider"></span></label></div>
+      <div class="toggle-row"><span>Switch access</span><label class="tog"><input type="checkbox"><span class="tog-slider"></span></label></div>
+      <div class="toggle-row"><span>Gesture control</span><label class="tog"><input type="checkbox"><span class="tog-slider"></span></label></div>
+      <div class="toggle-row"><span>Sticky keys</span><label class="tog"><input type="checkbox"><span class="tog-slider"></span></label></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-brand">Mwarokin Estates</div>
+      <p class="footer-desc">An inclusive, accessibility-first property rental platform built for people with disabilities and diverse abilities across Africa and the world.</p>
+      <div class="footer-social">
+        <div class="fsoc"><i class="ti ti-brand-facebook" aria-hidden="true"></i></div>
+        <div class="fsoc"><i class="ti ti-brand-x" aria-hidden="true"></i></div>
+        <div class="fsoc"><i class="ti ti-brand-instagram" aria-hidden="true"></i></div>
+        <div class="fsoc"><i class="ti ti-brand-linkedin" aria-hidden="true"></i></div>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Platform</div>
+      <ul class="footer-links">
+        <li><a href="#">Accessible properties</a></li>
+        <li><a href="#">Tenant profile</a></li>
+        <li><a href="#">Manage bills</a></li>
+        <li><a href="#">Vacancy locator</a></li>
+        <li><a href="#">Neighbourhoods</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Accessibility</div>
+      <ul class="footer-links">
+        <li><a href="#">Accessibility statement</a></li>
+        <li><a href="#">Screen reader guide</a></li>
+        <li><a href="#">Visual settings</a></li>
+        <li><a href="#">WCAG compliance</a></li>
+        <li><a href="#">Contact: +254 704 919 388</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span>© 2026 Mwarokin Estates — Abled with disabilities. All rights reserved.</span>
+    <span>Powered by <a href="#">Syllogism Technology Africa</a></span>
+  </div>
+</footer>
+
+</div>
+
+<div class="toast" id="toastEl" role="status" aria-live="polite"></div>
+
+<script>
+function toast(msg) {
+  const el = document.getElementById('toastEl');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+const states = {};
+function toggleFeature(key, label) {
+  states[key] = !states[key];
+  const btn = document.getElementById('btn' + key);
+  btn.classList.toggle('on', states[key]);
+  toast(label + ' ' + (states[key] ? 'enabled' : 'disabled'));
+}
+
+function setScheme(name, el) {
+  document.getElementById('mainWrap').setAttribute('data-scheme', name);
+  document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  toast('Theme: ' + name.replace('-', ' '));
+}
+
+function resetScheme(el) {
+  document.getElementById('mainWrap').removeAttribute('data-scheme');
+  document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  toast('Theme reset to default');
+}
+
+function applyText(v) {
+  document.getElementById('mainWrap').style.fontSize = v + '%';
+  document.getElementById('tsVal').textContent = Math.round(v) + '%';
+}
+
+function applySpacing(v) {
+  document.getElementById('mainWrap').style.lineHeight = parseFloat(v).toFixed(2);
+  document.getElementById('lsVal').textContent = parseFloat(v).toFixed(2);
+}
+
+function applyLetterSpacing(v) {
+  document.getElementById('mainWrap').style.letterSpacing = parseFloat(v).toFixed(2) + 'em';
+  document.getElementById('letVal').textContent = parseFloat(v).toFixed(2) + 'em';
+}
+
+document.addEventListener('keydown', e => {
+  if (!e.altKey) return;
+  const map = { s:'SR', v:'VC', r:'reading guide', a:'settings panel', d:'simplified mode' };
+  const lbl = { s:'Screen reader', v:'Voice control', r:'Reading guide', a:'Settings', d:'Simplified mode' };
+  if (map[e.key.toLowerCase()]) {
+    e.preventDefault();
+    toast(lbl[e.key.toLowerCase()] + ' toggled');
+  }
+});
+</script>

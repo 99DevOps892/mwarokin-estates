@@ -1,0 +1,47 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgis/postgis:15-3.3
+    environment:
+      POSTGRES_DB: mwarokin
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "15672:15672"
+
+  api:
+    build: .
+    environment:
+      DATABASE_URL: postgresql://admin:${DB_PASSWORD}@postgres:5432/mwarokin
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+    ports:
+      - "3000:3000"
+      - "3001:3001" # WebSocket port
+
+  ai-service:
+    build: ./ai-service
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  render-worker:
+    build: ./render-service
+    volumes:
+      - ./assets:/workspace/assets
+
+volumes:
+  pgdata:

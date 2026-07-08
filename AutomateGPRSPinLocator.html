@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - My Location</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet Routing Machine CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #f97316;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s ease;
+        }
+
+        .dark-theme {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #f97316;
+            --light: #1e293b;
+            --dark: #f1f5f9;
+            --gray: #94a3b8;
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            transition: var(--transition);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-theme header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+
+        .logo i {
+            color: var(--secondary);
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .theme-toggle {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--primary-dark);
+            transform: rotate(30deg);
+        }
+
+        .search-bar {
+            display: flex;
+            background: white;
+            border-radius: 50px;
+            padding: 5px 15px;
+            box-shadow: var(--card-shadow);
+        }
+
+        body.dark-theme .search-bar {
+            background: #334155;
+        }
+
+        .search-bar input {
+            border: none;
+            outline: none;
+            padding: 8px;
+            background: transparent;
+            color: var(--dark);
+            width: 200px;
+        }
+
+        body.dark-theme .search-bar input {
+            color: var(--light);
+        }
+
+        .search-bar button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        main {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 992px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+        }
+
+        body.dark-theme .panel {
+            background: #334155;
+        }
+
+        .location-info h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+
+        body.dark-theme .info-box {
+            background: #475569;
+        }
+
+        .info-box .label {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+
+        .info-box .value {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #ea580c;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .map-container {
+            height: 600px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            position: relative;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .property-list {
+            margin-top: 25px;
+        }
+
+        .property-list h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .property-card {
+            display: flex;
+            margin-bottom: 15px;
+            background: #f1f5f9;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        body.dark-theme .property-card {
+            background: #475569;
+        }
+
+        .property-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .property-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .property-details {
+            padding: 15px;
+            flex-grow: 1;
+        }
+
+        .property-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .property-price {
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .property-address {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: var(--success);
+            color: white;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .notification.error {
+            background: var(--danger);
+        }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: var(--gray);
+            font-size: 0.9rem;
+            padding: 20px 0;
+        }
+
+        /* Custom Leaflet popup styles */
+        .leaflet-popup-content-wrapper {
+            border-radius: 8px;
+        }
+
+        .custom-popup .leaflet-popup-content {
+            margin: 15px;
+        }
+
+        .popup-title {
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+
+        .popup-price {
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .popup-address {
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .popup-link {
+            display: inline-block;
+            padding: 5px 15px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        /* New styles for enhanced functionality */
+        .map-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .map-control-btn {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--card-shadow);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        body.dark-theme .map-control-btn {
+            background: #334155;
+            color: white;
+        }
+
+        .map-control-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .route-panel {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 1000;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: var(--card-shadow);
+            width: 300px;
+            display: none;
+        }
+
+        body.dark-theme .route-panel {
+            background: #334155;
+        }
+
+        .route-panel.active {
+            display: block;
+        }
+
+        .route-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        body.dark-theme .route-input {
+            background: #475569;
+            border-color: #64748b;
+            color: white;
+        }
+
+        .route-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .route-actions .btn {
+            flex: 1;
+            padding: 8px 15px;
+        }
+
+        .traffic-toggle {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            z-index: 1000;
+            background: white;
+            border-radius: 10px;
+            padding: 10px 15px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        body.dark-theme .traffic-toggle {
+            background: #334155;
+            color: white;
+        }
+
+        .traffic-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        .traffic-toggle.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .traffic-toggle.active:hover {
+            background: var(--primary-dark);
+        }
+
+        .location-history {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        body.dark-theme .history-item {
+            border-bottom: 1px solid #475569;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-time {
+            color: var(--gray);
+        }
+
+        .speed-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+
+        body.dark-theme .speed-display {
+            background: #475569;
+        }
+
+        .speed-value {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .map-type-selector {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            z-index: 1000;
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            gap: 10px;
+        }
+
+        body.dark-theme .map-type-selector {
+            background: #334155;
+        }
+
+        .map-type-btn {
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.8rem;
+        }
+
+        .map-type-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 0 0 10px 10px;
+            box-shadow: var(--card-shadow);
+            z-index: 1000;
+            display: none;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        body.dark-theme .search-suggestions {
+            background: #334155;
+        }
+
+        .search-suggestions.active {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        body.dark-theme .suggestion-item {
+            border-bottom: 1px solid #475569;
+        }
+
+        .suggestion-item:hover {
+            background: #f1f5f9;
+        }
+
+        body.dark-theme .suggestion-item:hover {
+            background: #475569;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-map-marked-alt"></i>
+                <span>Mwarokin Estates - My Locator</span>
+            </div>
+            <div class="header-controls">
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Search locations, properties...">
+                    <button id="search-btn"><i class="fas fa-search"></i></button>
+                    <div id="search-suggestions" class="search-suggestions"></div>
+                </div>
+                <button id="theme-toggle" class="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+        
+        <main>
+            <div class="panel location-info">
+                <h2><i class="fas fa-map-marker-alt"></i> Your Location</h2>
+                
+                <div class="info-grid">
+                    <div class="info-box">
+                        <div class="label">Latitude</div>
+                        <div id="latitude" class="value">-1.2921°</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="label">Longitude</div>
+                        <div id="longitude" class="value">36.8219°</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="label">Accuracy</div>
+                        <div id="accuracy" class="value">±20 meters</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="label">Last Update</div>
+                        <div id="last-update" class="value">Just now</div>
+                    </div>
+                </div>
+                
+                <div class="speed-display">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Speed: <span id="speed-value" class="speed-value">0 km/h</span></span>
+                </div>
+                
+                <div id="error" class="error-message"></div>
+                
+                <div class="action-buttons">
+                    <button id="track-btn" class="btn btn-primary">
+                        <i class="fas fa-play"></i> Start Tracking
+                    </button>
+                    <button id="refresh-btn" class="btn btn-outline">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button id="route-btn" class="btn btn-outline">
+                        <i class="fas fa-route"></i> Route
+                    </button>
+                    <button id="share-btn" class="btn btn-outline">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                </div>
+                
+                <div class="location-history">
+                    <h3>Location History</h3>
+                    <div id="history-list"></div>
+                </div>
+                
+                <div class="property-list">
+                    <h3>Nearby Properties</h3>
+                    <div class="property-card">
+                        <img src="https://picsum.photos/100/100?property=1" class="property-image" alt="Property">
+                        <div class="property-details">
+                            <div class="property-title">Luxury Apartment</div>
+                            <div class="property-price">KSh 12,500,000</div>
+                            <div class="property-address">0.8 km away · 3bd · 2ba</div>
+                        </div>
+                    </div>
+                    <div class="property-card">
+                        <img src="https://picsum.photos/100/100?property=2" class="property-image" alt="Property">
+                        <div class="property-details">
+                            <div class="property-title">Modern Townhouse</div>
+                            <div class="property-price">KSh 8,900,000</div>
+                            <div class="property-address">1.2 km away · 2bd · 2ba</div>
+                        </div>
+                    </div>
+                    <div class="property-card">
+                        <img src="https://picsum.photos/100/100?property=3" class="property-image" alt="Property">
+                        <div class="property-details">
+                            <div class="property-title">Family Home</div>
+                            <div class="property-price">KSh 18,300,000</div>
+                            <div class="property-address">0.5 km away · 4bd · 3ba</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="map-container">
+                <div id="map"></div>
+                
+                <div class="map-controls">
+                    <div id="zoom-in" class="map-control-btn">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div id="zoom-out" class="map-control-btn">
+                        <i class="fas fa-minus"></i>
+                    </div>
+                    <div id="locate-me" class="map-control-btn">
+                        <i class="fas fa-crosshairs"></i>
+                    </div>
+                </div>
+                
+                <div id="route-panel" class="route-panel">
+                    <h3>Plan Route</h3>
+                    <input type="text" id="route-from" class="route-input" placeholder="From (your location)" readonly>
+                    <input type="text" id="route-to" class="route-input" placeholder="To (destination)">
+                    <div class="route-actions">
+                        <button id="get-directions" class="btn btn-primary">Get Directions</button>
+                        <button id="clear-route" class="btn btn-outline">Clear</button>
+                    </div>
+                </div>
+                
+                <div id="traffic-toggle" class="traffic-toggle">
+                    <i class="fas fa-traffic-light"></i>
+                    <span>Traffic</span>
+                </div>
+                
+                <div class="map-type-selector">
+                    <div class="map-type-btn active" data-type="standard">Standard</div>
+                    <div class="map-type-btn" data-type="satellite">Satellite</div>
+                    <div class="map-type-btn" data-type="terrain">Terrain</div>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Mwarokin Estates - My Locator © 2026 All rights reserved | Powered By: Syllogism Technology Africa.</p>
+        </footer>
+    </div>
+    
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <span>Location updated successfully!</span>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Leaflet Routing Machine -->
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <script>
+        // Check if the browser supports Geolocation
+        if ("geolocation" in navigator) {
+            let map, marker, watchId, circle, routingControl;
+            let isTracking = false;
+            let lastPosition = null;
+            let locationHistory = [];
+            let trafficLayer = null;
+            let currentMapType = 'standard';
+            
+            // Sample property data (in a real app, this would come from an API)
+            const properties = [
+                {
+                    id: 1,
+                    title: "Luxury Apartment",
+                    price: "KSh 12,500,000",
+                    address: "Mwarokin Estates Heights, Nairobi",
+                    lat: -1.2905,
+                    lng: 36.8250,
+                    distance: "0.8 km away",
+                    beds: 3,
+                    baths: 2,
+                    image: "https://picsum.photos/100/100?property=1"
+                },
+                {
+                    id: 2,
+                    title: "Modern Townhouse",
+                    price: "KSh 8,900,000",
+                    address: "Mwarokin Estates Gardens, Nairobi",
+                    lat: -1.2935,
+                    lng: 36.8180,
+                    distance: "1.2 km away",
+                    beds: 2,
+                    baths: 2,
+                    image: "https://picsum.photos/100/100?property=2"
+                },
+                {
+                    id: 3,
+                    title: "Family Home",
+                    price: "KSh 18,300,000",
+                    address: "Mwarokin Estates Estates, Nairobi",
+                    lat: -1.2890,
+                    lng: 36.8230,
+                    distance: "0.5 km away",
+                    beds: 4,
+                    baths: 3,
+                    image: "https://picsum.photos/100/100?property=3"
+                }
+            ];
+
+            // Sample search suggestions
+            const searchSuggestions = [
+                "Mwarokin Estates Heights, Nairobi",
+                "Mwarokin Estates Gardens, Nairobi",
+                "Mwarokin Estates Estates, Nairobi",
+                "Nairobi City Center",
+                "Jomo Kenyatta International Airport",
+                "Westgate Shopping Mall",
+                "Kenyatta National Hospital",
+                "University of Nairobi"
+            ];
+
+            // Initialize the map
+            function initMap(latitude = -1.2921, longitude = 36.8219) {
+                map = L.map('map').setView([latitude, longitude], 15);
+                
+                // Standard tile layer
+                const standardLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+                
+                // Satellite tile layer
+                const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="https://www.esri.com/">Esri</a>'
+                });
+                
+                // Terrain tile layer
+                const terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 17,
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a>'
+                });
+                
+                // Traffic layer (simulated)
+                trafficLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    opacity: 0.7
+                });
+                
+                // Store layers for easy switching
+                window.mapLayers = {
+                    standard: standardLayer,
+                    satellite: satelliteLayer,
+                    terrain: terrainLayer,
+                    traffic: trafficLayer
+                };
+                
+                // Add property markers
+                properties.forEach(property => {
+                    const propertyMarker = L.marker([property.lat, property.lng]).addTo(map);
+                    propertyMarker.bindPopup(`
+                        <div class="custom-popup">
+                            <div class="popup-title">${property.title}</div>
+                            <div class="popup-price">${property.price}</div>
+                            <div class="popup-address">${property.address}</div>
+                            <div>${property.beds}bd · ${property.baths}ba</div>
+                            <a href="#" class="popup-link">View Details</a>
+                        </div>
+                    `);
+                    
+                    // Custom icon for properties
+                    propertyMarker.setIcon(
+                        L.icon({
+                            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                            iconSize: [25, 41],
+                            iconAnchor: [12, 41],
+                            popupAnchor: [1, -34],
+                            shadowSize: [41, 41]
+                        })
+                    );
+                });
+                
+                // Add user location marker
+                marker = L.marker([latitude, longitude]).addTo(map);
+                marker.bindPopup("Your location").openPopup();
+                
+                // Add accuracy circle
+                circle = L.circle([latitude, longitude], {
+                    color: '#2563eb',
+                    fillColor: '#3b82f6',
+                    fillOpacity: 0.2,
+                    radius: 500 // Default radius, will be updated with actual accuracy
+                }).addTo(map);
+            }
+
+            // Start tracking user location
+            function startTracking() {
+                const options = {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                };
+
+                watchId = navigator.geolocation.watchPosition(
+                    updateLocation,
+                    handleError,
+                    options
+                );
+
+                isTracking = true;
+                const trackBtn = document.getElementById('track-btn');
+                trackBtn.innerHTML = '<i class="fas fa-stop"></i> Stop Tracking';
+                trackBtn.classList.add('btn-secondary');
+                trackBtn.classList.remove('btn-primary');
+                
+                showNotification('Tracking started');
+            }
+
+            // Stop tracking user location
+            function stopTracking() {
+                if (watchId) {
+                    navigator.geolocation.clearWatch(watchId);
+                    isTracking = false;
+                    const trackBtn = document.getElementById('track-btn');
+                    trackBtn.innerHTML = '<i class="fas fa-play"></i> Start Tracking';
+                    trackBtn.classList.add('btn-primary');
+                    trackBtn.classList.remove('btn-secondary');
+                    
+                    showNotification('Tracking stopped');
+                }
+            }
+
+            // Update the location on the map and in the UI
+            function updateLocation(position) {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                const accuracy = position.coords.accuracy;
+                const speed = position.coords.speed || 0;
+                const timestamp = new Date(position.timestamp);
+
+                // Initialize map if not already initialized
+                if (!map) {
+                    initMap(latitude, longitude);
+                }
+
+                // Update the UI
+                displayLocation(latitude, longitude, accuracy, timestamp, speed);
+
+                // Update the map
+                updateMap(latitude, longitude, accuracy);
+                
+                // Save to history
+                addToHistory(latitude, longitude, timestamp);
+                
+                // Save last position
+                lastPosition = { latitude, longitude, accuracy, timestamp, speed };
+                
+                // Show notification if movement is detected
+                if (lastPosition && (lastPosition.latitude !== latitude || lastPosition.longitude !== longitude)) {
+                    showNotification('Location updated');
+                }
+            }
+
+            // Display location in the UI
+            function displayLocation(latitude, longitude, accuracy, timestamp, speed) {
+                const latitudeElement = document.getElementById('latitude');
+                const longitudeElement = document.getElementById('longitude');
+                const accuracyElement = document.getElementById('accuracy');
+                const lastUpdateElement = document.getElementById('last-update');
+                const speedElement = document.getElementById('speed-value');
+                const errorElement = document.getElementById('error');
+
+                latitudeElement.textContent = `${latitude.toFixed(6)}°`;
+                longitudeElement.textContent = `${longitude.toFixed(6)}°`;
+                accuracyElement.textContent = `±${Math.round(accuracy)} meters`;
+                
+                // Convert m/s to km/h
+                const speedKmh = speed ? (speed * 3.6).toFixed(1) : '0';
+                speedElement.textContent = `${speedKmh} km/h`;
+                
+                const now = new Date();
+                const diffInSeconds = Math.floor((now - timestamp) / 1000);
+                
+                if (diffInSeconds < 60) {
+                    lastUpdateElement.textContent = `${diffInSeconds} seconds ago`;
+                } else {
+                    const diffInMinutes = Math.floor(diffInSeconds / 60);
+                    lastUpdateElement.textContent = `${diffInMinutes} minutes ago`;
+                }
+                
+                errorElement.textContent = ''; // Clear any previous errors
+            }
+
+            // Update the map
+            function updateMap(latitude, longitude, accuracy) {
+                // Update map view
+                map.setView([latitude, longitude], map.getZoom());
+                
+                // Update marker position
+                marker.setLatLng([latitude, longitude]);
+                
+                // Update accuracy circle
+                if (circle) {
+                    map.removeLayer(circle);
+                }
+                circle = L.circle([latitude, longitude], {
+                    color: '#2563eb',
+                    fillColor: '#3b82f6',
+                    fillOpacity: 0.2,
+                    radius: accuracy
+                }).addTo(map);
+            }
+
+            // Add location to history
+            function addToHistory(latitude, longitude, timestamp) {
+                const historyItem = {
+                    latitude,
+                    longitude,
+                    timestamp,
+                    timeString: timestamp.toLocaleTimeString()
+                };
+                
+                locationHistory.unshift(historyItem);
+                
+                // Keep only last 10 items
+                if (locationHistory.length > 10) {
+                    locationHistory.pop();
+                }
+                
+                updateHistoryDisplay();
+            }
+
+            // Update history display
+            function updateHistoryDisplay() {
+                const historyList = document.getElementById('history-list');
+                historyList.innerHTML = '';
+                
+                locationHistory.forEach((item, index) => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item';
+                    historyItem.innerHTML = `
+                        <div>${item.latitude.toFixed(4)}°, ${item.longitude.toFixed(4)}°</div>
+                        <div class="history-time">${item.timeString}</div>
+                    `;
+                    
+                    historyItem.addEventListener('click', () => {
+                        map.setView([item.latitude, item.longitude], 15);
+                        showNotification(`Viewing location from ${item.timeString}`);
+                    });
+                    
+                    historyList.appendChild(historyItem);
+                });
+            }
+
+            // Handle geolocation errors
+            function handleError(error) {
+                let errorMessage;
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMessage = "Location access denied. Please enable location permissions in your browser settings.";
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMessage = "Your location information is currently unavailable.";
+                        break;
+                    case error.TIMEOUT:
+                        errorMessage = "The request to get your location timed out. Please try again.";
+                        break;
+                    case error.UNKNOWN_ERROR:
+                        errorMessage = "An unknown error occurred while getting your location.";
+                        break;
+                    default:
+                        errorMessage = "An error occurred while getting your location.";
+                }
+                displayError(errorMessage);
+                stopTracking(); // Stop tracking on error
+            }
+
+            // Display error in the UI
+            function displayError(message) {
+                const errorElement = document.getElementById('error');
+                errorElement.textContent = message;
+                errorElement.style.color = '#ef4444';
+                
+                showNotification(message, true);
+            }
+
+            // Show notification
+            function showNotification(message, isError = false) {
+                const notification = document.getElementById('notification');
+                const icon = notification.querySelector('i');
+                const text = notification.querySelector('span');
+                
+                text.textContent = message;
+                
+                if (isError) {
+                    notification.classList.add('error');
+                    icon.className = 'fas fa-exclamation-circle';
+                } else {
+                    notification.classList.remove('error');
+                    icon.className = 'fas fa-check-circle';
+                }
+                
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+
+            // Toggle route planning panel
+            function toggleRoutePanel() {
+                const routePanel = document.getElementById('route-panel');
+                routePanel.classList.toggle('active');
+                
+                if (routePanel.classList.contains('active')) {
+                    if (lastPosition) {
+                        document.getElementById('route-from').value = `${lastPosition.latitude.toFixed(4)}, ${lastPosition.longitude.toFixed(4)}`;
+                    }
+                } else {
+                    clearRoute();
+                }
+            }
+
+            // Calculate and display route
+            function calculateRoute() {
+                const toInput = document.getElementById('route-to').value;
+                
+                if (!toInput) {
+                    showNotification('Please enter a destination', true);
+                    return;
+                }
+                
+                // In a real app, you would geocode the destination address
+                // For demo purposes, we'll use a fixed destination
+                const destination = {
+                    lat: -1.2833,
+                    lng: 36.8167
+                };
+                
+                // Clear any existing route
+                clearRoute();
+                
+                // Calculate route using Leaflet Routing Machine
+                routingControl = L.Routing.control({
+                    waypoints: [
+                        L.latLng(lastPosition.latitude, lastPosition.longitude),
+                        L.latLng(destination.lat, destination.lng)
+                    ],
+                    routeWhileDragging: false,
+                    showAlternatives: true,
+                    lineOptions: {
+                        styles: [{color: '#2563eb', opacity: 0.7, weight: 5}]
+                    }
+                }).addTo(map);
+                
+                showNotification('Route calculated successfully');
+            }
+
+            // Clear route from map
+            function clearRoute() {
+                if (routingControl) {
+                    map.removeControl(routingControl);
+                    routingControl = null;
+                }
+            }
+
+            // Toggle traffic layer
+            function toggleTraffic() {
+                const trafficToggle = document.getElementById('traffic-toggle');
+                
+                if (trafficToggle.classList.contains('active')) {
+                    // Remove traffic layer
+                    if (trafficLayer && map.hasLayer(trafficLayer)) {
+                        map.removeLayer(trafficLayer);
+                    }
+                    trafficToggle.classList.remove('active');
+                    showNotification('Traffic layer hidden');
+                } else {
+                    // Add traffic layer (simulated)
+                    if (trafficLayer) {
+                        map.addLayer(trafficLayer);
+                    }
+                    trafficToggle.classList.add('active');
+                    showNotification('Traffic layer shown');
+                }
+            }
+
+            // Change map type
+            function changeMapType(type) {
+                // Remove all tile layers
+                Object.values(window.mapLayers).forEach(layer => {
+                    if (map.hasLayer(layer)) {
+                        map.removeLayer(layer);
+                    }
+                });
+                
+                // Add selected layer
+                if (type === 'traffic') {
+                    // Traffic is handled separately
+                    return;
+                }
+                
+                map.addLayer(window.mapLayers[type]);
+                currentMapType = type;
+                
+                // Update active button
+                document.querySelectorAll('.map-type-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`.map-type-btn[data-type="${type}"]`).classList.add('active');
+                
+                showNotification(`Map type changed to ${type}`);
+            }
+
+            // Show search suggestions
+            function showSearchSuggestions(query) {
+                const suggestionsContainer = document.getElementById('search-suggestions');
+                suggestionsContainer.innerHTML = '';
+                
+                if (!query) {
+                    suggestionsContainer.classList.remove('active');
+                    return;
+                }
+                
+                const filteredSuggestions = searchSuggestions.filter(suggestion => 
+                    suggestion.toLowerCase().includes(query.toLowerCase())
+                );
+                
+                if (filteredSuggestions.length === 0) {
+                    suggestionsContainer.innerHTML = '<div class="suggestion-item">No results found</div>';
+                } else {
+                    filteredSuggestions.forEach(suggestion => {
+                        const suggestionItem = document.createElement('div');
+                        suggestionItem.className = 'suggestion-item';
+                        suggestionItem.textContent = suggestion;
+                        
+                        suggestionItem.addEventListener('click', () => {
+                            document.getElementById('search-input').value = suggestion;
+                            suggestionsContainer.classList.remove('active');
+                            // In a real app, you would geocode the address and center the map
+                            showNotification(`Searching for "${suggestion}"`);
+                        });
+                        
+                        suggestionsContainer.appendChild(suggestionItem);
+                    });
+                }
+                
+                suggestionsContainer.classList.add('active');
+            }
+
+            // Share current location
+            function shareLocation() {
+                if (!lastPosition) {
+                    showNotification('No location data available', true);
+                    return;
+                }
+                
+                const locationUrl = `https://www.google.com/maps?q=${lastPosition.latitude},${lastPosition.longitude}`;
+                
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'My Current Location',
+                        text: 'Check out my current location',
+                        url: locationUrl
+                    })
+                    .then(() => showNotification('Location shared successfully'))
+                    .catch(error => {
+                        console.error('Error sharing:', error);
+                        copyToClipboard(locationUrl);
+                    });
+                } else {
+                    copyToClipboard(locationUrl);
+                }
+            }
+
+            // Copy text to clipboard
+            function copyToClipboard(text) {
+                navigator.clipboard.writeText(text)
+                    .then(() => showNotification('Location URL copied to clipboard'))
+                    .catch(err => {
+                        console.error('Failed to copy: ', err);
+                        showNotification('Failed to copy location URL', true);
+                    });
+            }
+
+            // Event Listeners
+            document.getElementById('track-btn').addEventListener('click', () => {
+                if (isTracking) {
+                    stopTracking();
+                } else {
+                    startTracking();
+                }
+            });
+
+            document.getElementById('refresh-btn').addEventListener('click', () => {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        updateLocation,
+                        handleError,
+                        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                    );
+                }
+            });
+
+            document.getElementById('route-btn').addEventListener('click', toggleRoutePanel);
+
+            document.getElementById('get-directions').addEventListener('click', calculateRoute);
+
+            document.getElementById('clear-route').addEventListener('click', clearRoute);
+
+            document.getElementById('share-btn').addEventListener('click', shareLocation);
+
+            document.getElementById('traffic-toggle').addEventListener('click', toggleTraffic);
+
+            document.querySelectorAll('.map-type-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    changeMapType(btn.dataset.type);
+                });
+            });
+
+            document.getElementById('zoom-in').addEventListener('click', () => {
+                map.zoomIn();
+            });
+
+            document.getElementById('zoom-out').addEventListener('click', () => {
+                map.zoomOut();
+            });
+
+            document.getElementById('locate-me').addEventListener('click', () => {
+                if (lastPosition) {
+                    map.setView([lastPosition.latitude, lastPosition.longitude], 15);
+                    showNotification('Centered on your location');
+                } else {
+                    showNotification('No location data available', true);
+                }
+            });
+
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                showSearchSuggestions(e.target.value);
+            });
+
+            document.getElementById('search-btn').addEventListener('click', () => {
+                const query = document.getElementById('search-input').value;
+                if (query) {
+                    // In a real app, you would geocode the address
+                    showNotification(`Searching for "${query}"`);
+                }
+            });
+
+            // Close suggestions when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.search-bar')) {
+                    document.getElementById('search-suggestions').classList.remove('active');
+                }
+            });
+
+            // Theme toggle
+            document.getElementById('theme-toggle').addEventListener('click', () => {
+                document.body.classList.toggle('dark-theme');
+                const icon = document.querySelector('#theme-toggle i');
+                
+                if (document.body.classList.contains('dark-theme')) {
+                    icon.className = 'fas fa-sun';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    icon.className = 'fas fa-moon';
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+
+            // Check for saved theme preference
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-theme');
+                document.querySelector('#theme-toggle i').className = 'fas fa-sun';
+            }
+
+        } else {
+            displayError("Geolocation is not supported by your browser.");
+        }
+
+        // Initialize map with default coordinates
+        window.onload = () => {
+            initMap();
+            
+            // Try to get initial position
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        updateLocation(position);
+                    },
+                    (error) => {
+                        // Use default coordinates if geolocation fails
+                        console.log("Using default coordinates");
+                    },
+                    { enableHighAccuracy: true, timeout: 5000 }
+                );
+            }
+        };
+    </script>
+</body>
+</html>

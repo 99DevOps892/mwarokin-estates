@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mwarokin Estates - Account Books Keeping</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f4f7fc;
+      color: #1e293b;
+    }
+    /* premium container */
+    .app-container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 28px 32px;
+    }
+    /* header branding */
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    .brand h1 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #1f3e48, #b8860b);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+    }
+    .brand p {
+      color: #4a627a;
+      font-weight: 500;
+    }
+    .currency-selector {
+      background: white;
+      padding: 10px 18px;
+      border-radius: 60px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      border: 1px solid #e2edf2;
+    }
+    /* stats row */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+      margin-bottom: 36px;
+    }
+    .stat-card {
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(2px);
+      border-radius: 32px;
+      padding: 20px 22px;
+      box-shadow: 0 10px 25px -8px rgba(0,0,0,0.05);
+      border: 1px solid #ffffffaa;
+      transition: all 0.2s;
+    }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 20px 30px -12px rgba(0,0,0,0.1); }
+    .stat-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #5b6e8c; font-weight: 600; }
+    .stat-value { font-size: 2rem; font-weight: 800; margin-top: 12px; color: #102b3b; }
+    .badge-modern {
+      background: #eef2ff;
+      padding: 4px 12px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    /* two column layout */
+    .two-columns {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+      margin-bottom: 36px;
+    }
+    .premium-card {
+      background: white;
+      border-radius: 32px;
+      padding: 24px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 4px rgba(0,0,0,0.02);
+      border: 1px solid #eef2f8;
+      transition: all 0.2s;
+    }
+    .premium-card h3 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 4px solid #d4af37;
+      padding-left: 16px;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .data-table th {
+      text-align: left;
+      padding: 12px 6px;
+      color: #476085;
+      font-weight: 600;
+      border-bottom: 1px solid #e9eef3;
+    }
+    .data-table td {
+      padding: 10px 6px;
+      border-bottom: 1px solid #f0f4f9;
+    }
+    .btn-icon {
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin: 0 4px;
+      color: #7e95b0;
+      font-size: 0.9rem;
+    }
+    .btn-icon:hover { color: #d4af37; }
+    .btn-primary {
+      background: #1f3e48;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      color: white;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .btn-outline-sm {
+      background: transparent;
+      border: 1px solid #cbdde9;
+      border-radius: 30px;
+      padding: 6px 14px;
+      font-size: 0.7rem;
+      cursor: pointer;
+    }
+    .flex-between {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .insight-gold {
+      background: linear-gradient(120deg, #fef9e6, #fff6e0);
+      border-radius: 24px;
+      padding: 18px;
+      margin-top: 18px;
+    }
+    input, select {
+      border: 1px solid #e2e8f0;
+      border-radius: 24px;
+      padding: 8px 14px;
+      font-family: inherit;
+      background: white;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+    .modal-bg {
+      position: fixed;
+      top:0;left:0;right:0;bottom:0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-card {
+      background: white;
+      border-radius: 36px;
+      padding: 28px;
+      width: 450px;
+      max-width: 90%;
+    }
+    .hidden { display: none; }
+    @media (max-width: 1000px) {
+      .two-columns { grid-template-columns: 1fr; }
+      .app-container { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <div class="top-header">
+    <div class="brand">
+      <h1><i class="fas fa-chart-pie"></i> Mwarokin Estates · Advanced Suite</h1>
+      <p>Payroll • Inventory • Multi‑Currency • Project Accounting • AI Tax & Forecast</p>
+    </div>
+    <div class="currency-selector">
+      <i class="fas fa-globe-americas"></i> Base: <strong id="baseCurrencyLabel">USD</strong>
+      <select id="currencySelect" style="width: auto; margin-left: 8px; padding: 4px 12px;">
+        <option value="USD">USD $</option>
+        <option value="EUR">EUR €</option>
+        <option value="KES">KES KSh</option>
+        <option value="GBP">GBP £</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- dynamic stats -->
+  <div class="stats-grid" id="statsGrid"></div>
+
+  <!-- Row 1: Payroll + Inventory -->
+  <div class="two-columns">
+    <div class="premium-card">
+      <h3><i class="fas fa-users"></i> Payroll Management</h3>
+      <div class="flex-between" style="margin-bottom: 16px;">
+        <span><i class="fas fa-user-plus"></i> Employees</span>
+        <button id="addEmployeeBtn" class="btn-outline-sm"><i class="fas fa-plus"></i> Add Staff</button>
+      </div>
+      <table class="data-table" id="payrollTable">
+        <thead><tr><th>Name</th><th>Position</th><th>Salary (base)</th><th>Paid (month)</th><th>Actions</th></tr></thead>
+        <tbody id="employeeList"></tbody>
+      </table>
+      <div class="insight-gold" style="margin-top: 20px;">
+        <i class="fas fa-robot"></i> <strong>AI Payroll Insight</strong><br>
+        <span id="payrollInsight">Next payroll due: 30 June · predicted overtime: $1,240</span>
+        <button id="processPayrollBtn" class="btn-primary" style="margin-top: 12px; padding: 6px 16px; font-size: 0.8rem;">Process Monthly Payroll</button>
+      </div>
+    </div>
+
+    <div class="premium-card">
+      <h3><i class="fas fa-boxes"></i> Inventory & Asset Tracking</h3>
+      <div class="flex-between">
+        <span><i class="fas fa-cube"></i> Stock items</span>
+        <button id="addInventoryBtn" class="btn-outline-sm"><i class="fas fa-plus"></i> Add Item</button>
+      </div>
+      <table class="data-table" style="margin-top: 12px;">
+        <thead><tr><th>Item</th><th>Quantity</th><th>Unit Value</th><th>Total Value</th><th>Reorder</th><th></th></tr></thead>
+        <tbody id="inventoryBody"></tbody>
+      </table>
+      <div id="inventoryAlert" class="badge-modern" style="margin-top: 16px; display: inline-block;"></div>
+    </div>
+  </div>
+
+  <!-- Row 2: Multi-currency Ledger + Project Accounting -->
+  <div class="two-columns">
+    <div class="premium-card">
+      <h3><i class="fas fa-coins"></i> Multi-Currency Ledger</h3>
+      <p style="font-size: 0.8rem; margin-bottom: 12px;">Forex rates: 1 USD = 0.92 EUR / 130 KES / 0.79 GBP (live simulation)</p>
+      <table class="data-table">
+        <thead><tr><th>Account</th><th>Currency</th><th>Balance (orig)</th><th>Balance (USD base)</th></tr></thead>
+        <tbody id="multiCurrencyBody"></tbody>
+      </table>
+      <div class="flex-between" style="margin-top: 16px;">
+        <button id="addCurrencyAccountBtn" class="btn-outline-sm"><i class="fas fa-plus-circle"></i> Add Account</button>
+        <span class="badge-modern">Auto-revaluation enabled</span>
+      </div>
+    </div>
+
+    <div class="premium-card">
+      <h3><i class="fas fa-project-diagram"></i> Project Accounting</h3>
+      <div class="flex-between"><span>Track by property / development</span><button id="newProjectBtn" class="btn-outline-sm">+ Project</button></div>
+      <table class="data-table" style="margin-top: 12px;">
+        <thead><tr><th>Project Name</th><th>Budget</th><th>Spent</th><th>Remaining</th><th>Status</th></tr></thead>
+        <tbody id="projectsBody"></tbody>
+      </table>
+      <div class="insight-gold" style="margin-top: 14px;">
+        <i class="fas fa-chart-line"></i> AI Forecast: Project "Riverside" on track, remaining budget $18,200.
+      </div>
+    </div>
+  </div>
+
+  <!-- Advanced Tax & Cashflow forecasting -->
+  <div class="premium-card" style="margin-top: 8px;">
+    <h3><i class="fas fa-chart-simple"></i> Tax Reporting & Cash Flow Forecasting (AI-powered)</h3>
+    <div class="flex-between" style="flex-wrap: wrap; gap: 16px;">
+      <div><strong>VAT/GST Summary (Quarterly)</strong><br>Output Tax: $8,240 &nbsp;|&nbsp; Input Tax: $3,110 &nbsp;|&nbsp; <span class="badge-modern">Net Payable: $5,130</span></div>
+      <div><strong>Corporate Tax Estimate</strong><br>21% of Net Profit → <span id="taxEstimateSpan">$0</span></div>
+      <button id="generateTaxReportBtn" class="btn-primary"><i class="fas fa-file-pdf"></i> Generate Tax Report</button>
+    </div>
+    <canvas id="cashflowChart" height="90" style="margin-top: 24px; max-height: 180px;"></canvas>
+    <div id="aiCashflowMsg" class="insight-gold" style="margin-top: 18px;"><i class="fas fa-brain"></i> AI Insight: Upcoming cash surplus in July, allocate 15% to investments.</div>
+  </div>
+</div>
+
+<!-- Modals -->
+<div id="employeeModal" class="modal-bg hidden"><div class="modal-card"><h3>Add Employee</h3><input type="text" id="empName" placeholder="Full Name"><input type="text" id="empRole" placeholder="Position"><input type="number" id="empSalary" placeholder="Monthly Salary"><div style="display: flex; justify-content: end; gap: 10px; margin-top: 20px;"><button id="saveEmployeeBtn" class="btn-primary">Save</button><button id="closeEmpModal" class="btn-outline-sm">Cancel</button></div></div></div>
+<div id="inventoryModal" class="modal-bg hidden"><div class="modal-card"><h3>Add Inventory Item</h3><input type="text" id="invName" placeholder="Item name"><input type="number" id="invQty" placeholder="Quantity"><input type="number" id="invPrice" placeholder="Unit price (USD)"><div style="display: flex; gap: 10px; justify-content: end;"><button id="saveInventoryBtn" class="btn-primary">Add</button><button id="closeInvModal" class="btn-outline-sm">Cancel</button></div></div></div>
+<div id="projectModal" class="modal-bg hidden"><div class="modal-card"><h3>New Project</h3><input type="text" id="projName" placeholder="Project Name"><input type="number" id="projBudget" placeholder="Budget (USD)"><input type="number" id="projSpent" placeholder="Spent so far"><select id="projStatus"><option>Active</option><option>Planning</option><option>Completed</option></select><button id="saveProjectBtn" class="btn-primary">Create</button><button id="closeProjModal" class="btn-outline-sm">Cancel</button></div></div>
+<div id="currencyModal" class="modal-bg hidden"><div class="modal-card"><h3>Multi-Currency Account</h3><input type="text" id="currAccName" placeholder="Account name (e.g., Euro Holdings)"><select id="currType"><option value="EUR">EUR</option><option value="KES">KES</option><option value="GBP">GBP</option></select><input type="number" id="currBalance" placeholder="Balance in currency"><button id="saveCurrencyAccountBtn" class="btn-primary">Add Account</button><button id="closeCurrModal" class="btn-outline-sm">Cancel</button></div></div>
+
+<script>
+  // ======================= DATA MODELS =======================
+  let employees = [];
+  let inventoryItems = [];
+  let multiCurrencyAccounts = [];   // { name, currency, balance }
+  let projects = [];
+
+  // load / init data
+  function loadData() {
+    if(localStorage.getItem('mw_adv_employees')) {
+      employees = JSON.parse(localStorage.getItem('mw_adv_employees'));
+      inventoryItems = JSON.parse(localStorage.getItem('mw_adv_inventory'));
+      multiCurrencyAccounts = JSON.parse(localStorage.getItem('mw_adv_currency'));
+      projects = JSON.parse(localStorage.getItem('mw_adv_projects'));
+    } else {
+      // demo
+      employees = [
+        { id: 1, name: "James Mwangi", role: "Property Manager", salary: 5200 },
+        { id: 2, name: "Lisa Otieno", role: "Accountant", salary: 4800 },
+        { id: 3, name: "David Kimathi", role: "Maintenance Lead", salary: 3800 }
+      ];
+      inventoryItems = [
+        { id: 101, name: "HVAC Units", qty: 12, unitPrice: 450 },
+        { id: 102, name: "Smart Locks", qty: 34, unitPrice: 85 },
+        { id: 103, name: "Paint (20L)", qty: 18, unitPrice: 62 }
+      ];
+      multiCurrencyAccounts = [
+        { id: 1001, name: "Euro Rental Income", currency: "EUR", balance: 12500 },
+        { id: 1002, name: "KES Operations", currency: "KES", balance: 950000 },
+        { id: 1003, name: "UK Investments", currency: "GBP", balance: 8600 }
+      ];
+      projects = [
+        { id: 201, name: "Riverside Estate", budget: 85000, spent: 66800, status: "Active" },
+        { id: 202, name: "Downtown Tower", budget: 210000, spent: 98750, status: "Active" },
+        { id: 203, name: "Green Gardens", budget: 43000, spent: 12500, status: "Planning" }
+      ];
+    }
+    // ensure ids if missing
+    if(!employees[0]?.id) employees.forEach((e,i)=>e.id=i+100);
+    if(!inventoryItems[0]?.id) inventoryItems.forEach((e,i)=>e.id=200+i);
+    if(!multiCurrencyAccounts[0]?.id) multiCurrencyAccounts.forEach((e,i)=>e.id=300+i);
+    if(!projects[0]?.id) projects.forEach((e,i)=>e.id=400+i);
+    saveToLocal();
+  }
+  function saveToLocal() {
+    localStorage.setItem('mw_adv_employees', JSON.stringify(employees));
+    localStorage.setItem('mw_adv_inventory', JSON.stringify(inventoryItems));
+    localStorage.setItem('mw_adv_currency', JSON.stringify(multiCurrencyAccounts));
+    localStorage.setItem('mw_adv_projects', JSON.stringify(projects));
+  }
+
+  // Helpers
+  const exchangeRates = { USD: 1, EUR: 0.92, KES: 130, GBP: 0.79 };
+  function convertToBase(amount, currency) { return amount / exchangeRates[currency]; }
+  function convertFromBase(amount, targetCurr) { return amount * exchangeRates[targetCurr]; }
+
+  let cashflowChart = null;
+  function computeNetProfitFromMock() {
+    // mock total net profit from previous core context (we simulate combined)
+    let totalRevenue = 125000, totalExpenses = 89200;
+    return totalRevenue - totalExpenses;
+  }
+
+  // Render all UI
+  function updateUI() {
+    // stats: total payroll monthly, inventory value, multi-currency assets USD, project budget remaining
+    const totalPayroll = employees.reduce((sum,e)=>sum+e.salary,0);
+    const inventoryValue = inventoryItems.reduce((sum,i)=>sum+(i.qty*i.unitPrice),0);
+    const totalMultiCurrencyUSD = multiCurrencyAccounts.reduce((sum,acc)=> sum + convertToBase(acc.balance, acc.currency),0);
+    const totalProjectsRemaining = projects.reduce((sum,p)=> sum + (p.budget - p.spent),0);
+    document.getElementById('statsGrid').innerHTML = `
+      <div class="stat-card"><div class="stat-title"><i class="fas fa-wallet"></i> Monthly Payroll</div><div class="stat-value">$${totalPayroll.toLocaleString()}</div></div>
+      <div class="stat-card"><div class="stat-title"><i class="fas fa-cubes"></i> Inventory Asset Value</div><div class="stat-value">$${inventoryValue.toLocaleString()}</div></div>
+      <div class="stat-card"><div class="stat-title"><i class="fas fa-globe"></i> Multi-Currency (USD eq.)</div><div class="stat-value">$${totalMultiCurrencyUSD.toLocaleString()}</div></div>
+      <div class="stat-card"><div class="stat-title"><i class="fas fa-hard-hat"></i> Project Remaining Budget</div><div class="stat-value">$${totalProjectsRemaining.toLocaleString()}</div></div>
+    `;
+    // Payroll table
+    const empBody = document.getElementById('employeeList');
+    empBody.innerHTML = employees.map(emp => `
+      <tr><td>${emp.name}</td><td>${emp.role}</td><td>$${emp.salary.toLocaleString()}</td><td><span class="badge-modern">Pending</span></td>
+      <td><button class="btn-icon deleteEmp" data-id="${emp.id}"><i class="fas fa-trash"></i></button></td></tr>
+    `).join('');
+    document.querySelectorAll('.deleteEmp').forEach(btn => btn.addEventListener('click',(e)=>{
+      const id = parseInt(btn.dataset.id);
+      employees = employees.filter(e=>e.id !== id);
+      saveToLocal(); updateUI();
+    }));
+    // Inventory table
+    const invBody = document.getElementById('inventoryBody');
+    invBody.innerHTML = inventoryItems.map(item => `
+      <tr><td>${item.name}</td><td>${item.qty}</td><td>$${item.unitPrice}</td><td>$${(item.qty*item.unitPrice).toLocaleString()}</td>
+      <td>${item.qty < 10 ? '<span class="badge-modern" style="background:#fee2e2;">Reorder!</span>' : 'OK'}</td>
+      <td><button class="btn-icon deleteInv" data-id="${item.id}"><i class="fas fa-trash-alt"></i></button></td></tr>
+    `).join('');
+    document.querySelectorAll('.deleteInv').forEach(btn => btn.addEventListener('click',(e)=>{
+      const id = parseInt(btn.dataset.id);
+      inventoryItems = inventoryItems.filter(i=>i.id !== id);
+      saveToLocal(); updateUI();
+    }));
+    const lowStock = inventoryItems.filter(i=>i.qty<10).length;
+    document.getElementById('inventoryAlert').innerHTML = lowStock ? `⚠️ ${lowStock} item(s) below reorder level. AI suggests restock.` : `✔️ All inventory levels healthy`;
+
+    // Multi-currency table with base currency conversion
+    const baseCurr = document.getElementById('currencySelect').value;
+    document.getElementById('baseCurrencyLabel').innerText = baseCurr;
+    const currBody = document.getElementById('multiCurrencyBody');
+    currBody.innerHTML = multiCurrencyAccounts.map(acc => {
+      const baseValue = convertToBase(acc.balance, acc.currency);
+      const shownBalance = baseCurr === 'USD' ? baseValue : convertFromBase(baseValue, baseCurr);
+      const symbol = baseCurr === 'USD' ? '$' : (baseCurr === 'EUR' ? '€' : (baseCurr === 'KES' ? 'KSh' : '£'));
+      return `<tr><td>${acc.name}</td><td>${acc.currency}</td><td>${acc.balance.toLocaleString()} ${acc.currency}</td><td>${symbol} ${shownBalance.toFixed(2)}</td></tr>`;
+    }).join('');
+    // Projects Table
+    const projBody = document.getElementById('projectsBody');
+    projBody.innerHTML = projects.map(p => `
+      <tr><td>${p.name}</td><td>$${p.budget.toLocaleString()}</td><td>$${p.spent.toLocaleString()}</td><td>$${(p.budget-p.spent).toLocaleString()}</td><td><span class="badge-modern">${p.status}</span></td></tr>
+    `).join('');
+    // Tax estimate & cashflow chart
+    const netProfitMock = computeNetProfitFromMock();
+    const taxEst = netProfitMock * 0.21;
+    document.getElementById('taxEstimateSpan').innerText = `$${taxEst.toLocaleString()}`;
+    renderCashflowChart();
+  }
+
+  function renderCashflowChart() {
+    const ctx = document.getElementById('cashflowChart')?.getContext('2d');
+    if(!ctx) return;
+    const months = ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const forecast = [34500, 37200, 39800, 42300, 45100, 48700]; // AI predictive
+    if(cashflowChart) cashflowChart.destroy();
+    cashflowChart = new Chart(ctx, {
+      type: 'line',
+      data: { labels: months, datasets: [{ label: 'Forecasted Cash Flow (USD)', data: forecast, borderColor: '#d4af37', backgroundColor: 'rgba(212,175,55,0.05)', tension: 0.3, fill: true, pointBackgroundColor: '#1f3e48' }] },
+      options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'top' } } }
+    });
+  }
+
+  // Event listeners for modals
+  function bindGlobalActions() {
+    document.getElementById('addEmployeeBtn').onclick = () => document.getElementById('employeeModal').classList.remove('hidden');
+    document.getElementById('closeEmpModal').onclick = () => document.getElementById('employeeModal').classList.add('hidden');
+    document.getElementById('saveEmployeeBtn').onclick = () => {
+      const name = document.getElementById('empName').value, role = document.getElementById('empRole').value, salary = parseFloat(document.getElementById('empSalary').value);
+      if(name && role && salary) {
+        employees.push({ id: Date.now(), name, role, salary });
+        saveToLocal(); updateUI();
+        document.getElementById('employeeModal').classList.add('hidden');
+        document.getElementById('empName').value = ''; document.getElementById('empRole').value=''; document.getElementById('empSalary').value='';
+      }
+    };
+    document.getElementById('addInventoryBtn').onclick = () => document.getElementById('inventoryModal').classList.remove('hidden');
+    document.getElementById('closeInvModal').onclick = () => document.getElementById('inventoryModal').classList.add('hidden');
+    document.getElementById('saveInventoryBtn').onclick = () => {
+      const name = document.getElementById('invName').value, qty = parseInt(document.getElementById('invQty').value), price = parseFloat(document.getElementById('invPrice').value);
+      if(name && !isNaN(qty) && price) {
+        inventoryItems.push({ id: Date.now(), name, qty, unitPrice: price });
+        saveToLocal(); updateUI();
+        document.getElementById('inventoryModal').classList.add('hidden');
+      }
+    };
+    document.getElementById('newProjectBtn').onclick = () => document.getElementById('projectModal').classList.remove('hidden');
+    document.getElementById('closeProjModal').onclick = () => document.getElementById('projectModal').classList.add('hidden');
+    document.getElementById('saveProjectBtn').onclick = () => {
+      const name = document.getElementById('projName').value, budget = parseFloat(document.getElementById('projBudget').value), spent = parseFloat(document.getElementById('projSpent').value), status = document.getElementById('projStatus').value;
+      if(name && !isNaN(budget)) {
+        projects.push({ id: Date.now(), name, budget, spent: spent||0, status });
+        saveToLocal(); updateUI();
+        document.getElementById('projectModal').classList.add('hidden');
+      }
+    };
+    document.getElementById('addCurrencyAccountBtn').onclick = () => document.getElementById('currencyModal').classList.remove('hidden');
+    document.getElementById('closeCurrModal').onclick = () => document.getElementById('currencyModal').classList.add('hidden');
+    document.getElementById('saveCurrencyAccountBtn').onclick = () => {
+      const accName = document.getElementById('currAccName').value, currency = document.getElementById('currType').value, balance = parseFloat(document.getElementById('currBalance').value);
+      if(accName && !isNaN(balance)) {
+        multiCurrencyAccounts.push({ id: Date.now(), name: accName, currency, balance });
+        saveToLocal(); updateUI();
+        document.getElementById('currencyModal').classList.add('hidden');
+      }
+    };
+    document.getElementById('processPayrollBtn').onclick = () => {
+      const total = employees.reduce((s,e)=>s+e.salary,0);
+      alert(`✅ Payroll processed: $${total.toLocaleString()} disbursed. Salaries marked as Paid. (Simulation)`);
+      document.getElementById('payrollInsight').innerHTML = `Last payroll: ${new Date().toLocaleDateString()} · total $${total.toLocaleString()}`;
+    };
+    document.getElementById('generateTaxReportBtn').onclick = () => {
+      alert("📑 Advanced Tax Report generated: VAT return + Corporate tax summary. Multi-currency adjustments applied. Ready for filing.");
+    };
+    document.getElementById('currencySelect').addEventListener('change', () => updateUI());
+  }
+
+  loadData();
+  updateUI();
+  bindGlobalActions();
+</script>
+</body>
+</html>

@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Apartments</title>
+    <link rel="icon" href="img/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style> 
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #3b82f6;
+            --secondary: #7c3aed;
+            --accent: #06b6d4;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --gray-light: #cbd5e1;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --card-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+            --border-radius-lg: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        /* Header & Navigation */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            padding: 1rem 0;
+            transition: var(--transition);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .navbar-brand img {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+        }
+
+        .nav-link {
+            color: var(--dark) !important;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--primary) !important;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: var(--transition);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: var(--card-shadow);
+            border-radius: var(--border-radius);
+            padding: 0.5rem 0;
+        }
+
+        .dropdown-item {
+            padding: 0.7rem 1.5rem;
+            transition: var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 4rem 0 3rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" opacity="0.1"><polygon fill="white" points="0,1000 1000,0 1000,1000"/></svg>');
+            background-size: cover;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .search-container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-control, .form-select {
+            border: none;
+            padding: 0.9rem 1.2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+
+        .form-control:focus, .form-select:focus {
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
+        }
+
+        .location-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.9rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .location-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Property Listings */
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            font-weight: 700;
+        }
+
+        .section-title p {
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        .filter-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 3rem;
+        }
+
+        .filter-row {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: var(--dark);
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .form-check-label {
+            font-weight: 500;
+        }
+
+        /* Property Cards */
+        .property-item {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            height: 100%;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .property-item:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .property-img-container {
+            position: relative;
+            overflow: hidden;
+            height: 220px;
+        }
+
+        .property-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .property-item:hover .property-img {
+            transform: scale(1.05);
+        }
+
+        .property-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--primary);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .property-type {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            background: white;
+            color: var(--primary);
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .property-content {
+            padding: 1.5rem;
+        }
+
+        .property-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .property-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: var(--dark);
+        }
+
+        .property-location {
+            color: var(--gray);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .property-features {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .feature {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .feature-icon {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .feature-text {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .property-actions {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-outline-primary {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: var(--transition);
+            flex: 1;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Chat Section */
+        .chat-section {
+            background: linear-gradient(135deg, var(--dark), var(--darker));
+            color: white;
+            padding: 5rem 0;
+        }
+
+        .chat-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .chat-box {
+            height: 300px;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chat-message {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+
+        .chat-message.user {
+            background: rgba(37, 99, 235, 0.2);
+            margin-left: auto;
+            border-bottom-right-radius: 0;
+        }
+
+        .chat-message.bot {
+            background: rgba(255, 255, 255, 0.1);
+            border-bottom-left-radius: 0;
+        }
+
+        .chat-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 0.9rem 1.5rem;
+            color: white;
+            transition: var(--transition);
+        }
+
+        .chat-input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
+        }
+
+        .chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .voice-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .voice-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--darker);
+            color: white;
+        }
+
+        .footer-section {
+            padding: 5rem 0 3rem;
+        }
+
+        .footer-title {
+            color: white;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .footer-contact {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .footer-contact i {
+            margin-right: 10px;
+            color: var(--primary-light);
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 10px;
+            margin-top: 1.5rem;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .gallery-img {
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .gallery-img:hover {
+            transform: scale(1.05);
+        }
+
+        .newsletter-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 0.8rem 1.5rem;
+            color: white;
+            width: 100%;
+        }
+
+        .newsletter-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .newsletter-btn {
+            background: var(--primary);
+            border: none;
+            border-radius: 30px;
+            padding: 0.8rem 1.5rem;
+            color: white;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .newsletter-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .copyright {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1.5rem 0;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .copyright a {
+            color: var(--primary-light);
+            text-decoration: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .search-container .row > div {
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .section-title h1 {
+                font-size: 2rem;
+            }
+            
+            .property-item {
+                margin-bottom: 2rem;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Animation Keyframes */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a href="index.html" class="navbar-brand">
+                <img src="Mwarokin Lg.png" alt="Mwarokin Estates">
+                <span>Mwarokin Estates</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a href="ManageBills.html" class="nav-link">Manage Bills</a></li>
+                    <li class="nav-item"><a href="Payments.html" class="nav-link">Payments</a></li>
+                    <li class="nav-item"><a href="LipaMdogo.html" class="nav-link">Lipa Mdogo</a></li>
+                    <li class="nav-item"><a href="Rent.html" class="nav-link">Rent</a></li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
+                        <div class="dropdown-menu">
+                            <a href="VacancyLocator.html" class="dropdown-item">Vacancy Locator</a>
+                            <a href="CalculatePendingRent.html" class="dropdown-item">Calculate Rent</a>
+                            <a href="LanguageSupport.html" class="dropdown-item">Language Support</a>
+                            <a href="Selling.html" class="dropdown-item">Selling Property</a>
+                            <a href="Buying.html" class="dropdown-item">Buying Property</a>
+                        </div>
+                    </li>
+                    <li class="nav-item"><a href="Communication.html" class="nav-link">Communication</a></li>
+                </ul>
+                <a href="LogOut.html" class="btn btn-primary ms-3">Log Out</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <h1 class="hero-title">Find Your Dream Apartment</h1>
+                    <p class="hero-subtitle">Discover premium apartments with modern amenities in prime locations across Africa.</p>
+                </div>
+                <div class="col-lg-6">
+                    <div class="search-container">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="searchKeyword" placeholder="Search Keyword">
+                            </div>
+                            <div class="col-md-6">
+                                <select class="form-select" id="continentSelect">
+                                    <option selected>Continents</option>
+                                    <option value="1">Africa</option>
+                                    <option value="2">Asia</option>
+                                    <option value="3">Europe</option>
+                                    <option value="4">Antarctica</option>
+                                    <option value="5">North America</option>
+                                    <option value="6">Australia</option>
+                                    <option value="7">South America</option>
+                                </select>
+                            </div>
+                            <div class="col-md-8">
+                                <select class="form-select" id="countrySelect">
+                                    <option selected>African Countries</option>
+                                    <option value="Kenya">Kenya</option>
+                                    <option value="Nigeria">Nigeria</option>
+                                    <option value="South Africa">South Africa</option>
+                                    <option value="Ghana">Ghana</option>
+                                    <option value="Egypt">Egypt</option>
+                                    <option value="Tanzania">Tanzania</option>
+                                    <option value="Uganda">Uganda</option>
+                                    <option value="Ethiopia">Ethiopia</option>
+                                    <option value="Rwanda">Rwanda</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn location-btn w-100" onclick="getLocation()">
+                                    <i class="fas fa-map-marker-alt"></i> Pin Location
+                                </button>
+                            </div>
+                        </div>
+                        <div id="locationResult" class="mt-3 text-white"></div>
+                        <div id="currencyResult" class="mt-2 text-white"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Property Listings -->
+    <section class="container py-5">
+        <div class="section-title">
+            <h1>Premium Apartments Available</h1>
+            <p>Discover our curated selection of luxury apartments with modern amenities in prime locations.</p>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="row filter-row">
+                <div class="col-md-3">
+                    <div class="filter-label">Price Range</div>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <input type="number" id="priceMin" class="form-control" placeholder="Min Price">
+                        </div>
+                        <div class="col-6">
+                            <input type="number" id="priceMax" class="form-control" placeholder="Max Price">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="filter-label">Location</div>
+                    <input type="text" id="location" class="form-control" placeholder="Enter location">
+                </div>
+                <div class="col-md-3">
+                    <div class="filter-label">Status</div>
+                    <div class="d-flex flex-column">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="status" value="for rent" id="rentOption">
+                            <label class="form-check-label" for="rentOption">For Rent</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="status" value="for sale" id="saleOption">
+                            <label class="form-check-label" for="saleOption">For Sale</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="filter-label">Availability</div>
+                    <div class="d-flex flex-column">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="availability" value="true" id="availableOption">
+                            <label class="form-check-label" for="availableOption">Available</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="availability" value="false" id="unavailableOption">
+                            <label class="form-check-label" for="unavailableOption">Unavailable</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 text-end">
+                    <button id="filterBtn" class="btn btn-primary">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Properties Grid -->
+        <div id="propertyContainer" class="row g-4">
+            <!-- Properties will be dynamically loaded here -->
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="#" class="btn btn-primary btn-lg">Browse More Properties</a>
+        </div>
+    </section>
+
+    <!-- Chat Section -->
+    <section class="chat-section">
+        <div class="container">
+            <h2 class="text-center mb-5">Mwarokin Estates Assistant</h2>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="chat-container">
+                        <div id="chat-display" class="chat-box">
+                            <div class="chat-message bot">
+                                Hello! I'm your Mwarokin Estates assistant. How can I help you find your perfect apartment today?
+                            </div>
+                        </div>
+                        <div class="chat-input-group">
+                            <input type="text" id="userInput" class="chat-input" placeholder="Ask your question here...">
+                            <button onclick="handleUserInput()" class="btn btn-primary">Send</button>
+                            <button onclick="startVoiceInput()" class="voice-btn">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-section">
+            <div class="container">
+                <div class="row g-5">
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="footer-title">Mwarokin Estates</h5>
+                        <div class="footer-contact">
+                            <p><i class="fas fa-map-marker-alt"></i> Africa & Global</p>
+                            <p><i class="fas fa-phone-alt"></i> +254-704-919-388</p>
+                            <p><i class="fas fa-envelope"></i> Property@MwarokinEstates.com</p>
+                        </div>
+                        <div class="social-icons">
+                            <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                            <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="footer-title">Quick Links</h5>
+                        <ul class="footer-links">
+                            <li><a href="videos.html">Media</a></li>
+                            <li><a href="Neighborhoods.html">Neighbourhoods</a></li>
+                            <li><a href="VacancyLocator.html">Vacancy Locator</a></li>
+                            <li><a href="CalculatePendingRent.html">Calculate Rent</a></li>
+                            <li><a href="LanguageSupport.html">Language Support</a></li>
+                            <li><a href="Wearables.html">Wearables</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="footer-title">Gallery</h5>
+                        <div class="row g-2">
+                            <div class="col-4">
+                                <img class="img-fluid rounded gallery-img" src="img/property-1.jpg" alt="Property">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded gallery-img" src="img/property-2.jpg" alt="Property">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded gallery-img" src="img/property-3.jpg" alt="Property">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="footer-title">Subscribe</h5>
+                        <p class="footer-contact">Get the latest property updates and offers</p>
+                        <div class="d-flex mt-3">
+                            <input type="email" class="newsletter-input me-2" placeholder="Your email">
+                            <button class="newsletter-btn">Subscribe</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <div class="container">
+                <p>Mwarokin Estates - Apartments &copy; 2026. All Rights Reserved. Powered by <a href="https://www.syllogismtechnologyafrica.com">Syllogism Technology Africa</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Data structure to store the properties' details
+        const properties = [
+            {
+                id: 1,
+                type: "Apartment",
+                status: "for sale",
+                location: "Nairobi, Kenya",
+                price: 12345,
+                availability: true,
+                img: "img/property-1.jpg",
+                beds: 3,
+                baths: 2,
+                sqft: 1200
+            },
+            {
+                id: 2,
+                type: "Luxury Apartment",
+                status: "for rent",
+                location: "Lagos, Nigeria",
+                price: 8500,
+                availability: true,
+                img: "img/property-2.jpg",
+                beds: 2,
+                baths: 2,
+                sqft: 950
+            },
+            {
+                id: 3,
+                type: "Penthouse",
+                status: "for sale",
+                location: "Cape Town, South Africa",
+                price: 25000,
+                availability: false,
+                img: "img/property-3.jpg",
+                beds: 4,
+                baths: 3,
+                sqft: 1800
+            },
+            {
+                id: 4,
+                type: "Studio Apartment",
+                status: "for rent",
+                location: "Accra, Ghana",
+                price: 4500,
+                availability: true,
+                img: "img/property-4.jpg",
+                beds: 1,
+                baths: 1,
+                sqft: 650
+            },
+            {
+                id: 5,
+                type: "Duplex Apartment",
+                status: "for sale",
+                location: "Kigali, Rwanda",
+                price: 18000,
+                availability: true,
+                img: "img/property-5.jpg",
+                beds: 3,
+                baths: 2,
+                sqft: 1400
+            },
+            {
+                id: 6,
+                type: "Executive Apartment",
+                status: "for rent",
+                location: "Dar es Salaam, Tanzania",
+                price: 7200,
+                availability: true,
+                img: "img/property-6.jpg",
+                beds: 2,
+                baths: 2,
+                sqft: 1100
+            }
+        ];
+
+        // Function to display properties on the page
+        function displayProperties(filteredProperties = properties) {
+            const propertyContainer = document.getElementById("propertyContainer");
+            propertyContainer.innerHTML = "";
+
+            if (filteredProperties.length === 0) {
+                propertyContainer.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <h3>No properties match your criteria</h3>
+                        <p class="text-muted">Try adjusting your filters to see more results</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filteredProperties.forEach((property) => {
+                const availabilityText = property.availability ? "Available" : "Unavailable";
+                const availabilityClass = property.availability ? "text-success" : "text-danger";
+                
+                const propertyHTML = `
+                    <div class="col-lg-4 col-md-6 fade-in">
+                        <div class="property-item">
+                            <div class="property-img-container">
+                                <img class="property-img" src="${property.img}" alt="${property.type}">
+                                <div class="property-badge">${property.status}</div>
+                                <div class="property-type">${property.type}</div>
+                            </div>
+                            <div class="property-content">
+                                <div class="property-price">$${property.price.toLocaleString()}</div>
+                                <h3 class="property-title">${property.type} in ${property.location}</h3>
+                                <p class="property-location">
+                                    <i class="fas fa-map-marker-alt"></i> ${property.location}
+                                </p>
+                                <div class="property-features">
+                                    <div class="feature">
+                                        <i class="fas fa-ruler-combined feature-icon"></i>
+                                        <span class="feature-text">${property.sqft} Sqft</span>
+                                    </div>
+                                    <div class="feature">
+                                        <i class="fas fa-bed feature-icon"></i>
+                                        <span class="feature-text">${property.beds} Bed</span>
+                                    </div>
+                                    <div class="feature">
+                                        <i class="fas fa-bath feature-icon"></i>
+                                        <span class="feature-text">${property.baths} Bath</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="property-actions">
+                                <button class="btn btn-outline-primary" onclick="checkAvailability(${property.id})">
+                                    <i class="fas fa-info-circle me-2"></i> Details
+                                </button>
+                                <button class="btn btn-primary" onclick="contactAgent(${property.id})">
+                                    <i class="fas fa-phone me-2"></i> Contact
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                propertyContainer.innerHTML += propertyHTML;
+            });
+        }
+
+        // Function to check availability and show an alert
+        function checkAvailability(propertyId) {
+            const selectedProperty = properties.find((property) => property.id === propertyId);
+
+            if (selectedProperty.availability) {
+                alert(`${selectedProperty.type} in ${selectedProperty.location} is available for ${selectedProperty.status}.`);
+            } else {
+                alert(`Sorry, ${selectedProperty.type} in ${selectedProperty.location} is currently unavailable.`);
+            }
+        }
+
+        // Function to contact agent
+        function contactAgent(propertyId) {
+            const selectedProperty = properties.find((property) => property.id === propertyId);
+            alert(`Contacting agent for ${selectedProperty.type} in ${selectedProperty.location}. Our team will reach out to you shortly.`);
+        }
+
+        // Function to filter properties based on multiple criteria
+        function filterProperties({ priceRange, location, status, availability }) {
+            let filteredProperties = properties;
+
+            // Filter by price
+            if (priceRange) {
+                filteredProperties = filteredProperties.filter(property => 
+                    property.price >= priceRange.min && property.price <= priceRange.max
+                );
+            }
+
+            // Filter by location
+            if (location) {
+                filteredProperties = filteredProperties.filter(property => 
+                    property.location.toLowerCase().includes(location.toLowerCase())
+                );
+            }
+
+            // Filter by status (rent, sale)
+            if (status) {
+                filteredProperties = filteredProperties.filter(property => 
+                    property.status.includes(status)
+                );
+            }
+
+            // Filter by availability
+            if (availability !== undefined) {
+                filteredProperties = filteredProperties.filter(property => 
+                    property.availability === availability
+                );
+            }
+
+            // Display filtered properties
+            displayProperties(filteredProperties);
+        }
+
+        // Event listeners for filtering
+        document.getElementById("filterBtn").addEventListener("click", () => {
+            const priceMin = document.getElementById("priceMin").value;
+            const priceMax = document.getElementById("priceMax").value;
+            const location = document.getElementById("location").value;
+            const status = document.querySelector('input[name="status"]:checked')?.value;
+            const availability = document.querySelector('input[name="availability"]:checked')?.value === 'true';
+
+            filterProperties({
+                priceRange: { 
+                    min: priceMin ? parseInt(priceMin) : 0, 
+                    max: priceMax ? parseInt(priceMax) : Infinity 
+                },
+                location,
+                status,
+                availability
+            });
+        });
+
+        // Location functionality
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                document.getElementById("locationResult").innerHTML = "Geolocation is not supported by this browser.";
+            }
+        }
+
+        function showPosition(position) {
+            const lat = position.coords.latitude;
+            const long = position.coords.longitude;
+            document.getElementById("locationResult").innerHTML = `Location: ${lat.toFixed(4)}, ${long.toFixed(4)}`;
+        }
+
+        function showError(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    document.getElementById("locationResult").innerHTML = "Location access denied.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    document.getElementById("locationResult").innerHTML = "Location information unavailable.";
+                    break;
+                case error.TIMEOUT:
+                    document.getElementById("locationResult").innerHTML = "Location request timed out.";
+                    break;
+                case error.UNKNOWN_ERROR:
+                    document.getElementById("locationResult").innerHTML = "An unknown error occurred.";
+                    break;
+            }
+        }
+
+        // Currency conversion based on selected country
+        const currencyRates = {
+            "Kenya": 150.22,
+            "Nigeria": 850.25,
+            "South Africa": 18.40,
+            "Ghana": 12.50,
+            "Egypt": 30.75,
+            "Tanzania": 2600.50,
+            "Uganda": 3800.75,
+            "Ethiopia": 110.25,
+            "Rwanda": 1250.80
+        };
+
+        document.getElementById("countrySelect").addEventListener("change", function () {
+            const selectedCountry = this.value;
+            const rate = currencyRates[selectedCountry];
+
+            if (rate) {
+                document.getElementById("currencyResult").innerHTML = `Approximate rate: 1 USD = ${rate} local currency`;
+            } else {
+                document.getElementById("currencyResult").innerHTML = "Currency rate not available.";
+            }
+        });
+
+        // Chat functionality
+        function handleUserInput() {
+            const userInput = document.getElementById("userInput").value;
+            if (userInput.trim() === "") return;
+
+            // Add user message
+            addMessage(userInput, 'user');
+            document.getElementById("userInput").value = '';
+
+            // Simulate bot response
+            setTimeout(() => {
+                const responses = [
+                    "I can help you find apartments based on your preferences. What's your budget range?",
+                    "We have several luxury apartments available in prime locations. Are you looking to rent or buy?",
+                    "I'd recommend checking our premium apartments in Nairobi and Lagos. They offer excellent amenities.",
+                    "Based on your search history, you might like our newly listed penthouse in Cape Town.",
+                    "Would you like me to schedule a property viewing for any of our available apartments?"
+                ];
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                addMessage(randomResponse, 'bot');
+            }, 1000);
+        }
+
+        function addMessage(text, sender) {
+            const chatDisplay = document.getElementById("chat-display");
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('chat-message', sender);
+            messageDiv.textContent = text;
+            chatDisplay.appendChild(messageDiv);
+            chatDisplay.scrollTop = chatDisplay.scrollHeight;
+        }
+
+        function startVoiceInput() {
+            alert("Voice input activated. Please speak now.");
+            // In a real implementation, this would use the Web Speech API
+        }
+
+        // Initial call to display all properties
+        displayProperties();
+    </script>
+</body>
+</html>

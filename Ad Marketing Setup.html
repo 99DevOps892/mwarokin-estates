@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Mwarokin Estates · Marketing Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Syne:wght@500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<style>
+/* ═══════════════════════ TOKENS ═══════════════════════ */
+:root{
+  --forest:#0d2818; --forest-mid:#15321f; --forest-pale:#2e6040;
+  --obsidian:#070f0a; --obsidian-2:#0a140e;
+  --gold:#c9a84c; --gold-light:#e2c27a; --gold-dim:rgba(201,168,76,.14); --gold-line:rgba(201,168,76,.28);
+  --ivory:#f5f0e8; --ivory-dim:rgba(245,240,232,.68); --ivory-mute:rgba(245,240,232,.42);
+  --glass:rgba(245,240,232,.045); --glass-brd:rgba(201,168,76,.16);
+  --success:#5cae7e; --warn:#e0a83f; --danger:#c85a4a; --info:#5c9bb0;
+  --radius:18px; --radius-sm:11px;
+  --ease:.4s cubic-bezier(.22,1,.36,1);
+  --shadow:0 30px 80px rgba(0,0,0,.55);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'DM Sans',sans-serif; color:var(--ivory);
+  background:var(--obsidian);
+  background-image:
+    radial-gradient(ellipse 900px 600px at 10% -10%, rgba(46,96,64,.35), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 100% 0%, rgba(201,168,76,.10), transparent 55%),
+    radial-gradient(ellipse 900px 700px at 50% 120%, rgba(13,40,24,.6), transparent 60%);
+  min-height:100vh; display:flex; align-items:center; justify-content:center; padding:22px;
+}
+::selection{background:var(--gold-dim); color:var(--gold-light);}
+::-webkit-scrollbar{width:6px; height:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--gold-line); border-radius:20px;}
+
+h1,h2,h3,.font-display{font-family:'Cormorant Garamond',serif;}
+.font-brand{font-family:'Syne',sans-serif;}
+
+/* ═══════════════════════ APP SHELL ═══════════════════════ */
+#app{
+  width:100%; max-width:1520px; min-height:93vh;
+  background:linear-gradient(160deg, rgba(21,50,31,.55), rgba(7,15,10,.85));
+  backdrop-filter:blur(30px); -webkit-backdrop-filter:blur(30px);
+  border:1px solid var(--glass-brd); border-radius:var(--radius);
+  box-shadow:var(--shadow); display:flex; overflow:hidden; position:relative;
+}
+
+/* ═══════════════════════ AUTH ═══════════════════════ */
+#authOverlay{
+  position:absolute; inset:0; z-index:1000;
+  background:radial-gradient(ellipse at 30% 20%, rgba(46,96,64,.4), var(--obsidian) 65%);
+  backdrop-filter:blur(30px);
+  display:flex; align-items:center; justify-content:center;
+  border-radius:var(--radius); transition:opacity .5s ease, visibility .5s ease;
+}
+#authOverlay.hidden{opacity:0; visibility:hidden; pointer-events:none;}
+.auth-box{
+  background:rgba(13,40,24,.55); border:1px solid var(--glass-brd); border-radius:var(--radius);
+  padding:52px 44px; max-width:430px; width:100%; box-shadow:0 40px 100px rgba(0,0,0,.6);
+  position:relative; overflow:hidden;
+}
+.auth-box::before{
+  content:''; position:absolute; top:-60%; right:-40%; width:280px; height:280px; border-radius:50%;
+  background:radial-gradient(circle, rgba(201,168,76,.18), transparent 70%); pointer-events:none;
+}
+.auth-emblem{
+  width:56px; height:56px; border-radius:14px; margin:0 auto 18px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--forest);
+  display:flex; align-items:center; justify-content:center; font-size:1.4rem;
+  box-shadow:0 10px 34px rgba(201,168,76,.35);
+}
+.auth-box .logo{font-family:'Syne',sans-serif; font-weight:800; font-size:1.9rem; text-align:center; letter-spacing:-.01em;}
+.auth-box .logo span{color:var(--gold-light);}
+.auth-box .sub{text-align:center; color:var(--ivory-mute); font-size:.82rem; letter-spacing:.05em; text-transform:uppercase; margin-bottom:30px; margin-top:4px;}
+.auth-box label{display:block; font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--gold-light); margin-top:18px; margin-bottom:6px;}
+.auth-box input{
+  width:100%; padding:12px 16px; border-radius:10px; border:1px solid var(--glass-brd);
+  background:rgba(0,0,0,.25); color:#fff; font-size:.95rem; outline:none; transition:var(--ease); font-family:'DM Sans',sans-serif;
+}
+.auth-box input:focus{border-color:var(--gold); box-shadow:0 0 0 3px var(--gold-dim);}
+.btn-primary{
+  width:100%; margin-top:26px; padding:14px; border:none; border-radius:10px;
+  background:linear-gradient(135deg,var(--gold),#b8924a); color:var(--forest);
+  font-weight:700; font-size:.95rem; cursor:pointer; transition:var(--ease); letter-spacing:.02em; font-family:'DM Sans',sans-serif;
+}
+.btn-primary:hover{transform:translateY(-1px); box-shadow:0 12px 34px rgba(201,168,76,.35);}
+.switch-auth{text-align:center; margin-top:18px; color:var(--ivory-mute); font-size:.85rem;}
+.switch-auth a{color:var(--gold-light); cursor:pointer; font-weight:600; text-decoration:none;}
+.switch-auth a:hover{text-decoration:underline;}
+.error-msg{color:var(--danger); font-size:.82rem; margin-top:10px; text-align:center; min-height:20px;}
+
+/* ═══════════════════════ SIDEBAR ═══════════════════════ */
+#sidebar{
+  width:250px; background:rgba(0,0,0,.22); border-right:1px solid var(--glass-brd);
+  padding:26px 14px 18px; display:flex; flex-direction:column; flex-shrink:0; transition:var(--ease);
+}
+#sidebar .brand{display:flex; align-items:center; gap:10px; padding:0 10px 26px; border-bottom:1px solid var(--glass-brd); margin-bottom:18px;}
+#sidebar .brand .mark{
+  width:38px; height:38px; border-radius:11px; background:linear-gradient(135deg,var(--gold),var(--gold-light));
+  color:var(--forest); display:flex; align-items:center; justify-content:center; font-size:1.05rem; flex-shrink:0;
+}
+#sidebar .brand .txt{font-family:'Syne',sans-serif; font-weight:800; font-size:1.15rem; line-height:1.1;}
+#sidebar .brand .txt small{display:block; font-weight:400; font-size:.6rem; color:var(--ivory-mute); letter-spacing:.08em; text-transform:uppercase; margin-top:3px;}
+.nav-label{font-size:.63rem; text-transform:uppercase; letter-spacing:.12em; color:var(--ivory-mute); padding:6px 14px 8px; margin-top:6px;}
+.nav-item{
+  display:flex; align-items:center; gap:13px; padding:11px 14px; border-radius:11px; color:var(--ivory-dim);
+  text-decoration:none; font-weight:500; font-size:.87rem; transition:var(--ease); cursor:pointer;
+  margin-bottom:3px; border:none; background:transparent; width:100%; text-align:left; position:relative;
+}
+.nav-item i{width:20px; font-size:1rem; text-align:center;}
+.nav-item:hover{background:rgba(245,240,232,.05); color:#fff;}
+.nav-item.active{background:var(--gold-dim); color:var(--gold-light);}
+.nav-item.active::before{content:''; position:absolute; left:0; top:20%; bottom:20%; width:3px; border-radius:4px; background:var(--gold);}
+.nav-item .badge{margin-left:auto; background:rgba(201,168,76,.2); color:var(--gold-light); font-size:.63rem; padding:2px 9px; border-radius:20px; font-weight:700;}
+.nav-item.active .badge{background:var(--gold); color:var(--forest);}
+.nav-divider{height:1px; background:var(--glass-brd); margin:14px 12px;}
+#sidebar .bottom-nav{margin-top:auto; padding-top:14px; border-top:1px solid var(--glass-brd);}
+#productionBtn{color:var(--gold-light) !important;}
+#productionBtn i{color:var(--gold);}
+
+/* ═══════════════════════ MAIN ═══════════════════════ */
+#main{flex:1; padding:26px 34px 36px; overflow-y:auto; max-height:93vh; min-width:0;}
+.page-header{display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px; margin-bottom:26px;}
+.page-header .eyebrow{font-size:.68rem; text-transform:uppercase; letter-spacing:.14em; color:var(--gold-light); font-weight:700; margin-bottom:4px;}
+.page-header h1{font-size:2rem; font-weight:600; letter-spacing:-.01em;}
+.page-header h1 small{font-size:.9rem; font-weight:400; font-family:'DM Sans',sans-serif; color:var(--ivory-mute); display:block; margin-top:4px;}
+.actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+
+.btn{
+  padding:10px 20px; border-radius:10px; border:1px solid var(--glass-brd); font-weight:600; font-size:.82rem;
+  cursor:pointer; transition:var(--ease); display:inline-flex; align-items:center; gap:8px;
+  background:rgba(245,240,232,.045); color:var(--ivory); font-family:'DM Sans',sans-serif;
+}
+.btn:hover{background:rgba(245,240,232,.09); transform:translateY(-1px);}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#b8924a); border:none; color:var(--forest);}
+.btn-gold:hover{box-shadow:0 10px 30px rgba(201,168,76,.3);}
+.btn-outline{background:transparent;}
+.btn-danger{background:rgba(200,90,74,.16); border-color:rgba(200,90,74,.3); color:#e08977;}
+.btn-danger:hover{background:rgba(200,90,74,.28);}
+.btn-icon{padding:9px 12px;}
+.btn-sm{padding:6px 13px; font-size:.72rem;}
+
+/* toolbar */
+.toolbar{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:20px;}
+.search-box{position:relative; flex:1; min-width:200px; max-width:340px;}
+.search-box i{position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--ivory-mute); font-size:.8rem;}
+.search-box input{
+  width:100%; padding:10px 14px 10px 36px; border-radius:10px; border:1px solid var(--glass-brd);
+  background:rgba(0,0,0,.2); color:#fff; font-size:.83rem; outline:none; transition:var(--ease); font-family:'DM Sans',sans-serif;
+}
+.search-box input:focus{border-color:var(--gold); box-shadow:0 0 0 3px var(--gold-dim);}
+.sort-select{
+  padding:10px 14px; border-radius:10px; border:1px solid var(--glass-brd); background:rgba(0,0,0,.2);
+  color:var(--ivory-dim); font-size:.8rem; outline:none; font-family:'DM Sans',sans-serif; cursor:pointer;
+}
+.view-toggle{display:flex; gap:2px; background:rgba(0,0,0,.2); border:1px solid var(--glass-brd); border-radius:10px; padding:3px;}
+.view-toggle button{
+  background:transparent; border:none; color:var(--ivory-mute); padding:7px 11px; border-radius:7px; cursor:pointer; font-size:.85rem; transition:var(--ease);
+}
+.view-toggle button.active{background:var(--gold-dim); color:var(--gold-light);}
+
+/* ═══════════════════════ STATS ═══════════════════════ */
+.stats-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(175px,1fr)); gap:14px; margin-bottom:30px;}
+.stat-card{
+  background:var(--glass); border:1px solid var(--glass-brd); border-radius:14px; padding:20px 22px;
+  transition:var(--ease); position:relative; overflow:hidden;
+}
+.stat-card:hover{background:rgba(245,240,232,.08); transform:translateY(-2px);}
+.stat-card .icon{position:absolute; top:16px; right:18px; font-size:1.3rem; color:var(--gold); opacity:.35;}
+.stat-card .num{font-family:'Cormorant Garamond',serif; font-size:2.1rem; font-weight:700; letter-spacing:-.01em; color:var(--ivory);}
+.stat-card .num.gold{color:var(--gold-light);}
+.stat-card .label{font-size:.68rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ivory-mute); margin-top:3px;}
+.stat-card .trend{font-size:.68rem; margin-top:8px; color:var(--success); display:flex; align-items:center; gap:4px;}
+
+/* ═══════════════════════ CONTENT GRID (cards) ═══════════════════════ */
+.section-title{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
+.section-title h3{font-weight:600; font-size:1rem; font-family:'Syne',sans-serif; display:flex; align-items:center; gap:8px;}
+.section-title .count{color:var(--ivory-mute); font-size:.78rem; font-family:'DM Sans',sans-serif;}
+
+.content-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:18px;}
+.content-grid.list-view{grid-template-columns:1fr; gap:10px;}
+
+.content-card{
+  background:var(--glass); border:1px solid var(--glass-brd); border-radius:16px; overflow:hidden;
+  transition:var(--ease); position:relative;
+}
+.content-card:hover{transform:translateY(-4px); border-color:var(--gold-line); box-shadow:0 18px 46px rgba(0,0,0,.4);}
+.content-card .thumb{
+  width:100%; height:152px; object-fit:cover; background:linear-gradient(135deg,var(--forest-mid),var(--obsidian-2));
+  display:flex; align-items:center; justify-content:center; font-size:2.4rem; color:var(--gold-line); position:relative;
+}
+.content-card .thumb img, .content-card .thumb video{width:100%; height:100%; object-fit:cover;}
+.content-card .thumb .type-chip{
+  position:absolute; top:10px; left:10px; background:rgba(7,15,10,.7); backdrop-filter:blur(6px);
+  color:var(--gold-light); font-size:.62rem; text-transform:uppercase; letter-spacing:.06em; font-weight:700;
+  padding:3px 10px; border-radius:20px; border:1px solid var(--gold-line);
+}
+.content-card .body{padding:14px 16px 16px;}
+.content-card .body h4{font-size:.92rem; font-weight:600; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-family:'DM Sans',sans-serif;}
+.content-card .body p{font-size:.78rem; color:var(--ivory-mute); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:2.2em;}
+.content-card .body .meta{display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:.7rem; color:var(--ivory-mute);}
+.content-card .body .meta .price-tag{background:var(--gold-dim); color:var(--gold-light); padding:3px 12px; border-radius:20px; font-weight:700;}
+.content-card .card-actions{position:absolute; top:10px; right:10px; display:flex; gap:6px; opacity:0; transition:var(--ease);}
+.content-card:hover .card-actions{opacity:1;}
+.content-card .card-actions button{
+  background:rgba(7,15,10,.75); backdrop-filter:blur(8px); border:1px solid var(--glass-brd); color:#fff;
+  width:30px; height:30px; border-radius:8px; cursor:pointer; transition:var(--ease); font-size:.75rem;
+}
+.content-card .card-actions button:hover{background:var(--gold); color:var(--forest); border-color:var(--gold);}
+
+/* list view row */
+.content-grid.list-view .content-card{display:flex; align-items:center;}
+.content-grid.list-view .thumb{width:110px; height:74px; flex-shrink:0;}
+.content-grid.list-view .body{flex:1; padding:10px 16px;}
+.content-grid.list-view .body p{min-height:0; -webkit-line-clamp:1;}
+.content-grid.list-view .card-actions{position:static; opacity:1; padding-right:14px;}
+
+/* ═══════════════════════ MODAL ═══════════════════════ */
+.modal-overlay{
+  position:fixed; inset:0; z-index:2000; background:rgba(5,10,7,.72); backdrop-filter:blur(16px);
+  display:flex; align-items:center; justify-content:center; opacity:0; visibility:hidden; transition:var(--ease); padding:20px;
+}
+.modal-overlay.open{opacity:1; visibility:visible;}
+.modal-box{
+  background:linear-gradient(165deg, rgba(21,50,31,.9), rgba(7,15,10,.96)); border:1px solid var(--glass-brd);
+  border-radius:var(--radius); max-width:580px; width:100%; padding:34px 32px; max-height:90vh; overflow-y:auto;
+  transform:scale(.95) translateY(16px); transition:var(--ease); box-shadow:var(--shadow);
+}
+.modal-overlay.open .modal-box{transform:scale(1) translateY(0);}
+.modal-box h2{font-size:1.5rem; margin-bottom:3px; font-weight:600;}
+.modal-box .sub{color:var(--ivory-mute); font-size:.82rem; margin-bottom:20px;}
+.modal-box label{display:block; font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--gold-light); margin-top:16px; margin-bottom:5px;}
+.modal-box input, .modal-box textarea, .modal-box select{
+  width:100%; padding:10px 14px; border-radius:10px; border:1px solid var(--glass-brd);
+  background:rgba(0,0,0,.22); color:#fff; font-size:.88rem; outline:none; transition:var(--ease); font-family:'DM Sans',sans-serif;
+}
+.modal-box input:focus, .modal-box textarea:focus, .modal-box select:focus{border-color:var(--gold); box-shadow:0 0 0 3px var(--gold-dim);}
+.modal-box textarea{min-height:68px; resize:vertical;}
+.modal-box .drop-zone{
+  border:2px dashed var(--glass-brd); border-radius:12px; padding:30px 18px; text-align:center;
+  color:var(--ivory-mute); transition:var(--ease); cursor:pointer; margin-top:4px;
+}
+.modal-box .drop-zone:hover, .modal-box .drop-zone.dragover{border-color:var(--gold); background:var(--gold-dim);}
+.modal-box .drop-zone i{font-size:2.2rem; display:block; margin-bottom:8px; color:var(--gold);}
+.modal-box .drop-zone .file-name{color:var(--ivory); font-weight:500; margin-top:8px; font-size:.85rem;}
+.modal-box .modal-actions{display:flex; gap:12px; margin-top:26px;}
+.modal-box .modal-actions .btn{flex:1; justify-content:center;}
+.two-col{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+
+/* ═══════════════════════ PRODUCTION / REEL PREVIEW ═══════════════════════ */
+#productionOverlay{
+  position:fixed; inset:0; z-index:3000; background:rgba(4,9,6,.9); backdrop-filter:blur(24px);
+  display:flex; flex-direction:column; opacity:0; visibility:hidden; transition:var(--ease); padding:22px; overflow-y:auto;
+}
+#productionOverlay.open{opacity:1; visibility:visible;}
+.prod-header{
+  display:flex; justify-content:space-between; align-items:center; padding:14px 22px; flex-wrap:wrap; gap:12px;
+  background:rgba(0,0,0,.25); border:1px solid var(--glass-brd); border-radius:var(--radius); margin-bottom:20px;
+}
+.prod-header h2{font-size:1.35rem; font-weight:600;}
+.prod-header h2 span{color:var(--gold-light);}
+.prod-header .close-btn{
+  background:rgba(245,240,232,.06); border:1px solid var(--glass-brd); color:#fff; padding:9px 20px;
+  border-radius:10px; cursor:pointer; font-weight:600; transition:var(--ease); font-family:'DM Sans',sans-serif;
+}
+.prod-header .close-btn:hover{background:var(--danger); border-color:var(--danger);}
+.mode-toggle{display:flex; gap:4px; background:rgba(0,0,0,.25); border:1px solid var(--glass-brd); border-radius:12px; padding:4px;}
+.mode-toggle button{
+  background:transparent; border:none; color:var(--ivory-mute); padding:8px 16px; border-radius:9px;
+  cursor:pointer; font-size:.78rem; font-weight:600; transition:var(--ease); font-family:'DM Sans',sans-serif;
+}
+.mode-toggle button.active{background:var(--gold); color:var(--forest);}
+
+.profile-tabs{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;}
+.profile-tabs .tab-btn{
+  padding:8px 20px; border-radius:30px; border:1px solid var(--glass-brd); background:transparent; color:var(--ivory-mute);
+  font-weight:600; font-size:.78rem; cursor:pointer; transition:var(--ease); font-family:'DM Sans',sans-serif;
+}
+.profile-tabs .tab-btn.active{background:var(--gold-dim); border-color:var(--gold); color:var(--gold-light);}
+.profile-tabs .tab-btn:hover:not(.active){background:rgba(245,240,232,.05);}
+
+.prod-profile{
+  background:var(--glass); border-radius:14px; padding:16px 22px; margin-bottom:18px; border:1px solid var(--glass-brd);
+  display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+}
+.prod-profile .avatar{
+  width:54px; height:54px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--gold-light));
+  display:flex; align-items:center; justify-content:center; font-size:1.4rem; font-weight:700; color:var(--forest); font-family:'Syne',sans-serif;
+}
+.prod-profile .name{font-weight:700; font-size:1.05rem; font-family:'Syne',sans-serif;}
+.prod-profile .role{color:var(--ivory-mute); font-size:.82rem; margin-top:2px;}
+.prod-profile .meta-r{margin-left:auto; display:flex; gap:16px; flex-wrap:wrap; font-size:.82rem; color:var(--ivory-mute);}
+
+/* feed grid (carousel/grid) */
+.prod-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:22px; padding:4px 0 40px;}
+.prod-card{background:var(--glass); border:1px solid var(--glass-brd); border-radius:15px; overflow:hidden; transition:var(--ease);}
+.prod-card:hover{transform:translateY(-4px); border-color:var(--gold-line);}
+.prod-card .thumb{height:165px; background:linear-gradient(135deg,var(--forest-mid),var(--obsidian-2)); display:flex; align-items:center; justify-content:center; font-size:2.6rem; color:var(--gold-line); position:relative;}
+.prod-card .thumb img, .prod-card .thumb video{width:100%; height:100%; object-fit:cover;}
+.prod-card .info{padding:14px 16px 16px;}
+.prod-card .info h4{font-size:.9rem; font-weight:600; font-family:'DM Sans',sans-serif;}
+.prod-card .info .price{color:var(--gold-light); font-weight:700; font-size:1.05rem; margin-top:5px; font-family:'Cormorant Garamond',serif;}
+.prod-card .info .type{font-size:.62rem; text-transform:uppercase; letter-spacing:.06em; color:var(--gold-light); background:var(--gold-dim); padding:3px 12px; border-radius:20px; display:inline-block; margin-top:7px;}
+
+/* reel/story mimic view */
+.reel-stage{display:flex; justify-content:center; padding:10px 0 40px;}
+.reel-phone{
+  width:320px; max-width:92vw; aspect-ratio:9/16; background:#000; border-radius:28px; border:3px solid rgba(201,168,76,.35);
+  position:relative; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,.6);
+}
+.reel-slide{
+  position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
+  padding:18px; opacity:0; transition:opacity .5s ease;
+  background:radial-gradient(circle at 30% 20%, var(--forest-mid), var(--obsidian) 70%);
+}
+.reel-slide.active{opacity:1; z-index:2;}
+.reel-slide .r-icon{font-size:3rem; color:var(--gold); margin-bottom:auto; margin-top:34px;}
+.reel-slide h4{font-family:'Cormorant Garamond',serif; font-size:1.3rem; color:var(--ivory); text-align:center; margin-bottom:6px;}
+.reel-slide .r-price{font-family:'Cormorant Garamond',serif; font-size:1.6rem; color:var(--gold-light); margin-bottom:6px;}
+.reel-slide p{font-size:.72rem; color:var(--ivory-mute); text-align:center; margin-bottom:14px;}
+.reel-progress{position:absolute; top:10px; left:10px; right:10px; display:flex; gap:4px; z-index:5;}
+.reel-progress .seg{flex:1; height:3px; background:rgba(255,255,255,.25); border-radius:3px; overflow:hidden;}
+.reel-progress .seg .fill{height:100%; width:0%; background:var(--gold);}
+.reel-progress .seg.done .fill{width:100%;}
+.reel-progress .seg.playing .fill{animation:reelfill 4s linear forwards;}
+@keyframes reelfill{from{width:0%;} to{width:100%;}}
+.reel-badge{position:absolute; top:22px; left:14px; z-index:5; display:flex; align-items:center; gap:8px;}
+.reel-badge .mark{width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--gold-light)); display:flex; align-items:center; justify-content:center; color:var(--forest); font-size:.7rem; font-weight:800;}
+.reel-badge span{font-size:.72rem; font-weight:700; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.6);}
+.reel-side-actions{position:absolute; right:10px; bottom:110px; z-index:5; display:flex; flex-direction:column; gap:16px; align-items:center;}
+.reel-side-actions .ract{color:#fff; text-align:center; font-size:.6rem;}
+.reel-side-actions .ract i{display:block; font-size:1.2rem; margin-bottom:3px; filter:drop-shadow(0 2px 6px rgba(0,0,0,.6));}
+.reel-tap-zone{position:absolute; inset:0; z-index:4; display:flex;}
+.reel-tap-zone div{flex:1;}
+
+/* ═══════════════════════ COMPANY / PRICING ═══════════════════════ */
+.settings-grid{display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:6px;}
+.settings-grid .card{background:var(--glass); border:1px solid var(--glass-brd); border-radius:16px; padding:22px 24px;}
+.settings-grid .card h3{font-size:1.05rem; font-weight:600; margin-bottom:6px; font-family:'Syne',sans-serif;}
+.settings-grid .card .card-sub{font-size:.78rem; color:var(--ivory-mute); margin-bottom:14px;}
+.settings-grid .card .field{display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px solid var(--glass-brd); gap:14px;}
+.settings-grid .card .field:last-child{border-bottom:none;}
+.settings-grid .card .field .label{color:var(--ivory-mute); font-size:.82rem; flex-shrink:0;}
+.settings-grid .card .field .value{font-weight:700; font-family:'DM Sans',sans-serif;}
+.settings-grid .card .field input{
+  background:rgba(0,0,0,.22); border:1px solid var(--glass-brd); border-radius:8px; padding:7px 12px; color:#fff;
+  width:58%; font-family:'DM Sans',sans-serif; font-size:.85rem; outline:none;
+}
+.settings-grid .card .field input:focus{border-color:var(--gold);}
+
+/* ═══════════════════════ RESPONSIVE ═══════════════════════ */
+@media (max-width:960px){
+  #sidebar{width:76px; padding:20px 8px;}
+  #sidebar .brand{justify-content:center; padding:0 0 20px;}
+  #sidebar .brand .txt{display:none;}
+  .nav-item span{display:none;}
+  .nav-item{justify-content:center; padding:12px;}
+  .nav-item .badge{display:none;}
+  .nav-label{display:none;}
+  #main{padding:20px 16px;}
+  .settings-grid{grid-template-columns:1fr;}
+  .prod-profile .meta-r{margin-left:0;}
+}
+@media (max-width:620px){
+  #sidebar{width:58px;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .content-grid{grid-template-columns:1fr 1fr;}
+  .content-grid.list-view{grid-template-columns:1fr;}
+  .prod-grid{grid-template-columns:1fr 1fr;}
+  .auth-box{padding:36px 22px;}
+  .modal-box{padding:24px 18px;}
+  .two-col{grid-template-columns:1fr;}
+  .page-header h1{font-size:1.5rem;}
+}
+
+/* ═══════════════════════ MISC ═══════════════════════ */
+.hidden{display:none !important;}
+.empty-state{text-align:center; padding:56px 20px; color:var(--ivory-mute); grid-column:1/-1;}
+.empty-state i{font-size:2.6rem; opacity:.35; display:block; margin-bottom:14px; color:var(--gold);}
+.empty-state h3{color:var(--ivory); font-weight:600; font-family:'Syne',sans-serif; margin-bottom:4px;}
+.empty-state p{font-size:.85rem;}
+.toast{
+  position:fixed; bottom:28px; right:28px; z-index:9999; background:rgba(13,40,24,.92); border:1px solid var(--gold-line);
+  border-radius:12px; padding:14px 24px; backdrop-filter:blur(20px); color:#fff; font-weight:500; box-shadow:var(--shadow);
+  transform:translateY(80px); opacity:0; transition:var(--ease); font-family:'DM Sans',sans-serif;
+}
+.toast.show{transform:translateY(0); opacity:1;}
+.toast .toast-icon{color:var(--gold-light); margin-right:10px;}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- ═══ AUTH ═══ -->
+  <div id="authOverlay">
+    <div class="auth-box">
+      <div class="auth-emblem"><i class="fas fa-city"></i></div>
+      <div class="logo">Mwarokin<span>.</span></div>
+      <div class="sub">Marketing Studio · Estate Content Control</div>
+      <form id="authForm">
+        <label for="authUsername">Username</label>
+        <input type="text" id="authUsername" placeholder="admin" value="admin" autocomplete="username" />
+        <label for="authPassword">Password</label>
+        <input type="password" id="authPassword" placeholder="••••••••" value="admin" autocomplete="current-password" />
+        <div class="error-msg" id="authError"></div>
+        <button type="submit" class="btn-primary" id="authBtn">Sign In</button>
+        <div class="switch-auth"><span id="authSwitchText">Don't have an account? </span><a id="authSwitchLink">Sign Up</a></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <div id="sidebar">
+    <div class="brand">
+      <div class="mark"><i class="fas fa-city"></i></div>
+      <div class="txt">Mwarokin<small>Marketing Studio</small></div>
+    </div>
+    <div class="nav-label">Overview</div>
+    <button class="nav-item active" data-page="dashboard"><i class="fas fa-chart-pie"></i><span>Dashboard</span></button>
+    <div class="nav-label">Content Library</div>
+    <button class="nav-item" data-page="ads"><i class="fas fa-image"></i><span>Ads</span><span class="badge" id="adsBadge">0</span></button>
+    <button class="nav-item" data-page="videos"><i class="fas fa-video"></i><span>Videos</span><span class="badge" id="videosBadge">0</span></button>
+    <button class="nav-item" data-page="reels"><i class="fas fa-film"></i><span>Reels</span><span class="badge" id="reelsBadge">0</span></button>
+    <button class="nav-item" data-page="materials"><i class="fas fa-file-alt"></i><span>Materials</span><span class="badge" id="materialsBadge">0</span></button>
+    <div class="nav-divider"></div>
+    <div class="nav-label">Configuration</div>
+    <button class="nav-item" data-page="company"><i class="fas fa-building"></i><span>Company</span></button>
+    <button class="nav-item" data-page="pricing"><i class="fas fa-tag"></i><span>Pricing</span></button>
+    <div class="bottom-nav">
+      <button class="nav-item" id="productionBtn"><i class="fas fa-rocket"></i><span>Live Preview</span></button>
+      <button class="nav-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span>Logout</span></button>
+    </div>
+  </div>
+
+  <!-- ═══ MAIN ═══ -->
+  <div id="main"><div id="pageContent"></div></div>
+</div>
+
+<!-- ═══ UPLOAD MODAL ═══ -->
+<div class="modal-overlay" id="uploadModal">
+  <div class="modal-box">
+    <h2 id="modalTitle">Upload New</h2>
+    <div class="sub" id="modalSub">Add marketing content to your catalog.</div>
+    <form id="uploadForm">
+      <input type="hidden" id="uploadType" />
+      <input type="hidden" id="editId" value="" />
+      <label for="uploadTitle">Title</label>
+      <input type="text" id="uploadTitle" placeholder="e.g. Summer Promo 2026" required />
+      <label for="uploadDesc">Description</label>
+      <textarea id="uploadDesc" placeholder="Brief description..."></textarea>
+      <div class="two-col">
+        <div>
+          <label for="uploadPrice">Price (USD)</label>
+          <input type="number" id="uploadPrice" placeholder="99.00" step="0.01" />
+        </div>
+        <div>
+          <label for="uploadTag">Tag</label>
+          <select id="uploadTag">
+            <option value="General">General</option>
+            <option value="Promo">Promo</option>
+            <option value="Seasonal">Seasonal</option>
+            <option value="Featured">Featured</option>
+            <option value="New">New</option>
+          </select>
+        </div>
+      </div>
+      <label>Media File</label>
+      <div class="drop-zone" id="dropZone">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <div>Drag &amp; drop or click to browse</div>
+        <div class="file-name" id="fileName">No file selected</div>
+        <input type="file" id="fileInput" style="display:none;" accept="image/*,video/*" />
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn" id="modalCancel">Cancel</button>
+        <button type="submit" class="btn btn-gold" id="modalSubmit">Upload</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ═══ PRODUCTION OVERLAY ═══ -->
+<div id="productionOverlay">
+  <div class="prod-header">
+    <h2><i class="fas fa-signal" style="color:var(--gold-light);"></i> Mwarokin Estates · <span>Live Preview</span></h2>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+      <div class="mode-toggle" id="prodModeToggle">
+        <button class="active" data-mode="grid"><i class="fas fa-th-large"></i> Feed</button>
+        <button data-mode="reel"><i class="fas fa-mobile-alt"></i> Reel</button>
+      </div>
+      <button class="close-btn" id="prodCloseBtn"><i class="fas fa-times"></i> Close</button>
+    </div>
+  </div>
+
+  <div class="profile-tabs" id="prodTabs">
+    <button class="tab-btn active" data-role="tenant">👤 Tenant</button>
+    <button class="tab-btn" data-role="landlord">🏠 Landlord</button>
+    <button class="tab-btn" data-role="caretaker">🔧 Caretaker</button>
+  </div>
+  <div class="prod-profile">
+    <div class="avatar" id="prodAvatar">JD</div>
+    <div>
+      <div class="name" id="prodProfileName">John Doe</div>
+      <div class="role" id="prodProfileRole">Tenant · Apartment 4B</div>
+    </div>
+    <div class="meta-r">
+      <span><i class="fas fa-map-pin" style="color:var(--gold);"></i> <span id="prodProfileUnit">Unit 4B</span></span>
+      <span><i class="fas fa-calendar" style="color:var(--gold);"></i> Member since 2024</span>
+      <span><i class="fas fa-signal" style="color:var(--success);"></i> Live</span>
+    </div>
+  </div>
+
+  <div id="gridModeWrap">
+    <div class="section-title"><h3><i class="fas fa-bullhorn" style="color:var(--gold);"></i> Marketing Feed</h3><span class="count" id="prodCount">0 items</span></div>
+    <div class="prod-grid" id="prodGrid"></div>
+  </div>
+
+  <div id="reelModeWrap" class="hidden">
+    <div class="reel-stage">
+      <div class="reel-phone" id="reelPhone">
+        <div class="reel-progress" id="reelProgress"></div>
+        <div class="reel-badge"><div class="mark">M</div><span id="reelBrand">Mwarokin Estates</span></div>
+        <div class="reel-tap-zone"><div id="reelPrev"></div><div id="reelNext"></div></div>
+        <div class="reel-side-actions">
+          <div class="ract"><i class="fas fa-heart"></i>2.4k</div>
+          <div class="ract"><i class="fas fa-comment"></i>318</div>
+          <div class="ract"><i class="fas fa-share"></i>Share</div>
+        </div>
+        <div id="reelSlides"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-check-circle toast-icon"></i> <span id="toastMsg">Done</span></div>
+
+<script>
+const DB_KEY = 'mwarokin_marketing_data_v2';
+
+function getDefaultData(){
+  return {
+    users:[{id:'u1',username:'admin',password:'admin',role:'admin'}],
+    company:{name:'Mwarokin Estates',slogan:'Premium Living Spaces',contact:'info@mwarokin.co.ke',phone:'+254 700 123 456',address:'Nairobi, Kenya'},
+    pricing:{ad:120,video:250,reel:180,material:75},
+    marketing:{ads:[],videos:[],reels:[],materials:[]}
+  };
+}
+function loadData(){
+  try{
+    const raw = localStorage.getItem(DB_KEY);
+    if(raw){
+      const data = JSON.parse(raw);
+      const def = getDefaultData();
+      for(let k in def){ if(!(k in data)) data[k] = def[k]; }
+      for(let k in def.marketing){ if(!(k in data.marketing)) data.marketing[k] = []; }
+      return data;
+    }
+  }catch(e){ console.warn('Data load error', e); }
+  return getDefaultData();
+}
+function saveData(d){ localStorage.setItem(DB_KEY, JSON.stringify(d)); }
+function genId(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function formatDate(ts){ return new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+
+let data = loadData();
+let currentUser = null;
+let currentPage = 'dashboard';
+let editId = null;
+let viewMode = 'grid';
+let searchQuery = '';
+let sortBy = 'newest';
+
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+
+const authOverlay=$('#authOverlay'), authForm=$('#authForm'), authUsername=$('#authUsername'),
+      authPassword=$('#authPassword'), authError=$('#authError'), authBtn=$('#authBtn'),
+      authSwitchLink=$('#authSwitchLink'), authSwitchText=$('#authSwitchText'),
+      pageContent=$('#pageContent'), navItems=$$('.nav-item[data-page]'),
+      productionBtn=$('#productionBtn'), prodOverlay=$('#productionOverlay'), prodCloseBtn=$('#prodCloseBtn'),
+      prodGrid=$('#prodGrid'), prodTabs=$$('#prodTabs .tab-btn'), prodProfileName=$('#prodProfileName'),
+      prodProfileRole=$('#prodProfileRole'), prodProfileUnit=$('#prodProfileUnit'), prodAvatar=$('#prodAvatar'),
+      prodCount=$('#prodCount'), gridModeWrap=$('#gridModeWrap'), reelModeWrap=$('#reelModeWrap'),
+      reelSlidesEl=$('#reelSlides'), reelProgressEl=$('#reelProgress'), reelBrand=$('#reelBrand');
+
+const modal=$('#uploadModal'), modalTitle=$('#modalTitle'), modalSub=$('#modalSub'), uploadForm=$('#uploadForm'),
+      uploadType=$('#uploadType'), editIdInput=$('#editId'), uploadTitle=$('#uploadTitle'), uploadDesc=$('#uploadDesc'),
+      uploadPrice=$('#uploadPrice'), uploadTag=$('#uploadTag'), fileInput=$('#fileInput'), dropZone=$('#dropZone'),
+      fileName=$('#fileName'), modalSubmit=$('#modalSubmit'), modalCancel=$('#modalCancel');
+
+const toast=$('#toast'), toastMsg=$('#toastMsg');
+let toastTimer=null;
+function showToast(msg, icon='fa-check-circle'){
+  toastMsg.textContent = msg;
+  toast.querySelector('.toast-icon').className = 'toast-icon fas ' + icon;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>toast.classList.remove('show'), 3200);
+}
+
+/* ═══ AUTH ═══ */
+let isSignup = false;
+function renderAuth(){
+  if(isSignup){ authBtn.textContent='Create Account'; authSwitchLink.textContent='Sign In'; authSwitchText.textContent='Already have an account? '; }
+  else{ authBtn.textContent='Sign In'; authSwitchLink.textContent='Sign Up'; authSwitchText.textContent="Don't have an account? "; }
+  authError.textContent='';
+}
+authSwitchLink.addEventListener('click', ()=>{ isSignup=!isSignup; renderAuth(); });
+authForm.addEventListener('submit', e=>{
+  e.preventDefault();
+  const username=authUsername.value.trim(), password=authPassword.value.trim();
+  if(!username||!password){ authError.textContent='Please fill in all fields.'; return; }
+  const users=data.users||[];
+  if(isSignup){
+    if(users.find(u=>u.username===username)){ authError.textContent='Username already exists.'; return; }
+    users.push({id:genId(),username,password,role:'admin'});
+    data.users=users; saveData(data);
+    showToast('Account created! Please sign in.','fa-check-circle');
+    isSignup=false; renderAuth(); authPassword.value=''; return;
+  }
+  const found=users.find(u=>u.username===username && u.password===password);
+  if(!found){ authError.textContent='Invalid username or password.'; return; }
+  currentUser=found;
+  authOverlay.classList.add('hidden');
+  showToast('Welcome back, '+found.username+'!','fa-rocket');
+  renderDashboard();
+});
+$('#logoutBtn').addEventListener('click', ()=>{
+  currentUser=null; authOverlay.classList.remove('hidden'); authPassword.value=''; authError.textContent='';
+  showToast('Signed out.','fa-sign-out-alt');
+});
+
+/* ═══ NAVIGATION ═══ */
+navItems.forEach(btn=>btn.addEventListener('click', ()=>navigateTo(btn.dataset.page)));
+function navigateTo(page){
+  currentPage=page; searchQuery=''; sortBy='newest';
+  navItems.forEach(b=>b.classList.toggle('active', b.dataset.page===page));
+  renderPage(page);
+}
+function renderPage(page){
+  switch(page){
+    case 'dashboard': renderDashboard(); break;
+    case 'ads': renderMarketing('ads','Ads','image'); break;
+    case 'videos': renderMarketing('videos','Videos','video'); break;
+    case 'reels': renderMarketing('reels','Reels','film'); break;
+    case 'materials': renderMarketing('materials','Materials','file-alt'); break;
+    case 'company': renderCompany(); break;
+    case 'pricing': renderPricing(); break;
+    default: pageContent.innerHTML='<div class="empty-state"><i class="fas fa-cog"></i><h3>Page not found</h3></div>';
+  }
+  updateBadges();
+}
+
+/* ═══ DASHBOARD ═══ */
+function renderDashboard(){
+  const m=data.marketing;
+  const total=m.ads.length+m.videos.length+m.reels.length+m.materials.length;
+  const p=data.pricing||{ad:0,video:0,reel:0,material:0};
+  const totalValue=(m.ads.length*p.ad)+(m.videos.length*p.video)+(m.reels.length*p.reel)+(m.materials.length*p.material);
+  const recent=[];
+  for(let key of ['ads','videos','reels','materials']){ for(let item of m[key]||[]) recent.push({...item,category:key}); }
+  recent.sort((a,b)=>b.createdAt-a.createdAt);
+  const latest=recent.slice(0,4);
+
+  pageContent.innerHTML = `
+    <div class="page-header">
+      <div><div class="eyebrow">Overview</div><h1>Marketing Studio<small>All your promotional assets, in one calm workspace</small></h1></div>
+      <div class="actions">
+        <button class="btn btn-outline" onclick="openUpload('ads')"><i class="fas fa-image"></i> New Ad</button>
+        <button class="btn btn-gold" onclick="openUpload('videos')"><i class="fas fa-video"></i> New Video</button>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="icon"><i class="fas fa-layer-group"></i></div><div class="num">${total}</div><div class="label">Total Assets</div></div>
+      <div class="stat-card"><div class="icon"><i class="fas fa-image"></i></div><div class="num">${m.ads.length}</div><div class="label">Ads</div></div>
+      <div class="stat-card"><div class="icon"><i class="fas fa-video"></i></div><div class="num">${m.videos.length}</div><div class="label">Videos</div></div>
+      <div class="stat-card"><div class="icon"><i class="fas fa-film"></i></div><div class="num">${m.reels.length}</div><div class="label">Reels</div></div>
+      <div class="stat-card"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="num">${m.materials.length}</div><div class="label">Materials</div></div>
+      <div class="stat-card" style="border-color:var(--gold-line);"><div class="icon"><i class="fas fa-coins"></i></div><div class="num gold">$${totalValue.toFixed(2)}</div><div class="label">Portfolio Value</div></div>
+    </div>
+    <div class="section-title"><h3><i class="fas fa-clock" style="color:var(--gold);"></i> Recent Activity</h3><span class="count">${recent.length} total items</span></div>
+    <div class="content-grid">
+      ${latest.length===0 ? `<div class="empty-state"><i class="fas fa-inbox"></i><h3>Nothing uploaded yet</h3><p>Upload your first marketing asset to see it here.</p></div>` :
+        latest.map(item=>contentCardHtml(item, item.category, false)).join('')}
+    </div>
+  `;
+}
+
+function iconFor(cat){ return {ads:'image',videos:'video',reels:'film',materials:'file-alt'}[cat] || 'file'; }
+
+function contentCardHtml(item, type, withActions){
+  const icon = iconFor(type);
+  const priceKey = type==='ads'?'ad':type==='videos'?'video':type==='reels'?'reel':'material';
+  const price = item.price || data.pricing[priceKey] || 0;
+  return `
+    <div class="content-card">
+      <div class="thumb">
+        <span class="type-chip">${item.tag || 'General'}</span>
+        ${item.fileData ? (item.fileType && item.fileType.startsWith('video/') ?
+          `<video src="${item.fileData}" muted></video>` : `<img src="${item.fileData}" alt="${item.title}" />`) :
+          `<i class="fas fa-${icon}"></i>`}
+      </div>
+      <div class="body">
+        <h4>${item.title || 'Untitled'}</h4>
+        <p>${item.description || ''}</p>
+        <div class="meta"><span class="price-tag">$${Number(price).toFixed(2)}</span><span>${formatDate(item.createdAt)}</span></div>
+      </div>
+      ${withActions ? `
+        <div class="card-actions">
+          <button onclick="editItem('${type}','${item.id}')" title="Edit"><i class="fas fa-pen"></i></button>
+          <button onclick="deleteItem('${type}','${item.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+        </div>` : ''}
+    </div>
+  `;
+}
+
+/* ═══ MARKETING LIST ═══ */
+function renderMarketing(type,label,icon){
+  let items=[...(data.marketing[type]||[])];
+  const priceKey=type==='ads'?'ad':type==='videos'?'video':type==='reels'?'reel':'material';
+  const defaultPrice=data.pricing[priceKey]||0;
+
+  pageContent.innerHTML = `
+    <div class="page-header">
+      <div><div class="eyebrow">Content Library</div><h1>${label}<small>Manage your ${label.toLowerCase()} — base price $${defaultPrice}</small></h1></div>
+      <div class="actions"><button class="btn btn-gold" onclick="openUpload('${type}')"><i class="fas fa-plus"></i> New ${label.slice(0,-1)}</button></div>
+    </div>
+    <div class="toolbar">
+      <div class="search-box"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Search ${label.toLowerCase()}..." value="${searchQuery}"></div>
+      <select class="sort-select" id="sortSelect">
+        <option value="newest" ${sortBy==='newest'?'selected':''}>Newest first</option>
+        <option value="oldest" ${sortBy==='oldest'?'selected':''}>Oldest first</option>
+        <option value="price-high" ${sortBy==='price-high'?'selected':''}>Price: high to low</option>
+        <option value="price-low" ${sortBy==='price-low'?'selected':''}>Price: low to high</option>
+        <option value="az" ${sortBy==='az'?'selected':''}>Title A–Z</option>
+      </select>
+      <div class="view-toggle">
+        <button data-view="grid" class="${viewMode==='grid'?'active':''}"><i class="fas fa-th-large"></i></button>
+        <button data-view="list" class="${viewMode==='list'?'active':''}"><i class="fas fa-list"></i></button>
+      </div>
+      <span class="count" style="margin-left:auto;">${items.length} items</span>
+    </div>
+    <div class="content-grid ${viewMode==='list'?'list-view':''}" id="marketingGrid"></div>
+  `;
+
+  function draw(){
+    let filtered = items.filter(i => (i.title||'').toLowerCase().includes(searchQuery.toLowerCase()) || (i.description||'').toLowerCase().includes(searchQuery.toLowerCase()));
+    filtered.sort((a,b)=>{
+      if(sortBy==='newest') return b.createdAt-a.createdAt;
+      if(sortBy==='oldest') return a.createdAt-b.createdAt;
+      if(sortBy==='price-high') return (b.price||defaultPrice)-(a.price||defaultPrice);
+      if(sortBy==='price-low') return (a.price||defaultPrice)-(b.price||defaultPrice);
+      if(sortBy==='az') return (a.title||'').localeCompare(b.title||'');
+      return 0;
+    });
+    const grid = $('#marketingGrid');
+    grid.innerHTML = filtered.length===0 ? `
+      <div class="empty-state"><i class="fas fa-${icon}"></i><h3>No ${label.toLowerCase()} found</h3><p>${searchQuery ? 'Try a different search term.' : `Click "New ${label.slice(0,-1)}" to upload your first asset.`}</p></div>
+    ` : filtered.map(item=>contentCardHtml(item,type,true)).join('');
+  }
+  draw();
+
+  $('#searchInput').addEventListener('input', e=>{ searchQuery=e.target.value; draw(); });
+  $('#sortSelect').addEventListener('change', e=>{ sortBy=e.target.value; draw(); });
+  $$('.view-toggle button').forEach(b=>b.addEventListener('click', ()=>{
+    viewMode=b.dataset.view;
+    $$('.view-toggle button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    $('#marketingGrid').classList.toggle('list-view', viewMode==='list');
+  }));
+}
+
+/* ═══ COMPANY ═══ */
+function renderCompany(){
+  const c=data.company||{};
+  pageContent.innerHTML = `
+    <div class="page-header"><div><div class="eyebrow">Configuration</div><h1>Company<small>Your estate's brand identity</small></h1></div>
+      <div class="actions"><button class="btn btn-gold" onclick="saveCompany()"><i class="fas fa-save"></i> Save Changes</button></div>
+    </div>
+    <div class="settings-grid">
+      <div class="card">
+        <h3><i class="fas fa-building" style="color:var(--gold);margin-right:6px;"></i>Company Details</h3>
+        <div class="card-sub">Shown across tenant-facing surfaces and receipts.</div>
+        <div class="field"><span class="label">Name</span><input type="text" id="compName" value="${c.name||''}"></div>
+        <div class="field"><span class="label">Slogan</span><input type="text" id="compSlogan" value="${c.slogan||''}"></div>
+        <div class="field"><span class="label">Email</span><input type="text" id="compEmail" value="${c.contact||''}"></div>
+        <div class="field"><span class="label">Phone</span><input type="text" id="compPhone" value="${c.phone||''}"></div>
+        <div class="field"><span class="label">Address</span><input type="text" id="compAddress" value="${c.address||''}"></div>
+      </div>
+      <div class="card">
+        <h3><i class="fas fa-chart-line" style="color:var(--gold);margin-right:6px;"></i>Quick Stats</h3>
+        <div class="card-sub">A snapshot of your marketing footprint.</div>
+        <div class="field"><span class="label">Total Assets</span><span class="value">${data.marketing.ads.length+data.marketing.videos.length+data.marketing.reels.length+data.marketing.materials.length}</span></div>
+        <div class="field"><span class="label">Total Value</span><span class="value" style="color:var(--gold-light);">$${calcTotalValue().toFixed(2)}</span></div>
+        <div class="field"><span class="label">Company Since</span><span class="value">2024</span></div>
+        <div class="field"><span class="label">Status</span><span class="value" style="color:var(--success);">● Active</span></div>
+      </div>
+    </div>
+  `;
+}
+function saveCompany(){
+  data.company={
+    name:document.getElementById('compName')?.value||'',
+    slogan:document.getElementById('compSlogan')?.value||'',
+    contact:document.getElementById('compEmail')?.value||'',
+    phone:document.getElementById('compPhone')?.value||'',
+    address:document.getElementById('compAddress')?.value||''
+  };
+  saveData(data);
+  showToast('Company details saved!','fa-check-circle');
+}
+
+/* ═══ PRICING ═══ */
+function renderPricing(){
+  const p=data.pricing||{};
+  pageContent.innerHTML = `
+    <div class="page-header"><div><div class="eyebrow">Configuration</div><h1>Pricing<small>Set base prices for each marketing type</small></h1></div>
+      <div class="actions"><button class="btn btn-gold" onclick="savePricing()"><i class="fas fa-save"></i> Save Pricing</button></div>
+    </div>
+    <div class="settings-grid">
+      <div class="card">
+        <h3><i class="fas fa-tag" style="color:var(--gold);margin-right:6px;"></i>Base Prices (USD)</h3>
+        <div class="card-sub">Applied by default unless an item overrides its own price.</div>
+        <div class="field"><span class="label">📷 Ad</span><input type="number" id="priceAd" value="${p.ad||0}" step="0.01" style="width:110px;"></div>
+        <div class="field"><span class="label">🎬 Video</span><input type="number" id="priceVideo" value="${p.video||0}" step="0.01" style="width:110px;"></div>
+        <div class="field"><span class="label">🎞️ Reel</span><input type="number" id="priceReel" value="${p.reel||0}" step="0.01" style="width:110px;"></div>
+        <div class="field"><span class="label">📄 Material</span><input type="number" id="priceMaterial" value="${p.material||0}" step="0.01" style="width:110px;"></div>
+      </div>
+      <div class="card">
+        <h3><i class="fas fa-coins" style="color:var(--gold);margin-right:6px;"></i>Portfolio Value</h3>
+        <div class="card-sub">Live calculation across your entire catalog.</div>
+        <div class="field"><span class="label">Total Assets</span><span class="value">${data.marketing.ads.length+data.marketing.videos.length+data.marketing.reels.length+data.marketing.materials.length}</span></div>
+        <div class="field"><span class="label">Total Value</span><span class="value" style="color:var(--gold-light);font-size:1.2rem;">$${calcTotalValue().toFixed(2)}</span></div>
+        <div class="field"><span class="label">Avg. Price / Asset</span><span class="value">$${calcAvgPrice().toFixed(2)}</span></div>
+      </div>
+    </div>
+  `;
+}
+function savePricing(){
+  data.pricing={
+    ad:parseFloat(document.getElementById('priceAd')?.value)||0,
+    video:parseFloat(document.getElementById('priceVideo')?.value)||0,
+    reel:parseFloat(document.getElementById('priceReel')?.value)||0,
+    material:parseFloat(document.getElementById('priceMaterial')?.value)||0
+  };
+  saveData(data);
+  showToast('Pricing updated!','fa-check-circle');
+}
+function calcTotalValue(){
+  const p=data.pricing||{}, m=data.marketing;
+  return (m.ads.length*(p.ad||0))+(m.videos.length*(p.video||0))+(m.reels.length*(p.reel||0))+(m.materials.length*(p.material||0));
+}
+function calcAvgPrice(){
+  const total=data.marketing.ads.length+data.marketing.videos.length+data.marketing.reels.length+data.marketing.materials.length;
+  if(total===0) return 0;
+  return calcTotalValue()/total;
+}
+
+/* ═══ UPLOAD MODAL ═══ */
+let selectedFile=null, selectedFileData=null, selectedFileType=null;
+function openUpload(type, editData=null){
+  editId = editData ? editData.id : null;
+  uploadType.value = type;
+  editIdInput.value = editId || '';
+  const labels={ads:'Ad',videos:'Video',reels:'Reel',materials:'Material'};
+  modalTitle.textContent = editId ? `Edit ${labels[type]}` : `New ${labels[type]}`;
+  modalSub.textContent = editId ? 'Update your marketing content.' : 'Upload new marketing content.';
+  if(editData){
+    uploadTitle.value=editData.title||''; uploadDesc.value=editData.description||'';
+    uploadPrice.value=editData.price||''; uploadTag.value=editData.tag||'General';
+    fileName.textContent=editData.fileName||'No file selected';
+    selectedFileData=editData.fileData||null; selectedFileType=editData.fileType||null;
+    modalSubmit.textContent='Update';
+  }else{
+    uploadTitle.value=''; uploadDesc.value=''; uploadPrice.value=''; uploadTag.value='General';
+    fileName.textContent='No file selected'; selectedFileData=null; selectedFileType=null;
+    modalSubmit.textContent='Upload';
+  }
+  selectedFile=null;
+  modal.classList.add('open');
+}
+function closeModal(){ modal.classList.remove('open'); editId=null; }
+modalCancel.addEventListener('click', closeModal);
+modal.addEventListener('click', e=>{ if(e.target===modal) closeModal(); });
+
+dropZone.addEventListener('click', ()=>fileInput.click());
+dropZone.addEventListener('dragover', e=>{ e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', ()=>dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e=>{ e.preventDefault(); dropZone.classList.remove('dragover'); if(e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]); });
+fileInput.addEventListener('change', ()=>{ if(fileInput.files.length) handleFile(fileInput.files[0]); });
+
+function handleFile(file){
+  if(!['image/','video/'].some(t=>file.type.startsWith(t))){ showToast('Please select an image or video file.','fa-exclamation-triangle'); return; }
+  selectedFile=file; fileName.textContent=file.name;
+  const reader=new FileReader();
+  reader.onload = e=>{ selectedFileData=e.target.result; selectedFileType=file.type; };
+  reader.readAsDataURL(file);
+}
+
+uploadForm.addEventListener('submit', e=>{
+  e.preventDefault();
+  const type=uploadType.value;
+  const title=uploadTitle.value.trim()||'Untitled';
+  const description=uploadDesc.value.trim();
+  const price=parseFloat(uploadPrice.value)||0;
+  const tag=uploadTag.value;
+  const id=editIdInput.value||genId();
+  if(!selectedFileData && !editId){ showToast('Please select a file.','fa-exclamation-triangle'); return; }
+  const list=data.marketing[type];
+  const existing=list.findIndex(i=>i.id===id);
+  const item={
+    id, title, description, price, tag,
+    fileData:selectedFileData||'', fileType:selectedFileType||'',
+    fileName:selectedFile?selectedFile.name:(existing>=0?list[existing].fileName:''),
+    createdAt: existing>=0 ? list[existing].createdAt : Date.now(),
+    updatedAt: Date.now()
+  };
+  if(existing>=0){ list[existing]={...list[existing],...item}; showToast(`${type.slice(0,-1)} updated!`,'fa-check-circle'); }
+  else{ list.push(item); showToast(`${type.slice(0,-1)} uploaded!`,'fa-check-circle'); }
+  saveData(data); closeModal(); renderPage(currentPage); updateBadges();
+  fileInput.value=''; selectedFile=null; selectedFileData=null;
+});
+
+function editItem(type,id){
+  const item=data.marketing[type].find(i=>i.id===id);
+  if(item) openUpload(type,item);
+}
+function deleteItem(type,id){
+  if(!confirm('Delete this item?')) return;
+  data.marketing[type]=data.marketing[type].filter(i=>i.id!==id);
+  saveData(data); renderPage(currentPage); updateBadges();
+  showToast('Deleted.','fa-trash');
+}
+
+function updateBadges(){
+  const m=data.marketing;
+  document.getElementById('adsBadge').textContent=m.ads.length;
+  document.getElementById('videosBadge').textContent=m.videos.length;
+  document.getElementById('reelsBadge').textContent=m.reels.length;
+  document.getElementById('materialsBadge').textContent=m.materials.length;
+}
+
+/* ═══ PRODUCTION PREVIEW ═══ */
+let prodRole='tenant', prodMode='grid', reelIndex=0, reelTimer=null, reelItems=[];
+
+productionBtn.addEventListener('click', ()=>{ prodOverlay.classList.add('open'); renderProduction(); });
+prodCloseBtn.addEventListener('click', ()=>{ prodOverlay.classList.remove('open'); stopReel(); });
+prodOverlay.addEventListener('click', e=>{ if(e.target===prodOverlay){ prodOverlay.classList.remove('open'); stopReel(); } });
+
+prodTabs.forEach(btn=>btn.addEventListener('click', ()=>{
+  prodTabs.forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+  prodRole=btn.dataset.role; renderProduction();
+}));
+
+$('#prodModeToggle').addEventListener('click', e=>{
+  const btn=e.target.closest('button'); if(!btn) return;
+  $$('#prodModeToggle button').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+  prodMode=btn.dataset.mode;
+  gridModeWrap.classList.toggle('hidden', prodMode!=='grid');
+  reelModeWrap.classList.toggle('hidden', prodMode!=='reel');
+  if(prodMode==='reel') startReel(); else stopReel();
+});
+
+function renderProduction(){
+  const profiles={
+    tenant:{name:'John Doe',role:'Tenant · Apartment 4B',unit:'Unit 4B',initials:'JD'},
+    landlord:{name:'Grace Mwangi',role:'Landlord · 3 Properties',unit:'Main Estate',initials:'GM'},
+    caretaker:{name:'David Ochieng',role:'Caretaker · Maintenance Lead',unit:'Block A',initials:'DO'}
+  };
+  const p=profiles[prodRole]||profiles.tenant;
+  prodProfileName.textContent=p.name; prodProfileRole.textContent=p.role; prodProfileUnit.textContent=p.unit; prodAvatar.textContent=p.initials;
+
+  const all=[]; const m=data.marketing; const priceMap={ads:'ad',videos:'video',reels:'reel',materials:'material'};
+  for(let key of ['ads','videos','reels','materials']){
+    for(let item of m[key]||[]) all.push({...item, category:key, price:item.price||data.pricing[priceMap[key]]||0});
+  }
+  all.sort((a,b)=>b.createdAt-a.createdAt);
+  reelItems=all;
+  prodCount.textContent = all.length + ' item' + (all.length===1?'':'s');
+
+  prodGrid.innerHTML = all.length===0 ? `
+    <div class="empty-state"><i class="fas fa-inbox"></i><h3>No marketing content yet</h3><p>Upload assets from the Studio to see them here.</p></div>
+  ` : all.map(item=>`
+    <div class="prod-card">
+      <div class="thumb">
+        ${item.fileData ? (item.fileType && item.fileType.startsWith('video/') ? `<video src="${item.fileData}" muted></video>` : `<img src="${item.fileData}" alt="${item.title}" />`) : `<i class="fas fa-${iconFor(item.category)}"></i>`}
+      </div>
+      <div class="info">
+        <h4>${item.title||'Untitled'}</h4>
+        <p style="font-size:.8rem;color:var(--ivory-mute);">${item.description||''}</p>
+        <div class="price">$${item.price.toFixed(2)}</div>
+        <span class="type">${item.category}</span>
+      </div>
+    </div>
+  `).join('');
+
+  buildReelSlides();
+}
+
+function buildReelSlides(){
+  reelSlidesEl.innerHTML = reelItems.length===0 ? `
+    <div class="reel-slide active"><i class="fas fa-inbox r-icon"></i><h4>No content yet</h4><p>Upload assets to preview them as a reel.</p></div>
+  ` : reelItems.map((item,idx)=>`
+    <div class="reel-slide ${idx===0?'active':''}" data-idx="${idx}">
+      ${item.fileData ? (item.fileType && item.fileType.startsWith('video/') ?
+        `<video src="${item.fileData}" muted autoplay loop style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video>` :
+        `<img src="${item.fileData}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />`) : `<i class="fas fa-${iconFor(item.category)} r-icon"></i>`}
+      <div style="position:relative;z-index:2;width:100%;background:linear-gradient(to top, rgba(0,0,0,.75), transparent);padding-top:60px;">
+        <h4>${item.title||'Untitled'}</h4>
+        <div class="r-price">$${item.price.toFixed(2)}</div>
+        <p>${item.description||''}</p>
+      </div>
+    </div>
+  `).join('');
+  reelProgressEl.innerHTML = reelItems.map((_,idx)=>`<div class="seg ${idx===0?'playing':''}" data-idx="${idx}"><div class="fill"></div></div>`).join('');
+  reelIndex=0;
+}
+
+function goToReelSlide(idx){
+  if(reelItems.length===0) return;
+  reelIndex = (idx+reelItems.length)%reelItems.length;
+  $$('.reel-slide').forEach(el=>el.classList.toggle('active', +el.dataset.idx===reelIndex));
+  $$('#reelProgress .seg').forEach((seg,i)=>{
+    seg.classList.remove('playing','done');
+    if(i<reelIndex) seg.classList.add('done');
+    if(i===reelIndex) seg.classList.add('playing');
+  });
+}
+function startReel(){
+  stopReel();
+  if(reelItems.length===0) return;
+  goToReelSlide(reelIndex);
+  reelTimer = setInterval(()=>goToReelSlide(reelIndex+1), 4000);
+}
+function stopReel(){ clearInterval(reelTimer); reelTimer=null; }
+$('#reelNext').addEventListener('click', ()=>{ goToReelSlide(reelIndex+1); if(prodMode==='reel') startReel(); });
+$('#reelPrev').addEventListener('click', ()=>{ goToReelSlide(reelIndex-1); if(prodMode==='reel') startReel(); });
+
+/* ═══ INIT ═══ */
+function init(){
+  const users=data.users||[];
+  if(users.length===0){ data.users=[{id:'u1',username:'admin',password:'admin',role:'admin'}]; saveData(data); }
+  renderAuth();
+  authOverlay.classList.remove('hidden');
+  updateBadges();
+  renderDashboard();
+}
+window.openUpload=openUpload; window.editItem=editItem; window.deleteItem=deleteItem;
+window.saveCompany=saveCompany; window.savePricing=savePricing;
+init();
+
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){ closeModal(); if(prodOverlay.classList.contains('open')){ prodOverlay.classList.remove('open'); stopReel(); } }
+});
+console.log('🚀 Mwarokin Estates Marketing Studio loaded.');
+</script>
+</body>
+</html>

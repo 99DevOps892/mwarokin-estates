@@ -1,0 +1,680 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Fee Deposits-</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --info: #7209b7;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-title {
+            font-size: 1rem;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .icon-revenue {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+        }
+
+        .icon-fees {
+            background-color: rgba(247, 37, 133, 0.1);
+            color: var(--warning);
+        }
+
+        .icon-payouts {
+            background-color: rgba(76, 201, 240, 0.1);
+            color: var(--success);
+        }
+
+        .icon-balance {
+            background-color: rgba(114, 9, 183, 0.1);
+            color: var(--info);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-change {
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .change-positive {
+            color: #2ecc71;
+        }
+
+        .change-negative {
+            color: #e74c3c;
+        }
+
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .transactions-list {
+            list-style: none;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .transaction-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .transaction-details h4 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .transaction-details p {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .transaction-amount {
+            font-weight: 600;
+        }
+
+        .positive {
+            color: #2ecc71;
+        }
+
+        .negative {
+            color: #e74c3c;
+        }
+
+        .distribution-breakdown {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .distribution-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background-color: var(--light);
+            border-radius: 8px;
+        }
+
+        .distribution-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+        }
+
+        .distribution-details {
+            flex: 1;
+        }
+
+        .distribution-name {
+            font-size: 0.9rem;
+            margin-bottom: 3px;
+        }
+
+        .distribution-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .realtime-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            background-color: rgba(46, 204, 113, 0.1);
+            color: #2ecc71;
+            border-radius: 20px;
+            margin-left: 10px;
+        }
+
+        .pulse {
+            width: 10px;
+            height: 10px;
+            background-color: #2ecc71;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 8px rgba(46, 204, 113, 0);
+            }
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .dashboard-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .distribution-breakdown {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-money-bill-transfer"></i>
+                <h1>Mwarokin Estates-Payment Distribution System</h1>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline"><i class="fas fa-cog"></i> Settings</button>
+            </div>
+        </header>
+
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Total Revenue</div>
+                    <div class="stat-icon icon-revenue">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                </div>
+                <div class="stat-value">$24,568.00</div>
+                <div class="stat-change change-positive">
+                    <i class="fas fa-arrow-up"></i> 12.5% from last month
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Total Fees</div>
+                    <div class="stat-icon icon-fees">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                </div>
+                <div class="stat-value">$1,245.60</div>
+                <div class="stat-change change-negative">
+                    <i class="fas fa-arrow-down"></i> 3.2% from last month
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Payouts Processed</div>
+                    <div class="stat-icon icon-payouts">
+                        <i class="fas fa-money-check"></i>
+                    </div>
+                </div>
+                <div class="stat-value">$22,845.32</div>
+                <div class="stat-change change-positive">
+                    <i class="fas fa-arrow-up"></i> 8.7% from last month
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Available Balance</div>
+                    <div class="stat-icon icon-balance">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                </div>
+                <div class="stat-value">$5,478.08</div>
+                <div class="stat-change change-positive">
+                    <i class="fas fa-arrow-up"></i> 5.3% from yesterday
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <div class="main-content">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Revenue Distribution <span class="realtime-indicator"><span class="pulse"></span> LIVE</span></div>
+                        <div class="card-actions">
+                            <button class="btn btn-outline"><i class="fas fa-download"></i> Report</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Recent Transactions</div>
+                        <div class="card-actions">
+                            <button class="btn btn-primary"><i class="fas fa-plus"></i> New Payment</button>
+                        </div>
+                    </div>
+                    <ul class="transactions-list" id="transactionsList">
+                        <!-- Transactions will be added here dynamically -->
+                    </ul>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Distribution Breakdown</div>
+                    </div>
+                    <div class="distribution-breakdown">
+                        <div class="distribution-item">
+                            <div class="distribution-color" style="background-color: #4361ee;"></div>
+                            <div class="distribution-details">
+                                <div class="distribution-name">Landlord Share</div>
+                                <div class="distribution-value">$895.43</div>
+                            </div>
+                        </div>
+                        <div class="distribution-item">
+                            <div class="distribution-color" style="background-color: #3a0ca3;"></div>
+                            <div class="distribution-details">
+                                <div class="distribution-name">Platform Fee</div>
+                                <div class="distribution-value">$45.25</div>
+                            </div>
+                        </div>
+                        <div class="distribution-item">
+                            <div class="distribution-color" style="background-color: #7209b7;"></div>
+                            <div class="distribution-details">
+                                <div class="distribution-name">Processing Fee</div>
+                                <div class="distribution-value">$28.75</div>
+                            </div>
+                        </div>
+                        <div class="distribution-item">
+                            <div class="distribution-color" style="background-color: #4cc9f0;"></div>
+                            <div class="distribution-details">
+                                <div class="distribution-name">Maintenance Reserve</div>
+                                <div class="distribution-value">$26.85</div>
+                            </div>
+                        </div>
+                        <div class="distribution-item">
+                            <div class="distribution-color" style="background-color: #f72585;"></div>
+                            <div class="distribution-details">
+                                <div class="distribution-name">Emergency Fund</div>
+                                <div class="distribution-value">$17.90</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">System Status</div>
+                    </div>
+                    <div class="system-status">
+                        <div class="status-item">
+                            <div class="status-name">Payment Processing</div>
+                            <div class="status-indicator active"></div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-name">Distribution Engine</div>
+                            <div class="status-indicator active"></div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-name">Transaction Logger</div>
+                            <div class="status-indicator active"></div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-name">Bank Integration</div>
+                            <div class="status-indicator active"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize the distribution chart
+        const distributionChart = new Chart(
+            document.getElementById('distributionChart'),
+            {
+                type: 'doughnut',
+                data: {
+                    labels: ['Landlord Share', 'Platform Fee', 'Processing Fee', 'Maintenance Reserve', 'Emergency Fund'],
+                    datasets: [{
+                        data: [895.43, 45.25, 28.75, 26.85, 17.90],
+                        backgroundColor: [
+                            '#4361ee',
+                            '#3a0ca3',
+                            '#7209b7',
+                            '#4cc9f0',
+                            '#f72585'
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 15
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        }
+                    }
+                }
+            }
+        );
+
+        // Sample transaction data
+        const transactions = [
+            {
+                id: 1,
+                name: 'John Smith',
+                description: 'Property Rental - April 2024',
+                amount: 1200.00,
+                type: 'income',
+                date: '2024-04-15 10:30:45'
+            },
+            {
+                id: 2,
+                name: 'Platform Fee',
+                description: 'Service charge',
+                amount: -30.00,
+                type: 'fee',
+                date: '2024-04-15 10:30:45'
+            },
+            {
+                id: 3,
+                name: 'Sarah Johnson',
+                description: 'Property Rental - April 2024',
+                amount: 950.00,
+                type: 'income',
+                date: '2024-04-14 14:22:18'
+            },
+            {
+                id: 4,
+                name: 'Processing Fee',
+                description: 'Transaction charge',
+                amount: -27.55,
+                type: 'fee',
+                date: '2024-04-14 14:22:18'
+            },
+            {
+                id: 5,
+                name: 'Robert Williams',
+                description: 'Property Rental - April 2024',
+                amount: 1500.00,
+                type: 'income',
+                date: '2024-04-13 09:15:33'
+            }
+        ];
+
+        // Function to render transactions
+        function renderTransactions() {
+            const transactionsList = document.getElementById('transactionsList');
+            transactionsList.innerHTML = '';
+            
+            transactions.forEach(transaction => {
+                const listItem = document.createElement('li');
+                listItem.className = 'transaction-item';
+                
+                listItem.innerHTML = `
+                    <div class="transaction-info">
+                        <div class="transaction-icon" style="background-color: ${transaction.type === 'income' ? 'rgba(46, 204, 113, 0.1)' : 'rgba(231, 76, 60, 0.1)'}; color: ${transaction.type === 'income' ? '#2ecc71' : '#e74c3c'};">
+                            <i class="fas ${transaction.type === 'income' ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
+                        </div>
+                        <div class="transaction-details">
+                            <h4>${transaction.name}</h4>
+                            <p>${transaction.description}</p>
+                        </div>
+                    </div>
+                    <div class="transaction-amount ${transaction.type === 'income' ? 'positive' : 'negative'}">
+                        ${transaction.type === 'income' ? '+' : ''}${transaction.amount.toFixed(2)}
+                    </div>
+                `;
+                
+                transactionsList.appendChild(listItem);
+            });
+        }
+
+        // Initial render
+        renderTransactions();
+
+        // Simulate real-time updates
+        setInterval(() => {
+            // Simulate a new transaction
+            const newTransaction = {
+                id: Date.now(),
+                name: 'New Customer',
+                description: 'Property Rental - April 2024',
+                amount: Math.floor(Math.random() * 1000) + 500,
+                type: 'income',
+                date: new Date().toISOString()
+            };
+            
+            // Add to beginning of list
+            transactions.unshift(newTransaction);
+            
+            // Keep only the last 5 transactions
+            if (transactions.length > 5) {
+                transactions.pop();
+            }
+            
+            // Re-render transactions
+            renderTransactions();
+            
+            // Update the chart with new data
+            const newData = [
+                895.43 + Math.random() * 100,
+                45.25 + Math.random() * 10,
+                28.75 + Math.random() * 5,
+                26.85 + Math.random() * 5,
+                17.90 + Math.random() * 3
+            ];
+            
+            distributionChart.data.datasets[0].data = newData;
+            distributionChart.update();
+            
+        }, 5000); // Update every 5 seconds
+    </script>
+</body>
+</html>

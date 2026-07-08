@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Annual Report Dashboard</title>
+    <link rel="icon" href="img/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/apexcharts@3.35.3/dist/apexcharts.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --info: #4895ef;
+            --warning: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --bg-gradient: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --hover-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background-color: #f5f7fb;
+            color: #333;
+        }
+
+        .dashboard-header {
+            background: var(--bg-gradient);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .stats-card .card-title {
+            font-size: 0.9rem;
+            color: #6c757d;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-card .card-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0;
+        }
+
+        .stats-card .card-icon {
+            font-size: 2.5rem;
+            color: var(--info);
+            opacity: 0.8;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .filter-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .data-table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .table th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 500;
+        }
+
+        .table-responsive {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary);
+            border-color: var(--primary);
+            border-radius: 8px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .nav-tabs .nav-link {
+            color: #6c757d;
+            font-weight: 500;
+            border: none;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+            background: transparent;
+        }
+
+        .export-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .trend-indicator {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            margin-left: 0.5rem;
+        }
+
+        .trend-up {
+            background: rgba(76, 201, 240, 0.15);
+            color: #4cc9f0;
+        }
+
+        .trend-down {
+            background: rgba(247, 37, 133, 0.15);
+            color: #f72585;
+        }
+
+        .year-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .year-btn {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            color: #6c757d;
+            transition: all 0.2s ease;
+        }
+
+        .year-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .year-btn:hover:not(.active) {
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .stats-card .card-value {
+                font-size: 1.5rem;
+            }
+            
+            .export-options {
+                flex-direction: column;
+            }
+            
+            .year-selector {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid p-0">
+        <!-- Navigation Bar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="#">
+                    <img src="Mwarokin Lg.png" alt="Icon" style="width: 30px; height: 30px;">
+                    <h4 class="m-0 ms-2 text-primary">Mwarokin Estates</h4>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="CalculatePendingRent.html">Calculate Pending Payments</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="Communication.html">Communication</a>
+                        </li>
+                          <li class="nav-item">
+                            <a class="nav-link" href="Construction.html">Construction</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="Contact.html">Contact</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                Property
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="Lipa Mdogo Payment Plan.html">Lipa Mdogo Payment Plan</a></li>
+                                <li><a class="dropdown-item" href="Buying.html">Buying Property</a></li>
+                                <li><a class="dropdown-item" href="Selling.html">Selling Property</a></li>
+                                <li><a class="dropdown-item" href="LipaCalculator.html">Pay Calculator</a></li>
+                                <li><a class="dropdown-item" href="Neighborhoods.html">Neighbourhoods</a></li>
+                                <li><a class="dropdown-item" href="Payments.html">Payments</a></li>
+                                <li><a class="dropdown-item" href="Peoples With Disabilities.html">People With Disabilities</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="LeaseDraft.html">Lease Draft</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="display-5 fw-bold">Annual Report Dashboard</h1>
+                        <p class="lead mb-0">Comprehensive overview of property performance and financial metrics</p>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <div class="year-selector">
+                            <span class="text-white-50 me-2">View:</span>
+                            <button class="year-btn" data-year="2025">2025</button>
+                            <button class="year-btn active" data-year="2026">2026</button>
+                            <button class="year-btn" data-year="2027">2027</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mb-5">
+            <!-- Summary Stats -->
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="card-title">TOTAL REVENUE</div>
+                                <div class="card-value">KSh 4.2M</div>
+                                <div class="trend-indicator trend-up">
+                                    <i class="fas fa-arrow-up me-1"></i> 12.5%
+                                </div>
+                            </div>
+                            <div class="card-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="card-title">OCCUPANCY RATE</div>
+                                <div class="card-value">94%</div>
+                                <div class="trend-indicator trend-up">
+                                    <i class="fas fa-arrow-up me-1"></i> 3.2%
+                                </div>
+                            </div>
+                            <div class="card-icon">
+                                <i class="fas fa-home"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="card-title">AVERAGE RENT</div>
+                                <div class="card-value">KSh 32,500</div>
+                                <div class="trend-indicator trend-up">
+                                    <i class="fas fa-arrow-up me-1"></i> 5.7%
+                                </div>
+                            </div>
+                            <div class="card-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="card-title">PROPERTIES</div>
+                                <div class="card-value">42</div>
+                                <div class="trend-indicator trend-up">
+                                    <i class="fas fa-arrow-up me-1"></i> 8.3%
+                                </div>
+                            </div>
+                            <div class="card-icon">
+                                <i class="fas fa-building"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="chart-container">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="chart-title mb-0">Revenue Trends</h4>
+                            <div>
+                                <button class="btn btn-outline-primary btn-sm me-2 active" data-period="monthly">Monthly</button>
+                                <button class="btn btn-outline-primary btn-sm" data-period="quarterly">Quarterly</button>
+                            </div>
+                        </div>
+                        <div id="revenueChart"></div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="chart-container">
+                        <h4 class="chart-title">Property Distribution</h4>
+                        <div id="propertyChart"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Charts -->
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="chart-container">
+                        <h4 class="chart-title">Occupancy Rate by Location</h4>
+                        <div id="occupancyChart"></div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="chart-container">
+                        <h4 class="chart-title">Rent Collection Performance</h4>
+                        <div id="collectionChart"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Table Section -->
+            <div class="data-table-container">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="chart-title mb-0">Tenant Payment Details</h4>
+                    <div class="export-options">
+                        <button id="print-btn" class="btn btn-outline-primary">
+                            <i class="fas fa-print me-2"></i>Print
+                        </button>
+                        <button id="download-btn" class="btn btn-outline-primary">
+                            <i class="fas fa-download me-2"></i>Download CSV
+                        </button>
+                        <button id="export-pdf-btn" class="btn btn-outline-primary">
+                            <i class="fas fa-file-pdf me-2"></i>Export PDF
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Tenant ID</th>
+                                <th>Property Details</th>
+                                <th>Location</th>
+                                <th>Payment Amount</th>
+                                <th>Tenant Name</th>
+                                <th>Month</th>
+                                <th>Year</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>111</td>
+                                <td>Two-Bed-Room</td>
+                                <td>Kangemi</td>
+                                <td>22,064</td>
+                                <td>Mwarema</td>
+                                <td>January</td>
+                                <td>2023</td>
+                                <td><span class="badge bg-success">Paid</span></td>
+                            </tr>
+                            <tr>
+                                <td>22</td>
+                                <td>Three-Bed-Room</td>
+                                <td>Taveta</td>
+                                <td>35,000</td>
+                                <td>Kisha</td>
+                                <td>March</td>
+                                <td>2023</td>
+                                <td><span class="badge bg-success">Paid</span></td>
+                            </tr>
+                            <tr>
+                                <td>144</td>
+                                <td>One-Bed-Room</td>
+                                <td>Kiambu</td>
+                                <td>12,000</td>
+                                <td>Joyce</td>
+                                <td>January</td>
+                                <td>2023</td>
+                                <td><span class="badge bg-warning">Pending</span></td>
+                            </tr>
+                            <tr>
+                                <td>88</td>
+                                <td>Compound Home</td>
+                                <td>Taveta</td>
+                                <td>135,000</td>
+                                <td>Mwarema</td>
+                                <td>September</td>
+                                <td>2023</td>
+                                <td><span class="badge bg-success">Paid</span></td>
+                            </tr>
+                            <tr>
+                                <td>90</td>
+                                <td>Bed-Sitter</td>
+                                <td>Jericho</td>
+                                <td>8,000</td>
+                                <td>Jane</td>
+                                <td>January</td>
+                                <td>2023</td>
+                                <td><span class="badge bg-danger">Overdue</span></td>
+                            </tr>
+                            <tr>
+                                <td>22</td>
+                                <td>Three-Bed-Room</td>
+                                <td>Taveta</td>
+                                <td>35,000</td>
+                                <td>S.Muele</td>
+                                <td>March</td>
+                                <td>2023</td>
+                                <td><span class="badge bg-success">Paid</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mt-4">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">Previous</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-dark text-white-50 pt-5 mt-5">
+            <div class="container py-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>Mwarokin Estates -Annual Report- &copy; 2026. All Right Reserved.</p>
+                        <p>Powered By: <a class="text-white-50" href="www.syllogismtechnologyafrica.co.ke">Syllogism Technology Africa</a></p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <div class="footer-menu">
+                            <a class="text-white-50 me-3" href="cookies.html">Cookies</a>
+                            <a class="text-white-50 me-3" href="Term.html">Terms</a>
+                            <a class="text-white-50 me-3" href="Privacy.html">Privacy</a>
+                            <a class="text-white-50" href="Faqs.html">FAQs</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.35.3/dist/apexcharts.min.js"></script>
+    <script>
+        // Initialize charts when the document is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Revenue Chart
+            var revenueOptions = {
+                series: [{
+                    name: 'Revenue',
+                    data: [320000, 350000, 380000, 410000, 390000, 420000, 450000, 480000, 510000, 490000, 530000, 560000]
+                }],
+                chart: {
+                    height: 350,
+                    type: 'area',
+                    toolbar: {
+                        show: true
+                    }
+                },
+                colors: ['#4361ee'],
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    curve: 'smooth',
+                    width: 3
+                },
+                xaxis: {
+                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                },
+                yaxis: {
+                    labels: {
+                        formatter: function(value) {
+                            return 'KSh ' + (value / 1000).toFixed(0) + 'K';
+                        }
+                    }
+                },
+                tooltip: {
+                    y: {
+                        formatter: function(value) {
+                            return 'KSh ' + value.toLocaleString();
+                        }
+                    }
+                }
+            };
+
+            var revenueChart = new ApexCharts(document.querySelector("#revenueChart"), revenueOptions);
+            revenueChart.render();
+
+            // Property Distribution Chart
+            var propertyOptions = {
+                series: [44, 25, 18, 13],
+                chart: {
+                    type: 'donut',
+                    height: 350
+                },
+                labels: ['Two-Bedroom', 'One-Bedroom', 'Three-Bedroom', 'Studio'],
+                colors: ['#4361ee', '#4cc9f0', '#3a0ca3', '#f72585'],
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                            width: 300
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }]
+            };
+
+            var propertyChart = new ApexCharts(document.querySelector("#propertyChart"), propertyOptions);
+            propertyChart.render();
+
+            // Occupancy Rate Chart
+            var occupancyOptions = {
+                series: [{
+                    name: 'Occupancy Rate',
+                    data: [92, 88, 95, 91, 96, 89, 94, 97, 93, 90, 95, 98]
+                }],
+                chart: {
+                    height: 350,
+                    type: 'bar',
+                    toolbar: {
+                        show: true
+                    }
+                },
+                colors: ['#4cc9f0'],
+                plotOptions: {
+                    bar: {
+                        borderRadius: 4,
+                        horizontal: false,
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                xaxis: {
+                    categories: ['Kangemi', 'Taveta', 'Kiambu', 'Jericho', 'Westlands', 'Karen', 'Runda', 'Lavington', 'Kilimani', 'South B', 'South C', 'Eastleigh'],
+                },
+                yaxis: {
+                    max: 100,
+                    labels: {
+                        formatter: function(value) {
+                            return value + '%';
+                        }
+                    }
+                }
+            };
+
+            var occupancyChart = new ApexCharts(document.querySelector("#occupancyChart"), occupancyOptions);
+            occupancyChart.render();
+
+            // Collection Performance Chart
+            var collectionOptions = {
+                series: [{
+                    name: 'Collection Rate',
+                    data: [95, 92, 98, 94, 96, 91, 97, 99, 93, 95, 98, 96]
+                }],
+                chart: {
+                    height: 350,
+                    type: 'line',
+                    toolbar: {
+                        show: true
+                    }
+                },
+                colors: ['#f72585'],
+                stroke: {
+                    width: 3,
+                    curve: 'smooth'
+                },
+                markers: {
+                    size: 5
+                },
+                xaxis: {
+                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                },
+                yaxis: {
+                    max: 100,
+                    labels: {
+                        formatter: function(value) {
+                            return value + '%';
+                        }
+                    }
+                },
+                tooltip: {
+                    y: {
+                        formatter: function(value) {
+                            return value + '% Collection Rate';
+                        }
+                    }
+                }
+            };
+
+            var collectionChart = new ApexCharts(document.querySelector("#collectionChart"), collectionOptions);
+            collectionChart.render();
+
+            // Year selector functionality
+            document.querySelectorAll('.year-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    document.querySelectorAll('.year-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // In a real app, you would fetch data for the selected year
+                    console.log('Selected year:', this.dataset.year);
+                });
+            });
+
+            // Period selector functionality
+            document.querySelectorAll('[data-period]').forEach(button => {
+                button.addEventListener('click', function() {
+                    document.querySelectorAll('[data-period]').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // In a real app, you would update the chart for the selected period
+                    console.log('Selected period:', this.dataset.period);
+                });
+            });
+
+            // Print functionality
+            document.getElementById('print-btn').addEventListener('click', function() {
+                window.print();
+            });
+
+            // Download CSV functionality
+            document.getElementById('download-btn').addEventListener('click', function() {
+                let csvContent = "data:text/csv;charset=utf-8,";
+                const rows = document.querySelectorAll(".table tr");
+
+                rows.forEach(row => {
+                    const cols = row.querySelectorAll("td, th");
+                    const rowData = Array.from(cols).map(col => col.innerText).join(",");
+                    csvContent += rowData + "\r\n";
+                });
+
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "annual_report_data.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+
+            // Export PDF functionality (placeholder)
+            document.getElementById('export-pdf-btn').addEventListener('click', function() {
+                alert('PDF export functionality would be implemented here in a production environment.');
+            });
+        });
+    </script>
+</body>
+
+</html>

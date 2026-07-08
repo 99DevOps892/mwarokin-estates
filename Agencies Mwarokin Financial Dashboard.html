@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mwarokin Estates - Payment Portal</title>
+  <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/babel-standalone@7.22.10/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f3f4f6;
+    }
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    // Simulated BillingAgent (translated from Python for client-side demo)
+    class BillingAgent {
+      constructor() {
+        this.tiers = [
+          { min_homes: 0, max_homes: 10, base_fee: 7000, max_fee: 15000 },
+          { min_homes: 11, max_homes: 30, base_fee: 15000, max_fee: 30000 },
+          { min_homes: 31, max_homes: 100, base_fee: 30000, max_fee: 60000 },
+          { min_homes: 101, max_homes: 500, base_fee: 60000, max_fee: 150000 },
+          { min_homes: 501, max_homes: 1000, base_fee: 150000, max_fee: 200000 },
+        ];
+        this.multi_estate_fee = 1000000;
+        this.multi_estate_periods = [3, 6];
+        this.leasing_fee_rate = 0.05;
+        this.white_label_fee = 10000;
+        this.transaction_fee_rate = 0.015;
+      }
+
+      calculatePropertyManagementFee(numHomes) {
+        for (const tier of this.tiers) {
+          if (!tier.max_homes || (numHomes >= tier.min_homes && numHomes <= tier.max_homes)) {
+            let fee = tier.base_fee;
+            if (tier.max_homes && tier.max_homes > tier.min_homes) {
+              const rangeSize = tier.max_homes - tier.min_homes;
+              const feeRange = tier.max_fee - tier.base_fee;
+              fee = tier.base_fee + (feeRange * (numHomes - tier.min_homes) / rangeSize);
+            }
+            const explanation = `Property Management Fee: ${numHomes} homes in tier (${tier.min_homes}-${tier.max_homes || '∞'}). Base fee: Ksh${tier.base_fee}, Max fee: Ksh${tier.max_fee}. Calculated: Ksh${fee.toFixed(2)}`;
+            return [fee, explanation];
+          }
+        }
+        return [0, "No applicable tier found"];
+      }
+
+      calculateMultiEstateFee(months) {
+        if (!this.multi_estate_periods.includes(months)) {
+          return [0, `Invalid period: ${months}. Must be 3 or 6 months.`];
+        }
+        const fee = this.multi_estate_fee;
+        const explanation = `Multi-Estate Fee: Ksh${fee.toFixed(2)} for ${months}-month plan.`;
+        return [fee, explanation];
+      }
+
+      calculateLeasingFee(monthlyRent) {
+        const fee = monthlyRent * this.leasing_fee_rate;
+        const explanation = `Leasing Fee: ${this.leasing_fee_rate * 100}% of monthly rent (Ksh${monthlyRent.toFixed(2)}). Calculated: Ksh${fee.toFixed(2)}`;
+        return [fee, explanation];
+      }
+
+      calculateTransactionFee(transactionAmount) {
+        const fee = transactionAmount * this.transaction_fee_rate;
+        const explanation = `Transaction Fee: ${this.transaction_fee_rate * 100}% of transaction amount (Ksh${transactionAmount.toFixed(2)}). Calculated: Ksh${fee.toFixed(2)}`;
+        return [fee, explanation];
+      }
+
+      calculateROI(revenue, expenses) {
+        if (expenses === 0) {
+          return [0, "ROI: Cannot calculate, expenses are zero."];
+        }
+        const roi = ((revenue - expenses) / expenses) * 100;
+        const explanation = `ROI: ${(revenue - expenses).toFixed(2)} / ${expenses.toFixed(2)} * 100 = ${roi.toFixed(2)}%`;
+        return [roi, explanation];
+      }
+
+      async generateBilling({ tenantId, numHomes, monthlyRent, transactionAmount, isMultiEstate, multiEstateMonths, useWhiteLabel }) {
+        const auditId = crypto.randomUUID();
+        const breakdown = {};
+        const explanations = [];
+        let totalFee = 0;
+
+        if (!tenantId || typeof tenantId !== 'string') {
+          throw new Error("Valid tenant_id required");
+        }
+
+        if (isMultiEstate) {
+          const [fee, explanation] = this.calculateMultiEstateFee(multiEstateMonths);
+          breakdown.multi_estate_fee = fee;
+          explanations.push(explanation);
+          totalFee += fee;
+        } else {
+          const [fee, explanation] = this.calculatePropertyManagementFee(numHomes);
+          breakdown.property_management_fee = fee;
+          explanations.push(explanation);
+          totalFee += fee;
+        }
+
+        if (monthlyRent > 0) {
+          const [fee, explanation] = this.calculateLeasingFee(monthlyRent);
+          breakdown.leasing_fee = fee;
+          explanations.push(explanation);
+          totalFee += fee;
+        }
+
+        if (transactionAmount > 0) {
+          const [fee, explanation] = this.calculateTransactionFee(transactionAmount);
+          breakdown.transaction_fee = fee;
+          explanations.push(explanation);
+          totalFee += fee;
+        }
+
+        if (useWhiteLabel) {
+          breakdown.white_label_fee = this.white_label_fee;
+          explanations.push(`White-Label Fee: Ksh${this.white_label_fee.toFixed(2)}`);
+          totalFee += this.white_label_fee;
+        }
+
+        const revenue = monthlyRent + transactionAmount;
+        const [roi, roiExplanation] = this.calculateROI(revenue, totalFee);
+        breakdown.roi_percent = roi;
+        explanations.push(roiExplanation);
+
+        return {
+          tenantId,
+          totalFee,
+          breakdown,
+          explanation: explanations.join('\n'),
+          auditId,
+          timestamp: new Date().toISOString()
+        };
+      }
+
+      async streamBillingProgress(tenantId, numHomes) {
+        const results = [];
+        const [fee, explanation] = this.calculatePropertyManagementFee(numHomes);
+        results.push(`Progress: Calculated property management fee for tenant ${tenantId}: ${explanation}`);
+        results.push(`Progress: Checking leasing and transaction fees for tenant ${tenantId}...`);
+        return results;
+      }
+    }
+
+    // Tenant-specific white-label configuration
+    const tenantConfig = {
+      logo: 'https://via.placeholder.com/150?text=Agency+Logo',
+      primaryColor: '#1e3a8a',
+      secondaryColor: '#3b82f6',
+      font: 'Inter',
+      currency: 'Ksh'
+    };
+
+    // React Components
+    const PaymentForm = () => {
+      const [formData, setFormData] = React.useState({
+        tenantId: 'tenant_123',
+        numHomes: 0,
+        monthlyRent: 0,
+        transactionAmount: 0,
+        isMultiEstate: false,
+        multiEstateMonths: 3,
+        useWhiteLabel: false
+      });
+      const [billingResult, setBillingResult] = React.useState(null);
+      const [progress, setProgress] = React.useState([]);
+      const [isLoading, setIsLoading] = React.useState(false);
+      const billingAgent = new BillingAgent();
+
+      const handleInputChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setFormData({
+          ...formData,
+          [name]: type === 'checkbox' ? checked : type === 'number' ? parseFloat(value) || 0 : value
+        });
+      };
+
+      const handleSubmit = async () => {
+        setIsLoading(true);
+        setProgress([]);
+        try {
+          const stream = await billingAgent.streamBillingProgress(formData.tenantId, formData.numHomes);
+          for (const message of stream) {
+            setProgress(prev => [...prev, message]);
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate streaming
+          }
+          const result = await billingAgent.generateBilling(formData);
+          setBillingResult(result);
+        } catch (error) {
+          alert(`Error: ${error.message}`);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      return (
+        <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-lg fade-in">
+          <div className="flex items-center mb-6">
+            <img src={tenantConfig.logo} alt="Agency Logo" className="h-12 mr-4" />
+            <h1 className="text-2xl font-bold" style={{ color: tenantConfig.primaryColor }}>
+              Mwarokin Estates Payment Portal
+            </h1>
+          </div>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Tenant ID</label>
+              <input
+                type="text"
+                name="tenantId"
+                value={formData.tenantId}
+                onChange={handleInputChange}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                disabled
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Number of Homes</label>
+              <input
+                type="number"
+                name="numHomes"
+                value={formData.numHomes}
+                onChange={handleInputChange}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                min="0"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Monthly Rent (Ksh)</label>
+              <input
+                type="number"
+                name="monthlyRent"
+                value={formData.monthlyRent}
+                onChange={handleInputChange}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                min="0"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Transaction Amount (Ksh)</label>
+              <input
+                type="number"
+                name="transactionAmount"
+                value={formData.transactionAmount}
+                onChange={handleInputChange}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                min="0"
+              />
+            </div>
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                name="isMultiEstate"
+                checked={formData.isMultiEstate}
+                onChange={handleInputChange}
+                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+              />
+              <label className="ml-2 block text-sm text-gray-900">Multi-Estate Plan</label>
+            </div>
+            {formData.isMultiEstate && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Multi-Estate Period (Months)</label>
+                <select
+                  name="multiEstateMonths"
+                  value={formData.multiEstateMonths}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                >
+                  <option value="3">3 Months</option>
+                  <option value="6">6 Months</option>
+                </select>
+              </div>
+            )}
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                name="useWhiteLabel"
+                checked={formData.useWhiteLabel}
+                onChange={handleInputChange}
+                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+              />
+              <label className="ml-2 block text-sm text-gray-900">Enable White-Labeling</label>
+            </div>
+            <button
+              onClick={handleSubmit}
+              disabled={isLoading}
+              className={`w-full py-2 px-4 rounded-md text-white font-semibold ${isLoading ? 'bg-gray-400' : 'bg-indigo-600 hover:bg-indigo-700'}`}
+              style={{ backgroundColor: isLoading ? '#9ca3af' : tenantConfig.secondaryColor }}
+            >
+              {isLoading ? 'Calculating...' : 'Calculate Fees'}
+            </button>
+          </div>
+          {progress.length > 0 && (
+            <div className="mt-4 p-4 bg-gray-100 rounded-md">
+              <h3 className="text-lg font-semibold">Progress Updates</h3>
+              <ul className="list-disc pl-5">
+                {progress.map((msg, index) => (
+                  <li key={index} className="text-sm text-gray-600">{msg}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {billingResult && (
+            <div className="mt-4 p-4 bg-gray-100 rounded-md fade-in">
+              <h3 className="text-lg font-semibold">Billing Summary</h3>
+              <p><strong>Total Fee:</strong> {tenantConfig.currency} {billingResult.totalFee.toFixed(2)}</p>
+              <p><strong>Audit ID:</strong> {billingResult.auditId}</p>
+              <p><strong>Timestamp:</strong> {new Date(billingResult.timestamp).toLocaleString()}</p>
+              <h4 className="mt-2 font-medium">Breakdown</h4>
+              <ul className="list-disc pl-5">
+                {Object.entries(billingResult.breakdown).map(([key, value]) => (
+                  <li key={key} className="text-sm">
+                    {key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}: {tenantConfig.currency} {value.toFixed(2)}
+                  </li>
+                ))}
+              </ul>
+              <h4 className="mt-2 font-medium">Explanation</h4>
+              <pre className="text-sm whitespace-pre-wrap bg-white p-2 rounded">{billingResult.explanation}</pre>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    // Main App Component
+    const App = () => {
+      return (
+        <div className="min-h-screen bg-gray-100 py-6">
+          <PaymentForm />
+        </div>
+      );
+    };
+
+    // Render the app
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
