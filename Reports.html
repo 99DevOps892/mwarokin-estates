@@ -1,0 +1,1867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mwarokin Estates — Reports</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #1A3A2A;
+    --forest-mid: #234D38;
+    --forest-light: #2E6647;
+    --gold: #C9A84C;
+    --gold-light: #E2C06A;
+    --gold-pale: #F5EDD0;
+    --cream: #FAF8F3;
+    --white: #FFFFFF;
+    --slate: #8A9BA8;
+    --muted: #B5C0C8;
+    --text: #1C2B22;
+    --text-secondary: #4A6355;
+    --border: #D8E4DC;
+    --card-bg: #FFFFFF;
+    --danger: #C0392B;
+    --success: #27AE60;
+    --info: #2980B9;
+    --shadow-sm: 0 1px 4px rgba(26,58,42,0.08);
+    --shadow-md: 0 4px 20px rgba(26,58,42,0.12);
+    --shadow-lg: 0 12px 48px rgba(26,58,42,0.18);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ─── TOP BAR ─── */
+  .topbar {
+    background: var(--forest);
+    height: 58px;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid rgba(201,168,76,0.25);
+  }
+  .topbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+  .topbar-logo-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--forest);
+    font-family: 'Playfair Display', serif;
+  }
+  .topbar-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--gold-light);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+  .topbar-search {
+    flex: 1;
+    max-width: 340px;
+    margin-left: auto;
+    position: relative;
+  }
+  .topbar-search input {
+    width: 100%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 8px;
+    padding: 7px 12px 7px 36px;
+    color: #fff;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .topbar-search input::placeholder { color: rgba(255,255,255,0.4); }
+  .topbar-search input:focus { border-color: var(--gold); }
+  .topbar-search-icon {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255,255,255,0.4);
+    font-size: 13px;
+  }
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 16px;
+  }
+  .topbar-icon-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    transition: background 0.2s;
+    position: relative;
+  }
+  .topbar-icon-btn:hover { background: rgba(255,255,255,0.14); }
+  .badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+    border: 1.5px solid var(--forest);
+  }
+  .topbar-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--forest);
+    cursor: pointer;
+    font-family: 'Playfair Display', serif;
+  }
+
+  /* ─── LAYOUT ─── */
+  .layout {
+    display: flex;
+    flex: 1;
+    min-height: calc(100vh - 58px);
+  }
+
+  /* ─── SIDEBAR ─── */
+  .sidebar {
+    width: 220px;
+    background: var(--forest);
+    flex-shrink: 0;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border-right: 1px solid rgba(201,168,76,0.12);
+  }
+  .sidebar-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: rgba(201,168,76,0.5);
+    padding: 12px 20px 6px;
+    font-weight: 600;
+  }
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    color: rgba(255,255,255,0.6);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    transition: all 0.18s;
+    border-radius: 0;
+  }
+  .sidebar-item:hover {
+    background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.9);
+  }
+  .sidebar-item.active {
+    background: rgba(201,168,76,0.12);
+    color: var(--gold-light);
+    border-left-color: var(--gold);
+  }
+  .sidebar-item-icon { font-size: 15px; width: 18px; text-align: center; }
+
+  /* ─── MAIN CONTENT ─── */
+  .main {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ─── PAGE HEADER ─── */
+  .page-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .breadcrumb {
+    font-size: 11px;
+    color: var(--slate);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .breadcrumb span { color: var(--gold); }
+  .page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: var(--forest);
+    font-weight: 700;
+  }
+  .page-subtitle {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+  .page-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 18px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.18s;
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--forest), var(--forest-light));
+    color: var(--gold-light);
+    box-shadow: 0 2px 8px rgba(26,58,42,0.25);
+  }
+  .btn-primary:hover {
+    background: linear-gradient(135deg, var(--forest-mid), var(--forest-light));
+    box-shadow: 0 4px 14px rgba(26,58,42,0.35);
+    transform: translateY(-1px);
+  }
+  .btn-gold {
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: var(--forest);
+    box-shadow: 0 2px 8px rgba(201,168,76,0.3);
+  }
+  .btn-gold:hover {
+    box-shadow: 0 4px 14px rgba(201,168,76,0.4);
+    transform: translateY(-1px);
+  }
+  .btn-outline {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--text-secondary);
+  }
+  .btn-outline:hover {
+    border-color: var(--forest);
+    color: var(--forest);
+  }
+  .btn-sm {
+    padding: 6px 14px;
+    font-size: 12px;
+  }
+
+  /* ─── CONTENT AREA ─── */
+  .content {
+    padding: 28px 32px;
+    flex: 1;
+  }
+
+  /* ─── SCREENS (tabs) ─── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ─── REPORTS GRID ─── */
+  .reports-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .reports-count {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .reports-count strong { color: var(--forest); }
+  .filter-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .filter-select {
+    padding: 7px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    color: var(--text);
+    background: var(--white);
+    cursor: pointer;
+    outline: none;
+    font-family: 'Inter', sans-serif;
+  }
+  .filter-select:focus { border-color: var(--gold); }
+  .icon-btn {
+    width: 34px;
+    height: 34px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--slate);
+    font-size: 14px;
+    transition: all 0.18s;
+  }
+  .icon-btn:hover { border-color: var(--forest); color: var(--forest); }
+
+  .reports-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+
+  .report-card {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    cursor: pointer;
+    transition: all 0.22s;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .report-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--border);
+    transition: background 0.22s;
+  }
+  .report-card:hover {
+    border-color: var(--forest-light);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+  .report-card:hover::before {
+    background: linear-gradient(90deg, var(--forest), var(--gold));
+  }
+  .report-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .report-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .report-icon.green { background: rgba(46,102,71,0.1); color: var(--forest-light); }
+  .report-icon.gold { background: rgba(201,168,76,0.12); color: var(--gold); }
+  .report-icon.blue { background: rgba(41,128,185,0.1); color: var(--info); }
+  .report-icon.red { background: rgba(192,57,43,0.1); color: var(--danger); }
+  .report-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--forest);
+    line-height: 1.3;
+  }
+  .report-card-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .report-card-desc span::before {
+    content: '·';
+    color: var(--gold);
+    margin-right: 6px;
+    font-weight: 700;
+  }
+  .report-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .special-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(201,168,76,0.12);
+    color: #8B6914;
+    border: 1px solid rgba(201,168,76,0.3);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .view-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--forest-light);
+    cursor: pointer;
+    padding: 5px 12px;
+    border: 1.5px solid var(--forest-light);
+    border-radius: 6px;
+    background: transparent;
+    transition: all 0.18s;
+    font-family: 'Inter', sans-serif;
+  }
+  .view-btn:hover {
+    background: var(--forest);
+    color: var(--gold-light);
+    border-color: var(--forest);
+  }
+
+  /* ─── STEP FORM SCREENS ─── */
+  .step-form-layout {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 24px;
+    align-items: start;
+  }
+  .step-form-main {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .step-block {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    display: flex;
+    gap: 20px;
+    transition: border-color 0.2s;
+  }
+  .step-block.active-step { border-color: var(--forest-light); }
+  .step-number {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--forest), var(--forest-light));
+    color: var(--gold-light);
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-content { flex: 1; }
+  .step-title {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--forest);
+    margin-bottom: 4px;
+  }
+  .step-subtitle {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+  }
+
+  /* Form elements */
+  .form-row { display: flex; gap: 12px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .form-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .form-control {
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    color: var(--text);
+    background: var(--white);
+    outline: none;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.18s;
+    -webkit-appearance: none;
+  }
+  .form-control:focus { border-color: var(--forest); box-shadow: 0 0 0 3px rgba(46,102,71,0.1); }
+  select.form-control {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234A6355' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+    cursor: pointer;
+  }
+  .form-note {
+    font-size: 11px;
+    color: var(--slate);
+    margin-top: 4px;
+  }
+  .form-note.warning {
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: #7A5C0A;
+    font-size: 12px;
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+  }
+
+  /* Radio & Toggle */
+  .radio-group {
+    display: flex;
+    gap: 16px;
+  }
+  .radio-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+  .radio-option input[type="radio"] { accent-color: var(--forest); }
+  .radio-option.selected { color: var(--forest); }
+
+  .toggle-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .toggle {
+    width: 44px;
+    height: 24px;
+    border-radius: 12px;
+    background: var(--border);
+    position: relative;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .toggle.on { background: var(--forest-light); }
+  .toggle::after {
+    content: '';
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    transition: left 0.2s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+  .toggle.on::after { left: 23px; }
+
+  .checkbox-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .checkbox-wrap input[type="checkbox"] { accent-color: var(--forest); width: 15px; height: 15px; }
+
+  /* ─── SIDE PANEL ─── */
+  .side-panel {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    position: sticky;
+    top: 20px;
+  }
+  .side-panel-header {
+    background: linear-gradient(135deg, var(--forest), var(--forest-light));
+    padding: 20px;
+    color: white;
+  }
+  .side-panel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--gold-light);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .side-panel-subtitle {
+    font-size: 12px;
+    color: rgba(255,255,255,0.65);
+  }
+  .side-panel-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .info-field { display: flex; flex-direction: column; gap: 4px; }
+  .info-field-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--slate);
+    font-weight: 600;
+  }
+  .info-field-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .side-panel-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 4px 0;
+  }
+  .side-panel-footer {
+    padding: 16px 20px;
+    background: var(--cream);
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--forest);
+  }
+  .total-amount {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--forest);
+  }
+  .kes-badge {
+    font-size: 10px;
+    background: rgba(201,168,76,0.15);
+    color: #7A5C0A;
+    border: 1px solid rgba(201,168,76,0.3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+    margin-right: 4px;
+  }
+
+  /* ─── PAYMENT SECTION ─── */
+  .payment-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .payment-option {
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    cursor: pointer;
+    transition: border-color 0.18s;
+  }
+  .payment-option.selected { border-color: var(--forest); background: rgba(46,102,71,0.04); }
+  .payment-option-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .payment-option-header input[type="radio"] { accent-color: var(--forest); }
+  .payment-method-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .payment-chip {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .payment-chip.active {
+    background: var(--forest);
+    color: var(--gold-light);
+    border-color: var(--forest);
+  }
+  .payment-chip.mpesa { color: #3EA843; border-color: #3EA843; }
+  .payment-chip.mpesa.active { background: #3EA843; color: white; }
+
+  /* ─── 1099 / TAX FORM ─── */
+  .tax-features {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-right: 24px;
+    border-right: 1px solid var(--border);
+    flex: 1;
+  }
+  .tax-feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+    background: var(--cream);
+    border-radius: var(--radius-sm);
+  }
+  .tax-feature-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(26,58,42,0.08), rgba(46,102,71,0.12));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .tax-feature-title {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--forest);
+    margin-bottom: 4px;
+  }
+  .tax-feature-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .two-col-step-form { display: flex; gap: 28px; }
+  .step-form-side-config {
+    width: 320px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .config-section {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .config-section-title {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--forest);
+    margin-bottom: 4px;
+  }
+  .config-section-sub {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+  }
+
+  /* ─── RENTABILITY REPORT ─── */
+  .rentability-features {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .rentability-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .rentability-feature:last-child { border-bottom: none; }
+  .rentability-feature-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(201,168,76,0.1), rgba(201,168,76,0.18));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .rentability-feature-title {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--forest);
+    margin-bottom: 5px;
+  }
+  .rentability-feature-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+  .view-sample {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--forest-light);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    margin-top: 8px;
+    cursor: pointer;
+  }
+  .view-sample:hover { color: var(--gold); }
+
+  /* ─── SUCCESS TOAST ─── */
+  .success-toast {
+    background: var(--white);
+    border: 1.5px solid var(--forest-light);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow-lg);
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-left: 4px solid var(--forest);
+  }
+  .success-toast-title {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--forest);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .success-toast-title::before {
+    content: '✓';
+    width: 22px;
+    height: 22px;
+    background: var(--forest);
+    color: var(--gold-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .success-toast-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  .success-toast-desc a { color: var(--forest-light); font-weight: 600; }
+  .success-toast-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  /* ─── NAV TABS ─── */
+  .nav-tabs {
+    display: flex;
+    background: var(--white);
+    border-bottom: 1.5px solid var(--border);
+    padding: 0 32px;
+    gap: 0;
+    overflow-x: auto;
+  }
+  .nav-tab {
+    padding: 13px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-bottom: 2.5px solid transparent;
+    margin-bottom: -1.5px;
+    white-space: nowrap;
+    transition: all 0.18s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .nav-tab:hover { color: var(--forest); }
+  .nav-tab.active {
+    color: var(--forest);
+    border-bottom-color: var(--gold);
+  }
+  .nav-tab-badge {
+    background: var(--gold-pale);
+    color: #7A5C0A;
+    border: 1px solid rgba(201,168,76,0.3);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+  }
+
+  /* ─── FORM SUBMIT ROW ─── */
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 8px;
+  }
+
+  /* ─── INLINE TAG ─── */
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .tag-green { background: rgba(39,174,96,0.1); color: #1A7A42; border: 1px solid rgba(39,174,96,0.25); }
+  .tag-gold { background: rgba(201,168,76,0.12); color: #8B6914; border: 1px solid rgba(201,168,76,0.3); }
+
+  /* ─── RECIPIENTS MULTI-SELECT ─── */
+  .multi-select {
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 42px;
+    cursor: text;
+    background: var(--white);
+    align-items: center;
+  }
+  .multi-select:focus-within { border-color: var(--forest); }
+  .multi-chip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(46,102,71,0.1);
+    color: var(--forest);
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .multi-chip span { cursor: pointer; color: var(--slate); }
+  .multi-placeholder { font-size: 13px; color: var(--muted); }
+
+  /* ─── REPORT PREVIEW MINI ─── */
+  .report-preview-card {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+  .report-preview-card strong { color: var(--forest); display: block; font-size: 12px; margin-bottom: 6px; font-family: 'Playfair Display', serif; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <a class="topbar-logo" href="#">
+    <div class="topbar-logo-icon">M</div>
+    <span class="topbar-brand">Mwarokin Estates</span>
+  </a>
+  <div class="topbar-search">
+    <span class="topbar-search-icon">🔍</span>
+    <input type="text" placeholder="Search reports, properties…">
+  </div>
+  <div class="topbar-actions">
+    <button class="topbar-icon-btn">🔔<span class="badge"></span></button>
+    <button class="topbar-icon-btn">💬</button>
+    <button class="topbar-icon-btn">⚙️</button>
+    <div class="topbar-avatar">RB</div>
+  </div>
+</div>
+
+<!-- NAV TABS (screen switcher) -->
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="showScreen('grid')">📊 Reports <span class="nav-tab-badge">21</span></div>
+  <div class="nav-tab" onclick="showScreen('rentability')">📈 Rentability Report</div>
+  <div class="nav-tab" onclick="showScreen('tax')">📋 Tax Preparation</div>
+  <div class="nav-tab" onclick="showScreen('form1099')">🗂️ 1099 Tax Form</div>
+  <div class="nav-tab" onclick="showScreen('success')">✅ Purchase Success</div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-label">Navigation</div>
+    <a class="sidebar-item" href="#"><span class="sidebar-item-icon">🏠</span>Dashboard</a>
+    <a class="sidebar-item" href="#"><span class="sidebar-item-icon">🏢</span>Properties</a>
+    <a class="sidebar-item" href="#"><span class="sidebar-item-icon">👥</span>Tenants</a>
+    <a class="sidebar-item" href="#"><span class="sidebar-item-icon">💰</span>Finances</a>
+    <a class="sidebar-item active" href="#"><span class="sidebar-item-icon">📊</span>Reports</a>
+    <a class="sidebar-item" href="#"><span class="sidebar-item-icon">🔧</span>Maintenance</a>
+    <a class="sidebar-item" href="#"><span class="sidebar-item-icon">📄</span>Documents</a>
+    <a class="sidebar-item" href="#"><span class="sidebar-item-icon">🗓️</span>Calendar</a>
+    <div class="sidebar-label">Account</div>
+    <a class="sidebar-item" href="#"><span class="sidebar-item-icon">⚙️</span>Settings</a>
+    <a class="sidebar-item" href="#"><span class="sidebar-item-icon">💬</span>Support</a>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- ═══════════════════════════════════════════════
+         SCREEN 1: REPORTS GRID
+    ══════════════════════════════════════════════════ -->
+    <div id="screen-grid" class="screen active">
+      <div class="page-header">
+        <div>
+          <div class="breadcrumb">Dashboard / <span>Reports</span></div>
+          <div class="page-title">Reports</div>
+          <div class="page-subtitle">Generate, view & download housing management reports for your portfolio</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-outline">⬇️ Export All</button>
+          <button class="btn btn-primary">+ Custom Report</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="reports-controls">
+          <div class="reports-count">Display: <strong>All</strong> — <strong>21 Total</strong> reports available</div>
+          <div class="filter-row">
+            <select class="filter-select">
+              <option>All Categories</option>
+              <option>Financial</option>
+              <option>Tax</option>
+              <option>Tenant</option>
+              <option>Property</option>
+            </select>
+            <button class="icon-btn" title="Grid view">⊞</button>
+            <button class="icon-btn" title="List view">☰</button>
+          </div>
+        </div>
+
+        <div class="reports-grid">
+
+          <!-- Rentability -->
+          <div class="report-card" onclick="showScreen('rentability')">
+            <div class="report-card-header">
+              <div class="report-icon gold">📈</div>
+              <div>
+                <div class="report-card-title">Rentability Analysis</div>
+              </div>
+            </div>
+            <div class="report-card-desc">
+              <span>Detailed rent estimates & market benchmarks</span>
+              <span>Property-specific vacancy rate analysis</span>
+              <span>Powered by real Kenyan market data</span>
+            </div>
+            <div class="report-card-footer">
+              <div class="special-badge">⭐ Special Offer</div>
+              <button class="view-btn" onclick="event.stopPropagation();showScreen('rentability')">View →</button>
+            </div>
+          </div>
+
+          <!-- Tenant Statement -->
+          <div class="report-card">
+            <div class="report-card-header">
+              <div class="report-icon green">👤</div>
+              <div><div class="report-card-title">Tenant Statement</div></div>
+            </div>
+            <div class="report-card-desc">
+              <span>Shows all income from tenants</span>
+              <span>Includes paid and unpaid invoices</span>
+              <span>Displays deposits and credits</span>
+              <span>Default: accrual accounting type</span>
+            </div>
+            <div class="report-card-footer">
+              <span class="tag tag-green">Accrual</span>
+              <button class="view-btn">View →</button>
+            </div>
+          </div>
+
+          <!-- Rent Roll -->
+          <div class="report-card">
+            <div class="report-card-header">
+              <div class="report-icon blue">🏠</div>
+              <div><div class="report-card-title">Rent Roll</div></div>
+            </div>
+            <div class="report-card-desc">
+              <span>Generated as of today's date</span>
+              <span>Active lease details & tenant info</span>
+              <span>Liabilities held, rent & balance owed</span>
+            </div>
+            <div class="report-card-footer">
+              <span class="tag tag-gold">Live Data</span>
+              <button class="view-btn">View →</button>
+            </div>
+          </div>
+
+          <!-- Property Owner Statement -->
+          <div class="report-card">
+            <div class="report-card-header">
+              <div class="report-icon gold">🏢</div>
+              <div><div class="report-card-title">Property Owner Statement</div></div>
+            </div>
+            <div class="report-card-desc">
+              <span>Designed for property managers to report to owner</span>
+              <span>Shows property paid income & expense</span>
+              <span>Info across all properties per owner</span>
+            </div>
+            <div class="report-card-footer">
+              <span></span>
+              <button class="view-btn">View →</button>
+            </div>
+          </div>
+
+          <!-- Tax Preparation -->
+          <div class="report-card" onclick="showScreen('tax')">
+            <div class="report-card-header">
+              <div class="report-icon green">📋</div>
+              <div><div class="report-card-title">Tax Preparation</div></div>
+            </div>
+            <div class="report-card-desc">
+              <span>Sums property income & expense by category</span>
+              <span>Does not include liabilities</span>
+              <span>Expense categories can fit KRA Schedule</span>
+            </div>
+            <div class="report-card-footer">
+              <span class="tag tag-green">KRA Ready</span>
+              <button class="view-btn" onclick="event.stopPropagation();showScreen('tax')">View →</button>
+            </div>
+          </div>
+
+          <!-- Property Statement -->
+          <div class="report-card">
+            <div class="report-card-header">
+              <div class="report-icon blue">📑</div>
+              <div><div class="report-card-title">Property Statement</div></div>
+            </div>
+            <div class="report-card-desc">
+              <span>Shows all property-related payments</span>
+              <span>Includes only paid transactions</span>
+              <span>Default accounting: cash basis</span>
+            </div>
+            <div class="report-card-footer">
+              <span class="tag tag-gold">Cash</span>
+              <button class="view-btn">View →</button>
+            </div>
+          </div>
+
+          <!-- 1099 Tax Form -->
+          <div class="report-card" onclick="showScreen('form1099')">
+            <div class="report-card-header">
+              <div class="report-icon gold">🗂️</div>
+              <div><div class="report-card-title">KRA Tax Form (P9)</div></div>
+            </div>
+            <div class="report-card-desc">
+              <span>Prepares you for tax season filing</span>
+              <span>Creates forms for Service Pros & Owners</span>
+              <span>Sends digital copies to recipients</span>
+            </div>
+            <div class="report-card-footer">
+              <span class="tag tag-green">KRA P9</span>
+              <button class="view-btn" onclick="event.stopPropagation();showScreen('form1099')">View →</button>
+            </div>
+          </div>
+
+          <!-- Tenant Screening -->
+          <div class="report-card">
+            <div class="report-card-header">
+              <div class="report-icon green">🔍</div>
+              <div><div class="report-card-title">Tenant Screening</div></div>
+            </div>
+            <div class="report-card-desc">
+              <span>Helps find and review screening reports</span>
+              <span>Search by provider or package</span>
+              <span>See the status of each report</span>
+            </div>
+            <div class="report-card-footer">
+              <span></span>
+              <button class="view-btn">View →</button>
+            </div>
+          </div>
+
+          <!-- Operating Statement -->
+          <div class="report-card">
+            <div class="report-card-header">
+              <div class="report-icon blue">📊</div>
+              <div><div class="report-card-title">Operating Statement</div></div>
+            </div>
+            <div class="report-card-desc">
+              <span>Complete income & expense summary</span>
+              <span>Net operating income calculation</span>
+              <span>Ideal for investor reporting</span>
+            </div>
+            <div class="report-card-footer">
+              <span class="tag tag-gold">Investor</span>
+              <button class="view-btn">View →</button>
+            </div>
+          </div>
+
+          <!-- Contacts -->
+          <div class="report-card">
+            <div class="report-card-header">
+              <div class="report-icon gold">📞</div>
+              <div><div class="report-card-title">Contacts Information</div></div>
+            </div>
+            <div class="report-card-desc">
+              <span>Full directory of tenants & owners</span>
+              <span>Service professionals contacts</span>
+            </div>
+            <div class="report-card-footer">
+              <span></span>
+              <button class="view-btn">View →</button>
+            </div>
+          </div>
+
+          <!-- Maintenance Requests -->
+          <div class="report-card">
+            <div class="report-card-header">
+              <div class="report-icon blue">🔧</div>
+              <div><div class="report-card-title">Maintenance Requests</div></div>
+            </div>
+            <div class="report-card-desc">
+              <span>Open, in-progress & closed tickets</span>
+              <span>Cost summary per property unit</span>
+            </div>
+            <div class="report-card-footer">
+              <span></span>
+              <button class="view-btn">View →</button>
+            </div>
+          </div>
+
+          <!-- Vacancy Report -->
+          <div class="report-card">
+            <div class="report-card-header">
+              <div class="report-icon green">🏚️</div>
+              <div><div class="report-card-title">Vacancy Report</div></div>
+            </div>
+            <div class="report-card-desc">
+              <span>Current vacant units & lost revenue</span>
+              <span>Days vacant per unit</span>
+              <span>Historical occupancy rates</span>
+            </div>
+            <div class="report-card-footer">
+              <span></span>
+              <button class="view-btn">View →</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div><!-- /screen-grid -->
+
+
+    <!-- ═══════════════════════════════════════════════
+         SCREEN 2: RENTABILITY REPORT
+    ══════════════════════════════════════════════════ -->
+    <div id="screen-rentability" class="screen">
+      <div class="page-header">
+        <div>
+          <div class="breadcrumb">Dashboard / <span onclick="showScreen('grid')" style="cursor:pointer">Reports</span> / <span>Rentability Report</span></div>
+          <div class="page-title">Rentability Report</div>
+          <div class="page-subtitle">Purchase a detailed rental market analysis for any property in your portfolio</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-outline" onclick="showScreen('grid')">← Back to Reports</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="step-form-layout">
+          <!-- Left: Features -->
+          <div>
+            <div class="side-panel" style="position:static; margin-bottom:20px;">
+              <div class="side-panel-header">
+                <div class="side-panel-title">What's included in this report?</div>
+                <div class="side-panel-subtitle">Comprehensive Kenyan rental market intelligence</div>
+              </div>
+              <div class="side-panel-body" style="padding:0;">
+                <div class="rentability-features" style="padding:0 20px;">
+                  <div class="rentability-feature">
+                    <div class="rentability-feature-icon">🗺️</div>
+                    <div>
+                      <div class="rentability-feature-title">Rental Saturation</div>
+                      <div class="rentability-feature-desc">A detailed snapshot of the local Nairobi market, with property-specific vacancy rate estimates and rental saturation benchmarks in the area.</div>
+                    </div>
+                  </div>
+                  <div class="rentability-feature">
+                    <div class="rentability-feature-icon">📈</div>
+                    <div>
+                      <div class="rentability-feature-title">Rent Trends</div>
+                      <div class="rentability-feature-desc">Localized comparable properties and days on market data. Historical rent trends at the county and city level for available Kenyan markets.</div>
+                    </div>
+                  </div>
+                  <div class="rentability-feature">
+                    <div class="rentability-feature-icon">📍</div>
+                    <div>
+                      <div class="rentability-feature-title">Neighbourhood Comparison</div>
+                      <div class="rentability-feature-desc">Gross yield data by neighbourhood to compare performance of the subject property with others in the surrounding area.</div>
+                    </div>
+                  </div>
+                </div>
+                <div style="padding:16px 20px; border-top:1px solid var(--border);">
+                  <span class="view-sample">👁 View sample report →</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Purchase Form -->
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <!-- Property Info -->
+            <div class="config-section">
+              <div class="config-section-title">Property Information</div>
+              <div class="config-section-sub">Select the property to analyse</div>
+              <div class="form-group" style="margin-bottom:12px;">
+                <div class="form-label">Property *</div>
+                <select class="form-control">
+                  <option>Kilimani Heights — Apt 4B</option>
+                  <option>Westlands Tower — Unit 12</option>
+                  <option>Karen Villa — Block C</option>
+                  <option>Lavington Court — Studio A</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <div class="form-label">Bedrooms *</div>
+                  <select class="form-control">
+                    <option>1</option><option>2</option><option>3</option><option>4+</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <div class="form-label">Bathrooms *</div>
+                  <select class="form-control">
+                    <option>1</option><option>1.5</option><option>2</option><option>3</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <div class="form-label">Size (sqft)</div>
+                  <input type="number" class="form-control" value="1200" placeholder="sqft">
+                </div>
+              </div>
+            </div>
+
+            <!-- Payment -->
+            <div class="config-section">
+              <div class="config-section-title">Payment Method</div>
+              <div class="config-section-sub">Choose how to pay for this report</div>
+              <div class="payment-options">
+                <div class="payment-option selected">
+                  <div class="payment-option-header">
+                    <input type="radio" name="pay" checked> M-Pesa / Mobile Money
+                  </div>
+                  <div class="payment-method-row">
+                    <span class="payment-chip mpesa active">📱 M-Pesa</span>
+                    <span class="payment-chip">📱 Airtel Money</span>
+                  </div>
+                </div>
+                <div class="payment-option">
+                  <div class="payment-option-header">
+                    <input type="radio" name="pay"> Saved Card
+                  </div>
+                  <select class="form-control" style="margin-top:8px; font-size:12px;">
+                    <option>•••• •••• •••• 5081</option>
+                  </select>
+                </div>
+                <div class="payment-option">
+                  <div class="payment-option-header">
+                    <input type="radio" name="pay"> Enter New Card
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Total & CTA -->
+            <div class="config-section" style="background: var(--cream);">
+              <div class="total-row">
+                <span>Total</span>
+                <span class="total-amount"><span class="kes-badge">KES</span>2,499</span>
+              </div>
+              <div style="font-size:11px; color:var(--slate); margin-top:6px; margin-bottom:14px;">
+                By purchasing you agree to the Mwarokin Estates Terms of Service
+              </div>
+              <button class="btn btn-gold" style="width:100%; justify-content:center; padding:12px;" onclick="showScreen('success')">
+                🛒 Purchase Report
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /screen-rentability -->
+
+
+    <!-- ═══════════════════════════════════════════════
+         SCREEN 3: TAX PREPARATION
+    ══════════════════════════════════════════════════ -->
+    <div id="screen-tax" class="screen">
+      <div class="page-header">
+        <div>
+          <div class="breadcrumb">Dashboard / <span onclick="showScreen('grid')" style="cursor:pointer">Reports</span> / <span>Tax Preparation</span></div>
+          <div class="page-title">Tax Preparation Report</div>
+          <div class="page-subtitle">Generate a KRA-ready income and expense summary for your properties</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-outline btn-sm">ℹ️ Info</button>
+          <button class="btn btn-outline btn-sm">🔒 Lock</button>
+          <button class="btn btn-outline" onclick="showScreen('grid')">← Back</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="step-form-main">
+
+          <!-- Step 1 -->
+          <div class="step-block active-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <div class="step-title">Date Range</div>
+              <div class="step-subtitle">Select a preset or a custom date range for your tax period</div>
+              <div class="form-row">
+                <div class="form-group">
+                  <div class="form-label">Presets</div>
+                  <select class="form-control">
+                    <option>All time</option>
+                    <option>Current Financial Year (Jul–Jun)</option>
+                    <option>Last Financial Year</option>
+                    <option>Custom range</option>
+                    <option>Q1 2025</option>
+                    <option>Q2 2025</option>
+                    <option>Q3 2025</option>
+                    <option>Q4 2025</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <div class="form-label">Date From *</div>
+                  <input type="date" class="form-control" value="2025-07-01">
+                </div>
+                <div class="form-group">
+                  <div class="form-label">Date To *</div>
+                  <input type="date" class="form-control" value="2026-06-30">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="step-block">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <div class="step-title">Data — Filter Properties</div>
+              <div class="step-subtitle">Filter which properties to include in this report</div>
+              <div class="form-row" style="margin-bottom:10px;">
+                <div class="form-group">
+                  <div class="form-label">Property</div>
+                  <select class="form-control">
+                    <option>All Properties</option>
+                    <option>Kilimani Heights</option>
+                    <option>Westlands Tower</option>
+                    <option>Karen Villa</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <div class="form-label">Owner</div>
+                  <select class="form-control">
+                    <option>All Owners</option>
+                    <option>Robin Bina Mwarema</option>
+                    <option>Khafafa & Associates</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-note warning">
+                ⚠️ <span><strong>Note:</strong> Preview is only available per property. Select a specific property to preview before downloading.</span>
+              </div>
+              <div style="margin-top:10px;">
+                <label class="checkbox-wrap">
+                  <input type="checkbox" checked> Include hidden invoices
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="step-block">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <div class="step-title">Accounting Type</div>
+              <div class="step-subtitle">Choose between cash-based accounting and accrual accounting type</div>
+              <div class="radio-group">
+                <label class="radio-option">
+                  <input type="radio" name="accounting" value="accrual"> Accrual
+                </label>
+                <label class="radio-option selected">
+                  <input type="radio" name="accounting" value="cash" checked> Cash
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="step-block">
+            <div class="step-number">4</div>
+            <div class="step-content">
+              <div class="step-title">Expense Section Format</div>
+              <div class="step-subtitle">
+                Expenses can be shown by KRA Schedule or regular system categories. The KRA Schedule format organises expenses to match the Kenya Revenue Authority's rental income reporting form. 
+                <a href="#" style="color:var(--forest-light); font-weight:600;">Learn more →</a>
+              </div>
+              <div class="toggle-wrap" onclick="this.querySelector('.toggle').classList.toggle('on')">
+                <div class="toggle on"></div>
+                <span>KRA Schedule Format</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 5 -->
+          <div class="step-block">
+            <div class="step-number">5</div>
+            <div class="step-content">
+              <div class="step-title">Report Format</div>
+              <div class="step-subtitle">Choose how you want to receive the report</div>
+              <div class="radio-group">
+                <label class="radio-option selected">
+                  <input type="radio" name="format" value="pdf" checked> PDF Download
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="format" value="excel"> Excel (.xlsx)
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="format" value="email"> Email to Owner
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-outline" onclick="showScreen('grid')">Cancel</button>
+            <button class="btn btn-primary">👁 Preview</button>
+            <button class="btn btn-gold">⬇️ Download Report</button>
+          </div>
+        </div>
+      </div>
+    </div><!-- /screen-tax -->
+
+
+    <!-- ═══════════════════════════════════════════════
+         SCREEN 4: 1099 / KRA P9 TAX FORM
+    ══════════════════════════════════════════════════ -->
+    <div id="screen-form1099" class="screen">
+      <div class="page-header">
+        <div>
+          <div class="breadcrumb">Dashboard / <span onclick="showScreen('grid')" style="cursor:pointer">Reports</span> / <span>KRA P9 Tax Form</span></div>
+          <div class="page-title">KRA P9 Tax Form</div>
+          <div class="page-subtitle">Generate, verify and distribute annual tax forms to service professionals and property owners</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-outline btn-sm">ℹ️</button>
+          <button class="btn btn-outline" onclick="showScreen('grid')">← Back</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="two-col-step-form">
+          <!-- Features -->
+          <div class="tax-features">
+            <div class="tax-feature-item">
+              <div class="tax-feature-icon">📝</div>
+              <div>
+                <div class="tax-feature-title">P9 Form Generation</div>
+                <div class="tax-feature-desc">We provide the P9A which is used for Service Professionals and P9B which is used for Property Owners — both in KRA-compliant format for annual tax filing.</div>
+              </div>
+            </div>
+            <div class="tax-feature-item">
+              <div class="tax-feature-icon">✅</div>
+              <div>
+                <div class="tax-feature-title">Determining Amounts</div>
+                <div class="tax-feature-desc">Verify your tax amounts and check if all recipients' information is added before e-filing to KRA's iTax portal. Ensure PAYE and WHT figures are accurate.</div>
+              </div>
+            </div>
+            <div class="tax-feature-item">
+              <div class="tax-feature-icon">📧</div>
+              <div>
+                <div class="tax-feature-title">Send Digital Copies</div>
+                <div class="tax-feature-desc">Send digital copies of P9 forms straight from your Mwarokin account via email or WhatsApp to service professionals and owners.</div>
+              </div>
+            </div>
+            <div class="form-note warning" style="margin-top:4px;">
+              ⚠️ <span>Please note we do <strong>NOT</strong> submit forms directly to KRA. For convenience, forms are saved as PDF and can be printed for mailing or uploaded manually to iTax. <a href="https://www.kra.go.ke" target="_blank" style="color:var(--forest-light)">Visit KRA.go.ke</a> for more information.</span>
+            </div>
+          </div>
+
+          <!-- Config -->
+          <div class="step-form-side-config">
+            <div class="config-section">
+              <div class="config-section-title">Date Range</div>
+              <div class="config-section-sub">Create the P9 with the tax year in the date range</div>
+              <div class="form-group" style="margin-bottom:10px;">
+                <div class="form-label">Presets</div>
+                <select class="form-control">
+                  <option>FY 2025 (Jan–Dec 2025)</option>
+                  <option>FY 2024</option>
+                  <option>FY 2023</option>
+                  <option>Custom range</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <div class="form-label">Date From *</div>
+                  <input type="date" class="form-control" value="2025-01-01">
+                </div>
+                <div class="form-group">
+                  <div class="form-label">Date To *</div>
+                  <input type="date" class="form-control" value="2025-12-31">
+                </div>
+              </div>
+            </div>
+
+            <div class="config-section">
+              <div class="config-section-title">Recipients</div>
+              <div class="config-section-sub">Filter which recipients to include. Maximum 5 contacts at once.</div>
+              <div class="radio-group" style="margin-bottom:12px;">
+                <label class="radio-option selected">
+                  <input type="radio" name="recip" checked> Service Pro
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="recip"> Owner
+                </label>
+              </div>
+              <div class="form-label" style="margin-bottom:6px;">Service Pros (up to 5 at a time)</div>
+              <div class="multi-select">
+                <div class="multi-chip">Kamau Plumbing <span>✕</span></div>
+                <div class="multi-chip">Elite Electricals <span>✕</span></div>
+                <span class="multi-placeholder">Add more…</span>
+              </div>
+            </div>
+
+            <div class="config-section">
+              <div class="config-section-title">Delivery Method</div>
+              <div class="config-section-sub">How to send the completed P9 forms</div>
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <label class="checkbox-wrap"><input type="checkbox" checked> Download as PDF</label>
+                <label class="checkbox-wrap"><input type="checkbox"> Email to recipient</label>
+                <label class="checkbox-wrap"><input type="checkbox"> WhatsApp (Kenya)</label>
+              </div>
+            </div>
+
+            <div class="form-actions" style="justify-content:stretch;">
+              <button class="btn btn-gold" style="flex:1; justify-content:center;">⬇️ Generate P9 Forms</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /screen-form1099 -->
+
+
+    <!-- ═══════════════════════════════════════════════
+         SCREEN 5: PURCHASE SUCCESS
+    ══════════════════════════════════════════════════ -->
+    <div id="screen-success" class="screen">
+      <div class="page-header">
+        <div>
+          <div class="breadcrumb">Dashboard / <span onclick="showScreen('grid')" style="cursor:pointer">Reports</span> / <span>Rentability Report</span></div>
+          <div class="page-title">Purchase Complete</div>
+          <div class="page-subtitle">Your rentability report has been generated and is ready to download</div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="step-form-layout">
+          <div>
+            <!-- Success Toast -->
+            <div class="success-toast">
+              <div class="success-toast-title">You have successfully purchased the report!</div>
+              <div class="success-toast-desc">
+                The Rentability Report for <strong>Kilimani Heights — Apt 4B</strong> is ready. We have added the report to your <a href="#">property</a>. You can also view the report by clicking the button below.
+              </div>
+              <div class="success-toast-actions">
+                <button class="btn btn-outline" onclick="showScreen('grid')">← Back to Reports</button>
+                <button class="btn btn-gold">⬇️ Download Report</button>
+              </div>
+            </div>
+
+            <!-- Property details -->
+            <div class="side-panel" style="position:static;">
+              <div class="side-panel-header">
+                <div class="side-panel-title">Property Information</div>
+                <div class="side-panel-subtitle">Kilimani Heights — Apt 4B, Nairobi</div>
+              </div>
+              <div class="side-panel-body">
+                <div class="form-row">
+                  <div class="info-field" style="flex:1;">
+                    <div class="info-field-label">Type</div>
+                    <div class="info-field-value">Apartment</div>
+                  </div>
+                  <div class="info-field" style="flex:1;">
+                    <div class="info-field-label">Year Built</div>
+                    <div class="info-field-value">2019</div>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="info-field" style="flex:1;">
+                    <div class="info-field-label">Size (sqft)</div>
+                    <div class="info-field-value">1,200</div>
+                  </div>
+                  <div class="info-field" style="flex:1;">
+                    <div class="info-field-label">Bedrooms</div>
+                    <div class="info-field-value">2</div>
+                  </div>
+                  <div class="info-field" style="flex:1;">
+                    <div class="info-field-label">Bathrooms</div>
+                    <div class="info-field-value">1.5</div>
+                  </div>
+                </div>
+                <hr class="side-panel-divider">
+                <div class="info-field">
+                  <div class="info-field-label">Mwarokin Estimate</div>
+                  <div style="background:linear-gradient(135deg,var(--forest),var(--forest-light)); color:var(--gold-light); font-family:'Playfair Display',serif; font-size:20px; font-weight:700; padding:10px 14px; border-radius:8px; display:inline-block;">KES 85,000 / mo</div>
+                </div>
+                <div class="form-row">
+                  <div class="info-field" style="flex:1;">
+                    <div class="info-field-label">Confidence Score</div>
+                    <div style="background:rgba(201,168,76,0.12); color:#7A5C0A; font-weight:700; padding:5px 10px; border-radius:6px; display:inline-block; font-size:14px; border:1px solid rgba(201,168,76,0.3);">89.0%</div>
+                  </div>
+                  <div class="info-field" style="flex:1;">
+                    <div class="info-field-label">Est. Vacancy Rate</div>
+                    <div style="background:rgba(201,168,76,0.12); color:#7A5C0A; font-weight:700; padding:5px 10px; border-radius:6px; display:inline-block; font-size:14px; border:1px solid rgba(201,168,76,0.3);">3.74%</div>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="info-field" style="flex:1;">
+                    <div class="info-field-label">Radius Searched</div>
+                    <div class="info-field-value">3.2 km</div>
+                  </div>
+                  <div class="info-field" style="flex:1;">
+                    <div class="info-field-label"># of Comps</div>
+                    <div class="info-field-value">36</div>
+                  </div>
+                  <div class="info-field" style="flex:1;">
+                    <div class="info-field-label">GLA sqft vs Comps</div>
+                    <div class="info-field-value">Smaller &lt; 80%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right mini preview -->
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <div class="config-section">
+              <div class="config-section-title">📊 Report Preview Summary</div>
+              <div class="config-section-sub">Key findings from your Rentability Report</div>
+              <div class="report-preview-card">
+                <strong>Rental Benchmarks — Kilimani</strong>
+                Market rent for 2BR units in Kilimani ranges KES 72,000–96,000/mo. Your unit sits at the 65th percentile for the neighbourhood based on size and amenities.
+              </div>
+              <div class="report-preview-card" style="margin-top:10px;">
+                <strong>Days on Market vs Vacancy</strong>
+                Average days on market in Kilimani: <strong>18 days</strong>. County vacancy rate: <strong>4.1%</strong>. Your sub-area vacancy: <strong>3.74%</strong> — below county average (favourable).
+              </div>
+              <div class="report-preview-card" style="margin-top:10px;">
+                <strong>Saturation Benchmarks</strong>
+                Neighbourhood rental saturation: <strong>11.2%</strong>. Nairobi county: <strong>8.1%</strong>. Kilimani Zone saturation: <strong>14.5%</strong> — consider pricing competitively.
+              </div>
+              <div style="margin-top:14px; text-align:center;">
+                <span class="view-sample">👁 View full sample report →</span>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-outline" onclick="showScreen('grid')" style="flex:1; justify-content:center;">View All Reports</button>
+              <button class="btn btn-primary" style="flex:1; justify-content:center;">⬇️ Download PDF</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /screen-success -->
+
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<script>
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+
+  const map = {
+    grid: 0, rentability: 1, tax: 2, form1099: 3, success: 4
+  };
+  document.querySelectorAll('.nav-tab').forEach((t, i) => {
+    t.classList.toggle('active', i === map[id]);
+  });
+
+  document.querySelector('.main').scrollTop = 0;
+}
+
+// Toggle toggles
+document.querySelectorAll('.toggle').forEach(t => {
+  t.parentElement.addEventListener('click', () => t.classList.toggle('on'));
+});
+
+// Payment option selection
+document.querySelectorAll('.payment-option').forEach(opt => {
+  opt.addEventListener('click', function() {
+    document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
+    this.classList.add('selected');
+  });
+});
+</script>
+</body>
+</html>

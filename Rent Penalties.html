@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mwarokin Estates - Rent Penalties & Payment</title>
+  <!-- Tailwind + Fonts + Tabler Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.30.0/dist/tabler-icons.min.css" />
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #f4f7fc; }
+    /* Custom premium styles */
+    .topnav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: white; border-bottom: 1px solid #eef2f6; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+    .topnav-left { font-weight: 700; font-size: 1.3rem; background: linear-gradient(135deg, #1E3A5F, #2C5282); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: -0.3px; }
+    .topnav-right { display: flex; gap: 1rem; align-items: center; }
+    .icon-btn { background: transparent; border: none; font-size: 1.3rem; cursor: pointer; padding: 0.4rem; border-radius: 50%; transition: all 0.2s; color: #2c3e66; display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; }
+    .icon-btn:hover { background: #eef2ff; }
+    .save-btn { background: #1e3a5f; color: white; border: none; padding: 0.5rem 1.2rem; border-radius: 40px; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .save-btn:hover { background: #0f2b46; transform: translateY(-1px); }
+    /* Profile header */
+    .profile-header { background: white; border-radius: 28px; margin: 0 1.5rem 1.8rem 1.5rem; overflow: hidden; box-shadow: 0 12px 30px rgba(0,0,0,0.05); transition: all 0.2s; }
+    .cover-area { position: relative; height: 170px; overflow: hidden; }
+    .cover-img { width: 100%; height: 100%; object-fit: cover; }
+    .cover-pattern { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 60%); pointer-events: none; }
+    .cover-edit-btn { position: absolute; bottom: 12px; right: 20px; background: rgba(255,255,255,0.85); backdrop-filter: blur(8px); border: none; border-radius: 40px; padding: 6px 14px; font-size: 0.75rem; font-weight: 500; display: flex; align-items: center; gap: 6px; cursor: pointer; transition: 0.2s; }
+    .profile-identity { display: flex; align-items: flex-end; gap: 1.5rem; padding: 0 2rem 1.5rem 2rem; flex-wrap: wrap; margin-top: -40px; position: relative; z-index: 3; }
+    .avatar-wrap { position: relative; }
+    .avatar { width: 100px; height: 100px; background: linear-gradient(145deg, #2c5282, #1e3a5f); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.3rem; font-weight: 600; color: white; box-shadow: 0 8px 20px rgba(0,0,0,0.1); border: 3px solid white; cursor: pointer; position: relative; transition: 0.2s; }
+    .avatar-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.2s; color: white; font-size: 1.3rem; border-radius: 50%; }
+    .avatar:hover .avatar-overlay { opacity: 1; }
+    .status-dot { position: absolute; bottom: 5px; right: 6px; width: 18px; height: 18px; background: #2ecc71; border: 3px solid white; border-radius: 50%; }
+    .identity-info { flex: 1; min-width: 220px; }
+    .display-name { font-size: 1.6rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .verify-badge { background: #eef2ff; color: #2563eb; font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 50px; display: inline-flex; align-items: center; gap: 5px; }
+    .user-handle { color: #4b5563; font-size: 0.9rem; margin: 6px 0 8px 0; }
+    .profile-meta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+    .meta-chip { background: #f1f5f9; padding: 5px 12px; border-radius: 30px; font-size: 0.75rem; font-weight: 500; color: #1e293b; display: inline-flex; align-items: center; gap: 6px; }
+    .profile-actions { display: flex; gap: 12px; align-items: center; }
+    .share-btn, .edit-profile-btn { background: white; border: 1px solid #cbd5e1; padding: 8px 18px; border-radius: 40px; font-weight: 500; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+    .edit-profile-btn { background: #f8fafc; color: #1e3a5f; border-color: #cbd5e1; }
+    .share-btn:hover, .edit-profile-btn:hover { background: #eef2ff; transform: translateY(-1px); }
+    /* card styling */
+    .premium-card { background: white; border-radius: 28px; box-shadow: 0 12px 30px rgba(0,0,0,0.04); transition: 0.2s; padding: 1.6rem; height: 100%; border: 1px solid #edf2f7; }
+    .glass-stat { background: #f9fbfd; border-radius: 1.5rem; padding: 1rem; }
+    .due-badge { font-size: 0.7rem; font-weight: 600; border-radius: 40px; padding: 4px 12px; display: inline-block; }
+    button:active { transform: scale(0.97); }
+    .penalty-number { font-weight: 800; background: linear-gradient(135deg, #b91c1c, #7f1a1a); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    @keyframes fadeSlide { from { opacity: 0; transform: translateY(10px);} to { opacity: 1; transform: translateY(0);} }
+    .animate-up { animation: fadeSlide 0.45s ease-out; }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- TOP NAV (exactly as snippet) -->
+  <div class="topnav">
+    <div class="topnav-left">🏡 Mwarokin Estates · My Profile</div>
+    <div class="topnav-right">
+      <button class="icon-btn" title="Notifications" onclick="toastMsg('🔔 Notifications: Rent due reminder in 3 days','info')"><i class="ti ti-bell"></i></button>
+      <button class="icon-btn" title="Preview profile" onclick="toastMsg('Preview mode — public view would show limited info','info')"><i class="ti ti-eye"></i></button>
+      <button class="save-btn" onclick="saveProfileToast()"><i class="ti ti-check"></i> Save changes</button>
+    </div>
+  </div>
+
+  <!-- PROFILE HEADER (exactly as provided, upgraded with function) -->
+  <div class="profile-header animate-up">
+    <div class="cover-area">
+      <img class="cover-img" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=60" alt="Cover photo">
+      <div class="cover-pattern"></div>
+      <button class="cover-edit-btn" onclick="toastMsg('Cover photo upload opened (demo)','success')"><i class="ti ti-camera"></i> Change cover</button>
+    </div>
+    <div class="profile-identity">
+      <div class="avatar-wrap">
+        <div class="avatar" onclick="toastMsg('Profile photo upload demo','success')">
+          RM
+          <div class="avatar-overlay"><i class="ti ti-camera"></i></div>
+        </div>
+        <div class="status-dot" title="Online"></div>
+      </div>
+      <div class="identity-info">
+        <div class="display-name">
+          Robin Mwarema
+          <span class="verify-badge"><i class="ti ti-rosette-discount-check"></i> Verified</span>
+        </div>
+        <div class="user-handle">@robin.mwarema · Tenant since Jan 2024</div>
+        <div class="profile-meta-row">
+          <div class="meta-chip"><i class="ti ti-map-pin"></i> Nairobi, Kenya</div>
+          <div class="meta-chip"><i class="ti ti-calendar"></i> Joined 18 months ago</div>
+          <div class="meta-chip"><i class="ti ti-star"></i> 4.8 tenant rating</div>
+          <div class="meta-chip"><i class="ti ti-clock"></i> Responds in ~2 hrs</div>
+        </div>
+      </div>
+      <div class="profile-actions">
+        <button class="share-btn" onclick="copyProfileLink()"><i class="ti ti-share"></i> Share</button>
+        <button class="edit-profile-btn" onclick="toastMsg('Edit profile (demo)','success')"><i class="ti ti-pencil"></i> Edit profile</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN DASHBOARD: Rent Penalty Engine + Payment hub -->
+  <div class="max-w-7xl mx-auto px-4 md:px-6 pb-12">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-7">
+      <!-- LEFT COLUMN: rent & penalty details -->
+      <div class="lg:col-span-2 space-y-6">
+        <div class="premium-card">
+          <div class="flex flex-wrap justify-between items-start gap-3 border-b border-gray-100 pb-4 mb-4">
+            <div>
+              <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2"><i class="ti ti-currency-dollar text-blue-700"></i> Rent & Penalty Center</h2>
+              <p class="text-gray-500 text-sm mt-1">Mwarokin late fee policy: 5% flat + 0.5% daily after 3-day grace period</p>
+            </div>
+            <div class="bg-blue-50 rounded-full px-4 py-1.5 text-sm font-medium text-blue-800"><i class="ti ti-calendar-clock"></i> Current billing: <span id="currentMonthDisplay">August 2025</span></div>
+          </div>
+          
+          <!-- editable rent amount -->
+          <div class="mb-5 flex flex-wrap gap-4 items-end justify-between">
+            <div class="flex-1 min-w-[160px]">
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Monthly rent (USD)</label>
+              <div class="flex items-center gap-2 mt-1">
+                <span class="text-2xl font-bold">$</span>
+                <input type="number" id="rentAmountInput" value="1250" step="50" class="text-2xl font-bold w-36 border-b-2 border-gray-200 focus:border-blue-500 outline-none bg-transparent p-1">
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-xs text-gray-400">Due date: 5th of each month</div>
+              <div class="text-xs text-gray-400">Grace period: until 8th</div>
+            </div>
+          </div>
+
+          <!-- Penalty breakdown card -->
+          <div class="bg-gradient-to-r from-gray-50 to-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+            <div class="flex justify-between items-start flex-wrap gap-3">
+              <div>
+                <p class="text-gray-500 text-sm">Payment status</p>
+                <div class="mt-1 flex items-center gap-2">
+                  <span id="paymentStatusBadge" class="due-badge bg-red-100 text-red-700"><i class="ti ti-alert-triangle"></i> Unpaid · Overdue</span>
+                  <span id="daysOverdueSpan" class="text-xs font-mono bg-gray-100 px-2 py-1 rounded-full"></span>
+                </div>
+                <p class="text-xs text-gray-400 mt-2"><i class="ti ti-info-circle"></i> Penalties apply after grace period (8th).</p>
+              </div>
+              <div class="text-right">
+                <p class="text-sm text-gray-500">Total due today</p>
+                <p class="text-3xl font-extrabold text-gray-800" id="totalDueAmount">$1,250.00</p>
+                <p class="text-xs text-gray-400 mt-1">includes rent + penalties</p>
+              </div>
+            </div>
+            <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+              <div class="bg-white/70 p-3 rounded-xl">
+                <div class="flex justify-between text-sm"><span>Base Rent</span><span class="font-semibold" id="displayBaseRent">$1,250.00</span></div>
+                <div class="flex justify-between text-sm mt-1"><span>Flat late fee (5% of rent)</span><span id="flatPenaltyAmount">$0.00</span></div>
+                <div class="flex justify-between text-sm"><span>Daily penalty (0.5% / day)</span><span id="dailyPenaltyAmount">$0.00</span></div>
+                <div class="border-t border-dashed mt-2 pt-2 flex justify-between font-bold"><span>Total Penalty</span><span id="totalPenaltySpan" class="text-red-600">$0.00</span></div>
+              </div>
+              <div class="bg-blue-50/50 p-3 rounded-xl">
+                <p class="text-xs font-semibold uppercase text-blue-800">Penalty formula</p>
+                <ul class="text-xs text-gray-700 mt-1 space-y-1">
+                  <li>✔️ Grace: due 5th → 8th (no penalty)</li>
+                  <li>⚠️ After 8th: flat 5% of rent + 0.5% daily of rent</li>
+                  <li>💡 Payment resets penalty for current month</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action buttons + payment simulation -->
+          <div class="flex flex-wrap gap-4 mt-6">
+            <button id="payNowBtn" class="bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-xl font-semibold flex items-center gap-2 transition shadow-md"><i class="ti ti-wallet"></i> Pay total due (reset penalty)</button>
+            <button id="resetUnpaidBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-xl font-medium flex items-center gap-2 transition border border-gray-200"><i class="ti ti-refresh"></i> Simulate Unpaid (reset month)</button>
+          </div>
+          <div class="text-xs text-gray-400 mt-4 border-t pt-3">* Payment instantly waives penalties for current billing cycle. Real transactions via Mwarokin Pay.</div>
+        </div>
+
+        <!-- Payment history mockup -->
+        <div class="premium-card">
+          <h3 class="font-bold text-lg flex items-center gap-2"><i class="ti ti-history"></i> Recent activity</h3>
+          <div class="mt-3 space-y-3">
+            <div class="flex justify-between items-center border-b pb-2 text-sm"><span><i class="ti ti-calendar"></i> July 5, 2025</span><span>Rent paid (on time) - $1,250.00</span><span class="text-green-600">✅</span></div>
+            <div class="flex justify-between items-center border-b pb-2 text-sm"><span><i class="ti ti-calendar"></i> June 6, 2025</span><span>Rent + $62.50 late fee paid</span><span class="text-amber-600">⚠️</span></div>
+            <div id="dynamicHistoryLog" class="text-sm text-gray-500 italic pt-1">Current month status: <span id="historyCurrentStatus">unpaid, penalties active</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: Penalty Summary & tenant insights -->
+      <div class="space-y-6">
+        <div class="premium-card bg-gradient-to-br from-white to-blue-50/30">
+          <div class="flex items-center gap-2 text-gray-800 font-bold text-lg"><i class="ti ti-calculator text-blue-600"></i> Penalty snapshot</div>
+          <div class="mt-3 space-y-3">
+            <div class="flex justify-between text-sm"><span class="text-gray-600">📆 Grace end date:</span><span class="font-mono" id="graceEndDisplay">Aug 8, 2025</span></div>
+            <div class="flex justify-between text-sm"><span class="text-gray-600">⏱️ Days overdue (after grace):</span><span id="overdueDaysCount" class="font-bold">0</span></div>
+            <div class="flex justify-between text-sm font-medium"><span>🏷️ Flat penalty:</span><span id="rightFlatPenalty">$0.00</span></div>
+            <div class="flex justify-between text-sm"><span>📈 Daily penalty accrued:</span><span id="rightDailyPenalty">$0.00</span></div>
+            <div class="border-t pt-2 mt-1 flex justify-between font-extrabold text-red-700"><span>⚠️ Total outstanding penalty</span><span id="rightTotalPenalty">$0.00</span></div>
+          </div>
+          <hr class="my-4">
+          <div class="flex justify-between items-center"><span class="text-sm">Current rent protection</span><span class="text-xs bg-green-100 px-2 py-1 rounded-full">Active</span></div>
+          <button class="w-full mt-4 bg-white border border-blue-300 text-blue-700 rounded-xl py-2 text-sm font-medium hover:bg-blue-50 transition" onclick="toastMsg('📞 Contact Mwarokin support for rent relief options','info')"><i class="ti ti-headset"></i> Need payment assistance?</button>
+        </div>
+
+        <div class="premium-card">
+          <h3 class="font-semibold flex gap-1 items-center"><i class="ti ti-building"></i> Property details</h3>
+          <div class="mt-2 text-sm space-y-2">
+            <p><span class="text-gray-500">📍 Apartment:</span> Mwarokin Heights, Block C, 12th flr</p>
+            <p><span class="text-gray-500">📅 Lease start:</span> Jan 15, 2024</p>
+            <p><span class="text-gray-500">⚙️ Next inspection:</span> Sep 2025</p>
+            <p><span class="text-gray-500">🏢 Landlord:</span> Mwarokin Asset Management</p>
+          </div>
+          <div class="mt-4 bg-gray-50 rounded-xl p-3 text-center text-xs text-gray-500"><i class="ti ti-file-invoice"></i> Rent statement generated dynamically</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ------------- Mwarokin Premium Rent Penalty Engine -------------
+    // State
+    let rentAmount = 1250;        // USD
+    let lastPaymentMonthKey = "2025-07";  // YYYY-MM format, initial unpaid for August
+    // The current month/year derived from real system date
+    function getCurrentMonthYear() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      return `${year}-${month}`;
+    }
+
+    function getCurrentMonthDisplay() {
+      const now = new Date();
+      return now.toLocaleString('default', { month: 'long', year: 'numeric' });
+    }
+
+    // penalty constants
+    const DUE_DAY = 5;
+    const GRACE_DAYS = 3; // due 5th -> grace until 8th
+    const FLAT_PENALTY_PERCENT = 0.05;   // 5%
+    const DAILY_PENALTY_PERCENT = 0.005; // 0.5% per day
+
+    // Helper: compute days overdue after grace period based on current date
+    function getOverdueDaysAfterGrace() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth(); // 0-index
+      const dueDateThisMonth = new Date(year, month, DUE_DAY);
+      const graceEndDate = new Date(year, month, DUE_DAY + GRACE_DAYS);
+      
+      // if today is on or before grace end => 0 overdue
+      if (today <= graceEndDate) return 0;
+      
+      // calculate difference in days (only after grace end)
+      const diffTime = today - graceEndDate;
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      return diffDays > 0 ? diffDays : 0;
+    }
+
+    // Determine if current month is paid (based on lastPaymentMonthKey)
+    function isCurrentMonthPaid() {
+      const currentKey = getCurrentMonthYear();
+      return lastPaymentMonthKey === currentKey;
+    }
+
+    // Compute penalty amounts (only if current month unpaid, else 0)
+    function computePenalties() {
+      if (isCurrentMonthPaid()) {
+        return { flatPenalty: 0, dailyPenalty: 0, totalPenalty: 0, overdueDays: 0 };
+      }
+      const overdueDays = getOverdueDaysAfterGrace();
+      if (overdueDays <= 0) {
+        return { flatPenalty: 0, dailyPenalty: 0, totalPenalty: 0, overdueDays: 0 };
+      }
+      const flatPenalty = rentAmount * FLAT_PENALTY_PERCENT;
+      const dailyPenalty = rentAmount * DAILY_PENALTY_PERCENT * overdueDays;
+      const totalPenalty = flatPenalty + dailyPenalty;
+      return { flatPenalty, dailyPenalty, totalPenalty, overdueDays };
+    }
+
+    // total amount due
+    function computeTotalDue() {
+      const penalty = computePenalties().totalPenalty;
+      return rentAmount + penalty;
+    }
+
+    // UI update: render all values, penalty displays, status
+    function updateUI() {
+      const currentPaid = isCurrentMonthPaid();
+      const penaltyData = computePenalties();
+      const totalDue = computeTotalDue();
+      const overdueDays = penaltyData.overdueDays;
+      const currentMonthStr = getCurrentMonthDisplay();
+      document.getElementById('currentMonthDisplay').innerText = currentMonthStr;
+      document.getElementById('rentAmountInput').value = rentAmount;
+      document.getElementById('displayBaseRent').innerHTML = `$${rentAmount.toFixed(2)}`;
+      document.getElementById('totalDueAmount').innerHTML = `$${totalDue.toFixed(2)}`;
+      document.getElementById('totalPenaltySpan').innerHTML = `$${penaltyData.totalPenalty.toFixed(2)}`;
+      document.getElementById('flatPenaltyAmount').innerHTML = `$${penaltyData.flatPenalty.toFixed(2)}`;
+      document.getElementById('dailyPenaltyAmount').innerHTML = `$${penaltyData.dailyPenalty.toFixed(2)}`;
+      // right column
+      document.getElementById('rightFlatPenalty').innerHTML = `$${penaltyData.flatPenalty.toFixed(2)}`;
+      document.getElementById('rightDailyPenalty').innerHTML = `$${penaltyData.dailyPenalty.toFixed(2)}`;
+      document.getElementById('rightTotalPenalty').innerHTML = `$${penaltyData.totalPenalty.toFixed(2)}`;
+      document.getElementById('overdueDaysCount').innerHTML = overdueDays;
+      // grace end display
+      const todayDate = new Date();
+      const graceEndObj = new Date(todayDate.getFullYear(), todayDate.getMonth(), DUE_DAY + GRACE_DAYS);
+      document.getElementById('graceEndDisplay').innerText = graceEndObj.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+      
+      // status badge
+      const statusBadge = document.getElementById('paymentStatusBadge');
+      const daysSpan = document.getElementById('daysOverdueSpan');
+      if (currentPaid) {
+        statusBadge.innerHTML = `<i class="ti ti-check-circle"></i> Paid · No penalty`;
+        statusBadge.className = "due-badge bg-green-100 text-green-700";
+        daysSpan.innerHTML = '';
+      } else if (overdueDays > 0) {
+        statusBadge.innerHTML = `<i class="ti ti-alert-triangle"></i> Unpaid · Penalty applied (${overdueDays} days overdue)`;
+        statusBadge.className = "due-badge bg-red-100 text-red-700";
+        daysSpan.innerHTML = `⚠️ ${overdueDays} day(s) overdue after grace`;
+      } else {
+        statusBadge.innerHTML = `<i class="ti ti-clock"></i> Unpaid · Within grace period (no penalty)`;
+        statusBadge.className = "due-badge bg-yellow-100 text-yellow-800";
+        daysSpan.innerHTML = `Grace until ${graceEndObj.toLocaleDateString()}`;
+      }
+      // history status text
+      const historyText = document.getElementById('historyCurrentStatus');
+      if (currentPaid) historyText.innerText = `✅ Paid for ${currentMonthStr} — rent cleared.`;
+      else if (overdueDays > 0) historyText.innerText = `⚠️ Unpaid, penalties active ($${penaltyData.totalPenalty.toFixed(2)} added)`;
+      else historyText.innerText = `📌 Unpaid but within grace period, no penalty yet.`;
+    }
+
+    // Pay total due: simulate payment = set lastPaymentMonthKey to current month, store locally, reset penalty
+    function payTotalDue() {
+      if (isCurrentMonthPaid()) {
+        toastMsg('Rent already paid for current month! No penalty due.', 'info');
+        updateUI();
+        return;
+      }
+      const totalDue = computeTotalDue();
+      // demo: confirm payment
+      if (confirm(`💳 Confirm payment of $${totalDue.toFixed(2)} (Rent + penalties) via Mwarokin Pay? This will clear penalty and mark current month as paid.`)) {
+        lastPaymentMonthKey = getCurrentMonthYear();
+        saveToLocalStorage();
+        updateUI();
+        toastMsg(`✅ Payment successful! $${totalDue.toFixed(2)} received. Thank you, Robin. Penalties cleared.`, 'success');
+        // add virtual log
+        const logDiv = document.getElementById('dynamicHistoryLog');
+        logDiv.innerHTML = `<span class="text-green-700">✓ ${new Date().toLocaleDateString()} - Paid $${totalDue.toFixed(2)} (current month cleared)</span>`;
+      }
+    }
+
+    // Reset to unpaid state (simulate not paid this month, last payment older)
+    function resetUnpaid() {
+      const currentYearMonth = getCurrentMonthYear();
+      // set last payment month to previous month (force current month unpaid)
+      const dateObj = new Date();
+      dateObj.setMonth(dateObj.getMonth() - 1);
+      const prevYear = dateObj.getFullYear();
+      const prevMonth = String(dateObj.getMonth() + 1).padStart(2, '0');
+      lastPaymentMonthKey = `${prevYear}-${prevMonth}`;
+      // ensure not equal to current month
+      if (lastPaymentMonthKey === currentYearMonth) {
+        // fallback
+        lastPaymentMonthKey = `2025-07`;
+      }
+      saveToLocalStorage();
+      updateUI();
+      toastMsg('🔄 Reset to unpaid state: current month penalties recalculated as per due date.', 'info');
+    }
+
+    // persist rent amount & payment status
+    function saveToLocalStorage() {
+      localStorage.setItem('mwarokin_rent_amt', rentAmount.toString());
+      localStorage.setItem('mwarokin_last_payment_month', lastPaymentMonthKey);
+    }
+
+    function loadFromLocalStorage() {
+      const storedRent = localStorage.getItem('mwarokin_rent_amt');
+      if (storedRent && !isNaN(parseFloat(storedRent))) rentAmount = parseFloat(storedRent);
+      const storedPaymentMonth = localStorage.getItem('mwarokin_last_payment_month');
+      if (storedPaymentMonth && storedPaymentMonth.match(/^\d{4}-\d{2}$/)) lastPaymentMonthKey = storedPaymentMonth;
+      // validation: if lastPaymentMonthKey > current month? force roll? but fine.
+      updateUI();
+    }
+
+    // Rent amount change handler
+    function bindEvents() {
+      const rentInput = document.getElementById('rentAmountInput');
+      rentInput.addEventListener('change', function(e) {
+        let newVal = parseFloat(e.target.value);
+        if (isNaN(newVal) || newVal <= 0) newVal = 1250;
+        rentAmount = newVal;
+        saveToLocalStorage();
+        updateUI();
+        toastMsg(`Monthly rent updated to $${rentAmount.toFixed(2)}. Penalties recalculated.`, 'info');
+      });
+      document.getElementById('payNowBtn').addEventListener('click', payTotalDue);
+      document.getElementById('resetUnpaidBtn').addEventListener('click', resetUnpaid);
+    }
+
+    // Toast function (premium)
+    function toastMsg(message, type = 'info') {
+      const toastDiv = document.createElement('div');
+      toastDiv.className = `fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-xl shadow-xl text-white transition-all duration-300 animate-up ${type === 'success' ? 'bg-green-600' : type === 'error' ? 'bg-red-600' : 'bg-blue-700'}`;
+      let icon = type === 'success' ? 'ti-check-circle' : type === 'error' ? 'ti-alert-circle' : 'ti-info-circle';
+      toastDiv.innerHTML = `<i class="ti ${icon} text-lg"></i><span class="text-sm font-medium">${message}</span>`;
+      document.body.appendChild(toastDiv);
+      setTimeout(() => { toastDiv.style.opacity = '0'; setTimeout(() => toastDiv.remove(), 300); }, 3200);
+    }
+
+    // Save profile dummy + copy link
+    window.saveProfileToast = function() { toastMsg('Profile changes saved locally (demo)','success'); };
+    window.copyProfileLink = function() {
+      navigator.clipboard.writeText(window.location.href);
+      toastMsg('Profile link copied to clipboard!','success');
+    };
+    window.toastMsg = toastMsg;
+
+    // initial run
+    loadFromLocalStorage();
+    bindEvents();
+    updateUI();
+    // ensure month detection on date crossing (optional but dynamic)
+    setInterval(() => {
+      const prevPaid = isCurrentMonthPaid();
+      updateUI();
+      if (prevPaid !== isCurrentMonthPaid()) toastMsg('Billing cycle updated. Check your rent status.','info');
+    }, 60000); // check each minute for date crossing
+  </script>
+</body>
+</html>

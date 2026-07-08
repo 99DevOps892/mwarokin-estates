@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Mwarokin Estates - Renovation Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Chart.js CDN for real-time analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-dark: #0b2b3b;
+            --primary: #1e4a6e;
+            --primary-light: #2c6e9e;
+            --accent: #f4a261;
+            --accent-dark: #e76f51;
+            --success: #2a9d8f;
+            --danger: #e63946;
+            --warning: #f4a261;
+            --light-bg: #f8fafc;
+            --card-shadow: 0 12px 28px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.02);
+            --hover-shadow: 0 20px 32px -12px rgba(0, 0, 0, 0.12);
+            --gradient-hero: linear-gradient(135deg, #0b2b3b 0%, #1e4a6e 100%);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+            background: #f4f7fc;
+            color: #1a2c3e;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.98) !important;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            background: linear-gradient(135deg, #0b2b3b, #2c6e9e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .btn-primary-custom {
+            background: var(--primary);
+            border: none;
+            border-radius: 12px;
+            padding: 0.6rem 1.2rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        .btn-primary-custom:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .hero-section {
+            background: var(--gradient-hero);
+            padding: 4rem 0 3rem;
+            color: white;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.2s;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .glass-card {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.2s;
+        }
+
+        .tenant-table th {
+            font-weight: 600;
+            background: #f1f5f9;
+        }
+
+        .badge-pending {
+            background: #fff3e0;
+            color: #e67e22;
+            font-weight: 500;
+        }
+
+        .badge-paid {
+            background: #e0f2e9;
+            color: #2c6e2f;
+        }
+
+        .badge-overdue {
+            background: #ffe6e5;
+            color: #c72535;
+        }
+
+        .real-time-alert {
+            transition: all 0.2s;
+        }
+
+        .form-control, .form-select {
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            padding: 0.7rem 1rem;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(30, 74, 110, 0.15);
+        }
+
+        .footer {
+            background: var(--gradient-hero);
+            color: rgba(255,255,255,0.8);
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: var(--primary);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            opacity: 0;
+            transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 99;
+        }
+
+        .back-to-top.show {
+            opacity: 1;
+        }
+
+        .update-feed {
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .feed-item {
+            border-left: 3px solid var(--accent);
+            padding: 0.7rem;
+            background: #fefcf5;
+            margin-bottom: 0.6rem;
+            border-radius: 12px;
+        }
+
+        .chart-container {
+            max-height: 200px;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold fs-3" href="#">🏢 Mwarokin Estates</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-2">
+                <li class="nav-item"><a class="nav-link fw-semibold" href="#dashboard">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link fw-semibold" href="#rentMgmt">Rent Mgmt</a></li>
+                <li class="nav-item"><a class="nav-link fw-semibold" href="#renovationServices">Renovations</a></li>
+                <li class="nav-item"><a class="nav-link fw-semibold" href="#properties">Properties</a></li>
+                <li class="nav-item"><a class="nav-link fw-semibold" href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero with real-time search & location -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-6" data-aos="fade-up">
+                <h1 class="display-4 fw-bold">Smart Rent & <span class="text-warning">Renovation</span> Hub</h1>
+                <p class="lead mt-3">Real-time rent collection, tenant management, professional renovation services — all in one premium platform for Mwarokin Estates.</p>
+                <div class="d-flex gap-3 mt-4">
+                    <button class="btn btn-light rounded-pill px-4" onclick="document.getElementById('rentMgmt').scrollIntoView({behavior:'smooth'})"><i class="fas fa-key me-2"></i>Manage Tenants</button>
+                    <button class="btn btn-outline-light rounded-pill px-4" onclick="document.getElementById('renovationServices').scrollIntoView({behavior:'smooth'})"><i class="fas fa-hammer me-2"></i>Renovate Now</button>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-up" data-aos-delay="150">
+                <div class="glass-card p-4">
+                    <h5 class="fw-bold"><i class="fas fa-map-pin me-2"></i>Find property & real-time currency</h5>
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-6">
+                            <input type="text" id="searchKeyword" class="form-control" placeholder="Location / property type">
+                        </div>
+                        <div class="col-md-6">
+                            <select id="propertyTypeSelect" class="form-select">
+                                <option>All Types</option>
+                                <option>Residential</option>
+                                <option>Commercial</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-primary w-100" onclick="getLocation()"><i class="fas fa-location-dot"></i> Pin Location</button>
+                        </div>
+                        <div class="col-md-6">
+                            <select id="countrySelectCurrency" class="form-select">
+                                <option value="Kenya">Kenya (KES)</option>
+                                <option value="Nigeria">Nigeria (NGN)</option>
+                                <option value="South Africa">South Africa (ZAR)</option>
+                                <option value="Egypt">Egypt (EGP)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="locationResult" class="mt-3 small bg-light p-2 rounded"></div>
+                    <div id="currencyResult" class="mt-2 small bg-light p-2 rounded"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container mt-5">
+    <!-- DASHBOARD SECTION (Real-time stats) -->
+    <section id="dashboard">
+        <div class="row g-4" id="statsCards">
+            <div class="col-md-3">
+                <div class="stat-card text-center">
+                    <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                    <h3 id="totalTenantsCount">0</h3>
+                    <p class="text-muted">Active Tenants</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card text-center">
+                    <i class="fas fa-coins fa-2x text-success mb-2"></i>
+                    <h3 id="totalMonthlyRent">KES 0</h3>
+                    <p class="text-muted">Expected Monthly Rent</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card text-center">
+                    <i class="fas fa-check-circle fa-2x text-info mb-2"></i>
+                    <h3 id="collectionRate">0%</h3>
+                    <p class="text-muted">Collection Rate</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card text-center">
+                    <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                    <h3 id="overdueCount">0</h3>
+                    <p class="text-muted">Overdue Accounts</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RENT MANAGEMENT CORE (Forms + tenant table) -->
+    <section id="rentMgmt" class="mt-5">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+            <h2 class="fw-bold"><i class="fas fa-file-invoice-dollar me-2"></i>Rent Management Suite</h2>
+            <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addTenantModal"><i class="fas fa-user-plus me-1"></i> Add New Tenant</button>
+        </div>
+        
+        <!-- Tenant Table (real-time updates) -->
+        <div class="glass-card p-0 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table tenant-table mb-0 align-middle">
+                    <thead>
+                        <tr><th>Tenant</th><th>Property</th><th>Monthly Rent (KES)</th><th>Due Day</th><th>Outstanding Balance</th><th>Status</th><th>Action</th></tr>
+                    </thead>
+                    <tbody id="tenantTableBody">
+                        <!-- dynamic -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Real-time payment form & recent transactions -->
+        <div class="row mt-4 g-4">
+            <div class="col-md-6">
+                <div class="glass-card">
+                    <h5 class="fw-bold"><i class="fas fa-hand-holding-usd"></i> Record Payment (Real-time)</h5>
+                    <form id="paymentFormWidget">
+                        <label class="form-label mt-2">Select Tenant</label>
+                        <select id="paymentTenantSelect" class="form-select" required></select>
+                        <label class="form-label mt-2">Amount (KES)</label>
+                        <input type="number" id="paymentAmount" class="form-control" placeholder="Enter amount" required>
+                        <label class="form-label mt-2">Payment Method</label>
+                        <select id="paymentMethod" class="form-select"><option>M-Pesa</option><option>Bank Transfer</option><option>Card</option></select>
+                        <button type="submit" class="btn btn-success w-100 mt-3"><i class="fas fa-check-circle"></i> Pay Rent Now</button>
+                        <div id="paymentFeedback" class="mt-2 small"></div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="glass-card">
+                    <h5 class="fw-bold"><i class="fas fa-history"></i> Recent Transactions (Live)</h5>
+                    <div id="recentPaymentsList" class="update-feed" style="max-height: 240px;">
+                        <!-- payments feed -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RENOVATION SERVICES SECTION + active service forms -->
+    <section id="renovationServices" class="mt-5">
+        <h2 class="fw-bold mb-4"><i class="fas fa-tools me-2"></i>Premium Renovation Services</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="service-card text-center p-4 bg-white rounded-4 shadow-sm h-100">
+                    <i class="fas fa-file-contract fa-3x text-primary mb-3"></i>
+                    <h5>Govt. Approvals</h5>
+                    <p class="text-muted">Fast-track permits & compliance</p>
+                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#renovationModal" data-service="Government Approvals">Request</button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="service-card text-center p-4 bg-white rounded-4 shadow-sm h-100">
+                    <i class="fas fa-paint-roller fa-3x text-primary mb-3"></i>
+                    <h5>Full Renovation</h5>
+                    <p class="text-muted">Interior & exterior remodeling</p>
+                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#renovationModal" data-service="Full Renovation">Request</button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="service-card text-center p-4 bg-white rounded-4 shadow-sm h-100">
+                    <i class="fas fa-camera fa-3x text-primary mb-3"></i>
+                    <h5>Media Preparation</h5>
+                    <p class="text-muted">Professional listing media</p>
+                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#renovationModal" data-service="Media Preparation">Request</button>
+                </div>
+            </div>
+        </div>
+        <!-- Renovation Progress & Live Updates -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="glass-card">
+                    <h5><i class="fas fa-chart-line"></i> Renovation Progress Tracker</h5>
+                    <div class="progress mb-2" style="height: 10px;"><div class="progress-bar bg-warning" style="width: 65%"></div></div>
+                    <p>Current project: Kitchen & Bath remodel – 65% complete</p>
+                    <button id="refreshProgressBtn" class="btn btn-sm btn-secondary"><i class="fas fa-sync-alt"></i> Sync Progress</button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="glass-card">
+                    <h5><i class="fas fa-rss"></i> Live Renovation Feed</h5>
+                    <div id="renovationLiveFeed" class="update-feed">
+                        <div class="feed-item"><small>10:45 AM</small> Cabinets installation in progress</div>
+                        <div class="feed-item"><small>09:20 AM</small> Flooring materials delivered</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Properties -->
+    <section id="properties" class="mt-5">
+        <h2 class="fw-bold">🏡 Featured Properties</h2>
+        <div class="row" id="propertyContainer"></div>
+    </section>
+    
+    <!-- Contact form active -->
+    <section id="contact" class="mt-5 mb-5">
+        <div class="glass-card">
+            <h4><i class="fas fa-envelope"></i> Contact Management</h4>
+            <form id="contactFormReal">
+                <div class="row g-3">
+                    <div class="col-md-6"><input type="text" id="contactName" class="form-control" placeholder="Full Name" required></div>
+                    <div class="col-md-6"><input type="email" id="contactEmail" class="form-control" placeholder="Email" required></div>
+                    <div class="col-12"><textarea id="contactMsg" rows="2" class="form-control" placeholder="Inquiry about rent or renovation..."></textarea></div>
+                    <div class="col-12"><button type="submit" class="btn btn-primary-custom">Send Message <i class="fas fa-paper-plane"></i></button></div>
+                    <div id="contactFeedback" class="small text-success"></div>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+
+<footer class="footer mt-5 pt-4 pb-3 text-center">
+    <p class="mb-0">Mwarokin Estates  © 2026 — Premium Rent & Renovation Software | All Right Reserved.</p>
+</footer>
+<a href="#" class="back-to-top" id="backToTopBtn"><i class="fas fa-arrow-up"></i></a>
+
+<!-- MODALS -->
+<div class="modal fade" id="addTenantModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
+            <div class="modal-header bg-primary text-white"><h5 class="modal-title">➕ Register New Tenant</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <form id="addTenantForm">
+                    <input type="text" id="tenantName" class="form-control mb-2" placeholder="Full name" required>
+                    <input type="text" id="tenantProperty" class="form-control mb-2" placeholder="Property (e.g., Hillside Apartment)" required>
+                    <input type="number" id="monthlyRent" class="form-control mb-2" placeholder="Monthly Rent (KES)" required>
+                    <input type="number" id="dueDay" class="form-control mb-2" placeholder="Due day of month (1-31)" value="5" required>
+                    <button type="submit" class="btn btn-primary w-100">Create Tenant</button>
+                    <div id="addTenantFeedback" class="mt-2"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="renovationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content rounded-4">
+            <div class="modal-header"><h5>Renovation Request</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <form id="renovationRequestForm">
+                    <input type="text" id="renovationServiceName" readonly class="form-control mb-2 bg-light">
+                    <input type="text" id="clientName" class="form-control mb-2" placeholder="Your Name" required>
+                    <input type="text" id="propertyLocation" class="form-control mb-2" placeholder="Property Location" required>
+                    <textarea id="renovDetails" class="form-control" rows="2" placeholder="Project details..."></textarea>
+                    <button type="submit" class="btn btn-warning mt-3 w-100">Submit Request</button>
+                    <div id="renovFeedback" class="small mt-2"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 600, once: true });
+
+    // ---------- REAL-TIME RENT DATA (LocalStorage persistence) ----------
+    let tenants = [];
+    let payments = [];
+    
+    function loadData() {
+        const storedTenants = localStorage.getItem('mwarokin_tenants');
+        const storedPayments = localStorage.getItem('mwarokin_payments');
+        if(storedTenants) tenants = JSON.parse(storedTenants);
+        else {
+            tenants = [
+                { id: 1, name: "Alice Wanjiku", property: "Westland Towers", monthlyRent: 55000, dueDay: 5, outstandingBalance: 55000 },
+                { id: 2, name: "Brian Otieno", property: "Kilimani Suites", monthlyRent: 42000, dueDay: 10, outstandingBalance: 0 },
+                { id: 3, name: "Cecilia Muthoni", property: "Riverside Lofts", monthlyRent: 78000, dueDay: 3, outstandingBalance: 78000 }
+            ];
+        }
+        if(storedPayments) payments = JSON.parse(storedPayments);
+        else payments = [
+            { id: 101, tenantId: 2, amount: 42000, date: new Date().toLocaleDateString(), method: "Bank" }
+        ];
+        recalcBalancesFromPayments();
+        saveAll();
+        renderAll();
+    }
+    
+    function recalcBalancesFromPayments() {
+        tenants.forEach(t => { t.outstandingBalance = t.monthlyRent; });
+        payments.forEach(p => {
+            const tenant = tenants.find(t => t.id === p.tenantId);
+            if(tenant) {
+                let paidAmount = p.amount;
+                tenant.outstandingBalance = Math.max(0, tenant.outstandingBalance - paidAmount);
+            }
+        });
+        tenants.forEach(t => { if(t.outstandingBalance < 0) t.outstandingBalance = 0; });
+    }
+    
+    function saveAll() {
+        localStorage.setItem('mwarokin_tenants', JSON.stringify(tenants));
+        localStorage.setItem('mwarokin_payments', JSON.stringify(payments));
+    }
+    
+    function addTenant(name, property, rent, dueDay) {
+        const newId = Date.now();
+        tenants.push({ id: newId, name, property, monthlyRent: parseFloat(rent), dueDay: parseInt(dueDay), outstandingBalance: parseFloat(rent) });
+        saveAll();
+        renderAll();
+        showToastMessage(`Tenant ${name} added successfully!`, "success");
+    }
+    
+    function recordPayment(tenantId, amount) {
+        const tenant = tenants.find(t => t.id == tenantId);
+        if(!tenant) return false;
+        if(amount <= 0) return false;
+        let remainingDue = tenant.outstandingBalance;
+        let paymentAmount = Math.min(amount, remainingDue);
+        if(paymentAmount <= 0) return false;
+        tenant.outstandingBalance -= paymentAmount;
+        const newPayment = { id: Date.now(), tenantId: tenant.id, amount: paymentAmount, date: new Date().toLocaleString(), method: document.getElementById("paymentMethod")?.value || "M-Pesa" };
+        payments.unshift(newPayment);
+        if(payments.length > 15) payments.pop();
+        saveAll();
+        renderAll();
+        return true;
+    }
+    
+    function renderAll() {
+        renderTenantTable();
+        renderStats();
+        renderRecentPayments();
+        populateTenantDropdowns();
+        renderProperties(); 
+    }
+    
+    function renderTenantTable() {
+        const tbody = document.getElementById('tenantTableBody');
+        if(!tbody) return;
+        tbody.innerHTML = '';
+        tenants.forEach(tenant => {
+            const statusBadge = tenant.outstandingBalance <= 0 ? '<span class="badge bg-success">Paid</span>' : (tenant.outstandingBalance > 0 ? '<span class="badge bg-warning text-dark">Unpaid</span>' : '');
+            const overdueFlag = (tenant.outstandingBalance > 0) ? '<span class="badge bg-danger ms-1">Overdue</span>' : '';
+            const row = `<tr>
+                <td class="fw-semibold">${escapeHtml(tenant.name)}</td>
+                <td>${escapeHtml(tenant.property)}</td>
+                <td>KES ${tenant.monthlyRent.toLocaleString()}</td>
+                <td>Day ${tenant.dueDay}</td>
+                <td class="fw-bold ${tenant.outstandingBalance > 0 ? 'text-danger' : 'text-success'}">KES ${tenant.outstandingBalance.toLocaleString()}</td>
+                <td>${statusBadge} ${overdueFlag}</td>
+                <td><button class="btn btn-sm btn-outline-primary" onclick="quickPayTenant(${tenant.id})"><i class="fas fa-credit-card"></i> Pay</button></td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+    }
+    
+    window.quickPayTenant = (tenantId) => {
+        const tenant = tenants.find(t=>t.id===tenantId);
+        if(!tenant) return;
+        let amount = prompt(`Enter payment amount for ${tenant.name} (Balance: KES ${tenant.outstandingBalance})`, tenant.outstandingBalance);
+        if(amount && !isNaN(amount) && parseFloat(amount)>0) {
+            if(recordPayment(tenantId, parseFloat(amount))) {
+                showToastMessage(`Payment of KES ${amount} recorded!`, "success");
+            } else { alert("Invalid amount or already fully paid"); }
+        }
+    };
+    
+    function renderStats() {
+        document.getElementById('totalTenantsCount').innerText = tenants.length;
+        const totalExpected = tenants.reduce((sum, t)=> sum + t.monthlyRent,0);
+        document.getElementById('totalMonthlyRent').innerText = `KES ${totalExpected.toLocaleString()}`;
+        const totalOutstanding = tenants.reduce((sum,t)=> sum + t.outstandingBalance,0);
+        const collectionRate = totalExpected === 0 ? 100 : ((totalExpected - totalOutstanding)/totalExpected * 100).toFixed(1);
+        document.getElementById('collectionRate').innerText = `${collectionRate}%`;
+        const overdueTenants = tenants.filter(t=> t.outstandingBalance > 0).length;
+        document.getElementById('overdueCount').innerText = overdueTenants;
+    }
+    
+    function renderRecentPayments() {
+        const container = document.getElementById('recentPaymentsList');
+        if(!container) return;
+        if(payments.length===0) { container.innerHTML = '<div class="text-muted">No payments yet</div>'; return; }
+        container.innerHTML = payments.slice(0,8).map(p => {
+            const tenant = tenants.find(t=>t.id===p.tenantId);
+            return `<div class="feed-item"><i class="fas fa-receipt text-success me-2"></i><strong>${tenant?.name || 'Tenant'}</strong> paid KES ${p.amount.toLocaleString()} on ${p.date} via ${p.method}</div>`;
+        }).join('');
+    }
+    
+    function populateTenantDropdowns() {
+        const select = document.getElementById('paymentTenantSelect');
+        if(select) {
+            select.innerHTML = '<option value="">--Select Tenant--</option>' + tenants.map(t => `<option value="${t.id}">${t.name} - ${t.property} (Balance: KES ${t.outstandingBalance})</option>`).join('');
+        }
+    }
+    
+    function showToastMessage(msg, type) {
+        const feedbackDiv = document.getElementById('paymentFeedback');
+        if(feedbackDiv) { feedbackDiv.innerHTML = `<div class="alert alert-${type === 'success'?'success':'danger'} p-2 mt-2">${msg}</div>`; setTimeout(()=>feedbackDiv.innerHTML='',3000);}
+        else alert(msg);
+    }
+    
+    document.getElementById('paymentFormWidget')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const tenantId = document.getElementById('paymentTenantSelect').value;
+        const amount = parseFloat(document.getElementById('paymentAmount').value);
+        if(!tenantId || isNaN(amount) || amount<=0) { showToastMessage("Valid tenant & amount required",'danger'); return; }
+        if(recordPayment(parseInt(tenantId), amount)) {
+            showToastMessage("Payment successful! Updated real-time.",'success');
+            document.getElementById('paymentAmount').value = '';
+        } else { showToastMessage("Payment failed (zero balance or invalid).",'danger'); }
+    });
+    
+    document.getElementById('addTenantForm')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('tenantName').value;
+        const prop = document.getElementById('tenantProperty').value;
+        const rent = parseFloat(document.getElementById('monthlyRent').value);
+        const due = parseInt(document.getElementById('dueDay').value);
+        if(!name || !prop || isNaN(rent) || rent<=0) { alert("Fill all fields"); return; }
+        addTenant(name, prop, rent, due);
+        bootstrap.Modal.getInstance(document.getElementById('addTenantModal')).hide();
+        document.getElementById('addTenantForm').reset();
+    });
+    
+    // Renovation modal active 
+    const renModal = document.getElementById('renovationModal');
+    if(renModal) {
+        renModal.addEventListener('show.bs.modal', (event) => {
+            const button = event.relatedTarget;
+            const service = button.getAttribute('data-service');
+            document.getElementById('renovationServiceName').value = service;
+        });
+        document.getElementById('renovationRequestForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const service = document.getElementById('renovationServiceName').value;
+            const name = document.getElementById('clientName').value;
+            const location = document.getElementById('propertyLocation').value;
+            if(!name || !location) { alert("Please fill name & location"); return; }
+            const feedbackDiv = document.getElementById('renovFeedback');
+            feedbackDiv.innerHTML = `<span class="text-success">✅ Request for ${service} sent! Real-time confirmation. Our team will contact you.</span>`;
+            setTimeout(()=> { bootstrap.Modal.getInstance(renModal).hide(); feedbackDiv.innerHTML=''; }, 1500);
+            // Add to live feed
+            const feed = document.getElementById('renovationLiveFeed');
+            if(feed) feed.insertAdjacentHTML('afterbegin', `<div class="feed-item"><small>Just now</small> New renovation request: ${service} for ${location}</div>`);
+            e.target.reset();
+        });
+    }
+    
+    // Refresh Progress simulation
+    document.getElementById('refreshProgressBtn')?.addEventListener('click', ()=>{
+        const progBar = document.querySelector('.progress-bar');
+        if(progBar) progBar.style.width = "72%";
+        const liveFeed = document.getElementById('renovationLiveFeed');
+        liveFeed.insertAdjacentHTML('afterbegin', `<div class="feed-item"><small>🔄 ${new Date().toLocaleTimeString()}</small> Progress synced: 72% completed (Electrical inspection passed)</div>`);
+    });
+    
+    // Contact form active
+    document.getElementById('contactFormReal')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('contactName').value;
+        const email = document.getElementById('contactEmail').value;
+        if(name && email) {
+            document.getElementById('contactFeedback').innerHTML = `<i class="fas fa-check-circle"></i> Thanks ${name}, your message delivered in real-time!`;
+            setTimeout(()=>document.getElementById('contactFeedback').innerHTML='',4000);
+            e.target.reset();
+        }
+    });
+    
+    // location & currency real-time
+    window.getLocation = function() {
+        if(navigator.geolocation) navigator.geolocation.getCurrentPosition(pos => {
+            document.getElementById('locationResult').innerHTML = `<i class="fas fa-map-marker-alt"></i> Lat: ${pos.coords.latitude.toFixed(4)}, Lng: ${pos.coords.longitude.toFixed(4)} (Nairobi region)`;
+        }, err => document.getElementById('locationResult').innerHTML = "Location access denied, using default: Mwarokin HQ, KE");
+    };
+    const currencyRates = {"Kenya":1,"Nigeria":0.021,"South Africa":0.054,"Egypt":0.019};
+    document.getElementById('countrySelectCurrency')?.addEventListener('change', function(){
+        const country = this.value;
+        const rate = currencyRates[country] || 1;
+        document.getElementById('currencyResult').innerHTML = `💱 1 KES = ${rate} ${country==='Kenya'?'KES':country==='Nigeria'?'NGN':country==='South Africa'?'ZAR':'EGP'} (live estimate)`;
+    });
+    
+    // property display
+    function renderProperties() {
+        const properties = [
+            {img:"https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=250&fit=crop", type:"Modern 3BR Apartment", location:"Westlands", price:"KES 65,000/mo"},
+            {img:"https://images.unsplash.com/photo-1613977257363-707ba9348227?w=400&h=250&fit=crop", type:"Luxury Villa", location:"Runda", price:"KES 250,000/mo"}
+        ];
+        const container = document.getElementById('propertyContainer');
+        if(container) container.innerHTML = properties.map(p => `<div class="col-md-6 mb-3"><div class="card border-0 shadow-sm"><img src="${p.img}" class="card-img-top" style="height:180px;object-fit:cover"><div class="card-body"><h6>${p.type}</h6><p class="text-muted">${p.location}</p><h5 class="text-primary">${p.price}</h5></div></div></div>`).join('');
+    }
+    
+    // Back to top & scroll
+    window.addEventListener('scroll', ()=>{
+        const btn = document.getElementById('backToTopBtn');
+        if(window.scrollY>400) btn.classList.add('show'); else btn.classList.remove('show');
+    });
+    document.getElementById('backToTopBtn')?.addEventListener('click', e=>{e.preventDefault(); window.scrollTo({top:0,behavior:'smooth'});});
+    
+    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;});}
+    
+    loadData();
+    setInterval(()=> { renderStats(); renderRecentPayments(); }, 2000);
+</script>
+</body>
+</html>

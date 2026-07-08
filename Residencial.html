@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Mwarokin Estate - Residencial </title>
+    <!-- Leaflet CSS + JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Font Awesome 6 (free icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts: Poppins + Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4f7fc;
+            color: #1a2c3e;
+            scroll-behavior: smooth;
+        }
+
+        /* premium glassmorphism & refined shadows */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(2px);
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0,0,0,0.02);
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px 28px;
+        }
+
+        /* header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+        .logo-area h1 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800;
+            font-size: 1.9rem;
+            background: linear-gradient(135deg, #1A5F5F, #2C7A47);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+        .logo-area p {
+            font-size: 0.85rem;
+            color: #5b6e7c;
+            letter-spacing: 0.3px;
+        }
+        .badge-live {
+            background: #eef2ff;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #0f4c3a;
+            border: 1px solid #cbdde6;
+        }
+        .badge-live i {
+            color: #22c55e;
+            margin-right: 8px;
+            font-size: 0.8rem;
+        }
+
+        /* stats row */
+        .stats-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        .stat-card {
+            flex: 1;
+            min-width: 160px;
+            background: white;
+            border-radius: 28px;
+            padding: 18px 16px;
+            transition: all 0.2s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 4px rgba(0,0,0,0.02);
+            border: 1px solid #e9edf2;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 30px -12px rgba(0,0,0,0.1);
+        }
+        .stat-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #6c8a9b;
+            margin-bottom: 12px;
+        }
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            font-family: 'Poppins', sans-serif;
+            color: #1C3B2F;
+        }
+        .stat-sub {
+            font-size: 0.75rem;
+            color: #5e7f8c;
+            margin-top: 8px;
+        }
+
+        /* map container premium */
+        .map-section {
+            margin-bottom: 38px;
+        }
+        .map-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .map-title h2 {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        .locate-btn {
+            background: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 60px;
+            font-weight: 500;
+            background: #1e2f3a;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .locate-btn i {
+            margin-right: 8px;
+        }
+        .locate-btn:hover {
+            background: #2c4b3e;
+            transform: scale(1.02);
+        }
+        #estateMap {
+            height: 420px;
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.2);
+            border: 1px solid #e2e8f0;
+            z-index: 1;
+        }
+
+        /* cards grid */
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 32px 0 20px 0;
+            position: relative;
+            display: inline-block;
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 28px;
+            margin-bottom: 40px;
+        }
+        .property-card, .amenity-card {
+            background: white;
+            border-radius: 28px;
+            overflow: hidden;
+            transition: all 0.25s ease;
+            box-shadow: 0 12px 28px -8px rgba(0,0,0,0.08);
+            border: 1px solid #eef2f6;
+        }
+        .property-card:hover, .amenity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 24px 38px -12px rgba(0, 0, 0, 0.15);
+        }
+        .card-img {
+            height: 180px;
+            width: 100%;
+            object-fit: cover;
+            transition: 0.3s;
+        }
+        .card-content {
+            padding: 20px 18px 22px;
+        }
+        .card-content h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .card-content p {
+            color: #5f7f8c;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .badge-amenity {
+            background: #eef6ec;
+            color: #2b6e3c;
+            border-radius: 40px;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        /* live monitoring feed */
+        .feed-panel {
+            background: #1e2a32;
+            border-radius: 32px;
+            padding: 18px 24px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            color: #f0f4f8;
+            box-shadow: 0 20px 30px -12px rgba(0,0,0,0.2);
+        }
+        .feed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #3a4c58;
+            padding-bottom: 14px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+        .feed-header h3 i {
+            margin-right: 12px;
+            color: #4ade80;
+        }
+        .live-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: #10b981;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.3; transform: scale(0.8);}
+            100% { opacity: 1; transform: scale(1.2);}
+        }
+        .feed-list {
+            max-height: 240px;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+        .feed-item {
+            display: flex;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px solid #2c3f48;
+            font-size: 0.9rem;
+            align-items: center;
+        }
+        .feed-time {
+            font-family: monospace;
+            font-size: 0.7rem;
+            background: #2c3f48;
+            padding: 4px 8px;
+            border-radius: 30px;
+            color: #cbd5e1;
+        }
+        .feed-icon {
+            width: 28px;
+            text-align: center;
+            color: #9bb8c9;
+        }
+        .feed-text {
+            flex: 1;
+        }
+        .feed-text strong {
+            color: #facc15;
+        }
+
+        footer {
+            text-align: center;
+            padding: 28px 0 16px;
+            font-size: 0.75rem;
+            color: #7a8f9c;
+            border-top: 1px solid #e0e8ed;
+            margin-top: 28px;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 16px;
+            }
+            .stat-value {
+                font-size: 1.8rem;
+            }
+            .header {
+                flex-direction: column;
+                align-items: start;
+                gap: 12px;
+            }
+        }
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #2c3f48;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #9bb8c9;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- header premium -->
+    <div class="header">
+        <div class="logo-area">
+            <h1><i class="fas fa-building" style="color:#1f6e43; margin-right: 8px;"></i> Mwarokin Estate</h1>
+            <p>Intelligent living · Real-time oversight · Ultra-modern amenities</p>
+        </div>
+        <div class="badge-live">
+            <i class="fas fa-satellite-dish"></i> LIVE MONITORING · SECURE CONNECT
+        </div>
+    </div>
+
+    <!-- KPI dynamic stats (realtime simulation) -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-title"><i class="fas fa-home"></i> TOTAL PROPERTIES</div>
+            <div class="stat-value" id="totalProperties">12</div>
+            <div class="stat-sub">+2 premium units upgraded</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-title"><i class="fas fa-users"></i> RESIDENTS (LIVE)</div>
+            <div class="stat-value" id="liveResidents">248</div>
+            <div class="stat-sub" id="occupancyRate">Occupancy: 83%</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-title"><i class="fas fa-tree"></i> AMENITIES</div>
+            <div class="stat-value">8</div>
+            <div class="stat-sub">Pool, Gym, Club, Parks & more</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-title"><i class="fas fa-exclamation-triangle"></i> ACTIVE ISSUES</div>
+            <div class="stat-value" id="activeIssues">4</div>
+            <div class="stat-sub">monitored & automated alerts</div>
+        </div>
+    </div>
+
+    <!-- MAP with LIVE locations & properties/amenities markers -->
+    <div class="map-section">
+        <div class="map-title">
+            <h2><i class="fas fa-map-marked-alt" style="color:#2a7f4b;"></i> Live Estate Map & Surroundings</h2>
+            <button class="locate-btn" id="locateMeBtn"><i class="fas fa-location-dot"></i> My live location</button>
+        </div>
+        <div id="estateMap"></div>
+        <p style="font-size: 0.75rem; margin-top: 12px; text-align: right;"><i class="fas fa-info-circle"></i> Markers: 🏡 Residential properties &nbsp;&nbsp;✨ Premium amenities around Mwarokin</p>
+    </div>
+
+    <!-- UPGRADED RESIDENTIAL PROPERTIES & AMENITIES (modern images) -->
+    <div class="section-title"><i class="fas fa-crown" style="margin-right: 12px; color:#d4af37;"></i> Premium Residences & Upgraded Living</div>
+    <div class="cards-grid" id="propertiesGrid">
+        <!-- dynamic via js but also static fill to guarantee layout, we'll inject with JS for consistency -->
+    </div>
+
+    <div class="section-title"><i class="fas fa-spa"></i> World‑Class Amenities Around</div>
+    <div class="cards-grid" id="amenitiesGrid">
+        <!-- dynamic amenities cards -->
+    </div>
+
+    <!-- REAL-TIME MONITORING FEED (live scenarios) -->
+    <div class="feed-panel">
+        <div class="feed-header">
+            <h3><i class="fas fa-broadcast-tower"></i> <span class="live-dot"></span> Real‑Time Resident Monitoring</h3>
+            <span style="font-size: 0.7rem; background: #00000030; padding: 4px 12px; border-radius: 40px;"><i class="fas fa-sync-alt"></i> live events stream</span>
+        </div>
+        <div class="feed-list" id="liveFeed">
+            <!-- dynamic feed items -->
+        </div>
+    </div>
+    <footer>
+        <i class="fas fa-shield-alt"></i> Mwarokin Estate Management — Smart monitoring, AI-driven insights, live geolocation & upgraded amenities. © 2025
+    </footer>
+</div>
+
+<script>
+    // ------------------------- DATASETS (properties & amenities with modern images, lat/lng)
+    const estateCenter = [-1.2925, 36.822];   // Mwarokin Estate hub
+    // property points (residences)
+    const propertiesData = [
+        { id: 1, name: "Sunset Pallazio", address: "Mwarokin Boulevard A1", residents: 28, image: "https://picsum.photos/id/106/400/300", lat: -1.292, lng: 36.8212, features: "Smart home ready, private garden" },
+        { id: 2, name: "Emerald Heights", address: "Green Valley Wing", residents: 34, image: "https://picsum.photos/id/164/400/300", lat: -1.2938, lng: 36.8219, features: "Rooftop lounge, EV charging" },
+        { id: 3, name: "The Windsor Manor", address: "Majestic Row", residents: 22, image: "https://picsum.photos/id/42/400/300", lat: -1.2912, lng: 36.8228, features: "Concierge & heated pool" },
+        { id: 4, name: "Serein Lakeview", address: "Lakefront Drive", residents: 41, image: "https://picsum.photos/id/157/400/300", lat: -1.294, lng: 36.8207, features: "Lake access, modern fitness" },
+        { id: 5, name: "Golden Crest Residences", address: "Northgate Estate", residents: 19, image: "https://picsum.photos/id/169/400/300", lat: -1.2905, lng: 36.8232, features: "Panoramic views, coworking hub" },
+        { id: 6, name: "Mwarokin Sky Gardens", address: "Aerial Heights", residents: 53, image: "https://picsum.photos/id/88/400/300", lat: -1.2934, lng: 36.821, features: "Vertical gardens, gym & spa" }
+    ];
+    const amenitiesData = [
+        { id: 1, name: "The Oasis Clubhouse", category: "Social & Events", image: "https://picsum.photos/id/259/400/300", lat: -1.2918, lng: 36.8225, desc: "Infinity pool, co-working lounge" },
+        { id: 2, name: "Vitality Fitness Center", category: "Gym & Wellness", image: "https://picsum.photos/id/143/400/300", lat: -1.2922, lng: 36.8209, desc: "CrossFit, yoga terrace, spa" },
+        { id: 3, name: "Parkside Padel & Tennis", category: "Sports", image: "https://picsum.photos/id/96/400/300", lat: -1.2942, lng: 36.8227, desc: "Floodlit courts + academy" },
+        { id: 4, name: "The Orchard Market Walk", category: "Retail & dining", image: "https://picsum.photos/id/130/400/300", lat: -1.2908, lng: 36.8215, desc: "Artisan cafes, boutiques & pharmacy" }
+    ];
+
+    // ---- helper: render property cards & amenity cards
+    function renderCards() {
+        const propGrid = document.getElementById('propertiesGrid');
+        propGrid.innerHTML = propertiesData.map(prop => `
+            <div class="property-card">
+                <img class="card-img" src="${prop.image}" alt="${prop.name}" loading="lazy">
+                <div class="card-content">
+                    <h3>🏘️ ${prop.name}</h3>
+                    <p><i class="fas fa-location-dot"></i> ${prop.address}</p>
+                    <p><i class="fas fa-user-group"></i> ${prop.residents} residents • ${prop.features}</p>
+                    <span class="badge-amenity"><i class="fas fa-charging-station"></i> upgraded smart tech</span>
+                </div>
+            </div>
+        `).join('');
+        const amenGrid = document.getElementById('amenitiesGrid');
+        amenGrid.innerHTML = amenitiesData.map(amen => `
+            <div class="amenity-card">
+                <img class="card-img" src="${amen.image}" alt="${amen.name}" loading="lazy">
+                <div class="card-content">
+                    <h3>✨ ${amen.name}</h3>
+                    <p><i class="fas fa-tag"></i> ${amen.category}</p>
+                    <p>${amen.desc}</p>
+                    <span class="badge-amenity"><i class="fas fa-check-circle"></i> open 24/7 for residents</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ---- Leaflet map initialization with markers for properties + amenities
+    let map;
+    let userMarker = null;
+    let markersLayer = L.layerGroup(); // to manage custom markers
+
+    function initMap() {
+        map = L.map('estateMap').setView(estateCenter, 16);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> & CartoDB',
+            subdomains: 'abcd',
+            maxZoom: 19,
+        }).addTo(map);
+
+        // custom icons
+        const propertyIcon = L.divIcon({ className: 'custom-div-icon', html: '<i class="fas fa-building" style="background:#1f6e43; color:white; padding:8px; border-radius:30px; font-size:14px; box-shadow:0 2px 8px rgba(0,0,0,0.2);"></i>', iconSize: [32,32], popupAnchor: [0,-10] });
+        const amenityIcon = L.divIcon({ className: 'custom-div-icon', html: '<i class="fas fa-star" style="background:#eab308; color:white; padding:6px 8px; border-radius:30px; font-size:12px; box-shadow:0 2px 8px rgba(0,0,0,0.2);"></i>', iconSize: [28,28] });
+        
+        // residential markers
+        propertiesData.forEach(prop => {
+            const marker = L.marker([prop.lat, prop.lng], { icon: propertyIcon }).addTo(map);
+            marker.bindPopup(`
+                <b>🏡 ${prop.name}</b><br>📍 ${prop.address}<br>👥 ${prop.residents} residents<br>🔧 ${prop.features}<br><i>Real-time occupancy: active</i>
+            `);
+        });
+        // amenities markers
+        amenitiesData.forEach(amen => {
+            const marker = L.marker([amen.lat, amen.lng], { icon: amenityIcon }).addTo(map);
+            marker.bindPopup(`
+                <b>✨ ${amen.name}</b><br>🏷️ ${amen.category}<br>📌 ${amen.desc}<br><span style="color:#15803d;">available 24/7 for residents</span>
+            `);
+        });
+    }
+
+    // geolocation live marker
+    function setupLocationTracking() {
+        const locateBtn = document.getElementById('locateMeBtn');
+        locateBtn.addEventListener('click', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const { latitude, longitude } = position.coords;
+                    if (userMarker) {
+                        map.removeLayer(userMarker);
+                    }
+                    userMarker = L.marker([latitude, longitude], {
+                        icon: L.divIcon({ className: 'user-live-marker', html: '<i class="fas fa-user-circle" style="background:#1e88e5; color:white; padding:6px; border-radius:50px; font-size:18px; border:2px solid white;"></i>', iconSize: [32,32] })
+                    }).addTo(map).bindPopup('<b>📍 Your live location</b><br>You are here — within Mwarokin vicinity').openPopup();
+                    map.setView([latitude, longitude], 15);
+                    // add a mock live feed entry
+                    addFeedEvent(`📍 Live location accessed: you are near estate perimeter`, "fas fa-map-marker-alt");
+                }, () => {
+                    addFeedEvent("⚠️ Location permission denied. Enable for live geo-tracking.", "fas fa-exclamation-circle");
+                });
+            } else {
+                addFeedEvent("❌ Geolocation not supported", "fas fa-ban");
+            }
+        });
+    }
+
+    // ------------------------- REAL-TIME SIMULATION: dynamic residents, active issues, monitoring feed
+    let currentResidents = 248;
+    let currentIssues = 4;
+    const maxCapacity = 300;  // estate capacity
+    
+    // feed event queue & DOM
+    const feedContainer = document.getElementById('liveFeed');
+    function addFeedEvent(message, icon = "fas fa-bell") {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+        const feedDiv = document.createElement('div');
+        feedDiv.className = 'feed-item';
+        feedDiv.innerHTML = `
+            <div class="feed-time">${timeStr}</div>
+            <div class="feed-icon"><i class="${icon}"></i></div>
+            <div class="feed-text">${message}</div>
+        `;
+        feedContainer.prepend(feedDiv);
+        // keep max 15 items
+        while(feedContainer.children.length > 18) feedContainer.removeChild(feedContainer.lastChild);
+    }
+
+    function updateStatsUI() {
+        document.getElementById('liveResidents').innerText = currentResidents;
+        const occupancyPercent = Math.round((currentResidents / maxCapacity) * 100);
+        document.getElementById('occupancyRate').innerHTML = `Occupancy: ${occupancyPercent}% • live flux`;
+        document.getElementById('activeIssues').innerText = currentIssues;
+        // also update occupancy rate text
+    }
+    
+    // real-life events & random flux
+    const eventTemplates = [
+        { msg: "🚪 Resident access at Gate B — ID verified", icon: "fas fa-door-open" },
+        { msg: "🛠️ Maintenance request: AC repair at Sunset Pallazio", icon: "fas fa-tools" },
+        { msg: "📦 Package delivery for Emerald Heights resident", icon: "fas fa-box" },
+        { msg: "🏊 Pool area usage peak: 34 residents", icon: "fas fa-swimmer" },
+        { msg: "🔔 Motion alert: garden wing (secure)", icon: "fas fa-shield-alt" },
+        { msg: "💧 Smart irrigation zone 3 active", icon: "fas fa-water" },
+        { msg: "📢 Community event: fitness challenge at Vitality Gym", icon: "fas fa-calendar-alt" },
+        { msg: "🚨 Security patrol completed: all zones safe", icon: "fas fa-check-circle" },
+        { msg: "⚡ Energy consumption peak — grid optimization active", icon: "fas fa-charging-station" },
+        { msg: "🏠 New resident check-in at Golden Crest Residences", icon: "fas fa-user-plus" },
+    ];
+
+    function simulateRealTimeScenarios() {
+        // update residents: dynamic delta between -3 and +5
+        let delta = Math.floor(Math.random() * 7) - 2;  // -2..4
+        let newRes = currentResidents + delta;
+        if (newRes > maxCapacity) newRes = maxCapacity - 1;
+        if (newRes < 180) newRes = 180;
+        if (newRes !== currentResidents) {
+            let changeMsg = delta > 0 ? `👥 +${delta} residents arrived (live occupancy update)` : `👥 ${delta} residents left estate (visit logs)`;
+            addFeedEvent(changeMsg, "fas fa-users");
+        }
+        currentResidents = newRes;
+        
+        // active issues dynamic: random +-1
+        let issueDelta = Math.floor(Math.random() * 3) - 1;
+        let newIssues = currentIssues + issueDelta;
+        if (newIssues < 1) newIssues = 1;
+        if (newIssues > 8) newIssues = 8;
+        if (newIssues !== currentIssues) {
+            addFeedEvent(`⚠️ Active service tickets now: ${newIssues} (updated from monitoring)`, "fas fa-clipboard-list");
+        }
+        currentIssues = newIssues;
+        updateStatsUI();
+        
+        // random event from templates (70% chance)
+        if (Math.random() < 0.75) {
+            const randEvent = eventTemplates[Math.floor(Math.random() * eventTemplates.length)];
+            addFeedEvent(randEvent.msg, randEvent.icon);
+        } else {
+            // specific resident mention scenario
+            const residentNames = ["Aisha M.", "James K.", "Lina W.", "Omondi R.", "Priya S.", "Ethan N."];
+            const randRes = residentNames[Math.floor(Math.random() * residentNames.length)];
+            addFeedEvent(`📱 ${randRes} submitted amenity feedback via app — 5-star rating`, "fas fa-star");
+        }
+        
+        // additional context: sometimes update property-specific monitoring
+        if (Math.random() < 0.3) {
+            const randomProp = propertiesData[Math.floor(Math.random() * propertiesData.length)];
+            addFeedEvent(`🏡 ${randomProp.name} — energy efficiency report: 12% reduced consumption`, "fas fa-leaf");
+        }
+    }
+    
+    // initial feed welcome + periodic updates
+    function initRealtimeMonitoring() {
+        // initial feed welcome logs
+        addFeedEvent("🟢 Mwarokin Live Monitor active — all systems nominal", "fas fa-microchip");
+        addFeedEvent("📍 Live location map ready — property & amenity markers synced", "fas fa-map");
+        addFeedEvent("👥 Occupancy sensors: real-time resident counting active", "fas fa-chart-line");
+        addFeedEvent("✨ Smart upgrades: New EV chargers & rooftop gardens now live", "fas fa-solar-panel");
+        updateStatsUI();
+        // periodic update every 12 seconds (real-life scenarios)
+        setInterval(() => {
+            simulateRealTimeScenarios();
+        }, 12000);
+        // extra faster micro-update for occupancy feel
+        setInterval(() => {
+            // tiny random nuance for super real feel: small resident change (0.2% probability additional)
+            if (Math.random() < 0.25) {
+                let tinyDelta = Math.random() > 0.5 ? 1 : -1;
+                let newVal = currentResidents + tinyDelta;
+                if (newVal >= 180 && newVal <= maxCapacity) {
+                    currentResidents = newVal;
+                    updateStatsUI();
+                    addFeedEvent(`📊 Live occupancy drift: residents count ${currentResidents} (real-time update)`, "fas fa-chart-simple");
+                }
+            }
+        }, 5000);
+    }
+    
+    // Combine all functionality
+    window.addEventListener('load', () => {
+        renderCards();
+        initMap();
+        setupLocationTracking();
+        initRealtimeMonitoring();
+        // also set total properties number if needed (static but fine)
+        document.getElementById('totalProperties').innerText = propertiesData.length;
+    });
+</script>
+</body>
+</html>

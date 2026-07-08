@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Mwarokin Estates - RBC Onboarding Portal</title>
+  <!-- Tailwind CSS + Font Awesome + Google Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: linear-gradient(135deg, #f6f9fc 0%, #eef2f5 100%); }
+    .step-active { background: #0f3b2c; color: white; border: none; box-shadow: 0 8px 20px -6px rgba(15,59,44,0.2); }
+    .glass-card { background: rgba(255,255,255,0.92); backdrop-filter: blur(2px); border: 1px solid rgba(255,255,255,0.5); }
+    .premium-shadow { box-shadow: 0 20px 35px -12px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.02); }
+    .property-card { transition: all 0.2s ease; border-radius: 1rem; cursor: pointer; }
+    .property-card.selected { border-color: #0f3b2c; background-color: #f0f9f4; box-shadow: 0 4px 12px rgba(15,59,44,0.1); }
+    .file-dropzone:hover { background: #fafafc; }
+    .audit-log { max-height: 220px; overflow-y: auto; }
+    .permission-chip { transition: all 0.1s; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: #0f3b2c; ring: 2px solid #0f3b2c; }
+  </style>
+</head>
+<body class="antialiased p-5 md:p-8">
+
+  <div class="max-w-7xl mx-auto">
+    <!-- Header Branding -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-3">
+      <div>
+        <h1 class="text-3xl font-bold tracking-tight bg-gradient-to-r from-[#0a2e23] to-[#1f6e4a] bg-clip-text text-transparent">Mwarokin Estates</h1>
+        <p class="text-slate-500 text-sm">Premium property management · RBC team onboarding</p>
+      </div>
+      <div class="flex gap-2 items-center bg-white/70 rounded-full px-4 py-2 shadow-sm text-sm text-slate-600">
+        <i class="fas fa-shield-alt text-emerald-700"></i>
+        <span>Secure onboarding portal</span>
+      </div>
+    </div>
+
+    <!-- Main Grid: Steps + (Side audit & permissions can be inside step3, but we keep step container prominent) -->
+    <div class="glass-card premium-shadow rounded-2xl overflow-hidden">
+      <!-- Stepper header -->
+      <div class="border-b border-gray-200 bg-white/50 px-6 py-4">
+        <div class="flex items-center justify-between max-w-md gap-2">
+          <div class="flex items-center gap-3">
+            <div class="step-badge w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all" data-step="1">1</div>
+            <span class="font-medium text-slate-700">Profile & Role</span>
+          </div>
+          <i class="fas fa-chevron-right text-slate-300 text-sm"></i>
+          <div class="flex items-center gap-3">
+            <div class="step-badge w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all" data-step="2">2</div>
+            <span class="font-medium text-slate-700">Property Access</span>
+          </div>
+          <i class="fas fa-chevron-right text-slate-300 text-sm"></i>
+          <div class="flex items-center gap-3">
+            <div class="step-badge w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all" data-step="3">3</div>
+            <span class="font-medium text-slate-700">Permissions & Audit</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dynamic Step Content -->
+      <div id="stepContent" class="p-6 md:p-8 bg-white/40"></div>
+
+      <!-- Navigation Buttons -->
+      <div class="bg-gray-50/80 px-6 py-4 border-t border-gray-200 flex justify-between">
+        <button id="prevBtn" class="px-6 py-2 rounded-xl border border-gray-300 text-slate-600 hover:bg-gray-100 transition disabled:opacity-40 disabled:cursor-not-allowed font-medium"><i class="fas fa-arrow-left mr-2"></i>Back</button>
+        <button id="nextBtn" class="px-6 py-2 rounded-xl bg-[#0f3b2c] text-white shadow-md hover:bg-[#0a2e22] transition font-medium"><i class="fas fa-arrow-right ml-2"></i>Next</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- GLOBAL STATE ----------
+    let currentStep = 1;
+    const totalSteps = 3;
+
+    // Step 1 Data
+    let profile = {
+      fullName: "",
+      role: "caretaker",   // caretaker / fieldAgent
+      email: "",
+      cellPhone: "",
+      idPassportNumber: "",
+      profileImageBase64: null,
+      idDocumentBase64: null,
+      profileImageName: "",
+      idDocName: ""
+    };
+
+    // Step 2 Data : Property assignment
+    let propertyMode = "single";   // "single" or "multiple"
+    // Predefined properties with multi-family flag
+    const availableProperties = [
+      { id: "prop_1", name: "Harmony Heights", type: "Single Family", multiFamily: false, address: "12 Serenity Lane" },
+      { id: "prop_2", name: "Palm Grove Village", type: "Multi-Family Rental", multiFamily: true, address: "450 Palm Blvd" },
+      { id: "prop_3", name: "Cedar Creek Apartments", type: "Multi-Family Rental", multiFamily: true, address: "88 Cedarwood Dr" },
+      { id: "prop_4", name: "Lakeside Villa", type: "Single Family", multiFamily: false, address: "22 Lakeview Rd" },
+      { id: "prop_5", name: "Maple Gardens", type: "Multi-Family Rental", multiFamily: true, address: "101 Maple Ave" }
+    ];
+    let selectedProperties = ["prop_2"];  // default example, but will sync on mode
+    // For single mode store singlePropertyId
+    let singlePropertyId = "prop_2";
+
+    // Audit trail logs
+    let auditLogs = [
+      { timestamp: new Date(), message: "🔐 Onboarding session started", type: "info" }
+    ];
+
+    // Permission Trackers: dynamic checkboxes
+    let permissionOverrides = {
+      viewProperty: true,
+      editPropertyDetails: false,
+      manageTenants: false,
+      accessFinancials: false,
+      viewAuditLogs: true
+    };
+
+    // Helper: Add audit log
+    function addAuditLog(message, type = "info") {
+      auditLogs.unshift({ timestamp: new Date(), message, type });
+      if (currentStep === 3) renderStep3(); // refresh audit UI if visible
+    }
+
+    // Helper to get role label & default permissions based on role
+    function getDefaultPermissionsForRole(role) {
+      if (role === "caretaker") {
+        return { viewProperty: true, editPropertyDetails: false, manageTenants: false, accessFinancials: false, viewAuditLogs: true };
+      } else { // field agent
+        return { viewProperty: true, editPropertyDetails: true, manageTenants: true, accessFinancials: true, viewAuditLogs: true };
+      }
+    }
+
+    // sync permission overrides when role changes
+    function syncPermissionsWithRole() {
+      const def = getDefaultPermissionsForRole(profile.role);
+      permissionOverrides = { ...def };
+      addAuditLog(`Permission template applied for ${profile.role === "caretaker" ? "Caretaker" : "Property Management Field Agent"}: View=${def.viewProperty}, Edit=${def.editPropertyDetails}, Manage Tenants=${def.manageTenants}, Financials=${def.accessFinancials}`);
+    }
+
+    // validation step 1
+    function validateStep1() {
+      if (!profile.fullName.trim()) { alert("Full name required"); return false; }
+      if (!profile.email.trim() || !profile.email.includes("@")) { alert("Valid email required"); return false; }
+      if (!profile.cellPhone.trim()) { alert("Cell phone required"); return false; }
+      if (!profile.idPassportNumber.trim()) { alert("ID/Passport number required"); return false; }
+      return true;
+    }
+
+    function validateStep2() {
+      if (propertyMode === "single" && !singlePropertyId) { alert("Please select a property"); return false; }
+      if (propertyMode === "multiple" && selectedProperties.length === 0) { alert("Please select at least one property"); return false; }
+      return true;
+    }
+
+    // Render based on step
+    function renderStep() {
+      const container = document.getElementById("stepContent");
+      if (!container) return;
+      if (currentStep === 1) renderStep1(container);
+      else if (currentStep === 2) renderStep2(container);
+      else if (currentStep === 3) renderStep3(container);
+      updateStepBadges();
+      updateNavButtons();
+    }
+
+    // Step 1: Details + role + uploads
+    function renderStep1(container) {
+      container.innerHTML = `
+        <div class="space-y-8">
+          <div class="grid md:grid-cols-2 gap-6">
+            <!-- Left column -->
+            <div class="space-y-5">
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Full Name <span class="text-red-500">*</span></label>
+                <input type="text" id="fullName" value="${escapeHtml(profile.fullName)}" placeholder="e.g. James Kamau" class="w-full px-4 py-3 rounded-xl border border-gray-300 bg-white focus:ring-2 focus:ring-emerald-600/30">
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Email Address <span class="text-red-500">*</span></label>
+                <input type="email" id="email" value="${escapeHtml(profile.email)}" placeholder="james@mwarokin.com" class="w-full px-4 py-3 rounded-xl border border-gray-300 bg-white">
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Cell Phone <span class="text-red-500">*</span></label>
+                <input type="tel" id="cellPhone" value="${escapeHtml(profile.cellPhone)}" placeholder="+254 700 123456" class="w-full px-4 py-3 rounded-xl border border-gray-300 bg-white">
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">ID / Passport Number <span class="text-red-500">*</span></label>
+                <input type="text" id="idNumber" value="${escapeHtml(profile.idPassportNumber)}" placeholder="A1234567 / Passport No." class="w-full px-4 py-3 rounded-xl border border-gray-300 bg-white">
+              </div>
+            </div>
+            <!-- Right column: Role + uploads -->
+            <div class="space-y-5">
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">RBC Team Role</label>
+                <div class="flex flex-wrap gap-4">
+                  <label class="flex items-center gap-2 bg-white rounded-xl px-4 py-2 border ${profile.role === 'caretaker' ? 'border-emerald-600 bg-emerald-50' : 'border-gray-200'} cursor-pointer">
+                    <input type="radio" name="role" value="caretaker" ${profile.role === 'caretaker' ? 'checked' : ''} class="w-4 h-4 text-emerald-700"> <span>Caretaker</span>
+                  </label>
+                  <label class="flex items-center gap-2 bg-white rounded-xl px-4 py-2 border ${profile.role === 'fieldAgent' ? 'border-emerald-600 bg-emerald-50' : 'border-gray-200'} cursor-pointer">
+                    <input type="radio" name="role" value="fieldAgent" ${profile.role === 'fieldAgent' ? 'checked' : ''} class="w-4 h-4 text-emerald-700"> <span>Property Management Field Agent</span>
+                  </label>
+                </div>
+              </div>
+              <!-- Upload Image (Profile) -->
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Profile Image</label>
+                <div class="file-dropzone border-2 border-dashed rounded-xl p-3 bg-gray-50 flex items-center gap-4">
+                  <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
+                    ${profile.profileImageBase64 ? `<img src="${profile.profileImageBase64}" class="w-full h-full object-cover">` : '<i class="fas fa-user text-2xl text-gray-400"></i>'}
+                  </div>
+                  <div class="flex-1">
+                    <input type="file" id="profileImageUpload" accept="image/jpeg,image/png,image/jpg" class="hidden">
+                    <button type="button" id="triggerProfileUpload" class="text-sm bg-white border rounded-lg px-3 py-1.5 shadow-sm">Upload photo</button>
+                    <p class="text-xs text-gray-400 mt-1">${profile.profileImageName || "JPG or PNG"}</p>
+                  </div>
+                </div>
+              </div>
+              <!-- ID/Passport Document Upload -->
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">ID / Passport Document (Image)</label>
+                <div class="file-dropzone border-2 border-dashed rounded-xl p-3 bg-gray-50 flex items-center gap-4">
+                  <div class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
+                    ${profile.idDocumentBase64 ? `<img src="${profile.idDocumentBase64}" class="w-full h-full object-cover rounded">` : '<i class="fas fa-id-card text-gray-500"></i>'}
+                  </div>
+                  <div class="flex-1">
+                    <input type="file" id="idDocUpload" accept="image/jpeg,image/png,image/jpg" class="hidden">
+                    <button type="button" id="triggerIdUpload" class="text-sm bg-white border rounded-lg px-3 py-1.5 shadow-sm">Upload ID/Passport</button>
+                    <p class="text-xs text-gray-400 mt-1">${profile.idDocName || "Upload front side"}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bg-amber-50/50 rounded-xl p-3 text-xs text-amber-700 flex gap-2"><i class="fas fa-info-circle mt-0.5"></i> All information is secured & encrypted for RBC compliance.</div>
+        </div>
+      `;
+
+      // Bind events step1
+      document.getElementById("fullName")?.addEventListener("input", (e) => { profile.fullName = e.target.value; });
+      document.getElementById("email")?.addEventListener("input", (e) => { profile.email = e.target.value; });
+      document.getElementById("cellPhone")?.addEventListener("input", (e) => { profile.cellPhone = e.target.value; });
+      document.getElementById("idNumber")?.addEventListener("input", (e) => { profile.idPassportNumber = e.target.value; });
+      const roleRadios = document.querySelectorAll("input[name='role']");
+      roleRadios.forEach(radio => {
+        radio.addEventListener("change", (e) => {
+          const newRole = e.target.value;
+          if (newRole !== profile.role) {
+            profile.role = newRole;
+            addAuditLog(`Role changed to ${newRole === "caretaker" ? "Caretaker" : "Property Management Field Agent"}`);
+            syncPermissionsWithRole();
+          }
+        });
+      });
+
+      // Profile image upload
+      const profileInput = document.getElementById("profileImageUpload");
+      document.getElementById("triggerProfileUpload")?.addEventListener("click", () => profileInput.click());
+      profileInput?.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            profile.profileImageBase64 = ev.target.result;
+            profile.profileImageName = file.name;
+            addAuditLog(`Profile image uploaded: ${file.name}`);
+            renderStep1(container); // re-render to show preview
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+      const idInput = document.getElementById("idDocUpload");
+      document.getElementById("triggerIdUpload")?.addEventListener("click", () => idInput.click());
+      idInput?.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            profile.idDocumentBase64 = ev.target.result;
+            profile.idDocName = file.name;
+            addAuditLog(`ID/Passport document uploaded: ${file.name}`);
+            renderStep1(container);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    // Step 2: View property (One vs Multiple) + Multi Family Rentals highlight
+    function renderStep2(container) {
+      const mode = propertyMode;
+      // Helper to render property selection based on mode
+      const renderPropertySelector = () => {
+        if (mode === "single") {
+          return `
+            <div class="mt-4">
+              <label class="font-semibold text-slate-700 block mb-3">Select a single property</label>
+              <div class="grid md:grid-cols-2 gap-4">
+                ${availableProperties.map(prop => `
+                  <div class="property-card border-2 p-4 rounded-xl cursor-pointer ${singlePropertyId === prop.id ? 'selected border-emerald-600 bg-emerald-50/40' : 'border-gray-200 bg-white'}" data-prop-id="${prop.id}">
+                    <div class="flex justify-between items-start">
+                      <div><i class="fas fa-building text-emerald-700"></i> <span class="font-bold">${escapeHtml(prop.name)}</span></div>
+                      ${prop.multiFamily ? '<span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full"><i class="fas fa-people-arrows"></i> Multi-Family</span>' : '<span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">Single Family</span>'}
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">${prop.address}</p>
+                    <p class="text-xs mt-1">${prop.type}</p>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        } else {
+          return `
+            <div class="mt-4">
+              <label class="font-semibold text-slate-700 block mb-3">Select multiple properties (check all that apply)</label>
+              <div class="grid md:grid-cols-2 gap-4">
+                ${availableProperties.map(prop => `
+                  <div class="border rounded-xl p-4 bg-white transition-all ${selectedProperties.includes(prop.id) ? 'border-emerald-500 bg-emerald-50/30' : 'border-gray-200'}">
+                    <label class="flex items-start gap-3 cursor-pointer">
+                      <input type="checkbox" value="${prop.id}" class="property-checkbox mt-1 w-5 h-5 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500" ${selectedProperties.includes(prop.id) ? 'checked' : ''}>
+                      <div class="flex-1">
+                        <div class="flex justify-between"><span class="font-semibold">${escapeHtml(prop.name)}</span> ${prop.multiFamily ? '<span class="text-xs bg-purple-100 px-2 py-0.5 rounded-full">Multi-Family</span>' : ''}</div>
+                        <p class="text-sm text-gray-500">${prop.address} · ${prop.type}</p>
+                      </div>
+                    </label>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        }
+      };
+
+      container.innerHTML = `
+        <div class="space-y-6">
+          <div class="bg-white/70 rounded-xl p-5">
+            <h3 class="text-lg font-semibold flex items-center gap-2"><i class="fas fa-globe-americas text-emerald-700"></i>Property Access Setup</h3>
+            <p class="text-gray-500 text-sm">Define property view permissions — Single or Multiple property assignment.</p>
+            <div class="mt-4 flex gap-6 border-b pb-3">
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="propMode" value="single" ${propertyMode === 'single' ? 'checked' : ''}> <span>🔹 One Property</span></label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="propMode" value="multiple" ${propertyMode === 'multiple' ? 'checked' : ''}> <span>🔸 Multiple Properties</span></label>
+            </div>
+            <div id="dynamicPropertySelector">${renderPropertySelector()}</div>
+          </div>
+          <div class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-4 text-sm border">
+            <i class="fas fa-tag text-emerald-600 mr-2"></i><strong>Multi-Family Rental Focus</strong> — Properties marked with "Multi-Family" badge support extensive rental portfolios and shared amenity tracking.
+          </div>
+        </div>
+      `;
+
+      // Bind mode radios
+      const modeRadios = document.querySelectorAll("input[name='propMode']");
+      modeRadios.forEach(radio => {
+        radio.addEventListener("change", (e) => {
+          const newMode = e.target.value;
+          if (newMode !== propertyMode) {
+            propertyMode = newMode;
+            addAuditLog(`Property access mode switched to ${newMode === 'single' ? 'Single Property' : 'Multiple Properties'}`);
+            if (propertyMode === "single" && !singlePropertyId) singlePropertyId = availableProperties[0]?.id;
+            if (propertyMode === "multiple" && selectedProperties.length === 0) selectedProperties = [availableProperties[0]?.id].filter(Boolean);
+            renderStep2(container);
+          }
+        });
+      });
+
+      // Add event listeners based on mode
+      if (propertyMode === "single") {
+        document.querySelectorAll(".property-card").forEach(card => {
+          card.addEventListener("click", (e) => {
+            const propId = card.getAttribute("data-prop-id");
+            singlePropertyId = propId;
+            addAuditLog(`Single property selected: ${availableProperties.find(p => p.id === propId)?.name}`);
+            renderStep2(container);
+          });
+        });
+      } else {
+        const checkboxes = document.querySelectorAll(".property-checkbox");
+        checkboxes.forEach(cb => {
+          cb.addEventListener("change", (e) => {
+            const val = e.target.value;
+            if (e.target.checked) {
+              if (!selectedProperties.includes(val)) selectedProperties.push(val);
+              addAuditLog(`Property added: ${availableProperties.find(p => p.id === val)?.name}`);
+            } else {
+              selectedProperties = selectedProperties.filter(id => id !== val);
+              addAuditLog(`Property removed: ${availableProperties.find(p => p.id === val)?.name}`);
+            }
+            renderStep2(container);
+          });
+        });
+      }
+    }
+
+    // Step 3: Permission Trackers + Audit Trails
+    function renderStep3(container) {
+      const roleLabel = profile.role === "caretaker" ? "Caretaker" : "Property Management Field Agent";
+      const propertyList = propertyMode === "single" 
+        ? [availableProperties.find(p => p.id === singlePropertyId)?.name || "None"]
+        : selectedProperties.map(id => availableProperties.find(p => p.id === id)?.name).filter(Boolean);
+      
+      container.innerHTML = `
+        <div class="grid lg:grid-cols-2 gap-8">
+          <!-- LEFT: Permission Tracker -->
+          <div class="bg-white rounded-2xl p-5 shadow-sm border">
+            <div class="flex items-center gap-2 border-b pb-3 mb-4"><i class="fas fa-lock text-emerald-700 text-xl"></i><h3 class="text-xl font-bold">Permission Tracker</h3><span class="bg-gray-100 text-xs px-2 py-0.5 rounded-full ml-auto">Live</span></div>
+            <div class="mb-4 p-3 bg-gray-50 rounded-xl">
+              <p><span class="font-semibold">👤 Role:</span> ${roleLabel}</p>
+              <p><span class="font-semibold">🏠 Assigned Properties:</span> ${propertyList.length ? propertyList.join(", ") : "—"}</p>
+            </div>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between p-3 border rounded-xl permission-chip">
+                <span><i class="fas fa-eye"></i> View Property Details</span>
+                <label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" class="perm-toggle" data-perm="viewProperty" ${permissionOverrides.viewProperty ? 'checked' : ''} class="sr-only peer"><div class="w-9 h-5 bg-gray-300 rounded-full peer-checked:bg-emerald-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div></label>
+              </div>
+              <div class="flex items-center justify-between p-3 border rounded-xl"><span><i class="fas fa-pen-alt"></i> Edit Property Details</span><label class="relative inline-flex items-center"><input type="checkbox" class="perm-toggle" data-perm="editPropertyDetails" ${permissionOverrides.editPropertyDetails ? 'checked' : ''}><div class="w-9 h-5 bg-gray-300 rounded-full peer-checked:bg-emerald-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div></label></div>
+              <div class="flex items-center justify-between p-3 border rounded-xl"><span><i class="fas fa-users"></i> Manage Tenants & Rentals (Multi-Family)</span><label class="relative inline-flex items-center"><input type="checkbox" class="perm-toggle" data-perm="manageTenants" ${permissionOverrides.manageTenants ? 'checked' : ''}><div class="w-9 h-5 bg-gray-300 rounded-full peer-checked:bg-emerald-600"></div></label></div>
+              <div class="flex items-center justify-between p-3 border rounded-xl"><span><i class="fas fa-chart-line"></i> Access Financial Reports</span><label class="relative inline-flex items-center"><input type="checkbox" class="perm-toggle" data-perm="accessFinancials" ${permissionOverrides.accessFinancials ? 'checked' : ''}><div class="w-9 h-5 bg-gray-300 rounded-full peer-checked:bg-emerald-600"></div></label></div>
+              <div class="flex items-center justify-between p-3 border rounded-xl"><span><i class="fas fa-history"></i> View Audit Logs</span><label class="relative inline-flex items-center"><input type="checkbox" class="perm-toggle" data-perm="viewAuditLogs" ${permissionOverrides.viewAuditLogs ? 'checked' : ''}><div class="w-9 h-5 bg-gray-300 rounded-full peer-checked:bg-emerald-600"></div></label></div>
+            </div>
+            <button id="applyPermChanges" class="mt-5 w-full bg-emerald-50 text-emerald-800 border border-emerald-200 py-2 rounded-xl text-sm font-medium hover:bg-emerald-100 transition"><i class="fas fa-sync-alt mr-1"></i> Apply & track permission changes</button>
+          </div>
+          <!-- RIGHT: Audit Trails -->
+          <div class="bg-white rounded-2xl p-5 shadow-sm border">
+            <div class="flex items-center gap-2 border-b pb-3 mb-4"><i class="fas fa-clipboard-list text-emerald-700"></i><h3 class="text-xl font-bold">Audit Trails</h3><span class="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded-full">Real-time</span></div>
+            <div class="audit-log space-y-2 max-h-[340px] overflow-y-auto pr-1">
+              ${auditLogs.slice(0, 20).map(log => `
+                <div class="text-xs border-l-4 ${log.type === 'info' ? 'border-blue-400' : 'border-amber-400'} pl-3 py-1 bg-gray-50 rounded-r">
+                  <span class="text-gray-500">${log.timestamp.toLocaleTimeString()}</span> — ${log.message}
+                </div>
+              `).join('')}
+              ${auditLogs.length === 0 ? '<div class="text-gray-400 text-sm">No audit events yet</div>' : ''}
+            </div>
+            <div class="mt-4 pt-2 text-xs text-gray-400 flex justify-between"><span><i class="fas fa-database"></i> Compliance ready logs</span><button id="clearAuditMock" class="text-red-500 underline">clear mock logs</button></div>
+          </div>
+        </div>
+        <div class="mt-6 bg-emerald-50 p-4 rounded-xl flex items-center justify-between">
+          <div><i class="fas fa-check-circle text-emerald-700"></i> <span class="font-medium">Onboarding summary ready</span><p class="text-xs">Final permissions & audit will be submitted to RBC admin portal</p></div>
+          <button id="finalizeOnboarding" class="bg-[#0f3b2c] text-white px-6 py-2 rounded-xl shadow-md hover:bg-[#0a2e22]">Complete Setup <i class="fas fa-arrow-right"></i></button>
+        </div>
+      `;
+
+      // toggle permissions and update audit logs
+      document.querySelectorAll(".perm-toggle").forEach(toggle => {
+        toggle.addEventListener("change", (e) => {
+          const permKey = toggle.getAttribute("data-perm");
+          const newVal = toggle.checked;
+          permissionOverrides[permKey] = newVal;
+          addAuditLog(`Permission "${permKey}" changed to ${newVal ? "GRANTED" : "REVOKED"}`);
+        });
+      });
+      document.getElementById("applyPermChanges")?.addEventListener("click", () => {
+        addAuditLog(`Permission snapshot applied: View=${permissionOverrides.viewProperty}, Edit=${permissionOverrides.editPropertyDetails}, Tenants=${permissionOverrides.manageTenants}`);
+        alert("Permission changes recorded in audit trail");
+        renderStep3(container);
+      });
+      document.getElementById("clearAuditMock")?.addEventListener("click", () => {
+        auditLogs = [{ timestamp: new Date(), message: "Audit trail cleared (demo)", type: "info" }];
+        renderStep3(container);
+      });
+      document.getElementById("finalizeOnboarding")?.addEventListener("click", () => {
+        addAuditLog("✅ Onboarding finalized by user. All permissions and profile data saved.");
+        alert(`Onboarding complete for ${profile.fullName} (${roleLabel}). Assigned properties: ${propertyList.join(", ")}. Audit & permissions finalized.`);
+      });
+    }
+
+    function updateStepBadges() {
+      document.querySelectorAll(".step-badge").forEach((badge, idx) => {
+        const stepNum = parseInt(badge.innerText);
+        if (stepNum === currentStep) badge.classList.add("step-active");
+        else badge.classList.remove("step-active");
+        if (stepNum < currentStep) badge.classList.add("bg-emerald-100", "text-emerald-800", "border");
+        else if (stepNum > currentStep) badge.classList.add("bg-gray-100", "text-gray-500");
+      });
+    }
+    function updateNavButtons() {
+      const prev = document.getElementById("prevBtn");
+      const next = document.getElementById("nextBtn");
+      if (currentStep === 1) prev.disabled = true; else prev.disabled = false;
+      if (currentStep === totalSteps) next.innerText = "Finish"; else next.innerText = "Next";
+    }
+    function goNext() {
+      if (currentStep === 1 && !validateStep1()) return;
+      if (currentStep === 2 && !validateStep2()) return;
+      if (currentStep < totalSteps) {
+        currentStep++;
+        renderStep();
+      } else if (currentStep === totalSteps) {
+        addAuditLog("Onboarding wizard completed, ready for RBC approval");
+        alert("Onboarding setup complete! All data captured.");
+      }
+    }
+    function goPrev() { if (currentStep > 1) { currentStep--; renderStep(); } }
+
+    // helper
+    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+    // Init 
+    syncPermissionsWithRole();
+    addAuditLog("Onboarding wizard initialized (RBC Team)");
+    renderStep();
+    document.getElementById("nextBtn").addEventListener("click", goNext);
+    document.getElementById("prevBtn").addEventListener("click", goPrev);
+  </script>
+</body>
+</html>

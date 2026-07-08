@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Mwarokin Estate - Residence Smart Monitoring</title>
+    <!-- Leaflet for location (lightweight) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Chart.js for elegant live chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts: Poppins + Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #eef2f5;
+            color: #102b2f;
+            scroll-behavior: smooth;
+        }
+
+        /* premium glass & shadows */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(0px);
+            border-radius: 36px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0,0,0,0.02);
+            border: 1px solid rgba(255,255,255,0.7);
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 28px 32px;
+        }
+
+        /* header */
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+        }
+        .title-section h1 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800;
+            font-size: 2rem;
+            background: linear-gradient(135deg, #1F5E4F, #2C8C5A);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .title-section p {
+            color: #5b6e7c;
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+        .live-badge {
+            background: #1a2e2b;
+            padding: 8px 20px;
+            border-radius: 60px;
+            color: #d9f2e6;
+            font-weight: 500;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+        .live-badge i {
+            color: #2ecc71;
+            margin-right: 8px;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.5; text-shadow: 0 0 0px #2ecc71;}
+            100% { opacity: 1; text-shadow: 0 0 4px #2ecc71;}
+        }
+
+        /* residence hero gallery */
+        .hero-gallery {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        .main-img {
+            flex: 2;
+            border-radius: 36px;
+            overflow: hidden;
+            box-shadow: 0 18px 30px -10px rgba(0,0,0,0.15);
+            height: 360px;
+        }
+        .main-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.3s;
+        }
+        .thumb-stack {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .thumb-stack img {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+            border-radius: 24px;
+            transition: 0.2s;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.05);
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .thumb-stack img:hover {
+            transform: scale(1.02);
+            border-color: #2c8c5a;
+        }
+
+        /* monitoring grid (real-time metrics) */
+        .monitoring-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 44px;
+        }
+        .metric-card {
+            background: white;
+            border-radius: 28px;
+            padding: 22px 20px;
+            transition: all 0.2s;
+            box-shadow: 0 12px 22px -8px rgba(0,0,0,0.05);
+            border: 1px solid #e9f0f3;
+        }
+        .metric-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #54808f;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            font-family: 'Poppins', sans-serif;
+            color: #1d4c3b;
+        }
+        .metric-unit {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #6f9aa8;
+        }
+        .trend {
+            font-size: 0.75rem;
+            margin-top: 12px;
+            background: #eef3f5;
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 60px;
+        }
+        .status-safe {
+            color: #16a34a;
+        }
+        .status-warning {
+            color: #e67e22;
+        }
+
+        /* chart + live feed row */
+        .insight-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+            margin-bottom: 42px;
+        }
+        .chart-box {
+            flex: 1.5;
+            background: white;
+            border-radius: 32px;
+            padding: 20px;
+            box-shadow: 0 12px 24px -10px rgba(0,0,0,0.05);
+        }
+        .feed-box {
+            flex: 1;
+            background: #14232b;
+            border-radius: 32px;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 20px 30px -12px rgba(0,0,0,0.2);
+            color: #eef4f8;
+        }
+        .feed-header {
+            background: #0f1e24;
+            padding: 18px 22px;
+            font-weight: 700;
+            border-bottom: 1px solid #28434e;
+        }
+        .feed-list {
+            max-height: 320px;
+            overflow-y: auto;
+            padding: 8px 16px;
+        }
+        .feed-event {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #2a424d;
+            font-size: 0.85rem;
+            align-items: center;
+        }
+        .feed-time {
+            font-family: monospace;
+            font-size: 0.7rem;
+            background: #1e3a44;
+            padding: 4px 8px;
+            border-radius: 26px;
+        }
+        .feed-icon {
+            width: 28px;
+            text-align: center;
+            color: #9ec3d0;
+        }
+
+        /* upgraded features */
+        .upgrade-section {
+            background: linear-gradient(115deg, #eef6f2 0%, #ffffff 100%);
+            border-radius: 32px;
+            padding: 28px 30px;
+            margin-top: 20px;
+            border: 1px solid #cde3da;
+        }
+        .upgrade-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+            margin-top: 18px;
+        }
+        .upgrade-item {
+            flex: 1;
+            min-width: 180px;
+            background: rgba(255,255,240,0.7);
+            border-radius: 24px;
+            padding: 14px 18px;
+            backdrop-filter: blur(2px);
+        }
+
+        footer {
+            margin-top: 48px;
+            text-align: center;
+            padding: 18px;
+            font-size: 0.75rem;
+            color: #67828f;
+            border-top: 1px solid #dee8ed;
+        }
+        button {
+            background: none;
+            border: none;
+        }
+        @media (max-width: 750px) {
+            .container { padding: 16px; }
+            .main-img { height: 240px; }
+        }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #1f3842; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #5f9db0; border-radius: 10px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- header with premium residence identity -->
+    <div class="profile-header">
+        <div class="title-section">
+            <h2><i class="fas fa-crown" style="color:#eab308; margin-right: 10px;"></i> Mwarokin Estate </h2>
+            <p><i class="fas fa-map-pin"></i>· Windsor Manor Premier Wing | Smart‑monitored unit</p>
+        </div>
+        <div class="live-badge">
+            <i class="fas fa-circle"></i> LIVE RESIDENCE MONITORING · ACTIVE
+        </div>
+    </div>
+
+    <!-- upgraded image gallery -->
+    <div class="hero-gallery">
+        <div class="main-img">
+            <img id="mainGalleryImg" src="https://picsum.photos/id/106/800/500" alt="Residence main view">
+        </div>
+        <div class="thumb-stack">
+            <img src="https://picsum.photos/id/164/400/280" alt="Living room" onclick="changeMainImage(this.src)">
+            <img src="https://picsum.photos/id/42/400/280" alt="Bedroom suite" onclick="changeMainImage(this.src)">
+            <img src="https://picsum.photos/id/169/400/280" alt="Private terrace" onclick="changeMainImage(this.src)">
+        </div>
+    </div>
+
+    <!-- REAL-TIME MONITORING METRICS (live scenarios) -->
+    <div class="monitoring-dashboard">
+        <div class="metric-card">
+            <div class="metric-title"><i class="fas fa-thermometer-half"></i> INDOOR TEMPERATURE</div>
+            <div class="metric-value" id="tempValue">22.4<span class="metric-unit">°C</span></div>
+            <div class="trend" id="tempTrend"><i class="fas fa-leaf"></i> Optimal climate</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-title"><i class="fas fa-tint"></i> HUMIDITY LEVEL</div>
+            <div class="metric-value" id="humValue">48<span class="metric-unit">%</span></div>
+            <div class="trend" id="humTrend"><i class="fas fa-check-circle"></i> Balanced</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-title"><i class="fas fa-bolt"></i> ENERGY USAGE</div>
+            <div class="metric-value" id="energyValue">2.8<span class="metric-unit">kW</span></div>
+            <div class="trend" id="energyTrend">⬇️ 12% vs yesterday</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-title"><i class="fas fa-shield-alt"></i> SECURITY STATUS</div>
+            <div class="metric-value" id="securityStatus">ARMED</div>
+            <div class="trend" style="color:#16a34a;">🔒 All sensors OK</div>
+        </div>
+    </div>
+
+    <!-- CHART (energy consumption trend) + LIVE EVENT FEED -->
+    <div class="insight-row">
+        <div class="chart-box">
+            <h3 style="font-weight: 700; margin-bottom: 16px;"><i class="fas fa-chart-line"></i> Energy Consumption (last 12h)</h3>
+            <canvas id="energyChart" width="400" height="200" style="max-height: 240px; width:100%"></canvas>
+            <p class="trend" style="margin-top: 16px;"><i class="fas fa-microchip"></i> Smart grid optimized · real‑time efficiency</p>
+        </div>
+        <div class="feed-box">
+            <div class="feed-header"><i class="fas fa-broadcast-tower"></i> <span class="live-dot" style="display:inline-block; width:8px; height:8px; background:#22c55e; border-radius:50%; margin:0 8px 0 4px;"></span> LIVE ACTIVITY STREAM</div>
+            <div class="feed-list" id="liveActivityFeed">
+                <!-- dynamic feed items -->
+                <div class="feed-event"><div class="feed-time">--:--:--</div><div class="feed-icon"><i class="fas fa-spinner fa-pulse"></i></div><div class="feed-text">Initializing monitoring...</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- UPGRADED FEATURES & AMENITIES (premium residence upgrades) -->
+    <div class="upgrade-section">
+        <h3><i class="fas fa-gem" style="color:#1f6e43;"></i> Upgraded Residence Perks & Smart Living</h3>
+        <div class="upgrade-grid">
+            <div class="upgrade-item"><i class="fas fa-microphone-alt fa-fw"></i> Voice‑activated AI assistant</div>
+            <div class="upgrade-item"><i class="fas fa-water fa-fw"></i> Smart irrigation & garden</div>
+            <div class="upgrade-item"><i class="fas fa-car-battery"></i> EV charging | V2G ready</div>
+            <div class="upgrade-item"><i class="fas fa-temperature-low"></i> Zoned climate control</div>
+            <div class="upgrade-item"><i class="fas fa-vr-cardboard"></i> Virtual concierge 24/7</div>
+        </div>
+    </div>
+
+    <!-- location micro-map (residence pinpoint) -->
+    <div style="margin-top: 32px;">
+        <h4 style="margin-bottom: 12px;"><i class="fas fa-map-marker-alt"></i> Residence Geo‑Location (Mwarokin Estate)</h4>
+        <div id="residenceMiniMap" style="height: 260px; border-radius: 28px; overflow: hidden; box-shadow: 0 12px 22px rgba(0,0,0,0.08);"></div>
+    </div>
+    <footer>
+        <i class="fas fa-shield-heart"></i> Mwarokin Estate — Premium Residence Profile · Real‑time IoT monitoring & live scenario simulation. All data encrypted.
+    </footer>
+</div>
+
+<script>
+    // ---------------------------- SIMULATED REAL-LIFE MONITORING (live scenarios, upgraded metrics)
+    // Elements
+    const tempSpan = document.getElementById('tempValue');
+    const humSpan = document.getElementById('humValue');
+    const energySpan = document.getElementById('energyValue');
+    const securitySpan = document.getElementById('securityStatus');
+    const tempTrendSpan = document.getElementById('tempTrend');
+    const humTrendSpan = document.getElementById('humTrend');
+    const energyTrendSpan = document.getElementById('energyTrend');
+    const feedContainer = document.getElementById('liveActivityFeed');
+
+    // Current values (dynamic)
+    let currentTemp = 22.4;
+    let currentHum = 48;
+    let currentEnergy = 2.8;
+    let securityArmed = true;
+    
+    // Chart init (energy last 12 readings)
+    const ctx = document.getElementById('energyChart').getContext('2d');
+    let energyDataPoints = [2.4, 2.7, 3.0, 2.9, 3.2, 3.4, 3.1, 2.8, 2.6, 2.5, 2.7, 2.8];
+    const timeLabels = ['10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00'];
+    let energyChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: timeLabels,
+            datasets: [{
+                label: 'kWh consumed',
+                data: energyDataPoints,
+                borderColor: '#2c8c5a',
+                backgroundColor: 'rgba(44,140,90,0.05)',
+                tension: 0.3,
+                fill: true,
+                pointBackgroundColor: '#1f6e43',
+                pointBorderColor: '#fff',
+                pointRadius: 4,
+                pointHoverRadius: 6,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: { legend: { position: 'top' }, tooltip: { mode: 'index' } },
+            scales: { y: { grid: { color: '#e0ece8' }, title: { display: true, text: 'Power (kW)' } } }
+        }
+    });
+    
+    function updateChartWithNewValue(newKwh) {
+        energyDataPoints.push(newKwh);
+        if (energyDataPoints.length > 12) energyDataPoints.shift();
+        energyChart.data.datasets[0].data = [...energyDataPoints];
+        energyChart.update();
+    }
+    
+    // add feed event with timestamp
+    function addFeedEvent(message, iconClass = "fas fa-bell") {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+        const feedDiv = document.createElement('div');
+        feedDiv.className = 'feed-event';
+        feedDiv.innerHTML = `
+            <div class="feed-time">${timeStr}</div>
+            <div class="feed-icon"><i class="${iconClass}"></i></div>
+            <div class="feed-text">${message}</div>
+        `;
+        feedContainer.prepend(feedDiv);
+        // keep max 14 events
+        while(feedContainer.children.length > 16) feedContainer.removeChild(feedContainer.lastChild);
+    }
+    
+    // update metrics UI with trend context
+    function updateUI() {
+        tempSpan.innerHTML = currentTemp.toFixed(1) + '<span class="metric-unit">°C</span>';
+        humSpan.innerHTML = Math.round(currentHum) + '<span class="metric-unit">%</span>';
+        energySpan.innerHTML = currentEnergy.toFixed(1) + '<span class="metric-unit">kW</span>';
+        securitySpan.innerHTML = securityArmed ? "ARMED · GUARD" : "DISARMED";
+        securitySpan.style.color = securityArmed ? "#16a34a" : "#e67e22";
+        
+        // temp trend
+        if (currentTemp > 24.5) tempTrendSpan.innerHTML = '<i class="fas fa-temperature-high"></i> Slight warm → AC adjusting';
+        else if (currentTemp < 19) tempTrendSpan.innerHTML = '<i class="fas fa-snowflake"></i> Heating optimization';
+        else tempTrendSpan.innerHTML = '<i class="fas fa-leaf"></i> Optimal climate';
+        
+        // humidity trend
+        if (currentHum > 65) humTrendSpan.innerHTML = '<i class="fas fa-tint"></i> High humidity, dehumidifier active';
+        else if (currentHum < 35) humTrendSpan.innerHTML = '<i class="fas fa-wind"></i> Dry air → humidifier on';
+        else humTrendSpan.innerHTML = '<i class="fas fa-check-circle"></i> Balanced comfort';
+        
+        // energy trend message
+        if (currentEnergy > 3.5) energyTrendSpan.innerHTML = '⚠️ Peak usage, load balancing';
+        else if (currentEnergy < 1.8) energyTrendSpan.innerHTML = '💚 Low consumption, eco mode';
+        else energyTrendSpan.innerHTML = '⬇️ Efficient range';
+    }
+    
+    // SIMULATE REAL-LIFE SCENARIOS (occupancy detection, temperature drifts, events)
+    const scenarioMessages = [
+        { msg: "🪟 Smart windows adjusted: natural ventilation mode", icon: "fas fa-wind" },
+        { msg: "🏊‍♂️ Resident detected: pool access via biometric", icon: "fas fa-swimmer" },
+        { msg: "📦 Package arrival at smart locker – notification sent", icon: "fas fa-box" },
+        { msg: "🔊 Voice command: 'Set lights to cinematic' – living room", icon: "fas fa-microphone-alt" },
+        { msg: "🌿 Garden humidity sensor triggered irrigation", icon: "fas fa-seedling" },
+        { msg: "⚡ EV charger plugged in – scheduled green charging", icon: "fas fa-charging-station" },
+        { msg: "🛋️ Presence sensor: resident in home office", icon: "fas fa-user-check" },
+        { msg: "🔒 Front door locked automatically (geofence exit)", icon: "fas fa-door-closed" },
+        { msg: "📹 Security camera: motion detected at private terrace", icon: "fas fa-video" },
+        { msg: "🧹 Robotic vacuum started cleaning routine", icon: "fas fa-robot" },
+    ];
+    
+    function simulateRealtimeMetrics() {
+        // temperature random walk (-0.3 to +0.4) realistic
+        let tempDelta = (Math.random() * 0.7) - 0.3;
+        let newTemp = currentTemp + tempDelta;
+        if (newTemp > 27) newTemp = 27;
+        if (newTemp < 18.5) newTemp = 18.5;
+        if (Math.abs(newTemp - currentTemp) > 0.05) {
+            addFeedEvent(`🌡️ Indoor temperature changed from ${currentTemp.toFixed(1)}°C to ${newTemp.toFixed(1)}°C (HVAC adaptive)`, "fas fa-thermometer-half");
+        }
+        currentTemp = newTemp;
+        
+        // humidity dynamic (related to temperature)
+        let humDelta = (Math.random() * 3) - 1.2;
+        let newHum = currentHum + humDelta;
+        if (newHum > 72) newHum = 72;
+        if (newHum < 32) newHum = 32;
+        if (Math.abs(newHum - currentHum) > 1.5) {
+            addFeedEvent(`💧 Humidity now ${Math.round(newHum)}% — ${newHum > 60 ? 'dehumidifier active' : 'optimal'}`, "fas fa-tint");
+        }
+        currentHum = newHum;
+        
+        // energy usage realistic simulation
+        let energyDelta = (Math.random() * 0.6) - 0.2;
+        let newEnergy = currentEnergy + energyDelta;
+        if (newEnergy > 5.2) newEnergy = 5.2;
+        if (newEnergy < 1.0) newEnergy = 1.0;
+        if (Math.abs(newEnergy - currentEnergy) > 0.15) {
+            addFeedEvent(`⚡ Power consumption: ${newEnergy.toFixed(1)} kW (smart meter reading)`, "fas fa-charging-station");
+        }
+        currentEnergy = newEnergy;
+        updateChartWithNewValue(currentEnergy);
+        
+        // random security scenario (rarely change armed state, but add events)
+        if (Math.random() < 0.12) {
+            const randomSecurityEvent = Math.random() > 0.7 ? "🔔 Perimeter sensor: no anomaly" : "🛡️ Security patrol check completed";
+            addFeedEvent(randomSecurityEvent, "fas fa-shield-alt");
+        }
+        // simulate occasional false disarm/arm events for realism
+        if (Math.random() < 0.05) {
+            securityArmed = !securityArmed;
+            addFeedEvent(securityArmed ? "🔒 Security system ARMED (instant lockdown mode)" : "🔓 Security system temporarily disarmed – authorized access", "fas fa-lock");
+        } else if (Math.random() < 0.1) {
+            addFeedEvent("📡 IoT hub: Firmware auto-update completed", "fas fa-cloud-upload-alt");
+        }
+        
+        // add random scenario from messages
+        if (Math.random() < 0.65) {
+            let rand = scenarioMessages[Math.floor(Math.random() * scenarioMessages.length)];
+            addFeedEvent(rand.msg, rand.icon);
+        } else {
+            // more personalized scenario for Windsor Manor
+            addFeedEvent("👑 Windsor Manor: Energy optimization AI reduced standby usage by 8%", "fas fa-microchip");
+        }
+        
+        // extra live resident-like interaction
+        if (Math.random() < 0.2) {
+            addFeedEvent("📱 Mobile app command received: 'set ambiance – evening relaxation'", "fas fa-mobile-alt");
+        }
+        
+        updateUI();
+    }
+    
+    // initial feed warmup
+    function initLiveFeed() {
+        addFeedEvent("🟢 Windsor Manor Residence Monitor online — upgraded sensors active", "fas fa-check-circle");
+        addFeedEvent("🌍 Real‑time geofence & occupancy tracking live", "fas fa-map-marked-alt");
+        addFeedEvent("🎛️ Smart climate & energy dashboard updated every 9s", "fas fa-chart-line");
+        addFeedEvent("✨ New upgrade: HEPA filtration & AQI monitoring ready", "fas fa-leaf");
+        updateUI();
+    }
+    
+    // image gallery changer
+    window.changeMainImage = function(src) {
+        document.getElementById('mainGalleryImg').src = src;
+        addFeedEvent("📸 Gallery view: residence interior preview selected", "fas fa-images");
+    };
+    
+    // Leaflet mini map for exact residence pinpoint (Mwarokin Estate precise coords)
+    function initMiniMap() {
+        const residenceCoord = [-1.2925, 36.822];  // Windsor Manor exact placement
+        const miniMap = L.map('residenceMiniMap').setView(residenceCoord, 17);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+        }).addTo(miniMap);
+        const premiumIcon = L.divIcon({ html: '<i class="fas fa-home" style="background:#1f6e43; color:white; padding:8px 10px; border-radius:40px; font-size:14px; box-shadow:0 4px 8px rgba(0,0,0,0.2);"></i>', iconSize: [32,32], popupAnchor: [0,-12] });
+        L.marker(residenceCoord, { icon: premiumIcon }).addTo(miniMap).bindPopup('<b>The Windsor Manor · 7B</b><br>Premium monitored unit').openPopup();
+    }
+    
+    // simulate real-life updates every 9 seconds
+    let interval = setInterval(() => {
+        simulateRealtimeMetrics();
+    }, 9000);
+    
+    // also add occasional fake "resident arriving" scenario outside interval for extra dynamic
+    setInterval(() => {
+        if (Math.random() < 0.25) {
+            addFeedEvent("🚶‍♂️ Resident presence detected via smartphone geofence (arrival)", "fas fa-walking");
+        }
+    }, 17000);
+    
+    window.addEventListener('load', () => {
+        initLiveFeed();
+        initMiniMap();
+        // initial gallery load plus extra small random metric initial variation
+        setTimeout(() => {
+            simulateRealtimeMetrics();
+        }, 1200);
+    });
+    
+    // clean interval on page unload (optional but fine)
+    window.addEventListener('beforeunload', () => {
+        if (interval) clearInterval(interval);
+    });
+</script>
+</body>
+</html>

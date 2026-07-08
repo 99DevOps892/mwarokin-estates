@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mwarokin Estates — Neighbourhoods</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Syne:wght@500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --obsidian-950:#07060a;
+    --obsidian-900:#0d0b10;
+    --obsidian-850:#131016;
+    --obsidian-800:#1a151d;
+    --obsidian-line:rgba(212,175,106,0.14);
+    --gold-100:#f4e4c1;
+    --gold-300:#e3c586;
+    --gold-400:#d4af6a;
+    --gold-600:#b8863f;
+    --gold-glow:rgba(212,175,106,0.35);
+    --ivory:#f7f3ec;
+    --muted:#a89c8a;
+    --muted-dim:#6f6558;
+    --serif:'Cormorant Garamond',serif;
+    --syne:'Syne',sans-serif;
+    --sans:'DM Sans',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--obsidian-950);
+    color:var(--ivory);
+    font-family:var(--sans);
+    overflow-x:hidden;
+  }
+  a{text-decoration:none;color:inherit;}
+  ::selection{background:var(--gold-400);color:var(--obsidian-950);}
+  @media (prefers-reduced-motion: reduce){ *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;} }
+
+  .noise{
+    position:fixed;inset:0;pointer-events:none;z-index:2;opacity:0.035;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:sticky;top:0;z-index:1000;
+    background:rgba(7,6,10,0.86);backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--obsidian-line);
+  }
+  .header-inner{
+    max-width:1440px;margin:0 auto;padding:18px 40px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand-mark{
+    width:38px;height:38px;border:1px solid var(--gold-400);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;color:var(--gold-400);font-size:15px;
+    position:relative;
+  }
+  .brand-mark::after{
+    content:'';position:absolute;inset:-5px;border:1px solid var(--obsidian-line);border-radius:50%;
+  }
+  .brand h1{
+    font-family:var(--serif);font-weight:600;font-size:22px;letter-spacing:0.5px;color:var(--ivory);
+  }
+  .brand span{color:var(--gold-400);}
+  nav ul{display:flex;gap:34px;list-style:none;}
+  nav a{
+    font-family:var(--syne);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+    color:var(--muted);transition:color .3s ease;position:relative;padding-bottom:4px;
+  }
+  nav a:hover{color:var(--gold-300);}
+  nav a.active{color:var(--gold-400);}
+  nav a.active::after{
+    content:'';position:absolute;left:0;bottom:0;width:100%;height:1px;background:var(--gold-400);
+  }
+  .nav-toggle{display:none;background:none;border:none;color:var(--gold-400);font-size:22px;cursor:pointer;}
+  @media (max-width:1000px){
+    nav{display:none;}
+    .nav-toggle{display:block;}
+    nav.open{
+      display:flex;position:absolute;top:100%;left:0;width:100%;background:var(--obsidian-900);
+      flex-direction:column;padding:20px 40px;border-bottom:1px solid var(--obsidian-line);
+    }
+    nav.open ul{flex-direction:column;gap:18px;}
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    max-width:1440px;margin:0 auto;
+    padding:70px 40px 40px;
+    display:grid;grid-template-columns:1.05fr 0.95fr;gap:50px;align-items:center;
+  }
+  .hero-eyebrow{
+    font-family:var(--syne);font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gold-400);
+    display:flex;align-items:center;gap:12px;margin-bottom:22px;
+  }
+  .hero-eyebrow::before{content:'';width:30px;height:1px;background:var(--gold-400);}
+  .hero h2{
+    font-family:var(--serif);font-weight:500;font-size:clamp(38px,4.6vw,64px);line-height:1.05;
+    letter-spacing:0.2px;
+  }
+  .hero h2 em{font-style:italic;color:var(--gold-300);}
+  .hero p.lede{
+    margin-top:22px;color:var(--muted);font-size:16px;line-height:1.7;max-width:480px;
+  }
+  .hero-stats{display:flex;gap:40px;margin-top:36px;}
+  .hero-stat b{font-family:var(--serif);font-size:30px;color:var(--gold-300);display:block;font-weight:500;}
+  .hero-stat span{font-size:11px;color:var(--muted-dim);letter-spacing:1px;text-transform:uppercase;font-family:var(--syne);}
+
+  .locate-panel{
+    margin-top:36px;background:linear-gradient(180deg,var(--obsidian-850),var(--obsidian-900));
+    border:1px solid var(--obsidian-line);border-radius:4px;padding:22px 24px;max-width:520px;
+  }
+  .locate-row{display:flex;gap:12px;align-items:center;}
+  .locate-row i{color:var(--gold-400);font-size:16px;}
+  .locate-row input{
+    flex:1;background:transparent;border:none;border-bottom:1px solid var(--obsidian-line);
+    color:var(--ivory);font-family:var(--sans);font-size:14px;padding:8px 2px;outline:none;
+  }
+  .locate-row input:focus{border-color:var(--gold-400);}
+  .locate-row input::placeholder{color:var(--muted-dim);}
+  .locate-btn{
+    background:var(--gold-400);color:var(--obsidian-950);border:none;padding:9px 18px;
+    font-family:var(--syne);font-size:11px;letter-spacing:1.2px;text-transform:uppercase;
+    border-radius:2px;cursor:pointer;white-space:nowrap;transition:background .3s ease, transform .2s ease;
+  }
+  .locate-btn:hover{background:var(--gold-300);transform:translateY(-1px);}
+  #locate-status{
+    margin-top:12px;font-size:12.5px;color:var(--muted-dim);min-height:18px;font-family:var(--sans);
+  }
+  #locate-status.found{color:var(--gold-300);}
+
+  /* ---------- HERO PANORAMA TEASER ---------- */
+  .pano-teaser{
+    position:relative;border-radius:4px;overflow:hidden;height:460px;
+    border:1px solid var(--obsidian-line);
+    box-shadow:0 30px 70px rgba(0,0,0,0.55);
+  }
+  #pano-teaser-canvas{width:100%;height:100%;display:block;cursor:grab;}
+  #pano-teaser-canvas:active{cursor:grabbing;}
+  .pano-teaser-label{
+    position:absolute;left:20px;bottom:20px;z-index:5;
+    font-family:var(--syne);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-100);
+    background:rgba(7,6,10,0.55);padding:8px 14px;border:1px solid var(--obsidian-line);border-radius:2px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .pano-teaser-label i{color:var(--gold-400);}
+  .pano-expand{
+    position:absolute;right:20px;top:20px;z-index:5;width:38px;height:38px;border-radius:50%;
+    background:rgba(7,6,10,0.6);border:1px solid var(--obsidian-line);color:var(--gold-300);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.3s ease;
+  }
+  .pano-expand:hover{background:var(--gold-400);color:var(--obsidian-950);}
+  @media (max-width:1000px){ .hero{grid-template-columns:1fr;} }
+
+  /* ---------- SECTION HEADERS ---------- */
+  .section{max-width:1440px;margin:0 auto;padding:90px 40px;}
+  .section-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:44px;gap:20px;flex-wrap:wrap;}
+  .section-head .tag{
+    font-family:var(--syne);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold-400);
+    margin-bottom:10px;display:block;
+  }
+  .section-head h3{font-family:var(--serif);font-weight:500;font-size:clamp(28px,3vw,42px);}
+  .section-head p{color:var(--muted);max-width:420px;font-size:14.5px;line-height:1.6;}
+  hr.divider{border:none;height:1px;background:var(--obsidian-line);margin:0;}
+
+  /* ---------- COMPASS DIAL (signature element) ---------- */
+  .compass-wrap{
+    display:grid;grid-template-columns:440px 1fr;gap:60px;align-items:center;
+  }
+  @media (max-width:1000px){ .compass-wrap{grid-template-columns:1fr;} }
+  .compass{
+    position:relative;width:400px;height:400px;margin:0 auto;
+  }
+  .compass-ring{
+    position:absolute;inset:0;border-radius:50%;border:1px solid var(--obsidian-line);
+  }
+  .compass-ring.inner{inset:60px;border-color:rgba(212,175,106,0.22);}
+  .compass-center{
+    position:absolute;inset:130px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, var(--obsidian-800), var(--obsidian-950));
+    border:1px solid var(--gold-400);display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:10px;
+  }
+  .compass-center .cn-label{font-family:var(--syne);font-size:10px;letter-spacing:2px;color:var(--muted-dim);text-transform:uppercase;}
+  .compass-center .cn-name{font-family:var(--serif);font-size:24px;color:var(--gold-200,var(--gold-300));margin-top:6px;font-weight:500;}
+  .compass-center .cn-bearing{font-family:var(--syne);font-size:11px;color:var(--gold-400);margin-top:8px;letter-spacing:1px;}
+  .compass-node{
+    position:absolute;width:78px;height:78px;margin:-39px 0 0 -39px;border-radius:50%;
+    background:var(--obsidian-900);border:1px solid var(--obsidian-line);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;
+    transition:transform .35s ease, border-color .3s ease, background .3s ease;
+    text-align:center;
+  }
+  .compass-node span{font-family:var(--syne);font-size:9.5px;letter-spacing:0.5px;color:var(--muted);padding:0 6px;line-height:1.2;}
+  .compass-node:hover{transform:scale(1.08);border-color:var(--gold-400);}
+  .compass-node.active{background:var(--gold-400);border-color:var(--gold-400);}
+  .compass-node.active span{color:var(--obsidian-950);font-weight:600;}
+  .compass-needle{
+    position:absolute;left:50%;top:50%;width:2px;height:150px;background:linear-gradient(180deg,var(--gold-400),transparent);
+    transform-origin:top center;margin-left:-1px;transition:transform .6s cubic-bezier(.4,0,.2,1);pointer-events:none;
+  }
+
+  .compass-detail h4{font-family:var(--syne);font-size:11px;letter-spacing:2px;color:var(--gold-400);text-transform:uppercase;margin-bottom:10px;}
+  .compass-detail h3{font-family:var(--serif);font-size:34px;font-weight:500;margin-bottom:14px;}
+  .compass-detail p.desc{color:var(--muted);line-height:1.75;font-size:15px;max-width:520px;margin-bottom:26px;}
+  .compass-facts{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:520px;margin-bottom:28px;}
+  .cfact{border-left:1px solid var(--obsidian-line);padding-left:14px;}
+  .cfact b{font-family:var(--serif);font-size:22px;color:var(--gold-300);display:block;font-weight:500;}
+  .cfact span{font-size:10.5px;color:var(--muted-dim);text-transform:uppercase;letter-spacing:1px;font-family:var(--syne);}
+  .compass-actions{display:flex;gap:14px;flex-wrap:wrap;}
+  .btn-gold, .btn-ghost{
+    font-family:var(--syne);font-size:11px;letter-spacing:1.4px;text-transform:uppercase;
+    padding:13px 26px;border-radius:2px;cursor:pointer;transition:.3s ease;display:inline-flex;align-items:center;gap:8px;
+  }
+  .btn-gold{background:var(--gold-400);color:var(--obsidian-950);border:1px solid var(--gold-400);}
+  .btn-gold:hover{background:transparent;color:var(--gold-300);}
+  .btn-ghost{background:transparent;color:var(--ivory);border:1px solid var(--obsidian-line);}
+  .btn-ghost:hover{border-color:var(--gold-400);color:var(--gold-300);}
+
+  /* ---------- MAP ---------- */
+  .map-section{display:grid;grid-template-columns:1.3fr 0.7fr;gap:0;border:1px solid var(--obsidian-line);border-radius:4px;overflow:hidden;}
+  #estate-map{height:560px;width:100%;filter:saturate(0.85) brightness(0.95);}
+  .map-side{background:var(--obsidian-850);padding:30px;display:flex;flex-direction:column;gap:16px;max-height:560px;overflow-y:auto;}
+  .map-side::-webkit-scrollbar{width:4px;}
+  .map-side::-webkit-scrollbar-thumb{background:var(--obsidian-line);}
+  .map-side h4{font-family:var(--syne);font-size:11px;letter-spacing:2px;color:var(--gold-400);text-transform:uppercase;margin-bottom:6px;}
+  .near-item{
+    display:flex;justify-content:space-between;align-items:center;padding:14px 4px;
+    border-bottom:1px solid var(--obsidian-line);cursor:pointer;transition:.25s ease;
+  }
+  .near-item:hover{padding-left:10px;}
+  .near-item .ni-name{font-family:var(--serif);font-size:17px;color:var(--ivory);}
+  .near-item .ni-sub{font-size:11px;color:var(--muted-dim);font-family:var(--syne);letter-spacing:0.5px;}
+  .near-item .ni-dist{font-family:var(--syne);font-size:12px;color:var(--gold-400);text-align:right;}
+  .map-legend-custom{display:flex;gap:14px;flex-wrap:wrap;margin-top:6px;}
+  .leg{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);font-family:var(--syne);}
+  .leg-dot{width:9px;height:9px;border-radius:50%;}
+
+  /* ---------- NEIGHBOURHOOD GRID ---------- */
+  .n-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;}
+  @media (max-width:1100px){ .n-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:680px){ .n-grid{grid-template-columns:1fr;} }
+  .n-card{
+    background:var(--obsidian-850);border:1px solid var(--obsidian-line);border-radius:4px;overflow:hidden;
+    transition:transform .35s ease, border-color .35s ease;
+  }
+  .n-card:hover{transform:translateY(-6px);border-color:var(--gold-400);}
+  .n-card-img{height:210px;position:relative;overflow:hidden;}
+  .n-card-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease;}
+  .n-card:hover .n-card-img img{transform:scale(1.08);}
+  .n-card-img::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(7,6,10,0.9));}
+  .n-card-tag{
+    position:absolute;top:14px;left:14px;z-index:2;font-family:var(--syne);font-size:10px;letter-spacing:1.5px;
+    text-transform:uppercase;color:var(--gold-100);background:rgba(7,6,10,0.6);border:1px solid var(--obsidian-line);
+    padding:5px 10px;border-radius:2px;
+  }
+  .n-card-360{
+    position:absolute;bottom:14px;right:14px;z-index:2;width:36px;height:36px;border-radius:50%;
+    background:rgba(7,6,10,0.7);border:1px solid var(--gold-400);color:var(--gold-300);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.3s ease;
+  }
+  .n-card-360:hover{background:var(--gold-400);color:var(--obsidian-950);}
+  .n-card-body{padding:22px 24px 26px;}
+  .n-card-body h4{font-family:var(--serif);font-size:23px;font-weight:500;margin-bottom:4px;}
+  .n-card-body .loc{font-size:11.5px;color:var(--muted-dim);font-family:var(--syne);letter-spacing:0.5px;margin-bottom:14px;}
+  .n-card-stats{display:flex;justify-content:space-between;padding-top:14px;border-top:1px solid var(--obsidian-line);}
+  .n-card-stats div{text-align:left;}
+  .n-card-stats b{display:block;font-family:var(--serif);font-size:17px;color:var(--gold-300);font-weight:500;}
+  .n-card-stats span{font-size:9.5px;text-transform:uppercase;letter-spacing:1px;color:var(--muted-dim);font-family:var(--syne);}
+
+  /* ---------- PROPERTIES ---------- */
+  .p-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;}
+  @media (max-width:1100px){ .p-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:680px){ .p-grid{grid-template-columns:1fr;} }
+  .p-card{border:1px solid var(--obsidian-line);border-radius:4px;overflow:hidden;background:var(--obsidian-850);transition:.3s ease;}
+  .p-card:hover{border-color:var(--gold-400);}
+  .p-img{height:220px;overflow:hidden;position:relative;}
+  .p-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease;}
+  .p-card:hover .p-img img{transform:scale(1.06);}
+  .p-badge{position:absolute;top:14px;left:14px;background:var(--gold-400);color:var(--obsidian-950);font-family:var(--syne);font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:5px 10px;border-radius:2px;}
+  .p-body{padding:22px 24px;}
+  .p-body h4{font-family:var(--serif);font-size:20px;font-weight:500;margin-bottom:6px;}
+  .p-loc{font-size:12px;color:var(--muted-dim);margin-bottom:16px;display:flex;gap:6px;align-items:center;}
+  .p-feats{display:flex;gap:16px;padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid var(--obsidian-line);font-size:12.5px;color:var(--muted);}
+  .p-feats span{display:flex;gap:6px;align-items:center;}
+  .p-price{font-family:var(--serif);font-size:24px;color:var(--gold-300);margin-bottom:16px;}
+  .p-actions{display:flex;gap:10px;}
+  .p-actions button{flex:1;padding:10px;font-family:var(--syne);font-size:10.5px;letter-spacing:1px;text-transform:uppercase;border-radius:2px;cursor:pointer;transition:.3s ease;}
+  .p-view{background:transparent;border:1px solid var(--gold-400);color:var(--gold-300);}
+  .p-view:hover{background:var(--gold-400);color:var(--obsidian-950);}
+  .p-tour{background:var(--gold-400);border:1px solid var(--gold-400);color:var(--obsidian-950);}
+  .p-tour:hover{background:transparent;color:var(--gold-300);}
+
+  /* ---------- 360 MODAL ---------- */
+  .pano-modal{
+    display:none;position:fixed;inset:0;z-index:3000;background:rgba(4,3,5,0.92);backdrop-filter:blur(6px);
+    align-items:center;justify-content:center;
+  }
+  .pano-modal.open{display:flex;}
+  .pano-modal-inner{width:min(1100px,92vw);height:min(640px,80vh);position:relative;border:1px solid var(--obsidian-line);border-radius:4px;overflow:hidden;background:#000;}
+  #pano-full-canvas{width:100%;height:100%;display:block;cursor:grab;}
+  #pano-full-canvas:active{cursor:grabbing;}
+  .pano-modal-close{
+    position:absolute;top:16px;right:16px;z-index:10;width:40px;height:40px;border-radius:50%;
+    background:rgba(7,6,10,0.6);border:1px solid var(--obsidian-line);color:var(--gold-300);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;
+  }
+  .pano-modal-title{
+    position:absolute;left:20px;bottom:20px;z-index:10;
+    font-family:var(--serif);font-size:22px;color:var(--gold-100);
+    background:rgba(7,6,10,0.55);padding:10px 18px;border:1px solid var(--obsidian-line);border-radius:2px;
+  }
+  .pano-hint{
+    position:absolute;left:50%;top:20px;transform:translateX(-50%);z-index:10;
+    font-family:var(--syne);font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);
+    background:rgba(7,6,10,0.55);padding:8px 16px;border:1px solid var(--obsidian-line);border-radius:20px;
+    display:flex;align-items:center;gap:8px;
+  }
+
+  /* ---------- SCHEDULE MODAL ---------- */
+  .modal{display:none;position:fixed;inset:0;z-index:3000;background:rgba(4,3,5,0.85);align-items:center;justify-content:center;}
+  .modal.open{display:flex;}
+  .modal-box{width:min(480px,90vw);background:var(--obsidian-850);border:1px solid var(--obsidian-line);border-radius:4px;padding:34px;position:relative;}
+  .modal-box h3{font-family:var(--serif);font-size:26px;margin-bottom:22px;color:var(--gold-200,var(--gold-300));}
+  .modal-close{position:absolute;top:18px;right:20px;color:var(--muted);font-size:22px;cursor:pointer;}
+  .f-group{margin-bottom:18px;}
+  .f-group label{display:block;font-family:var(--syne);font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted-dim);margin-bottom:8px;}
+  .f-group input, .f-group select, .f-group textarea{
+    width:100%;background:var(--obsidian-900);border:1px solid var(--obsidian-line);color:var(--ivory);
+    padding:11px 12px;border-radius:2px;font-family:var(--sans);font-size:14px;
+  }
+  .f-group input:focus, .f-group select:focus, .f-group textarea:focus{outline:none;border-color:var(--gold-400);}
+  .f-group textarea{height:80px;resize:vertical;}
+  .modal-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:24px;}
+
+  /* ---------- FOOTER ---------- */
+  footer{border-top:1px solid var(--obsidian-line);background:var(--obsidian-900);padding:60px 40px 30px;}
+  .footer-grid{max-width:1440px;margin:0 auto;display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:40px;}
+  .footer-grid h5{font-family:var(--syne);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-400);margin-bottom:18px;}
+  .footer-grid ul{list-style:none;display:flex;flex-direction:column;gap:11px;}
+  .footer-grid a{color:var(--muted);font-size:13.5px;transition:color .3s ease;}
+  .footer-grid a:hover{color:var(--gold-300);}
+  .footer-brand p{color:var(--muted);font-size:13.5px;line-height:1.7;max-width:320px;margin-top:14px;}
+  .footer-social{display:flex;gap:12px;margin-top:20px;}
+  .footer-social a{width:34px;height:34px;border:1px solid var(--obsidian-line);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:.3s ease;}
+  .footer-social a:hover{border-color:var(--gold-400);color:var(--gold-400);}
+  .footer-bottom{max-width:1440px;margin:40px auto 0;padding-top:24px;border-top:1px solid var(--obsidian-line);text-align:center;color:var(--muted-dim);font-size:12px;}
+
+  .fade-in{opacity:0;transform:translateY(18px);animation:fadeUp .8s ease forwards;}
+  @keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-mark"><i class="fas fa-compass"></i></div>
+      <h1>Mwarokin <span>Estates</span></h1>
+    </div>
+    <button class="nav-toggle" id="navToggle"><i class="fas fa-bars"></i></button>
+    <nav id="mainNav">
+      <ul>
+        <li><a href="index.html"><i class="fas fa-home" style="margin-right:6px;"></i>Home</a></li>
+        <li><a href="About.html">About</a></li>
+        <li><a href="#" class="active">Neighbourhoods</a></li>
+        <li><a href="AutomateGPRSPinLocator.html">GPRS Locator</a></li>
+        <li><a href="LanguageSupport.html">Language</a></li>
+        <li><a href="Contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="fade-in">
+    <div class="hero-eyebrow">Nairobi &amp; Beyond</div>
+    <h2>Every address tells<br>a story. <em>Find yours.</em></h2>
+    <p class="lede">Walk through Nairobi's most distinguished addresses in full 360°, locate your position live on the map, and let the Compass guide you to the neighbourhood built for how you live.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><b>8</b><span>Neighbourhoods</span></div>
+      <div class="hero-stat"><b>412</b><span>Listed Properties</span></div>
+      <div class="hero-stat"><b>9.1/10</b><span>Avg. Livability</span></div>
+    </div>
+
+    <div class="locate-panel">
+      <div class="locate-row">
+        <i class="fas fa-location-crosshairs"></i>
+        <input type="text" id="locate-input" placeholder="Search a neighbourhood, e.g. Karen, Kilimani…">
+        <button class="locate-btn" id="find-me-btn">Find Near Me</button>
+      </div>
+      <div id="locate-status">Share your location to see distances to every neighbourhood.</div>
+    </div>
+  </div>
+
+  <div class="pano-teaser fade-in" style="animation-delay:.15s;">
+    <canvas id="pano-teaser-canvas"></canvas>
+    <div class="pano-teaser-label"><i class="fas fa-arrows-left-right"></i> Drag to look around — Karen Estate</div>
+    <div class="pano-expand" id="teaser-expand"><i class="fas fa-expand"></i></div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- COMPASS -->
+<section class="section">
+  <div class="section-head">
+    <div>
+      <span class="tag">The Compass</span>
+      <h3>Navigate by feel, not by filter.</h3>
+    </div>
+    <p>Rotate through Nairobi's neighbourhoods. Each bearing holds its own character, price point, and pace of life.</p>
+  </div>
+
+  <div class="compass-wrap">
+    <div class="compass" id="compass"></div>
+
+    <div class="compass-detail" id="compass-detail">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- MAP -->
+<section class="section">
+  <div class="section-head">
+    <div>
+      <span class="tag">Live Location</span>
+      <h3>See where you stand.</h3>
+    </div>
+    <p>Enable location to measure real distance from you to every listed neighbourhood, or explore freely on the map.</p>
+  </div>
+
+  <div class="map-section">
+    <div id="estate-map"></div>
+    <div class="map-side">
+      <h4>Nearest To You</h4>
+      <div class="map-legend-custom">
+        <div class="leg"><div class="leg-dot" style="background:#d4af6a;"></div>Residential</div>
+        <div class="leg"><div class="leg-dot" style="background:#8fae8b;"></div>Diplomatic / Green Belt</div>
+        <div class="leg"><div class="leg-dot" style="background:#c07a5b;"></div>Mixed Use</div>
+      </div>
+      <div id="near-list"></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- NEIGHBOURHOOD GRID -->
+<section class="section">
+  <div class="section-head">
+    <div>
+      <span class="tag">The Addresses</span>
+      <h3>Eight neighbourhoods, one standard.</h3>
+    </div>
+    <p>Every card opens to a full 360° walkthrough — step into the street before you step into the viewing.</p>
+  </div>
+  <div class="n-grid" id="n-grid"></div>
+</section>
+
+<hr class="divider">
+
+<!-- PROPERTIES -->
+<section class="section">
+  <div class="section-head">
+    <div>
+      <span class="tag">Featured Listings</span>
+      <h3>Available this season.</h3>
+    </div>
+    <p>A curated set from across the Compass — schedule a private tour in two taps.</p>
+  </div>
+  <div class="p-grid" id="p-grid"></div>
+</section>
+
+<!-- 360 MODAL -->
+<div class="pano-modal" id="pano-modal">
+  <div class="pano-modal-inner">
+    <div class="pano-modal-close" id="pano-modal-close"><i class="fas fa-times"></i></div>
+    <div class="pano-hint"><i class="fas fa-arrows-left-right"></i> Drag / Swipe to rotate</div>
+    <canvas id="pano-full-canvas"></canvas>
+    <div class="pano-modal-title" id="pano-modal-title">Karen Estate</div>
+  </div>
+</div>
+
+<!-- SCHEDULE MODAL -->
+<div class="modal" id="schedule-modal">
+  <div class="modal-box">
+    <span class="modal-close" id="modal-close">&times;</span>
+    <h3>Schedule a Private Tour</h3>
+    <form id="schedule-form">
+      <div class="f-group"><label>Property</label><input type="text" id="s-property" readonly></div>
+      <div class="f-group"><label>Preferred Date</label><input type="date" id="s-date" required></div>
+      <div class="f-group"><label>Preferred Time</label>
+        <select id="s-time" required>
+          <option value="">Select a time</option>
+          <option>9:00 AM</option><option>11:00 AM</option><option>1:00 PM</option><option>3:00 PM</option><option>5:00 PM</option>
+        </select>
+      </div>
+      <div class="f-group"><label>Full Name</label><input type="text" required></div>
+      <div class="f-group"><label>Phone / Email</label><input type="text" required></div>
+      <div class="modal-actions">
+        <button type="button" class="btn-ghost" id="modal-cancel">Cancel</button>
+        <button type="submit" class="btn-gold">Confirm Tour</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="brand"><div class="brand-mark"><i class="fas fa-compass"></i></div><h1 style="font-size:20px;">Mwarokin <span style="color:var(--gold-400);">Estates</span></h1></div>
+      <p>A pan-African address, built for the way you actually live. Powered by Syllogism Technology Africa.</p>
+      <div class="footer-social">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+    </div>
+    <div><h5>Mwarokin</h5><ul>
+      <li><a href="Property-agent.html">Agents</a></li>
+      <li><a href="Privacy.html">Privacy Policy</a></li>
+      <li><a href="Cookies.html">Cookies</a></li>
+    </ul></div>
+    <div><h5>Support</h5><ul>
+      <li><a href="Faqs.html">FAQ</a></li>
+      <li><a href="Tenant Profile.html">Tenant Profile</a></li>
+      <li><a href="Settings.html">Settings</a></li>
+    </ul></div>
+    <div><h5>Resources</h5><ul>
+      <li><a href="Title Deeds.html">Mother Title</a></li>
+      <li><a href="Testimonial.html">Testimonials</a></li>
+      <li><a href="Wearables.html">Wearables</a></li>
+    </ul></div>
+  </div>
+  <div class="footer-bottom">Mwarokin Estates — Neighbourhoods &copy; 2026. All rights reserved. Powered by Syllogism Technology Africa.</div>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ============ DATA ============ */
+const neighbourhoods = [
+  { id:"karen", name:"Karen", position:[-1.3197,36.7076], type:"green", properties:64, avgPrice:"KES 85M", security:9.4, schools:9.6,
+    desc:"Rolling coffee-farm acreage, forest bordering the Ngong Hills, and Nairobi's most established old-money addresses.",
+    pano:"https://images.unsplash.com/photo-1500076656116-558758c991c1?w=1600&q=80" },
+  { id:"kilimani", name:"Kilimani", position:[-1.2905,36.7820], type:"mixed", properties:88, avgPrice:"KES 32M", security:8.1, schools:8.4,
+    desc:"Nairobi's vertical frontier — glass towers, rooftop lounges, and the fastest-growing rental yields in the city.",
+    pano:"https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1600&q=80" },
+  { id:"runda", name:"Runda", position:[-1.2167,36.8167], type:"green", properties:41, avgPrice:"KES 120M", security:9.7, schools:9.2,
+    desc:"Gated, forested, and diplomatic — Runda remains the benchmark for privacy and scale on half-acre plots.",
+    pano:"https://images.unsplash.com/photo-1444492417251-9c84a5fa18e0?w=1600&q=80" },
+  { id:"lavington", name:"Lavington", position:[-1.2793,36.7688], type:"green", properties:57, avgPrice:"KES 68M", security:9.0, schools:8.9,
+    desc:"Leafy, walkable, and close to everything — Lavington balances family life with easy access to the CBD.",
+    pano:"https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&q=80" },
+  { id:"westlands", name:"Westlands", position:[-1.2673,36.8090], type:"mixed", properties:73, avgPrice:"KES 45M", security:8.0, schools:8.0,
+    desc:"Nairobi after dark — corporate towers by day, the city's dining and nightlife spine after sunset.",
+    pano:"https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80" },
+  { id:"kitisuru", name:"Kitisuru", position:[-1.2258,36.7889], type:"green", properties:33, avgPrice:"KES 95M", security:9.5, schools:9.0,
+    desc:"Quiet, low-density, and adjacent to Runda — Kitisuru suits those who want acreage without the drive.",
+    pano:"https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1600&q=80" },
+  { id:"muthaiga", name:"Muthaiga", position:[-1.2417,36.8264], type:"green", properties:24, avgPrice:"KES 140M", security:9.8, schools:9.1,
+    desc:"Nairobi's original diplomatic enclave — colonial-era grandeur on some of the city's largest private plots.",
+    pano:"https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1600&q=80" },
+  { id:"gigiri", name:"Gigiri", position:[-1.2333,36.8083],  type:"mixed", properties:32, avgPrice:"KES 78M", security:9.3, schools:9.3,
+    desc:"Home to the UN complex and the international-school belt — Gigiri is Nairobi's most global postcode.",
+    pano:"https://images.unsplash.com/photo-1494526585095-c41746248156?w=1600&q=80" }
+];
+
+const properties = [
+  { title:"Coffee Ridge Villa", n:"karen", price:"KES 98,000,000", beds:5, baths:4, area:"5,400 sq.ft.", img:"https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=700&q=80", badge:"Featured" },
+  { title:"The Kilimani Loft", n:"kilimani", price:"KES 36,500,000", beds:3, baths:2, area:"1,850 sq.ft.", img:"https://images.unsplash.com/photo-1600566753052-d04fcfc4b5eb?w=700&q=80", badge:"New" },
+  { title:"Runda Forest Manor", n:"runda", price:"KES 132,000,000", beds:6, baths:5, area:"7,200 sq.ft.", img:"https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=700&q=80", badge:"Exclusive" },
+  { title:"Lavington Garden House", n:"lavington", price:"KES 71,000,000", beds:4, baths:3, area:"3,900 sq.ft.", img:"https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=700&q=80", badge:"Price Reduced" },
+  { title:"Westlands Sky Residence", n:"westlands", price:"KES 48,000,000", beds:3, baths:3, area:"2,300 sq.ft.", img:"https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=700&q=80", badge:"New" },
+  { title:"Kitisuru Acreage Estate", n:"kitisuru", price:"KES 101,000,000", beds:5, baths:4, area:"6,100 sq.ft.", img:"https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=700&q=80", badge:"Featured" }
+];
+
+const typeColor = { green:"#8fae8b", mixed:"#c07a5b", residential:"#d4af6a" };
+
+/* ============ NEIGHBOURHOOD GRID ============ */
+const nGrid = document.getElementById('n-grid');
+neighbourhoods.forEach(n=>{
+  const el = document.createElement('div');
+  el.className = 'n-card';
+  el.innerHTML = `
+    <div class="n-card-img">
+      <span class="n-card-tag">${n.type==='green'?'Green Belt':n.type==='mixed'?'Mixed Use':'Residential'}</span>
+      <img src="${n.pano}" alt="${n.name}">
+      <div class="n-card-360" data-pano="${n.id}"><i class="fas fa-vr-cardboard"></i></div>
+    </div>
+    <div class="n-card-body">
+      <h4>${n.name}</h4>
+      <div class="loc">NAIROBI, KENYA · ${n.properties} PROPERTIES</div>
+      <div class="n-card-stats">
+        <div><b>${n.avgPrice}</b><span>Avg. Price</span></div>
+        <div><b>${n.security}</b><span>Security</span></div>
+        <div><b>${n.schools}</b><span>Schools</span></div>
+      </div>
+    </div>`;
+  el.querySelector('.n-card-360').addEventListener('click', (e)=>{ e.stopPropagation(); openPano(n.id); });
+  el.addEventListener('click', ()=>{ focusNeighbourhood(n.id); document.getElementById('estate-map').scrollIntoView({behavior:'smooth',block:'center'}); });
+  nGrid.appendChild(el);
+});
+
+/* ============ PROPERTIES GRID ============ */
+const pGrid = document.getElementById('p-grid');
+properties.forEach(p=>{
+  const nb = neighbourhoods.find(n=>n.id===p.n);
+  const el = document.createElement('div');
+  el.className = 'p-card';
+  el.innerHTML = `
+    <div class="p-img"><span class="p-badge">${p.badge}</span><img src="${p.img}" alt="${p.title}"></div>
+    <div class="p-body">
+      <h4>${p.title}</h4>
+      <div class="p-loc"><i class="fas fa-location-dot" style="color:var(--gold-400);"></i>${nb.name}, Nairobi</div>
+      <div class="p-feats">
+        <span><i class="fas fa-bed"></i>${p.beds} beds</span>
+        <span><i class="fas fa-bath"></i>${p.baths} baths</span>
+        <span><i class="fas fa-ruler-combined"></i>${p.area}</span>
+      </div>
+      <div class="p-price">${p.price}</div>
+      <div class="p-actions">
+        <button class="p-view">View 360°</button>
+        <button class="p-tour">Schedule Tour</button>
+      </div>
+    </div>`;
+  el.querySelector('.p-view').addEventListener('click', ()=>openPano(p.n));
+  el.querySelector('.p-tour').addEventListener('click', ()=>openSchedule(p.title));
+  pGrid.appendChild(el);
+});
+
+/* ============ COMPASS DIAL ============ */
+const compassEl = document.getElementById('compass');
+const compassDetail = document.getElementById('compass-detail');
+const ringR = 190;
+const ringInner = document.createElement('div'); ringInner.className='compass-ring';
+const ringInner2 = document.createElement('div'); ringInner2.className='compass-ring inner';
+const needle = document.createElement('div'); needle.className='compass-needle';
+const centerEl = document.createElement('div'); centerEl.className='compass-center';
+compassEl.append(ringInner, ringInner2, needle, centerEl);
+
+const nodeEls = {};
+neighbourhoods.forEach((n, i)=>{
+  const angle = (i / neighbourhoods.length) * 360 - 90;
+  const rad = angle * Math.PI/180;
+  const x = 200 + ringR*0.72*Math.cos(rad);
+  const y = 200 + ringR*0.72*Math.sin(rad);
+  const node = document.createElement('div');
+  node.className = 'compass-node';
+  node.style.left = x+'px'; node.style.top = y+'px';
+  node.innerHTML = `<span>${n.name}</span>`;
+  node.addEventListener('click', ()=>focusNeighbourhood(n.id, angle));
+  compassEl.appendChild(node);
+  nodeEls[n.id] = node;
+});
+
+function focusNeighbourhood(id, angle){
+  const n = neighbourhoods.find(x=>x.id===id);
+  Object.values(nodeEls).forEach(el=>el.classList.remove('active'));
+  nodeEls[id].classList.add('active');
+  if(angle===undefined){
+    const idx = neighbourhoods.findIndex(x=>x.id===id);
+    angle = (idx / neighbourhoods.length) * 360 - 90;
+  }
+  needle.style.transform = `rotate(${angle+90}deg)`;
+  centerEl.innerHTML = `
+    <div class="cn-label">Bearing</div>
+    <div class="cn-name">${n.name}</div>
+    <div class="cn-bearing">${Math.round(((angle+90)+360)%360)}° · ${n.properties} listings</div>`;
+  compassDetail.innerHTML = `
+    <h4>On The Compass — ${n.type==='green'?'Green Belt':n.type==='mixed'?'Mixed Use':'Residential'}</h4>
+    <h3>${n.name}</h3>
+    <p class="desc">${n.desc}</p>
+    <div class="compass-facts">
+      <div class="cfact"><b>${n.avgPrice}</b><span>Avg. Price</span></div>
+      <div class="cfact"><b>${n.security}/10</b><span>Security Index</span></div>
+      <div class="cfact"><b>${n.schools}/10</b><span>School Rating</span></div>
+    </div>
+    <div class="compass-actions">
+      <button class="btn-gold" onclick="openPano('${n.id}')"><i class="fas fa-vr-cardboard"></i> View in 360°</button>
+      <button class="btn-ghost" onclick="document.getElementById('estate-map').scrollIntoView({behavior:'smooth',block:'center'})"><i class="fas fa-map"></i> Locate on Map</button>
+    </div>`;
+  if(map && markers[id]){ map.setView(n.position, 14, {animate:true}); markers[id].openPopup(); }
+}
+focusNeighbourhood('karen');
+
+/* ============ LEAFLET MAP ============ */
+const map = L.map('estate-map', {zoomControl:true}).setView([-1.2650,36.7900], 12);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains:'abcd', maxZoom:19
+}).addTo(map);
+
+const markers = {};
+let userLatLng = null;
+
+function makeIcon(color){
+  return L.divIcon({
+    className:'', html:`<div style="width:16px;height:16px;border-radius:50%;background:${color};border:2px solid #07060a;box-shadow:0 0 10px ${color};"></div>`,
+    iconSize:[16,16], iconAnchor:[8,8]
+  });
+}
+neighbourhoods.forEach(n=>{
+  const marker = L.marker(n.position, {icon:makeIcon(typeColor[n.type])}).addTo(map)
+    .bindPopup(`<div style="font-family:'DM Sans',sans-serif;min-width:180px;">
+      <strong style="font-family:'Cormorant Garamond',serif;font-size:18px;">${n.name}</strong><br>
+      <span style="color:#666;font-size:12.5px;">${n.avgPrice} avg · ${n.properties} properties</span>
+    </div>`);
+  markers[n.id] = marker;
+});
+
+function renderNearList(){
+  const list = document.getElementById('near-list');
+  let items = neighbourhoods.map(n=>({...n, dist: userLatLng ? distanceKm(userLatLng, n.position) : null}));
+  if(userLatLng) items.sort((a,b)=>a.dist-b.dist);
+  list.innerHTML = items.map(n=>`
+    <div class="near-item" data-id="${n.id}">
+      <div>
+        <div class="ni-name">${n.name}</div>
+        <div class="ni-sub">${n.properties} PROPERTIES · ${n.avgPrice}</div>
+      </div>
+      <div class="ni-dist">${n.dist!==null ? n.dist.toFixed(1)+' km' : '—'}</div>
+    </div>`).join('');
+  list.querySelectorAll('.near-item').forEach(item=>{
+    item.addEventListener('click', ()=>focusNeighbourhood(item.dataset.id));
+  });
+}
+renderNearList();
+
+function distanceKm([lat1,lon1],[lat2,lon2]){
+  const R=6371, dLat=(lat2-lat1)*Math.PI/180, dLon=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+document.getElementById('find-me-btn').addEventListener('click', ()=>{
+  const status = document.getElementById('locate-status');
+  if(!("geolocation" in navigator)){ status.textContent="Geolocation isn't supported by this browser."; return; }
+  status.textContent = "Locating you…";
+  navigator.geolocation.getCurrentPosition(pos=>{
+    userLatLng = [pos.coords.latitude, pos.coords.longitude];
+    status.textContent = "Location found — distances updated below.";
+    status.classList.add('found');
+    if(map._userMarker) map.removeLayer(map._userMarker);
+    map._userMarker = L.marker(userLatLng, {icon:makeIcon('#f4e4c1')}).addTo(map).bindPopup('You are here').openPopup();
+    map.setView(userLatLng, 12);
+    renderNearList();
+  }, ()=>{ status.textContent = "Couldn't access your location — check browser permissions."; });
+});
+
+document.getElementById('locate-input').addEventListener('input', function(){
+  const q = this.value.toLowerCase().trim();
+  if(!q){ renderNearList(); return; }
+  const list = document.getElementById('near-list');
+  const matches = neighbourhoods.filter(n=>n.name.toLowerCase().includes(q));
+  list.innerHTML = matches.map(n=>`
+    <div class="near-item" data-id="${n.id}">
+      <div><div class="ni-name">${n.name}</div><div class="ni-sub">${n.properties} PROPERTIES · ${n.avgPrice}</div></div>
+      <div class="ni-dist">${userLatLng ? distanceKm(userLatLng,n.position).toFixed(1)+' km' : '—'}</div>
+    </div>`).join('') || `<p style="color:var(--muted-dim);font-size:13px;padding:14px 4px;">No neighbourhood matches "${this.value}".</p>`;
+  list.querySelectorAll('.near-item').forEach(item=>item.addEventListener('click', ()=>focusNeighbourhood(item.dataset.id)));
+});
+
+/* ============ THREE.JS 360 PANORAMA VIEWER ============ */
+function createPanoViewer(canvas, imgUrl){
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth/canvas.clientHeight, 0.1, 1000);
+  camera.position.set(0,0,0.1);
+
+  const geometry = new THREE.SphereGeometry(500, 60, 40);
+  geometry.scale(-1,1,1);
+  const loader = new THREE.TextureLoader();
+  const material = new THREE.MeshBasicMaterial({ color:0x1a151d });
+  const sphere = new THREE.Mesh(geometry, material);
+  scene.add(sphere);
+  loader.load(imgUrl, tex=>{ material.map = tex; material.color.set(0xffffff); material.needsUpdate = true; });
+
+  let lon=0, lat=0, isDown=false, lastX=0, lastY=0;
+  let autoRotate = true;
+
+  function pointerDown(x,y){ isDown=true; lastX=x; lastY=y; autoRotate=false; }
+  function pointerMove(x,y){
+    if(!isDown) return;
+    lon += (x-lastX)*0.18;
+    lat += (y-lastY)*0.12;
+    lat = Math.max(-85, Math.min(85, lat));
+    lastX=x; lastY=y;
+  }
+  function pointerUp(){ isDown=false; }
+
+  canvas.addEventListener('mousedown', e=>pointerDown(e.clientX,e.clientY));
+  window.addEventListener('mousemove', e=>pointerMove(e.clientX,e.clientY));
+  window.addEventListener('mouseup', pointerUp);
+  canvas.addEventListener('touchstart', e=>{ const t=e.touches[0]; pointerDown(t.clientX,t.clientY); }, {passive:true});
+  canvas.addEventListener('touchmove', e=>{ const t=e.touches[0]; pointerMove(t.clientX,t.clientY); }, {passive:true});
+  canvas.addEventListener('touchend', pointerUp);
+
+  function resize(){
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    renderer.setSize(w,h,false);
+    camera.aspect = w/h;
+    camera.updateProjectionMatrix();
+  }
+
+  function animate(){
+    if(autoRotate) lon += 0.03;
+    const phi = THREE.MathUtils.degToRad(90-lat);
+    const theta = THREE.MathUtils.degToRad(lon);
+    const target = new THREE.Vector3(
+      500*Math.sin(phi)*Math.cos(theta),
+      500*Math.cos(phi),
+      500*Math.sin(phi)*Math.sin(theta)
+    );
+    camera.lookAt(target);
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+  resize();
+  animate();
+  return { resize, resumeAutoRotate: ()=>autoRotate=true };
+}
+
+let teaserViewer = null;
+function initTeaser(){
+  const canvas = document.getElementById('pano-teaser-canvas');
+  teaserViewer = createPanoViewer(canvas, neighbourhoods[0].pano);
+  window.addEventListener('resize', ()=>teaserViewer.resize());
+}
+initTeaser();
+
+let fullViewer = null;
+function openPano(id){
+  const n = neighbourhoods.find(x=>x.id===id);
+  document.getElementById('pano-modal-title').textContent = n.name + ' Estate';
+  document.getElementById('pano-modal').classList.add('open');
+  const canvas = document.getElementById('pano-full-canvas');
+  setTimeout(()=>{
+    if(!fullViewer){ fullViewer = createPanoViewer(canvas, n.pano); }
+    else { fullViewer.resize(); }
+  }, 30);
+}
+document.getElementById('pano-modal-close').addEventListener('click', ()=>{
+  document.getElementById('pano-modal').classList.remove('open');
+});
+document.getElementById('teaser-expand').addEventListener('click', ()=>openPano('karen'));
+
+/* ============ SCHEDULE MODAL ============ */
+function openSchedule(title){
+  document.getElementById('s-property').value = title;
+  document.getElementById('schedule-modal').classList.add('open');
+}
+document.getElementById('modal-close').addEventListener('click', ()=>document.getElementById('schedule-modal').classList.remove('open'));
+document.getElementById('modal-cancel').addEventListener('click', ()=>document.getElementById('schedule-modal').classList.remove('open'));
+document.getElementById('schedule-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  alert('Tour scheduled successfully! Our team will confirm shortly.');
+  this.reset();
+  document.getElementById('schedule-modal').classList.remove('open');
+});
+
+/* ============ NAV TOGGLE ============ */
+document.getElementById('navToggle').addEventListener('click', ()=>{
+  document.getElementById('mainNav').classList.toggle('open');
+});
+</script>
+</body>
+</html>

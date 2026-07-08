@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mwarokin Estates · Payment Portal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{
+  --navy:#0e1a2b;
+  --navy-light:#16283f;
+  --navy-softer:#1e3352;
+  --gold:#c9a959;
+  --gold-light:#e8d5a3;
+  --gold-glow:rgba(201,169,89,.25);
+  --cream:#f8f5ee;
+  --white:#ffffff;
+  --gray-100:#f3f1ed;
+  --gray-200:#e8e4dc;
+  --gray-300:#d0cbc2;
+  --gray-600:#6b6560;
+  --gray-800:#2d2823;
+  --green:#2f7d5e;
+  --green-bg:#e7f3ed;
+  --amber:#b9822f;
+  --amber-bg:#f7ecd8;
+  --red:#b3462c;
+  --red-bg:#f6e6e1;
+  --shadow-sm:0 4px 20px rgba(14,26,43,.08);
+  --shadow-md:0 12px 48px rgba(14,26,43,.12);
+  --shadow-lg:0 24px 64px rgba(14,26,43,.18);
+}
+*{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;}
+.serif{font-family:'Fraunces',serif;}
+.mono{font-family:'JetBrains Mono',monospace;}
+
+body{
+  background:var(--cream);
+  background-image:
+    radial-gradient(ellipse at 8% 10%, rgba(201,169,89,.07) 0%, transparent 45%),
+    radial-gradient(ellipse at 95% 90%, rgba(14,26,43,.05) 0%, transparent 45%);
+  color:var(--gray-800);
+}
+
+.fade-in{animation:fadeIn .5s;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.slide-in{animation:slideIn .35s cubic-bezier(.25,.46,.45,.94) forwards;}
+@keyframes slideIn{from{transform:translateY(-8px) translateX(8px);opacity:0;}to{transform:translateY(0) translateX(0);opacity:1;}}
+.pop-in{animation:popIn .4s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes popIn{from{transform:scale(.9);opacity:0;}to{transform:scale(1);opacity:1;}}
+
+/* ===== Card shell ===== */
+.p-card{background:var(--white);border-radius:20px;box-shadow:var(--shadow-sm);border:1px solid var(--gray-200);}
+.p-card-hover{transition:.3s cubic-bezier(.25,.46,.45,.94);}
+.p-card-hover:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);}
+
+/* ===== Header ===== */
+.brand-header{
+  background:var(--navy);border-radius:20px;padding:28px 32px;position:relative;overflow:hidden;
+  box-shadow:var(--shadow-lg);
+}
+.brand-header::after{content:'';position:absolute;top:-70%;right:-6%;width:420px;height:420px;background:radial-gradient(circle, rgba(201,169,89,.12) 0%, transparent 70%);border-radius:50%;pointer-events:none;}
+.brand-icon{width:48px;height:48px;background:var(--gold);border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--navy);flex-shrink:0;}
+.brand-badge{background:rgba(201,169,89,.15);border:1px solid rgba(201,169,89,.25);padding:7px 16px;border-radius:100px;font-size:12px;font-weight:600;color:var(--gold-light);letter-spacing:.4px;display:inline-flex;align-items:center;gap:8px;}
+
+/* ===== Method selector ===== */
+.method-card{
+  background:var(--white);border:2px solid var(--gray-200);border-radius:16px;padding:18px;cursor:pointer;
+  transition:.3s cubic-bezier(.25,.46,.45,.94);position:relative;
+}
+.method-card:hover{border-color:var(--gold-light);box-shadow:var(--shadow-sm);transform:translateY(-2px);}
+.method-card.active{border-color:var(--gold);background:linear-gradient(180deg, rgba(201,169,89,.06), rgba(201,169,89,.02));box-shadow:0 0 0 4px var(--gold-glow), var(--shadow-sm);}
+.method-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.method-card .m-check{position:absolute;top:12px;right:12px;width:20px;height:20px;border-radius:50%;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:10px;opacity:0;transform:scale(.6);transition:.3s;}
+.method-card.active .m-check{opacity:1;transform:scale(1);}
+
+/* ===== Forms ===== */
+.p-label{font-size:12.5px;font-weight:600;color:var(--navy);letter-spacing:.2px;display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+.p-input, .p-select{
+  width:100%;border:1.5px solid var(--gray-200);background:var(--gray-100);border-radius:10px;padding:11px 14px;
+  font-size:14.5px;color:var(--gray-800);transition:.3s;outline:none;
+}
+.p-input:focus, .p-select:focus{border-color:var(--gold);background:var(--white);box-shadow:0 0 0 4px var(--gold-glow);}
+
+.btn-pay{
+  width:100%;border:none;border-radius:100px;padding:13px 24px;font-weight:700;font-size:14.5px;color:var(--white);
+  background:var(--navy);cursor:pointer;transition:.3s;display:flex;align-items:center;justify-content:center;gap:9px;
+}
+.btn-pay:hover:not(:disabled){background:var(--navy-softer);transform:translateY(-2px);box-shadow:0 8px 24px rgba(14,26,43,.2);}
+.btn-pay:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:none!important;}
+.btn-pay.gold{background:var(--gold);color:var(--navy);}
+.btn-pay.gold:hover:not(:disabled){background:#dbb96a;box-shadow:0 8px 24px rgba(201,169,89,.35);}
+
+.info-box{border-radius:14px;padding:16px 18px;margin-top:20px;}
+.info-box h3{font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:7px;}
+.info-box li{font-size:12.5px;line-height:1.6;}
+
+/* ===== STK / processing state ===== */
+.stk-wait{
+  border:1.5px dashed var(--gold);background:rgba(201,169,89,.06);border-radius:14px;padding:18px;margin-top:16px;
+  display:flex;align-items:center;gap:14px;
+}
+.stk-wait .stk-icon{width:40px;height:40px;border-radius:50%;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;animation:pulseStk 1.4s ease infinite;}
+@keyframes pulseStk{0%,100%{box-shadow:0 0 0 0 rgba(201,169,89,.4);}50%{box-shadow:0 0 0 10px rgba(201,169,89,0);}}
+
+/* ===== Status pills ===== */
+.pill{padding:4px 13px;border-radius:100px;font-size:11.5px;font-weight:700;letter-spacing:.2px;display:inline-flex;align-items:center;gap:5px;}
+.pill-completed{background:var(--green-bg);color:var(--green);}
+.pill-pending, .pill-initiated{background:var(--amber-bg);color:var(--amber);}
+.pill-awaiting_confirmation{background:rgba(201,169,89,.15);color:#8a6a2a;}
+.pill-failed{background:var(--red-bg);color:var(--red);}
+
+/* ===== Notifications ===== */
+.notification{position:fixed;top:20px;right:20px;z-index:1000;}
+.notif-box{border-radius:14px;padding:16px 18px;box-shadow:var(--shadow-lg);max-width:380px;display:flex;gap:12px;align-items:flex-start;background:var(--white);border-left:4px solid var(--gold);}
+.notif-box.success{border-left-color:var(--green);}
+.notif-box.error{border-left-color:var(--red);}
+.notif-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;}
+.notif-icon.info{background:var(--gold-glow);color:var(--gold);}
+.notif-icon.success{background:var(--green-bg);color:var(--green);}
+.notif-icon.error{background:var(--red-bg);color:var(--red);}
+
+/* ===== Table ===== */
+.p-table thead th{font-size:11px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.4px;padding:12px 20px;text-align:left;border-bottom:1.5px solid var(--gray-200);}
+.p-table tbody td{padding:14px 20px;font-size:13.5px;color:var(--gray-800);border-bottom:1px solid var(--gray-200);}
+.p-table tbody tr:hover{background:var(--gray-100);}
+.p-table tbody tr:last-child td{border-bottom:none;}
+</style>
+</head>
+<body class="min-h-screen">
+<div id="app" class="container mx-auto px-4 py-8 max-w-6xl"></div>
+
+<script>
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+const formatCurrency = (amount, currency) => {
+    try{
+        return new Intl.NumberFormat('en-KE', { style: 'currency', currency: currency, minimumFractionDigits: 2 }).format(amount);
+    }catch(e){
+        return `${currency} ${Number(amount).toLocaleString()}`;
+    }
+};
+
+/* ============================================================
+   MOCK PAYMENT SERVICE
+   ============================================================ */
+const paymentService = {
+    processBankTransfer: async (data) => new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if (!data.amount || data.amount <= 0) return reject(new Error("Amount must be greater than zero"));
+            if (!data.bankName) return reject(new Error("Please select a bank"));
+            resolve({ id:`bt_${rid()}`, status:'pending', type:'bank_transfer', ...data, timestamp:new Date().toISOString(), reference:`REF${Math.floor(100000+Math.random()*900000)}` });
+        }, 1500);
+    }),
+
+    processMpesa: async (data) => new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if (!data.amount || data.amount <= 0) return reject(new Error("Amount must be greater than zero"));
+            if (!/^0[71]\d{8}$/.test((data.phone||'').replace(/\s/g,''))) return reject(new Error("Enter a valid M-Pesa phone number"));
+            resolve({ id:`mp_${rid()}`, status:'pending', type:'mpesa', ...data, timestamp:new Date().toISOString(), reference:`MPX${Math.floor(100000+Math.random()*900000)}` });
+        }, 1000);
+    }),
+
+    processSyllopay: async (data) => new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if (!data.amount || data.amount <= 0) return reject(new Error("Amount must be greater than zero"));
+            if (!data.sylloCode) return reject(new Error("Enter your SylloPay ID / SylloCode"));
+            resolve({ id:`sp_${rid()}`, status:'completed', type:'syllopay', ...data, timestamp:new Date().toISOString(), reference:`SYL${Math.floor(100000+Math.random()*900000)}` });
+        }, 1300);
+    }),
+
+    processMobileWallet: async (data) => new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if (!data.amount || data.amount <= 0) return reject(new Error("Amount must be greater than zero"));
+            if (!data.walletNumber) return reject(new Error("Wallet number is required"));
+            resolve({ id:`mw_${rid()}`, status:'initiated', type:'mobile_wallet', ...data, timestamp:new Date().toISOString() });
+        }, 1200);
+    }),
+
+    processCryptoPayment: async (data) => new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if (!data.amount || data.amount <= 0) return reject(new Error("Amount must be greater than zero"));
+            resolve({ id:`cp_${rid()}`, status:'awaiting_confirmation', type:'crypto', ...data, timestamp:new Date().toISOString(), cryptoAmount:(data.amount/4000).toFixed(8), address:'0x742d35Cc6634C0532925a3b844Bc454e4438f44e' });
+        }, 1000);
+    }),
+
+    getPaymentHistory: async () => new Promise(resolve => {
+        setTimeout(() => {
+            resolve([
+                { id:'sp_1', status:'completed', amount:12000, currency:'KES', type:'syllopay', sylloCode:'SYL-4XK92', timestamp:new Date(Date.now()-43200000).toISOString(), reference:'SYL284710' },
+                { id:'mp_1', status:'completed', amount:5000, currency:'KES', type:'mpesa', phone:'0712 *** 456', timestamp:new Date(Date.now()-86400000).toISOString(), reference:'MPX384729' },
+                { id:'bt_1', status:'completed', amount:7500, currency:'KES', type:'bank_transfer', bankName:'Equity Bank', timestamp:new Date(Date.now()-172800000).toISOString(), reference:'REF384729' },
+                { id:'mw_1', status:'completed', amount:3500, currency:'KES', type:'mobile_wallet', walletProvider:'Airtel Money', timestamp:new Date(Date.now()-259200000).toISOString() },
+                { id:'cp_1', status:'completed', amount:100, currency:'USD', type:'crypto', cryptocurrency:'Ethereum', timestamp:new Date(Date.now()-345600000).toISOString() }
+            ]);
+        }, 700);
+    })
+};
+function rid(){ return Math.random().toString(36).slice(2,11); }
+
+/* ============================================================
+   NOTIFICATIONS
+   ============================================================ */
+function showNotification(message, type = 'info') {
+    const wrap = document.createElement('div');
+    wrap.className = 'notification slide-in';
+    const iconMap = { info:'fa-info-circle', success:'fa-check-circle', error:'fa-exclamation-circle' };
+    wrap.innerHTML = `
+        <div class="notif-box ${type}">
+            <div class="notif-icon ${type}"><i class="fas ${iconMap[type]||iconMap.info}"></i></div>
+            <div class="flex-1">
+                <p class="text-sm text-gray-700 leading-snug">${message}</p>
+            </div>
+            <button onclick="this.closest('.notification').remove()" class="text-gray-400 hover:text-gray-700 ml-1">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>`;
+    document.body.appendChild(wrap);
+    setTimeout(() => { if (wrap.parentElement) wrap.remove(); }, 6000);
+}
+
+/* ============================================================
+   PAYMENT METHOD SELECTOR
+   ============================================================ */
+function renderPaymentMethods(activeMethod) {
+    const methods = [
+        { id:'syllopay', name:'SylloPay', icon:'fa-globe-africa', color:'#c9a959', bg:'rgba(201,169,89,.12)', sub:'Pan-African wallet & SylloCode' },
+        { id:'mpesa', name:'M-Pesa', icon:'fa-mobile-alt', color:'#0e1a2b', bg:'rgba(14,26,43,.07)', sub:'Lipa Na M-Pesa · STK Push' },
+        { id:'bank', name:'Bank Transfer', icon:'fa-landmark', color:'#0e1a2b', bg:'rgba(14,26,43,.07)', sub:'Direct bank transfer' },
+        { id:'mobile', name:'Mobile Wallet', icon:'fa-wallet', color:'#c9a959', bg:'rgba(201,169,89,.12)', sub:'Airtel Money, T-Kash & more' },
+        { id:'crypto', name:'Cryptocurrency', icon:'fa-coins', color:'#c9a959', bg:'rgba(201,169,89,.12)', sub:'Bitcoin, Ethereum, USDT' }
+    ];
+    return `
+        <div class="p-card p-6 mb-6">
+            <h2 class="text-lg font-bold mb-1" style="color:var(--navy);"><i class="fas fa-credit-card mr-2" style="color:var(--gold);"></i>Select Payment Method</h2>
+            <p class="text-sm mb-4" style="color:var(--gray-600);">Choose how you'd like to pay or receive funds through Mwarokin Estates.</p>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                ${methods.map(m => `
+                    <div class="method-card ${activeMethod===m.id?'active':''}" onclick="app.selectPaymentMethod('${m.id}')">
+                        <div class="m-check"><i class="fas fa-check"></i></div>
+                        <div class="method-icon mb-3" style="background:${m.bg};color:${m.color};"><i class="fas ${m.icon}"></i></div>
+                        <div class="font-semibold text-sm" style="color:var(--navy);">${m.name}</div>
+                        <div class="text-xs mt-1" style="color:var(--gray-600);">${m.sub}</div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>`;
+}
+
+/* ============================================================
+   SYLLOPAY FORM
+   ============================================================ */
+function renderSyllopayForm(isLoading) {
+    return `
+        <div class="p-card p-6 fade-in">
+            <h2 class="text-lg font-bold mb-4 flex items-center gap-2" style="color:var(--navy);">
+                <i class="fas fa-globe-africa" style="color:var(--gold);"></i> Pay with SylloPay
+            </h2>
+            <form id="syllopayForm" class="space-y-4">
+                <div>
+                    <label class="p-label"><i class="fas fa-id-badge"></i>SylloPay ID / SylloCode</label>
+                    <input type="text" name="sylloCode" class="p-input mono" placeholder="e.g. SYL-4XK92" required />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="p-label"><i class="fas fa-coins"></i>Amount</label>
+                        <input type="number" name="amount" class="p-input" placeholder="Enter amount" min="1" step="0.01" required />
+                    </div>
+                    <div>
+                        <label class="p-label"><i class="fas fa-money-bill-wave"></i>Currency</label>
+                        <select name="currency" class="p-select" required>
+                            <option value="KES">KES — Kenya</option>
+                            <option value="NGN">NGN — Nigeria</option>
+                            <option value="GHS">GHS — Ghana</option>
+                            <option value="ZAR">ZAR — South Africa</option>
+                            <option value="USD">USD — US Dollar</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="p-label"><i class="fas fa-tag"></i>Reference (optional)</label>
+                    <input type="text" name="reference" class="p-input" placeholder="e.g. Rent — Kilimani Court" />
+                </div>
+                <button type="submit" ${isLoading?'disabled':''} class="btn-pay gold">
+                    ${isLoading ? '<i class="fas fa-circle-notch fa-spin"></i> Routing via SylloPay…' : '<i class="fas fa-paper-plane"></i> Pay with SylloPay'}
+                </button>
+            </form>
+            <div class="info-box" style="background:rgba(201,169,89,.08);border:1px solid rgba(201,169,89,.2);">
+                <h3 style="color:#8a6a2a;"><i class="fas fa-info-circle"></i>About SylloPay</h3>
+                <ul class="list-disc pl-5 space-y-1" style="color:#7a5d26;">
+                    <li>Cross-border pan-African payments in local currency</li>
+                    <li>Funds settle to your linked SylloPay wallet instantly</li>
+                    <li>Use your SylloCode for fast, contactless checkout</li>
+                </ul>
+            </div>
+        </div>`;
+}
+
+/* ============================================================
+   M-PESA FORM
+   ============================================================ */
+function renderMpesaForm(isLoading, stkWaiting) {
+    return `
+        <div class="p-card p-6 fade-in">
+            <h2 class="text-lg font-bold mb-4 flex items-center gap-2" style="color:var(--navy);">
+                <i class="fas fa-mobile-alt" style="color:var(--gold);"></i> Lipa Na M-Pesa
+            </h2>
+            <form id="mpesaForm" class="space-y-4">
+                <div>
+                    <label class="p-label"><i class="fas fa-phone"></i>M-Pesa phone number</label>
+                    <input type="text" name="phone" class="p-input" placeholder="07XX XXX XXX" required />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="p-label"><i class="fas fa-coins"></i>Amount (KES)</label>
+                        <input type="number" name="amount" class="p-input" placeholder="Enter amount" min="1" step="1" required />
+                    </div>
+                    <div>
+                        <label class="p-label"><i class="fas fa-tag"></i>Account reference</label>
+                        <input type="text" name="reference" class="p-input" placeholder="e.g. Property ID" />
+                    </div>
+                </div>
+                <button type="submit" ${isLoading?'disabled':''} class="btn-pay">
+                    ${isLoading ? '<i class="fas fa-circle-notch fa-spin"></i> Sending STK push…' : '<i class="fas fa-satellite-dish"></i> Send STK Push'}
+                </button>
+            </form>
+
+            ${stkWaiting ? `
+            <div class="stk-wait">
+                <div class="stk-icon"><i class="fas fa-mobile-alt"></i></div>
+                <div>
+                    <div class="text-sm font-semibold" style="color:var(--navy);">Check your phone</div>
+                    <div class="text-xs mt-0.5" style="color:var(--gray-600);">Enter your M-Pesa PIN to complete the payment. This request will expire shortly.</div>
+                </div>
+            </div>` : ''}
+
+            <div class="info-box" style="background:var(--gray-100);border:1px solid var(--gray-200);">
+                <h3 style="color:var(--navy);"><i class="fas fa-info-circle" style="color:var(--gold);"></i>M-Pesa Instructions</h3>
+                <ul class="list-disc pl-5 space-y-1" style="color:var(--gray-600);">
+                    <li>You'll get a prompt on your phone to enter your M-Pesa PIN</li>
+                    <li>Ensure your line has sufficient balance</li>
+                    <li>Payments confirm within seconds of PIN entry</li>
+                </ul>
+            </div>
+        </div>`;
+}
+
+/* ============================================================
+   BANK TRANSFER FORM
+   ============================================================ */
+function renderBankTransferForm(isLoading) {
+    const banks = ['Equity Bank','KCB Bank','Co-operative Bank','Standard Chartered','Absa Bank Kenya','NCBA Bank'];
+    return `
+        <div class="p-card p-6 fade-in">
+            <h2 class="text-lg font-bold mb-4 flex items-center gap-2" style="color:var(--navy);">
+                <i class="fas fa-landmark" style="color:var(--gold);"></i> Bank Transfer
+            </h2>
+            <form id="bankTransferForm" class="space-y-4">
+                <div>
+                    <label class="p-label"><i class="fas fa-university"></i>Select bank</label>
+                    <select name="bankName" class="p-select" required>
+                        <option value="">Select your bank</option>
+                        ${banks.map(b => `<option value="${b}">${b}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="p-label"><i class="fas fa-hashtag"></i>Account number</label>
+                        <input type="text" name="accountNumber" class="p-input" placeholder="Enter account number" required />
+                    </div>
+                    <div>
+                        <label class="p-label"><i class="fas fa-id-card"></i>Account name</label>
+                        <input type="text" name="accountName" class="p-input" placeholder="Enter account name" required />
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="p-label"><i class="fas fa-coins"></i>Amount</label>
+                        <input type="number" name="amount" class="p-input" placeholder="Enter amount" min="1" step="0.01" required />
+                    </div>
+                    <div>
+                        <label class="p-label"><i class="fas fa-money-bill-wave"></i>Currency</label>
+                        <select name="currency" class="p-select" required>
+                            <option value="KES">KES (Kenyan Shilling)</option>
+                            <option value="USD">USD (US Dollar)</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="p-label"><i class="fas fa-tag"></i>Payment reference (optional)</label>
+                    <input type="text" name="reference" class="p-input" placeholder="E.g. Property ID or Invoice Number" />
+                </div>
+                <button type="submit" ${isLoading?'disabled':''} class="btn-pay">
+                    ${isLoading ? '<i class="fas fa-circle-notch fa-spin"></i> Processing…' : '<i class="fas fa-paper-plane"></i> Initiate Bank Transfer'}
+                </button>
+            </form>
+            <div class="info-box" style="background:var(--gray-100);border:1px solid var(--gray-200);">
+                <h3 style="color:var(--navy);"><i class="fas fa-info-circle" style="color:var(--gold);"></i>Bank Transfer Instructions</h3>
+                <ul class="list-disc pl-5 space-y-1" style="color:var(--gray-600);">
+                    <li>Transfers may take 1–2 business days to process</li>
+                    <li>Include your reference number for faster processing</li>
+                    <li>You'll receive a confirmation email once completed</li>
+                </ul>
+            </div>
+        </div>`;
+}
+
+/* ============================================================
+   MOBILE WALLET FORM
+   ============================================================ */
+function renderMobileWalletForm(isLoading) {
+    const providers = ['Airtel Money','T-Kash','MTC Money','Orange Money'];
+    return `
+        <div class="p-card p-6 fade-in">
+            <h2 class="text-lg font-bold mb-4 flex items-center gap-2" style="color:var(--navy);">
+                <i class="fas fa-wallet" style="color:var(--gold);"></i> Mobile Wallet
+            </h2>
+            <form id="mobileWalletForm" class="space-y-4">
+                <div>
+                    <label class="p-label"><i class="fas fa-layer-group"></i>Select provider</label>
+                    <select name="walletProvider" class="p-select" required>
+                        <option value="">Select your wallet provider</option>
+                        ${providers.map(p => `<option value="${p}">${p}</option>`).join('')}
+                    </select>
+                </div>
+                <div>
+                    <label class="p-label"><i class="fas fa-phone"></i>Wallet number</label>
+                    <input type="text" name="walletNumber" class="p-input" placeholder="Enter your wallet number" required />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="p-label"><i class="fas fa-coins"></i>Amount</label>
+                        <input type="number" name="amount" class="p-input" placeholder="Enter amount" min="1" step="0.01" required />
+                    </div>
+                    <div>
+                        <label class="p-label"><i class="fas fa-money-bill-wave"></i>Currency</label>
+                        <select name="currency" class="p-select" required>
+                            <option value="KES">KES (Kenyan Shilling)</option>
+                            <option value="USD">USD (US Dollar)</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" ${isLoading?'disabled':''} class="btn-pay">
+                    ${isLoading ? '<i class="fas fa-circle-notch fa-spin"></i> Processing…' : '<i class="fas fa-paper-plane"></i> Initiate Payment'}
+                </button>
+            </form>
+            <div class="info-box" style="background:var(--gray-100);border:1px solid var(--gray-200);">
+                <h3 style="color:var(--navy);"><i class="fas fa-info-circle" style="color:var(--gold);"></i>Mobile Payment Instructions</h3>
+                <ul class="list-disc pl-5 space-y-1" style="color:var(--gray-600);">
+                    <li>You'll get a prompt on your phone to confirm the payment</li>
+                    <li>Ensure your mobile wallet has sufficient funds</li>
+                    <li>Transactions process instantly</li>
+                </ul>
+            </div>
+        </div>`;
+}
+
+/* ============================================================
+   CRYPTO FORM
+   ============================================================ */
+function renderCryptoForm(isLoading) {
+    const cryptos = ['Bitcoin (BTC)','Ethereum (ETH)','USDT (Tether)','Litecoin (LTC)'];
+    return `
+        <div class="p-card p-6 fade-in">
+            <h2 class="text-lg font-bold mb-4 flex items-center gap-2" style="color:var(--navy);">
+                <i class="fas fa-coins" style="color:var(--gold);"></i> Cryptocurrency
+            </h2>
+            <form id="cryptoForm" class="space-y-4">
+                <div>
+                    <label class="p-label"><i class="fas fa-coins"></i>Select cryptocurrency</label>
+                    <select name="cryptocurrency" class="p-select" required>
+                        <option value="">Select cryptocurrency</option>
+                        ${cryptos.map(c => `<option value="${c}">${c}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="p-label"><i class="fas fa-dollar-sign"></i>Amount (USD)</label>
+                        <input type="number" name="amount" class="p-input" placeholder="Enter amount in USD" min="1" step="0.01" required />
+                    </div>
+                    <div>
+                        <label class="p-label"><i class="fas fa-money-bill-wave"></i>Currency</label>
+                        <select name="currency" class="p-select" required>
+                            <option value="USD">USD (US Dollar)</option>
+                            <option value="KES">KES (Kenyan Shilling)</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="p-label"><i class="fas fa-wallet"></i>Your crypto wallet address</label>
+                    <input type="text" name="walletAddress" class="p-input mono" placeholder="Enter your wallet address" required />
+                </div>
+                <button type="submit" ${isLoading?'disabled':''} class="btn-pay">
+                    ${isLoading ? '<i class="fas fa-circle-notch fa-spin"></i> Generating address…' : '<i class="fas fa-qrcode"></i> Get Deposit Address'}
+                </button>
+            </form>
+            <div class="info-box" style="background:var(--gray-100);border:1px solid var(--gray-200);">
+                <h3 style="color:var(--navy);"><i class="fas fa-info-circle" style="color:var(--gold);"></i>Crypto Payment Instructions</h3>
+                <ul class="list-disc pl-5 space-y-1" style="color:var(--gray-600);">
+                    <li>Send exactly the amount shown to the provided address</li>
+                    <li>Transactions may take 10–30 minutes to confirm</li>
+                    <li>Do not send from an exchange — use your personal wallet</li>
+                </ul>
+            </div>
+        </div>`;
+}
+
+/* ============================================================
+   HISTORY TABLE
+   ============================================================ */
+function renderPaymentHistory(payments, isLoading) {
+    if (isLoading) {
+        return `
+            <div class="p-card p-6">
+                <h2 class="text-lg font-bold mb-4" style="color:var(--navy);"><i class="fas fa-history mr-2" style="color:var(--gold);"></i>Payment History</h2>
+                <div class="flex justify-center items-center h-32"><i class="fas fa-circle-notch fa-spin text-2xl" style="color:var(--gold);"></i></div>
+            </div>`;
+    }
+    const typeMeta = {
+        syllopay:{icon:'fa-globe-africa', label:'SylloPay'},
+        mpesa:{icon:'fa-mobile-alt', label:'M-Pesa'},
+        bank_transfer:{icon:'fa-landmark', label:'Bank transfer'},
+        mobile_wallet:{icon:'fa-wallet', label:'Mobile wallet'},
+        crypto:{icon:'fa-coins', label:'Crypto'}
+    };
+    return `
+        <div class="p-card p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-bold" style="color:var(--navy);"><i class="fas fa-history mr-2" style="color:var(--gold);"></i>Payment History</h2>
+                <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background:var(--gray-100);color:var(--gray-600);">${payments.length} payments</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full p-table">
+                    <thead><tr><th>ID</th><th>Type</th><th>Amount</th><th>Details</th><th>Status</th><th>Date</th></tr></thead>
+                    <tbody>
+                        ${payments.length ? payments.map(p => {
+                            const meta = typeMeta[p.type] || {icon:'fa-money-bill', label:p.type};
+                            return `
+                            <tr class="fade-in">
+                                <td class="mono">${p.id}</td>
+                                <td><i class="fas ${meta.icon} mr-1" style="color:var(--gold);"></i>${meta.label}</td>
+                                <td class="font-semibold" style="color:var(--navy);">${formatCurrency(p.amount, p.currency)}</td>
+                                <td>${p.bankName || p.walletProvider || p.cryptocurrency || p.sylloCode || p.phone || ''}</td>
+                                <td><span class="pill pill-${p.status}">${p.status.replace('_',' ')}</span></td>
+                                <td style="color:var(--gray-600);">${new Date(p.timestamp).toLocaleString()}</td>
+                            </tr>`;
+                        }).join('') : `<tr><td colspan="6" class="text-center py-8" style="color:var(--gray-600);">No payments found. Initiate a payment to see it here.</td></tr>`}
+                    </tbody>
+                </table>
+            </div>
+        </div>`;
+}
+
+/* ============================================================
+   MAIN APP
+   ============================================================ */
+class PaymentApp {
+    constructor() {
+        this.state = { payments:[], selectedMethod:'syllopay', isLoading:true, isSubmitting:false, stkWaiting:false };
+    }
+
+    async init() {
+        await this.loadPaymentData();
+        this.render();
+    }
+
+    async loadPaymentData() {
+        try {
+            this.setState({ isLoading:true });
+            const history = await paymentService.getPaymentHistory();
+            this.setState({ payments:history, isLoading:false });
+        } catch (e) {
+            showNotification('Failed to load payment history', 'error');
+            this.setState({ isLoading:false });
+        }
+    }
+
+    setState(newState) { this.state = { ...this.state, ...newState }; this.render(); }
+
+    render() {
+        const el = document.getElementById('app');
+        el.innerHTML = `
+            <div class="brand-header mb-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative" style="z-index:1;">
+                    <div class="flex items-center gap-4">
+                        <div class="brand-icon"><i class="fas fa-building"></i></div>
+                        <div>
+                            <h1 class="text-xl md:text-2xl font-bold text-white">Mwarokin <span style="color:var(--gold);">Estates</span></h1>
+                            <p class="text-sm mt-0.5" style="color:rgba(255,255,255,.6);">Payment Portal · Premium Property Management</p>
+                        </div>
+                    </div>
+                    <div class="brand-badge"><i class="fas fa-shield-alt"></i> Secure · Bank-Grade Encryption</div>
+                </div>
+            </div>
+
+            ${renderPaymentMethods(this.state.selectedMethod)}
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                ${this.state.selectedMethod === 'syllopay' ? renderSyllopayForm(this.state.isSubmitting) : ''}
+                ${this.state.selectedMethod === 'mpesa' ? renderMpesaForm(this.state.isSubmitting, this.state.stkWaiting) : ''}
+                ${this.state.selectedMethod === 'bank' ? renderBankTransferForm(this.state.isSubmitting) : ''}
+                ${this.state.selectedMethod === 'mobile' ? renderMobileWalletForm(this.state.isSubmitting) : ''}
+                ${this.state.selectedMethod === 'crypto' ? renderCryptoForm(this.state.isSubmitting) : ''}
+
+                <div>
+                    <div class="p-card p-6 mb-6" style="background:var(--navy);border:none;">
+                        <h2 class="text-lg font-bold mb-2 text-white"><i class="fas fa-lightbulb mr-2" style="color:var(--gold);"></i>Why multiple payment options?</h2>
+                        <p class="text-sm mb-4" style="color:rgba(255,255,255,.65);">Pay the way that suits you — pan-African, mobile, bank, or crypto — all reconciled in one place.</p>
+                        <ul class="space-y-2 text-sm" style="color:rgba(255,255,255,.8);">
+                            <li class="flex items-start gap-2"><i class="fas fa-check-circle mt-1" style="color:var(--gold);"></i><span>SylloPay for cross-border, multi-currency payments</span></li>
+                            <li class="flex items-start gap-2"><i class="fas fa-check-circle mt-1" style="color:var(--gold);"></i><span>M-Pesa STK Push for instant local payments</span></li>
+                            <li class="flex items-start gap-2"><i class="fas fa-check-circle mt-1" style="color:var(--gold);"></i><span>Bank transfers for larger transactions</span></li>
+                            <li class="flex items-start gap-2"><i class="fas fa-check-circle mt-1" style="color:var(--gold);"></i><span>Crypto for international settlements</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="p-card p-6">
+                        <h2 class="text-lg font-bold mb-4" style="color:var(--navy);"><i class="fas fa-shield-alt mr-2" style="color:var(--gold);"></i>Secure Payments</h2>
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-3">
+                                <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style="background:var(--green-bg);"><i class="fas fa-lock" style="color:var(--green);"></i></div>
+                                <div><h3 class="font-semibold text-sm" style="color:var(--navy);">Bank-level security</h3><p class="text-xs" style="color:var(--gray-600);">All transactions are encrypted end-to-end</p></div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style="background:var(--gold-glow);"><i class="fas fa-user-shield" style="color:var(--gold);"></i></div>
+                                <div><h3 class="font-semibold text-sm" style="color:var(--navy);">Privacy guaranteed</h3><p class="text-xs" style="color:var(--gray-600);">Your financial details are never shared with third parties</p></div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style="background:var(--gray-100);"><i class="fas fa-sync-alt" style="color:var(--navy);"></i></div>
+                                <div><h3 class="font-semibold text-sm" style="color:var(--navy);">Fast processing</h3><p class="text-xs" style="color:var(--gray-600);">Most payments settle within minutes</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            ${renderPaymentHistory(this.state.payments, this.state.isLoading)}
+
+            <footer class="mt-8 text-center text-sm" style="color:var(--gray-600);">
+                Mwarokin Estates · Payments — © ${new Date().getFullYear()}. All rights reserved. Powered by Syllogism Technology Africa.
+            </footer>`;
+
+        this.setupFormListeners();
+    }
+
+    selectPaymentMethod(method) { this.setState({ selectedMethod: method, stkWaiting:false }); }
+
+    setupFormListeners() {
+        const bankForm = document.getElementById('bankTransferForm');
+        if (bankForm) bankForm.addEventListener('submit', (e) => this.handleBankTransfer(e));
+
+        const mpesaForm = document.getElementById('mpesaForm');
+        if (mpesaForm) mpesaForm.addEventListener('submit', (e) => this.handleMpesa(e));
+
+        const syllopayForm = document.getElementById('syllopayForm');
+        if (syllopayForm) syllopayForm.addEventListener('submit', (e) => this.handleSyllopay(e));
+
+        const mobileForm = document.getElementById('mobileWalletForm');
+        if (mobileForm) mobileForm.addEventListener('submit', (e) => this.handleMobileWallet(e));
+
+        const cryptoForm = document.getElementById('cryptoForm');
+        if (cryptoForm) cryptoForm.addEventListener('submit', (e) => this.handleCryptoPayment(e));
+    }
+
+    async handleBankTransfer(e) {
+        e.preventDefault();
+        try {
+            this.setState({ isSubmitting:true });
+            const fd = new FormData(document.getElementById('bankTransferForm'));
+            const data = { bankName:fd.get('bankName'), accountNumber:fd.get('accountNumber'), accountName:fd.get('accountName'), amount:parseFloat(fd.get('amount')), currency:fd.get('currency'), reference:fd.get('reference') };
+            const res = await paymentService.processBankTransfer(data);
+            this.setState({ payments:[res, ...this.state.payments], isSubmitting:false });
+            showNotification(`Bank transfer initiated for ${formatCurrency(res.amount, res.currency)}. Reference: ${res.reference}`, 'success');
+        } catch (err) {
+            this.setState({ isSubmitting:false });
+            showNotification(err.message || 'Failed to initiate bank transfer', 'error');
+        }
+    }
+
+    async handleMpesa(e) {
+        e.preventDefault();
+        try {
+            this.setState({ isSubmitting:true });
+            const fd = new FormData(document.getElementById('mpesaForm'));
+            const data = { phone:fd.get('phone'), amount:parseFloat(fd.get('amount')), currency:'KES', reference:fd.get('reference') };
+            const res = await paymentService.processMpesa(data);
+            this.setState({ payments:[res, ...this.state.payments], isSubmitting:false, stkWaiting:true });
+            showNotification(`STK push sent to ${data.phone}. Enter your M-Pesa PIN to complete payment.`, 'success');
+            setTimeout(() => {
+                const updated = this.state.payments.map(p => p.id===res.id ? { ...p, status:'completed' } : p);
+                this.setState({ payments:updated, stkWaiting:false });
+                showNotification(`M-Pesa payment of ${formatCurrency(res.amount,'KES')} confirmed.`, 'success');
+            }, 4000);
+        } catch (err) {
+            this.setState({ isSubmitting:false });
+            showNotification(err.message || 'Failed to send STK push', 'error');
+        }
+    }
+
+    async handleSyllopay(e) {
+        e.preventDefault();
+        try {
+            this.setState({ isSubmitting:true });
+            const fd = new FormData(document.getElementById('syllopayForm'));
+            const data = { sylloCode:fd.get('sylloCode'), amount:parseFloat(fd.get('amount')), currency:fd.get('currency'), reference:fd.get('reference') };
+            const res = await paymentService.processSyllopay(data);
+            this.setState({ payments:[res, ...this.state.payments], isSubmitting:false });
+            showNotification(`SylloPay payment of ${formatCurrency(res.amount, res.currency)} completed. Ref: ${res.reference}`, 'success');
+        } catch (err) {
+            this.setState({ isSubmitting:false });
+            showNotification(err.message || 'Failed to process SylloPay payment', 'error');
+        }
+    }
+
+    async handleMobileWallet(e) {
+        e.preventDefault();
+        try {
+            this.setState({ isSubmitting:true });
+            const fd = new FormData(document.getElementById('mobileWalletForm'));
+            const data = { walletProvider:fd.get('walletProvider'), walletNumber:fd.get('walletNumber'), amount:parseFloat(fd.get('amount')), currency:fd.get('currency') };
+            const res = await paymentService.processMobileWallet(data);
+            this.setState({ payments:[res, ...this.state.payments], isSubmitting:false });
+            showNotification(`Mobile wallet payment initiated for ${formatCurrency(res.amount, res.currency)}. Check your phone to confirm.`, 'success');
+        } catch (err) {
+            this.setState({ isSubmitting:false });
+            showNotification(err.message || 'Failed to initiate mobile payment', 'error');
+        }
+    }
+
+    async handleCryptoPayment(e) {
+        e.preventDefault();
+        try {
+            this.setState({ isSubmitting:true });
+            const fd = new FormData(document.getElementById('cryptoForm'));
+            const data = { cryptocurrency:fd.get('cryptocurrency'), amount:parseFloat(fd.get('amount')), currency:fd.get('currency'), walletAddress:fd.get('walletAddress') };
+            const res = await paymentService.processCryptoPayment(data);
+            this.setState({ payments:[res, ...this.state.payments], isSubmitting:false });
+            showNotification(`Send exactly ${res.cryptoAmount} ${res.cryptocurrency} to address: ${res.address}`, 'success');
+        } catch (err) {
+            this.setState({ isSubmitting:false });
+            showNotification(err.message || 'Failed to process cryptocurrency payment', 'error');
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    window.app = new PaymentApp();
+    window.app.init();
+});
+</script>
+</body>
+</html>

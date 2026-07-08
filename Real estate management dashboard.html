@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mwarokin Estates - Real Estate Management</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f5f4f0;
+  --sidebar:#0c1427;
+  --sidebar-accent:#1a2540;
+  --brand:#1a3a5c;
+  --brand2:#c9a84c;
+  --green:#1e8c5a;
+  --red:#c0392b;
+  --orange:#d4720a;
+  --text:#1a1a2e;
+  --text-muted:#6b7280;
+  --surface:#ffffff;
+  --border:#e5e2da;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04);
+  --radius:16px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;overflow-x:hidden}
+/* SIDEBAR */
+.sidebar{width:260px;min-height:100vh;background:var(--sidebar);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;transition:width .25s}
+.sidebar.collapsed{width:64px}
+.sidebar-logo{padding:28px 20px 20px;border-bottom:1px solid rgba(255,255,255,.06)}
+.sidebar-logo .brand-name{font-family:'Playfair Display',serif;color:#fff;font-size:1.25rem;line-height:1.2;letter-spacing:-.3px;white-space:nowrap;overflow:hidden}
+.sidebar-logo .brand-sub{color:var(--brand2);font-size:.72rem;font-weight:500;letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+.sidebar.collapsed .brand-name,.sidebar.collapsed .brand-sub{display:none}
+.sidebar-toggle{background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:1rem;padding:4px;margin-left:auto;display:block}
+.sidebar.collapsed .sidebar-toggle{margin:0 auto}
+nav{flex:1;padding:12px 0;overflow-y:auto}
+.nav-section{padding:8px 20px 4px;font-size:.65rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1.5px;white-space:nowrap;overflow:hidden}
+.sidebar.collapsed .nav-section{visibility:hidden}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 20px;color:rgba(255,255,255,.55);text-decoration:none;font-size:.875rem;font-weight:500;transition:all .18s;border-left:2px solid transparent;white-space:nowrap}
+.nav-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav-item.active{background:rgba(201,168,76,.1);color:var(--brand2);border-left-color:var(--brand2)}
+.nav-item i{width:20px;text-align:center;font-size:.95rem;flex-shrink:0}
+.sidebar.collapsed .nav-item span{display:none}
+.sidebar.collapsed .nav-item{padding:10px;justify-content:center}
+.sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.06)}
+.user-chip{display:flex;align-items:center;gap:10px}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--brand2),#e8c96b);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:600;color:#fff;flex-shrink:0}
+.user-info .name{color:#fff;font-size:.82rem;font-weight:600}
+.user-info .role{color:rgba(255,255,255,.4);font-size:.72rem}
+.sidebar.collapsed .user-info{display:none}
+/* MAIN */
+.main{margin-left:260px;flex:1;transition:margin-left .25s;min-width:0}
+.main.expanded{margin-left:64px}
+/* TOP BAR */
+.topbar{background:var(--surface);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.page-title{font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--text)}
+.live-pill{display:flex;align-items:center;gap:6px;background:#e8f5ed;color:#1e7a4a;padding:4px 12px;border-radius:40px;font-size:.75rem;font-weight:600}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#1e8c5a;animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.topbar-right{display:flex;align-items:center;gap:16px}
+.icon-btn{background:none;border:1.5px solid var(--border);width:36px;height:36px;border-radius:10px;cursor:pointer;color:var(--text-muted);font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.icon-btn:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+/* CONTENT */
+.content{padding:24px 28px}
+/* STAT CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);position:relative;overflow:hidden;border:1px solid var(--border)}
+.stat-card::before{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:.06}
+.stat-card.blue::before{background:var(--brand)}
+.stat-card.gold::before{background:var(--brand2)}
+.stat-card.green::before{background:var(--green)}
+.stat-card.red::before{background:var(--red)}
+.stat-label{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin-bottom:8px}
+.stat-value{font-size:1.75rem;font-weight:600;color:var(--text);line-height:1}
+.stat-delta{font-size:.75rem;margin-top:6px;display:flex;align-items:center;gap:4px}
+.delta-up{color:var(--green)}
+.delta-dn{color:var(--red)}
+.stat-icon{position:absolute;top:18px;right:18px;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.stat-card.blue .stat-icon{background:#e8eef8;color:var(--brand)}
+.stat-card.gold .stat-icon{background:#faf3e0;color:#c9a84c}
+.stat-card.green .stat-icon{background:#e5f4ec;color:var(--green)}
+.stat-card.red .stat-icon{background:#fae8e6;color:var(--red)}
+/* CHARTS ROW */
+.charts-grid{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:24px}
+.chart-card{background:var(--surface);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.card-title{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--text)}
+.chart-tabs{display:flex;gap:4px}
+.chart-tab{background:none;border:1.5px solid var(--border);border-radius:8px;padding:4px 12px;font-size:.75rem;cursor:pointer;color:var(--text-muted);font-family:'DM Sans',sans-serif;transition:all .15s}
+.chart-tab.active,.chart-tab:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+/* FILTER BAR */
+.filter-card{background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:24px}
+.filter-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:12px;align-items:end}
+.form-group label{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--text-muted);display:block;margin-bottom:6px}
+.form-control,.form-select{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.875rem;color:var(--text);background:var(--bg);transition:border .15s;outline:none}
+.form-control:focus,.form-select:focus{border-color:var(--brand)}
+.btn{padding:9px 18px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:500;cursor:pointer;transition:all .18s;border:none;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--brand);color:#fff}
+.btn-primary:hover{background:#142d48}
+.btn-gold{background:var(--brand2);color:#fff}
+.btn-gold:hover{background:#b8932d}
+.btn-outline{background:none;border:1.5px solid var(--border);color:var(--text-muted)}
+.btn-outline:hover{border-color:var(--brand);color:var(--brand)}
+.btn-sm{padding:6px 14px;font-size:.8rem}
+.btn-danger-sm{background:#fae8e6;color:var(--red);border:none;border-radius:8px;padding:5px 12px;font-size:.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.btn-danger-sm:hover{background:var(--red);color:#fff}
+.location-result{margin-top:14px;background:var(--bg);border-radius:10px;padding:12px 16px;font-size:.82rem;color:var(--text-muted);border:1.5px dashed var(--border)}
+/* TABLE */
+.table-card{background:var(--surface);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:24px}
+.table-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+table{width:100%;border-collapse:collapse}
+thead tr{border-bottom:2px solid var(--border)}
+thead th{font-size:.72rem;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);padding:10px 12px;text-align:left;font-weight:600}
+tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+tbody tr:hover{background:#faf9f7}
+tbody tr:last-child{border-bottom:none}
+td{padding:12px 12px;font-size:.875rem;vertical-align:middle}
+.td-tenant{display:flex;align-items:center;gap:10px}
+.t-avatar{width:32px;height:32px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;flex-shrink:0}
+.t-name{font-weight:500;font-size:.875rem}
+.t-email{font-size:.72rem;color:var(--text-muted)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:40px;font-size:.72rem;font-weight:600}
+.badge-paid{background:#e5f4ec;color:#1e7a4a}
+.badge-pending{background:#fdf3e3;color:#c07d1a}
+.badge-overdue{background:#fae8e6;color:#c0392b}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+/* AI CHAT */
+.chat-card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);overflow:hidden;margin-bottom:24px}
+.chat-header{background:var(--brand);padding:14px 20px;display:flex;align-items:center;gap:10px}
+.chat-header-icon{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;color:var(--brand2);font-size:1rem}
+.chat-header-text .title{color:#fff;font-weight:600;font-size:.9rem}
+.chat-header-text .sub{color:rgba(255,255,255,.5);font-size:.72rem}
+.chat-status{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:.72rem;color:rgba(255,255,255,.5)}
+.chat-messages{height:240px;overflow-y:auto;padding:16px;background:#fafaf8}
+.msg{max-width:80%;padding:10px 14px;border-radius:16px;font-size:.85rem;line-height:1.5;margin-bottom:8px}
+.msg-bot{background:#fff;color:var(--text);border:1px solid var(--border);border-bottom-left-radius:4px}
+.msg-user{background:var(--brand);color:#fff;margin-left:auto;border-bottom-right-radius:4px}
+.chat-input-area{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px}
+.chat-input{flex:1;padding:9px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.875rem;outline:none;transition:border .15s}
+.chat-input:focus{border-color:var(--brand)}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:20px;width:90%;max-width:500px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.modal-head{padding:20px 24px;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:space-between}
+.modal-head h3{font-family:'Playfair Display',serif;font-size:1.1rem}
+.modal-body{padding:24px}
+.modal-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:12px 18px;border-radius:12px;font-size:.85rem;z-index:999;opacity:0;transform:translateY(12px);transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.success{background:var(--green)}
+.toast.info{background:var(--brand)}
+/* BACK TO TOP */
+.back-top{position:fixed;bottom:24px;right:24px;width:42px;height:42px;border-radius:50%;background:var(--brand);color:#fff;border:none;cursor:pointer;font-size:.9rem;display:none;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.2);z-index:100}
+/* RESPONSIVE */
+@media(max-width:1200px){.stats-grid{grid-template-columns:repeat(2,1fr)}.filter-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){.charts-grid{grid-template-columns:1fr}.sidebar{width:64px}.sidebar .brand-name,.sidebar .brand-sub,.sidebar .nav-item span,.sidebar .nav-section,.sidebar .user-info{display:none}.sidebar .nav-item{padding:10px;justify-content:center}.main{margin-left:64px}}
+@media(max-width:640px){.stats-grid{grid-template-columns:1fr}.filter-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between">
+      <div>
+        <div class="brand-name">Mwarokin<br>Estates</div>
+        <div class="brand-sub">Premium Rentals</div>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle" title="Collapse sidebar"><i class="fas fa-bars"></i></button>
+    </div>
+  </div>
+  <nav>
+    <div class="nav-section">Main</div>
+    <a href="#" class="nav-item active"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+    <a href="#" class="nav-item"><i class="fas fa-home"></i><span>Properties</span></a>
+    <a href="#" class="nav-item"><i class="fas fa-users"></i><span>Tenants</span></a>
+    <div class="nav-section">Finance</div>
+    <a href="#" class="nav-item"><i class="fas fa-key"></i><span>Rent</span></a>
+    <a href="#" class="nav-item"><i class="fas fa-hand-holding-usd"></i><span>Lipa Mdogo</span></a>
+    <a href="#" class="nav-item"><i class="fas fa-chart-line"></i><span>Payments</span></a>
+    <a href="#" class="nav-item"><i class="fas fa-file-invoice-dollar"></i><span>Manage Bills</span></a>
+    <div class="nav-section">Tools</div>
+    <a href="#" class="nav-item"><i class="fas fa-map-marker-alt"></i><span>Track Rent</span></a>
+    <a href="#" class="nav-item"><i class="fas fa-comments"></i><span>Communication</span></a>
+    <a href="#" class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="avatar">JM</div>
+      <div class="user-info">
+        <div class="name">John Mwarokin</div>
+        <div class="role">Property Manager</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="mainContent">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="icon-btn" id="mobileToggle"><i class="fas fa-bars"></i></button>
+      <div class="page-title">Real‑time Rent Management</div>
+      <div class="live-pill"><div class="live-dot"></div> Live</div>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" title="Notifications"><i class="fas fa-bell"></i><span id="notifBadge" style="position:absolute;top:-4px;right:-4px;width:8px;height:8px;background:var(--red);border-radius:50%;display:none"></span></button>
+      <button class="icon-btn" title="Export Data" onclick="exportData()"><i class="fas fa-download"></i></button>
+      <div class="avatar" style="cursor:pointer">JM</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card blue">
+        <div class="stat-icon"><i class="fas fa-building"></i></div>
+        <div class="stat-label">Total Properties</div>
+        <div class="stat-value" id="statProperties">24</div>
+        <div class="stat-delta delta-up"><i class="fas fa-arrow-up" style="font-size:.65rem"></i> 2 this month</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+        <div class="stat-label">Active Tenants</div>
+        <div class="stat-value" id="statTenants">0</div>
+        <div class="stat-delta"><span id="occupancyRate" class="delta-up">--% occupied</span></div>
+      </div>
+      <div class="stat-card gold">
+        <div class="stat-icon"><i class="fas fa-coins"></i></div>
+        <div class="stat-label">Monthly Revenue</div>
+        <div class="stat-value" id="statRevenue">KSh 0</div>
+        <div class="stat-delta delta-up"><i class="fas fa-arrow-up" style="font-size:.65rem"></i> <span id="revPercent">0%</span> collected</div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+        <div class="stat-label">Overdue Payments</div>
+        <div class="stat-value" id="statOverdue">0</div>
+        <div class="stat-delta delta-dn" id="overdueAmt">KSh 0 outstanding</div>
+      </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="card-header">
+          <div class="card-title">Revenue Trend</div>
+          <div class="chart-tabs">
+            <button class="chart-tab active" onclick="switchChart('monthly',this)">Monthly</button>
+            <button class="chart-tab" onclick="switchChart('quarterly',this)">Quarterly</button>
+          </div>
+        </div>
+        <canvas id="revenueChart" height="120"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="card-header"><div class="card-title">Portfolio Mix</div></div>
+        <canvas id="doughnutChart" height="180"></canvas>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px" id="donutLegend"></div>
+      </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filter-card">
+      <div class="filter-grid">
+        <div class="form-group">
+          <label><i class="fas fa-search" style="margin-right:4px"></i>Search</label>
+          <input type="text" class="form-control" id="searchInput" placeholder="Tenant, property or location...">
+        </div>
+        <div class="form-group">
+          <label>Country</label>
+          <select class="form-select" id="countrySelect">
+            <option value="">All Countries</option>
+            <option value="Kenya">Kenya (KES)</option>
+            <option value="Nigeria">Nigeria (NGN)</option>
+            <option value="South Africa">South Africa (ZAR)</option>
+            <option value="Ghana">Ghana (GHS)</option>
+            <option value="Tanzania">Tanzania (TZS)</option>
+            <option value="Uganda">Uganda (UGX)</option>
+            <option value="Rwanda">Rwanda (RWF)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Status Filter</label>
+          <select class="form-select" id="statusFilter">
+            <option value="">All Statuses</option>
+            <option value="Paid">Paid</option>
+            <option value="Pending">Pending</option>
+            <option value="Overdue">Overdue</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Month</label>
+          <select class="form-select" id="monthFilter">
+            <option>January</option><option>February</option><option selected>March</option>
+            <option>April</option><option>May</option><option>June</option>
+            <option>July</option><option>August</option><option>September</option>
+            <option>October</option><option>November</option><option>December</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>&nbsp;</label>
+          <button class="btn btn-primary" onclick="getLiveLocation()"><i class="fas fa-map-marker-alt"></i> Pin Location</button>
+        </div>
+      </div>
+      <div class="location-result" id="locationResult" style="display:none">
+        <i class="fas fa-location-crosshairs" style="color:var(--brand);margin-right:6px"></i>
+        <span id="locationText"></span>
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        <i class="fas fa-coins" style="color:var(--brand2);margin-right:4px"></i>
+        <span id="currencyText">KES selected</span>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-card">
+      <div class="table-toolbar">
+        <div class="card-title">Tenants & Rent Status</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-outline btn-sm" onclick="exportCSV()"><i class="fas fa-file-csv"></i> Export CSV</button>
+          <button class="btn btn-gold btn-sm" onclick="openAddModal()"><i class="fas fa-plus"></i> Add Tenant</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>#ID</th>
+              <th>Tenant</th>
+              <th>Property</th>
+              <th>Location</th>
+              <th>Monthly Rent</th>
+              <th>Due</th>
+              <th>Status</th>
+              <th style="text-align:center">Action</th>
+            </tr>
+          </thead>
+          <tbody id="tenantBody"></tbody>
+        </table>
+      </div>
+      <div id="noResults" style="display:none;text-align:center;padding:28px;color:var(--text-muted);font-size:.875rem"><i class="fas fa-search" style="margin-right:6px"></i>No tenants match your filters</div>
+    </div>
+
+    <!-- AI CHAT -->
+    <div class="chat-card">
+      <div class="chat-header">
+        <div class="chat-header-icon"><i class="fas fa-robot"></i></div>
+        <div class="chat-header-text">
+          <div class="title">Mwarokin AI Assistant</div>
+          <div class="sub">Powered by real-time property data</div>
+        </div>
+        <div class="chat-status"><div class="live-dot"></div> Online</div>
+      </div>
+      <div id="chatMessages" class="chat-messages">
+        <div class="msg msg-bot">👋 Hi! I'm your property management assistant. Ask me about rent payments, tenant status, overdue accounts, or any property queries.</div>
+      </div>
+      <div class="chat-input-area">
+        <input type="text" class="chat-input" id="chatInput" placeholder="Ask about payments, tenants, rent status..." onkeydown="if(event.key==='Enter')sendChat()">
+        <button class="btn btn-outline btn-sm" onclick="voiceDemo()" title="Voice input"><i class="fas fa-microphone"></i></button>
+        <button class="btn btn-primary btn-sm" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+
+    <footer style="text-align:center;color:var(--text-muted);font-size:.78rem;padding:16px 0 8px">
+      © 2026 Mwarokin Estates — Premium Real Estate Management Platform &nbsp;|&nbsp; Real-time Payments &nbsp;|&nbsp; Built by STA
+    </footer>
+  </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="payModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3><i class="fas fa-credit-card" style="margin-right:8px;color:var(--brand2)"></i>Process Payment</h3>
+      <button onclick="closeModal('payModal')" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:1.2rem;cursor:pointer"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:14px">
+        <label class="form-group" style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--text-muted);margin-bottom:6px;display:block">Tenant</label>
+        <select class="form-select" id="payTenantSelect" onchange="updatePayAmount()"></select>
+      </div>
+      <div style="margin-bottom:14px">
+        <label class="form-group" style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--text-muted);margin-bottom:6px;display:block">Amount (KES)</label>
+        <input type="number" class="form-control" id="payAmount" readonly>
+      </div>
+      <div style="margin-bottom:14px">
+        <label class="form-group" style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--text-muted);margin-bottom:6px;display:block">Payment Method</label>
+        <select class="form-select" id="payMethod">
+          <option>M-Pesa</option>
+          <option>Bank Transfer</option>
+          <option>Flutterwave</option>
+          <option>Airtel Money</option>
+          <option>Card (Visa/Mastercard)</option>
+        </select>
+      </div>
+      <div style="margin-bottom:14px">
+        <label class="form-group" style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--text-muted);margin-bottom:6px;display:block">Transaction Code</label>
+        <input type="text" class="form-control" id="txCode" placeholder="e.g. PJX4892QW">
+      </div>
+      <div style="background:#e8f5ed;border-radius:10px;padding:10px 14px;font-size:.8rem;color:#1e6b43"><i class="fas fa-check-circle" style="margin-right:6px"></i>Payment confirmed — status updates to <strong>Paid</strong> instantly.</div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('payModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmPayment()"><i class="fas fa-check-circle"></i> Confirm Payment</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD TENANT MODAL -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3><i class="fas fa-user-plus" style="margin-right:8px;color:var(--brand2)"></i>Register Tenant</h3>
+      <button onclick="closeModal('addModal')" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:1.2rem;cursor:pointer"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div>
+          <label class="form-group" style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--text-muted);margin-bottom:6px;display:block">Full Name *</label>
+          <input type="text" class="form-control" id="newName">
+        </div>
+        <div>
+          <label class="form-group" style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--text-muted);margin-bottom:6px;display:block">Email</label>
+          <input type="email" class="form-control" id="newEmail" placeholder="tenant@example.com">
+        </div>
+        <div>
+          <label class="form-group" style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--text-muted);margin-bottom:6px;display:block">Property *</label>
+          <input type="text" class="form-control" id="newProperty" placeholder="e.g. Studio Apartment">
+        </div>
+        <div>
+          <label class="form-group" style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--text-muted);margin-bottom:6px;display:block">Location</label>
+          <input type="text" class="form-control" id="newLocation" placeholder="e.g. Westlands">
+        </div>
+        <div>
+          <label class="form-group" style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--text-muted);margin-bottom:6px;display:block">Monthly Rent (KES) *</label>
+          <input type="number" class="form-control" id="newRent" placeholder="e.g. 18000">
+        </div>
+        <div>
+          <label class="form-group" style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--text-muted);margin-bottom:6px;display:block">Phone</label>
+          <input type="tel" class="form-control" id="newPhone" placeholder="+254 7XX XXX XXX">
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('addModal')">Cancel</button>
+      <button class="btn btn-gold" onclick="addTenant()"><i class="fas fa-save"></i> Save & Activate</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+
+<script>
+let tenants=[
+  {id:101,name:"Mwarema Donald",email:"mwarema@ex.com",phone:"+254 712 345 678",property:"Two-Bedroom Apt",location:"Kangemi",rent:22064,month:"March",year:2026,status:"Paid"},
+  {id:102,name:"Kisha Otieno",email:"kisha@ex.com",phone:"+254 723 456 789",property:"Three-Bedroom",location:"Taveta",rent:35000,month:"March",year:2026,status:"Overdue"},
+  {id:103,name:"Joyce Wanjiru",email:"joyce@ex.com",phone:"+254 734 567 890",property:"One-Bedroom",location:"Kiambu",rent:12000,month:"March",year:2026,status:"Paid"},
+  {id:104,name:"Jane Muthoni",email:"jane@ex.com",phone:"+254 745 678 901",property:"Bed-Sitter",location:"Jericho",rent:8000,month:"March",year:2026,status:"Pending"},
+  {id:105,name:"Peter Omondi",email:"peter@ex.com",phone:"+254 756 789 012",property:"Penthouse Suite",location:"Kilimani",rent:55000,month:"March",year:2026,status:"Pending"},
+  {id:106,name:"Amina Hassan",email:"amina@ex.com",phone:"+254 767 890 123",property:"Studio Flat",location:"Westlands",rent:14500,month:"March",year:2026,status:"Paid"},
+  {id:107,name:"David Kimani",email:"david@ex.com",phone:"+254 778 901 234",property:"Three-Bedroom",location:"Lavington",rent:42000,month:"March",year:2026,status:"Overdue"}
+];
+const currencies={Kenya:"1 KES = 1 KES",Nigeria:"1 KES ≈ 14.5 NGN",South:"1 KES ≈ 0.14 ZAR",Ghana:"1 KES ≈ 0.078 GHS",Tanzania:"1 KES ≈ 25.8 TZS",Uganda:"1 KES ≈ 28.4 UGX",Rwanda:"1 KES ≈ 7.8 RWF"};
+const initials=n=>n.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+const avatarColors=["#1a3a5c","#1e8c5a","#c9a84c","#8b5cf6","#0891b2","#b45309","#be185d"];
+
+function updateStats(){
+  const paid=tenants.filter(t=>t.status==="Paid");
+  const overdue=tenants.filter(t=>t.status==="Overdue");
+  const paidAmt=paid.reduce((s,t)=>s+t.rent,0);
+  const overdueAmt=overdue.reduce((s,t)=>s+t.rent,0);
+  const total=tenants.reduce((s,t)=>s+t.rent,0);
+  const pct=total>0?Math.round(paidAmt/total*100):0;
+  document.getElementById("statTenants").textContent=tenants.length;
+  document.getElementById("statRevenue").textContent="KSh "+paidAmt.toLocaleString();
+  document.getElementById("statOverdue").textContent=overdue.length;
+  document.getElementById("revPercent").textContent=pct+"%";
+  document.getElementById("overdueAmt").textContent="KSh "+overdueAmt.toLocaleString()+" outstanding";
+  document.getElementById("occupancyRate").textContent=Math.round(tenants.length/24*100)+"% occupied";
+  if(overdue.length>0) document.getElementById("notifBadge").style.display="block";
+}
+
+function renderTable(){
+  const search=document.getElementById("searchInput").value.toLowerCase();
+  const statusF=document.getElementById("statusFilter").value;
+  const body=document.getElementById("tenantBody");
+  let filtered=tenants.filter(t=>{
+    const matchSearch=!search||t.name.toLowerCase().includes(search)||t.location.toLowerCase().includes(search)||t.property.toLowerCase().includes(search);
+    const matchStatus=!statusF||t.status===statusF;
+    return matchSearch&&matchStatus;
+  });
+  body.innerHTML="";
+  document.getElementById("noResults").style.display=filtered.length?"none":"block";
+  filtered.forEach((t,i)=>{
+    const color=avatarColors[i%avatarColors.length];
+    const statusClass=t.status==="Paid"?"badge-paid":t.status==="Pending"?"badge-pending":"badge-overdue";
+    const row=document.createElement("tr");
+    row.innerHTML=`<td style="color:var(--text-muted);font-size:.78rem">#${t.id}</td>
+    <td><div class="td-tenant"><div class="t-avatar" style="background:${color}">${initials(t.name)}</div><div><div class="t-name">${t.name}</div><div class="t-email">${t.email}</div></div></div></td>
+    <td>${t.property}</td>
+    <td><i class="fas fa-map-marker-alt" style="color:var(--brand2);margin-right:4px;font-size:.75rem"></i>${t.location}</td>
+    <td style="font-weight:600">KSh ${t.rent.toLocaleString()}</td>
+    <td style="color:var(--text-muted)">${t.month} ${t.year}</td>
+    <td><span class="badge ${statusClass}"><span class="badge-dot"></span>${t.status}</span></td>
+    <td style="text-align:center">
+      <button class="btn btn-primary btn-sm" onclick="openPayModal(${t.id})" style="margin-right:4px"><i class="fas fa-credit-card"></i> Pay</button>
+      <button class="btn-danger-sm" onclick="removeTenant(${t.id})" title="Remove"><i class="fas fa-trash"></i></button>
+    </td>`;
+    body.appendChild(row);
+  });
+  updateStats();
+}
+
+function removeTenant(id){
+  if(!confirm("Remove this tenant?"))return;
+  tenants=tenants.filter(t=>t.id!==id);
+  renderTable();
+  showToast("Tenant removed","info");
+}
+
+function openPayModal(id){
+  const sel=document.getElementById("payTenantSelect");
+  sel.innerHTML=tenants.map(t=>`<option value="${t.id}" data-rent="${t.rent}">${t.name} — ${t.property} (${t.status})</option>`).join('');
+  sel.value=id;
+  updatePayAmount();
+  document.getElementById("payModal").classList.add("open");
+}
+function updatePayAmount(){
+  const sel=document.getElementById("payTenantSelect");
+  const opt=sel.options[sel.selectedIndex];
+  document.getElementById("payAmount").value=opt?opt.dataset.rent:"";
+}
+function confirmPayment(){
+  const id=parseInt(document.getElementById("payTenantSelect").value);
+  const t=tenants.find(x=>x.id===id);
+  if(!t)return;
+  if(t.status==="Paid"){showToast("Already paid this month!","info");return;}
+  t.status="Paid";
+  renderTable();
+  closeModal("payModal");
+  showToast("✓ Payment confirmed for "+t.name,"success");
+  addBotMsg(`Payment of KSh ${t.rent.toLocaleString()} received from ${t.name}. Thank you! Status updated to Paid.`);
+}
+
+function openAddModal(){document.getElementById("addModal").classList.add("open")}
+function closeModal(id){document.getElementById(id).classList.remove("open")}
+
+function addTenant(){
+  const name=document.getElementById("newName").value.trim();
+  const email=document.getElementById("newEmail").value.trim();
+  const property=document.getElementById("newProperty").value.trim();
+  const location=document.getElementById("newLocation").value.trim();
+  const rent=parseFloat(document.getElementById("newRent").value);
+  const phone=document.getElementById("newPhone").value.trim();
+  if(!name||!property||!rent||rent<=0){showToast("Please fill all required fields","info");return;}
+  const id=1000+tenants.length+1;
+  tenants.push({id,name,email,phone,property,location:location||"Nairobi",rent,month:"March",year:2026,status:"Pending"});
+  renderTable();
+  closeModal("addModal");
+  ["newName","newEmail","newProperty","newLocation","newRent","newPhone"].forEach(i=>document.getElementById(i).value="");
+  showToast("Tenant "+name+" added!","success");
+  addBotMsg(`New tenant ${name} registered. Monthly rent: KSh ${rent.toLocaleString()}. Status: Pending.`);
+}
+
+function getLiveLocation(){
+  if(!navigator.geolocation){showToast("Geolocation not supported","info");return;}
+  showToast("Getting your location...","info");
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const lat=pos.coords.latitude.toFixed(5),lng=pos.coords.longitude.toFixed(5);
+    document.getElementById("locationResult").style.display="block";
+    document.getElementById("locationText").textContent=`GPS: ${lat}, ${lng} — Nairobi Region`;
+    showToast("Location pinned!","success");
+  },()=>{
+    document.getElementById("locationResult").style.display="block";
+    document.getElementById("locationText").textContent="Demo: -1.28333, 36.81667 — Nairobi, Kenya";
+  });
+}
+
+document.getElementById("countrySelect").addEventListener("change",e=>{
+  const v=e.target.value;
+  if(!v)return;
+  const rate=currencies[v.split(' ')[0]]||"Multi-currency accepted";
+  document.getElementById("locationResult").style.display="block";
+  document.getElementById("currencyText").textContent=rate;
+});
+
+// CHARTS
+let revChart,donut;
+const chartData={
+  monthly:{labels:["Jan","Feb","Mar","Apr","May","Jun"],data:[210000,225000,242000,255000,270000,284000]},
+  quarterly:{labels:["Q1 2025","Q2 2025","Q3 2025","Q4 2025","Q1 2026"],data:[670000,710000,740000,795000,820000]}
+};
+function initCharts(){
+  const ctx=document.getElementById("revenueChart").getContext("2d");
+  revChart=new Chart(ctx,{type:"line",data:{labels:chartData.monthly.labels,datasets:[{label:"Revenue (KES)",data:chartData.monthly.data,borderColor:"#1a3a5c",backgroundColor:"rgba(26,58,92,.06)",tension:.4,fill:true,pointBackgroundColor:"#c9a84c",pointRadius:4,pointHoverRadius:6}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{grid:{color:"rgba(0,0,0,.04)"},ticks:{callback:v=>"KSh "+v.toLocaleString(),font:{family:"'DM Sans',sans-serif",size:11}}},x:{grid:{display:false},ticks:{font:{family:"'DM Sans',sans-serif",size:11}}}}}});
+  const dCtx=document.getElementById("doughnutChart").getContext("2d");
+  const dLabels=["Apartments","Houses","Commercial","Land"],dData=[14,6,2,2],dColors=["#1a3a5c","#1e8c5a","#c9a84c","#8b5cf6"];
+  donut=new Chart(dCtx,{type:"doughnut",data:{labels:dLabels,datasets:[{data:dData,backgroundColor:dColors,borderWidth:2,borderColor:"#ffffff"}]},options:{responsive:true,cutout:"68%",plugins:{legend:{display:false}}}});
+  const leg=document.getElementById("donutLegend");
+  dLabels.forEach((l,i)=>{leg.innerHTML+=`<span style="display:flex;align-items:center;gap:5px;font-size:.72rem;color:var(--text-muted)"><span style="width:10px;height:10px;border-radius:2px;background:${dColors[i]};display:inline-block"></span>${l}</span>`});
+}
+function switchChart(type,btn){
+  document.querySelectorAll(".chart-tab").forEach(t=>t.classList.remove("active"));
+  btn.classList.add("active");
+  revChart.data.labels=chartData[type].labels;
+  revChart.data.datasets[0].data=chartData[type].data;
+  revChart.update();
+}
+
+// CHAT
+function sendChat(){
+  const input=document.getElementById("chatInput");
+  const msg=input.value.trim();
+  if(!msg)return;
+  addUserMsg(msg);
+  input.value="";
+  setTimeout(()=>{
+    const lm=msg.toLowerCase();
+    let r;
+    if(lm.includes("overdue")||lm.includes("late")){
+      const od=tenants.filter(t=>t.status==="Overdue");
+      r=od.length?`⚠️ ${od.length} overdue account(s): ${od.map(t=>t.name+" (KSh "+t.rent.toLocaleString()+")").join(", ")}. Use the Pay button to clear.`:"No overdue accounts — great news!";
+    }else if(lm.includes("revenue")||lm.includes("income")){
+      const paid=tenants.filter(t=>t.status==="Paid").reduce((s,t)=>s+t.rent,0);
+      r=`💰 Current collected revenue: KSh ${paid.toLocaleString()} this month from ${tenants.filter(t=>t.status==="Paid").length} tenants.`;
+    }else if(lm.includes("tenant")||lm.includes("how many")){
+      r=`👥 You have ${tenants.length} registered tenants. ${tenants.filter(t=>t.status==="Paid").length} paid, ${tenants.filter(t=>t.status==="Pending").length} pending, ${tenants.filter(t=>t.status==="Overdue").length} overdue.`;
+    }else if(lm.includes("pay")||lm.includes("rent")){
+      r="💳 Click the 'Pay' button next to any tenant to process rent. Supports M-Pesa, Flutterwave, Airtel Money, and bank transfers.";
+    }else if(lm.includes("property")||lm.includes("properties")){
+      r="🏢 You manage 24 properties across Kenya: 14 apartments, 6 houses, 2 commercial, 2 land parcels. Current occupancy: "+Math.round(tenants.length/24*100)+"%.";
+    }else{
+      r="I can help with rent payments, tenant status, overdue alerts, and property insights. Try asking about 'overdue tenants' or 'this month revenue'.";
+    }
+    addBotMsg(r);
+  },400);
+}
+function addUserMsg(t){const d=document.getElementById("chatMessages");d.insertAdjacentHTML("beforeend",`<div class="msg msg-user">${t}</div>`);d.scrollTop=d.scrollHeight}
+function addBotMsg(t){const d=document.getElementById("chatMessages");d.insertAdjacentHTML("beforeend",`<div class="msg msg-bot">🤖 ${t}</div>`);d.scrollTop=d.scrollHeight}
+function voiceDemo(){addBotMsg("🎙️ Voice demo active — in production, Web Speech API transcribes: 'show overdue tenants' or 'pay rent for Kisha'.")}
+
+function showToast(msg,type){
+  const t=document.getElementById("toast");
+  t.textContent=msg;
+  t.className="toast "+(type||"info")+" show";
+  setTimeout(()=>t.classList.remove("show"),3200);
+}
+
+function exportData(){showToast("Report exported to CSV","success")}
+function exportCSV(){
+  const rows=[["ID","Name","Email","Property","Location","Rent","Month","Status"],...tenants.map(t=>[t.id,t.name,t.email,t.property,t.location,t.rent,t.month+" "+t.year,t.status])];
+  const csv=rows.map(r=>r.join(",")).join("\n");
+  const blob=new Blob([csv],{type:"text/csv"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=url;a.download="mwarokin-tenants.csv";a.click();URL.revokeObjectURL(url);
+  showToast("CSV downloaded","success");
+}
+
+// SIDEBAR TOGGLE
+document.getElementById("sidebarToggle").addEventListener("click",()=>{
+  document.getElementById("sidebar").classList.toggle("collapsed");
+  document.getElementById("mainContent").classList.toggle("expanded");
+});
+document.getElementById("mobileToggle").addEventListener("click",()=>{
+  document.getElementById("sidebar").classList.toggle("collapsed");
+  document.getElementById("mainContent").classList.toggle("expanded");
+});
+
+// CLOSE MODALS ON OVERLAY CLICK
+document.querySelectorAll(".modal-overlay").forEach(m=>{m.addEventListener("click",e=>{if(e.target===m)m.classList.remove("open")})});
+
+// REAL-TIME FILTERS
+["searchInput","statusFilter","monthFilter"].forEach(id=>document.getElementById(id)?.addEventListener("input",renderTable));
+document.getElementById("statusFilter").addEventListener("change",renderTable);
+
+// BACK TO TOP
+window.addEventListener("scroll",()=>{document.getElementById("backTop").style.display=window.scrollY>300?"flex":"none"});
+
+// INIT
+document.addEventListener("DOMContentLoaded",()=>{
+  initCharts();
+  renderTable();
+  setInterval(()=>updateStats(),10000);
+});
+</script>
+</body>
+</html>

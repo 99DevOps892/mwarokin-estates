@@ -1,0 +1,1899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Parking Analytics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #4cc9f0;
+            --success: #06d6a0;
+            --danger: #ef476f;
+            --warning: #ffd166;
+            --dark: #1a1a2e;
+            --darker: #16213e;
+            --light: #f8f9fa;
+            --gray: #8b8c9a;
+            --gray-light: #e9ecef;
+            --purple: #7209b7;
+            --pink: #f72585;
+            --cyan: #06b6d4;
+            --gradient-primary: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            --gradient-secondary: linear-gradient(135deg, #4cc9f0 0%, #4361ee 100%);
+            --gradient-success: linear-gradient(135deg, #06d6a0 0%, #04a87a 100%);
+            --gradient-warning: linear-gradient(135deg, #ffd166 0%, #f9c74f 100%);
+            --gradient-danger: linear-gradient(135deg, #ef476f 0%, #d90429 100%);
+            --gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        
+        body {
+            background-color: var(--darker);
+            color: var(--light);
+            overflow-x: hidden;
+            font-weight: 400;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 260px;
+            background: var(--gradient-dark);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px 0;
+            transition: all 0.3s ease;
+            z-index: 100;
+            flex-shrink: 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 30px;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 20px;
+        }
+        
+        .logo h1 {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4cc9f0, #4361ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+        
+        .menu-item {
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            color: var(--gray);
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+            margin: 2px 0;
+            position: relative;
+        }
+        
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+        
+        .menu-item.active {
+            background-color: rgba(67, 97, 238, 0.15);
+            color: white;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .menu-item i {
+            margin-right: 14px;
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .menu-item span {
+            font-weight: 500;
+            font-size: 15px;
+        }
+        
+        .menu-item .notification-badge {
+            position: absolute;
+            right: 20px;
+            background-color: var(--danger);
+            color: white;
+            font-size: 11px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--dark);
+        }
+        
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 30px;
+            background-color: rgba(26, 26, 46, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 12px 18px;
+            width: 350px;
+            transition: all 0.3s;
+        }
+        
+        .search-bar:focus-within {
+            background-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.3);
+        }
+        
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: white;
+            margin-left: 12px;
+            width: 100%;
+            outline: none;
+            font-size: 15px;
+        }
+        
+        .search-bar input::placeholder {
+            color: var(--gray);
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .alert-icon, .user-profile {
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .alert-icon {
+            font-size: 20px;
+            color: var(--warning);
+        }
+        
+        .alert-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--danger);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(239, 71, 111, 0.3);
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        
+        .user-role {
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
+        .dashboard {
+            padding: 30px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .dashboard-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #fff, #4cc9f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .time-filter {
+            display: flex;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+            padding: 4px;
+        }
+        
+        .time-option {
+            padding: 8px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+        }
+        
+        .time-option:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+        
+        .time-option.active {
+            background-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
+        }
+        
+        /* Main Cards Grid */
+        .systems-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .system-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .system-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+        }
+        
+        .system-card:nth-child(1)::before { background: var(--success); }
+        .system-card:nth-child(2)::before { background: var(--secondary); }
+        .system-card:nth-child(3)::before { background: var(--warning); }
+        .system-card:nth-child(4)::before { background: var(--pink); }
+        
+        .system-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .system-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        
+        .system-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .system-card:nth-child(1) .system-icon {
+            background: rgba(6, 214, 160, 0.15);
+            color: var(--success);
+        }
+        
+        .system-card:nth-child(2) .system-icon {
+            background: rgba(76, 201, 240, 0.15);
+            color: var(--secondary);
+        }
+        
+        .system-card:nth-child(3) .system-icon {
+            background: rgba(255, 209, 102, 0.15);
+            color: var(--warning);
+        }
+        
+        .system-card:nth-child(4) .system-icon {
+            background: rgba(247, 37, 133, 0.15);
+            color: var(--pink);
+        }
+        
+        .system-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        
+        .system-description {
+            color: var(--gray);
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+        
+        .system-status {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 10px;
+            position: relative;
+        }
+        
+        .status-indicator.active {
+            background-color: var(--success);
+            box-shadow: 0 0 10px rgba(6, 214, 160, 0.5);
+        }
+        
+        .status-indicator.warning {
+            background-color: var(--warning);
+            box-shadow: 0 0 10px rgba(255, 209, 102, 0.5);
+        }
+        
+        .status-indicator::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            70% { transform: scale(1.8); opacity: 0; }
+            100% { transform: scale(1.8); opacity: 0; }
+        }
+        
+        .system-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
+        /* Digital Twin Section */
+        .section-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        
+        .btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(67, 97, 238, 0.4);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+        
+        /* Digital Twin Panel */
+        .digital-twin-panel {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+        
+        .simulation-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .control-group {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 14px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .control-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--secondary);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .slider-container {
+            margin-bottom: 20px;
+        }
+        
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--secondary);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(76, 201, 240, 0.5);
+            border: 3px solid white;
+        }
+        
+        .simulation-scenarios {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .scenario-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .scenario-btn:hover {
+            background: rgba(76, 201, 240, 0.1);
+            border-color: var(--secondary);
+        }
+        
+        .scenario-btn.active {
+            background: rgba(76, 201, 240, 0.15);
+            border-color: var(--secondary);
+            color: var(--secondary);
+            font-weight: 600;
+        }
+        
+        /* Simulation List */
+        .simulation-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .simulation-item {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .simulation-name {
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .simulation-progress {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: var(--gradient-secondary);
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            font-size: 13px;
+            color: var(--gray);
+            text-align: right;
+        }
+        
+        /* AV Panel */
+        .av-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        
+        .av-fleet {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .av-vehicle {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 14px;
+            padding: 18px;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .av-vehicle:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(5px);
+        }
+        
+        .av-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 20px;
+        }
+        
+        .av-taxi { background: rgba(255, 209, 102, 0.15); color: var(--warning); }
+        .av-delivery { background: rgba(6, 214, 160, 0.15); color: var(--success); }
+        .av-shuttle { background: rgba(67, 97, 238, 0.15); color: var(--primary); }
+        .av-truck { background: rgba(247, 37, 133, 0.15); color: var(--pink); }
+        
+        .av-details {
+            flex: 1;
+        }
+        
+        .av-type {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        
+        .av-status {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+        
+        .av-battery {
+            font-size: 13px;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .stat-item {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+        
+        /* Parking Panel */
+        .parking-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        
+        .parking-lots {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .parking-lot {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .lot-name {
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .lot-occupancy {
+            height: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+        
+        .occupancy-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.8s ease;
+        }
+        
+        .low-occupancy { background: var(--success); }
+        .medium-occupancy { background: var(--warning); }
+        .high-occupancy { background: var(--danger); }
+        
+        .lot-stats {
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        /* Tolling Panel */
+        .tolling-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        
+        .toll-zones {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .toll-zone {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 14px;
+            padding: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .zone-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 20px;
+            background: rgba(247, 37, 133, 0.15);
+            color: var(--pink);
+        }
+        
+        .zone-details {
+            flex: 1;
+        }
+        
+        .zone-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        
+        .zone-rate {
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        .zone-status {
+            font-size: 13px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: rgba(6, 214, 160, 0.15);
+            color: var(--success);
+            font-weight: 600;
+        }
+        
+        /* Pedestrian Panel */
+        .pedestrian-panel {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+        
+        .pedestrian-zones {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .pedestrian-zone {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .zone-icon-ped {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 22px;
+            background: rgba(67, 97, 238, 0.15);
+            color: var(--primary);
+        }
+        
+        .zone-count {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 12px 0;
+        }
+        
+        .zone-label {
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        /* Chart Styles */
+        .chart-container {
+            margin-top: 20px;
+            height: 200px;
+            position: relative;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .systems-grid,
+            .digital-twin-panel,
+            .av-panel,
+            .parking-panel,
+            .tolling-panel,
+            .pedestrian-panel {
+                grid-template-columns: 1fr;
+            }
+            
+            .parking-lots {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .pedestrian-zones {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .simulation-scenarios {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+            }
+            
+            .logo h1, .menu-item span {
+                display: none;
+            }
+            
+            .logo {
+                justify-content: center;
+                padding: 0 10px 20px;
+            }
+            
+            .logo-icon {
+                margin-right: 0;
+            }
+            
+            .menu-item {
+                justify-content: center;
+                padding: 20px 0;
+            }
+            
+            .menu-item i {
+                margin-right: 0;
+                font-size: 20px;
+            }
+            
+            .menu-item .notification-badge {
+                right: 10px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                padding: 20px;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            
+            .time-filter {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .time-option {
+                flex: 1;
+                text-align: center;
+            }
+            
+            .search-bar {
+                width: 100%;
+                max-width: 350px;
+            }
+            
+            .topbar {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .user-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .parking-lots,
+            .pedestrian-zones,
+            .simulation-scenarios {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .system-card, .section-card {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .system-card:nth-child(2) { animation-delay: 0.1s; }
+        .system-card:nth-child(3) { animation-delay: 0.2s; }
+        .system-card:nth-child(4) { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-traffic-light"></i>
+                </div>
+                <h1>Mwarokin - Intelligence Traffic</h1>
+            </div>
+            <a href="#" class="menu-item">
+                <i class="fas fa-chart-dashboard"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-microchip"></i>
+                <span>Advanced Features</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-robot"></i>
+                <span>Advanced Systems</span>
+                <span class="notification-badge">3</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-city"></i>
+                <span>Digital Twin</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-car-side"></i>
+                <span>Autonomous Vehicles</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-parking"></i>
+                <span>Smart Parking</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-road"></i>
+                <span>Dynamic Tolling</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-walking"></i>
+                <span>Pedestrian Systems</span>
+            </a>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Topbar -->
+            <div class="topbar">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search traffic systems, analytics, alerts...">
+                </div>
+                <div class="user-actions">
+                    <div class="alert-icon">
+                        <i class="fas fa-bell"></i>
+                        <div class="alert-count">7</div>
+                    </div>
+                    <div class="user-profile">
+                        <div class="user-avatar">TA</div>
+                        <div class="user-info">
+                            <div class="user-name">Traffic Admin</div>
+                            <div class="user-role">System Administrator</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Dashboard -->
+            <div class="dashboard">
+                <div class="dashboard-header">
+                    <h2>Advanced Traffic Management Systems</h2>
+                    <div class="time-filter">
+                        <div class="time-option active">Live</div>
+                        <div class="time-option">Today</div>
+                        <div class="time-option">Week</div>
+                        <div class="time-option">Month</div>
+                    </div>
+                </div>
+                
+                <!-- Advanced Systems Grid -->
+                <div class="systems-grid">
+                    <div class="system-card">
+                        <div class="system-header">
+                            <div>
+                                <div class="system-icon">
+                                    <i class="fas fa-city"></i>
+                                </div>
+                                <div class="system-title">Digital Twin Simulation</div>
+                            </div>
+                            <div class="system-status">
+                                <div class="status-indicator active"></div>
+                                <span>Active</span>
+                            </div>
+                        </div>
+                        <div class="system-description">
+                            High-fidelity virtual replica of the city's transportation network for predictive modeling, scenario testing, and optimization without real-world impact.
+                        </div>
+                        <div class="system-stats">
+                            <div class="stat">
+                                <div class="stat-value">3</div>
+                                <div class="stat-label">Active Simulations</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">98%</div>
+                                <div class="stat-label">Accuracy</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">42</div>
+                                <div class="stat-label">Models</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="system-card">
+                        <div class="system-header">
+                            <div>
+                                <div class="system-icon">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="system-title">Autonomous Vehicle Coordination</div>
+                            </div>
+                            <div class="system-status">
+                                <div class="status-indicator active"></div>
+                                <span>Active</span>
+                            </div>
+                        </div>
+                        <div class="system-description">
+                            Centralized coordination system for autonomous vehicles, optimizing routes, managing intersections, and ensuring safe interactions with human drivers.
+                        </div>
+                        <div class="system-stats">
+                            <div class="stat">
+                                <div class="stat-value">142</div>
+                                <div class="stat-label">Connected AVs</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">99.7%</div>
+                                <div class="stat-label">Safety Score</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">1.2K</div>
+                                <div class="stat-label">Events/hr</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="system-card">
+                        <div class="system-header">
+                            <div>
+                                <div class="system-icon">
+                                    <i class="fas fa-parking"></i>
+                                </div>
+                                <div class="system-title">Smart Parking Management</div>
+                            </div>
+                            <div class="system-status">
+                                <div class="status-indicator active"></div>
+                                <span>Active</span>
+                            </div>
+                        </div>
+                        <div class="system-description">
+                            Dynamic parking space detection, reservation systems, and pricing optimization to reduce congestion caused by vehicles searching for parking.
+                        </div>
+                        <div class="system-stats">
+                            <div class="stat">
+                                <div class="stat-value">2,345</div>
+                                <div class="stat-label">Spaces Monitored</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">487</div>
+                                <div class="stat-label">Available Now</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">4.2m</div>
+                                <div class="stat-label">Avg. Search Time</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="system-card">
+                        <div class="system-header">
+                            <div>
+                                <div class="system-icon">
+                                    <i class="fas fa-road"></i>
+                                </div>
+                                <div class="system-title">Dynamic Tolling & Pricing</div>
+                            </div>
+                            <div class="system-status">
+                                <div class="status-indicator warning"></div>
+                                <span>Partial</span>
+                            </div>
+                        </div>
+                        <div class="system-description">
+                            Real-time congestion-based toll pricing, zone-based access fees, and demand-responsive pricing to manage traffic flow and reduce peak congestion.
+                        </div>
+                        <div class="system-stats">
+                            <div class="stat">
+                                <div class="stat-value">4</div>
+                                <div class="stat-label">Active Zones</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">18%</div>
+                                <div class="stat-label">Traffic Reduction</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">$84K</div>
+                                <div class="stat-label">Revenue Today</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Digital Twin Simulation -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">Digital Twin Simulation Environment</div>
+                        <div>
+                            <button class="btn">
+                                <i class="fas fa-play"></i>
+                                <span>Run New Simulation</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="digital-twin-panel">
+                        <div class="simulation-controls">
+                            <div class="control-group">
+                                <div class="control-title">
+                                    <i class="fas fa-sliders-h"></i>
+                                    Simulation Parameters
+                                </div>
+                                <div class="slider-container">
+                                    <div class="slider-label">
+                                        <span>Traffic Volume</span>
+                                        <span id="trafficValue">75%</span>
+                                    </div>
+                                    <input type="range" min="0" max="100" value="75" class="slider" id="trafficSlider">
+                                </div>
+                                <div class="slider-container">
+                                    <div class="slider-label">
+                                        <span>Weather Conditions</span>
+                                        <span id="weatherValue">Clear</span>
+                                    </div>
+                                    <input type="range" min="0" max="100" value="80" class="slider" id="weatherSlider">
+                                </div>
+                                <div class="slider-container">
+                                    <div class="slider-label">
+                                        <span>Incident Probability</span>
+                                        <span id="incidentValue">15%</span>
+                                    </div>
+                                    <input type="range" min="0" max="100" value="15" class="slider" id="incidentSlider">
+                                </div>
+                            </div>
+                            
+                            <div class="control-group">
+                                <div class="control-title">
+                                    <i class="fas fa-list-check"></i>
+                                    Predefined Scenarios
+                                </div>
+                                <div class="simulation-scenarios">
+                                    <button class="scenario-btn active">Rush Hour</button>
+                                    <button class="scenario-btn">Major Event</button>
+                                    <button class="scenario-btn">Accident Response</button>
+                                    <button class="scenario-btn">Weather Emergency</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <div class="control-title">
+                                <i class="fas fa-tasks"></i>
+                                Active Simulations
+                            </div>
+                            <div class="simulation-list">
+                                <div class="simulation-item">
+                                    <div class="simulation-name">Weekend Festival Impact</div>
+                                    <div class="simulation-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 65%;"></div>
+                                        </div>
+                                        <div class="progress-text">65% complete • ETA: 1h 24m</div>
+                                    </div>
+                                </div>
+                                <div class="simulation-item">
+                                    <div class="simulation-name">New Bridge Opening</div>
+                                    <div class="simulation-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 30%;"></div>
+                                        </div>
+                                        <div class="progress-text">30% complete • ETA: 2h 15m</div>
+                                    </div>
+                                </div>
+                                <div class="simulation-item">
+                                    <div class="simulation-name">Winter Storm Response</div>
+                                    <div class="simulation-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 85%;"></div>
+                                        </div>
+                                        <div class="progress-text">85% complete • ETA: 0h 32m</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Autonomous Vehicle Coordination -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">Autonomous Vehicle Fleet Coordination</div>
+                        <div>
+                            <button class="btn btn-outline">
+                                <i class="fas fa-sync-alt"></i>
+                                <span>Update Fleet</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="av-panel">
+                        <div class="av-fleet">
+                            <div class="av-vehicle">
+                                <div class="av-icon av-taxi">
+                                    <i class="fas fa-taxi"></i>
+                                </div>
+                                <div class="av-details">
+                                    <div class="av-type">Autonomous Taxi #AT-124</div>
+                                    <div class="av-status">Route: Downtown to Airport (12.4 km)</div>
+                                    <div class="av-battery">
+                                        <i class="fas fa-battery-three-quarters"></i>
+                                        <span>Battery: 78% • 3 passengers</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="av-vehicle">
+                                <div class="av-icon av-delivery">
+                                    <i class="fas fa-shipping-fast"></i>
+                                </div>
+                                <div class="av-details">
+                                    <div class="av-type">Delivery Bot #DB-87</div>
+                                    <div class="av-status">Route: Warehouse District (6.8 km)</div>
+                                    <div class="av-battery">
+                                        <i class="fas fa-battery-full"></i>
+                                        <span>Battery: 92% • 12 packages</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="av-vehicle">
+                                <div class="av-icon av-shuttle">
+                                    <i class="fas fa-shuttle-van"></i>
+                                </div>
+                                <div class="av-details">
+                                    <div class="av-type">Shuttle #AS-45</div>
+                                    <div class="av-status">Route: University Loop (9.2 km)</div>
+                                    <div class="av-battery">
+                                        <i class="fas fa-battery-half"></i>
+                                        <span>Battery: 65% • 8 passengers</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="av-vehicle">
+                                <div class="av-icon av-truck">
+                                    <i class="fas fa-truck"></i>
+                                </div>
+                                <div class="av-details">
+                                    <div class="av-type">Freight Truck #FT-32</div>
+                                    <div class="av-status">Route: Highway 5 Northbound (42.6 km)</div>
+                                    <div class="av-battery">
+                                        <i class="fas fa-battery-quarter"></i>
+                                        <span>Battery: 45% • 18 tons cargo</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <div class="control-title">
+                                <i class="fas fa-chart-line"></i>
+                                AV Coordination Statistics
+                            </div>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <div class="stat-label">Active AVs</div>
+                                    <div class="stat-value">142</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Avg. Speed</div>
+                                    <div class="stat-value">42 km/h</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Coordination Events</div>
+                                    <div class="stat-value">1,248/hr</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Safety Score</div>
+                                    <div class="stat-value">98.7%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Smart Parking Management -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">Smart Parking Management System</div>
+                        <div>
+                            <button class="btn">
+                                <i class="fas fa-search"></i>
+                                <span>Find Parking</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="parking-panel">
+                        <div class="parking-lots">
+                            <div class="parking-lot">
+                                <div class="lot-name">Downtown Plaza</div>
+                                <div class="lot-occupancy">
+                                    <div class="occupancy-fill high-occupancy" style="width: 90%;"></div>
+                                </div>
+                                <div class="lot-stats">45/50 spaces • $4.50/hr</div>
+                            </div>
+                            
+                            <div class="parking-lot">
+                                <div class="lot-name">Riverfront Garage</div>
+                                <div class="lot-occupancy">
+                                    <div class="occupancy-fill medium-occupancy" style="width: 60%;"></div>
+                                </div>
+                                <div class="lot-stats">120/200 spaces • $3.75/hr</div>
+                            </div>
+                            
+                            <div class="parking-lot">
+                                <div class="lot-name">Market Street</div>
+                                <div class="lot-occupancy">
+                                    <div class="occupancy-fill low-occupancy" style="width: 25%;"></div>
+                                </div>
+                                <div class="lot-stats">15/60 spaces • $5.25/hr</div>
+                            </div>
+                            
+                            <div class="parking-lot">
+                                <div class="lot-name">Convention Center</div>
+                                <div class="lot-occupancy">
+                                    <div class="occupancy-fill high-occupancy" style="width: 95%;"></div>
+                                </div>
+                                <div class="lot-stats">380/400 spaces • $6.00/hr</div>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <div class="control-title">
+                                <i class="fas fa-chart-pie"></i>
+                                Parking Analytics
+                            </div>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <div class="stat-label">Total Spaces</div>
+                                    <div class="stat-value">2,345</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Available Now</div>
+                                    <div class="stat-value">487</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Avg. Search Time</div>
+                                    <div class="stat-value">4.2 min</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Revenue Today</div>
+                                    <div class="stat-value">$12,458</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dynamic Tolling System -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">Dynamic Tolling & Congestion Pricing</div>
+                        <div>
+                            <button class="btn btn-outline">
+                                <i class="fas fa-sliders-h"></i>
+                                <span>Adjust Pricing</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tolling-panel">
+                        <div class="toll-zones">
+                            <div class="toll-zone">
+                                <div class="zone-icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                                <div class="zone-details">
+                                    <div class="zone-name">Central Business District</div>
+                                    <div class="zone-rate">Current Rate: $8.50 • Peak: $12.00</div>
+                                </div>
+                                <div class="zone-status">Active</div>
+                            </div>
+                            
+                            <div class="toll-zone">
+                                <div class="zone-icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                                <div class="zone-details">
+                                    <div class="zone-name">River Crossing Zone</div>
+                                    <div class="zone-rate">Current Rate: $4.25 • Peak: $6.50</div>
+                                </div>
+                                <div class="zone-status">Active</div>
+                            </div>
+                            
+                            <div class="toll-zone">
+                                <div class="zone-icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                                <div class="zone-details">
+                                    <div class="zone-name">Northern Expressway</div>
+                                    <div class="zone-rate">Current Rate: $3.75 • Peak: $5.50</div>
+                                </div>
+                                <div class="zone-status">Active</div>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <div class="control-title">
+                                <i class="fas fa-chart-bar"></i>
+                                Tolling Impact
+                            </div>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <div class="stat-label">Traffic Reduction</div>
+                                    <div class="stat-value">18%</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Revenue Today</div>
+                                    <div class="stat-value">$84,250</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Compliance Rate</div>
+                                    <div class="stat-value">94.3%</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Avg. Speed Increase</div>
+                                    <div class="stat-value">12%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pedestrian Flow Optimization -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">Pedestrian Flow Optimization</div>
+                        <div>
+                            <button class="btn">
+                                <i class="fas fa-people-arrows"></i>
+                                <span>Adjust Crossings</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="pedestrian-panel">
+                        <div class="pedestrian-zones">
+                            <div class="pedestrian-zone">
+                                <div class="zone-icon-ped">
+                                    <i class="fas fa-walking"></i>
+                                </div>
+                                <div class="zone-count">248</div>
+                                <div class="zone-label">Downtown Core</div>
+                            </div>
+                            
+                            <div class="pedestrian-zone">
+                                <div class="zone-icon-ped">
+                                    <i class="fas fa-walking"></i>
+                                </div>
+                                <div class="zone-count">142</div>
+                                <div class="zone-label">Shopping District</div>
+                            </div>
+                            
+                            <div class="pedestrian-zone">
+                                <div class="zone-icon-ped">
+                                    <i class="fas fa-walking"></i>
+                                </div>
+                                <div class="zone-count">87</div>
+                                <div class="zone-label">University Area</div>
+                            </div>
+                            
+                            <div class="pedestrian-zone">
+                                <div class="zone-icon-ped">
+                                    <i class="fas fa-walking"></i>
+                                </div>
+                                <div class="zone-count">56</div>
+                                <div class="zone-label">Transit Hub</div>
+                            </div>
+                            
+                            <div class="pedestrian-zone">
+                                <div class="zone-icon-ped">
+                                    <i class="fas fa-walking"></i>
+                                </div>
+                                <div class="zone-count">203</div>
+                                <div class="zone-label">Waterfront Park</div>
+                            </div>
+                            
+                            <div class="pedestrian-zone">
+                                <div class="zone-icon-ped">
+                                    <i class="fas fa-walking"></i>
+                                </div>
+                                <div class="zone-count">74</div>
+                                <div class="zone-label">Stadium Area</div>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <div class="control-title">
+                                <i class="fas fa-users"></i>
+                                Pedestrian Analytics
+                            </div>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <div class="stat-label">Total Pedestrians</div>
+                                    <div class="stat-value">810</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Crossing Events</div>
+                                    <div class="stat-value">1,245/hr</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Avg. Wait Time</div>
+                                    <div class="stat-value">18 sec</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Safety Score</div>
+                                    <div class="stat-value">99.2%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize dashboard with real-time functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Slider controls
+            const trafficSlider = document.getElementById('trafficSlider');
+            const weatherSlider = document.getElementById('weatherSlider');
+            const incidentSlider = document.getElementById('incidentSlider');
+            
+            const trafficValue = document.getElementById('trafficValue');
+            const weatherValue = document.getElementById('weatherValue');
+            const incidentValue = document.getElementById('incidentValue');
+            
+            // Traffic volume slider
+            trafficSlider.addEventListener('input', function() {
+                trafficValue.textContent = this.value + '%';
+            });
+            
+            // Weather conditions slider
+            weatherSlider.addEventListener('input', function() {
+                const value = this.value;
+                if (value >= 80) {
+                    weatherValue.textContent = 'Clear';
+                } else if (value >= 60) {
+                    weatherValue.textContent = 'Partly Cloudy';
+                } else if (value >= 40) {
+                    weatherValue.textContent = 'Rainy';
+                } else if (value >= 20) {
+                    weatherValue.textContent = 'Stormy';
+                } else {
+                    weatherValue.textContent = 'Severe Weather';
+                }
+            });
+            
+            // Incident probability slider
+            incidentSlider.addEventListener('input', function() {
+                incidentValue.textContent = this.value + '%';
+            });
+            
+            // Scenario buttons
+            const scenarioButtons = document.querySelectorAll('.scenario-btn');
+            scenarioButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    scenarioButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update sliders based on scenario
+                    if (this.textContent === 'Rush Hour') {
+                        trafficSlider.value = 95;
+                        trafficValue.textContent = '95%';
+                        weatherSlider.value = 80;
+                        weatherValue.textContent = 'Clear';
+                        incidentSlider.value = 10;
+                        incidentValue.textContent = '10%';
+                    } else if (this.textContent === 'Major Event') {
+                        trafficSlider.value = 85;
+                        trafficValue.textContent = '85%';
+                        weatherSlider.value = 70;
+                        weatherValue.textContent = 'Partly Cloudy';
+                        incidentSlider.value = 20;
+                        incidentValue.textContent = '20%';
+                    } else if (this.textContent === 'Accident Response') {
+                        trafficSlider.value = 65;
+                        trafficValue.textContent = '65%';
+                        weatherSlider.value = 60;
+                        weatherValue.textContent = 'Partly Cloudy';
+                        incidentSlider.value = 40;
+                        incidentValue.textContent = '40%';
+                    } else if (this.textContent === 'Weather Emergency') {
+                        trafficSlider.value = 50;
+                        trafficValue.textContent = '50%';
+                        weatherSlider.value = 15;
+                        weatherValue.textContent = 'Severe Weather';
+                        incidentSlider.value = 35;
+                        incidentValue.textContent = '35%';
+                    }
+                });
+            });
+            
+            // Simulate real-time updates
+            setInterval(() => {
+                // Update AV battery levels
+                const batteries = document.querySelectorAll('.av-battery span');
+                batteries.forEach(battery => {
+                    const batteryText = battery.textContent;
+                    const currentLevel = parseInt(batteryText.match(/\d+/)[0]);
+                    const change = Math.floor(Math.random() * 6) - 2;
+                    const newLevel = Math.max(15, Math.min(100, currentLevel + change));
+                    
+                    // Update battery icon
+                    const icon = battery.previousElementSibling;
+                    icon.className = 'fas';
+                    
+                    if (newLevel >= 80) {
+                        icon.classList.add('fa-battery-full');
+                    } else if (newLevel >= 60) {
+                        icon.classList.add('fa-battery-three-quarters');
+                    } else if (newLevel >= 40) {
+                        icon.classList.add('fa-battery-half');
+                    } else if (newLevel >= 20) {
+                        icon.classList.add('fa-battery-quarter');
+                    } else {
+                        icon.classList.add('fa-battery-empty');
+                    }
+                    
+                    battery.textContent = batteryText.replace(/\d+%/, newLevel + '%');
+                });
+                
+                // Update pedestrian counts
+                const pedestrianCounts = document.querySelectorAll('.zone-count');
+                pedestrianCounts.forEach(count => {
+                    const currentCount = parseInt(count.textContent);
+                    const change = Math.floor(Math.random() * 30) - 15;
+                    const newCount = Math.max(20, currentCount + change);
+                    count.textContent = newCount;
+                    
+                    // Update total pedestrians
+                    const totalPedestrians = document.querySelector('.stat-item .stat-value');
+                    if (totalPedestrians && totalPedestrians.textContent.includes('810')) {
+                        const total = Array.from(pedestrianCounts).reduce((sum, el) => sum + parseInt(el.textContent), 0);
+                        totalPedestrians.textContent = total;
+                    }
+                });
+                
+                // Update parking occupancy
+                const occupancyBars = document.querySelectorAll('.occupancy-fill');
+                occupancyBars.forEach(bar => {
+                    const currentWidth = parseInt(bar.style.width);
+                    const change = Math.floor(Math.random() * 15) - 7;
+                    const newWidth = Math.max(5, Math.min(100, (currentWidth || 50) + change));
+                    bar.style.width = newWidth + '%';
+                    
+                    // Update class based on occupancy level
+                    bar.classList.remove('low-occupancy', 'medium-occupancy', 'high-occupancy');
+                    if (newWidth < 40) {
+                        bar.classList.add('low-occupancy');
+                    } else if (newWidth < 75) {
+                        bar.classList.add('medium-occupancy');
+                    } else {
+                        bar.classList.add('high-occupancy');
+                    }
+                    
+                    // Update available spaces text
+                    const lotStats = bar.closest('.parking-lot').querySelector('.lot-stats');
+                    if (lotStats) {
+                        const match = lotStats.textContent.match(/(\d+)\/(\d+)/);
+                        if (match) {
+                            const total = parseInt(match[2]);
+                            const occupied = Math.round(total * newWidth / 100);
+                            const available = total - occupied;
+                            const priceMatch = lotStats.textContent.match(/\$[\d\.]+\/hr/);
+                            const price = priceMatch ? priceMatch[0] : '$4.50/hr';
+                            lotStats.textContent = `${occupied}/${total} spaces • ${price}`;
+                        }
+                    }
+                });
+                
+                // Update available parking count
+                const availableParking = document.querySelectorAll('.stat-item .stat-value')[1];
+                if (availableParking && availableParking.textContent.includes('487')) {
+                    const allLots = document.querySelectorAll('.parking-lot');
+                    let totalAvailable = 0;
+                    allLots.forEach(lot => {
+                        const stats = lot.querySelector('.lot-stats').textContent;
+                        const match = stats.match(/(\d+)\/(\d+)/);
+                        if (match) {
+                            const occupied = parseInt(match[1]);
+                            const total = parseInt(match[2]);
+                            totalAvailable += (total - occupied);
+                        }
+                    });
+                    availableParking.textContent = totalAvailable;
+                }
+                
+                // Update simulation progress bars
+                const progressBars = document.querySelectorAll('.progress-fill');
+                progressBars.forEach(bar => {
+                    const currentWidth = parseInt(bar.style.width);
+                    if (currentWidth < 100) {
+                        const increment = Math.random() * 3;
+                        const newWidth = Math.min(100, currentWidth + increment);
+                        bar.style.width = newWidth + '%';
+                        
+                        // Update progress text
+                        const progressText = bar.closest('.simulation-progress').querySelector('.progress-text');
+                        if (progressText) {
+                            const percent = Math.round(newWidth);
+                            const eta = 100 - percent;
+                            progressText.textContent = `${percent}% complete • ETA: ${Math.round(eta/3)}h ${Math.round((eta%3)*20)}m`;
+                        }
+                    }
+                });
+                
+                // Pulse active status indicators
+                const activeIndicators = document.querySelectorAll('.status-indicator.active, .status-indicator.warning');
+                activeIndicators.forEach(indicator => {
+                    indicator.style.animation = 'none';
+                    setTimeout(() => {
+                        indicator.style.animation = 'pulse 2s infinite';
+                    }, 10);
+                });
+                
+            }, 3000); // Update every 3 seconds
+            
+            // Time filter buttons
+            const timeOptions = document.querySelectorAll('.time-option');
+            timeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    timeOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Alert bell animation
+            const alertIcon = document.querySelector('.alert-icon');
+            alertIcon.addEventListener('click', function() {
+                this.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 200);
+                
+                // Update alert count
+                const alertCount = document.querySelector('.alert-count');
+                if (alertCount) {
+                    const currentCount = parseInt(alertCount.textContent);
+                    if (currentCount > 0) {
+                        alertCount.textContent = currentCount - 1;
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

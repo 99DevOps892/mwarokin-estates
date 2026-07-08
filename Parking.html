@@ -1,0 +1,1956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Smart Parking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --primary-light: #60a5fa;
+            --secondary: #8b5cf6;
+            --secondary-dark: #7c3aed;
+            --accent: #10b981;
+            --accent-dark: #059669;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --dark-lighter: #334155;
+            --gray: #64748b;
+            --gray-light: #94a3b8;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --radius: 12px;
+            --radius-lg: 16px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--light);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 15px 0;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav a {
+            color: var(--gray-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        nav a:hover {
+            color: var(--white);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: var(--transition);
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--gray-light);
+            border: 1px solid var(--gray);
+        }
+
+        .btn-outline:hover {
+            color: var(--white);
+            border-color: var(--white);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 100px 0;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%), url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+            margin-bottom: 60px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--white), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--gray-light);
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        /* Dashboard Styles */
+        .dashboard {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 60px;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section-title h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            color: var(--gray-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .dashboard-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .location-tabs {
+            display: flex;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: var(--radius);
+            padding: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .location-tab {
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .location-tab.active {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .search-filter {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-light);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius);
+            color: var(--white);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .filter-dropdown select {
+            padding: 12px 15px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius);
+            color: var(--white);
+            font-family: 'Inter', sans-serif;
+            min-width: 180px;
+        }
+
+        .parking-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .parking-card {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: var(--transition);
+        }
+
+        .parking-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-available {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-occupied {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .spots-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .parking-spot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 5px;
+            border-radius: 8px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .parking-spot.available {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .parking-spot.occupied {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .parking-spot.reserved {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .parking-spot:hover {
+            transform: scale(1.05);
+        }
+
+        .spot-icon {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .spot-number {
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .progress-section {
+            margin-top: 15px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar-container {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--dark-light);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--gray-light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            color: var(--white);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius);
+            color: var(--white);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        /* Notification Styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            z-index: 3000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 350px;
+        }
+
+        .notification.active {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        .notification.error {
+            background: var(--danger);
+            color: var(--white);
+        }
+
+        .notification.warning {
+            background: var(--warning);
+            color: var(--white);
+        }
+
+        .notification.info {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        /* Registration Modal Styles */
+        .registration-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .registration-modal.active {
+            display: flex;
+        }
+
+        .registration-form {
+            background: var(--dark-light);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-tabs {
+            display: flex;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            color: var(--gray-light);
+            border-bottom: 2px solid transparent;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .form-tab.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .form-content {
+            display: none;
+        }
+
+        .form-content.active {
+            display: block;
+        }
+
+        /* Payment Modal Styles */
+        .payment-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .payment-modal.active {
+            display: flex;
+        }
+
+        .payment-form {
+            background: var(--dark-light);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .payment-methods {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .payment-method {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .payment-method:hover,
+        .payment-method.active {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .payment-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        /* Real-time indicators */
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            color: var(--accent);
+            margin-left: 10px;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* User Dashboard */
+        .user-dashboard {
+            display: none;
+        }
+
+        .user-dashboard.active {
+            display: block;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: var(--radius);
+            transition: var(--transition);
+        }
+
+        .user-info:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .user-menu {
+            position: relative;
+        }
+
+        .user-menu-content {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--dark-light);
+            border-radius: var(--radius);
+            padding: 15px;
+            min-width: 200px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+            z-index: 1000;
+            margin-top: 10px;
+        }
+
+        .user-menu.active .user-menu-content {
+            display: block;
+            animation: modalFadeIn 0.2s ease;
+        }
+
+        .user-menu-item {
+            padding: 10px 0;
+            cursor: pointer;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-menu-item:hover {
+            color: var(--primary);
+        }
+
+        /* Active Reservations */
+        .reservations-list {
+            margin-top: 30px;
+        }
+
+        .reservation-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: var(--radius);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .reservation-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .reservation-info h4 {
+            margin-bottom: 5px;
+        }
+
+        .reservation-info p {
+            color: var(--gray-light);
+            font-size: 0.9rem;
+        }
+
+        .reservation-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            nav ul {
+                gap: 15px;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .location-tabs {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .search-filter {
+                flex-direction: column;
+            }
+
+            .spots-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">🅿️</div>
+                    <div class="logo-text">Mwarokin Estates</div>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="AutomateGPRSPinLocator.html">My Location</a></li>
+                        <li><a href="Payments.html">Payments</a></li>
+                        <li><a href="Reserve Parkings.html">Reserve Parkings</a></li>
+                        <li><a href="Contact.html">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="auth-buttons" id="authButtons">
+                    <button class="btn btn-outline" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                    <button class="btn btn-primary" id="registerBtn">
+                        <i class="fas fa-user-plus"></i> Get Started
+                    </button>
+                </div>
+                <div class="user-dashboard" id="userDashboard">
+                    <div class="user-menu" id="userMenu">
+                        <div class="user-info">
+                            <div class="user-avatar" id="userAvatar">JD</div>
+                            <span id="userName">John Doe</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="user-menu-content">
+                            <div class="user-menu-item" id="profileBtn">
+                                <i class="fas fa-user"></i> My Profile
+                            </div>
+                            <div class="user-menu-item" id="reservationsBtn">
+                                <i class="fas fa-calendar-check"></i> My Reservations
+                            </div>
+                            <div class="user-menu-item" id="paymentMethodsBtn">
+                                <i class="fas fa-credit-card"></i> Payment Methods
+                            </div>
+                            <div class="user-menu-item" id="logoutBtn">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <h1>Smart Parking Solutions</h1>
+            <p>Revolutionize your property management with our intelligent parking system. Real-time monitoring, seamless reservations, and automated billing.</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" id="heroRegisterBtn">
+                    <i class="fas fa-rocket"></i> Get Started Free
+                </button>
+                <button class="btn btn-outline" id="heroDemoBtn">
+                    <i class="fas fa-play-circle"></i> Watch Demo
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Parking Dashboard -->
+    <section class="container" id="dashboard">
+        <div class="section-title">
+            <h2>Live Parking Dashboard <span class="live-indicator"><span class="live-dot"></span> LIVE</span></h2>
+            <p>Monitor and manage parking across all your properties in real-time.</p>
+        </div>
+        <div class="dashboard">
+            <div class="dashboard-header">
+                <h2 class="dashboard-title">Property Parking Overview</h2>
+                <div class="location-tabs">
+                    <div class="location-tab active" data-location="all">All Locations</div>
+                    <div class="location-tab" data-location="apartments">Apartments</div>
+                    <div class="location-tab" data-location="commercial">Commercial</div>
+                    <div class="location-tab" data-location="public">Public Areas</div>
+                </div>
+            </div>
+            
+            <div class="search-filter">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search parking locations...">
+                </div>
+                <div class="filter-dropdown">
+                    <select id="statusFilter">
+                        <option value="all">All Status</option>
+                        <option value="available">Available</option>
+                        <option value="occupied">Occupied</option>
+                        <option value="reserved">Reserved</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="parking-grid" id="parkingGrid">
+                <!-- Parking cards will be dynamically generated -->
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="reserveSpotBtn">
+                    <i class="fas fa-calendar-plus"></i> Reserve Spot
+                </button>
+                <button class="btn btn-primary" id="checkInBtn">
+                    <i class="fas fa-car"></i> Check In Vehicle
+                </button>
+                <button class="btn btn-outline" id="generateReportBtn">
+                    <i class="fas fa-chart-bar"></i> Generate Report
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- User Reservations Section -->
+    <section class="container" id="userReservations" style="display: none;">
+        <div class="section-title">
+            <h2>My Reservations</h2>
+            <p>Manage your current and past parking reservations.</p>
+        </div>
+        <div class="dashboard">
+            <div class="reservations-list" id="reservationsList">
+                <!-- Reservations will be dynamically generated -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Reservation Modal -->
+    <div class="modal-overlay" id="reservationModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Reserve Parking Spot</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="reservationForm">
+                <div class="form-group">
+                    <label for="spotNumber">Spot Number</label>
+                    <input type="text" id="spotNumber" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="reservationName">Your Name</label>
+                    <input type="text" id="reservationName" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="reservationDate">Date</label>
+                    <input type="date" id="reservationDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="reservationTime">Time</label>
+                    <input type="time" id="reservationTime" required>
+                </div>
+                <div class="form-group">
+                    <label for="reservationDuration">Duration (hours)</label>
+                    <select id="reservationDuration" required>
+                        <option value="1">1 hour</option>
+                        <option value="2">2 hours</option>
+                        <option value="4">4 hours</option>
+                        <option value="8">8 hours</option>
+                        <option value="24">24 hours</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline close-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Reserve Spot</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Registration Modal -->
+    <div class="registration-modal" id="registrationModal">
+        <div class="registration-form">
+            <div class="modal-header">
+                <h3 class="modal-title">Create Account</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="form-tabs">
+                <div class="form-tab active" data-tab="register">Register</div>
+                <div class="form-tab" data-tab="login">Login</div>
+            </div>
+            
+            <div class="form-content active" id="registerForm">
+                <form id="registrationForm">
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" placeholder="Enter your phone number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" placeholder="Create a password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="vehicleType">Vehicle Type</label>
+                        <select id="vehicleType" required>
+                            <option value="">Select vehicle type</option>
+                            <option value="car">Car</option>
+                            <option value="suv">SUV</option>
+                            <option value="truck">Truck</option>
+                            <option value="motorcycle">Motorcycle</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="licensePlate">License Plate</label>
+                        <input type="text" id="licensePlate" placeholder="Enter license plate" required>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-outline close-modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="registerSubmitBtn">
+                            <span class="btn-text">Create Account</span>
+                            <span class="loading-spinner" style="display: none;"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="form-content" id="loginForm">
+                <form id="loginFormElement">
+                    <div class="form-group">
+                        <label for="loginEmail">Email Address</label>
+                        <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                    </div>
+                    <div class="form-group" style="text-align: right;">
+                        <a href="#" style="color: var(--primary);">Forgot Password?</a>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-outline close-modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="loginSubmitBtn">
+                            <span class="btn-text">Login</span>
+                            <span class="loading-spinner" style="display: none;"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="payment-modal" id="paymentModal">
+        <div class="payment-form">
+            <div class="modal-header">
+                <h3 class="modal-title">Complete Payment</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="payment-details">
+                <div class="form-group">
+                    <label>Spot Number</label>
+                    <p id="paymentSpotNumber" style="margin-top: 5px; font-weight: bold;">A1</p>
+                </div>
+                <div class="form-group">
+                    <label>Duration</label>
+                    <p id="paymentDuration" style="margin-top: 5px;">2 hours</p>
+                </div>
+                <div class="form-group">
+                    <label>Total Amount</label>
+                    <p id="paymentAmount" style="margin-top: 5px; font-size: 1.5rem; color: var(--primary);">$8.00</p>
+                </div>
+            </div>
+            
+            <div class="payment-methods">
+                <div class="payment-method active" data-method="card">
+                    <div class="payment-icon"><i class="far fa-credit-card"></i></div>
+                    <div>Credit Card</div>
+                </div>
+                <div class="payment-method" data-method="paypal">
+                    <div class="payment-icon"><i class="fab fa-paypal"></i></div>
+                    <div>PayPal</div>
+                </div>
+                <div class="payment-method" data-method="wallet">
+                    <div class="payment-icon"><i class="fas fa-wallet"></i></div>
+                    <div>Wallet</div>
+                </div>
+            </div>
+            
+            <form id="paymentForm">
+                <div class="form-group" id="cardDetails">
+                    <label for="cardNumber">Card Number</label>
+                    <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" required>
+                </div>
+                <div class="form-group" id="cardDetails">
+                    <label for="cardExpiry">Expiry Date</label>
+                    <input type="text" id="cardExpiry" placeholder="MM/YY" required>
+                </div>
+                <div class="form-group" id="cardDetails">
+                    <label for="cardCVC">CVC</label>
+                    <input type="text" id="cardCVC" placeholder="123" required>
+                </div>
+                <div class="form-group" id="cardDetails">
+                    <label for="cardName">Name on Card</label>
+                    <input type="text" id="cardName" placeholder="John Doe" required>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline close-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="paymentSubmitBtn">
+                        <span class="btn-text">Pay Now</span>
+                        <span class="loading-spinner" style="display: none;"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div class="notification-text"></div>
+        <button class="close-notification">&times;</button>
+    </div>
+
+    <script>
+        // Parking data structure with real-time simulation
+        const parkingData = {
+            locations: {
+                apartments: [
+                    {
+                        id: "villa-a",
+                        name: "Villa A Parking",
+                        totalSpots: 80,
+                        availableSpots: 50,
+                        spots: [
+                            { id: "A1", status: "available", type: "standard" },
+                            { id: "A2", status: "occupied", type: "standard" },
+                            { id: "A3", status: "available", type: "standard" },
+                            { id: "A4", status: "reserved", type: "premium" },
+                            { id: "A5", status: "occupied", type: "standard" },
+                            { id: "A6", status: "available", type: "standard" },
+                            { id: "A7", status: "occupied", type: "standard" },
+                            { id: "A8", status: "available", type: "premium" }
+                        ]
+                    },
+                    {
+                        id: "villa-b",
+                        name: "Villa B Parking",
+                        totalSpots: 60,
+                        availableSpots: 35,
+                        spots: [
+                            { id: "B1", status: "available", type: "standard" },
+                            { id: "B2", status: "occupied", type: "standard" },
+                            { id: "B3", status: "available", type: "standard" },
+                            { id: "B4", status: "occupied", type: "standard" },
+                            { id: "B5", status: "available", type: "premium" },
+                            { id: "B6", status: "occupied", type: "standard" },
+                            { id: "B7", status: "available", type: "standard" },
+                            { id: "B8", status: "reserved", type: "premium" }
+                        ]
+                    }
+                ],
+                commercial: [
+                    {
+                        id: "commercial-building",
+                        name: "Commercial Building",
+                        totalSpots: 120,
+                        availableSpots: 2,
+                        spots: [
+                            { id: "C1", status: "occupied", type: "standard" },
+                            { id: "C2", status: "occupied", type: "standard" },
+                            { id: "C3", status: "occupied", type: "standard" },
+                            { id: "C4", status: "available", type: "standard" },
+                            { id: "C5", status: "occupied", type: "standard" },
+                            { id: "C6", status: "occupied", type: "standard" },
+                            { id: "C7", status: "occupied", type: "standard" },
+                            { id: "C8", status: "available", type: "premium" }
+                        ]
+                    }
+                ],
+                public: [
+                    {
+                        id: "public-parking",
+                        name: "Public Parking Area",
+                        totalSpots: 200,
+                        availableSpots: 45,
+                        spots: [
+                            { id: "P1", status: "available", type: "standard" },
+                            { id: "P2", status: "occupied", type: "standard" },
+                            { id: "P3", status: "available", type: "standard" },
+                            { id: "P4", status: "occupied", type: "standard" },
+                            { id: "P5", status: "available", type: "standard" },
+                            { id: "P6", status: "occupied", type: "standard" },
+                            { id: "P7", status: "available", type: "standard" },
+                            { id: "P8", status: "reserved", type: "premium" }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        // User data and reservations
+        let userData = null;
+        let userReservations = [];
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Check if user is logged in
+            checkLoginStatus();
+            
+            // Render parking dashboard
+            renderParkingDashboard();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Start real-time updates simulation
+            startRealTimeUpdates();
+        }
+
+        function checkLoginStatus() {
+            // In a real app, this would check with the server
+            const savedUser = localStorage.getItem('parkingUser');
+            if (savedUser) {
+                userData = JSON.parse(savedUser);
+                showUserDashboard();
+            } else {
+                showAuthButtons();
+            }
+        }
+
+        function showUserDashboard() {
+            document.getElementById('authButtons').style.display = 'none';
+            document.getElementById('userDashboard').classList.add('active');
+            document.getElementById('userName').textContent = userData.fullName;
+            document.getElementById('userAvatar').textContent = getInitials(userData.fullName);
+            
+            // Load user reservations
+            loadUserReservations();
+        }
+
+        function showAuthButtons() {
+            document.getElementById('authButtons').style.display = 'flex';
+            document.getElementById('userDashboard').classList.remove('active');
+        }
+
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').toUpperCase();
+        }
+
+        function renderParkingDashboard() {
+            const parkingGrid = document.getElementById('parkingGrid');
+            parkingGrid.innerHTML = '';
+            
+            // Get active location
+            const activeLocation = document.querySelector('.location-tab.active').dataset.location;
+            
+            // Render parking cards based on location
+            if (activeLocation === 'all') {
+                // Show all locations
+                Object.values(parkingData.locations).forEach(locationArray => {
+                    locationArray.forEach(location => {
+                        parkingGrid.appendChild(createParkingCard(location));
+                    });
+                });
+            } else {
+                // Show specific location
+                parkingData.locations[activeLocation].forEach(location => {
+                    parkingGrid.appendChild(createParkingCard(location));
+                });
+            }
+        }
+
+        function createParkingCard(location) {
+            const card = document.createElement('div');
+            card.className = 'parking-card';
+            card.dataset.locationId = location.id;
+            
+            // Calculate available spots
+            const availableCount = location.spots.filter(spot => spot.status === 'available').length;
+            const occupiedCount = location.spots.filter(spot => spot.status === 'occupied').length;
+            const reservedCount = location.spots.filter(spot => spot.status === 'reserved').length;
+            
+            // Status badge
+            let statusBadge = '';
+            if (availableCount === 0) {
+                statusBadge = `<span class="status-badge status-occupied">Full</span>`;
+            } else if (availableCount <= location.totalSpots * 0.2) {
+                statusBadge = `<span class="status-badge status-occupied">Almost Full</span>`;
+            } else {
+                statusBadge = `<span class="status-badge status-available">${availableCount} Available</span>`;
+            }
+            
+            // Spots grid
+            let spotsHTML = '';
+            location.spots.forEach(spot => {
+                let icon = '🚗';
+                if (spot.status === 'occupied') icon = '🚙';
+                if (spot.status === 'reserved') icon = '🔒';
+                if (spot.type === 'premium') icon = '⭐';
+                
+                spotsHTML += `
+                    <div class="parking-spot ${spot.status}" data-spot="${spot.id}" data-location="${location.id}">
+                        <div class="spot-icon">${icon}</div>
+                        <div class="spot-number">${spot.id}</div>
+                    </div>
+                `;
+            });
+            
+            // Progress bar
+            const percentage = ((location.totalSpots - availableCount) / location.totalSpots) * 100;
+            
+            card.innerHTML = `
+                <div class="card-header">
+                    <h3 class="card-title">${location.name}</h3>
+                    ${statusBadge}
+                </div>
+                <div class="spots-grid">
+                    ${spotsHTML}
+                </div>
+                <div class="progress-section">
+                    <div class="progress-label">
+                        <span>Capacity</span>
+                        <span>${location.totalSpots - availableCount}/${location.totalSpots}</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: ${percentage}%;"></div>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function setupEventListeners() {
+            // Registration/Login modal
+            document.getElementById('registerBtn').addEventListener('click', function() {
+                document.getElementById('registrationModal').classList.add('active');
+                switchFormTab('register');
+            });
+            
+            document.getElementById('loginBtn').addEventListener('click', function() {
+                document.getElementById('registrationModal').classList.add('active');
+                switchFormTab('login');
+            });
+            
+            // Hero buttons
+            document.getElementById('heroRegisterBtn').addEventListener('click', function() {
+                document.getElementById('registrationModal').classList.add('active');
+                switchFormTab('register');
+            });
+            
+            // Form tabs
+            document.querySelectorAll('.form-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.dataset.tab;
+                    switchFormTab(tabName);
+                });
+            });
+            
+            // Registration form
+            document.getElementById('registrationForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                registerUser();
+            });
+            
+            // Login form
+            document.getElementById('loginFormElement').addEventListener('submit', function(e) {
+                e.preventDefault();
+                loginUser();
+            });
+            
+            // Location tabs
+            document.querySelectorAll('.location-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.location-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    renderParkingDashboard();
+                });
+            });
+            
+            // Parking spot clicks
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.parking-spot')) {
+                    const spotElement = e.target.closest('.parking-spot');
+                    const spotId = spotElement.dataset.spot;
+                    const locationId = spotElement.dataset.location;
+                    
+                    handleSpotClick(spotId, locationId);
+                }
+            });
+            
+            // Reserve spot button
+            document.getElementById('reserveSpotBtn').addEventListener('click', function() {
+                if (!userData) {
+                    showNotification('Please log in to reserve a spot', 'error');
+                    document.getElementById('registrationModal').classList.add('active');
+                    return;
+                }
+                
+                // Find first available spot
+                const availableSpot = findAvailableSpot();
+                if (availableSpot) {
+                    openReservationModal(availableSpot.spotId, availableSpot.locationId);
+                } else {
+                    showNotification('No available spots found. Please try another location.', 'error');
+                }
+            });
+            
+            // User menu
+            document.getElementById('userMenu').addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+            
+            // User menu items
+            document.getElementById('reservationsBtn').addEventListener('click', function() {
+                showUserReservations();
+            });
+            
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                logoutUser();
+            });
+            
+            // Close modals
+            document.querySelectorAll('.close-modal').forEach(button => {
+                button.addEventListener('click', function() {
+                    document.querySelectorAll('.modal-overlay, .registration-modal, .payment-modal').forEach(modal => {
+                        modal.classList.remove('active');
+                    });
+                });
+            });
+            
+            // Click outside modals to close
+            document.querySelectorAll('.modal-overlay, .registration-modal, .payment-modal').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('active');
+                    }
+                });
+            });
+            
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', function() {
+                filterParkingLocations(this.value);
+            });
+            
+            // Status filter
+            document.getElementById('statusFilter').addEventListener('change', function() {
+                filterParkingSpots(this.value);
+            });
+            
+            // Payment method selection
+            document.querySelectorAll('.payment-method').forEach(method => {
+                method.addEventListener('click', function() {
+                    document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        }
+
+        function switchFormTab(tabName) {
+            // Update tabs
+            document.querySelectorAll('.form-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.tab === tabName);
+            });
+            
+            // Update forms
+            document.querySelectorAll('.form-content').forEach(form => {
+                form.classList.toggle('active', form.id === `${tabName}Form`);
+            });
+        }
+
+        function registerUser() {
+            const submitBtn = document.getElementById('registerSubmitBtn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const spinner = submitBtn.querySelector('.loading-spinner');
+            
+            // Show loading state
+            btnText.style.display = 'none';
+            spinner.style.display = 'inline-block';
+            
+            // Get form data
+            const formData = {
+                fullName: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                password: document.getElementById('password').value,
+                vehicleType: document.getElementById('vehicleType').value,
+                licensePlate: document.getElementById('licensePlate').value
+            };
+            
+            // Validate passwords match
+            if (formData.password !== document.getElementById('confirmPassword').value) {
+                showNotification('Passwords do not match', 'error');
+                btnText.style.display = 'inline-block';
+                spinner.style.display = 'none';
+                return;
+            }
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Save user data
+                userData = {
+                    id: Date.now().toString(),
+                    ...formData
+                };
+                localStorage.setItem('parkingUser', JSON.stringify(userData));
+                
+                // Update UI
+                showUserDashboard();
+                document.getElementById('registrationModal').classList.remove('active');
+                showNotification('Account created successfully!', 'success');
+                
+                // Reset form
+                document.getElementById('registrationForm').reset();
+                
+                // Reset button
+                btnText.style.display = 'inline-block';
+                spinner.style.display = 'none';
+            }, 1500);
+        }
+
+        function loginUser() {
+            const submitBtn = document.getElementById('loginSubmitBtn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const spinner = submitBtn.querySelector('.loading-spinner');
+            
+            // Show loading state
+            btnText.style.display = 'none';
+            spinner.style.display = 'inline-block';
+            
+            // Get form data
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // Simulate API call
+            setTimeout(() => {
+                // For demo purposes, we'll just create a mock user
+                // In a real app, this would validate against a server
+                userData = {
+                    id: '12345',
+                    fullName: 'John Doe',
+                    email: email,
+                    phone: '+1234567890',
+                    vehicleType: 'car',
+                    licensePlate: 'ABC123'
+                };
+                localStorage.setItem('parkingUser', JSON.stringify(userData));
+                
+                // Update UI
+                showUserDashboard();
+                document.getElementById('registrationModal').classList.remove('active');
+                showNotification('Logged in successfully!', 'success');
+                
+                // Reset form
+                document.getElementById('loginFormElement').reset();
+                
+                // Reset button
+                btnText.style.display = 'inline-block';
+                spinner.style.display = 'none';
+            }, 1500);
+        }
+
+        function logoutUser() {
+            userData = null;
+            localStorage.removeItem('parkingUser');
+            showAuthButtons();
+            showNotification('Logged out successfully', 'success');
+        }
+
+        function handleSpotClick(spotId, locationId) {
+            if (!userData) {
+                showNotification('Please log in to reserve a spot', 'error');
+                document.getElementById('registrationModal').classList.add('active');
+                return;
+            }
+            
+            // Find the spot in our data
+            const spot = findSpot(spotId, locationId);
+            
+            if (!spot) return;
+            
+            if (spot.status === 'available') {
+                openReservationModal(spotId, locationId);
+            } else if (spot.status === 'reserved') {
+                showNotification(`Spot ${spotId} is reserved. Contact management to modify reservation.`, 'warning');
+            } else {
+                showNotification(`Spot ${spotId} is currently occupied.`, 'error');
+            }
+        }
+
+        function findSpot(spotId, locationId) {
+            for (const locationType in parkingData.locations) {
+                for (const location of parkingData.locations[locationType]) {
+                    if (location.id === locationId) {
+                        return location.spots.find(spot => spot.id === spotId);
+                    }
+                }
+            }
+            return null;
+        }
+
+        function findAvailableSpot() {
+            for (const locationType in parkingData.locations) {
+                for (const location of parkingData.locations[locationType]) {
+                    const availableSpot = location.spots.find(spot => spot.status === 'available');
+                    if (availableSpot) {
+                        return {
+                            spotId: availableSpot.id,
+                            locationId: location.id
+                        };
+                    }
+                }
+            }
+            return null;
+        }
+
+        function openReservationModal(spotId, locationId) {
+            document.getElementById('spotNumber').value = spotId;
+            document.getElementById('reservationModal').classList.add('active');
+            
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('reservationDate').setAttribute('min', today);
+        }
+
+        function showUserReservations() {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('userReservations').style.display = 'block';
+            
+            // Close user menu
+            document.getElementById('userMenu').classList.remove('active');
+        }
+
+        function loadUserReservations() {
+            // In a real app, this would fetch from a server
+            // For demo, we'll use stored reservations or create mock ones
+            const storedReservations = localStorage.getItem('userReservations');
+            if (storedReservations) {
+                userReservations = JSON.parse(storedReservations);
+            } else {
+                // Create mock reservations for demo
+                userReservations = [
+                    {
+                        id: 'res1',
+                        spotId: 'A1',
+                        location: 'Villa A Parking',
+                        date: '2023-06-15',
+                        time: '14:00',
+                        duration: 2,
+                        status: 'active',
+                        amount: 8.00
+                    },
+                    {
+                        id: 'res2',
+                        spotId: 'B3',
+                        location: 'Villa B Parking',
+                        date: '2023-06-10',
+                        time: '09:30',
+                        duration: 4,
+                        status: 'completed',
+                        amount: 16.00
+                    }
+                ];
+                localStorage.setItem('userReservations', JSON.stringify(userReservations));
+            }
+            
+            renderUserReservations();
+        }
+
+        function renderUserReservations() {
+            const reservationsList = document.getElementById('reservationsList');
+            reservationsList.innerHTML = '';
+            
+            if (userReservations.length === 0) {
+                reservationsList.innerHTML = '<p style="text-align: center; color: var(--gray-light);">No reservations found.</p>';
+                return;
+            }
+            
+            userReservations.forEach(reservation => {
+                const reservationCard = document.createElement('div');
+                reservationCard.className = 'reservation-card';
+                
+                let statusBadge = '';
+                if (reservation.status === 'active') {
+                    statusBadge = '<span class="status-badge status-available">Active</span>';
+                } else if (reservation.status === 'completed') {
+                    statusBadge = '<span class="status-badge" style="background: rgba(100, 116, 139, 0.2); color: var(--gray); border: 1px solid rgba(100, 116, 139, 0.3);">Completed</span>';
+                } else if (reservation.status === 'cancelled') {
+                    statusBadge = '<span class="status-badge status-occupied">Cancelled</span>';
+                }
+                
+                reservationCard.innerHTML = `
+                    <div class="reservation-info">
+                        <h4>Spot ${reservation.spotId} - ${reservation.location}</h4>
+                        <p>${reservation.date} at ${reservation.time} | ${reservation.duration} hours | $${reservation.amount.toFixed(2)}</p>
+                    </div>
+                    <div class="reservation-actions">
+                        ${statusBadge}
+                        ${reservation.status === 'active' ? '<button class="btn btn-outline cancel-reservation" data-id="${reservation.id}">Cancel</button>' : ''}
+                    </div>
+                `;
+                
+                reservationsList.appendChild(reservationCard);
+            });
+            
+            // Add event listeners to cancel buttons
+            document.querySelectorAll('.cancel-reservation').forEach(button => {
+                button.addEventListener('click', function() {
+                    const reservationId = this.dataset.id;
+                    cancelReservation(reservationId);
+                });
+            });
+        }
+
+        function cancelReservation(reservationId) {
+            // Find reservation
+            const reservationIndex = userReservations.findIndex(r => r.id === reservationId);
+            if (reservationIndex === -1) return;
+            
+            // Update status
+            userReservations[reservationIndex].status = 'cancelled';
+            
+            // Update the spot status in parking data
+            const reservation = userReservations[reservationIndex];
+            updateSpotStatus(reservation.spotId, 'available');
+            
+            // Save to localStorage
+            localStorage.setItem('userReservations', JSON.stringify(userReservations));
+            
+            // Re-render reservations
+            renderUserReservations();
+            
+            // Show notification
+            showNotification('Reservation cancelled successfully', 'success');
+        }
+
+        function updateSpotStatus(spotId, newStatus) {
+            // Find and update the spot in parking data
+            for (const locationType in parkingData.locations) {
+                for (const location of parkingData.locations[locationType]) {
+                    const spotIndex = location.spots.findIndex(spot => spot.id === spotId);
+                    if (spotIndex !== -1) {
+                        location.spots[spotIndex].status = newStatus;
+                        
+                        // Update available spots count
+                        location.availableSpots = location.spots.filter(spot => spot.status === 'available').length;
+                        
+                        // Re-render the dashboard
+                        renderParkingDashboard();
+                        return;
+                    }
+                }
+            }
+        }
+
+        function filterParkingLocations(searchTerm) {
+            const parkingCards = document.querySelectorAll('.parking-card');
+            const term = searchTerm.toLowerCase();
+            
+            parkingCards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                if (title.includes(term)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function filterParkingSpots(status) {
+            const parkingSpots = document.querySelectorAll('.parking-spot');
+            
+            parkingSpots.forEach(spot => {
+                if (status === 'all' || spot.classList.contains(status)) {
+                    spot.style.display = 'flex';
+                } else {
+                    spot.style.display = 'none';
+                }
+            });
+        }
+
+        function startRealTimeUpdates() {
+            // Simulate real-time updates by randomly changing spot statuses
+            setInterval(() => {
+                // Only update if user is on the dashboard
+                if (document.getElementById('dashboard').style.display !== 'none') {
+                    simulateRealTimeChange();
+                }
+            }, 10000); // Update every 10 seconds
+        }
+
+        function simulateRealTimeChange() {
+            // Randomly select a location type
+            const locationTypes = Object.keys(parkingData.locations);
+            const randomLocationType = locationTypes[Math.floor(Math.random() * locationTypes.length)];
+            
+            // Randomly select a location
+            const locations = parkingData.locations[randomLocationType];
+            const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+            
+            // Randomly select a spot
+            const randomSpotIndex = Math.floor(Math.random() * randomLocation.spots.length);
+            const spot = randomLocation.spots[randomSpotIndex];
+            
+            // Only change available or occupied spots (not reserved ones)
+            if (spot.status === 'available') {
+                spot.status = 'occupied';
+                randomLocation.availableSpots--;
+            } else if (spot.status === 'occupied') {
+                spot.status = 'available';
+                randomLocation.availableSpots++;
+            }
+            
+            // Re-render the dashboard
+            renderParkingDashboard();
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const notificationText = notification.querySelector('.notification-text');
+            
+            notificationText.innerHTML = `<strong>${type.charAt(0).toUpperCase() + type.slice(1)}!</strong> ${message}`;
+            notification.className = `notification ${type} active`;
+            
+            setTimeout(() => {
+                notification.classList.remove('active');
+            }, 5000);
+        }
+
+        // Reservation form submission
+        document.getElementById('reservationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // In a real app, you would send this data to a server
+            const spotNumber = document.getElementById('spotNumber').value;
+            const name = document.getElementById('reservationName').value;
+            const date = document.getElementById('reservationDate').value;
+            const time = document.getElementById('reservationTime').value;
+            const duration = document.getElementById('reservationDuration').value;
+            
+            // Calculate amount based on duration
+            const amount = duration * 4; // $4 per hour
+            
+            // Create reservation object
+            const reservation = {
+                id: 'res' + Date.now(),
+                spotId: spotNumber,
+                location: 'Villa A Parking', // This would come from the spot data
+                date: date,
+                time: time,
+                duration: parseInt(duration),
+                status: 'active',
+                amount: amount
+            };
+            
+            // Add to user reservations
+            userReservations.push(reservation);
+            localStorage.setItem('userReservations', JSON.stringify(userReservations));
+            
+            // Update the spot status to reserved
+            updateSpotStatus(spotNumber, 'reserved');
+            
+            // Close modal and show success notification
+            document.getElementById('reservationModal').classList.remove('active');
+            showNotification(`Spot ${spotNumber} has been reserved for ${name}.`, 'success');
+            
+            // Reset form
+            this.reset();
+        });
+    </script>
+</body>
+</html>

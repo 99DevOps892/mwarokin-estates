@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Parking Analytics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --gray-light: #cbd5e1;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #0f172a;
+            color: var(--light);
+            overflow-x: hidden;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            border-right: 1px solid #334155;
+            padding: 20px 0;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #334155;
+            margin-bottom: 20px;
+        }
+        
+        .logo i {
+            font-size: 28px;
+            color: var(--primary);
+            margin-right: 10px;
+        }
+        
+        .logo h1 {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #3b82f6, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .menu-item {
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            color: var(--gray-light);
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+        }
+        
+        .menu-item:hover, .menu-item.active {
+            background-color: rgba(30, 41, 59, 0.7);
+            color: white;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .menu-item i {
+            margin-right: 12px;
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 30px;
+            background-color: rgba(30, 41, 59, 0.7);
+            border-bottom: 1px solid #334155;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: #1e293b;
+            border-radius: 8px;
+            padding: 8px 15px;
+            width: 300px;
+        }
+        
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: white;
+            margin-left: 10px;
+            width: 100%;
+            outline: none;
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .alert-icon, .user-profile {
+            margin-left: 20px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        .alert-icon {
+            position: relative;
+            color: var(--warning);
+        }
+        
+        .alert-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: white;
+            font-size: 12px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .dashboard {
+            padding: 30px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .dashboard-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+        }
+        
+        .time-filter {
+            display: flex;
+            background-color: #1e293b;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .time-option {
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .time-option.active {
+            background-color: var(--primary);
+        }
+        
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .stat-card.warning {
+            border-left-color: var(--warning);
+        }
+        
+        .stat-card.danger {
+            border-left-color: var(--danger);
+        }
+        
+        .stat-card.success {
+            border-left-color: var(--secondary);
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .stat-title {
+            font-size: 14px;
+            color: var(--gray-light);
+        }
+        
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(37, 99, 235, 0.2);
+            color: var(--primary);
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-change {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .positive {
+            color: var(--secondary);
+        }
+        
+        .negative {
+            color: var(--danger);
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .card-actions {
+            display: flex;
+        }
+        
+        .card-action {
+            margin-left: 15px;
+            cursor: pointer;
+            color: var(--gray);
+            transition: color 0.2s;
+        }
+        
+        .card-action:hover {
+            color: white;
+        }
+        
+        .traffic-map {
+            height: 500px;
+            background: linear-gradient(135deg, #1e40af 0%, #1e293b 100%);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #map {
+            height: 100%;
+            width: 100%;
+            border-radius: 8px;
+        }
+        
+        .map-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(30, 41, 59, 0.8);
+            border-radius: 8px;
+            padding: 15px;
+            width: 250px;
+            z-index: 1000;
+        }
+        
+        .map-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .map-control {
+            background-color: #334155;
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            flex: 1;
+            margin: 0 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .map-control i {
+            margin-right: 5px;
+        }
+        
+        .map-legend {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 8px;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        
+        .flow-1 {
+            background-color: var(--secondary);
+        }
+        
+        .flow-2 {
+            background-color: #f59e0b;
+        }
+        
+        .flow-3 {
+            background-color: var(--danger);
+        }
+        
+        .incidents-list {
+            max-height: 460px;
+            overflow-y: auto;
+        }
+        
+        .incident-item {
+            display: flex;
+            padding: 15px 0;
+            border-bottom: 1px solid #334155;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .incident-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .incident-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .accident {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+        
+        .congestion {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+        
+        .roadwork {
+            background-color: rgba(37, 99, 235, 0.2);
+            color: var(--primary);
+        }
+        
+        .incident-details {
+            flex: 1;
+        }
+        
+        .incident-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .incident-location {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+        
+        .incident-time {
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+        
+        .signal-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+        
+        .signal-item {
+            background-color: #1e293b;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .signal-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .signal-status {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 24px;
+        }
+        
+        .status-optimized {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: var(--secondary);
+        }
+        
+        .status-moderate {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+        
+        .status-manual {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+        
+        .signal-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .signal-location {
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
+        .predictive-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .timeline-control {
+            display: flex;
+            align-items: center;
+            background-color: #1e293b;
+            border-radius: 8px;
+            padding: 8px 15px;
+        }
+        
+        .timeline-control span {
+            margin: 0 10px;
+        }
+        
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .btn i {
+            margin-right: 8px;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--gray);
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .close-modal:hover {
+            color: white;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: white;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .stats-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .signal-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .logo h1, .menu-item span {
+                display: none;
+            }
+            
+            .menu-item {
+                justify-content: center;
+                padding: 20px 0;
+            }
+            
+            .menu-item i {
+                margin-right: 0;
+                font-size: 20px;
+            }
+            
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .signal-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .predictive-controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-traffic-light"></i>
+                <h1>Mwarokin - Intelligence Traffic</h1>
+            </div>
+            <a href="#" class="menu-item">
+                <i class="fas fa-chart-dashboard"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-map-marked-alt"></i>
+                <span>Traffic Map</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-traffic-light"></i>
+                <span>Signal Control</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-car-crash"></i>
+                <span>Incidents</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-cog"></i>
+                <span>System Settings</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-bell"></i>
+                <span>Alerts</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-question-circle"></i>
+                <span>Help & Support</span>
+            </a>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Topbar -->
+            <div class="topbar">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search for locations, incidents, or signals...">
+                </div>
+                <div class="user-actions">
+                    <div class="alert-icon">
+                        <i class="fas fa-bell"></i>
+                        <div class="alert-count">3</div>
+                    </div>
+                    <div class="user-profile">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Dashboard -->
+            <div class="dashboard">
+                <div class="dashboard-header">
+                    <h2>City Traffic Management Dashboard</h2>
+                    <div class="time-filter">
+                        <div class="time-option active">Live</div>
+                        <div class="time-option">Today</div>
+                        <div class="time-option">Week</div>
+                        <div class="time-option">Month</div>
+                    </div>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">TRAFFIC FLOW</div>
+                            <div class="stat-icon">
+                                <i class="fas fa-car"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">72%</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>5.2% from yesterday</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card warning">
+                        <div class="stat-header">
+                            <div class="stat-title">AVG. VEHICLE SPEED</div>
+                            <div class="stat-icon">
+                                <i class="fas fa-tachometer-alt"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">38 km/h</div>
+                        <div class="stat-change negative">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>2.1% from yesterday</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card danger">
+                        <div class="stat-header">
+                            <div class="stat-title">ACTIVE INCIDENTS</div>
+                            <div class="stat-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">14</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>3 from last hour</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card success">
+                        <div class="stat-header">
+                            <div class="stat-title">AI OPTIMIZED SIGNALS</div>
+                            <div class="stat-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">87%</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>12% from last week</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Main Dashboard Grid -->
+                <div class="dashboard-grid">
+                    <!-- Traffic Map -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Real-Time Traffic Flow & Predictive Analysis</div>
+                            <div class="card-actions">
+                                <div class="card-action" id="fullscreen-map">
+                                    <i class="fas fa-expand"></i>
+                                </div>
+                                <div class="card-action" id="map-settings">
+                                    <i class="fas fa-cog"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="traffic-map">
+                            <div id="map"></div>
+                            <div class="map-overlay">
+                                <div class="map-controls">
+                                    <button class="map-control" id="show-flow">
+                                        <i class="fas fa-car"></i>
+                                        <span>Flow</span>
+                                    </button>
+                                    <button class="map-control" id="show-signals">
+                                        <i class="fas fa-traffic-light"></i>
+                                        <span>Signals</span>
+                                    </button>
+                                    <button class="map-control" id="show-cameras">
+                                        <i class="fas fa-camera"></i>
+                                        <span>Cameras</span>
+                                    </button>
+                                </div>
+                                <div class="map-legend">
+                                    <div class="legend-item">
+                                        <div class="legend-color flow-1"></div>
+                                        <span>Fluid Traffic</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color flow-2"></div>
+                                        <span>Moderate Congestion</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color flow-3"></div>
+                                        <span>Heavy Congestion</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Predictive Controls -->
+                            <div class="predictive-controls">
+                                <div class="timeline-control">
+                                    <i class="fas fa-chevron-left"></i>
+                                    <span>Current Time</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                                <button class="btn" id="run-simulation">
+                                    <i class="fas fa-play"></i>
+                                    <span>Run Simulation</span>
+                                </button>
+                                <div class="timeline-control">
+                                    <i class="fas fa-chevron-left"></i>
+                                    <span>Prediction: +30 min</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Incidents List -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Recent Incidents & Alerts</div>
+                            <div class="card-actions">
+                                <div class="card-action" id="refresh-incidents">
+                                    <i class="fas fa-sync-alt"></i>
+                                </div>
+                                <div class="card-action" id="add-incident">
+                                    <i class="fas fa-plus"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="incidents-list" id="incidents-container">
+                            <!-- Incidents will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts Row -->
+                <div class="charts-row">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Traffic Flow Trends</div>
+                            <div class="card-actions">
+                                <div class="card-action">
+                                    <i class="fas fa-download"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="flowChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Incident Types Distribution</div>
+                            <div class="card-actions">
+                                <div class="card-action">
+                                    <i class="fas fa-download"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="incidentChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Signal Control -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">AI-Optimized Traffic Signal Control</div>
+                        <div class="card-actions">
+                            <button class="btn btn-outline" id="manual-override">
+                                <i class="fas fa-sliders-h"></i>
+                                <span>Manual Override</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="signal-grid" id="signals-container">
+                        <!-- Signal items will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Incident Modal -->
+    <div class="modal" id="incident-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Report New Incident</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="incident-form">
+                <div class="form-group">
+                    <label class="form-label">Incident Type</label>
+                    <select class="form-control" id="incident-type" required>
+                        <option value="">Select type</option>
+                        <option value="accident">Accident</option>
+                        <option value="congestion">Congestion</option>
+                        <option value="roadwork">Roadwork</option>
+                        <option value="disabled">Disabled Vehicle</option>
+                        <option value="special">Special Event</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <input type="text" class="form-control" id="incident-location" required placeholder="Enter location">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" id="incident-description" rows="3" placeholder="Provide details about the incident"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Severity</label>
+                    <select class="form-control" id="incident-severity" required>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="cancel-incident">Cancel</button>
+                    <button type="submit" class="btn">Report Incident</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Traffic Management System Data and Functions
+        const trafficSystem = {
+            // Initialize the application
+            init: function() {
+                this.initMap();
+                this.initCharts();
+                this.loadIncidents();
+                this.loadSignals();
+                this.setupEventListeners();
+                this.startRealTimeUpdates();
+            },
+            
+            // Initialize the map
+            initMap: function() {
+                // Create a map centered on a sample city
+                this.map = L.map('map').setView([40.7128, -74.0060], 12);
+                
+                // Add a tile layer (using OpenStreetMap as an example)
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(this.map);
+                
+                // Add sample traffic data markers
+                this.addTrafficMarkers();
+            },
+            
+            // Add sample traffic markers to the map
+            addTrafficMarkers: function() {
+                // Sample traffic incidents
+                const incidents = [
+                    { lat: 40.7128, lng: -74.0060, type: 'accident', severity: 'high' },
+                    { lat: 40.7210, lng: -74.0100, type: 'congestion', severity: 'medium' },
+                    { lat: 40.7050, lng: -74.0150, type: 'roadwork', severity: 'low' },
+                    { lat: 40.7300, lng: -74.0050, type: 'disabled', severity: 'medium' }
+                ];
+                
+                // Define icons for different incident types
+                const iconColors = {
+                    accident: 'red',
+                    congestion: 'orange',
+                    roadwork: 'blue',
+                    disabled: 'yellow',
+                    special: 'purple'
+                };
+                
+                // Add markers to the map
+                incidents.forEach(incident => {
+                    const icon = L.divIcon({
+                        className: `incident-marker ${incident.type}`,
+                        html: `<div style="background-color: ${iconColors[incident.type]}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white;"></div>`,
+                        iconSize: [20, 20],
+                        iconAnchor: [10, 10]
+                    });
+                    
+                    L.marker([incident.lat, incident.lng], { icon: icon })
+                        .addTo(this.map)
+                        .bindPopup(`<b>${incident.type.toUpperCase()}</b><br>Severity: ${incident.severity}`);
+                });
+                
+                // Add traffic flow lines (simulated)
+                this.addTrafficFlowLines();
+            },
+            
+            // Add simulated traffic flow lines to the map
+            addTrafficFlowLines: function() {
+                // Sample road segments with traffic data
+                const roads = [
+                    {
+                        coords: [[40.7128, -74.0160], [40.7128, -74.0060]],
+                        flow: 85, // percentage
+                        speed: 45 // km/h
+                    },
+                    {
+                        coords: [[40.7128, -74.0060], [40.7228, -74.0060]],
+                        flow: 65,
+                        speed: 30
+                    },
+                    {
+                        coords: [[40.7228, -74.0060], [40.7228, -73.9960]],
+                        flow: 45,
+                        speed: 20
+                    }
+                ];
+                
+                roads.forEach(road => {
+                    // Determine color based on traffic flow
+                    let color = '#10b981'; // green - good flow
+                    if (road.flow < 70) color = '#f59e0b'; // orange - moderate
+                    if (road.flow < 50) color = '#ef4444'; // red - heavy congestion
+                    
+                    // Add the road segment to the map
+                    L.polyline(road.coords, {
+                        color: color,
+                        weight: 6,
+                        opacity: 0.7
+                    }).addTo(this.map).bindPopup(`<b>Traffic Flow: ${road.flow}%</b><br>Avg Speed: ${road.speed} km/h`);
+                });
+            },
+            
+            // Initialize charts
+            initCharts: function() {
+                // Traffic Flow Chart
+                const flowCtx = document.getElementById('flowChart').getContext('2d');
+                this.flowChart = new Chart(flowCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['6:00', '7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'],
+                        datasets: [{
+                            label: 'Current Flow',
+                            data: [65, 70, 80, 85, 82, 78, 75, 72, 70, 68, 72, 85],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }, {
+                            label: 'Predicted Flow',
+                            data: [null, null, null, null, null, null, null, null, null, null, 75, 90],
+                            borderColor: '#10b981',
+                            borderDash: [5, 5],
+                            tension: 0.4,
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: '#e2e8f0'
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                grid: {
+                                    color: 'rgba(100, 116, 139, 0.2)'
+                                },
+                                ticks: {
+                                    color: '#94a3b8'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: 'rgba(100, 116, 139, 0.2)'
+                                },
+                                ticks: {
+                                    color: '#94a3b8'
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                // Incident Types Chart
+                const incidentCtx = document.getElementById('incidentChart').getContext('2d');
+                this.incidentChart = new Chart(incidentCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Accidents', 'Congestion', 'Roadwork', 'Special Events', 'Disabled Vehicles'],
+                        datasets: [{
+                            data: [25, 40, 15, 10, 10],
+                            backgroundColor: [
+                                '#ef4444',
+                                '#f59e0b',
+                                '#3b82f6',
+                                '#8b5cf6',
+                                '#64748b'
+                            ],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    color: '#e2e8f0',
+                                    padding: 15
+                                }
+                            }
+                        }
+                    }
+                });
+            },
+            
+            // Load incidents data
+            loadIncidents: function() {
+                // Sample incident data
+                const incidents = [
+                    {
+                        id: 1,
+                        type: 'accident',
+                        title: 'Multi-Vehicle Collision',
+                        location: 'Central Expressway, Exit 14B',
+                        time: '12 minutes ago',
+                        severity: 'high'
+                    },
+                    {
+                        id: 2,
+                        type: 'congestion',
+                        title: 'Heavy Congestion',
+                        location: 'Downtown Bridge, Westbound',
+                        time: 'Ongoing - 45 minutes',
+                        severity: 'medium'
+                    },
+                    {
+                        id: 3,
+                        type: 'roadwork',
+                        title: 'Road Maintenance',
+                        location: 'River Road, Between 5th and 7th',
+                        time: 'Until 5:00 PM today',
+                        severity: 'low'
+                    },
+                    {
+                        id: 4,
+                        type: 'accident',
+                        title: 'Disabled Vehicle',
+                        location: 'North-South Highway, Mile 22',
+                        time: 'Reported 8 minutes ago',
+                        severity: 'medium'
+                    },
+                    {
+                        id: 5,
+                        type: 'congestion',
+                        title: 'Special Event Traffic',
+                        location: 'City Center, Around Convention Hall',
+                        time: 'Expected until 10:00 PM',
+                        severity: 'low'
+                    }
+                ];
+                
+                // Render incidents in the UI
+                this.renderIncidents(incidents);
+            },
+            
+            // Render incidents to the DOM
+            renderIncidents: function(incidents) {
+                const container = document.getElementById('incidents-container');
+                container.innerHTML = '';
+                
+                incidents.forEach(incident => {
+                    const incidentElement = document.createElement('div');
+                    incidentElement.className = 'incident-item';
+                    incidentElement.setAttribute('data-id', incident.id);
+                    
+                    // Determine icon class based on incident type
+                    let iconClass = 'accident';
+                    if (incident.type === 'congestion') iconClass = 'congestion';
+                    if (incident.type === 'roadwork') iconClass = 'roadwork';
+                    
+                    // Determine icon based on incident type
+                    let icon = 'fas fa-car-crash';
+                    if (incident.type === 'congestion') icon = 'fas fa-traffic-light';
+                    if (incident.type === 'roadwork') icon = 'fas fa-cone';
+                    if (incident.type === 'disabled') icon = 'fas fa-car-battery';
+                    if (incident.type === 'special') icon = 'fas fa-parade';
+                    
+                    incidentElement.innerHTML = `
+                        <div class="incident-icon ${iconClass}">
+                            <i class="${icon}"></i>
+                        </div>
+                        <div class="incident-details">
+                            <div class="incident-title">${incident.title}</div>
+                            <div class="incident-location">${incident.location}</div>
+                            <div class="incident-time">${incident.time}</div>
+                        </div>
+                    `;
+                    
+                    container.appendChild(incidentElement);
+                });
+            },
+            
+            // Load traffic signals data
+            loadSignals: function() {
+                // Sample signal data
+                const signals = [
+                    {
+                        id: 1,
+                        name: 'Intersection #42',
+                        location: 'Main St & 5th Ave',
+                        status: 'optimized',
+                        efficiency: 92
+                    },
+                    {
+                        id: 2,
+                        name: 'Intersection #17',
+                        location: 'Broadway & Park',
+                        status: 'optimized',
+                        efficiency: 88
+                    },
+                    {
+                        id: 3,
+                        name: 'Intersection #89',
+                        location: 'River Rd & Bridge',
+                        status: 'moderate',
+                        efficiency: 65
+                    },
+                    {
+                        id: 4,
+                        name: 'Intersection #23',
+                        location: 'Central & Market',
+                        status: 'manual',
+                        efficiency: 45
+                    }
+                ];
+                
+                // Render signals in the UI
+                this.renderSignals(signals);
+            },
+            
+            // Render traffic signals to the DOM
+            renderSignals: function(signals) {
+                const container = document.getElementById('signals-container');
+                container.innerHTML = '';
+                
+                signals.forEach(signal => {
+                    const signalElement = document.createElement('div');
+                    signalElement.className = 'signal-item';
+                    signalElement.setAttribute('data-id', signal.id);
+                    
+                    // Determine status class and icon based on signal status
+                    let statusClass = 'status-optimized';
+                    let icon = 'fas fa-check';
+                    
+                    if (signal.status === 'moderate') {
+                        statusClass = 'status-moderate';
+                        icon = 'fas fa-exclamation';
+                    } else if (signal.status === 'manual') {
+                        statusClass = 'status-manual';
+                        icon = 'fas fa-times';
+                    }
+                    
+                    signalElement.innerHTML = `
+                        <div class="signal-status ${statusClass}">
+                            <i class="${icon}"></i>
+                        </div>
+                        <div class="signal-name">${signal.name}</div>
+                        <div class="signal-location">${signal.location}</div>
+                        <div class="signal-efficiency" style="margin-top:5px; font-size:11px; color:var(--gray);">Efficiency: ${signal.efficiency}%</div>
+                    `;
+                    
+                    container.appendChild(signalElement);
+                });
+            },
+            
+            // Set up event listeners
+            setupEventListeners: function() {
+                // Add incident button
+                document.getElementById('add-incident').addEventListener('click', () => {
+                    this.openIncidentModal();
+                });
+                
+                // Incident form submission
+                document.getElementById('incident-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.submitIncident();
+                });
+                
+                // Cancel incident button
+                document.getElementById('cancel-incident').addEventListener('click', () => {
+                    this.closeIncidentModal();
+                });
+                
+                // Close modal when clicking the X
+                document.querySelector('.close-modal').addEventListener('click', () => {
+                    this.closeIncidentModal();
+                });
+                
+                // Close modal when clicking outside
+                document.getElementById('incident-modal').addEventListener('click', (e) => {
+                    if (e.target.id === 'incident-modal') {
+                        this.closeIncidentModal();
+                    }
+                });
+                
+                // Manual override button
+                document.getElementById('manual-override').addEventListener('click', () => {
+                    this.toggleManualOverride();
+                });
+                
+                // Refresh incidents button
+                document.getElementById('refresh-incidents').addEventListener('click', () => {
+                    this.refreshIncidents();
+                });
+                
+                // Run simulation button
+                document.getElementById('run-simulation').addEventListener('click', () => {
+                    this.runTrafficSimulation();
+                });
+                
+                // Map controls
+                document.getElementById('show-flow').addEventListener('click', () => {
+                    this.toggleMapLayer('flow');
+                });
+                
+                document.getElementById('show-signals').addEventListener('click', () => {
+                    this.toggleMapLayer('signals');
+                });
+                
+                document.getElementById('show-cameras').addEventListener('click', () => {
+                    this.toggleMapLayer('cameras');
+                });
+                
+                // Time filter options
+                document.querySelectorAll('.time-option').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        document.querySelectorAll('.time-option').forEach(o => o.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.filterDataByTime(e.target.textContent.toLowerCase());
+                    });
+                });
+            },
+            
+            // Open the incident report modal
+            openIncidentModal: function() {
+                document.getElementById('incident-modal').style.display = 'flex';
+            },
+            
+            // Close the incident report modal
+            closeIncidentModal: function() {
+                document.getElementById('incident-modal').style.display = 'none';
+                document.getElementById('incident-form').reset();
+            },
+            
+            // Submit a new incident
+            submitIncident: function() {
+                const type = document.getElementById('incident-type').value;
+                const location = document.getElementById('incident-location').value;
+                const description = document.getElementById('incident-description').value;
+                const severity = document.getElementById('incident-severity').value;
+                
+                // In a real application, you would send this data to a server
+                console.log('New incident reported:', { type, location, description, severity });
+                
+                // Show success message
+                alert('Incident reported successfully!');
+                
+                // Close the modal
+                this.closeIncidentModal();
+                
+                // Refresh the incidents list
+                this.refreshIncidents();
+            },
+            
+            // Toggle manual override for traffic signals
+            toggleManualOverride: function() {
+                const button = document.getElementById('manual-override');
+                const isActive = button.classList.contains('active');
+                
+                if (isActive) {
+                    button.classList.remove('active');
+                    button.innerHTML = '<i class="fas fa-sliders-h"></i><span>Manual Override</span>';
+                    alert('Returning to AI optimization mode');
+                } else {
+                    button.classList.add('active');
+                    button.innerHTML = '<i class="fas fa-robot"></i><span>AI Optimization</span>';
+                    alert('Manual override activated. You now have control over traffic signals.');
+                }
+            },
+            
+            // Refresh incidents data
+            refreshIncidents: function() {
+                // Show loading state
+                const container = document.getElementById('incidents-container');
+                container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--gray);">Refreshing incidents...</div>';
+                
+                // Simulate API call with timeout
+                setTimeout(() => {
+                    this.loadIncidents();
+                    alert('Incidents refreshed successfully!');
+                }, 1000);
+            },
+            
+            // Run traffic simulation
+            runTrafficSimulation: function() {
+                const button = document.getElementById('run-simulation');
+                const originalText = button.innerHTML;
+                
+                // Show loading state
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Running Simulation...</span>';
+                button.disabled = true;
+                
+                // Simulate simulation running
+                setTimeout(() => {
+                    // Update charts with simulation data
+                    this.updateChartsWithSimulation();
+                    
+                    // Restore button
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                    
+                    alert('Traffic simulation completed! Prediction data has been updated.');
+                }, 3000);
+            },
+            
+            // Update charts with simulation data
+            updateChartsWithSimulation: function() {
+                // Generate random prediction data
+                const predictionData = [];
+                for (let i = 0; i < 12; i++) {
+                    predictionData.push(Math.floor(Math.random() * 30) + 60);
+                }
+                
+                // Update the prediction dataset
+                this.flowChart.data.datasets[1].data = predictionData;
+                this.flowChart.update();
+            },
+            
+            // Toggle map layers
+            toggleMapLayer: function(layer) {
+                // In a real application, this would show/hide different map layers
+                alert(`Showing ${layer} layer on the map`);
+                
+                // Update active state of buttons
+                document.querySelectorAll('.map-control').forEach(button => {
+                    button.classList.remove('active');
+                });
+                
+                event.target.classList.add('active');
+            },
+            
+            // Filter data by time range
+            filterDataByTime: function(range) {
+                // In a real application, this would filter the displayed data
+                console.log(`Filtering data for: ${range}`);
+                
+                // Update stats cards based on time range
+                this.updateStatsForTimeRange(range);
+            },
+            
+            // Update stats for selected time range
+            updateStatsForTimeRange: function(range) {
+                // Sample data for different time ranges
+                const statsData = {
+                    live: { flow: 72, speed: 38, incidents: 14, signals: 87 },
+                    today: { flow: 68, speed: 42, incidents: 22, signals: 85 },
+                    week: { flow: 71, speed: 41, incidents: 18, signals: 82 },
+                    month: { flow: 69, speed: 43, incidents: 16, signals: 79 }
+                };
+                
+                const data = statsData[range] || statsData.live;
+                
+                // Update stat values
+                document.querySelectorAll('.stat-card')[0].querySelector('.stat-value').textContent = `${data.flow}%`;
+                document.querySelectorAll('.stat-card')[1].querySelector('.stat-value').textContent = `${data.speed} km/h`;
+                document.querySelectorAll('.stat-card')[2].querySelector('.stat-value').textContent = data.incidents;
+                document.querySelectorAll('.stat-card')[3].querySelector('.stat-value').textContent = `${data.signals}%`;
+            },
+            
+            // Start real-time updates
+            startRealTimeUpdates: function() {
+                // Update traffic flow data every 10 seconds
+                setInterval(() => {
+                    this.updateRealTimeData();
+                }, 10000);
+            },
+            
+            // Update real-time data
+            updateRealTimeData: function() {
+                // Only update if we're in live mode
+                if (!document.querySelector('.time-option.active').textContent === 'Live') return;
+                
+                // Randomly update traffic flow
+                const currentFlow = parseInt(document.querySelectorAll('.stat-card')[0].querySelector('.stat-value').textContent);
+                const newFlow = Math.max(50, Math.min(95, currentFlow + (Math.random() * 6 - 3)));
+                
+                document.querySelectorAll('.stat-card')[0].querySelector('.stat-value').textContent = `${Math.round(newFlow)}%`;
+                
+                // Update traffic speed
+                const currentSpeed = parseInt(document.querySelectorAll('.stat-card')[1].querySelector('.stat-value').textContent);
+                const newSpeed = Math.max(25, Math.min(65, currentSpeed + (Math.random() * 4 - 2)));
+                
+                document.querySelectorAll('.stat-card')[1].querySelector('.stat-value').textContent = `${Math.round(newSpeed)} km/h`;
+                
+                // Update chart with new data point
+                this.addNewDataPoint();
+            },
+            
+            // Add new data point to the flow chart
+            addNewDataPoint: function() {
+                const currentData = this.flowChart.data.datasets[0].data;
+                
+                // Remove first data point
+                currentData.shift();
+                
+                // Add new data point at the end
+                const lastValue = currentData[currentData.length - 1];
+                const newValue = Math.max(50, Math.min(95, lastValue + (Math.random() * 10 - 5)));
+                currentData.push(Math.round(newValue));
+                
+                // Update the chart
+                this.flowChart.update('quiet');
+            }
+        };
+
+        // Initialize the traffic management system when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            trafficSystem.init();
+        });
+    </script>
+</body>
+</html>
