@@ -1,0 +1,1638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mwarokin Estates · Unmapped Land</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        /* ───────────── ROOT VARIABLES ───────────── */
+        :root {
+            --primary: #0a4b7a;
+            --primary-light: #2a7ab0;
+            --primary-dark: #062d4a;
+            --primary-gradient: linear-gradient(135deg, #0a4b7a 0%, #1d6fa5 100%);
+            --secondary: #eef5fb;
+            --accent: #f59e42;
+            --accent-light: #fcd9b0;
+            --success: #2d9b6e;
+            --warning: #e9a23b;
+            --danger: #d95b5b;
+            --text: #1a2634;
+            --text-muted: #5a6e7e;
+            --bg-light: #f5f8fc;
+            --bg-white: #ffffff;
+            --border: #dce5ef;
+            --shadow-sm: 0 2px 8px rgba(10, 75, 122, 0.06);
+            --shadow-md: 0 8px 30px rgba(10, 75, 122, 0.10);
+            --shadow-lg: 0 20px 50px rgba(10, 75, 122, 0.15);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg-light);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ───────────── SCROLLBAR ───────────── */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-light);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* ───────────── UTILITY ───────────── */
+        .text-primary-custom {
+            color: var(--primary) !important;
+        }
+        .bg-primary-custom {
+            background: var(--primary-gradient) !important;
+        }
+        .fw-600 {
+            font-weight: 600;
+        }
+        .fw-700 {
+            font-weight: 700;
+        }
+        .gap-2 {
+            gap: 0.5rem;
+        }
+        .gap-3 {
+            gap: 1rem;
+        }
+
+        /* ───────────── BUTTONS ───────────── */
+        .btn-primary-custom {
+            background: var(--primary-gradient);
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 14px rgba(10, 75, 122, 0.25);
+        }
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(10, 75, 122, 0.35);
+            color: #fff;
+        }
+        .btn-outline-primary-custom {
+            background: transparent;
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+        .btn-outline-primary-custom:hover {
+            background: var(--primary);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+        .btn-accent {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 14px rgba(245, 158, 66, 0.30);
+        }
+        .btn-accent:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(245, 158, 66, 0.40);
+            color: #fff;
+        }
+
+        /* ───────────── NAVBAR ───────────── */
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(220, 229, 239, 0.5);
+            box-shadow: 0 2px 20px rgba(10, 75, 122, 0.04);
+            padding: 12px 0;
+        }
+        .navbar-custom .navbar-brand {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--primary) !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .navbar-custom .navbar-brand i {
+            font-size: 1.6rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .navbar-custom .nav-link {
+            font-weight: 500;
+            color: var(--text-muted) !important;
+            padding: 8px 16px;
+            border-radius: 50px;
+            transition: var(--transition);
+            font-size: 0.92rem;
+        }
+        .navbar-custom .nav-link:hover,
+        .navbar-custom .nav-link.active {
+            color: var(--primary) !important;
+            background: rgba(10, 75, 122, 0.06);
+        }
+        .navbar-custom .nav-link i {
+            margin-right: 6px;
+        }
+
+        /* ───────────── HERO ───────────── */
+        .hero-premium {
+            background: var(--primary-gradient);
+            padding: 60px 0 50px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0 0 40px 40px;
+            margin-bottom: 30px;
+        }
+        .hero-premium::after {
+            content: '';
+            position: absolute;
+            top: -60%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .hero-premium::before {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -5%;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .hero-premium h1 {
+            font-weight: 700;
+            font-size: 2.6rem;
+            letter-spacing: -0.02em;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-premium p {
+            font-size: 1.15rem;
+            opacity: 0.9;
+            max-width: 580px;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-premium .badge-live {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(4px);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ───────────── DASHBOARD CARDS ───────────── */
+        .stat-card-premium {
+            background: var(--bg-white);
+            border-radius: var(--radius);
+            padding: 22px 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card-premium:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+        .stat-card-premium .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+        }
+        .stat-card-premium .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.2;
+        }
+        .stat-card-premium .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .stat-card-premium .stat-trend {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .stat-trend.up {
+            background: #e3f5ed;
+            color: var(--success);
+        }
+        .stat-trend.down {
+            background: #fde8e8;
+            color: var(--danger);
+        }
+
+        /* ───────────── SEARCH BAR ───────────── */
+        .search-premium {
+            background: var(--bg-white);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+        .search-premium .form-control,
+        .search-premium .form-select {
+            border-radius: var(--radius-sm);
+            border: 1.5px solid var(--border);
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background: var(--bg-light);
+        }
+        .search-premium .form-control:focus,
+        .search-premium .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(10, 75, 122, 0.08);
+            background: #fff;
+        }
+        .search-premium .form-control::placeholder {
+            color: #a0b4c6;
+        }
+        .search-premium .input-group-text {
+            background: var(--bg-light);
+            border: 1.5px solid var(--border);
+            border-right: none;
+            border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+            color: var(--text-muted);
+        }
+        .search-premium .input-group .form-control {
+            border-left: none;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        }
+
+        /* ───────────── MAP ───────────── */
+        .map-wrapper {
+            background: var(--bg-white);
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            height: 520px;
+            position: relative;
+            overflow: hidden;
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+            border-radius: var(--radius-sm);
+        }
+
+        .map-overlay-premium {
+            position: absolute;
+            bottom: 24px;
+            left: 24px;
+            right: 24px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 18px 22px;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px 24px;
+            z-index: 1000;
+        }
+        .map-overlay-premium .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1 1 200px;
+        }
+        .map-overlay-premium .filter-group label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+        .map-overlay-premium .filter-group input[type="range"] {
+            flex: 1;
+            min-width: 80px;
+            accent-color: var(--primary);
+        }
+        .map-overlay-premium .filter-group .range-value {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--primary);
+            min-width: 60px;
+            text-align: right;
+        }
+        .map-overlay-premium .form-check {
+            font-size: 0.85rem;
+            margin: 0;
+        }
+        .map-overlay-premium .form-check-input {
+            accent-color: var(--primary);
+            margin-top: 2px;
+        }
+
+        /* ───────────── LAND CARDS ───────────── */
+        .land-card-premium {
+            background: var(--bg-white);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: var(--transition);
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+        .land-card-premium:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-light);
+        }
+        .land-card-premium .card-img-top {
+            height: 160px;
+            background: var(--primary-gradient);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 2.8rem;
+        }
+        .land-card-premium .card-img-top .badge-status {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            padding: 4px 14px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            color: #fff;
+        }
+        .land-card-premium .card-img-top .badge-status.available {
+            background: var(--success);
+        }
+        .land-card-premium .card-img-top .badge-status.pending {
+            background: var(--warning);
+        }
+        .land-card-premium .card-body {
+            padding: 18px 20px 16px;
+        }
+        .land-card-premium .card-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        .land-card-premium .card-location {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .land-card-premium .card-location i {
+            color: var(--primary-light);
+        }
+        .land-card-premium .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 12px;
+            margin-bottom: 14px;
+        }
+        .land-card-premium .detail-grid .detail-item {
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid var(--bg-light);
+        }
+        .land-card-premium .detail-grid .detail-item .label {
+            color: var(--text-muted);
+        }
+        .land-card-premium .detail-grid .detail-item .value {
+            font-weight: 600;
+        }
+        .land-card-premium .card-footer-actions {
+            display: flex;
+            gap: 8px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+        .land-card-premium .card-footer-actions .btn-sm-custom {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: none;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .land-card-premium .card-footer-actions .btn-outline-primary-sm {
+            background: transparent;
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+        }
+        .land-card-premium .card-footer-actions .btn-outline-primary-sm:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+        .land-card-premium .card-footer-actions .btn-ghost-sm {
+            background: var(--bg-light);
+            color: var(--text-muted);
+        }
+        .land-card-premium .card-footer-actions .btn-ghost-sm:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        /* ───────────── FEATURES ───────────── */
+        .features-premium {
+            padding: 60px 0 40px;
+            background: var(--bg-white);
+        }
+        .features-premium .feature-item {
+            text-align: center;
+            padding: 30px 20px;
+            border-radius: var(--radius);
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            height: 100%;
+        }
+        .features-premium .feature-item:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-light);
+        }
+        .features-premium .feature-item .icon {
+            font-size: 2.6rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 16px;
+        }
+        .features-premium .feature-item h5 {
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .features-premium .feature-item p {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* ───────────── MODAL ───────────── */
+        .modal-premium .modal-content {
+            border-radius: var(--radius);
+            border: none;
+            box-shadow: var(--shadow-lg);
+        }
+        .modal-premium .modal-header {
+            background: var(--primary-gradient);
+            color: #fff;
+            border-radius: var(--radius) var(--radius) 0 0;
+            padding: 20px 28px;
+            border: none;
+        }
+        .modal-premium .modal-header .btn-close {
+            filter: brightness(0) invert(1);
+        }
+        .modal-premium .modal-body {
+            padding: 28px;
+        }
+        .modal-premium .modal-footer {
+            padding: 16px 28px;
+            border-top: 1px solid var(--border);
+        }
+        .modal-premium .ownership-timeline {
+            position: relative;
+            padding-left: 28px;
+            margin-top: 12px;
+        }
+        .modal-premium .ownership-timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 4px;
+            bottom: 4px;
+            width: 2px;
+            background: var(--primary-light);
+        }
+        .modal-premium .timeline-item {
+            position: relative;
+            margin-bottom: 18px;
+        }
+        .modal-premium .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -22px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+        .modal-premium .timeline-item .period {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.85rem;
+        }
+        .modal-premium .timeline-item .owner {
+            font-weight: 600;
+        }
+        .modal-premium .timeline-item .details {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* ───────────── FOOTER ───────────── */
+        .footer-premium {
+            background: var(--primary-dark);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 50px 0 30px;
+        }
+        .footer-premium h5 {
+            color: #fff;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+        .footer-premium a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+        .footer-premium a:hover {
+            color: #fff;
+        }
+        .footer-premium .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.06);
+            transition: var(--transition);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+        }
+        .footer-premium .social-links a:hover {
+            background: var(--accent);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+        .footer-premium .input-group .form-control {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 50px 0 0 50px;
+        }
+        .footer-premium .input-group .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+        .footer-premium .input-group .btn {
+            border-radius: 0 50px 50px 0;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            font-weight: 600;
+        }
+        .footer-premium .input-group .btn:hover {
+            background: #e08c2e;
+        }
+
+        /* ───────────── TOAST ───────────── */
+        .toast-premium {
+            border-radius: var(--radius-sm) !important;
+            border: none !important;
+            box-shadow: var(--shadow-md) !important;
+            background: var(--bg-white) !important;
+            padding: 0 !important;
+        }
+        .toast-premium .toast-header {
+            background: transparent;
+            border-bottom: 1px solid var(--border);
+            padding: 12px 18px;
+            font-weight: 600;
+        }
+        .toast-premium .toast-body {
+            padding: 14px 18px;
+            color: var(--text);
+        }
+
+        /* ───────────── RESPONSIVE ───────────── */
+        @media (max-width: 991px) {
+            .hero-premium h1 {
+                font-size: 2rem;
+            }
+            .map-wrapper {
+                height: 400px;
+            }
+            .map-overlay-premium {
+                flex-direction: column;
+                align-items: stretch;
+                bottom: 16px;
+                left: 16px;
+                right: 16px;
+                padding: 14px 18px;
+                gap: 12px;
+            }
+            .map-overlay-premium .filter-group {
+                flex: 1 1 auto;
+            }
+        }
+        @media (max-width: 768px) {
+            .hero-premium {
+                padding: 40px 0 30px;
+                border-radius: 0 0 24px 24px;
+            }
+            .hero-premium h1 {
+                font-size: 1.6rem;
+            }
+            .stat-card-premium .stat-number {
+                font-size: 1.5rem;
+            }
+            .search-premium {
+                padding: 16px;
+            }
+            .land-card-premium .detail-grid {
+                grid-template-columns: 1fr;
+            }
+            .map-wrapper {
+                height: 320px;
+            }
+            .map-overlay-premium .filter-group {
+                flex-wrap: wrap;
+            }
+            .map-overlay-premium .filter-group input[type="range"] {
+                min-width: 60px;
+            }
+        }
+        @media (max-width: 576px) {
+            .navbar-custom .navbar-brand {
+                font-size: 1.1rem;
+            }
+            .hero-premium h1 {
+                font-size: 1.4rem;
+            }
+            .hero-premium p {
+                font-size: 0.95rem;
+            }
+            .stat-card-premium {
+                padding: 16px 18px;
+            }
+            .land-card-premium .card-body {
+                padding: 14px 16px;
+            }
+            .modal-premium .modal-body {
+                padding: 20px;
+            }
+        }
+
+        /* ───────────── ANIMATIONS ───────────── */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .fade-in-up {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.3);
+            }
+        }
+        .pulse-dot {
+            animation: pulse-dot 1.8s ease-in-out infinite;
+        }
+
+        /* ───────────── LOADING ───────────── */
+        .spinner-overlay {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+        }
+        .spinner-overlay .spinner-border {
+            width: 2.4rem;
+            height: 2.4rem;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- NAVBAR -->
+    <!-- ════════════════════════════════════════ -->
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-mountain"></i>
+                Mwarokin Estates
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-home"></i>Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Payments.html"><i class="fas fa-credit-card"></i>Payments</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Schedual Viewing.html"><i class="fas fa-calendar-check"></i>Viewing</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Titles Deed.html"><i class="fas fa-calculator"></i>Calculator</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Neighborhoods.html"><i class="fas fa-city"></i>Neighborhoods</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Title Deeds.html"><i class="fas fa-file-signature"></i>Mother Title</a></li>
+                    <li class="nav-item"><a class="nav-link" href="LanguageSupport.html"><i class="fas fa-globe"></i>Language</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- HERO -->
+    <!-- ════════════════════════════════════════ -->
+    <section class="hero-premium">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <div class="badge-live mb-3 text-white">
+                        <span class="pulse-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#4ade80;"></span>
+                        Live data · 24/7
+                    </div>
+                    <h1 class="text-white">Discover &amp; Claim<br />Unmapped Land</h1>
+                    <p class="text-white-50">Mwarokin Estates gives you real‑time access to verified land parcels, ownership histories, and secure claiming — all in one place.</p>
+                    <div class="d-flex flex-wrap gap-2 mt-3">
+                        <a href="#land-listings" class="btn btn-primary-custom"><i class="fas fa-search me-2"></i>Explore Land</a>
+                        <a href="#features" class="btn btn-outline-light rounded-pill px-4 py-2" style="border-color:rgba(255,255,255,0.3);color:#fff;">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- DASHBOARD -->
+    <!-- ════════════════════════════════════════ -->
+    <section class="container" style="margin-top:-20px;">
+        <div class="row g-3 g-md-4" id="dashboardStats">
+            <div class="col-6 col-lg-3">
+                <div class="stat-card-premium">
+                    <div class="stat-icon" style="background:#e3f0fa;color:var(--primary);"><i class="fas fa-layer-group"></i></div>
+                    <div class="stat-number" id="totalLandCount">0</div>
+                    <div class="stat-label">Total Parcels</div>
+                    <div class="stat-trend up mt-2"><i class="fas fa-arrow-up"></i> +12%</div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="stat-card-premium">
+                    <div class="stat-icon" style="background:#e3f5ed;color:var(--success);"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-number" id="availableLandCount">0</div>
+                    <div class="stat-label">Available</div>
+                    <div class="stat-trend up mt-2"><i class="fas fa-arrow-up"></i> +8%</div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="stat-card-premium">
+                    <div class="stat-icon" style="background:#fdf0e0;color:var(--accent);"><i class="fas fa-dollar-sign"></i></div>
+                    <div class="stat-number" id="totalValue">$0</div>
+                    <div class="stat-label">Total Value</div>
+                    <div class="stat-trend up mt-2"><i class="fas fa-arrow-up"></i> +5.2%</div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="stat-card-premium">
+                    <div class="stat-icon" style="background:#f0e6fa;color:#8b5cf6;"><i class="fas fa-clock"></i></div>
+                    <div class="stat-number" id="recentActivity">0</div>
+                    <div class="stat-label">Recent Activity</div>
+                    <div class="stat-trend down mt-2"><i class="fas fa-arrow-down"></i> -2%</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- SEARCH -->
+    <!-- ════════════════════════════════════════ -->
+    <section class="container mt-4">
+        <div class="search-premium">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label fw-600 text-muted small">Search</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" id="searchKeyword" placeholder="Location or title..." />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-600 text-muted small">Continent</label>
+                    <select class="form-select" id="continentSelect">
+                        <option value="">All</option>
+                        <option value="Africa">Africa</option>
+                        <option value="Asia">Asia</option>
+                        <option value="Europe">Europe</option>
+                        <option value="North America">North America</option>
+                        <option value="South America">South America</option>
+                        <option value="Australia">Australia</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-600 text-muted small">Country</label>
+                    <select class="form-select" id="countrySelect">
+                        <option value="">All</option>
+                        <option value="Kenya">Kenya</option>
+                        <option value="Nigeria">Nigeria</option>
+                        <option value="South Africa">South Africa</option>
+                        <option value="Ghana">Ghana</option>
+                        <option value="Ethiopia">Ethiopia</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-600 text-muted small">Land Type</label>
+                    <select class="form-select" id="landType">
+                        <option value="">All</option>
+                        <option value="Agricultural">Agricultural</option>
+                        <option value="Residential">Residential</option>
+                        <option value="Commercial">Commercial</option>
+                        <option value="Forest">Forest</option>
+                        <option value="Undeveloped">Undeveloped</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-accent w-100" onclick="getLocation()">
+                        <i class="fas fa-map-pin me-2"></i>Pin Current Location
+                    </button>
+                </div>
+            </div>
+            <div class="row mt-3 align-items-center">
+                <div class="col-md-6">
+                    <div id="locationResult" class="text-muted small"><i class="fas fa-info-circle me-1"></i>No location pinned yet</div>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <button class="btn btn-outline-primary-custom btn-sm" onclick="resetFilters()">
+                        <i class="fas fa-undo me-1"></i>Reset Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- MAP + LISTINGS -->
+    <!-- ════════════════════════════════════════ -->
+    <section id="land-listings" class="container mt-3">
+        <div class="row g-4">
+            <!-- Map -->
+            <div class="col-lg-8">
+                <div class="map-wrapper">
+                    <div id="map"></div>
+                    <!-- Overlay -->
+                    <div class="map-overlay-premium">
+                        <div class="filter-group">
+                            <label><i class="fas fa-arrows-alt-h me-1"></i>Size</label>
+                            <input type="range" id="landSizeRange" min="0" max="1000" value="500" />
+                            <span class="range-value" id="landSizeValue">500 ac</span>
+                        </div>
+                        <div class="filter-group">
+                            <label><i class="fas fa-tag me-1"></i>Price</label>
+                            <input type="range" id="priceRange" min="0" max="1000000" value="500000" step="10000" />
+                            <span class="range-value" id="priceValue">$500k</span>
+                        </div>
+                        <div class="d-flex gap-3 flex-wrap">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="showAvailable" />
+                                <label class="form-check-label" for="showAvailable">Available</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="showUnmapped" />
+                                <label class="form-check-label" for="showUnmapped">Unmapped</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Listings -->
+            <div class="col-lg-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-700 mb-0"><i class="fas fa-list-ul me-2" style="color:var(--primary);"></i>Listings</h5>
+                    <span class="badge bg-primary-custom rounded-pill px-3 py-2" id="landCountBadge">0 parcels</span>
+                </div>
+                <div id="landListings" style="max-height:550px;overflow-y:auto;padding-right:4px;">
+                    <div class="spinner-overlay">
+                        <div class="spinner-border" role="status"><span class="visually-hidden">Loading…</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- FEATURES -->
+    <!-- ════════════════════════════════════════ -->
+    <section id="features" class="features-premium mt-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-700" style="letter-spacing:-0.02em;">Built for Land Professionals</h2>
+                <p class="text-muted" style="font-size:1.1rem;">Everything you need to discover, analyze, and secure land opportunities.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-search-location"></i></div>
+                        <h5>Advanced Discovery</h5>
+                        <p>Find unmapped land with smart search and real‑time data.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-history"></i></div>
+                        <h5>Ownership History</h5>
+                        <p>Full ownership timelines and transfer records for due diligence.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-file-contract"></i></div>
+                        <h5>Legal Documentation</h5>
+                        <p>Generate and manage legal documents for claims and transfers.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-chart-line"></i></div>
+                        <h5>Valuation Tools</h5>
+                        <p>AI‑powered valuation models and market trend analysis.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-map-marked-alt"></i></div>
+                        <h5>Interactive Mapping</h5>
+                        <p>Visualize parcels with satellite imagery and terrain analysis.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-shield-alt"></i></div>
+                        <h5>Secure Transactions</h5>
+                        <p>Encrypted platform with full verification for every transaction.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- MODAL -->
+    <!-- ════════════════════════════════════════ -->
+    <div class="modal fade modal-premium" id="landDetailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-700"><i class="fas fa-map-pin me-2"></i><span id="modalLandTitle">Land</span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="bg-primary-custom rounded-3 d-flex align-items-center justify-content-center" style="height:160px;color:rgba(255,255,255,0.5);font-size:3.4rem;">
+                                <i class="fas fa-mountain"></i>
+                            </div>
+                            <h5 class="mt-3 fw-700" id="modalLandTitle2">Agricultural Land in Nairobi</h5>
+                            <p class="text-muted" id="modalLandLocation"><i class="fas fa-map-marker-alt me-2" style="color:var(--primary-light);"></i>Nairobi, Kenya</p>
+                            <div class="row g-2 mt-3">
+                                <div class="col-6"><span class="text-muted small">Size</span><br /><strong id="modalLandSize">50 acres</strong></div>
+                                <div class="col-6"><span class="text-muted small">Price</span><br /><strong id="modalLandPrice">$250,000</strong></div>
+                                <div class="col-6"><span class="text-muted small">Zoning</span><br /><strong id="modalLandZoning">Agricultural</strong></div>
+                                <div class="col-6"><span class="text-muted small">Soil Quality</span><br /><strong id="modalSoilQuality">High</strong></div>
+                                <div class="col-6"><span class="text-muted small">Water Access</span><br /><strong id="modalWaterAccess">Yes</strong></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-700"><i class="fas fa-timeline me-2" style="color:var(--primary);"></i>Ownership History</h6>
+                            <div class="ownership-timeline" id="ownershipTimeline">
+                                <!-- dynamic -->
+                            </div>
+                            <h6 class="fw-700 mt-4"><i class="fas fa-file me-2" style="color:var(--primary);"></i>Documents</h6>
+                            <div id="landDocuments" class="d-flex flex-wrap gap-2">
+                                <!-- dynamic -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-accent rounded-pill px-4" id="expressInterestBtn"><i class="fas fa-handshake me-2"></i>Express Interest</button>
+                    <button class="btn btn-outline-primary-custom rounded-pill px-4" id="saveToWatchlistBtn"><i class="far fa-heart me-2"></i>Watchlist</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- FOOTER -->
+    <!-- ════════════════════════════════════════ -->
+    <footer class="footer-premium">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h5><i class="fas fa-mountain me-2"></i>Mwarokin Estates</h5>
+                    <p style="font-size:0.9rem;max-width:320px;">Discover and claim unmapped land with real‑time data, verified ownership, and secure tools.</p>
+                    <div class="social-links d-flex gap-2 mt-3">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-6">
+                    <h5>Quick</h5>
+                    <div class="d-flex flex-column gap-2">
+                        <a href="videos.html">Media</a>
+                        <a href="Renovations.html">Renovations</a>
+                        <a href="Title Deeds.html">Mother Land</a>
+                        <a href="Settings.html">Settings</a>
+                        <a href="AutomateGPRSPinLocator.html">My Locator</a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-6">
+                    <h5>Resources</h5>
+                    <div class="d-flex flex-column gap-2">
+                        <a href="Lipa Mdogo Payment Plan.html">Lipa Mdogo</a>
+                        <a href="Neighborhoods.html">Neighbourhoods</a>
+                        <a href="Upgrade&DowngradeRelocation.html">Relocation</a>
+                        <a href="Wearables.html">Wearables</a>
+                        <a href="Tenant Profile.html">Tenant Profile</a>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <h5>Subscribe</h5>
+                    <p style="font-size:0.9rem;opacity:0.7;">Get updates on new land listings and market insights.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Your email" id="newsletterEmail" />
+                        <button class="btn" type="button" onclick="subscribeNewsletter()">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4" style="border-color:rgba(255,255,255,0.06);" />
+            <div class="text-center" style="font-size:0.85rem;opacity:0.6;">
+                &copy; 2026 Mwarokin Estates — Unmapped. Powered by Syllogism Technology Africa.
+            </div>
+        </div>
+    </footer>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- SCRIPTS -->
+    <!-- ════════════════════════════════════════ -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js">
+    </script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    </script>
+
+    <script>
+        // ──────────────────────────────────────────────
+        // DATA
+        // ──────────────────────────────────────────────
+        const landData = [{
+            id: 1,
+            title: "Agricultural Land in Nairobi",
+            location: "Nairobi, Kenya",
+            size: 50,
+            price: 250000,
+            type: "Agricultural",
+            soilQuality: "High",
+            waterAccess: true,
+            status: "Available",
+            coordinates: { lat: -1.2921, lng: 36.8219 },
+            ownershipHistory: [
+                { period: "2020 – Present", owner: "John Kamau", details: "Current owner, purchased in 2020" },
+                { period: "1995 – 2020", owner: "Mary Wanjiku", details: "Inherited from family, owned 25 years" },
+                { period: "1970 – 1995", owner: "James Mwangi", details: "Original allocation, developed farmland" }
+            ],
+            documents: ["Title Deed", "Survey Map", "Tax Records"]
+        }, {
+            id: 2,
+            title: "Undeveloped Plot in Mombasa",
+            location: "Mombasa, Kenya",
+            size: 10,
+            price: 120000,
+            type: "Residential",
+            soilQuality: "Medium",
+            waterAccess: false,
+            status: "Available",
+            coordinates: { lat: -4.0435, lng: 39.6682 },
+            ownershipHistory: [
+                { period: "2018 – Present", owner: "Ahmed Hassan", details: "Purchased for future development" },
+                { period: "2005 – 2018", owner: "Coastal Properties Ltd", details: "Held as investment property" }
+            ],
+            documents: ["Title Deed", "Land Survey"]
+        }, {
+            id: 3,
+            title: "Commercial Land in Kisumu",
+            location: "Kisumu, Kenya",
+            size: 25,
+            price: 350000,
+            type: "Commercial",
+            soilQuality: "High",
+            waterAccess: true,
+            status: "Pending",
+            coordinates: { lat: -0.1022, lng: 34.7617 },
+            ownershipHistory: [
+                { period: "2015 – Present", owner: "Lakeview Enterprises", details: "Commercial development company" },
+                { period: "1980 – 2015", owner: "County Government", details: "Public land before privatization" }
+            ],
+            documents: ["Title Deed", "Zoning Certificate", "Development Plan"]
+        }, {
+            id: 4,
+            title: "Forest Land in Nakuru",
+            location: "Nakuru, Kenya",
+            size: 100,
+            price: 180000,
+            type: "Forest",
+            soilQuality: "Medium",
+            waterAccess: true,
+            status: "Available",
+            coordinates: { lat: -0.3031, lng: 36.0800 },
+            ownershipHistory: [
+                { period: "2000 – Present", owner: "Green Earth Conservancy", details: "Conservation organization" },
+                { period: "Pre-2000", owner: "Public Forest Reserve", details: "Government protected area" }
+            ],
+            documents: ["Conservation Title", "Forest Management Plan"]
+        }, {
+            id: 5,
+            title: "Undeveloped Land in Eldoret",
+            location: "Eldoret, Kenya",
+            size: 75,
+            price: 275000,
+            type: "Undeveloped",
+            soilQuality: "Low",
+            waterAccess: false,
+            status: "Available",
+            coordinates: { lat: 0.5143, lng: 35.2698 },
+            ownershipHistory: [
+                { period: "2010 – Present", owner: "Highland Investments", details: "Investment holding company" },
+                { period: "1990 – 2010", owner: "Local Community Trust", details: "Community-owned land" }
+            ],
+            documents: ["Community Title", "Land Use Agreement"]
+        }];
+
+        // ──────────────────────────────────────────────
+        // STATE
+        // ──────────────────────────────────────────────
+        let map;
+        let markers = [];
+        let currentUserLocation = null;
+        let modalInstance = null;
+
+        // ──────────────────────────────────────────────
+        // INIT
+        // ──────────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', function() {
+            initMap();
+            displayLandListings(landData);
+            updateDashboard();
+            setupEventListeners();
+            startRealTimeUpdates();
+            modalInstance = new bootstrap.Modal(document.getElementById('landDetailModal'));
+        });
+
+        // ──────────────────────────────────────────────
+        // MAP
+        // ──────────────────────────────────────────────
+        function initMap() {
+            map = L.map('map').setView([-1.2921, 36.8219], 7);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+            addLandMarkers(landData);
+        }
+
+        function addLandMarkers(lands) {
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+            lands.forEach(land => {
+                const m = L.marker([land.coordinates.lat, land.coordinates.lng])
+                    .addTo(map)
+                    .bindPopup(`
+                  <div style="min-width:180px;">
+                    <strong>${land.title}</strong><br />
+                    <span style="font-size:0.85rem;color:#5a6e7e;">${land.location}</span><br />
+                    <span style="font-size:0.85rem;">${land.size} ac · $${land.price.toLocaleString()}</span><br />
+                    <button class="btn btn-primary btn-sm mt-2" onclick="showLandDetails(${land.id})">View</button>
+                  </div>
+                `);
+                markers.push(m);
+            });
+        }
+
+        // ──────────────────────────────────────────────
+        // LISTINGS
+        // ──────────────────────────────────────────────
+        function displayLandListings(lands) {
+            const container = document.getElementById('landListings');
+            const badge = document.getElementById('landCountBadge');
+            badge.textContent = `${lands.length} parcel${lands.length !== 1 ? 's' : ''}`;
+            container.innerHTML = '';
+
+            if (!lands.length) {
+                container.innerHTML = `
+                <div class="text-center py-5">
+                  <i class="fas fa-search fa-2x text-muted mb-3" style="opacity:0.4;"></i>
+                  <p class="text-muted">No parcels found</p>
+                  <button class="btn btn-outline-primary-custom btn-sm" onclick="resetFilters()">Reset filters</button>
+                </div>
+              `;
+                return;
+            }
+
+            lands.forEach(land => {
+                const card = document.createElement('div');
+                card.className = 'land-card-premium fade-in-up';
+                const statusClass = land.status === 'Available' ? 'available' : 'pending';
+                card.innerHTML = `
+                <div class="card-img-top">
+                  <i class="fas fa-mountain"></i>
+                  <span class="badge-status ${statusClass}">${land.status}</span>
+                </div>
+                <div class="card-body">
+                  <div class="card-title">${land.title}</div>
+                  <div class="card-location"><i class="fas fa-map-pin"></i>${land.location}</div>
+                  <div class="detail-grid">
+                    <div class="detail-item"><span class="label">Size</span><span class="value">${land.size} ac</span></div>
+                    <div class="detail-item"><span class="label">Price</span><span class="value">$${land.price.toLocaleString()}</span></div>
+                    <div class="detail-item"><span class="label">Type</span><span class="value">${land.type}</span></div>
+                    <div class="detail-item"><span class="label">Water</span><span class="value">${land.waterAccess ? '✓' : '✗'}</span></div>
+                  </div>
+                  <div class="card-footer-actions">
+                    <button class="btn-sm-custom btn-outline-primary-sm" data-id="${land.id}"><i class="fas fa-eye"></i>Details</button>
+                    <button class="btn-sm-custom btn-ghost-sm save-btn" data-id="${land.id}"><i class="far fa-heart"></i>Save</button>
+                  </div>
+                </div>
+              `;
+                container.appendChild(card);
+
+                // Events
+                card.querySelector('[data-id]').addEventListener('click', function() {
+                    showLandDetails(parseInt(this.dataset.id));
+                });
+                card.querySelector('.save-btn').addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    saveToWatchlist(parseInt(this.dataset.id));
+                });
+            });
+        }
+
+        // ──────────────────────────────────────────────
+        // MODAL
+        // ──────────────────────────────────────────────
+        function showLandDetails(id) {
+            const land = landData.find(l => l.id === id);
+            if (!land) return;
+
+            document.getElementById('modalLandTitle').textContent = land.title;
+            document.getElementById('modalLandTitle2').textContent = land.title;
+            document.getElementById('modalLandLocation').innerHTML =
+                `<i class="fas fa-map-marker-alt me-2" style="color:var(--primary-light);"></i>${land.location}`;
+            document.getElementById('modalLandSize').textContent = `${land.size} acres`;
+            document.getElementById('modalLandPrice').textContent = `$${land.price.toLocaleString()}`;
+            document.getElementById('modalLandZoning').textContent = land.type;
+            document.getElementById('modalSoilQuality').textContent = land.soilQuality;
+            document.getElementById('modalWaterAccess').textContent = land.waterAccess ? 'Yes' : 'No';
+
+            // Timeline
+            const tl = document.getElementById('ownershipTimeline');
+            tl.innerHTML = '';
+            land.ownershipHistory.forEach(h => {
+                tl.innerHTML += `
+                <div class="timeline-item">
+                  <div class="period">${h.period}</div>
+                  <div class="owner">${h.owner}</div>
+                  <p class="details">${h.details}</p>
+                </div>
+              `;
+            });
+
+            // Docs
+            const docs = document.getElementById('landDocuments');
+            docs.innerHTML = '';
+            land.documents.forEach(d => {
+                docs.innerHTML += `<span class="badge bg-light text-dark px-3 py-2 rounded-pill"><i class="fas fa-file-pdf me-1" style="color:var(--danger);"></i>${d}</span>`;
+            });
+
+            // Buttons
+            document.getElementById('expressInterestBtn').onclick = () => expressInterest(id);
+            document.getElementById('saveToWatchlistBtn').onclick = () => saveToWatchlist(id);
+
+            modalInstance.show();
+            map.setView([land.coordinates.lat, land.coordinates.lng], 12);
+        }
+
+        // ──────────────────────────────────────────────
+        // ACTIONS
+        // ──────────────────────────────────────────────
+        function expressInterest(id) {
+            showToast(`✅ Interest expressed in land #${id}. Our team will contact you.`, 'success');
+        }
+
+        function saveToWatchlist(id) {
+            showToast(`❤️ Land #${id} saved to your watchlist.`, 'success');
+        }
+
+        // ──────────────────────────────────────────────
+        // FILTERS
+        // ──────────────────────────────────────────────
+        function filterLandListings() {
+            const size = parseInt(document.getElementById('landSizeRange').value);
+            const maxPrice = parseInt(document.getElementById('priceRange').value);
+            const showAvail = document.getElementById('showAvailable').checked;
+            const showUnmapped = document.getElementById('showUnmapped').checked;
+            const kw = document.getElementById('searchKeyword').value.toLowerCase();
+            const country = document.getElementById('countrySelect').value;
+            const type = document.getElementById('landType').value;
+
+            const filtered = landData.filter(l => {
+                if (l.size > size) return false;
+                if (l.price > maxPrice) return false;
+                if (showAvail && l.status !== 'Available') return false;
+                if (showUnmapped && l.type !== 'Undeveloped') return false;
+                if (kw && !l.title.toLowerCase().includes(kw) && !l.location.toLowerCase().includes(kw)) return false;
+                if (country && !l.location.includes(country)) return false;
+                if (type && l.type !== type) return false;
+                return true;
+            });
+
+            displayLandListings(filtered);
+            addLandMarkers(filtered);
+        }
+
+        function resetFilters() {
+            document.getElementById('searchKeyword').value = '';
+            document.getElementById('continentSelect').value = '';
+            document.getElementById('countrySelect').value = '';
+            document.getElementById('landType').value = '';
+            document.getElementById('landSizeRange').value = 500;
+            document.getElementById('priceRange').value = 500000;
+            document.getElementById('showAvailable').checked = false;
+            document.getElementById('showUnmapped').checked = false;
+            document.getElementById('landSizeValue').textContent = '500 ac';
+            document.getElementById('priceValue').textContent = '$500k';
+            filterLandListings();
+            showToast('Filters reset', 'info');
+        }
+
+        // ──────────────────────────────────────────────
+        // LOCATION
+        // ──────────────────────────────────────────────
+        function getLocation() {
+            if (!navigator.geolocation) {
+                document.getElementById('locationResult').textContent = 'Geolocation not supported.';
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(
+                pos => {
+                    const { latitude, longitude } = pos.coords;
+                    currentUserLocation = { lat: latitude, lng: longitude };
+                    document.getElementById('locationResult').innerHTML =
+                        `<i class="fas fa-check-circle text-success me-1"></i> ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+
+                    if (window.userMarker) map.removeLayer(window.userMarker);
+                    window.userMarker = L.marker([latitude, longitude])
+                        .addTo(map)
+                        .bindPopup('📍 You are here')
+                        .openPopup();
+                    map.setView([latitude, longitude], 10);
+                    showToast('📍 Location pinned!', 'success');
+                },
+                err => {
+                    let msg = 'Unable to get location.';
+                    if (err.code === 1) msg = 'Location permission denied.';
+                    document.getElementById('locationResult').textContent = msg;
+                    showToast(msg, 'warning');
+                }
+            );
+        }
+
+        // ──────────────────────────────────────────────
+        // DASHBOARD
+        // ──────────────────────────────────────────────
+        function updateDashboard() {
+            const total = landData.length;
+            const avail = landData.filter(l => l.status === 'Available').length;
+            const value = landData.reduce((s, l) => s + l.price, 0);
+            const activity = Math.floor(Math.random() * 18) + 6;
+
+            document.getElementById('totalLandCount').textContent = total;
+            document.getElementById('availableLandCount').textContent = avail;
+            document.getElementById('totalValue').textContent = `$${value.toLocaleString()}`;
+            document.getElementById('recentActivity').textContent = activity;
+        }
+
+        // ──────────────────────────────────────────────
+        // REAL-TIME SIM
+        // ──────────────────────────────────────────────
+        function startRealTimeUpdates() {
+            setInterval(() => {
+                if (Math.random() > 0.82) {
+                    const locs = ['Nairobi', 'Mombasa', 'Kisumu', 'Nakuru', 'Eldoret'];
+                    const types = ['Agricultural', 'Residential', 'Commercial', 'Forest', 'Undeveloped'];
+                    const loc = locs[Math.floor(Math.random() * locs.length)];
+                    const newLand = {
+                        id: landData.length + 1,
+                        title: `New Listing in ${loc}`,
+                        location: `${loc}, Kenya`,
+                        size: Math.floor(Math.random() * 90) + 10,
+                        price: Math.floor(Math.random() * 450000) + 50000,
+                        type: types[Math.floor(Math.random() * types.length)],
+                        soilQuality: ['High', 'Medium', 'Low'][Math.floor(Math.random() * 3)],
+                        waterAccess: Math.random() > 0.5,
+                        status: 'Available',
+                        coordinates: {
+                            lat: -1.2921 + (Math.random() - 0.5) * 2.5,
+                            lng: 36.8219 + (Math.random() - 0.5) * 2.5
+                        },
+                        ownershipHistory: [
+                            { period: 'New', owner: 'Available', details: 'Recently identified unmapped land' }
+                        ],
+                        documents: ['Title Verification', 'Land Survey']
+                    };
+                    landData.push(newLand);
+                    filterLandListings();
+                    updateDashboard();
+                    showNotification(`🆕 New listing: ${newLand.title}`);
+                }
+            }, 30000);
+        }
+
+        // ──────────────────────────────────────────────
+        // NOTIFICATIONS / TOASTS
+        // ──────────────────────────────────────────────
+        function showNotification(msg) {
+            const el = document.createElement('div');
+            el.className = 'position-fixed top-0 end-0 p-3';
+            el.style.zIndex = '1060';
+            el.innerHTML = `
+              <div class="toast toast-premium show" role="alert">
+                <div class="toast-header"><i class="fas fa-bell text-primary me-2"></i><strong>New Listing</strong>
+                  <button type="button" class="btn-close ms-auto" data-bs-dismiss="toast"></button>
+                </div>
+                <div class="toast-body">${msg}</div>
+              </div>
+            `;
+            document.body.appendChild(el);
+            setTimeout(() => { if (el.parentNode) el.remove(); }, 5000);
+        }
+
+        function showToast(msg, type = 'info') {
+            const container = document.createElement('div');
+            container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+            container.style.zIndex = '1060';
+            const bg = type === 'success' ? '#2d9b6e' : type === 'warning' ? '#e9a23b' : '#0a4b7a';
+            container.innerHTML = `
+              <div class="toast toast-premium show" role="alert" style="border-left:4px solid ${bg};">
+                <div class="toast-body d-flex align-items-center gap-2">
+                  <span>${msg}</span>
+                  <button type="button" class="btn-close ms-auto" data-bs-dismiss="toast"></button>
+                </div>
+              </div>
+            `;
+            document.body.appendChild(container);
+            setTimeout(() => { if (container.parentNode) container.remove(); }, 4000);
+        }
+
+        // ──────────────────────────────────────────────
+        // NEWSLETTER
+        // ──────────────────────────────────────────────
+        function subscribeNewsletter() {
+            const email = document.getElementById('newsletterEmail').value.trim();
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showToast('Please enter a valid email address.', 'warning');
+                return;
+            }
+            showToast('🎉 Subscribed successfully!', 'success');
+            document.getElementById('newsletterEmail').value = '';
+        }
+
+        // ──────────────────────────────────────────────
+        // EVENT LISTENERS
+        // ──────────────────────────────────────────────
+        function setupEventListeners() {
+            document.getElementById('landSizeRange').addEventListener('input', function() {
+                document.getElementById('landSizeValue').textContent = `${this.value} ac`;
+                filterLandListings();
+            });
+            document.getElementById('priceRange').addEventListener('input', function() {
+                const v = parseInt(this.value);
+                document.getElementById('priceValue').textContent = v >= 1000000 ? `$${(v/1000000).toFixed(1)}M` :
+                    `$${Math.round(v/1000)}k`;
+                filterLandListings();
+            });
+            document.getElementById('showAvailable').addEventListener('change', filterLandListings);
+            document.getElementById('showUnmapped').addEventListener('change', filterLandListings);
+            document.getElementById('searchKeyword').addEventListener('input', filterLandListings);
+            document.getElementById('continentSelect').addEventListener('change', filterLandListings);
+            document.getElementById('countrySelect').addEventListener('change', filterLandListings);
+            document.getElementById('landType').addEventListener('change', filterLandListings);
+        }
+
+        // ──────────────────────────────────────────────
+        // EXPOSE TO GLOBAL
+        // ──────────────────────────────────────────────
+        window.showLandDetails = showLandDetails;
+        window.getLocation = getLocation;
+        window.resetFilters = resetFilters;
+        window.expressInterest = expressInterest;
+        window.saveToWatchlist = saveToWatchlist;
+        window.subscribeNewsletter = subscribeNewsletter;
+        window.filterLandListings = filterLandListings;
+    </script>
+
+</body>
+</html>

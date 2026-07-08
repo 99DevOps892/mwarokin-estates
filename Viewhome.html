@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Mwarokin Estates - View Home Management</title>
+  <!-- Google Fonts + Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Leaflet CSS for Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f4f7fc;
+      color: #1a2c3e;
+      overflow-x: hidden;
+    }
+
+    /* premium glass & shadows */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(0px);
+      border-radius: 28px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.02);
+      transition: transform 0.2s ease, box-shadow 0.2s;
+    }
+
+    .glass-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 32px -10px rgba(0, 68, 128, 0.12);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px 32px;
+    }
+
+    /* header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .logo h1 {
+      font-size: 28px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #1e3c72, #2b4f8c);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+    }
+    .logo span {
+      font-size: 14px;
+      color: #5c7a9a;
+      font-weight: 500;
+    }
+    .header-actions {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    .notif-badge {
+      position: relative;
+      cursor: pointer;
+    }
+    .badge-count {
+      position: absolute;
+      top: -6px;
+      right: -8px;
+      background: #e53e3e;
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 30px;
+    }
+    .avatar {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(145deg, #2563eb, #1e40af);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    /* stats row */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    .stat-card {
+      padding: 20px;
+      background: white;
+      border-radius: 28px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      border: 1px solid #eef2f8;
+    }
+    .stat-title { font-size: 14px; color: #5e6f8d; margin-bottom: 8px; }
+    .stat-number { font-size: 32px; font-weight: 800; color: #1e2f4e; letter-spacing: -0.5px; }
+    .stat-trend { font-size: 13px; margin-left: 8px; font-weight: 500; }
+
+    /* filter bar */
+    .filter-bar {
+      background: white;
+      border-radius: 48px;
+      padding: 12px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+      border: 1px solid #e6edf4;
+    }
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #f8fafd;
+      padding: 6px 18px;
+      border-radius: 40px;
+    }
+    .filter-group i { color: #2b6cb0; }
+    .filter-group select, .filter-group input {
+      border: none;
+      background: transparent;
+      padding: 10px 0;
+      font-weight: 500;
+      outline: none;
+      font-size: 14px;
+    }
+    .search-btn {
+      background: #1e3c72;
+      border: none;
+      padding: 10px 28px;
+      border-radius: 40px;
+      color: white;
+      font-weight: 600;
+      transition: 0.2s;
+      cursor: pointer;
+    }
+
+    /* property grid */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .property-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+      gap: 28px;
+      margin-bottom: 48px;
+    }
+    .property-card {
+      background: white;
+      border-radius: 28px;
+      overflow: hidden;
+      transition: all 0.25s;
+      box-shadow: 0 12px 24px -12px rgba(0,0,0,0.08);
+      border: 1px solid #eaf0f5;
+    }
+    .card-img {
+      height: 210px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .card-badge {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(6px);
+      padding: 4px 12px;
+      border-radius: 40px;
+      font-size: 12px;
+      font-weight: 600;
+      color: white;
+    }
+    .card-content {
+      padding: 20px;
+    }
+    .property-title {
+      font-weight: 800;
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+    .property-location {
+      color: #5f7d9c;
+      font-size: 14px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .property-price {
+      font-weight: 800;
+      font-size: 22px;
+      color: #2563eb;
+      margin: 12px 0 8px;
+    }
+    .property-features {
+      display: flex;
+      gap: 16px;
+      border-top: 1px solid #edf2f7;
+      padding-top: 12px;
+      margin-top: 8px;
+      font-size: 13px;
+      color: #4a5b7a;
+    }
+    .card-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .btn-outline-premium {
+      background: transparent;
+      border: 1px solid #cbdde9;
+      border-radius: 40px;
+      padding: 8px 0;
+      font-weight: 600;
+      font-size: 13px;
+      flex: 1;
+      transition: 0.2s;
+      cursor: pointer;
+    }
+    .btn-primary-premium {
+      background: #1e3c72;
+      border: none;
+      color: white;
+      border-radius: 40px;
+      padding: 8px 0;
+      font-weight: 600;
+      flex: 1;
+      cursor: pointer;
+    }
+
+    /* map + recent section */
+    .insight-row {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 28px;
+      margin-bottom: 48px;
+    }
+    .map-card {
+      background: white;
+      border-radius: 28px;
+      overflow: hidden;
+      padding: 16px;
+      border: 1px solid #eef2f8;
+    }
+    #propertyMap {
+      height: 280px;
+      width: 100%;
+      border-radius: 20px;
+      z-index: 1;
+    }
+    .recent-activities {
+      background: white;
+      border-radius: 28px;
+      padding: 20px;
+    }
+    .activity-item {
+      display: flex;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid #eff3f9;
+    }
+
+    /* modal premium */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(6px);
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+    .modal-container {
+      background: white;
+      width: 90%;
+      max-width: 600px;
+      border-radius: 36px;
+      padding: 28px;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 860px) {
+      .container { padding: 16px; }
+      .insight-row { grid-template-columns: 1fr; }
+      .filter-bar { flex-direction: column; align-items: stretch; border-radius: 28px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- header -->
+  <div class="header">
+    <div class="logo">
+      <h1><i class="fas fa-building" style="color:#2563eb; margin-right: 8px;"></i> Mwarokin Estates</h1>
+      <span>Home Management • Intelligent Portfolio</span>
+    </div>
+    <div class="header-actions">
+      <div class="notif-badge"><i class="fas fa-bell fa-lg" style="color:#2c5282;"></i><span class="badge-count">3</span></div>
+      <div class="avatar">MW</div>
+    </div>
+  </div>
+
+  <!-- stats -->
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-title">Total Properties</div><div class="stat-number" id="totalProps">24</div><span class="stat-trend">+2 this month</span></div>
+    <div class="stat-card"><div class="stat-title">Occupied Homes</div><div class="stat-number" id="occupiedCount">18</div><span class="stat-trend">75% occupancy</span></div>
+    <div class="stat-card"><div class="stat-title">Vacant Listings</div><div class="stat-number" id="vacantCount">6</div><span class="stat-trend">↓ 1 from last week</span></div>
+    <div class="stat-card"><div class="stat-title">Monthly Revenue</div><div class="stat-number">KSh 1.28M</div><span class="stat-trend">+8.2%</span></div>
+  </div>
+
+  <!-- advanced filter bar -->
+  <div class="filter-bar">
+    <div class="filter-group"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Search by name or location..."></div>
+    <div class="filter-group"><i class="fas fa-map-marker-alt"></i><select id="locationFilter"><option value="all">All Areas</option><option value="Kangemi">Kangemi</option><option value="Westlands">Westlands</option><option value="Kiambu">Kiambu</option><option value="Taveta">Taveta</option><option value="Jericho">Jericho</option></select></div>
+    <div class="filter-group"><i class="fas fa-bed"></i><select id="bedsFilter"><option value="0">Any Beds</option><option value="1">1+ Bed</option><option value="2">2+ Beds</option><option value="3">3+ Beds</option></select></div>
+    <div class="filter-group"><i class="fas fa-tag"></i><select id="priceFilter"><option value="all">All Prices</option><option value="0-30000">Under KSh 30k</option><option value="30000-80000">KSh 30k - 80k</option><option value="80000+">Above KSh 80k</option></select></div>
+    <button class="search-btn" id="applyFilterBtn"><i class="fas fa-sliders-h"></i> Apply Filters</button>
+  </div>
+
+  <!-- property grid -->
+  <div class="section-header"><h3 style="font-weight: 700;"><i class="fas fa-home"></i> Premium Residences</h3><span id="resultCount" style="color:#5c7a9a;">6 properties available</span></div>
+  <div class="property-grid" id="propertyGrid"></div>
+
+  <!-- Map + recent insights (Home management side) -->
+  <div class="insight-row">
+    <div class="map-card"><h4 style="margin-bottom: 12px;"><i class="fas fa-map-pin"></i> Property Intelligence Map</h4><div id="propertyMap"></div></div>
+    <div class="recent-activities"><h4 style="margin-bottom: 16px;"><i class="fas fa-clock"></i> Recent Home Management Activity</h4>
+      <div id="activityFeed">
+        <div class="activity-item"><i class="fas fa-calendar-check" style="color:#2b6cb0;"></i><div><strong>Villa A</strong> – Tour scheduled with client (Today 3PM)</div></div>
+        <div class="activity-item"><i class="fas fa-file-signature"></i><div><strong>Sunset Apartment</strong> – Lease renewal signed by tenant</div></div>
+        <div class="activity-item"><i class="fas fa-wrench"></i><div><strong>Kiambu Bungalow</strong> – Maintenance request completed</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Property Detail Management Modal -->
+<div id="propertyModal" class="modal">
+  <div class="modal-container">
+    <div class="modal-header"><h3 id="modalTitle">Property Management</h3><button id="closeModalBtn" style="background: none; border: none; font-size: 24px; cursor:pointer;">&times;</button></div>
+    <div id="modalBodyContent">
+      <!-- dynamic content -->
+      <p>Loading details...</p>
+    </div>
+    <div style="display: flex; gap: 12px; margin-top: 24px;">
+      <button class="btn-outline-premium" id="scheduleTourModalBtn"><i class="fas fa-calendar-alt"></i> Schedule Tour</button>
+      <button class="btn-primary-premium" id="manageHomeModalBtn"><i class="fas fa-tools"></i> Manage Home</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  // ---------- PROPERTY DATABASE (Mwarokin Real Estate) ----------
+  const properties = [
+    { id: 1, name: "The Horizon Villa", location: "Kangemi", price: 125000, beds: 4, baths: 3, area: "280 sqm", status: "occupied", imgId: "101", lat: -1.2921, lng: 36.8219, desc: "Luxury villa with private pool, smart home ready.", amenities: ["Pool", "Gym", "Smart Security"] },
+    { id: 2, name: "Silver Springs Manor", location: "Westlands", price: 185000, beds: 5, baths: 4, area: "350 sqm", status: "vacant", imgId: "104", lat: -1.2698, lng: 36.8034, desc: "Premium gated community with panoramic views.", amenities: ["Jacuzzi", "Garden", "EV Charging"] },
+    { id: 3, name: "Kiambu Oasis", location: "Kiambu", price: 45000, beds: 3, baths: 2, area: "160 sqm", status: "vacant", imgId: "107", lat: -1.1765, lng: 36.8284, desc: "Modern family home near schools.", amenities: ["Solar Panels", "Lawn"] },
+    { id: 4, name: "Taveta Courtyard", location: "Taveta", price: 32000, beds: 2, baths: 2, area: "105 sqm", status: "occupied", imgId: "115", lat: -3.4024, lng: 37.6910, desc: "Cosy apartment, close to CBD.", amenities: ["Parking", "CCTV"] },
+    { id: 5, name: "Jericho Heights", location: "Jericho", price: 22000, beds: 2, baths: 1, area: "78 sqm", status: "vacant", imgId: "127", lat: -1.2855, lng: 36.8509, desc: "Affordable modern unit with fast internet.", amenities: ["Fiber", "Playground"] },
+    { id: 6, name: "Palmwood Residences", location: "Westlands", price: 98000, beds: 3, baths: 3, area: "210 sqm", status: "occupied", imgId: "131", lat: -1.2630, lng: 36.8020, desc: "Luxury duplex with rooftop terrace.", amenities: ["Rooftop", "Concierge"] },
+    { id: 7, name: "Riverside Executive", location: "Kangemi", price: 165000, beds: 4, baths: 4, area: "310 sqm", status: "vacant", imgId: "143", lat: -1.2848, lng: 36.8152, desc: "Elegant riverside estate with smart features.", amenities: ["Wine Cellar", "Home Office"] },
+    { id: 8, name: "Mountain View Cottages", location: "Kiambu", price: 55000, beds: 3, baths: 2, area: "145 sqm", status: "occupied", imgId: "156", lat: -1.1690, lng: 36.8370, desc: "Scenic mountain view home.", amenities: ["Fireplace", "Backyard"] },
+  ];
+
+  let activeProperties = [...properties];
+  let mapInstance = null;
+  let markersLayer = [];
+
+  // Helper: format currency
+  function formatKES(amount) {
+    return 'KSh ' + amount.toLocaleString();
+  }
+
+  // render grid
+  function renderProperties(propArray) {
+    const grid = document.getElementById('propertyGrid');
+    grid.innerHTML = '';
+    if (propArray.length === 0) {
+      grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px;">🏡 No properties match filters</div>';
+      document.getElementById('resultCount').innerText = '0 properties';
+      return;
+    }
+    document.getElementById('resultCount').innerText = `${propArray.length} properties`;
+    propArray.forEach(prop => {
+      const statusText = prop.status === 'occupied' ? 'Occupied' : 'Available';
+      const statusColor = prop.status === 'occupied' ? '#2b6e3c' : '#0f5c7a';
+      const imageUrl = `https://picsum.photos/id/${prop.imgId}/400/240`;
+      const card = document.createElement('div');
+      card.className = 'property-card';
+      card.innerHTML = `
+        <div class="card-img" style="background-image: url('${imageUrl}'); background-size: cover;">
+          <span class="card-badge" style="background: ${statusColor};">${statusText}</span>
+        </div>
+        <div class="card-content">
+          <div class="property-title">${prop.name}</div>
+          <div class="property-location"><i class="fas fa-map-pin"></i> ${prop.location}</div>
+          <div class="property-price">${formatKES(prop.price)}<span style="font-size:14px; font-weight:normal;">/month</span></div>
+          <div class="property-features"><span><i class="fas fa-bed"></i> ${prop.beds} beds</span><span><i class="fas fa-bath"></i> ${prop.baths} baths</span><span><i class="fas fa-arrows-alt"></i> ${prop.area}</span></div>
+          <div class="card-actions">
+            <button class="btn-outline-premium view-details" data-id="${prop.id}"><i class="fas fa-eye"></i> Details</button>
+            <button class="btn-primary-premium schedule-quick" data-id="${prop.id}"><i class="fas fa-calendar-week"></i> Tour</button>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+    // attach event listeners
+    document.querySelectorAll('.view-details').forEach(btn => {
+      btn.addEventListener('click', (e) => { const id = parseInt(btn.dataset.id); openPropertyModal(id); });
+    });
+    document.querySelectorAll('.schedule-quick').forEach(btn => {
+      btn.addEventListener('click', (e) => { const id = parseInt(btn.dataset.id); quickScheduleTour(id); });
+    });
+    updateMapMarkers(propArray);
+    updateStats(propArray);
+  }
+
+  // Update stats based on filtered/visible list (for realism)
+  function updateStats(visibleProps) {
+    const total = visibleProps.length;
+    const occupied = visibleProps.filter(p => p.status === 'occupied').length;
+    const vacant = total - occupied;
+    document.getElementById('totalProps').innerText = total;
+    document.getElementById('occupiedCount').innerText = occupied;
+    document.getElementById('vacantCount').innerText = vacant;
+  }
+
+  // Map handling
+  function initMap() {
+    if (mapInstance) mapInstance.remove();
+    mapInstance = L.map('propertyMap').setView([-1.2864, 36.8172], 12);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> & CartoDB'
+    }).addTo(mapInstance);
+    updateMapMarkers(activeProperties);
+  }
+
+  function updateMapMarkers(propertiesArr) {
+    if (!mapInstance) return;
+    markersLayer.forEach(marker => mapInstance.removeLayer(marker));
+    markersLayer = [];
+    propertiesArr.forEach(prop => {
+      if (prop.lat && prop.lng) {
+        const marker = L.marker([prop.lat, prop.lng]).addTo(mapInstance)
+          .bindPopup(`<b>${prop.name}</b><br>${prop.location}<br>${formatKES(prop.price)}/month<br><i>${prop.status}</i>`);
+        markersLayer.push(marker);
+      }
+    });
+    if (propertiesArr.length > 0 && propertiesArr[0].lat) {
+      mapInstance.setView([propertiesArr[0].lat, propertiesArr[0].lng], 13);
+    }
+  }
+
+  // filter logic
+  function filterProperties() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const locationVal = document.getElementById('locationFilter').value;
+    const bedsVal = parseInt(document.getElementById('bedsFilter').value);
+    const priceRange = document.getElementById('priceFilter').value;
+
+    let filtered = properties.filter(prop => {
+      let match = true;
+      if (searchTerm && !prop.name.toLowerCase().includes(searchTerm) && !prop.location.toLowerCase().includes(searchTerm)) match = false;
+      if (locationVal !== 'all' && prop.location !== locationVal) match = false;
+      if (bedsVal > 0 && prop.beds < bedsVal) match = false;
+      if (priceRange !== 'all') {
+        if (priceRange === '0-30000' && prop.price > 30000) match = false;
+        else if (priceRange === '30000-80000' && (prop.price < 30000 || prop.price > 80000)) match = false;
+        else if (priceRange === '80000+' && prop.price <= 80000) match = false;
+      }
+      return match;
+    });
+    activeProperties = filtered;
+    renderProperties(activeProperties);
+  }
+
+  // Modal management
+  let currentModalProperty = null;
+  function openPropertyModal(propId) {
+    const prop = properties.find(p => p.id === propId);
+    if (!prop) return;
+    currentModalProperty = prop;
+    const modal = document.getElementById('propertyModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBodyContent');
+    modalTitle.innerText = `🏡 ${prop.name} • Management Hub`;
+    modalBody.innerHTML = `
+      <div style="margin-bottom:16px;"><img src="https://picsum.photos/id/${prop.imgId}/500/280" style="width:100%; border-radius:24px; object-fit:cover;"></div>
+      <p><strong><i class="fas fa-map-marker-alt"></i> Location:</strong> ${prop.location}</p>
+      <p><strong>💰 Monthly Rent:</strong> ${formatKES(prop.price)}</p>
+      <p><strong>🛏️ Bedrooms:</strong> ${prop.beds} | 🛁 Bathrooms: ${prop.baths} | 📐 Area: ${prop.area}</p>
+      <p><strong>✨ Amenities:</strong> ${prop.amenities.join(', ')}</p>
+      <p><strong>📋 Status:</strong> <span style="background:${prop.status === 'occupied' ? '#e6f7e6' : '#fff3e0'}; padding:4px 12px; border-radius:40px;">${prop.status === 'occupied' ? 'Occupied' : 'Vacant / Available'}</span></p>
+      <p><strong>🏠 Description:</strong> ${prop.desc}</p>
+      <div style="background:#f8fafd; padding:12px; border-radius:20px; margin-top:12px;"><i class="fas fa-chart-line"></i> <strong>Home Management Insights:</strong> Last maintenance: 25 days ago, Lease health: ${prop.status === 'occupied' ? 'Active' : 'Ready for lease'}</div>
+    `;
+    modal.style.display = 'flex';
+  }
+
+  function quickScheduleTour(propId) {
+    const prop = properties.find(p => p.id === propId);
+    if (prop) {
+      alert(`✨ Tour request sent for ${prop.name} (${prop.location}). Our property manager will confirm within 2 hours.`);
+      addActivity(`${prop.name} – Tour inquiry via Home Management panel`);
+    } else alert("Property not found");
+  }
+
+  function addActivity(msg) {
+    const feed = document.getElementById('activityFeed');
+    const newItem = document.createElement('div');
+    newItem.className = 'activity-item';
+    newItem.innerHTML = `<i class="fas fa-bell" style="color:#2563eb;"></i><div><strong>${msg}</strong> – just now</div>`;
+    feed.prepend(newItem);
+    if (feed.children.length > 5) feed.removeChild(feed.lastChild);
+  }
+
+  // attach modal close & management buttons
+  document.getElementById('closeModalBtn').addEventListener('click', () => { document.getElementById('propertyModal').style.display = 'none'; });
+  document.getElementById('scheduleTourModalBtn').addEventListener('click', () => { if(currentModalProperty) quickScheduleTour(currentModalProperty.id); document.getElementById('propertyModal').style.display = 'none'; });
+  document.getElementById('manageHomeModalBtn').addEventListener('click', () => {
+    if(currentModalProperty) {
+      alert(`🔧 Manage Home: "${currentModalProperty.name}" – Advanced options: lease renewal, maintenance log, financial report. (Demo) Full CRM integration ready.`);
+      addActivity(`Management action triggered for ${currentModalProperty.name}`);
+    }
+    document.getElementById('propertyModal').style.display = 'none';
+  });
+
+  window.onclick = function(e) { if(e.target === document.getElementById('propertyModal')) document.getElementById('propertyModal').style.display = 'none'; };
+
+  document.getElementById('applyFilterBtn').addEventListener('click', filterProperties);
+  document.getElementById('searchInput').addEventListener('keyup', filterProperties);
+
+  // additional quick filter updates
+  function simulateRealTime() {
+    filterProperties(); // initial
+  }
+
+  // init map & render all
+  window.addEventListener('load', () => {
+    renderProperties(properties);
+    initMap();
+    // extra: handle location permission pin (optional)
+    document.getElementById('applyFilterBtn').click();
+  });
+</script>
+</body>
+</html>

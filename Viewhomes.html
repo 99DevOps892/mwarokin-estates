@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> Mwarokin Estates - View Homes </title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏡</text></svg>" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        /* ── reset & base ── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        :root {
+            --primary: #0f1724;
+            --primary-light: #1a2a4a;
+            --primary-dark: #0a0f18;
+            --gold: #d4af37;
+            --gold-light: #f0d680;
+            --gold-glow: rgba(212, 175, 55, 0.25);
+            --surface: #f5f7fc;
+            --card-bg: #ffffff;
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.04);
+            --shadow: 0 8px 40px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 20px 60px rgba(0, 0, 0, 0.10);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --radius-full: 50px;
+            --transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --font: 'Inter', sans-serif;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font);
+            background: var(--surface);
+            color: #1a1f2e;
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        /* ── scrollbar ── */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--surface);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 10px;
+        }
+
+        /* ── glassmorphism ── */
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid var(--glass-border);
+        }
+
+        /* ── typography ── */
+        .text-gold {
+            color: var(--gold);
+        }
+        .text-gold-light {
+            color: var(--gold-light);
+        }
+        .bg-gold-soft {
+            background: rgba(212, 175, 55, 0.06);
+        }
+        .bg-gold-gradient {
+            background: linear-gradient(135deg, var(--gold), #c9a030);
+        }
+        .fw-700 {
+            font-weight: 700;
+        }
+        .fw-800 {
+            font-weight: 800;
+        }
+        .fw-900 {
+            font-weight: 900;
+        }
+        .letter-spacing-1 {
+            letter-spacing: 0.5px;
+        }
+
+        /* ── navbar ── */
+        .navbar-premium {
+            background: rgba(15, 23, 36, 0.95) !important;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 0.6rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1050;
+            transition: var(--transition);
+        }
+        .navbar-premium .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .navbar-premium .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--gold), #c9a030);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #0f1724;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.25);
+        }
+        .navbar-premium .brand-text {
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: -0.5px;
+            color: #fff;
+            line-height: 1;
+        }
+        .navbar-premium .brand-text span {
+            color: var(--gold);
+        }
+        .navbar-premium .brand-tag {
+            font-size: 0.5rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            color: var(--gold);
+            text-transform: uppercase;
+            display: block;
+            margin-top: -2px;
+        }
+        .navbar-premium .nav-link {
+            color: rgba(255, 255, 255, 0.7) !important;
+            font-weight: 500;
+            font-size: 0.88rem;
+            padding: 0.5rem 1.2rem !important;
+            border-radius: var(--radius-full);
+            transition: var(--transition);
+            position: relative;
+        }
+        .navbar-premium .nav-link:hover,
+        .navbar-premium .nav-link.active {
+            color: #fff !important;
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .navbar-premium .nav-link .badge-dot {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 7px;
+            height: 7px;
+            background: #e74c3c;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+        }
+        .navbar-premium .btn-outline-gold-nav {
+            border: 1.5px solid var(--gold);
+            color: var(--gold);
+            background: transparent;
+            padding: 0.4rem 1.6rem;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+        .navbar-premium .btn-outline-gold-nav:hover {
+            background: var(--gold);
+            color: #0f1724;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.25);
+        }
+        .navbar-premium .btn-gold-nav {
+            background: linear-gradient(135deg, var(--gold), #c9a030);
+            border: none;
+            color: #0f1724;
+            font-weight: 600;
+            padding: 0.4rem 1.6rem;
+            border-radius: var(--radius-full);
+            transition: var(--transition);
+            font-size: 0.85rem;
+        }
+        .navbar-premium .btn-gold-nav:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+            color: #0f1724;
+        }
+        .dropdown-menu-premium {
+            background: rgba(15, 23, 36, 0.97);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-sm);
+            padding: 0.5rem 0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        .dropdown-menu-premium .dropdown-item {
+            color: rgba(255, 255, 255, 0.75);
+            padding: 0.5rem 1.5rem;
+            font-weight: 450;
+            font-size: 0.88rem;
+            transition: var(--transition);
+        }
+        .dropdown-menu-premium .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+        .dropdown-menu-premium .dropdown-item i {
+            width: 20px;
+            color: var(--gold);
+        }
+
+        /* ── hero / showcase ── */
+        .hero-showcase {
+            position: relative;
+            padding: 4rem 0 5rem;
+            background: linear-gradient(160deg, #0a0f18 0%, #15203a 40%, #1a2a4a 100%);
+            overflow: hidden;
+            border-bottom: 2px solid rgba(212, 175, 55, 0.15);
+        }
+        .hero-showcase::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 15% 30%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 85% 70%, rgba(26, 42, 74, 0.4) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .hero-showcase .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(212, 175, 55, 0.12);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            color: var(--gold-light);
+            padding: 0.3rem 1.4rem;
+            border-radius: var(--radius-full);
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            backdrop-filter: blur(4px);
+        }
+        .hero-showcase h1 {
+            font-weight: 900;
+            font-size: 3.8rem;
+            letter-spacing: -1.5px;
+            line-height: 1.05;
+            color: #fff;
+        }
+        .hero-showcase h1 .highlight {
+            background: linear-gradient(135deg, var(--gold), #f5d97a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-showcase p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.1rem;
+            max-width: 480px;
+            font-weight: 400;
+            line-height: 1.7;
+        }
+        .hero-showcase .hero-stats {
+            display: flex;
+            gap: 2.5rem;
+            margin-top: 1.8rem;
+        }
+        .hero-showcase .hero-stats .stat-item .number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1;
+        }
+        .hero-showcase .hero-stats .stat-item .label {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .hero-showcase .hero-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .hero-showcase .hero-visual .visual-ring {
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(212, 175, 55, 0.12), transparent 70%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            animation: float-ring 6s ease-in-out infinite;
+            position: relative;
+        }
+        .hero-showcase .hero-visual .visual-ring i {
+            font-size: 6rem;
+            color: var(--gold);
+            filter: drop-shadow(0 8px 40px rgba(212, 175, 55, 0.2));
+        }
+        .hero-showcase .hero-visual .visual-ring .ring-orb {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--gold);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+            animation: orbit 8s linear infinite;
+        }
+        .hero-showcase .hero-visual .visual-ring .ring-orb:nth-child(2) {
+            animation-delay: 2s;
+            width: 8px;
+            height: 8px;
+            background: rgba(212, 175, 55, 0.5);
+        }
+        .hero-showcase .hero-visual .visual-ring .ring-orb:nth-child(3) {
+            animation-delay: 4s;
+            width: 6px;
+            height: 6px;
+            background: rgba(212, 175, 55, 0.3);
+        }
+        @keyframes float-ring {
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-14px);
+            }
+        }
+        @keyframes orbit {
+            0% {
+                transform: rotate(0deg) translateX(110px);
+            }
+            100% {
+                transform: rotate(360deg) translateX(110px);
+            }
+        }
+        .hero-showcase .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 0.4rem 1.4rem;
+            border-radius: var(--radius-full);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .hero-showcase .live-badge .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #2ecc71;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.4;
+                transform: scale(0.8);
+            }
+        }
+
+        /* ── search bar ── */
+        .search-bar-premium {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem 2rem;
+            margin-top: -2.5rem;
+            position: relative;
+            z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: var(--transition);
+        }
+        .search-bar-premium:hover {
+            box-shadow: var(--shadow-hover);
+        }
+        .search-bar-premium .form-control,
+        .search-bar-premium .form-select {
+            border-radius: var(--radius-sm);
+            border: 1px solid #e8ecf3;
+            padding: 0.65rem 1.1rem;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            background: #fafbff;
+        }
+        .search-bar-premium .form-control:focus,
+        .search-bar-premium .form-select:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.08);
+            background: #fff;
+        }
+        .search-bar-premium .form-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6b7a8f;
+            margin-bottom: 0.3rem;
+        }
+        .search-bar-premium .btn-search {
+            background: linear-gradient(135deg, var(--gold), #c9a030);
+            border: none;
+            color: #0f1724;
+            font-weight: 600;
+            padding: 0.65rem 2.2rem;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            width: 100%;
+            font-size: 0.9rem;
+        }
+        .search-bar-premium .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+        }
+        .search-bar-premium .btn-outline-gold-sm {
+            border: 1.5px solid var(--gold);
+            color: var(--primary);
+            background: transparent;
+            border-radius: var(--radius-sm);
+            padding: 0.5rem 1.2rem;
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+        .search-bar-premium .btn-outline-gold-sm:hover {
+            background: var(--gold);
+            color: #0f1724;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.15);
+        }
+        .search-bar-premium .currency-chip {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: #fff;
+            padding: 0.4rem 1.4rem;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(15, 23, 36, 0.15);
+        }
+        .search-bar-premium .currency-chip i {
+            color: var(--gold);
+        }
+
+        /* ── property grid ── */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.8rem;
+        }
+        .section-header h2 {
+            font-weight: 800;
+            font-size: 1.8rem;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+        .section-header .view-all {
+            color: var(--gold);
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        .section-header .view-all:hover {
+            color: #c9a030;
+            transform: translateX(4px);
+        }
+
+        .property-card-modern {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            height: 100%;
+            position: relative;
+        }
+        .property-card-modern:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+        .property-card-modern .card-img-wrap {
+            position: relative;
+            overflow: hidden;
+            height: 220px;
+            background: #e8ecf3;
+        }
+        .property-card-modern .card-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+        .property-card-modern:hover .card-img-wrap img {
+            transform: scale(1.05);
+        }
+        .property-card-modern .card-img-wrap .badge-status-modern {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            padding: 0.25rem 1.2rem;
+            border-radius: var(--radius-full);
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .property-card-modern .card-img-wrap .badge-status-modern.available {
+            background: rgba(46, 204, 113, 0.85);
+            color: #fff;
+        }
+        .property-card-modern .card-img-wrap .badge-status-modern.occupied {
+            background: rgba(241, 196, 15, 0.85);
+            color: #0f1724;
+        }
+        .property-card-modern .card-img-wrap .badge-status-modern.maintenance {
+            background: rgba(231, 76, 60, 0.85);
+            color: #fff;
+        }
+        .property-card-modern .card-img-wrap .badge-status-modern.coming {
+            background: rgba(52, 152, 219, 0.85);
+            color: #fff;
+        }
+        .property-card-modern .card-img-wrap .btn-fav {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7a8f;
+            transition: var(--transition);
+            font-size: 0.85rem;
+        }
+        .property-card-modern .card-img-wrap .btn-fav:hover {
+            background: #fff;
+            color: #e74c3c;
+            transform: scale(1.1);
+        }
+        .property-card-modern .card-img-wrap .btn-fav.liked {
+            color: #e74c3c;
+        }
+        .property-card-modern .card-body {
+            padding: 1.2rem 1.4rem 1.4rem;
+        }
+        .property-card-modern .card-body .property-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--primary);
+            margin-bottom: 0.2rem;
+        }
+        .property-card-modern .card-body .property-location {
+            color: #6b7a8f;
+            font-size: 0.85rem;
+        }
+        .property-card-modern .card-body .property-location i {
+            color: var(--gold);
+            margin-right: 4px;
+        }
+        .property-card-modern .card-body .property-price {
+            font-weight: 800;
+            font-size: 1.35rem;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+        .property-card-modern .card-body .property-price span {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #6b7a8f;
+        }
+        .property-card-modern .card-body .property-features {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: #6b7a8f;
+            margin-top: 0.3rem;
+        }
+        .property-card-modern .card-body .property-features i {
+            color: var(--gold);
+            margin-right: 4px;
+        }
+        .property-card-modern .card-body .btn-view-modern {
+            background: var(--primary);
+            border: none;
+            color: #fff;
+            padding: 0.45rem 1.5rem;
+            border-radius: var(--radius-full);
+            font-weight: 500;
+            transition: var(--transition);
+            font-size: 0.82rem;
+            width: 100%;
+        }
+        .property-card-modern .card-body .btn-view-modern:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(15, 23, 36, 0.15);
+            color: #fff;
+        }
+        .property-card-modern .card-body .btn-view-modern i {
+            margin-right: 6px;
+        }
+
+        /* ── quick stats bar ── */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .stats-bar .stat-block {
+            background: var(--card-bg);
+            border-radius: var(--radius-sm);
+            padding: 1.2rem 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            transition: var(--transition);
+            text-align: center;
+        }
+        .stats-bar .stat-block:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+        }
+        .stats-bar .stat-block .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+        .stats-bar .stat-block .stat-number.gold {
+            color: var(--gold);
+        }
+        .stats-bar .stat-block .stat-label {
+            font-size: 0.8rem;
+            color: #6b7a8f;
+            font-weight: 500;
+        }
+        .stats-bar .stat-block .stat-icon-sm {
+            font-size: 1.4rem;
+            color: var(--gold);
+            opacity: 0.4;
+            margin-bottom: 0.2rem;
+        }
+
+        /* ── featured / spotlight ── */
+        .spotlight-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+        .spotlight-card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+        .spotlight-card .spotlight-img {
+            height: 260px;
+            overflow: hidden;
+            position: relative;
+        }
+        .spotlight-card .spotlight-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+        .spotlight-card:hover .spotlight-img img {
+            transform: scale(1.03);
+        }
+        .spotlight-card .spotlight-img .spotlight-tag {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            padding: 0.3rem 1.2rem;
+            border-radius: var(--radius-full);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .spotlight-card .spotlight-body {
+            padding: 1.4rem 1.6rem 1.6rem;
+        }
+        .spotlight-card .spotlight-body .spotlight-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+        .spotlight-card .spotlight-body .spotlight-desc {
+            color: #6b7a8f;
+            font-size: 0.9rem;
+        }
+        .spotlight-card .spotlight-body .spotlight-price {
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--gold);
+            letter-spacing: -0.5px;
+        }
+
+        /* ── chat assistant ── */
+        .chat-modern {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.02);
+        }
+        .chat-modern .chat-header {
+            background: var(--primary);
+            padding: 0.9rem 1.6rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .chat-modern .chat-header i {
+            font-size: 1.3rem;
+            color: var(--gold);
+        }
+        .chat-modern .chat-header h5 {
+            font-weight: 600;
+            margin: 0;
+            font-size: 1rem;
+        }
+        .chat-modern .chat-header .chat-status {
+            margin-left: auto;
+            font-size: 0.7rem;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 0.2rem 1rem;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .chat-modern .chat-header .chat-status .dot {
+            width: 6px;
+            height: 6px;
+            background: #2ecc71;
+            border-radius: 50%;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+        .chat-modern .chat-body {
+            height: 260px;
+            overflow-y: auto;
+            padding: 1.2rem 1.6rem;
+            background: #fafbff;
+        }
+        .chat-modern .chat-body .msg {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+        .chat-modern .chat-body .msg.bot {
+            justify-content: flex-start;
+        }
+        .chat-modern .chat-body .msg.user {
+            justify-content: flex-end;
+        }
+        .chat-modern .chat-body .msg .bubble {
+            max-width: 78%;
+            padding: 0.6rem 1.2rem;
+            border-radius: 14px;
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+        .chat-modern .chat-body .msg.bot .bubble {
+            background: #fff;
+            color: var(--primary);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            border-bottom-left-radius: 4px;
+        }
+        .chat-modern .chat-body .msg.user .bubble {
+            background: linear-gradient(135deg, var(--gold), #c9a030);
+            color: #0f1724;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-modern .chat-footer {
+            padding: 0.9rem 1.6rem;
+            border-top: 1px solid #eef2f7;
+            background: #fff;
+        }
+        .chat-modern .chat-footer .input-group-custom {
+            display: flex;
+            gap: 8px;
+        }
+        .chat-modern .chat-footer .input-group-custom input {
+            flex: 1;
+            border: 1px solid #e8ecf3;
+            border-radius: var(--radius-full);
+            padding: 0.55rem 1.2rem;
+            font-size: 0.88rem;
+            transition: var(--transition);
+            outline: none;
+            background: #fafbff;
+        }
+        .chat-modern .chat-footer .input-group-custom input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.06);
+            background: #fff;
+        }
+        .chat-modern .chat-footer .input-group-custom button {
+            border: none;
+            background: var(--gold);
+            color: #0f1724;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .chat-modern .chat-footer .input-group-custom button:hover {
+            background: #c9a030;
+            transform: scale(1.04);
+        }
+        .chat-modern .chat-footer .input-group-custom button.mic {
+            background: transparent;
+            border: 1px solid #e8ecf3;
+            color: #6b7a8f;
+        }
+        .chat-modern .chat-footer .input-group-custom button.mic:hover {
+            background: #f0f3f8;
+            transform: none;
+        }
+
+        /* ── footer ── */
+        .footer-modern {
+            background: #0a0f18;
+            color: rgba(255, 255, 255, 0.6);
+            padding: 3.5rem 0 1.8rem;
+            margin-top: 4rem;
+            border-top: 1px solid rgba(212, 175, 55, 0.08);
+        }
+        .footer-modern h5 {
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        .footer-modern .footer-link {
+            display: block;
+            color: rgba(255, 255, 255, 0.45);
+            transition: var(--transition);
+            padding: 0.15rem 0;
+            font-size: 0.85rem;
+        }
+        .footer-modern .footer-link:hover {
+            color: var(--gold);
+            padding-left: 4px;
+        }
+        .footer-modern .social-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.3);
+            transition: var(--transition);
+            background: transparent;
+            font-size: 0.85rem;
+        }
+        .footer-modern .social-btn:hover {
+            background: var(--gold);
+            color: #0a0f18;
+            border-color: var(--gold);
+        }
+        .footer-modern .border-top {
+            border-color: rgba(255, 255, 255, 0.04) !important;
+        }
+
+        /* ── back to top ── */
+        .back-to-top-modern {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), #c9a030);
+            color: #0f1724;
+            border: none;
+            font-size: 1.1rem;
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2);
+            transition: var(--transition);
+            opacity: 0;
+            transform: scale(0.8);
+            pointer-events: none;
+            z-index: 1060;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-modern.visible {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+        .back-to-top-modern:hover {
+            transform: translateY(-4px) scale(1.04);
+            box-shadow: 0 12px 35px rgba(212, 175, 55, 0.3);
+            color: #0f1724;
+        }
+
+        /* ── agentic badge ── */
+        .agentic-badge-modern {
+            position: fixed;
+            bottom: 28px;
+            left: 28px;
+            background: rgba(10, 15, 24, 0.92);
+            backdrop-filter: blur(12px);
+            padding: 0.4rem 1.4rem;
+            border-radius: var(--radius-full);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            font-weight: 500;
+            z-index: 1060;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+        .agentic-badge-modern .pulse-dot {
+            width: 7px;
+            height: 7px;
+            background: #2ecc71;
+            border-radius: 50%;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        /* ── modal ── */
+        .modal-modern .modal-content {
+            background: #fff;
+            border-radius: var(--radius);
+            border: none;
+            box-shadow: var(--shadow-hover);
+        }
+        .modal-modern .modal-header {
+            border-bottom: 1px solid #eef2f7;
+            padding: 1.2rem 1.8rem;
+        }
+        .modal-modern .modal-header h5 {
+            font-weight: 700;
+        }
+        .modal-modern .modal-body {
+            padding: 1.8rem;
+        }
+        .modal-modern .modal-footer {
+            border-top: 1px solid #eef2f7;
+            padding: 1.2rem 1.8rem;
+        }
+        .modal-modern .btn-close-custom {
+            background: transparent;
+            border: none;
+            font-size: 1.3rem;
+            color: #6b7a8f;
+            transition: var(--transition);
+        }
+        .modal-modern .btn-close-custom:hover {
+            color: var(--primary);
+            transform: rotate(90deg);
+        }
+
+        /* ── responsive ── */
+        @media (max-width: 992px) {
+            .hero-showcase h1 {
+                font-size: 2.8rem;
+            }
+            .hero-showcase .hero-visual .visual-ring {
+                width: 200px;
+                height: 200px;
+            }
+            .hero-showcase .hero-visual .visual-ring i {
+                font-size: 4.5rem;
+            }
+            .hero-showcase .hero-stats {
+                gap: 1.5rem;
+            }
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 768px) {
+            .hero-showcase {
+                padding: 2.5rem 0 3.5rem;
+            }
+            .hero-showcase h1 {
+                font-size: 2.2rem;
+            }
+            .hero-showcase .hero-stats .stat-item .number {
+                font-size: 1.4rem;
+            }
+            .search-bar-premium {
+                margin-top: -1.5rem;
+                padding: 1.2rem;
+            }
+            .stats-bar {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.8rem;
+            }
+            .stats-bar .stat-block {
+                padding: 0.8rem 1rem;
+            }
+            .stats-bar .stat-block .stat-number {
+                font-size: 1.5rem;
+            }
+            .section-header h2 {
+                font-size: 1.4rem;
+            }
+            .agentic-badge-modern {
+                display: none;
+            }
+            .navbar-premium .brand-text {
+                font-size: 1.2rem;
+            }
+        }
+        @media (max-width: 576px) {
+            .hero-showcase h1 {
+                font-size: 1.8rem;
+            }
+            .hero-showcase p {
+                font-size: 0.95rem;
+            }
+            .hero-showcase .hero-stats {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            .stats-bar {
+                grid-template-columns: 1fr 1fr;
+            }
+            .property-card-modern .card-img-wrap {
+                height: 170px;
+            }
+            .search-bar-premium .currency-chip {
+                font-size: 0.7rem;
+                padding: 0.3rem 1rem;
+            }
+        }
+
+        /* ── utilities ── */
+        .gap-2 {
+            gap: 0.5rem;
+        }
+        .gap-3 {
+            gap: 1rem;
+        }
+        .cursor-pointer {
+            cursor: pointer;
+        }
+        .rounded-4 {
+            border-radius: var(--radius);
+        }
+        .border-gold {
+            border-color: var(--gold) !important;
+        }
+
+        /* ── smooth reveal ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar navbar-expand-lg navbar-premium">
+        <div class="container">
+            <a href="#" class="navbar-brand">
+                <span class="brand-icon"><i class="fas fa-crown"></i></span>
+                <div>
+                    <span class="brand-text">Mwarokin <span>Estates</span></span>
+                    <span class="brand-tag">Premium Living</span>
+                </div>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
+                    <li class="nav-item"><a href="index.html" class="nav-link active">Home</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Properties</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Manage</a></li>
+                    <li class="nav-item"><a href="Payments.html" class="nav-link">Payments</a></li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">More</a>
+                        <ul class="dropdown-menu dropdown-menu-premium">
+                            <li><a class="dropdown-item" href="My Profile.html"><i class="fas fa-user me-2"></i>My Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-calculator me-2"></i>Rent Calculator</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-language me-2"></i>Language</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-video me-2"></i>Media</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-tools me-2"></i>Maintenance</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-map-pin me-2"></i>Vacancy Locator</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a href="#" class="nav-link">Support</a></li>
+                    <li class="nav-item position-relative">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-bell"></i>
+                            <span class="badge-dot"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item ms-lg-1"><a href="#" class="btn-gold-nav btn">Log Out</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== HERO SHOWCASE ===== -->
+    <section class="hero-showcase">
+        <div class="container position-relative">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-7">
+                    <span class="hero-badge"><i class="fas fa-sparkles me-1"></i> AI-Powered Property Intelligence</span>
+                    <h1 class="mt-3">
+                        Find Your <br /><span class="highlight">Dream Home</span>
+                    </h1>
+                    <p>Discover premium properties with real‑time insights, virtual tours, and seamless tenant–landlord orchestration.</p>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <div class="number" id="heroTotal">24</div>
+                            <div class="label">Properties</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="number" id="heroAvailable">6</div>
+                            <div class="label">Available</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="number" id="heroOccupied">18</div>
+                            <div class="label">Occupied</div>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-wrap gap-3 mt-4">
+                        <span class="live-badge">
+                            <span class="pulse-dot"></span> Live Updates
+                        </span>
+                        <span class="live-badge">
+                            <i class="fas fa-shield-alt text-gold"></i> Enterprise Grade
+                        </span>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="hero-visual">
+                        <div class="visual-ring">
+                            <i class="fas fa-building-columns"></i>
+                            <span class="ring-orb"></span>
+                            <span class="ring-orb"></span>
+                            <span class="ring-orb"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SEARCH BAR ===== -->
+    <div class="container">
+        <div class="search-bar-premium">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label"><i class="fas fa-search me-1"></i> Keyword</label>
+                    <input type="text" class="form-control" id="searchKeyword" placeholder="Search properties..." />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label"><i class="fas fa-globe me-1"></i> Continent</label>
+                    <select class="form-select" id="continentSelect">
+                        <option selected>All</option>
+                        <option>Africa</option>
+                        <option>Asia</option>
+                        <option>Europe</option>
+                        <option>North America</option>
+                        <option>South America</option>
+                        <option>Australia</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label"><i class="fas fa-flag me-1"></i> Country</label>
+                    <select class="form-select" id="countrySelect">
+                        <option selected>All Countries</option>
+                        <option>Kenya</option>
+                        <option>Tanzania</option>
+                        <option>Uganda</option>
+                        <option>Rwanda</option>
+                        <option>Ethiopia</option>
+                        <option>Nigeria</option>
+                        <option>Ghana</option>
+                        <option>South Africa</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label"><i class="fas fa-home me-1"></i> Type</label>
+                    <select class="form-select" id="propertyType">
+                        <option selected>All Types</option>
+                        <option>Apartment</option>
+                        <option>House</option>
+                        <option>Commercial</option>
+                        <option>Land</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <div class="d-flex gap-2">
+                        <button class="btn-search btn" onclick="searchProperties()">
+                            <i class="fas fa-search me-2"></i>Search
+                        </button>
+                        <button class="btn-outline-gold-sm btn" onclick="getLocation()" title="Pin Location">
+                            <i class="fas fa-map-pin"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3 align-items-center">
+                <div class="col-md-8">
+                    <button class="btn-outline-gold-sm btn btn-sm" data-bs-toggle="collapse" data-bs-target="#advancedFilters">
+                        <i class="fas fa-sliders-h me-2"></i>Advanced Filters
+                    </button>
+                    <button class="btn-outline-gold-sm btn btn-sm ms-2" onclick="getLocation()">
+                        <i class="fas fa-location-dot me-2"></i>My Location
+                    </button>
+                </div>
+                <div class="col-md-4 text-end">
+                    <span class="currency-chip">
+                        <i class="fas fa-coins"></i> KES 1 = XAF 15.2
+                    </span>
+                </div>
+            </div>
+
+            <!-- Advanced Filters -->
+            <div class="collapse mt-3" id="advancedFilters">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Price Range</label>
+                        <div class="d-flex gap-2">
+                            <input type="number" class="form-control" placeholder="Min" id="priceMin" />
+                            <input type="number" class="form-control" placeholder="Max" id="priceMax" />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Bedrooms</label>
+                        <select class="form-select" id="bedrooms">
+                            <option selected>Any</option>
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4+</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="propertyStatus">
+                            <option selected>Any</option>
+                            <option>Available</option>
+                            <option>Occupied</option>
+                            <option>Maintenance</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">&nbsp;</label>
+                        <button class="btn-search btn w-100" onclick="applyAdvancedFilters()">Apply</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location result -->
+            <div class="mt-3 p-3 rounded-4 bg-gold-soft" id="locationResult" style="display: none;">
+                <div class="row align-items-center">
+                    <div class="col-md-7">
+                        <i class="fas fa-map-pin text-gold me-2"></i>
+                        <span id="locationDetails">Latitude: -, Longitude: -</span>
+                    </div>
+                    <div class="col-md-5 text-md-end">
+                        <button class="btn-outline-gold-sm btn btn-sm" onclick="updateMap()">Update Map</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== STATS BAR ===== -->
+    <div class="container">
+        <div class="stats-bar">
+            <div class="stat-block">
+                <div class="stat-icon-sm"><i class="fas fa-home"></i></div>
+                <div class="stat-number" id="statTotal">24</div>
+                <div class="stat-label">Total Properties</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-icon-sm"><i class="fas fa-user-check"></i></div>
+                <div class="stat-number gold" id="statOccupied">18</div>
+                <div class="stat-label">Occupied</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-icon-sm"><i class="fas fa-money-bill-wave"></i></div>
+                <div class="stat-number gold" id="statRevenue">KSh 245.6k</div>
+                <div class="stat-label">Monthly Revenue</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-icon-sm"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="stat-number" id="statPending">3</div>
+                <div class="stat-label">Pending Payments</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FEATURED SPOTLIGHT ===== -->
+    <div class="container my-4">
+        <div class="spotlight-card">
+            <div class="row g-0">
+                <div class="col-lg-6">
+                    <div class="spotlight-img">
+                        <img src="https://picsum.photos/seed/spotlight/800/500" alt="Featured Property" />
+                        <span class="spotlight-tag"><i class="fas fa-star me-1"></i> Featured</span>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="spotlight-body d-flex flex-column justify-content-center h-100">
+                        <span class="text-gold fw-600 text-uppercase small letter-spacing-1">Exclusive Listing</span>
+                        <div class="spotlight-title">Luxury Penthouse · Nairobi</div>
+                        <div class="spotlight-desc">Panoramic city views, 4 bedrooms, private rooftop terrace, and premium finishes in the heart of the city.</div>
+                        <div class="d-flex align-items-center gap-3 mt-2">
+                            <span class="spotlight-price">KSh 85,000 <span>/ month</span></span>
+                            <span class="text-secondary" style="font-size:0.85rem;"><i class="fas fa-bed me-1"></i> 4 Beds</span>
+                            <span class="text-secondary" style="font-size:0.85rem;"><i class="fas fa-bath me-1"></i> 3 Baths</span>
+                        </div>
+                        <button class="btn-view-modern btn mt-3" style="width:auto;padding:0.5rem 2rem;" onclick="viewSpotlight()">
+                            <i class="fas fa-arrow-right"></i> Explore Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== PROPERTIES GRID ===== -->
+    <section class="container my-5">
+        <div class="section-header">
+            <h2><i class="fas fa-building text-gold me-2"></i> Available Properties</h2>
+            <span class="view-all">View All <i class="fas fa-arrow-right ms-1"></i></span>
+        </div>
+        <div class="row g-4" id="propertiesGrid">
+            <!-- dynamic -->
+        </div>
+    </section>
+
+    <!-- ===== CHAT ASSISTANT ===== -->
+    <section class="container my-5">
+        <div class="chat-modern">
+            <div class="chat-header">
+                <i class="fas fa-robot"></i>
+                <h5>Mwarokin AI Assistant</h5>
+                <span class="chat-status">
+                    <span class="dot"></span> Online
+                </span>
+            </div>
+            <div class="chat-body" id="chatDisplay">
+                <div class="msg bot">
+                    <div class="bubble">
+                        👋 Hello! I'm your Mwarokin AI assistant. I can help you find properties, track payments, communicate with tenants, and automate workflows. How can I assist you today?
+                    </div>
+                </div>
+            </div>
+            <div class="chat-footer">
+                <div class="input-group-custom">
+                    <input type="text" id="userInput" placeholder="Ask your question..." onkeypress="handleKeyPress(event)" />
+                    <button class="mic" onclick="startVoiceInput()"><i class="fas fa-microphone"></i></button>
+                    <button onclick="handleUserInput()"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer-modern">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="brand-icon" style="width:36px;height:36px;font-size:1rem;"><i class="fas fa-crown"></i></span>
+                        <span style="font-weight:800;font-size:1.2rem;color:#fff;">Mwarokin</span>
+                    </div>
+                    <p class="small" style="max-width:260px;">Advanced property management with AI‑driven insights and premium tenant experiences.</p>
+                    <div class="d-flex gap-2">
+                        <a href="#" class="social-btn"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-btn"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-btn"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="social-btn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>Quick Links</h5>
+                    <a href="#" class="footer-link">Mother Title</a>
+                    <a href="#" class="footer-link">Mortgage Calculator</a>
+                    <a href="#" class="footer-link">My Locator</a>
+                    <a href="#" class="footer-link">Lipa Mdogo Plan</a>
+                    <a href="#" class="footer-link">Neighborhoods</a>
+                    <a href="#" class="footer-link">Upgrade &amp; Relocation</a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>Gallery</h5>
+                    <div class="row g-2">
+                        <div class="col-4"><div class="rounded-3" style="height:60px;background:linear-gradient(135deg,#1a2a4a,#0f1724);"></div></div>
+                        <div class="col-4"><div class="rounded-3" style="height:60px;background:linear-gradient(135deg,#d4af37,#c9a030);"></div></div>
+                        <div class="col-4"><div class="rounded-3" style="height:60px;background:linear-gradient(135deg,#0f1724,#1a2a4a);"></div></div>
+                        <div class="col-4"><div class="rounded-3" style="height:60px;background:linear-gradient(135deg,#c9a030,#d4af37);"></div></div>
+                        <div class="col-4"><div class="rounded-3" style="height:60px;background:linear-gradient(135deg,#1a2a4a,#0f1724);"></div></div>
+                        <div class="col-4"><div class="rounded-3" style="height:60px;background:linear-gradient(135deg,#d4af37,#c9a030);"></div></div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>Subscribe</h5>
+                    <p class="small">Get the latest property updates and insights.</p>
+                    <div class="d-flex">
+                        <input type="email" class="form-control form-control-sm bg-transparent text-white border-secondary" placeholder="Your email" style="border-radius:50px 0 0 50px;border-color:rgba(255,255,255,0.08);" />
+                        <button class="btn btn-sm" style="background:var(--gold);color:#0f1724;border-radius:0 50px 50px 0;padding:0.4rem 1.2rem;font-weight:600;">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-top pt-4 mt-4 text-center small">
+                &copy; 2026 Mwarokin Estates — Advanced Property Management. Powered by Syllogism Technology Africa.
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== BACK TO TOP ===== -->
+    <button class="back-to-top-modern" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- ===== AGENTIC BADGE ===== -->
+    <div class="agentic-badge-modern">
+        <span class="pulse-dot"></span>
+        <span>AI Agent Active</span>
+    </div>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+    <script>
+        /* ── DATA ── */
+        const propertiesData = [
+            { id: 1, type: "Two-Bedroom Apartment", location: "Kangemi", price: 22064, status: "occupied",
+                image: "https://picsum.photos/seed/p1/600/400", beds: 2, baths: 1, area: "85 m²" },
+            { id: 2, type: "Three-Bedroom House", location: "Taveta", price: 35000, status: "available",
+                image: "https://picsum.photos/seed/p2/600/400", beds: 3, baths: 2, area: "140 m²" },
+            { id: 3, type: "One-Bedroom Studio", location: "Kiambu", price: 12000, status: "occupied",
+                image: "https://picsum.photos/seed/p3/600/400", beds: 1, baths: 1, area: "45 m²" },
+            { id: 4, type: "Compound Home", location: "Taveta", price: 135000, status: "maintenance",
+                image: "https://picsum.photos/seed/p4/600/400", beds: 5, baths: 3, area: "220 m²" },
+            { id: 5, type: "Bed-Sitter", location: "Jericho", price: 8000, status: "available",
+                image: "https://picsum.photos/seed/p5/600/400", beds: 1, baths: 1, area: "30 m²" },
+            { id: 6, type: "Studio Apartment", location: "Westlands", price: 18000, status: "coming",
+                image: "https://picsum.photos/seed/p6/600/400", beds: 1, baths: 1, area: "50 m²" },
+            { id: 7, type: "Four-Bedroom Villa", location: "Karen", price: 95000, status: "available",
+                image: "https://picsum.photos/seed/p7/600/400", beds: 4, baths: 3, area: "180 m²" },
+            { id: 8, type: "Two-Bedroom Duplex", location: "Runda", price: 48000, status: "occupied",
+                image: "https://picsum.photos/seed/p8/600/400", beds: 2, baths: 2, area: "110 m²" },
+        ];
+
+        const tenantsData = [
+            { id: 111, property: "Two-Bedroom Apartment", location: "Kangemi", payment: 22064, name: "Mwarema",
+                month: "January", year: 2023, status: "paid" },
+            { id: 22, property: "Three-Bedroom House", location: "Taveta", payment: 35000, name: "Kisha",
+                month: "March", year: 2019, status: "overdue" },
+            { id: 144, property: "One-Bedroom Studio", location: "Kiambu", payment: 12000, name: "Joyce",
+                month: "January", year: 2012, status: "paid" },
+            { id: 88, property: "Compound Home", location: "Taveta", payment: 135000, name: "Mwarema",
+                month: "September", year: 2024, status: "pending" },
+            { id: 90, property: "Bed-Sitter", location: "Jericho", payment: 8000, name: "Jane", month: "January",
+                year: 2023, status: "paid" },
+            { id: 56, property: "Studio Apartment", location: "Westlands", payment: 18000, name: "S.Muele",
+                month: "April", year: 2024, status: "pending" },
+        ];
+
+        /* ── LOAD PROPERTIES ── */
+        function loadProperties() {
+            const grid = document.getElementById('propertiesGrid');
+            grid.innerHTML = '';
+            propertiesData.forEach(p => {
+                const statusLabel = p.status.charAt(0).toUpperCase() + p.status.slice(1);
+                const badgeClass = p.status;
+                const iconMap = {
+                    'occupied': 'fa-user-check',
+                    'available': 'fa-check-circle',
+                    'maintenance': 'fa-tools',
+                    'coming': 'fa-clock'
+                };
+                const icon = iconMap[p.status] || 'fa-home';
+                grid.innerHTML += `
+                        <div class="col-lg-4 col-md-6">
+                            <div class="property-card-modern">
+                                <div class="card-img-wrap">
+                                    <img src="${p.image}" alt="${p.type}" loading="lazy" />
+                                    <span class="badge-status-modern ${badgeClass}"><i class="fas ${icon} me-1"></i> ${statusLabel}</span>
+                                    <button class="btn-fav" onclick="toggleFav(this)"><i class="far fa-heart"></i></button>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <div class="property-title">${p.type}</div>
+                                            <div class="property-location"><i class="fas fa-map-pin"></i> ${p.location}</div>
+                                        </div>
+                                        <span class="property-price">KSh ${p.price.toLocaleString()}<span>/mo</span></span>
+                                    </div>
+                                    <div class="property-features">
+                                        <span><i class="fas fa-bed"></i> ${p.beds} beds</span>
+                                        <span><i class="fas fa-bath"></i> ${p.baths} baths</span>
+                                        <span><i class="fas fa-vector-square"></i> ${p.area}</span>
+                                    </div>
+                                    <button class="btn-view-modern btn mt-3" onclick="viewProperty(${p.id})">
+                                        <i class="fas fa-arrow-right"></i> View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+            });
+            updateStats();
+        }
+
+        /* ── UPDATE STATS ── */
+        function updateStats() {
+            const total = propertiesData.length;
+            const occupied = propertiesData.filter(p => p.status === 'occupied').length;
+            const available = propertiesData.filter(p => p.status === 'available').length;
+            const maintenance = propertiesData.filter(p => p.status === 'maintenance').length;
+            const coming = propertiesData.filter(p => p.status === 'coming').length;
+
+            // Hero stats
+            document.getElementById('heroTotal').textContent = total;
+            document.getElementById('heroAvailable').textContent = available + coming;
+            document.getElementById('heroOccupied').textContent = occupied;
+
+            // Stats bar
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statOccupied').textContent = occupied;
+
+            const rev = propertiesData.reduce((s, p) => s + (p.status === 'occupied' ? p.price : 0), 0);
+            document.getElementById('statRevenue').textContent = `KSh ${(rev/1000).toFixed(1)}k`;
+
+            const pending = tenantsData.filter(t => t.status === 'pending' || t.status === 'overdue').length;
+            document.getElementById('statPending').textContent = pending;
+        }
+
+        /* ── SEARCH ── */
+        function searchProperties() {
+            const kw = document.getElementById('searchKeyword').value.trim() || 'all';
+            const country = document.getElementById('countrySelect').value;
+            const type = document.getElementById('propertyType').value;
+            alert(`🔍 Searching: "${kw}" in ${country} (${type})`);
+        }
+
+        function applyAdvancedFilters() {
+            const min = document.getElementById('priceMin').value || 'any';
+            const max = document.getElementById('priceMax').value || 'any';
+            const beds = document.getElementById('bedrooms').value;
+            const status = document.getElementById('propertyStatus').value;
+            alert(`⚙️ Filters: Price ${min}–${max}, Beds: ${beds}, Status: ${status}`);
+        }
+
+        /* ── LOCATION ── */
+        function getLocation() {
+            if (!navigator.geolocation) {
+                document.getElementById('locationDetails').textContent = 'Geolocation not supported.';
+                document.getElementById('locationResult').style.display = 'block';
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(
+                pos => {
+                    const lat = pos.coords.latitude.toFixed(6);
+                    const lng = pos.coords.longitude.toFixed(6);
+                    document.getElementById('locationDetails').textContent =
+                        `📍 Latitude: ${lat}, Longitude: ${lng}`;
+                    document.getElementById('locationResult').style.display = 'block';
+                },
+                err => {
+                    document.getElementById('locationDetails').textContent =
+                        '⚠️ Unable to retrieve location. Please allow access.';
+                    document.getElementById('locationResult').style.display = 'block';
+                }
+            );
+        }
+
+        function updateMap() {
+            alert('🗺️ Map view would be updated with your location.');
+        }
+
+        /* ── PROPERTY ACTIONS ── */
+        function viewProperty(id) {
+            const p = propertiesData.find(x => x.id === id);
+            if (p) {
+                alert(
+                    `🏷️ ${p.type}\n📍 ${p.location}\n💰 KSh ${p.price.toLocaleString()}/month\n📌 Status: ${p.status}\n🛏️ ${p.beds} beds · 🛁 ${p.baths} baths · 📐 ${p.area}`);
+            }
+        }
+
+        function viewSpotlight() {
+            alert('🏆 Featured Luxury Penthouse — Nairobi\n\n4 bedrooms · 3 bathrooms · 280 m²\nRooftop terrace · Panoramic views\nPrice: KSh 85,000/month');
+        }
+
+        function toggleFav(el) {
+            const icon = el.querySelector('i');
+            if (icon.classList.contains('far')) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                el.classList.add('liked');
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                el.classList.remove('liked');
+            }
+        }
+
+        /* ── CHAT ── */
+        function handleUserInput() {
+            const input = document.getElementById('userInput');
+            const msg = input.value.trim();
+            if (!msg) return;
+            addChatMessage(msg, 'user');
+            input.value = '';
+            setTimeout(() => {
+                const reply = generateReply(msg);
+                addChatMessage(reply, 'bot');
+            }, 700);
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') handleUserInput();
+        }
+
+        function addChatMessage(text, sender) {
+            const container = document.getElementById('chatDisplay');
+            const div = document.createElement('div');
+            div.className = `msg ${sender}`;
+            div.innerHTML = `<div class="bubble">${text}</div>`;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function generateReply(msg) {
+            const m = msg.toLowerCase();
+            if (m.includes('rent') || m.includes('payment'))
+                return "💳 I can help with rent payments. View pending payments or set up auto-pay. Need a payment summary?";
+            if (m.includes('property') || m.includes('home') || m.includes('apartment'))
+                return "🏠 We have 8 properties — 3 occupied, 3 available, 1 under maintenance, 1 coming soon. Would you like to see available ones?";
+            if (m.includes('tenant'))
+                return "👤 You have 6 tenants: 3 paid, 2 pending, 1 overdue. Shall I send payment reminders?";
+            if (m.includes('hello') || m.includes('hi') || m.includes('hey'))
+                return "👋 Hello! I'm your Mwarokin AI. Ask me about properties, payments, tenants, or automations.";
+            if (m.includes('report') || m.includes('analytics') || m.includes('stats'))
+                return "📊 I can generate occupancy, payment, maintenance, and satisfaction reports. Which one would you like?";
+            if (m.includes('automate') || m.includes('workflow') || m.includes('auto'))
+                return "⚡ I can automate rent collection, maintenance requests, tenant comms, and vacancy alerts. What process shall we automate?";
+            if (m.includes('help') || m.includes('support'))
+                return "🆘 I'm here to help! Try asking about:\n• Rent & payments\n• Properties & availability\n• Tenant management\n• Reports & analytics\n• Automations";
+            if (m.includes('thanks') || m.includes('thank'))
+                return "🙌 You're welcome! Anything else I can help with?";
+            return "🤖 I'm here to help! Try asking about rent, properties, tenants, reports, automations, or support.";
+        }
+
+        function startVoiceInput() {
+            alert('🎤 Voice input would be activated in a production environment.');
+        }
+
+        /* ── BACK TO TOP ── */
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('backToTop');
+            if (window.scrollY > 400) btn.classList.add('visible');
+            else btn.classList.remove('visible');
+        });
+
+        /* ── SIMULATE REAL-TIME UPDATES ── */
+        function simulateRealtime() {
+            setInterval(() => {
+                const total = propertiesData.length;
+                const occ = propertiesData.filter(p => p.status === 'occupied').length;
+                const delta = Math.floor(Math.random() * 3) - 1;
+                const newOcc = Math.max(0, Math.min(total, occ + delta));
+                document.getElementById('heroOccupied').textContent = newOcc;
+                document.getElementById('statOccupied').textContent = newOcc;
+                const avail = total - newOcc - propertiesData.filter(p => p.status === 'maintenance').length;
+                document.getElementById('heroAvailable').textContent = avail;
+            }, 8000);
+        }
+
+        /* ── SMOOTH REVEAL ── */
+        function handleReveal() {
+            const reveals = document.querySelectorAll('.reveal');
+            reveals.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight - 60) {
+                    el.classList.add('visible');
+                }
+            });
+        }
+
+        /* ── INIT ── */
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProperties();
+            simulateRealtime();
+            // Add reveal class to sections
+            document.querySelectorAll('.stats-bar, .spotlight-card, #propertiesGrid, .chat-modern').forEach(el => {
+                el.classList.add('reveal');
+                setTimeout(() => el.classList.add('visible'), 100);
+            });
+            window.addEventListener('scroll', handleReveal);
+        });
+    </script>
+</body>
+</html>

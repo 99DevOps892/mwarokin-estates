@@ -1,0 +1,1291 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mwarokin Estates — Unit Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        /* ── Reset & Base ── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f2f5f9;
+            color: #0b1a2f;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 20px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: 260px;
+            background: #0b1a2f;
+            backdrop-filter: blur(2px);
+            padding: 32px 20px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+            border-right: 1px solid rgba(255, 255, 255, 0.06);
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 36px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            margin-bottom: 28px;
+        }
+
+        .sidebar-brand .brand-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #d4a373, #b8865b);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(184, 134, 91, 0.35);
+        }
+
+        .sidebar-brand h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            color: #fff;
+            line-height: 1.2;
+        }
+        .sidebar-brand h1 span {
+            display: block;
+            font-weight: 400;
+            font-size: 12px;
+            letter-spacing: 0.4px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 2px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+        }
+
+        .sidebar-nav .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: rgba(255, 255, 255, 0.25);
+            margin-bottom: 16px;
+            margin-top: 8px;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            margin-bottom: 4px;
+            position: relative;
+        }
+
+        .sidebar-nav a i {
+            width: 20px;
+            font-size: 16px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+        }
+
+        .sidebar-nav a.active {
+            background: linear-gradient(135deg, rgba(212, 163, 115, 0.2), rgba(184, 134, 91, 0.1));
+            color: #f0d5b0;
+            box-shadow: inset 0 0 0 1px rgba(212, 163, 115, 0.2);
+        }
+
+        .sidebar-nav a .badge {
+            margin-left: auto;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 2px 10px;
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .sidebar-nav a.active .badge {
+            background: rgba(212, 163, 115, 0.25);
+            color: #f0d5b0;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .sidebar-footer .user-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-footer .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #d4a373, #b8865b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+            color: #fff;
+        }
+
+        .sidebar-footer .user-info {
+            flex: 1;
+        }
+        .sidebar-footer .user-info .name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .sidebar-footer .user-info .role {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* ── Main ── */
+        .main {
+            flex: 1;
+            padding: 28px 36px 40px;
+            overflow-y: auto;
+            min-height: 100vh;
+        }
+
+        /* ── Top Bar ── */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .topbar-left h2 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+            color: #0b1a2f;
+        }
+        .topbar-left p {
+            font-size: 14px;
+            color: #64748b;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .topbar-left p i {
+            color: #d4a373;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .topbar-right .search-wrap {
+            position: relative;
+        }
+        .topbar-right .search-wrap input {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 40px;
+            padding: 10px 18px 10px 44px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            width: 240px;
+            transition: all 0.25s ease;
+            color: #0b1a2f;
+            outline: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+        .topbar-right .search-wrap input:focus {
+            border-color: #d4a373;
+            box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.15);
+            width: 280px;
+        }
+        .topbar-right .search-wrap i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 15px;
+        }
+
+        .topbar-right .btn-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1e293b;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+        .topbar-right .btn-icon:hover {
+            border-color: #d4a373;
+            color: #b8865b;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+        .topbar-right .btn-icon .dot {
+            width: 8px;
+            height: 8px;
+            background: #e74c3c;
+            border-radius: 50%;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            border: 2px solid #fff;
+        }
+
+        .topbar-right .btn-primary {
+            background: #0b1a2f;
+            color: #fff;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(11, 26, 47, 0.2);
+        }
+        .topbar-right .btn-primary:hover {
+            background: #1a2f44;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(11, 26, 47, 0.25);
+        }
+
+        /* ── Stats ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: #fff;
+            border-radius: 18px;
+            padding: 20px 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+            border: 1px solid #f1f4f9;
+            transition: all 0.2s ease;
+        }
+        .stat-card:hover {
+            border-color: #e8edf4;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+        }
+        .stat-card .stat-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .stat-card .stat-label i {
+            color: #d4a373;
+            font-size: 14px;
+        }
+        .stat-card .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0b1a2f;
+            margin-top: 6px;
+            letter-spacing: -0.3px;
+        }
+        .stat-card .stat-change {
+            font-size: 12px;
+            font-weight: 500;
+            color: #22c55e;
+            background: #ecfdf5;
+            padding: 2px 12px;
+            border-radius: 40px;
+            display: inline-block;
+            margin-top: 6px;
+        }
+        .stat-card .stat-change.negative {
+            color: #ef4444;
+            background: #fef2f2;
+        }
+
+        /* ── Section header ── */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .section-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #0b1a2f;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-header h3 i {
+            color: #d4a373;
+        }
+
+        .section-header .view-options {
+            display: flex;
+            gap: 6px;
+            background: #fff;
+            padding: 4px;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+        }
+        .section-header .view-options button {
+            border: none;
+            background: transparent;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+        }
+        .section-header .view-options button.active {
+            background: #0b1a2f;
+            color: #fff;
+        }
+        .section-header .view-options button:hover:not(.active) {
+            background: #f1f4f9;
+        }
+
+        /* ── Unit Grid ── */
+        .unit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .unit-card {
+            background: #fff;
+            border-radius: 22px;
+            border: 1px solid #f1f4f9;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .unit-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.07);
+            border-color: #e8edf4;
+        }
+
+        .unit-card .card-header {
+            padding: 20px 24px 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .unit-card .card-header .unit-title {
+            display: flex;
+            flex-direction: column;
+        }
+        .unit-card .card-header .unit-title .name {
+            font-size: 17px;
+            font-weight: 600;
+            color: #0b1a2f;
+        }
+        .unit-card .card-header .unit-title .address {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 2px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .unit-card .card-header .unit-title .address i {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .unit-card .card-header .status-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 14px;
+            border-radius: 40px;
+            letter-spacing: 0.3px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .status-badge.vacant {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+        .status-badge.occupied {
+            background: #ecfdf5;
+            color: #16a34a;
+        }
+        .status-badge.partial {
+            background: #fffbeb;
+            color: #d97706;
+        }
+
+        .unit-card .card-body {
+            padding: 16px 24px 20px;
+        }
+
+        .unit-card .card-body .specs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 20px;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f1f4f9;
+        }
+
+        .unit-card .card-body .specs .spec-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #334155;
+        }
+        .unit-card .card-body .specs .spec-item i {
+            color: #94a3b8;
+            font-size: 14px;
+            width: 18px;
+            text-align: center;
+        }
+        .unit-card .card-body .specs .spec-item strong {
+            font-weight: 600;
+            color: #0b1a2f;
+        }
+
+        .unit-card .card-body .rent-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .unit-card .card-body .rent-row .rent {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0b1a2f;
+            letter-spacing: -0.3px;
+        }
+        .unit-card .card-body .rent-row .rent span {
+            font-size: 13px;
+            font-weight: 400;
+            color: #64748b;
+            margin-left: 4px;
+        }
+        .unit-card .card-body .rent-row .tag {
+            font-size: 11px;
+            font-weight: 600;
+            background: #f1f4f9;
+            padding: 4px 14px;
+            border-radius: 40px;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .unit-card .card-footer {
+            padding: 14px 24px;
+            background: #fafbfc;
+            border-top: 1px solid #f1f4f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .unit-card .card-footer .actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .unit-card .card-footer .actions button {
+            border: none;
+            background: transparent;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .unit-card .card-footer .actions button:hover {
+            background: #f1f4f9;
+            color: #0b1a2f;
+        }
+        .unit-card .card-footer .actions button.primary-action {
+            background: #0b1a2f;
+            color: #fff;
+        }
+        .unit-card .card-footer .actions button.primary-action:hover {
+            background: #1a2f44;
+        }
+
+        .unit-card .card-footer .file-count {
+            font-size: 13px;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .unit-card .card-footer .file-count i {
+            color: #d4a373;
+        }
+
+        /* ── File Manager Section ── */
+        .file-manager {
+            background: #fff;
+            border-radius: 22px;
+            border: 1px solid #f1f4f9;
+            padding: 24px 28px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
+            margin-top: 8px;
+        }
+
+        .file-manager .fm-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .file-manager .fm-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .file-manager .fm-header h3 i {
+            color: #d4a373;
+        }
+
+        .file-manager .fm-header .fm-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .file-manager .fm-header .fm-actions button {
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #1e293b;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .file-manager .fm-header .fm-actions button:hover {
+            border-color: #d4a373;
+            color: #b8865b;
+        }
+        .file-manager .fm-header .fm-actions button.primary {
+            background: #0b1a2f;
+            color: #fff;
+            border-color: #0b1a2f;
+        }
+        .file-manager .fm-header .fm-actions button.primary:hover {
+            background: #1a2f44;
+            border-color: #1a2f44;
+            color: #fff;
+        }
+
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .file-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 14px;
+            transition: all 0.15s ease;
+            gap: 14px;
+        }
+        .file-row:hover {
+            background: #f8fafc;
+        }
+
+        .file-row .file-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: #f1f4f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #475569;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .file-row .file-icon.pdf {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+        .file-row .file-icon.doc {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+        .file-row .file-icon.img {
+            background: #ecfdf5;
+            color: #16a34a;
+        }
+
+        .file-row .file-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .file-row .file-info .fname {
+            font-weight: 500;
+            font-size: 14px;
+            color: #0b1a2f;
+        }
+        .file-row .file-info .fmeta {
+            font-size: 13px;
+            color: #64748b;
+            display: flex;
+            gap: 16px;
+            margin-top: 1px;
+            flex-wrap: wrap;
+        }
+        .file-row .file-info .fmeta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .file-row .file-status {
+            font-size: 12px;
+            font-weight: 500;
+            padding: 3px 14px;
+            border-radius: 40px;
+            flex-shrink: 0;
+        }
+        .file-row .file-status.uploaded {
+            background: #ecfdf5;
+            color: #16a34a;
+        }
+        .file-row .file-status.pending {
+            background: #fffbeb;
+            color: #d97706;
+        }
+        .file-row .file-status.review {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .file-row .file-actions {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .file-row .file-actions button {
+            border: none;
+            background: transparent;
+            padding: 6px 10px;
+            border-radius: 30px;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+        .file-row .file-actions button:hover {
+            background: #f1f4f9;
+            color: #0b1a2f;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 1024px) {
+            .main {
+                padding: 24px 24px 32px;
+            }
+            .unit-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                transform: translateX(-100%);
+                width: 280px;
+                z-index: 1000;
+                border-right: none;
+                box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main {
+                padding: 20px 16px 32px;
+            }
+            .topbar-right .search-wrap input {
+                width: 160px;
+            }
+            .topbar-right .search-wrap input:focus {
+                width: 180px;
+            }
+            .unit-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .file-manager {
+                padding: 18px 16px;
+            }
+            .file-row {
+                flex-wrap: wrap;
+                padding: 12px 0;
+            }
+            .file-row .file-status {
+                margin-left: 54px;
+            }
+            .file-row .file-actions {
+                margin-left: auto;
+            }
+            .topbar-left h2 {
+                font-size: 22px;
+            }
+            .sidebar-toggle {
+                display: flex !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .topbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .topbar-right {
+                flex-wrap: wrap;
+            }
+            .topbar-right .search-wrap input {
+                width: 100%;
+            }
+            .topbar-right .search-wrap input:focus {
+                width: 100%;
+            }
+            .section-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .section-header .view-options {
+                align-self: flex-start;
+            }
+        }
+
+        /* ── Mobile toggle ── */
+        .sidebar-toggle {
+            display: none;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 40px;
+            width: 44px;
+            height: 44px;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #0b1a2f;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+        .sidebar-toggle:hover {
+            border-color: #d4a373;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(2px);
+            z-index: 999;
+        }
+        .overlay.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ─── Overlay ─── -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- ─── Sidebar ─── -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon"><i class="fas fa-building"></i></div>
+            <h1>Mwarokin<span>Estates</span></h1>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-label">Main</div>
+            <a href="#" class="active"><i class="fas fa-th-large"></i> Dashboard</a>
+            <a href="#"><i class="fas fa-building"></i> Units <span class="badge">12</span></a>
+            <a href="#"><i class="fas fa-folder-open"></i> Files <span class="badge">8</span></a>
+            <a href="#"><i class="fas fa-users"></i> Tenants</a>
+
+            <div class="nav-label" style="margin-top:28px;">Management</div>
+            <a href="#"><i class="fas fa-file-invoice"></i> Lease Agreements</a>
+            <a href="#"><i class="fas fa-calendar-alt"></i> Maintenance</a>
+            <a href="#"><i class="fas fa-chart-pie"></i> Reports</a>
+
+            <div class="nav-label" style="margin-top:28px;">Settings</div>
+            <a href="#"><i class="fas fa-sliders-h"></i> Preferences</a>
+            <a href="#"><i class="fas fa-question-circle"></i> Help Center</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-card">
+                <div class="user-avatar">JD</div>
+                <div class="user-info">
+                    <div class="name">James Duncan</div>
+                    <div class="role">Property Manager</div>
+                </div>
+                <i class="fas fa-ellipsis-v" style="color:rgba(255,255,255,0.2);cursor:pointer;"></i>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ─── Main ─── -->
+    <main class="main">
+
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+                    <div>
+                        <h2>Unit Management</h2>
+                        <p><i class="fas fa-map-pin"></i> Mwarokin Estates · 12 units · 8 files</p>
+                    </div>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div class="search-wrap">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search units, files..." />
+                </div>
+                <button class="btn-icon"><i class="fas fa-bell"></i><span class="dot"></span></button>
+                <button class="btn-icon"><i class="fas fa-upload"></i></button>
+                <button class="btn-primary"><i class="fas fa-plus"></i> Add Unit</button>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label"><i class="fas fa-building"></i> Total Units</div>
+                <div class="stat-value">12</div>
+                <span class="stat-change"><i class="fas fa-arrow-up"></i> +2 this month</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label"><i class="fas fa-user-check"></i> Occupied</div>
+                <div class="stat-value">9</div>
+                <span class="stat-change"><i class="fas fa-arrow-up"></i> 75% occupancy</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label"><i class="fas fa-door-open"></i> Vacant</div>
+                <div class="stat-value">3</div>
+                <span class="stat-change negative"><i class="fas fa-arrow-down"></i> 2 vacant this week</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label"><i class="fas fa-folder"></i> Total Files</div>
+                <div class="stat-value">8</div>
+                <span class="stat-change"><i class="fas fa-arrow-up"></i> 3 new uploads</span>
+            </div>
+        </div>
+
+        <!-- Units Section -->
+        <div class="section-header">
+            <h3><i class="fas fa-building"></i> Property Units</h3>
+            <div class="view-options">
+                <button class="active"><i class="fas fa-th"></i> Grid</button>
+                <button><i class="fas fa-list"></i> List</button>
+            </div>
+        </div>
+
+        <div class="unit-grid">
+
+            <!-- Boston Ave -->
+            <div class="unit-card">
+                <div class="card-header">
+                    <div class="unit-title">
+                        <span class="name">Boston Ave</span>
+                        <span class="address"><i class="fas fa-map-marker-alt"></i> 23 Boston Ave, Medford, MA</span>
+                    </div>
+                    <span class="status-badge vacant">Vacant</span>
+                </div>
+                <div class="card-body">
+                    <div class="specs">
+                        <span class="spec-item"><i class="fas fa-vector-square"></i> <strong>549</strong> sqft</span>
+                        <span class="spec-item"><i class="fas fa-bed"></i> <strong>1</strong> bed</span>
+                        <span class="spec-item"><i class="fas fa-home"></i> Single-Family</span>
+                    </div>
+                    <div class="rent-row">
+                        <div class="rent">$33,000 <span>/ mo</span></div>
+                        <span class="tag">Might Rent</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="actions">
+                        <button><i class="fas fa-edit"></i> Edit</button>
+                        <button class="primary-action"><i class="fas fa-file-alt"></i> Files</button>
+                    </div>
+                    <div class="file-count"><i class="fas fa-file"></i> 2 files</div>
+                </div>
+            </div>
+
+            <!-- Boylston Street Unit 1 -->
+            <div class="unit-card">
+                <div class="card-header">
+                    <div class="unit-title">
+                        <span class="name">Boylston Street · Unit 1</span>
+                        <span class="address"><i class="fas fa-map-marker-alt"></i> 883-885 Boylston St, Boston, MA</span>
+                    </div>
+                    <span class="status-badge occupied">Occupied</span>
+                </div>
+                <div class="card-body">
+                    <div class="specs">
+                        <span class="spec-item"><i class="fas fa-bed"></i> <strong>2</strong> beds</span>
+                        <span class="spec-item"><i class="fas fa-bath"></i> <strong>2</strong> baths</span>
+                        <span class="spec-item"><i class="fas fa-building"></i> Apartment</span>
+                    </div>
+                    <div class="rent-row">
+                        <div class="rent">$7,000 <span>/ mo</span></div>
+                        <span class="tag">Might Rent</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="actions">
+                        <button><i class="fas fa-edit"></i> Edit</button>
+                        <button class="primary-action"><i class="fas fa-file-alt"></i> Files</button>
+                    </div>
+                    <div class="file-count"><i class="fas fa-file"></i> 3 files</div>
+                </div>
+            </div>
+
+            <!-- Boylston Street Unit 2 -->
+            <div class="unit-card">
+                <div class="card-header">
+                    <div class="unit-title">
+                        <span class="name">Boylston Street · Unit 2</span>
+                        <span class="address"><i class="fas fa-map-marker-alt"></i> 883-885 Boylston St, Boston, MA</span>
+                    </div>
+                    <span class="status-badge occupied">Occupied</span>
+                </div>
+                <div class="card-body">
+                    <div class="specs">
+                        <span class="spec-item"><i class="fas fa-bed"></i> <strong>2</strong> beds</span>
+                        <span class="spec-item"><i class="fas fa-bath"></i> <strong>2</strong> baths</span>
+                        <span class="spec-item"><i class="fas fa-building"></i> Condo</span>
+                    </div>
+                    <div class="rent-row">
+                        <div class="rent">$500 <span>/ mo</span></div>
+                        <span class="tag">Might Rent</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="actions">
+                        <button><i class="fas fa-edit"></i> Edit</button>
+                        <button class="primary-action"><i class="fas fa-file-alt"></i> Files</button>
+                    </div>
+                    <div class="file-count"><i class="fas fa-file"></i> 1 file</div>
+                </div>
+            </div>
+
+            <!-- Unit 90 -->
+            <div class="unit-card">
+                <div class="card-header">
+                    <div class="unit-title">
+                        <span class="name">Unit 90</span>
+                        <span class="address"><i class="fas fa-map-marker-alt"></i> Mwarokin Estates, MA</span>
+                    </div>
+                    <span class="status-badge partial">Partial</span>
+                </div>
+                <div class="card-body">
+                    <div class="specs">
+                        <span class="spec-item"><i class="fas fa-building"></i> Apartment</span>
+                        <span class="spec-item"><i class="fas fa-user-check"></i> Occupied</span>
+                        <span class="spec-item"><i class="fas fa-door-open"></i> Vacant</span>
+                    </div>
+                    <div class="rent-row">
+                        <div class="rent">— <span>contact</span></div>
+                        <span class="tag">Mixed</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="actions">
+                        <button><i class="fas fa-edit"></i> Edit</button>
+                        <button class="primary-action"><i class="fas fa-file-alt"></i> Files</button>
+                    </div>
+                    <div class="file-count"><i class="fas fa-file"></i> 0 files</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- File Manager -->
+        <div class="file-manager">
+            <div class="fm-header">
+                <h3><i class="fas fa-folder-open"></i> File Management</h3>
+                <div class="fm-actions">
+                    <button><i class="fas fa-upload"></i> Upload</button>
+                    <button><i class="fas fa-folder-plus"></i> New Folder</button>
+                    <button class="primary"><i class="fas fa-file-alt"></i> + New File</button>
+                </div>
+            </div>
+
+            <div class="file-list">
+
+                <div class="file-row">
+                    <div class="file-icon pdf"><i class="fas fa-file-pdf"></i></div>
+                    <div class="file-info">
+                        <div class="fname">Boston_Ave_Lease_2026.pdf</div>
+                        <div class="fmeta">
+                            <span><i class="far fa-calendar-alt"></i> 12 Jun 2026</span>
+                            <span><i class="far fa-file"></i> 2.4 MB</span>
+                            <span><i class="fas fa-building"></i> Boston Ave</span>
+                        </div>
+                    </div>
+                    <span class="file-status uploaded"><i class="fas fa-check-circle"></i> Uploaded</span>
+                    <div class="file-actions">
+                        <button><i class="fas fa-eye"></i></button>
+                        <button><i class="fas fa-download"></i></button>
+                        <button><i class="fas fa-ellipsis-v"></i></button>
+                    </div>
+                </div>
+
+                <div class="file-row">
+                    <div class="file-icon doc"><i class="fas fa-file-word"></i></div>
+                    <div class="file-info">
+                        <div class="fname">Boylston_Unit1_Tenant_Agreement.docx</div>
+                        <div class="fmeta">
+                            <span><i class="far fa-calendar-alt"></i> 08 Jun 2026</span>
+                            <span><i class="far fa-file"></i> 1.8 MB</span>
+                            <span><i class="fas fa-building"></i> Boylston St · Unit 1</span>
+                        </div>
+                    </div>
+                    <span class="file-status review"><i class="fas fa-clock"></i> In Review</span>
+                    <div class="file-actions">
+                        <button><i class="fas fa-eye"></i></button>
+                        <button><i class="fas fa-download"></i></button>
+                        <button><i class="fas fa-ellipsis-v"></i></button>
+                    </div>
+                </div>
+
+                <div class="file-row">
+                    <div class="file-icon img"><i class="fas fa-file-image"></i></div>
+                    <div class="file-info">
+                        <div class="fname">Boston_Ave_Floor_Plan.png</div>
+                        <div class="fmeta">
+                            <span><i class="far fa-calendar-alt"></i> 05 Jun 2026</span>
+                            <span><i class="far fa-file"></i> 3.1 MB</span>
+                            <span><i class="fas fa-building"></i> Boston Ave</span>
+                        </div>
+                    </div>
+                    <span class="file-status uploaded"><i class="fas fa-check-circle"></i> Uploaded</span>
+                    <div class="file-actions">
+                        <button><i class="fas fa-eye"></i></button>
+                        <button><i class="fas fa-download"></i></button>
+                        <button><i class="fas fa-ellipsis-v"></i></button>
+                    </div>
+                </div>
+
+                <div class="file-row">
+                    <div class="file-icon doc"><i class="fas fa-file-alt"></i></div>
+                    <div class="file-info">
+                        <div class="fname">Unit90_Inspection_Report.pdf</div>
+                        <div class="fmeta">
+                            <span><i class="far fa-calendar-alt"></i> 01 Jun 2026</span>
+                            <span><i class="far fa-file"></i> 0.9 MB</span>
+                            <span><i class="fas fa-building"></i> Unit 90</span>
+                        </div>
+                    </div>
+                    <span class="file-status pending"><i class="fas fa-hourglass-half"></i> Pending</span>
+                    <div class="file-actions">
+                        <button><i class="fas fa-eye"></i></button>
+                        <button><i class="fas fa-download"></i></button>
+                        <button><i class="fas fa-ellipsis-v"></i></button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer note -->
+        <div style="margin-top:32px;text-align:center;font-size:13px;color:#94a3b8;border-top:1px solid #f1f4f9;padding-top:24px;">
+            <i class="fas fa-shield-alt" style="margin-right:6px;"></i> Mwarokin Estates — Premium Unit Management · v2.0
+        </div>
+
+    </main>
+
+    <!-- ─── JavaScript ─── -->
+    <script>
+        (function() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const toggleBtn = document.getElementById('sidebarToggle');
+
+            function closeSidebar() {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('show');
+            }
+
+            function openSidebar() {
+                sidebar.classList.add('open');
+                overlay.classList.add('show');
+            }
+
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (sidebar.classList.contains('open')) {
+                        closeSidebar();
+                    } else {
+                        openSidebar();
+                    }
+                });
+            }
+
+            overlay.addEventListener('click', closeSidebar);
+
+            // Close on escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeSidebar();
+            });
+
+            // View toggle (demo)
+            document.querySelectorAll('.view-options button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.view-options button').forEach(b => b.classList.remove(
+                    'active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // File action buttons demo
+            document.querySelectorAll('.file-actions button').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const action = this.querySelector('i')?.className || 'action';
+                    console.log('File action:', action);
+                });
+            });
+
+            // Unit action buttons demo
+            document.querySelectorAll('.unit-card .actions button').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const txt = this.innerText.trim();
+                    console.log('Unit action:', txt);
+                });
+            });
+
+            // "Add Unit" button
+            document.querySelector('.btn-primary')?.addEventListener('click', function() {
+                alert('✨ New Unit wizard will open here.');
+            });
+
+            // Upload / New File buttons
+            document.querySelectorAll('.fm-actions button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const txt = this.innerText.trim();
+                    console.log('File manager action:', txt);
+                });
+            });
+
+            console.log('🏢 Mwarokin Estates UI ready.');
+        })();
+    </script>
+
+</body>
+</html>
