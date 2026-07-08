@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mwarokin Estates - E‑Signature Hub</title>
+  <!-- Tailwind + Google Fonts + Fontawesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: linear-gradient(145deg, #f0f4fa 0%, #e9eef4 100%); }
+    .signature-canvas {
+      border: 2px solid #e2e8f0;
+      border-radius: 20px;
+      background: white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+      transition: all 0.2s;
+      cursor: crosshair;
+      width: 100%;
+      height: auto;
+      background-color: #fff;
+    }
+    .signature-canvas:active { cursor: crosshair; }
+    .role-badge { transition: all 0.2s ease; cursor: pointer; border-bottom: 3px solid transparent; }
+    .role-badge.active { border-bottom-color: #1e3a5f; background: #f0f5ff; color: #1e3a5f; font-weight: 600; }
+    .premium-card { background: rgba(255,255,255,0.96); backdrop-filter: blur(0px); border-radius: 2rem; box-shadow: 0 20px 35px -12px rgba(0,0,0,0.08); transition: all 0.2s; border: 1px solid #ffffff50; }
+    .signature-preview { border-radius: 16px; background: #f8fafc; min-height: 70px; display: flex; align-items: center; justify-content: center; }
+    button:active { transform: scale(0.97); }
+    .animate-fade { animation: fadeSlide 0.35s ease-out; }
+    @keyframes fadeSlide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="p-5 md:p-8">
+
+<div class="max-w-7xl mx-auto">
+  <!-- Header -->
+  <div class="flex flex-wrap justify-between items-center mb-8 gap-3">
+    <div>
+      <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-800"><i class="fas fa-file-signature text-blue-800 mr-2"></i> Mwarokin <span class="text-blue-800">Rent E‑Signature</span></h1>
+      <p class="text-gray-500 mt-1">Securely sign rental agreements & lease documents — legally binding</p>
+    </div>
+    <div class="bg-white/70 backdrop-blur-sm rounded-full px-5 py-2 shadow-sm text-sm font-medium text-gray-700"><i class="far fa-clock mr-1"></i> <span id="currentDateTime"></span></div>
+  </div>
+
+  <div class="grid lg:grid-cols-3 gap-7">
+    <!-- LEFT COLUMN: Client Profile + Monthly Rent details (dynamic by role) -->
+    <div class="lg:col-span-1 space-y-6">
+      <!-- Role Selector (Landlord / Property Management / Tenant) -->
+      <div class="premium-card p-5">
+        <h3 class="font-semibold text-gray-700 flex items-center gap-2 mb-3"><i class="fas fa-user-tag"></i> Signing as</h3>
+        <div class="flex flex-wrap gap-2">
+          <button data-role="tenant" class="role-badge px-5 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition">🏠 Tenant</button>
+          <button data-role="landlord" class="role-badge px-5 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition">🏢 Landlord/Landlady</button>
+          <button data-role="agency" class="role-badge px-5 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition">📊 Property Agency</button>
+        </div>
+      </div>
+
+      <!-- Dynamic Profile Card -->
+      <div class="premium-card p-6 transition-all" id="profileCard">
+        <div class="flex items-center gap-4">
+          <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-700 to-indigo-700 flex items-center justify-center text-white text-2xl font-bold shadow-md" id="profileAvatar">RT</div>
+          <div>
+            <h2 class="text-xl font-bold text-gray-800" id="profileName">Robin Mwarema</h2>
+            <p class="text-sm text-gray-500" id="profileRoleBadge"><i class="fas fa-check-circle text-green-500 text-xs"></i> Tenant · Verified</p>
+            <div class="flex gap-2 text-xs text-gray-400 mt-1"><span><i class="far fa-envelope"></i> <span id="profileEmail">robin@mwarokin.co</span></span><span class="ml-2"><i class="fas fa-phone-alt"></i> <span id="profilePhone">+254 712 345 678</span></span></div>
+          </div>
+        </div>
+        <div class="border-t border-gray-100 mt-4 pt-4 text-sm space-y-2">
+          <div class="flex justify-between"><span class="text-gray-500">Property / Unit:</span><span class="font-medium" id="propertyAddress">Mwarokin Heights, Block C, Unit 12B</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Lease ID:</span><span class="font-mono text-xs" id="leaseId">MWK-2425-001</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Contract period:</span><span id="leasePeriod">June 2025 – May 2026</span></div>
+        </div>
+      </div>
+
+      <!-- Monthly Rent Summary (premium card) -->
+      <div class="premium-card p-6 bg-gradient-to-br from-white to-blue-50/40">
+        <h3 class="font-bold text-lg flex items-center gap-2"><i class="fas fa-coins text-amber-600"></i> Monthly Rent Summary</h3>
+        <div class="mt-3 space-y-3">
+          <div class="flex justify-between items-end border-b pb-2"><span class="text-gray-600">Base Rent</span><span class="text-2xl font-bold text-gray-800" id="rentAmountDisplay">$1,450.00</span></div>
+          <div class="flex justify-between text-sm"><span>Due date</span><span><i class="far fa-calendar-alt"></i> 5th of every month</span></div>
+          <div class="flex justify-between text-sm"><span>Late fee policy</span><span>5% flat + 0.5% daily after grace</span></div>
+          <div class="flex justify-between text-sm"><span>Next payment due</span><span id="nextDueDate">September 5, 2025</span></div>
+          <div class="bg-blue-100/50 rounded-xl p-2 text-center text-xs font-medium mt-2"><i class="fas fa-shield-alt"></i> E-signature confirms rent obligation</div>
+        </div>
+        <input type="hidden" id="monthlyRentValue" value="1450">
+      </div>
+
+      <!-- Additional document note -->
+      <div class="premium-card p-5 text-sm text-gray-500 flex items-start gap-3">
+        <i class="fas fa-gavel text-blue-600 text-lg"></i>
+        <span>This electronic signature is legally binding under the Kenya Electronic Transactions Act. Signed document will be stored on Mwarokin secure vault.</span>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Signature Area + Rental Agreement Preview -->
+    <div class="lg:col-span-2 space-y-7">
+      <!-- Rental agreement card with terms & signature canvas -->
+      <div class="premium-card overflow-hidden">
+        <div class="bg-gray-50/80 px-6 py-4 border-b border-gray-200">
+          <h2 class="text-xl font-bold flex items-center gap-2"><i class="fas fa-file-contract text-blue-700"></i> Rental Agreement · E-Signature</h2>
+          <p class="text-xs text-gray-500">Mwarokin Estates Standard Lease Addendum (v3.2)</p>
+        </div>
+        <div class="p-6 space-y-5">
+          <!-- Agreement text (dynamic based on role) -->
+          <div class="bg-gray-50 rounded-xl p-4 text-sm text-gray-700 leading-relaxed max-h-48 overflow-y-auto border border-gray-100" id="agreementText">
+            I, <strong id="signerNameDynamic">Robin Mwarema</strong> (Tenant), agree to pay a monthly rent of <strong id="rentInAgreement">$1,450.00</strong> for the property at <strong>Mwarokin Heights, Block C, Unit 12B</strong>. 
+            Rent is due on the 5th of each month. Late payments incur penalties per Mwarokin policy. 
+            This e-signature confirms acceptance of lease terms and Mwarokin Estates' community guidelines.
+          </div>
+
+          <!-- Signature canvas + tools -->
+          <div>
+            <div class="flex justify-between items-center mb-2 flex-wrap">
+              <label class="font-semibold text-gray-700"><i class="fas fa-pen-fancy"></i> Draw your signature</label>
+              <div class="flex gap-2">
+                <button id="clearCanvasBtn" class="text-xs bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded-full transition"><i class="fas fa-eraser"></i> Clear</button>
+                <button id="signTypedBtn" class="text-xs bg-white border border-gray-300 hover:bg-gray-50 px-3 py-1 rounded-full transition"><i class="fas fa-keyboard"></i> Use typed name</button>
+              </div>
+            </div>
+            <canvas id="signatureCanvas" class="signature-canvas w-full" width="600" height="200" style="width:100%; height:auto; max-width:100%; aspect-ratio:600/200; background:#ffffff; touch-action: none;"></canvas>
+            <p class="text-xs text-gray-400 mt-2"><i class="fas fa-mouse-pointer"></i> Draw or touch to sign — clear & retry anytime</p>
+          </div>
+
+          <!-- Preview & typed signature modal area -->
+          <div id="typedSignatureModal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" style="backdrop-filter: blur(3px);">
+            <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl animate-fade">
+              <h3 class="font-bold text-lg">Type your full legal name</h3>
+              <input type="text" id="typedNameInput" placeholder="e.g., Robin Mwarema" class="w-full border rounded-xl p-3 mt-3 focus:ring-blue-500 focus:border-blue-500">
+              <div class="flex justify-end gap-3 mt-6">
+                <button id="cancelTypedBtn" class="px-4 py-2 rounded-lg border">Cancel</button>
+                <button id="confirmTypedBtn" class="px-4 py-2 bg-blue-700 text-white rounded-lg">Use typed signature</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Signature preview & final action -->
+          <div class="border-t pt-4 mt-2">
+            <div class="flex flex-wrap gap-6 items-center justify-between">
+              <div class="flex-1">
+                <p class="text-xs font-medium text-gray-500">Signature preview</p>
+                <div id="signaturePreview" class="signature-preview w-36 h-12 border border-gray-200 rounded-lg bg-white overflow-hidden flex items-center justify-center text-gray-400 text-xs">
+                  <i class="fas fa-signature"></i> Not signed
+                </div>
+              </div>
+              <div class="flex gap-3">
+                <button id="resetSignatureBtn" class="border border-red-200 bg-white text-red-600 px-5 py-2 rounded-xl text-sm font-medium hover:bg-red-50"><i class="fas fa-undo-alt"></i> Reset</button>
+                <button id="finalizeSignatureBtn" class="bg-green-700 hover:bg-green-800 text-white px-7 py-2.5 rounded-xl font-semibold shadow-md transition"><i class="fas fa-signature mr-1"></i> Sign & Submit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Signed document confirmation panel -->
+      <div id="confirmationPanel" class="premium-card p-5 hidden animate-fade bg-white/90">
+        <div class="flex items-start gap-3">
+          <i class="fas fa-check-circle text-green-600 text-2xl"></i>
+          <div>
+            <h3 class="font-bold text-green-800">Agreement Electronically Signed</h3>
+            <p class="text-sm text-gray-600" id="signatureConfirmMsg">Signed by Robin Mwarema on <span id="signTimestamp"></span></p>
+            <div class="mt-3 flex gap-3">
+              <button id="downloadSignedBtn" class="text-sm bg-blue-50 text-blue-700 px-4 py-1.5 rounded-full flex items-center gap-1"><i class="fas fa-download"></i> Download signed copy</button>
+              <button id="newSignatureBtn" class="text-sm bg-gray-100 text-gray-600 px-4 py-1.5 rounded-full flex items-center gap-1"><i class="fas fa-file-signature"></i> Sign another document</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ---------------- GLOBALS ----------------
+    const canvas = document.getElementById('signatureCanvas');
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+    let signatureDataURL = null;      // stores drawn signature as dataURL
+    let isSigned = false;
+
+    // Canvas drawing setup
+    function initCanvas() {
+      // Set actual canvas dimensions for crisp drawing
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      drawGridBackground(); // subtle background
+    }
+
+    function drawGridBackground() {
+      ctx.save();
+      ctx.globalAlpha = 0.15;
+      ctx.beginPath();
+      for(let i = 0; i < canvas.width; i += 20) {
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i, canvas.height);
+        ctx.stroke();
+        ctx.moveTo(0, i);
+        ctx.lineTo(canvas.width, i);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function startDrawing(e) {
+      drawing = true;
+      const pos = getCanvasCoordinates(e);
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+    }
+
+    function draw(e) {
+      if (!drawing) return;
+      e.preventDefault();
+      const pos = getCanvasCoordinates(e);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+    }
+
+    function stopDrawing() {
+      drawing = false;
+      ctx.beginPath();
+      saveSignatureFromCanvas();
+    }
+
+    function getCanvasCoordinates(e) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      let clientX, clientY;
+      if (e.touches) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+      let x = (clientX - rect.left) * scaleX;
+      let y = (clientY - rect.top) * scaleY;
+      x = Math.min(Math.max(0, x), canvas.width);
+      y = Math.min(Math.max(0, y), canvas.height);
+      return { x, y };
+    }
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      drawGridBackground();
+      signatureDataURL = null;
+      updatePreview(null);
+      isSigned = false;
+      document.getElementById('confirmationPanel').classList.add('hidden');
+    }
+
+    function saveSignatureFromCanvas() {
+      if (isCanvasBlank()) {
+        signatureDataURL = null;
+        updatePreview(null);
+        return;
+      }
+      signatureDataURL = canvas.toDataURL('image/png');
+      updatePreview(signatureDataURL);
+    }
+
+    function isCanvasBlank() {
+      const pixelBuffer = new Uint32Array(ctx.getImageData(0, 0, canvas.width, canvas.height).data.buffer);
+      return !pixelBuffer.some(color => color !== 0xFFFFFFFF);
+    }
+
+    function updatePreview(dataURL) {
+      const previewDiv = document.getElementById('signaturePreview');
+      if (dataURL) {
+        previewDiv.innerHTML = `<img src="${dataURL}" style="max-height:48px; max-width:100%; object-fit:contain;">`;
+      } else {
+        previewDiv.innerHTML = `<i class="fas fa-signature"></i> Not signed`;
+      }
+    }
+
+    // typed signature handler
+    const typedModal = document.getElementById('typedSignatureModal');
+    function showTypedModal() {
+      typedModal.classList.remove('hidden');
+    }
+    function applyTypedSignature(name) {
+      if (!name || name.trim() === "") name = "Signed party";
+      // Create text signature on canvas
+      clearCanvas();
+      ctx.font = `italic ${Math.min(32, canvas.height * 0.35)}px "Inter", cursive`;
+      ctx.fillStyle = "#1e293b";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(name.trim(), canvas.width/2, canvas.height/2);
+      saveSignatureFromCanvas();
+      typedModal.classList.add('hidden');
+    }
+
+    // Role-based dynamic profile & rent agreement text
+    const roleData = {
+      tenant: {
+        name: "Robin Mwarema",
+        email: "robin.m@mwarokin.co.ke",
+        phone: "+254 712 345 678",
+        roleLabel: "Tenant · Verified",
+        avatarInitials: "RM",
+        property: "Mwarokin Heights, Block C, Unit 12B",
+        leaseId: "MWK-2425-001",
+        period: "June 2025 – May 2026",
+        rent: 1450,
+        agreementText: (name, rent) => `I, <strong>${name}</strong> (Tenant), agree to pay a monthly rent of <strong>$${rent.toFixed(2)}</strong> for the property at <strong>Mwarokin Heights, Block C, Unit 12B</strong>. Rent is due on the 5th of each month. Late payments incur penalties per Mwarokin policy. This e-signature confirms acceptance of lease terms and Mwarokin Estates' community guidelines.`
+      },
+      landlord: {
+        name: "Esther Mwangi",
+        email: "esther.mwangi@mwarokin.com",
+        phone: "+254 722 456 789",
+        roleLabel: "Landlord · Premium Owner",
+        avatarInitials: "EM",
+        property: "Mwarokin Towers, Unit 4A & 7C",
+        leaseId: "MWK-LD-9823",
+        period: "July 2025 – June 2026",
+        rent: 1890,
+        agreementText: (name, rent) => `I, <strong>${name}</strong> (Landlord/Landlady), hereby affirm the lease agreement for property located at <strong>Mwarokin Towers</strong>. The tenant agrees to monthly rent of <strong>$${rent.toFixed(2)}</strong> payable by the 5th. I authorize Mwarokin Estates to manage rental collection and maintenance. This e-signature legally binds the property owner to the terms.`
+      },
+      agency: {
+        name: "PrimeLet Property Mgmt",
+        email: "clients@primelet.co.ke",
+        phone: "+254 700 123 456",
+        roleLabel: "Agency · Authorised",
+        avatarInitials: "PM",
+        property: "Mwarokin Business Park, Suite 101",
+        leaseId: "MWK-AG-4451",
+        period: "August 2025 – July 2026",
+        rent: 2450,
+        agreementText: (name, rent) => `On behalf of <strong>${name}</strong> (Property Management Agency), we confirm the commercial lease agreement for <strong>Mwarokin Business Park</strong>. Monthly rent: <strong>$${rent.toFixed(2)}</strong>, due on the 5th. This e-signature represents the agency's binding acceptance of management responsibilities.`
+      }
+    };
+
+    let currentRole = 'tenant';
+    function updateProfileAndRent(role) {
+      const data = roleData[role];
+      if (!data) return;
+      document.getElementById('profileName').innerText = data.name;
+      document.getElementById('profileRoleBadge').innerHTML = `<i class="fas fa-check-circle text-green-500 text-xs"></i> ${data.roleLabel}`;
+      document.getElementById('profileEmail').innerText = data.email;
+      document.getElementById('profilePhone').innerText = data.phone;
+      document.getElementById('profileAvatar').innerText = data.avatarInitials;
+      document.getElementById('propertyAddress').innerText = data.property;
+      document.getElementById('leaseId').innerText = data.leaseId;
+      document.getElementById('leasePeriod').innerText = data.period;
+      document.getElementById('rentAmountDisplay').innerHTML = `$${data.rent.toFixed(2)}`;
+      document.getElementById('monthlyRentValue').value = data.rent;
+      document.getElementById('rentInAgreement').innerHTML = `$${data.rent.toFixed(2)}`;
+      document.getElementById('signerNameDynamic').innerHTML = data.name;
+      // Update agreement text
+      const agreementHtml = data.agreementText(data.name, data.rent);
+      document.getElementById('agreementText').innerHTML = agreementHtml;
+      // Update next due date (fake dynamic)
+      const dueDate = new Date();
+      dueDate.setMonth(dueDate.getMonth() + 1);
+      dueDate.setDate(5);
+      document.getElementById('nextDueDate').innerText = dueDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    // attach role selection
+    function initRoleSelector() {
+      const btns = document.querySelectorAll('[data-role]');
+      btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          btns.forEach(b => b.classList.remove('active', 'bg-blue-100', 'text-blue-800'));
+          btn.classList.add('active', 'bg-blue-100', 'text-blue-800');
+          currentRole = btn.getAttribute('data-role');
+          updateProfileAndRent(currentRole);
+          // after role change, reset signature canvas & confirmation
+          clearCanvas();
+          document.getElementById('confirmationPanel').classList.add('hidden');
+          isSigned = false;
+        });
+        // set default active tenant
+        if(btn.getAttribute('data-role') === 'tenant') btn.classList.add('active', 'bg-blue-100', 'text-blue-800');
+      });
+    }
+
+    // Finalize signature action
+    function finalizeSignature() {
+      if (!signatureDataURL && isCanvasBlank()) {
+        // alert no signature
+        showToast("Please draw or add a signature before signing the agreement.", "error");
+        return;
+      }
+      if (isSigned) {
+        showToast("Document already signed. Reset or sign a new document.", "info");
+        return;
+      }
+      // capture current signer name from role data
+      const roleInfo = roleData[currentRole];
+      const signerFullName = roleInfo.name;
+      const timestamp = new Date().toLocaleString();
+      document.getElementById('signTimestamp').innerHTML = timestamp;
+      document.getElementById('signatureConfirmMsg').innerHTML = `Signed by ${signerFullName} (${currentRole === 'tenant' ? 'Tenant' : currentRole === 'landlord' ? 'Landlord' : 'Agency Representative'}) on ${timestamp}`;
+      document.getElementById('confirmationPanel').classList.remove('hidden');
+      isSigned = true;
+      // Also store signed flag and signature data in session
+      sessionStorage.setItem('mwarokin_last_signature', signatureDataURL);
+      sessionStorage.setItem('mwarokin_signed_role', currentRole);
+      showToast(`✅ Rental agreement successfully e-signed by ${signerFullName}. A confirmation will be emailed.`, "success");
+      // Disable canvas drawing after finalize? optional but allow reset
+    }
+
+    function resetSignatureState() {
+      clearCanvas();
+      document.getElementById('confirmationPanel').classList.add('hidden');
+      isSigned = false;
+      showToast("Signature reset. You can now draw a new signature.", "info");
+    }
+
+    // Download signed copy (generate simple html + signature image)
+    function downloadSignedCopy() {
+      if (!isSigned && !signatureDataURL && isCanvasBlank()) {
+        showToast("No signature found. Please sign the document first.", "error");
+        return;
+      }
+      const roleInfo = roleData[currentRole];
+      const signerName = roleInfo.name;
+      const rentAmount = roleInfo.rent;
+      const timestamp = document.getElementById('signTimestamp').innerText || new Date().toLocaleString();
+      const agreementTextRaw = document.getElementById('agreementText').innerText;
+      const signatureImgHTML = signatureDataURL ? `<img src="${signatureDataURL}" style="max-width:280px; border:1px solid #ccc; border-radius:12px; padding:8px; background:white;">` : '<i>Electronic signature attached</i>';
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head><meta charset="UTF-8"><title>Mwarokin_Signed_Agreement.pdf.html</title><style>body{font-family: system-ui; padding: 2rem; max-width: 800px; margin:auto;} .sign-box{border-top:2px solid #ccc; margin-top:2rem; padding-top:1rem;}</style></head>
+        <body>
+          <h1 style="color:#1e3a5f;">Mwarokin Estates · Signed Rental Agreement</h1>
+          <p><strong>Document ID:</strong> ${roleInfo.leaseId} | Signed on: ${timestamp}</p>
+          <p><strong>Signer:</strong> ${signerName} (${currentRole.toUpperCase()})</p>
+          <div style="background:#f5f7fb; padding:1rem; border-radius:1rem;"><strong>Agreement Terms:</strong><br>${agreementTextRaw}</div>
+          <div class="sign-box"><strong>Electronic Signature:</strong><br>${signatureImgHTML}</div>
+          <p style="margin-top:2rem; font-size:0.8rem;">Digitally executed via Mwarokin E‑Signature Hub. Legally binding.</p>
+        </body>
+        </html>
+      `;
+      const blob = new Blob([htmlContent], {type: 'text/html'});
+      const a = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      a.href = url;
+      a.download = `Mwarokin_Signed_Agreement_${roleInfo.leaseId}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast("Signed document downloaded (HTML format).", "success");
+    }
+
+    function showToast(msg, type = 'info') {
+      const toast = document.createElement('div');
+      toast.className = `fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-xl shadow-lg text-white animate-fade ${type === 'success' ? 'bg-green-700' : type === 'error' ? 'bg-red-600' : 'bg-blue-700'}`;
+      toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i><span>${msg}</span>`;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3800);
+    }
+
+    // Event binding & canvas resize handling
+    function attachCanvasEvents() {
+      canvas.addEventListener('mousedown', startDrawing);
+      canvas.addEventListener('mousemove', draw);
+      canvas.addEventListener('mouseup', stopDrawing);
+      canvas.addEventListener('mouseleave', stopDrawing);
+      canvas.addEventListener('touchstart', startDrawing);
+      canvas.addEventListener('touchmove', draw);
+      canvas.addEventListener('touchend', stopDrawing);
+      window.addEventListener('resize', () => {
+        const prevData = signatureDataURL;
+        initCanvas();
+        if (prevData) {
+          const img = new Image();
+          img.onload = () => { ctx.drawImage(img, 0, 0, canvas.width, canvas.height); saveSignatureFromCanvas(); };
+          img.src = prevData;
+        } else {
+          clearCanvas();
+        }
+      });
+    }
+
+    // set date time
+    function updateDateTime() {
+      const now = new Date();
+      document.getElementById('currentDateTime').innerHTML = now.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+
+    // initial loading
+    function init() {
+      initCanvas();
+      attachCanvasEvents();
+      initRoleSelector();
+      updateProfileAndRent('tenant');
+      document.getElementById('clearCanvasBtn').addEventListener('click', () => clearCanvas());
+      document.getElementById('signTypedBtn').addEventListener('click', showTypedModal);
+      document.getElementById('cancelTypedBtn').addEventListener('click', () => typedModal.classList.add('hidden'));
+      document.getElementById('confirmTypedBtn').addEventListener('click', () => {
+        const nameInput = document.getElementById('typedNameInput');
+        applyTypedSignature(nameInput.value);
+        nameInput.value = '';
+      });
+      document.getElementById('finalizeSignatureBtn').addEventListener('click', finalizeSignature);
+      document.getElementById('resetSignatureBtn').addEventListener('click', resetSignatureState);
+      document.getElementById('downloadSignedBtn').addEventListener('click', downloadSignedCopy);
+      document.getElementById('newSignatureBtn').addEventListener('click', () => {
+        resetSignatureState();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+      // close modal on outside click?
+      typedModal.addEventListener('click', (e) => { if(e.target === typedModal) typedModal.classList.add('hidden'); });
+    }
+    init();
+  })();
+</script>
+</body>
+</html>

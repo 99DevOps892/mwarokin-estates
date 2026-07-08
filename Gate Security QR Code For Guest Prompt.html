@@ -1,0 +1,2055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mwarokin Estates — Gate Security</title>
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js">
+    </script>
+
+    <style>
+        /* ===== RESET & BASE ===== */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0b1a2e;
+            --primary-light: #132a44;
+            --primary-dark: #060f1a;
+            --accent: #d4a745;
+            --accent-light: #e8c97a;
+            --accent-glow: rgba(212, 167, 69, 0.25);
+            --gold-gradient: linear-gradient(135deg, #d4a745 0%, #f0d68a 50%, #d4a745 100%);
+            --surface: rgba(255, 255, 255, 0.06);
+            --surface-hover: rgba(255, 255, 255, 0.10);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f0ede8;
+            --text-secondary: rgba(255, 255, 255, 0.65);
+            --text-muted: rgba(255, 255, 255, 0.35);
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--primary-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            overflow: hidden;
+            background-image:
+                radial-gradient(ellipse at 20% 50%, rgba(212, 167, 69, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(212, 167, 69, 0.04) 0%, transparent 50%);
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-light);
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 260px;
+            min-height: 100vh;
+            background: var(--primary);
+            border-right: 1px solid var(--border);
+            padding: 28px 20px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(4px);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 32px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-brand .logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--gold-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--primary-dark);
+            font-weight: 800;
+            flex-shrink: 0;
+            box-shadow: 0 4px 20px rgba(212, 167, 69, 0.3);
+        }
+
+        .sidebar-brand .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-brand .brand-text .name {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            line-height: 1.2;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-brand .brand-text .sub {
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            -webkit-text-fill-color: var(--text-muted);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-nav .nav-label {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--text-muted);
+            padding: 12px 12px 6px;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .sidebar-nav a i {
+            width: 20px;
+            font-size: 16px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--surface-hover);
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav a.active {
+            background: var(--surface);
+            color: var(--accent);
+            box-shadow: inset 3px 0 0 var(--accent);
+        }
+
+        .sidebar-nav a.active i {
+            color: var(--accent);
+        }
+
+        .sidebar-nav a .badge {
+            margin-left: auto;
+            background: var(--accent);
+            color: var(--primary-dark);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.3px;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .sidebar-footer .user-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            background: var(--surface);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .sidebar-footer .user-card:hover {
+            background: var(--surface-hover);
+        }
+
+        .sidebar-footer .user-card .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--gold-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--primary-dark);
+            flex-shrink: 0;
+        }
+
+        .sidebar-footer .user-card .user-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .sidebar-footer .user-card .user-info .name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .sidebar-footer .user-card .user-info .role {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .sidebar-footer .user-card i {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            padding: 20px 36px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            background: rgba(6, 15, 26, 0.6);
+            backdrop-filter: blur(12px);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-left .page-title h1 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-left .page-title p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            -webkit-text-fill-color: var(--text-secondary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-actions .search-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-actions .search-wrap input {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 10px 18px 10px 44px;
+            font-size: 13px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            width: 220px;
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .header-actions .search-wrap input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .header-actions .search-wrap input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+            width: 280px;
+        }
+
+        .header-actions .search-wrap i {
+            position: absolute;
+            left: 16px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .header-actions .btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .header-actions .btn-icon:hover {
+            background: var(--surface-hover);
+            border-color: var(--accent);
+            color: var(--text-primary);
+        }
+
+        .header-actions .btn-icon .dot {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ef4444;
+            border: 2px solid var(--primary-dark);
+        }
+
+        .header-actions .btn-primary {
+            background: var(--gold-gradient);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--primary-dark);
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 20px rgba(212, 167, 69, 0.25);
+        }
+
+        .header-actions .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(212, 167, 69, 0.35);
+        }
+
+        .header-actions .btn-primary i {
+            font-size: 14px;
+        }
+
+        /* ===== DASHBOARD STATS ===== */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            padding: 20px 36px 0;
+            flex-shrink: 0;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px 22px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: var(--transition);
+            backdrop-filter: blur(4px);
+        }
+
+        .stat-card:hover {
+            background: var(--surface-hover);
+            transform: translateY(-2px);
+            border-color: rgba(212, 167, 69, 0.2);
+        }
+
+        .stat-card .stat-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .stat-card .stat-icon.gold {
+            background: var(--accent-glow);
+            color: var(--accent);
+        }
+
+        .stat-card .stat-icon.blue {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+        }
+
+        .stat-card .stat-icon.green {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+        }
+
+        .stat-card .stat-icon.red {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+        }
+
+        .stat-card .stat-info {
+            flex: 1;
+        }
+
+        .stat-card .stat-info .number {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            line-height: 1.2;
+        }
+
+        .stat-card .stat-info .label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            letter-spacing: 0.2px;
+        }
+
+        .stat-card .stat-info .trend {
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 2px;
+            padding: 2px 10px;
+            border-radius: 20px;
+            background: rgba(34, 197, 94, 0.12);
+            color: #4ade80;
+        }
+
+        .stat-card .stat-info .trend.down {
+            background: rgba(239, 68, 68, 0.12);
+            color: #f87171;
+        }
+
+        /* ===== TABLE WRAPPER ===== */
+        .content-area {
+            flex: 1;
+            padding: 20px 36px 36px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .table-container {
+            flex: 1;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(4px);
+            min-height: 0;
+        }
+
+        .table-toolbar {
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .table-toolbar .left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .table-toolbar .left .filter-group {
+            display: flex;
+            gap: 6px;
+        }
+
+        .table-toolbar .left .filter-group button {
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .table-toolbar .left .filter-group button:hover {
+            background: var(--surface-hover);
+            color: var(--text-primary);
+        }
+
+        .table-toolbar .left .filter-group button.active {
+            background: var(--accent);
+            color: var(--primary-dark);
+            border-color: var(--accent);
+        }
+
+        .table-toolbar .right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .table-toolbar .right .view-toggle {
+            display: flex;
+            gap: 4px;
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 3px;
+            border: 1px solid var(--border);
+        }
+
+        .table-toolbar .right .view-toggle button {
+            width: 32px;
+            height: 30px;
+            border: none;
+            border-radius: 6px;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .table-toolbar .right .view-toggle button.active {
+            background: var(--accent);
+            color: var(--primary-dark);
+        }
+
+        .table-toolbar .right .view-toggle button:hover:not(.active) {
+            color: var(--text-primary);
+        }
+
+        /* ===== TABLE ===== */
+        .table-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 4px 4px 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            background: var(--primary);
+        }
+
+        thead th {
+            text-align: left;
+            padding: 14px 20px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        thead th:first-child {
+            padding-left: 24px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: var(--transition);
+            cursor: default;
+        }
+
+        tbody tr:hover {
+            background: var(--surface-hover);
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        tbody td {
+            padding: 14px 20px;
+            vertical-align: middle;
+            color: var(--text-secondary);
+        }
+
+        tbody td:first-child {
+            padding-left: 24px;
+        }
+
+        tbody td .guest-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        tbody td .guest-info .guest-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--text-primary);
+            flex-shrink: 0;
+        }
+
+        tbody td .guest-info .guest-details .name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 13px;
+        }
+
+        tbody td .guest-info .guest-details .email {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .badge-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .badge-status .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .badge-status.checked-in {
+            background: rgba(34, 197, 94, 0.12);
+            color: #4ade80;
+        }
+
+        .badge-status.checked-in .dot {
+            background: #4ade80;
+        }
+
+        .badge-status.pending {
+            background: rgba(251, 191, 36, 0.12);
+            color: #fbbf24;
+        }
+
+        .badge-status.pending .dot {
+            background: #fbbf24;
+        }
+
+        .badge-status.checked-out {
+            background: rgba(156, 163, 175, 0.12);
+            color: #9ca3af;
+        }
+
+        .badge-status.checked-out .dot {
+            background: #9ca3af;
+        }
+
+        .badge-status.blocked {
+            background: rgba(239, 68, 68, 0.12);
+            color: #f87171;
+        }
+
+        .badge-status.blocked .dot {
+            background: #f87171;
+        }
+
+        .qr-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .qr-cell .qr-preview {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            background: white;
+            padding: 2px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .qr-cell .qr-preview:hover {
+            transform: scale(1.05);
+            border-color: var(--accent);
+        }
+
+        .qr-cell .qr-preview canvas,
+        .qr-cell .qr-preview img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: contain;
+        }
+
+        .qr-cell .qr-code-text {
+            font-size: 10px;
+            color: var(--text-muted);
+            font-family: monospace;
+            letter-spacing: 0.5px;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 6px;
+        }
+
+        .action-btns button {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btns button:hover {
+            background: var(--surface-hover);
+            color: var(--text-primary);
+            border-color: var(--accent);
+        }
+
+        .action-btns button.check-in-btn {
+            color: #4ade80;
+        }
+
+        .action-btns button.check-in-btn:hover {
+            background: rgba(34, 197, 94, 0.15);
+            border-color: #4ade80;
+        }
+
+        .action-btns button.check-out-btn {
+            color: #fbbf24;
+        }
+
+        .action-btns button.check-out-btn:hover {
+            background: rgba(251, 191, 36, 0.15);
+            border-color: #fbbf24;
+        }
+
+        .action-btns button.qr-btn {
+            color: var(--accent);
+        }
+
+        .action-btns button.qr-btn:hover {
+            background: var(--accent-glow);
+            border-color: var(--accent);
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            max-width: 520px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 32px 36px;
+            box-shadow: var(--shadow);
+            animation: slideUp 0.35s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .modal-header .close-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 18px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-header .close-btn:hover {
+            background: var(--surface-hover);
+            color: var(--text-primary);
+        }
+
+        .modal .form-group {
+            margin-bottom: 18px;
+        }
+
+        .modal .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        .modal .form-group input,
+        .modal .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .modal .form-group input:focus,
+        .modal .form-group select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+        }
+
+        .modal .form-group input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .modal .form-group select option {
+            background: var(--primary);
+        }
+
+        .modal .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .modal .btn-submit {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: var(--radius-sm);
+            background: var(--gold-gradient);
+            color: var(--primary-dark);
+            font-weight: 700;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 20px rgba(212, 167, 69, 0.25);
+            margin-top: 6px;
+        }
+
+        .modal .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(212, 167, 69, 0.35);
+        }
+
+        /* ===== QR DETAIL MODAL ===== */
+        .qr-detail-modal .modal {
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .qr-detail-modal .qr-big {
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius-sm);
+            display: inline-block;
+            margin: 12px auto 16px;
+            border: 1px solid var(--border);
+        }
+
+        .qr-detail-modal .qr-big canvas,
+        .qr-detail-modal .qr-big img {
+            width: 180px !important;
+            height: 180px !important;
+            object-fit: contain;
+        }
+
+        .qr-detail-modal .guest-name-big {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .qr-detail-modal .guest-detail-big {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .qr-detail-modal .btn-download {
+            margin-top: 16px;
+            padding: 10px 32px;
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            background: var(--surface);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .qr-detail-modal .btn-download:hover {
+            background: var(--surface-hover);
+            border-color: var(--accent);
+        }
+
+        /* ===== TOAST ===== */
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            padding: 14px 24px;
+            border-radius: var(--radius-sm);
+            background: var(--primary);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideInRight 0.4s ease;
+            backdrop-filter: blur(12px);
+            min-width: 280px;
+        }
+
+        .toast.success {
+            border-left: 4px solid #4ade80;
+        }
+
+        .toast.error {
+            border-left: 4px solid #f87171;
+        }
+
+        .toast.info {
+            border-left: 4px solid var(--accent);
+        }
+
+        .toast .toast-icon {
+            font-size: 18px;
+        }
+
+        .toast .toast-msg {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+            flex: 1;
+        }
+
+        .toast .toast-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0 4px;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1200px) {
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 72px;
+                padding: 16px 10px;
+            }
+            .sidebar-brand .brand-text,
+            .sidebar-nav a span,
+            .sidebar-nav .nav-label,
+            .sidebar-nav a .badge,
+            .sidebar-footer .user-card .user-info,
+            .sidebar-footer .user-card i {
+                display: none;
+            }
+            .sidebar-nav a {
+                justify-content: center;
+                padding: 12px;
+            }
+            .sidebar-nav a i {
+                font-size: 18px;
+                margin: 0;
+            }
+            .sidebar-brand .logo-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+            .sidebar-footer .user-card {
+                justify-content: center;
+                padding: 8px;
+            }
+            .sidebar-footer .user-card .avatar {
+                width: 34px;
+                height: 34px;
+                font-size: 12px;
+            }
+            .header {
+                padding: 16px 20px;
+            }
+            .stats-row {
+                padding: 16px 20px 0;
+                gap: 12px;
+            }
+            .content-area {
+                padding: 16px 20px 20px;
+            }
+            .header-actions .search-wrap input {
+                width: 150px;
+            }
+            .header-actions .search-wrap input:focus {
+                width: 200px;
+            }
+            .table-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            .table-toolbar .left {
+                flex-wrap: wrap;
+            }
+            .table-toolbar .right {
+                justify-content: space-between;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                overflow-y: auto;
+            }
+            .sidebar {
+                width: 60px;
+                padding: 12px 6px;
+            }
+            .sidebar-brand .logo-icon {
+                width: 34px;
+                height: 34px;
+                font-size: 13px;
+            }
+            .header-left .page-title h1 {
+                font-size: 18px;
+            }
+            .header-left .page-title p {
+                font-size: 11px;
+            }
+            .header-actions .search-wrap input {
+                width: 120px;
+                padding: 8px 12px 8px 34px;
+                font-size: 12px;
+            }
+            .header-actions .search-wrap input:focus {
+                width: 160px;
+            }
+            .header-actions .btn-primary span {
+                display: none;
+            }
+            .header-actions .btn-primary {
+                padding: 10px 14px;
+            }
+            .stats-row {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            .stat-card {
+                padding: 14px 16px;
+            }
+            .stat-card .stat-info .number {
+                font-size: 18px;
+            }
+            .stat-card .stat-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+            .table-container {
+                border-radius: var(--radius-sm);
+            }
+            tbody td,
+            thead th {
+                padding: 10px 12px;
+                font-size: 12px;
+            }
+            tbody td:first-child,
+            thead th:first-child {
+                padding-left: 14px;
+            }
+            .modal {
+                padding: 24px 20px;
+            }
+            .modal .form-row {
+                grid-template-columns: 1fr;
+            }
+            .qr-detail-modal .qr-big canvas,
+            .qr-detail-modal .qr-big img {
+                width: 140px !important;
+                height: 140px !important;
+            }
+            .toast-container {
+                bottom: 16px;
+                right: 16px;
+                left: 16px;
+            }
+            .toast {
+                min-width: unset;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+            .header {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .header-left {
+                width: 100%;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .header-actions .search-wrap {
+                flex: 1;
+            }
+            .header-actions .search-wrap input {
+                width: 100%;
+            }
+            .header-actions .search-wrap input:focus {
+                width: 100%;
+            }
+            .table-toolbar .left .filter-group button {
+                padding: 4px 12px;
+                font-size: 11px;
+            }
+            .action-btns button {
+                width: 26px;
+                height: 26px;
+                font-size: 10px;
+            }
+            .qr-cell .qr-preview {
+                width: 28px;
+                height: 28px;
+            }
+        }
+
+        /* ===== SIDEBAR TOGGLE (mobile) ===== */
+        .sidebar-toggle {
+            display: none;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            padding: 8px 12px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 992px) {
+            .sidebar-toggle {
+                display: block;
+            }
+            .sidebar.collapsed {
+                width: 0;
+                padding: 0;
+                overflow: hidden;
+                border: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="logo-icon">M</div>
+            <div class="brand-text">
+                <span class="name">Mwarokin</span>
+                <span class="sub">Estates</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-label">Main</div>
+            <a href="#" class="active">
+                <i class="fas fa-qrcode"></i>
+                <span>Gate Security</span>
+                <span class="badge">12</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-users"></i>
+                <span>All Guests</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-clock"></i>
+                <span>Check-ins</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Schedule</span>
+            </a>
+            <div class="nav-label" style="margin-top:16px;">Settings</div>
+            <a href="#">
+                <i class="fas fa-cog"></i>
+                <span>Preferences</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-shield-alt"></i>
+                <span>Security Log</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-card">
+                <div class="avatar">JD</div>
+                <div class="user-info">
+                    <div class="name">James Duncan</div>
+                    <div class="role">Security Admin</div>
+                </div>
+                <i class="fas fa-ellipsis-v"></i>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ===== MAIN ===== -->
+    <div class="main">
+
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="page-title">
+                    <h1>Gate Security</h1>
+                    <p>Manage guest access &amp; QR codes for Mwarokin Estates</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="search-wrap">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search guests..." id="searchInput" />
+                </div>
+                <button class="btn-icon" aria-label="Notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="dot"></span>
+                </button>
+                <button class="btn-primary" id="addGuestBtn">
+                    <i class="fas fa-plus"></i>
+                    <span>Add Guest</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats -->
+        <div class="stats-row" id="statsRow">
+            <div class="stat-card">
+                <div class="stat-icon gold"><i class="fas fa-users"></i></div>
+                <div class="stat-info">
+                    <div class="number" id="totalGuests">0</div>
+                    <div class="label">Total Guests</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                <div class="stat-info">
+                    <div class="number" id="checkedInCount">0</div>
+                    <div class="label">Checked In</div>
+                    <div class="trend"><i class="fas fa-arrow-up"></i> +2 today</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fas fa-hourglass-half"></i></div>
+                <div class="stat-info">
+                    <div class="number" id="pendingCount">0</div>
+                    <div class="label">Pending</div>
+                    <div class="trend"><i class="fas fa-clock"></i> awaiting</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon red"><i class="fas fa-sign-out-alt"></i></div>
+                <div class="stat-info">
+                    <div class="number" id="checkedOutCount">0</div>
+                    <div class="label">Checked Out</div>
+                    <div class="trend down"><i class="fas fa-arrow-down"></i> 3 today</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content-area">
+            <div class="table-container">
+                <div class="table-toolbar">
+                    <div class="left">
+                        <div class="filter-group">
+                            <button class="active" data-filter="all">All</button>
+                            <button data-filter="checked-in">Checked In</button>
+                            <button data-filter="pending">Pending</button>
+                            <button data-filter="checked-out">Checked Out</button>
+                        </div>
+                    </div>
+                    <div class="right">
+                        <span style="font-size:12px;color:var(--text-muted);" id="guestCountLabel">0 guests</span>
+                        <div class="view-toggle">
+                            <button class="active" title="Table view"><i class="fas fa-list"></i></button>
+                            <button title="Grid view"><i class="fas fa-th"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Guest</th>
+                                <th>Contact</th>
+                                <th>Status</th>
+                                <th>QR Code</th>
+                                <th style="text-align:right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="guestTableBody">
+                            <!-- Rows injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ADD GUEST MODAL ===== -->
+    <div class="modal-overlay" id="addGuestModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-plus" style="margin-right:10px;"></i>Add New Guest</h2>
+                <button class="close-btn" id="closeAddModal"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="addGuestForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="guestName" placeholder="e.g. Jane Mwangi" required />
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="guestEmail" placeholder="jane@example.com" required />
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="text" id="guestPhone" placeholder="+254 700 123 456" />
+                    </div>
+                    <div class="form-group">
+                        <label>Host / Unit</label>
+                        <input type="text" id="guestHost" placeholder="e.g. A12, Mr. Kariuki" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="guestStatus">
+                        <option value="pending">Pending</option>
+                        <option value="checked-in">Checked In</option>
+                        <option value="checked-out">Checked Out</option>
+                        <option value="blocked">Blocked</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-qrcode" style="margin-right:8px;"></i> Generate QR &amp; Add Guest
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== QR DETAIL MODAL ===== -->
+    <div class="modal-overlay qr-detail-modal" id="qrDetailModal">
+        <div class="modal" style="text-align:center;">
+            <div class="modal-header" style="justify-content:flex-end;">
+                <button class="close-btn" id="closeQrModal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="qr-big" id="qrBigContainer">
+                <!-- QR code rendered here -->
+            </div>
+            <div class="guest-name-big" id="qrGuestName">—</div>
+            <div class="guest-detail-big" id="qrGuestDetail">—</div>
+            <button class="btn-download" id="downloadQrBtn">
+                <i class="fas fa-download"></i> Download QR
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== TOAST CONTAINER ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ===== JAVASCRIPT ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            // ============================================================
+            //  DATA
+            // ============================================================
+            let guests = [{
+                id: 1,
+                name: 'Sarah Wanjiku',
+                email: 'sarah.w@example.com',
+                phone: '+254 712 345 678',
+                host: 'B4, Mr. Ochieng',
+                status: 'checked-in',
+                qrData: 'MWK-1001'
+            }, {
+                id: 2,
+                name: 'Michael Odhiambo',
+                email: 'michael.o@example.com',
+                phone: '+254 723 456 789',
+                host: 'A7, Ms. Akinyi',
+                status: 'pending',
+                qrData: 'MWK-1002'
+            }, {
+                id: 3,
+                name: 'Grace Auma',
+                email: 'grace.a@example.com',
+                phone: '+254 734 567 890',
+                host: 'C12, Dr. Mwangi',
+                status: 'checked-out',
+                qrData: 'MWK-1003'
+            }, {
+                id: 4,
+                name: 'David Kamau',
+                email: 'david.k@example.com',
+                phone: '+254 745 678 901',
+                host: 'D3, Mr. Kiprop',
+                status: 'pending',
+                qrData: 'MWK-1004'
+            }, {
+                id: 5,
+                name: 'Faith Nyambura',
+                email: 'faith.n@example.com',
+                phone: '+254 756 789 012',
+                host: 'E9, Mrs. Njoroge',
+                status: 'checked-in',
+                qrData: 'MWK-1005'
+            }, {
+                id: 6,
+                name: 'Peter Ochieng',
+                email: 'peter.o@example.com',
+                phone: '+254 767 890 123',
+                host: 'F2, Mr. Otieno',
+                status: 'blocked',
+                qrData: 'MWK-1006'
+            }];
+
+            let nextId = 7;
+            let currentFilter = 'all';
+            let currentQrGuestId = null;
+
+            // ============================================================
+            //  DOM REFS
+            // ============================================================
+            const tbody = document.getElementById('guestTableBody');
+            const searchInput = document.getElementById('searchInput');
+            const filterBtns = document.querySelectorAll('.filter-group button');
+            const addGuestBtn = document.getElementById('addGuestBtn');
+            const addModal = document.getElementById('addGuestModal');
+            const closeAddModal = document.getElementById('closeAddModal');
+            const addForm = document.getElementById('addGuestForm');
+            const qrDetailModal = document.getElementById('qrDetailModal');
+            const closeQrModal = document.getElementById('closeQrModal');
+            const qrBigContainer = document.getElementById('qrBigContainer');
+            const qrGuestName = document.getElementById('qrGuestName');
+            const qrGuestDetail = document.getElementById('qrGuestDetail');
+            const downloadQrBtn = document.getElementById('downloadQrBtn');
+            const totalGuestsEl = document.getElementById('totalGuests');
+            const checkedInCountEl = document.getElementById('checkedInCount');
+            const pendingCountEl = document.getElementById('pendingCount');
+            const checkedOutCountEl = document.getElementById('checkedOutCount');
+            const guestCountLabel = document.getElementById('guestCountLabel');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+
+            // ============================================================
+            //  UTILITY
+            // ============================================================
+            function getInitials(name) {
+                return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+            }
+
+            function getStatusBadge(status) {
+                const map = {
+                    'checked-in': 'checked-in',
+                    'pending': 'pending',
+                    'checked-out': 'checked-out',
+                    'blocked': 'blocked'
+                };
+                return map[status] || 'pending';
+            }
+
+            function formatDate() {
+                return new Date().toLocaleDateString('en-KE', { day: 'numeric', month: 'short', year: 'numeric' });
+            }
+
+            function generateQRData(name) {
+                const code = 'MWK-' + String(nextId).padStart(4, '0');
+                return code;
+            }
+
+            // ============================================================
+            //  TOAST
+            // ============================================================
+            function showToast(message, type = 'success') {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                const icons = {
+                    success: 'fa-check-circle',
+                    error: 'fa-exclamation-circle',
+                    info: 'fa-info-circle'
+                };
+                toast.innerHTML = `
+                    <span class="toast-icon" style="color:${type === 'success' ? '#4ade80' : type === 'error' ? '#f87171' : 'var(--accent)'}">
+                        <i class="fas ${icons[type] || icons.info}"></i>
+                    </span>
+                    <span class="toast-msg">${message}</span>
+                    <button class="toast-close"><i class="fas fa-times"></i></button>
+                `;
+                container.appendChild(toast);
+                const closeBtn = toast.querySelector('.toast-close');
+                closeBtn.addEventListener('click', () => toast.remove());
+                setTimeout(() => {
+                    if (toast.parentNode) toast.remove();
+                }, 4000);
+            }
+
+            // ============================================================
+            //  RENDER TABLE
+            // ============================================================
+            function render() {
+                const search = searchInput.value.toLowerCase().trim();
+                let filtered = guests;
+
+                // filter
+                if (currentFilter !== 'all') {
+                    filtered = filtered.filter(g => g.status === currentFilter);
+                }
+
+                // search
+                if (search) {
+                    filtered = filtered.filter(g =>
+                        g.name.toLowerCase().includes(search) ||
+                        g.email.toLowerCase().includes(search) ||
+                        g.phone.includes(search) ||
+                        g.host.toLowerCase().includes(search) ||
+                        g.qrData.toLowerCase().includes(search)
+                    );
+                }
+
+                // stats
+                const total = guests.length;
+                const checkedIn = guests.filter(g => g.status === 'checked-in').length;
+                const pending = guests.filter(g => g.status === 'pending').length;
+                const checkedOut = guests.filter(g => g.status === 'checked-out').length;
+
+                totalGuestsEl.textContent = total;
+                checkedInCountEl.textContent = checkedIn;
+                pendingCountEl.textContent = pending;
+                checkedOutCountEl.textContent = checkedOut;
+                guestCountLabel.textContent = `${filtered.length} guest${filtered.length !== 1 ? 's' : ''}`;
+
+                if (filtered.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align:center;padding:40px 20px;color:var(--text-muted);">
+                                <i class="fas fa-user-slash" style="font-size:28px;display:block;margin-bottom:10px;opacity:0.4;"></i>
+                                No guests found. Try adjusting your filters or add a new guest.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                filtered.forEach(guest => {
+                    const statusClass = getStatusBadge(guest.status);
+                    const initials = getInitials(guest.name);
+                    const isCheckedIn = guest.status === 'checked-in';
+                    const isCheckedOut = guest.status === 'checked-out';
+                    const isPending = guest.status === 'pending';
+
+                    html += `
+                        <tr data-id="${guest.id}">
+                            <td>
+                                <div class="guest-info">
+                                    <div class="guest-avatar">${initials}</div>
+                                    <div class="guest-details">
+                                        <div class="name">${guest.name}</div>
+                                        <div class="email">${guest.host}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div style="font-size:12px;">${guest.email}</div>
+                                <div style="font-size:11px;color:var(--text-muted);">${guest.phone}</div>
+                            </td>
+                            <td>
+                                <span class="badge-status ${statusClass}">
+                                    <span class="dot"></span>
+                                    ${guest.status.replace('-', ' ')}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="qr-cell">
+                                    <div class="qr-preview" data-id="${guest.id}" data-qr="${guest.qrData}" data-name="${guest.name}" data-email="${guest.email}" data-host="${guest.host}">
+                                        <!-- QR will be rendered here -->
+                                    </div>
+                                    <span class="qr-code-text">${guest.qrData}</span>
+                                </div>
+                            </td>
+                            <td style="text-align:right;">
+                                <div class="action-btns" style="justify-content:flex-end;">
+                                    ${!isCheckedIn && guest.status !== 'blocked' ? `
+                                        <button class="check-in-btn" data-action="checkin" data-id="${guest.id}" title="Check In">
+                                            <i class="fas fa-sign-in-alt"></i>
+                                        </button>
+                                    ` : ''}
+                                    ${isCheckedIn && !isCheckedOut ? `
+                                        <button class="check-out-btn" data-action="checkout" data-id="${guest.id}" title="Check Out">
+                                            <i class="fas fa-sign-out-alt"></i>
+                                        </button>
+                                    ` : ''}
+                                    <button class="qr-btn" data-action="viewqr" data-id="${guest.id}" title="View QR">
+                                        <i class="fas fa-qrcode"></i>
+                                    </button>
+                                    <button data-action="delete" data-id="${guest.id}" title="Remove" style="color:#f87171;">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                tbody.innerHTML = html;
+
+                // Render QR codes in preview cells
+                document.querySelectorAll('.qr-preview').forEach(cell => {
+                    const qrData = cell.dataset.qr;
+                    const id = cell.dataset.id;
+                    // clear any existing canvas
+                    cell.innerHTML = '';
+                    try {
+                        const qr = new QRCode(cell, {
+                            text: qrData,
+                            width: 36,
+                            height: 36,
+                            colorDark: '#0b1a2e',
+                            colorLight: '#ffffff',
+                            correctLevel: QRCode.CorrectLevel.H
+                        });
+                    } catch (e) {
+                        cell.textContent = 'QR';
+                        cell.style.background = '#fff';
+                        cell.style.color = '#0b1a2e';
+                        cell.style.fontSize = '10px';
+                        cell.style.fontWeight = '700';
+                    }
+                });
+
+                // Attach event listeners to action buttons
+                document.querySelectorAll('[data-action]').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const action = this.dataset.action;
+                        const id = parseInt(this.dataset.id);
+                        if (action === 'checkin') handleCheckIn(id);
+                        else if (action === 'checkout') handleCheckOut(id);
+                        else if (action === 'viewqr') handleViewQR(id);
+                        else if (action === 'delete') handleDelete(id);
+                    });
+                });
+
+                // Click on QR preview to view larger
+                document.querySelectorAll('.qr-preview').forEach(el => {
+                    el.addEventListener('click', function() {
+                        const id = parseInt(this.dataset.id);
+                        handleViewQR(id);
+                    });
+                });
+            }
+
+            // ============================================================
+            //  ACTIONS
+            // ============================================================
+            function handleCheckIn(id) {
+                const guest = guests.find(g => g.id === id);
+                if (!guest) return;
+                if (guest.status === 'checked-in') {
+                    showToast(`${guest.name} is already checked in.`, 'info');
+                    return;
+                }
+                guest.status = 'checked-in';
+                showToast(`✅ ${guest.name} checked in successfully.`, 'success');
+                render();
+            }
+
+            function handleCheckOut(id) {
+                const guest = guests.find(g => g.id === id);
+                if (!guest) return;
+                if (guest.status === 'checked-out') {
+                    showToast(`${guest.name} is already checked out.`, 'info');
+                    return;
+                }
+                guest.status = 'checked-out';
+                showToast(`🚪 ${guest.name} checked out.`, 'info');
+                render();
+            }
+
+            function handleViewQR(id) {
+                const guest = guests.find(g => g.id === id);
+                if (!guest) return;
+                currentQrGuestId = id;
+                qrGuestName.textContent = guest.name;
+                qrGuestDetail.textContent = `${guest.email} · ${guest.host} · ${guest.qrData}`;
+                qrBigContainer.innerHTML = '';
+                try {
+                    const qr = new QRCode(qrBigContainer, {
+                        text: guest.qrData,
+                        width: 180,
+                        height: 180,
+                        colorDark: '#0b1a2e',
+                        colorLight: '#ffffff',
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                } catch (e) {
+                    qrBigContainer.textContent = 'QR: ' + guest.qrData;
+                    qrBigContainer.style.padding = '20px';
+                    qrBigContainer.style.background = '#fff';
+                    qrBigContainer.style.color = '#0b1a2e';
+                    qrBigContainer.style.borderRadius = '8px';
+                    qrBigContainer.style.fontWeight = '700';
+                }
+                qrDetailModal.classList.add('active');
+            }
+
+            function handleDelete(id) {
+                const guest = guests.find(g => g.id === id);
+                if (!guest) return;
+                if (confirm(`Remove ${guest.name} from the guest list?`)) {
+                    guests = guests.filter(g => g.id !== id);
+                    showToast(`🗑️ ${guest.name} removed.`, 'error');
+                    render();
+                }
+            }
+
+            function addGuest(name, email, phone, host, status) {
+                const qrData = generateQRData(name);
+                const newGuest = {
+                    id: nextId++,
+                    name: name.trim(),
+                    email: email.trim(),
+                    phone: phone.trim() || '—',
+                    host: host.trim() || '—',
+                    status: status,
+                    qrData: qrData
+                };
+                guests.push(newGuest);
+                showToast(`✅ ${name} added with QR: ${qrData}`, 'success');
+                render();
+            }
+
+            // ============================================================
+            //  MODAL CONTROLS
+            // ============================================================
+            function openAddModal() {
+                addModal.classList.add('active');
+                document.getElementById('guestName').focus();
+            }
+
+            function closeAddModalFn() {
+                addModal.classList.remove('active');
+                addForm.reset();
+            }
+
+            addGuestBtn.addEventListener('click', openAddModal);
+            closeAddModal.addEventListener('click', closeAddModalFn);
+            addModal.addEventListener('click', function(e) {
+                if (e.target === this) closeAddModalFn();
+            });
+
+            closeQrModal.addEventListener('click', function() {
+                qrDetailModal.classList.remove('active');
+            });
+            qrDetailModal.addEventListener('click', function(e) {
+                if (e.target === this) qrDetailModal.classList.remove('active');
+            });
+
+            // ============================================================
+            //  ADD FORM
+            // ============================================================
+            addForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('guestName').value.trim();
+                const email = document.getElementById('guestEmail').value.trim();
+                const phone = document.getElementById('guestPhone').value.trim();
+                const host = document.getElementById('guestHost').value.trim();
+                const status = document.getElementById('guestStatus').value;
+
+                if (!name || !email) {
+                    showToast('Please fill in the name and email.', 'error');
+                    return;
+                }
+                if (!email.includes('@')) {
+                    showToast('Please enter a valid email address.', 'error');
+                    return;
+                }
+                addGuest(name, email, phone, host, status);
+                closeAddModalFn();
+            });
+
+            // ============================================================
+            //  FILTERS
+            // ============================================================
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.filter;
+                    render();
+                });
+            });
+
+            // ============================================================
+            //  SEARCH (debounced)
+            // ============================================================
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(render, 250);
+            });
+
+            // ============================================================
+            //  DOWNLOAD QR
+            // ============================================================
+            downloadQrBtn.addEventListener('click', function() {
+                const container = qrBigContainer;
+                const canvas = container.querySelector('canvas');
+                if (!canvas) {
+                    showToast('No QR code to download.', 'error');
+                    return;
+                }
+                const link = document.createElement('a');
+                link.download = `QR-${qrGuestName.textContent.replace(/\s/g, '_')}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showToast('📥 QR code downloaded.', 'success');
+            });
+
+            // ============================================================
+            //  SIDEBAR TOGGLE (mobile)
+            // ============================================================
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+            });
+
+            // ============================================================
+            //  INIT
+            // ============================================================
+            render();
+
+            // Close modals with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    if (addModal.classList.contains('active')) closeAddModalFn();
+                    if (qrDetailModal.classList.contains('active')) qrDetailModal.classList.remove('active');
+                }
+            });
+
+            // Auto-close sidebar on outside click (mobile)
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth <= 992) {
+                    if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                        sidebar.classList.add('collapsed');
+                    }
+                }
+            });
+
+            console.log('🏘️ Mwarokin Estates — Gate Security UI loaded.');
+        })();
+    </script>
+
+</body>
+</html>
