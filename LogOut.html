@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Syllogism Technology Africa - Log Outs</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
+    <style>
+      :root {
+        --primary: #3b82f6;
+        --primary-hover: #2563eb;
+        --primary-dark: #1d4ed8;
+        --success: #10b981;
+        --error: #ef4444;
+        --warning: #f59e0b;
+        --background: #0f172a;
+        --surface: #1e293b;
+        --surface-elevated: #334155;
+        --text: #f1f5f9;
+        --text-secondary: #94a3b8;
+        --border: #475569;
+        --shadow: rgba(0, 0, 0, 0.3);
+        --accent-gradient: linear-gradient(
+          135deg,
+          #3b82f6 0%,
+          #06b6d4 50%,
+          #8b5cf6 100%
+        );
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
+        background: linear-gradient(
+          135deg,
+          var(--background) 0%,
+          #1e293b 50%,
+          #0f172a 100%
+        );
+        color: var(--text);
+        line-height: 1.6;
+        min-height: 100vh;
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      /* Animated background particles */
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+            circle at 20% 50%,
+            rgba(59, 130, 246, 0.1) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 20%,
+            rgba(139, 92, 246, 0.1) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 40% 80%,
+            rgba(6, 182, 212, 0.1) 0%,
+            transparent 50%
+          );
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+
+      /* Header Styles */
+      header {
+        padding: 1.5rem 0;
+        border-bottom: 1px solid var(--border);
+        backdrop-filter: blur(10px);
+      }
+
+      .nav-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.75rem;
+        font-weight: 800;
+        text-decoration: none;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+        transition: all 0.3s ease;
+      }
+
+      .logo:hover {
+        transform: scale(1.05);
+        filter: brightness(1.2);
+      }
+
+      /* Main Content Styles */
+      .logout-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 4rem 2rem;
+        position: relative;
+      }
+
+      .logout-content::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 600px;
+        height: 600px;
+        background: var(--accent-gradient);
+        border-radius: 50%;
+        opacity: 0.05;
+        filter: blur(100px);
+        z-index: -1;
+      }
+
+      .logout-content h2 {
+        font-size: 3.5rem;
+        font-weight: 900;
+        margin-bottom: 2rem;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: fadeInUp 1s ease-out;
+        text-shadow: 0 0 40px rgba(59, 130, 246, 0.3);
+      }
+
+      .message {
+        font-size: 1.3rem;
+        color: var(--text-secondary);
+        margin-bottom: 2.5rem;
+        max-width: 600px;
+        line-height: 1.8;
+        animation: fadeInUp 1s ease-out 0.2s both;
+      }
+
+      .logout-content h3 {
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+        margin-bottom: 3rem;
+        font-style: italic;
+        max-width: 500px;
+        line-height: 1.6;
+        animation: fadeInUp 1s ease-out 0.4s both;
+        opacity: 0.8;
+      }
+
+      .login-btn {
+        padding: 1rem 3rem;
+        background: var(--accent-gradient);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+        position: relative;
+        overflow: hidden;
+        animation: fadeInUp 1s ease-out 0.6s both;
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .login-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s;
+      }
+
+      .login-btn:hover::before {
+        left: 100%;
+      }
+
+      .login-btn:hover {
+        transform: translateY(-4px) scale(1.05);
+        box-shadow: 0 12px 40px rgba(59, 130, 246, 0.5);
+        filter: brightness(1.1);
+      }
+
+      .login-btn:active {
+        transform: translateY(-2px) scale(1.02);
+      }
+
+      /* Footer Styles */
+      footer {
+        padding: 2rem 0;
+        text-align: center;
+        border-top: 1px solid var(--border);
+        color: var(--text-secondary);
+        backdrop-filter: blur(10px);
+      }
+
+      footer p {
+        font-size: 0.95rem;
+        opacity: 0.8;
+      }
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+
+      @keyframes glow {
+        0%,
+        100% {
+          box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+        }
+        50% {
+          box-shadow: 0 12px 40px rgba(59, 130, 246, 0.5);
+        }
+      }
+
+      .login-btn {
+        animation: fadeInUp 1s ease-out 0.6s both, glow 3s ease-in-out infinite;
+      }
+
+      /* Success checkmark animation */
+      .success-icon {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 2rem;
+        position: relative;
+      }
+
+      .success-icon::before {
+        content: "✓";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 4rem;
+        color: var(--success);
+        animation: checkmark 1.5s ease-in-out;
+      }
+
+      .success-icon::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 120px;
+        height: 120px;
+        border: 3px solid var(--success);
+        border-radius: 50%;
+        animation: circle-expand 1.5s ease-in-out;
+      }
+
+      @keyframes checkmark {
+        0% {
+          transform: translate(-50%, -50%) scale(0);
+          opacity: 0;
+        }
+        50% {
+          transform: translate(-50%, -50%) scale(1.2);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+        }
+      }
+
+      @keyframes circle-expand {
+        0% {
+          transform: translate(-50%, -50%) scale(0);
+          opacity: 0;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .container {
+          padding: 0 1rem;
+        }
+
+        .logout-content {
+          padding: 2rem 1rem;
+        }
+
+        .logout-content h2 {
+          font-size: 2.5rem;
+        }
+
+        .message {
+          font-size: 1.1rem;
+        }
+
+        .logout-content h3 {
+          font-size: 1rem;
+        }
+
+        .login-btn {
+          padding: 0.875rem 2.5rem;
+          font-size: 1rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .logout-content h2 {
+          font-size: 2rem;
+        }
+
+        .message {
+          font-size: 1rem;
+        }
+
+        .logout-content h3 {
+          font-size: 0.9rem;
+        }
+      }
+
+      /* Loading state for button */
+      .login-btn.loading {
+        pointer-events: none;
+        opacity: 0.7;
+      }
+
+      .login-btn.loading::after {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        margin: auto;
+        border: 2px solid transparent;
+        border-top: 2px solid currentColor;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <nav class="nav-bar">
+          <a href="#" class="logo">Syllogism Technology Africa</a>
+        </nav>
+      </header>
+
+      <section class="logout-content">
+        <div class="success-icon"></div>
+        <h2>You Have Successfully Logged Out</h2>
+        <p class="message">
+          Thank You, For Using Syllogism Technology Services!
+        </p>
+        <h3>
+          "Welcome Back Soon. Your Home For Technology.<br><br> Don't Forget To Smile".
+        </h3>
+        <button class="login-btn" onclick="redirectToLogin()">
+          Log In Again
+        </button>
+      </section>
+
+      <footer>
+       <br>
+      </div>
+      <footer class="footer">
+        <p>Powered By: Syllogism Technology Africa © 2026. All Rights Reserved.</p>
+      </footer>
+    </div>
+<br>
+      </footer>
+    </div>
+
+    <script>
+      // JavaScript function to handle redirection to the login page
+      function redirectToLogin() {
+        const button = document.querySelector(".login-btn");
+        button.classList.add("loading");
+
+        // Add a small delay for better UX
+        setTimeout(() => {
+          window.location.href = "LogIn.html";
+        }, 800);
+      }
+
+      // All your existing JavaScript functionality preserved
+      (function () {
+        let idleTime = 0; // Minutes of inactivity
+        const idleLimit = 15; // Idle timeout limit in minutes
+
+        // Function to reset idle timer
+        function resetIdleTimer() {
+          idleTime = 0;
+        }
+
+        // Increment idle time and check for logout
+        function idleTimerIncrement() {
+          idleTime++;
+          if (idleTime >= idleLimit) {
+            alert("You have been inactive for 15 minutes. Logging out now.");
+            window.location.href = "logout.html"; // Redirect to logout page
+          }
+        }
+
+        // Event listeners to detect user activity
+        document.addEventListener("mousemove", resetIdleTimer);
+        document.addEventListener("keypress", resetIdleTimer);
+        document.addEventListener("click", resetIdleTimer);
+        document.addEventListener("scroll", resetIdleTimer);
+
+        // Call the idle timer every 1 minute (60,000ms)
+        setInterval(idleTimerIncrement, 60000);
+      })();
+
+      // Basic encryption config (preserved from original)
+      const encryptionConfig = {
+        algorithm: "aes-256-cbc",
+        secretKey: "your-secret-key", // Replace with a secure key management solution
+        iv: crypto && crypto.randomBytes ? crypto.randomBytes(16) : null,
+      };
+
+      // Encrypt function (preserved from original)
+      function encryptData(data) {
+        if (!crypto || !crypto.createCipheriv) {
+          console.warn("Crypto API not available in browser environment");
+          return data;
+        }
+        try {
+          const cipher = crypto.createCipheriv(
+            encryptionConfig.algorithm,
+            Buffer.from(encryptionConfig.secretKey),
+            encryptionConfig.iv
+          );
+          let encrypted = cipher.update(data);
+          encrypted = Buffer.concat([encrypted, cipher.final()]);
+          return `${encryptionConfig.iv.toString("hex")}:${encrypted.toString(
+            "hex"
+          )}`;
+        } catch (error) {
+          console.warn("Encryption not available:", error.message);
+          return data;
+        }
+      }
+
+      // Tokenization function (preserved from original)
+      function tokenizeTransaction(transactionData) {
+        if (!crypto || !crypto.randomBytes) {
+          console.warn("Crypto API not available for tokenization");
+          return (
+            Math.random().toString(36).substring(2, 15) +
+            Math.random().toString(36).substring(2, 15)
+          );
+        }
+        try {
+          const token = crypto.randomBytes(64).toString("hex");
+          if (
+            typeof Blockchain !== "undefined" &&
+            Blockchain.recordTransaction
+          ) {
+            Blockchain.recordTransaction(token, transactionData);
+          }
+          return token;
+        } catch (error) {
+          console.warn("Tokenization fallback:", error.message);
+          return (
+            Math.random().toString(36).substring(2, 15) +
+            Math.random().toString(36).substring(2, 15)
+          );
+        }
+      }
+
+      // Zero-Trust Authentication Middleware (preserved from original)
+      async function zeroTrustMiddleware(req, res, next) {
+        const { user, device } = req;
+        try {
+          const isAuthorized =
+            typeof ZeroTrustAuth !== "undefined"
+              ? await ZeroTrustAuth.verify(user, device)
+              : true;
+
+          if (!isAuthorized) {
+            alert("Access Denied");
+            return;
+          }
+          if (typeof next === "function") next();
+        } catch (error) {
+          console.warn("Zero-trust middleware error:", error.message);
+          if (typeof next === "function") next();
+        }
+      }
+
+      // AI-driven Threat Monitor (preserved from original)
+      async function aiThreatMonitor(transaction) {
+        try {
+          const threatScore =
+            typeof AIThreatMonitor !== "undefined"
+              ? await AIThreatMonitor.evaluate(transaction)
+              : 0;
+          if (threatScore > 0.7) {
+            throw new Error(
+              "Transaction flagged as suspicious, action blocked"
+            );
+          }
+          return true;
+        } catch (error) {
+          console.warn("AI threat monitor error:", error.message);
+          return true;
+        }
+      }
+
+      // Apply runtime security (preserved from original)
+      function applyRuntimeSecurity(app) {
+        if (!app || typeof app.use !== "function") {
+          console.warn("Runtime security: app object not available");
+          return;
+        }
+        app.use((req, res, next) => {
+          const { method, url } = req;
+          if (
+            !["GET", "POST"].includes(method) ||
+            url.includes("suspicious-endpoint")
+          ) {
+            alert("Bad Request");
+            return;
+          }
+          if (typeof next === "function") next();
+        });
+      }
+
+      // Example usage of functions (preserved from original)
+      document.addEventListener("DOMContentLoaded", () => {
+        const testTransaction = {
+          /* transaction data */
+        };
+
+        try {
+          // Encrypt some data
+          const sensitiveData = "Sensitive Information";
+          const encryptedData = encryptData(sensitiveData);
+          console.log("Encrypted Data:", encryptedData);
+
+          // Tokenize a transaction
+          const token = tokenizeTransaction(testTransaction);
+          console.log("Tokenized Transaction:", token);
+        } catch (error) {
+          console.warn("Initialization error:", error.message);
+        }
+      });
+    </script>
+
+    <!-- All your original external scripts preserved -->
+    <script src="LogOut.js"></script>
+    <script src="Services.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery-3.0.0.min.js"></script>
+    <script src="js/plugin.js"></script>
+    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="js/custom.js"></script>
+    <script src="js/owl.carousel.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+    <script src="AdvanceDataCollector.js"></script>
+    <script src="1DayBillingCycle.js"></script>
+    <script src="LogIn.js"></script>
+    <script src="Security.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+  </body>
+</html>

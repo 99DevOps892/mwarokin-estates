@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mwarokin Estates — Listing Website</title>
+<meta name="description" content="Verified land, homes and commercial plots across Nairobi and beyond. Mwarokin Estates — buy, rent, and finance property with confidence.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1A1F1B;
+    --ink-soft:#3B443C;
+    --sand:#EDE7D8;
+    --sand-deep:#E2DAC6;
+    --forest:#2C4A3B;
+    --forest-deep:#16261D;
+    --forest-mid:#203B2E;
+    --brass:#B8863A;
+    --brass-light:#D9AE64;
+    --clay:#8B4530;
+    --ivory:#FBF8F2;
+    --line:rgba(26,31,27,0.14);
+    --line-ivory:rgba(251,248,242,0.18);
+
+    --font-display:'Fraunces', serif;
+    --font-body:'Inter', sans-serif;
+    --font-mono:'JetBrains Mono', monospace;
+
+    --container:1240px;
+    --radius:2px;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:var(--font-body);
+    background:var(--sand);
+    color:var(--ink);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  img{max-width:100%; display:block;}
+  a{color:inherit; text-decoration:none;}
+  button{font-family:inherit; cursor:pointer;}
+  .wrap{max-width:var(--container); margin:0 auto; padding:0 32px;}
+  ::selection{background:var(--brass); color:var(--ivory);}
+
+  :focus-visible{outline:2px solid var(--brass); outline-offset:3px;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;}
+  }
+
+  /* ---------- eyebrow / labels ---------- */
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--brass);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow::before{
+    content:'';
+    width:22px; height:1px;
+    background:var(--brass);
+  }
+
+  /* ================= NAV ================= */
+  header.site-nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:rgba(237,231,216,0.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+    transition:background .3s ease;
+  }
+  .nav-inner{
+    max-width:var(--container); margin:0 auto; padding:18px 32px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .logo{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:21px;
+    letter-spacing:0.01em;
+    display:flex; align-items:center; gap:10px;
+  }
+  .logo .mark{
+    width:30px; height:30px;
+    display:inline-flex; align-items:center; justify-content:center;
+    border:1.5px solid var(--forest);
+    color:var(--forest);
+    font-family:var(--font-mono);
+    font-size:12px;
+    transform:rotate(45deg);
+    flex-shrink:0;
+  }
+  .logo .mark span{transform:rotate(-45deg);}
+  .logo .txt{color:var(--ink);}
+  .logo .txt em{font-style:italic; color:var(--forest);}
+
+  nav.links{display:flex; gap:36px; align-items:center;}
+  nav.links a{
+    font-size:13.5px; font-weight:500; color:var(--ink-soft);
+    position:relative; padding:4px 0;
+  }
+  nav.links a::after{
+    content:''; position:absolute; left:0; bottom:0; height:1px; width:0;
+    background:var(--brass); transition:width .25s ease;
+  }
+  nav.links a:hover{color:var(--ink);}
+  nav.links a:hover::after{width:100%;}
+
+  .nav-cta{
+    display:flex; align-items:center; gap:18px;
+  }
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:13px; font-weight:600;
+    padding:11px 22px;
+    border-radius:var(--radius);
+    border:1px solid transparent;
+    transition:all .25s ease;
+    white-space:nowrap;
+  }
+  .btn-primary{
+    background:var(--forest); color:var(--ivory);
+    border-color:var(--forest);
+  }
+  .btn-primary:hover{background:var(--forest-deep); transform:translateY(-1px);}
+  .btn-ghost{
+    color:var(--ink); border-color:var(--line);
+  }
+  .btn-ghost:hover{border-color:var(--ink); background:rgba(26,31,27,0.04);}
+  .btn-brass{
+    background:var(--brass); color:var(--forest-deep); border-color:var(--brass);
+  }
+  .btn-brass:hover{background:var(--brass-light); transform:translateY(-1px);}
+
+  .hamburger{
+    display:none; flex-direction:column; gap:5px; width:26px; background:none; border:none;
+  }
+  .hamburger span{width:100%; height:1.5px; background:var(--ink); transition:all .25s ease;}
+
+  /* ================= HERO ================= */
+  .hero{
+    position:relative;
+    padding:168px 0 0;
+    background:
+      radial-gradient(ellipse 900px 500px at 82% 8%, rgba(184,134,58,0.14), transparent 60%),
+      var(--sand);
+    overflow:hidden;
+  }
+  .hero-grid{
+    display:grid; grid-template-columns:1.05fr 0.95fr;
+    gap:56px; align-items:center;
+    max-width:var(--container); margin:0 auto; padding:0 32px 90px;
+  }
+  .hero-copy h1{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(38px, 4.6vw, 64px);
+    line-height:1.04;
+    letter-spacing:-0.01em;
+    margin:22px 0 22px;
+  }
+  .hero-copy h1 em{
+    font-style:italic; font-weight:500; color:var(--forest);
+  }
+  .hero-copy p.lede{
+    font-size:17px; color:var(--ink-soft); max-width:460px; line-height:1.65;
+    margin-bottom:34px;
+  }
+  .hero-actions{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:44px;}
+
+  .hero-metrics{
+    display:flex; gap:36px; padding-top:30px; border-top:1px solid var(--line);
+    max-width:480px;
+  }
+  .metric b{
+    font-family:var(--font-display); font-size:28px; font-weight:600; display:block; color:var(--forest);
+  }
+  .metric span{font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.05em;}
+
+  /* hero visual: architectural plate */
+  .hero-visual{position:relative; height:560px;}
+  .plate{
+    position:absolute; inset:0;
+    background:
+      linear-gradient(160deg, var(--forest) 0%, var(--forest-deep) 100%);
+    border-radius:3px;
+    overflow:hidden;
+    box-shadow:0 30px 60px -20px rgba(22,38,29,0.45);
+  }
+  .plate svg{position:absolute; inset:0; width:100%; height:100%;}
+  .plate-tag{
+    position:absolute; top:24px; left:24px;
+    font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--brass-light);
+    border:1px solid rgba(217,174,100,0.35);
+    padding:6px 12px;
+  }
+  .plate-caption{
+    position:absolute; bottom:0; left:0; right:0;
+    padding:22px 24px 24px;
+    background:linear-gradient(0deg, rgba(22,38,29,0.92), transparent);
+    color:var(--ivory);
+  }
+  .plate-caption .price{
+    font-family:var(--font-display); font-size:26px; font-weight:600;
+  }
+  .plate-caption .loc{
+    font-size:12.5px; color:rgba(251,248,242,0.72); margin-top:4px;
+    display:flex; align-items:center; gap:6px;
+  }
+  .plate-specs{
+    position:absolute; top:24px; right:24px;
+    display:flex; flex-direction:column; gap:6px; align-items:flex-end;
+  }
+  .plate-specs span{
+    font-family:var(--font-mono); font-size:10.5px; color:rgba(251,248,242,0.65);
+  }
+  .corner-tab{
+    position:absolute; top:0; right:40px;
+    width:44px; height:56px;
+    background:var(--brass);
+    clip-path:polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);
+  }
+
+  /* search plate overlap */
+  .search-plate{
+    position:relative; z-index:5;
+    max-width:var(--container); margin:0 auto;
+    padding:0 32px;
+    margin-top:-56px;
+  }
+  .search-plate-inner{
+    background:var(--ivory);
+    border:1px solid var(--line);
+    box-shadow:0 24px 50px -24px rgba(26,31,27,0.25);
+    padding:26px 30px;
+    display:grid;
+    grid-template-columns:1.3fr 1fr 1fr 1fr auto;
+    gap:0;
+  }
+  .field{
+    padding:0 22px;
+    border-right:1px solid var(--line);
+    display:flex; flex-direction:column; gap:6px;
+  }
+  .field:first-child{padding-left:4px;}
+  .field label{
+    font-family:var(--font-mono); font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft);
+  }
+  .field select, .field input{
+    border:none; background:none; font-family:var(--font-body); font-size:14.5px; font-weight:500;
+    color:var(--ink); padding:0; appearance:none; -webkit-appearance:none;
+  }
+  .field select:focus, .field input:focus{outline:none;}
+  .search-btn{
+    display:flex; align-items:center; justify-content:center;
+    background:var(--forest); color:var(--ivory);
+    padding:0 30px; margin-left:22px;
+    font-size:13px; font-weight:600; letter-spacing:0.02em;
+    gap:8px; transition:background .25s ease;
+  }
+  .search-btn:hover{background:var(--forest-deep);}
+
+  /* ================= MARQUEE / TRUST STRIP ================= */
+  .trust-strip{
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    margin-top:96px;
+    background:var(--sand-deep);
+  }
+  .trust-inner{
+    max-width:var(--container); margin:0 auto; padding:20px 32px;
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;
+  }
+  .trust-item{
+    font-family:var(--font-mono); font-size:11.5px; color:var(--ink-soft);
+    letter-spacing:0.03em; display:flex; align-items:center; gap:8px;
+  }
+  .trust-item .dot{width:5px; height:5px; border-radius:50%; background:var(--brass);}
+
+  /* ================= SECTION HEADERS ================= */
+  section{padding:120px 0;}
+  .sec-head{
+    display:flex; justify-content:space-between; align-items:flex-end; gap:40px;
+    margin-bottom:56px;
+  }
+  .sec-head h2{
+    font-family:var(--font-display); font-weight:600; font-size:clamp(30px, 3.2vw, 44px);
+    line-height:1.08; margin-top:14px; max-width:560px;
+    letter-spacing:-0.01em;
+  }
+  .sec-head h2 em{font-style:italic; color:var(--forest); font-weight:500;}
+  .sec-head p{color:var(--ink-soft); max-width:340px; font-size:14.5px; line-height:1.6; padding-bottom:4px;}
+
+  /* ================= FILTER TABS ================= */
+  .filter-row{
+    display:flex; gap:8px; margin-bottom:44px; flex-wrap:wrap;
+  }
+  .filter-tab{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:0.04em;
+    padding:9px 18px; border:1px solid var(--line); background:transparent; color:var(--ink-soft);
+    transition:all .2s ease;
+  }
+  .filter-tab.active, .filter-tab:hover{
+    background:var(--forest); color:var(--ivory); border-color:var(--forest);
+  }
+
+  /* ================= LISTINGS GRID ================= */
+  .listings-grid{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:28px;
+  }
+  .listing-card{
+    background:var(--ivory);
+    border:1px solid var(--line);
+    position:relative;
+    opacity:0; transform:translateY(24px);
+    transition:opacity .6s ease, transform .6s ease, box-shadow .3s ease, border-color .3s ease;
+  }
+  .listing-card.visible{opacity:1; transform:translateY(0);}
+  .listing-card:hover{
+    box-shadow:0 26px 46px -26px rgba(26,31,27,0.28);
+    border-color:rgba(26,31,27,0.28);
+  }
+  .listing-media{
+    position:relative; height:220px; overflow:hidden;
+  }
+  .listing-media .art{
+    position:absolute; inset:0; width:100%; height:100%;
+    transition:transform .6s cubic-bezier(.2,.7,.3,1);
+  }
+  .listing-card:hover .listing-media .art{transform:scale(1.06);}
+  .tier-tag{
+    position:absolute; top:14px; left:14px;
+    font-family:var(--font-mono); font-size:10px; letter-spacing:0.1em; text-transform:uppercase;
+    background:rgba(22,38,29,0.82); color:var(--brass-light);
+    padding:6px 10px;
+  }
+  .fav-btn{
+    position:absolute; top:14px; right:14px;
+    width:30px; height:30px; border:none;
+    background:rgba(251,248,242,0.9);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--ink);
+  }
+  .listing-body{padding:20px 22px 22px;}
+  .listing-price{
+    font-family:var(--font-display); font-size:22px; font-weight:600; color:var(--forest);
+  }
+  .listing-price span{font-family:var(--font-body); font-size:12px; color:var(--ink-soft); font-weight:500;}
+  .listing-title{font-size:15px; font-weight:600; margin-top:8px;}
+  .listing-loc{
+    font-size:12.5px; color:var(--ink-soft); margin-top:4px;
+    display:flex; align-items:center; gap:5px;
+  }
+  .listing-specs{
+    display:flex; gap:16px; margin-top:16px; padding-top:16px; border-top:1px dashed var(--line);
+    font-family:var(--font-mono); font-size:11.5px; color:var(--ink-soft);
+  }
+  .listing-specs b{color:var(--ink); font-weight:600;}
+
+  .center-cta{display:flex; justify-content:center; margin-top:52px;}
+
+  /* ================= NEIGHBORHOODS ================= */
+  .hoods-section{background:var(--forest-deep); color:var(--ivory);}
+  .hoods-section .eyebrow{color:var(--brass-light);}
+  .hoods-section .eyebrow::before{background:var(--brass-light);}
+  .hoods-section .sec-head p{color:rgba(251,248,242,0.6);}
+  .hoods-scroll{
+    display:flex; gap:20px; overflow-x:auto; padding-bottom:12px;
+    scrollbar-width:thin;
+  }
+  .hoods-scroll::-webkit-scrollbar{height:5px;}
+  .hoods-scroll::-webkit-scrollbar-thumb{background:var(--brass); }
+  .hood-card{
+    flex:0 0 260px; height:320px; position:relative; overflow:hidden;
+    border:1px solid var(--line-ivory);
+  }
+  .hood-card .art{position:absolute; inset:0;}
+  .hood-card .overlay{
+    position:absolute; inset:0;
+    background:linear-gradient(0deg, rgba(10,18,13,0.88) 0%, rgba(10,18,13,0.1) 55%, transparent 100%);
+    display:flex; flex-direction:column; justify-content:flex-end; padding:20px;
+  }
+  .hood-card .count{
+    font-family:var(--font-mono); font-size:11px; color:var(--brass-light); letter-spacing:0.06em;
+  }
+  .hood-card h3{
+    font-family:var(--font-display); font-size:22px; font-weight:600; margin-top:6px;
+  }
+
+  /* ================= PROCESS / SITE PLAN ================= */
+  .process{position:relative;}
+  .process-line{
+    display:grid; grid-template-columns:repeat(4, 1fr); gap:0; position:relative; margin-top:20px;
+  }
+  .process-line::before{
+    content:''; position:absolute; top:19px; left:6%; right:6%; height:1px;
+    background:repeating-linear-gradient(90deg, var(--brass) 0 8px, transparent 8px 16px);
+    z-index:0;
+  }
+  .process-step{position:relative; z-index:1; padding-right:26px;}
+  .process-node{
+    width:38px; height:38px; border:1.5px solid var(--brass); background:var(--sand);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-size:12px; color:var(--forest); font-weight:600;
+    margin-bottom:20px;
+  }
+  .process-step h3{
+    font-family:var(--font-display); font-size:19px; font-weight:600; margin-bottom:8px;
+  }
+  .process-step p{font-size:13.5px; color:var(--ink-soft); line-height:1.6;}
+
+  /* ================= FINANCING ================= */
+  .financing{
+    background:var(--forest);
+    color:var(--ivory);
+    position:relative;
+    overflow:hidden;
+  }
+  .financing::before{
+    content:'';
+    position:absolute; top:-30%; right:-10%; width:600px; height:600px;
+    background:radial-gradient(circle, rgba(184,134,58,0.18), transparent 65%);
+  }
+  .fin-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center;
+    position:relative; z-index:1;
+  }
+  .financing .eyebrow{color:var(--brass-light);}
+  .financing .eyebrow::before{background:var(--brass-light);}
+  .financing h2{
+    font-family:var(--font-display); font-weight:600; font-size:clamp(28px,3vw,40px);
+    line-height:1.12; margin:16px 0 20px;
+  }
+  .financing h2 em{font-style:italic; color:var(--brass-light); font-weight:500;}
+  .financing p.lede{color:rgba(251,248,242,0.72); font-size:15px; line-height:1.7; max-width:440px; margin-bottom:30px;}
+
+  .fin-methods{display:flex; gap:14px; margin-bottom:34px;}
+  .fin-chip{
+    border:1px solid var(--line-ivory); padding:9px 16px;
+    font-family:var(--font-mono); font-size:12px; display:flex; align-items:center; gap:8px;
+    color:rgba(251,248,242,0.85);
+  }
+  .fin-chip .sq{width:7px; height:7px; background:var(--brass-light);}
+
+  .fin-panel{
+    background:rgba(251,248,242,0.05);
+    border:1px solid var(--line-ivory);
+    padding:34px;
+  }
+  .fin-row{
+    display:flex; justify-content:space-between; padding:16px 0; border-bottom:1px solid var(--line-ivory);
+    font-size:13.5px;
+  }
+  .fin-row:last-child{border-bottom:none;}
+  .fin-row .label{color:rgba(251,248,242,0.6);}
+  .fin-row .val{font-family:var(--font-mono); font-weight:600;}
+  .fin-cta{
+    margin-top:26px; width:100%; justify-content:center;
+  }
+
+  /* ================= TESTIMONIALS ================= */
+  .testimonial-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  .testimonial{
+    background:var(--sand); padding:34px 30px;
+  }
+  .testimonial .quote-mark{
+    font-family:var(--font-display); font-size:44px; color:var(--brass); line-height:0.5; display:block; margin-bottom:18px;
+  }
+  .testimonial p.q{font-size:14.5px; line-height:1.7; color:var(--ink-soft); margin-bottom:24px; min-height:110px;}
+  .t-person{display:flex; align-items:center; gap:12px;}
+  .t-avatar{
+    width:38px; height:38px; border-radius:50%;
+    background:var(--forest); color:var(--brass-light);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); font-size:14px; font-weight:600;
+  }
+  .t-person .name{font-size:13px; font-weight:600;}
+  .t-person .role{font-size:11.5px; color:var(--ink-soft);}
+
+  /* ================= FINAL CTA ================= */
+  .final-cta{
+    text-align:center;
+    padding:130px 0;
+    position:relative;
+  }
+  .final-cta h2{
+    font-family:var(--font-display); font-weight:600; font-size:clamp(34px, 5vw, 58px);
+    line-height:1.06; max-width:760px; margin:20px auto 34px;
+    letter-spacing:-0.01em;
+  }
+  .final-cta h2 em{font-style:italic; color:var(--forest); font-weight:500;}
+  .final-cta .eyebrow{justify-content:center;}
+  .final-actions{display:flex; gap:16px; justify-content:center; flex-wrap:wrap;}
+
+  /* ================= FOOTER ================= */
+  footer{
+    background:var(--forest-deep); color:rgba(251,248,242,0.7);
+    padding:76px 0 30px;
+  }
+  .footer-grid{
+    display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:50px;
+    padding-bottom:56px; border-bottom:1px solid var(--line-ivory);
+  }
+  .footer-brand .logo{color:var(--ivory);}
+  .footer-brand .logo .mark{border-color:var(--brass-light); color:var(--brass-light);}
+  .footer-brand p{font-size:13.5px; line-height:1.7; margin-top:16px; max-width:280px; color:rgba(251,248,242,0.55);}
+  .footer-col h4{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--brass-light); margin-bottom:18px;
+  }
+  .footer-col a{
+    display:block; font-size:13.5px; margin-bottom:12px; color:rgba(251,248,242,0.72);
+    transition:color .2s ease;
+  }
+  .footer-col a:hover{color:var(--ivory);}
+  .footer-bottom{
+    display:flex; justify-content:space-between; align-items:center; padding-top:28px;
+    font-size:12px; color:rgba(251,248,242,0.45); flex-wrap:wrap; gap:12px;
+  }
+  .footer-bottom .socials{display:flex; gap:16px;}
+
+  /* ================= REVEAL ANIM ================= */
+  .reveal{opacity:0; transform:translateY(20px); transition:opacity .7s ease, transform .7s ease;}
+  .reveal.visible{opacity:1; transform:translateY(0);}
+
+  /* ================= RESPONSIVE ================= */
+  @media (max-width: 980px){
+    nav.links{display:none;}
+    .hamburger{display:flex;}
+    .hero-grid{grid-template-columns:1fr; padding-top:0;}
+    .hero-visual{height:400px; order:-1;}
+    .search-plate-inner{grid-template-columns:1fr 1fr; row-gap:18px;}
+    .field{border-right:none; border-bottom:1px solid var(--line); padding-bottom:14px;}
+    .search-btn{grid-column:1 / -1; margin-left:0; padding:14px;}
+    .listings-grid{grid-template-columns:repeat(2,1fr);}
+    .process-line{grid-template-columns:1fr 1fr; row-gap:40px;}
+    .process-line::before{display:none;}
+    .fin-grid{grid-template-columns:1fr;}
+    .testimonial-grid{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:1fr 1fr; row-gap:36px;}
+  }
+  @media (max-width: 620px){
+    .wrap, .hero-grid, .search-plate, .nav-inner{padding-left:20px; padding-right:20px;}
+    section{padding:80px 0;}
+    .listings-grid{grid-template-columns:1fr;}
+    .hero-metrics{flex-wrap:wrap; gap:24px;}
+    .sec-head{flex-direction:column; align-items:flex-start; gap:16px;}
+    .footer-grid{grid-template-columns:1fr;}
+    .footer-bottom{flex-direction:column; align-items:flex-start;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="nav-inner">
+    <a href="#top" class="logo">
+      <span class="mark"><span>M</span></span>
+      <span class="txt">Mwarokin <em>Estates</em></span>
+    </a>
+    <nav class="links">
+      <a href="#listings">Listings</a>
+      <a href="#neighborhoods">Neighborhoods</a>
+      <a href="#process">How it works</a>
+      <a href="#financing">Financing</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="#contact" class="btn btn-ghost" style="display:none" id="loginBtn">Sign in</a>
+      <a href="#contact" class="btn btn-primary">List your property</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero" style="padding-bottom:0;">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow">Verified Kenyan Property, 2026</span>
+        <h1>Ground that <em>holds its value</em>, homes that hold your life.</h1>
+        <p class="lede">Mwarokin Estates lists verified land, homes and commercial plots across Nairobi and beyond — every title searched, every seller checked, before it reaches you.</p>
+        <div class="hero-actions">
+          <a href="#listings" class="btn btn-primary">Browse listings</a>
+          <a href="#process" class="btn btn-ghost">How verification works</a>
+        </div>
+        <div class="hero-metrics">
+          <div class="metric"><b data-count="1240">0</b><span>Verified listings</span></div>
+          <div class="metric"><b data-count="18">0</b><span>Counties covered</span></div>
+          <div class="metric"><b data-count="96">0</b><span>% titles cleared</span></div>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="plate">
+          <div class="corner-tab"></div>
+          <svg viewBox="0 0 500 560" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <linearGradient id="skyfade" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#2C4A3B"/>
+                <stop offset="100%" stop-color="#16261D"/>
+              </linearGradient>
+            </defs>
+            <rect width="500" height="560" fill="url(#skyfade)"/>
+            <g opacity="0.5" stroke="#D9AE64" stroke-width="1">
+              <line x1="0" y1="120" x2="500" y2="120"/>
+              <line x1="0" y1="240" x2="500" y2="240"/>
+              <line x1="0" y1="360" x2="500" y2="360"/>
+            </g>
+            <g opacity="0.9">
+              <polygon points="60,340 180,220 300,340" fill="none" stroke="#D9AE64" stroke-width="1.5"/>
+              <rect x="90" y="340" width="160" height="130" fill="none" stroke="#D9AE64" stroke-width="1.5"/>
+              <line x1="170" y1="470" x2="170" y2="400" stroke="#D9AE64" stroke-width="1.5"/>
+              <rect x="140" y="400" width="60" height="70" fill="none" stroke="#D9AE64" stroke-width="1.5"/>
+              <line x1="110" y1="380" x2="130" y2="380" stroke="#D9AE64" stroke-width="1"/>
+              <line x1="220" y1="380" x2="240" y2="380" stroke="#D9AE64" stroke-width="1"/>
+            </g>
+            <g opacity="0.35">
+              <circle cx="410" cy="90" r="34" fill="none" stroke="#D9AE64" stroke-width="1"/>
+            </g>
+            <g stroke="#D9AE64" stroke-width="0.6" opacity="0.4">
+              <line x1="0" y1="470" x2="500" y2="470"/>
+              <line x1="50" y1="470" x2="50" y2="480"/>
+              <line x1="450" y1="470" x2="450" y2="480"/>
+            </g>
+          </svg>
+          <div class="plate-tag">Featured · Karen, Nairobi</div>
+          <div class="plate-specs">
+            <span>4 BED</span>
+            <span>3 BATH</span>
+            <span>0.5 ACRE</span>
+          </div>
+          <div class="plate-caption">
+            <div class="price">KSh 68,000,000</div>
+            <div class="loc">📍 Karen Ridge Estate, Nairobi</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SEARCH PLATE ================= -->
+  <div class="search-plate">
+    <div class="search-plate-inner">
+      <div class="field">
+        <label>Location</label>
+        <select>
+          <option>Anywhere in Kenya</option>
+          <option>Nairobi — Karen</option>
+          <option>Nairobi — Kilimani</option>
+          <option>Nairobi — Westlands</option>
+          <option>Kiambu — Runda Edge</option>
+          <option>Mombasa — Nyali</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Property type</label>
+        <select>
+          <option>Any type</option>
+          <option>Residential</option>
+          <option>Land / plot</option>
+          <option>Commercial</option>
+          <option>Rental</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Budget (KSh)</label>
+        <select>
+          <option>Any budget</option>
+          <option>Under 5M</option>
+          <option>5M – 20M</option>
+          <option>20M – 60M</option>
+          <option>60M+</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Collection</label>
+        <select>
+          <option>All tiers</option>
+          <option>Msingi</option>
+          <option>Jengo</option>
+          <option>Milki</option>
+          <option>Taifa</option>
+        </select>
+      </div>
+      <button class="search-btn">Search <span>→</span></button>
+    </div>
+  </div>
+
+  <!-- ================= TRUST STRIP ================= -->
+  <div class="trust-strip">
+    <div class="trust-inner">
+      <div class="trust-item"><span class="dot"></span>Title deed search on every listing</div>
+      <div class="trust-item"><span class="dot"></span>Escrow via SylloPay &amp; M-Pesa</div>
+      <div class="trust-item"><span class="dot"></span>Licensed agents only</div>
+      <div class="trust-item"><span class="dot"></span>Physical site inspection reports</div>
+    </div>
+  </div>
+
+  <!-- ================= LISTINGS ================= -->
+  <section id="listings">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <span class="eyebrow">Current inventory</span>
+          <h2>A shortlist worth <em>your time.</em></h2>
+        </div>
+        <p>Every plate below has cleared title search, boundary survey and a physical inspection this quarter.</p>
+      </div>
+
+      <div class="filter-row reveal">
+        <button class="filter-tab active" data-filter="all">All listings</button>
+        <button class="filter-tab" data-filter="residential">Residential</button>
+        <button class="filter-tab" data-filter="land">Land</button>
+        <button class="filter-tab" data-filter="commercial">Commercial</button>
+        <button class="filter-tab" data-filter="rental">Rentals</button>
+      </div>
+
+      <div class="listings-grid" id="listingsGrid">
+        <!-- cards injected by JS -->
+      </div>
+
+      <div class="center-cta reveal">
+        <a href="#contact" class="btn btn-ghost">View full inventory (1,240 listings)</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= NEIGHBORHOODS ================= -->
+  <section class="hoods-section" id="neighborhoods">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <span class="eyebrow">Where to look</span>
+          <h2>Six neighborhoods our buyers <em>keep returning to.</em></h2>
+        </div>
+        <p>Each has its own rhythm — pick the one that matches how you actually live.</p>
+      </div>
+
+      <div class="hoods-scroll reveal">
+        <div class="hood-card">
+          <svg class="art" viewBox="0 0 260 320" preserveAspectRatio="xMidYMid slice"><rect width="260" height="320" fill="#2C4A3B"/><g opacity="0.5" stroke="#B8863A"><line x1="0" y1="80" x2="260" y2="80"/><line x1="0" y1="160" x2="260" y2="160"/><line x1="0" y1="240" x2="260" y2="240"/></g></svg>
+          <div class="overlay"><div class="count">86 listings</div><h3>Karen</h3></div>
+        </div>
+        <div class="hood-card">
+          <svg class="art" viewBox="0 0 260 320" preserveAspectRatio="xMidYMid slice"><rect width="260" height="320" fill="#3B443C"/><g opacity="0.5" stroke="#B8863A"><circle cx="60" cy="100" r="30" fill="none"/><circle cx="180" cy="220" r="46" fill="none"/></g></svg>
+          <div class="overlay"><div class="count">142 listings</div><h3>Kilimani</h3></div>
+        </div>
+        <div class="hood-card">
+          <svg class="art" viewBox="0 0 260 320" preserveAspectRatio="xMidYMid slice"><rect width="260" height="320" fill="#203B2E"/><g opacity="0.5" stroke="#B8863A"><rect x="40" y="60" width="60" height="200"/><rect x="130" y="100" width="60" height="160"/></g></svg>
+          <div class="overlay"><div class="count">98 listings</div><h3>Westlands</h3></div>
+        </div>
+        <div class="hood-card">
+          <svg class="art" viewBox="0 0 260 320" preserveAspectRatio="xMidYMid slice"><rect width="260" height="320" fill="#2C4A3B"/><g opacity="0.5" stroke="#B8863A"><polygon points="30,260 130,80 230,260" fill="none"/></g></svg>
+          <div class="overlay"><div class="count">54 listings</div><h3>Runda</h3></div>
+        </div>
+        <div class="hood-card">
+          <svg class="art" viewBox="0 0 260 320" preserveAspectRatio="xMidYMid slice"><rect width="260" height="320" fill="#16261D"/><g opacity="0.5" stroke="#B8863A"><line x1="0" y1="40" x2="260" y2="280"/><line x1="0" y1="280" x2="260" y2="40"/></g></svg>
+          <div class="overlay"><div class="count">71 listings</div><h3>Nyali, Mombasa</h3></div>
+        </div>
+        <div class="hood-card">
+          <svg class="art" viewBox="0 0 260 320" preserveAspectRatio="xMidYMid slice"><rect width="260" height="320" fill="#3B443C"/><g opacity="0.5" stroke="#B8863A"><rect x="60" y="60" width="140" height="200" rx="70"/></g></svg>
+          <div class="overlay"><div class="count">39 listings</div><h3>Nakuru East</h3></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PROCESS ================= -->
+  <section id="process">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <span class="eyebrow">How it works</span>
+          <h2>From shortlist to <em>keys in hand.</em></h2>
+        </div>
+        <p>Four steps, same order, every time — no shortcuts on the title work.</p>
+      </div>
+
+      <div class="process-line reveal">
+        <div class="process-step">
+          <div class="process-node">01</div>
+          <h3>Browse &amp; shortlist</h3>
+          <p>Filter by location, budget and tier. Save listings and compare specs side by side.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-node">02</div>
+          <h3>We verify the title</h3>
+          <p>Our team runs a land registry search and physical boundary check before you view.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-node">03</div>
+          <h3>Reserve with deposit</h3>
+          <p>Hold your listing with a refundable deposit via M-Pesa or SylloPay escrow.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-node">04</div>
+          <h3>Transfer &amp; move in</h3>
+          <p>We coordinate the lawyer, the transfer, and handover — you just show up.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FINANCING ================= -->
+  <section class="financing" id="financing">
+    <div class="wrap fin-grid">
+      <div>
+        <span class="eyebrow">Payments</span>
+        <h2>Pay your deposit <em>the way you already bank.</em></h2>
+        <p class="lede">No wire transfers, no waiting on bank clearance. Reserve a listing, pay stage-by-stage, and track every shilling from your dashboard.</p>
+        <div class="fin-methods">
+          <div class="fin-chip"><span class="sq"></span>M-Pesa</div>
+          <div class="fin-chip"><span class="sq"></span>SylloPay</div>
+          <div class="fin-chip"><span class="sq"></span>Bank transfer</div>
+        </div>
+        <a href="#contact" class="btn btn-brass">See financing options</a>
+      </div>
+      <div class="fin-panel reveal">
+        <div class="fin-row"><span class="label">Reservation deposit</span><span class="val">KSh 150,000</span></div>
+        <div class="fin-row"><span class="label">Escrow release</span><span class="val">On title transfer</span></div>
+        <div class="fin-row"><span class="label">Processing time</span><span class="val">2–4 weeks</span></div>
+        <div class="fin-row"><span class="label">Legal fee coordination</span><span class="val">Included</span></div>
+        <div class="fin-row"><span class="label">Refund window</span><span class="val">14 days</span></div>
+        <button class="btn btn-primary fin-cta">Start a reservation</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TESTIMONIALS ================= -->
+  <section id="testimonials">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <span class="eyebrow">Buyers &amp; sellers</span>
+          <h2>What the title search <em>actually caught.</em></h2>
+        </div>
+        <p>Real outcomes from listings that went through Mwarokin's verification process.</p>
+      </div>
+
+      <div class="testimonial-grid reveal">
+        <div class="testimonial">
+          <span class="quote-mark">"</span>
+          <p class="q">The plot I almost bought privately had a boundary dispute nobody mentioned. Mwarokin's survey caught it in three days.</p>
+          <div class="t-person"><div class="t-avatar">JN</div><div><div class="name">Josephine N.</div><div class="role">Buyer, Kiambu</div></div></div>
+        </div>
+        <div class="testimonial">
+          <span class="quote-mark">"</span>
+          <p class="q">Listed my late father's land, got a verified buyer in five weeks, and the escrow flow meant nobody had to trust anybody blindly.</p>
+          <div class="t-person"><div class="t-avatar">DK</div><div><div class="name">David K.</div><div class="role">Seller, Nakuru</div></div></div>
+        </div>
+        <div class="testimonial">
+          <span class="quote-mark">"</span>
+          <p class="q">Paid the deposit on M-Pesa from Doha at 11pm and had a confirmation before I woke up. That alone sold me on the platform.</p>
+          <div class="t-person"><div class="t-avatar">AW</div><div><div class="name">Amina W.</div><div class="role">Diaspora buyer</div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FINAL CTA ================= -->
+  <section class="final-cta" id="contact">
+    <div class="wrap">
+      <span class="eyebrow">Ready when you are</span>
+      <h2>Your next plot is one <em>verified search</em> away.</h2>
+      <div class="final-actions">
+        <a href="#listings" class="btn btn-primary">Browse listings</a>
+        <a href="#" class="btn btn-ghost">Talk to an agent</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#top" class="logo">
+          <span class="mark"><span>M</span></span>
+          <span class="txt">Mwarokin <em>Estates</em></span>
+        </a>
+        <p>Verified land, homes and commercial plots across Kenya. A Syllogism Technology Africa company.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <a href="#listings">Listings</a>
+        <a href="#neighborhoods">Neighborhoods</a>
+        <a href="#process">How it works</a>
+        <a href="#financing">Financing</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="#">About Mwarokin</a>
+        <a href="#">List your property</a>
+        <a href="#">Agent network</a>
+        <a href="#">Careers</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="#">Nairobi, Kenya</a>
+        <a href="#">hello@mwarokinestates.co.ke</a>
+        <a href="#">+254 700 000 000</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Mwarokin Estates. All rights reserved.</span>
+      <div class="socials">
+        <a href="#">Instagram</a>
+        <a href="#">LinkedIn</a>
+        <a href="#">X</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // ---------- Mobile nav ----------
+  const hamburger = document.getElementById('hamburger');
+  const links = document.querySelector('nav.links');
+  hamburger.addEventListener('click', () => {
+    const isOpen = links.style.display === 'flex';
+    links.style.display = isOpen ? 'none' : 'flex';
+    links.style.cssText += isOpen ? '' : 'position:fixed; top:66px; left:0; right:0; background:#EDE7D8; flex-direction:column; padding:24px 32px; gap:20px; border-bottom:1px solid rgba(26,31,27,0.14);';
+  });
+
+  // ---------- Listing data ----------
+  const listings = [
+    {tier:'Milki', cat:'residential', price:'42,500,000', title:'4-Bed Contemporary Villa', loc:'Karen, Nairobi', beds:4, baths:4, size:'3,200 sqft', grad:['#2C4A3B','#16261D'], shape:'house'},
+    {tier:'Jengo', cat:'land', price:'8,900,000', title:'Half-Acre Corner Plot', loc:'Kitengela, Kajiado', beds:'-', baths:'-', size:'0.5 acre', grad:['#3B443C','#1A1F1B'], shape:'plot'},
+    {tier:'Taifa', cat:'commercial', price:'96,000,000', title:'Mixed-Use Commercial Block', loc:'Westlands, Nairobi', beds:'-', baths:'8', size:'12,400 sqft', grad:['#203B2E','#16261D'], shape:'block'},
+    {tier:'Msingi', cat:'rental', price:'85,000/mo', title:'2-Bed Modern Apartment', loc:'Kilimani, Nairobi', beds:2, baths:2, size:'1,050 sqft', grad:['#2C4A3B','#3B443C'], shape:'apt'},
+    {tier:'Milki', cat:'residential', price:'58,000,000', title:'5-Bed Family Home + Garden', loc:'Runda, Nairobi', beds:5, baths:5, size:'4,600 sqft', grad:['#16261D','#2C4A3B'], shape:'house'},
+    {tier:'Jengo', cat:'land', price:'14,200,000', title:'1-Acre Serviced Plot', loc:'Tigoni, Kiambu', beds:'-', baths:'-', size:'1 acre', grad:['#1A1F1B','#3B443C'], shape:'plot'},
+    {tier:'Taifa', cat:'commercial', price:'210,000,000', title:'Waterfront Office Development', loc:'Nyali, Mombasa', beds:'-', baths:'14', size:'22,000 sqft', grad:['#203B2E','#1A1F1B'], shape:'block'},
+    {tier:'Msingi', cat:'rental', price:'120,000/mo', title:'3-Bed Townhouse', loc:'Lavington, Nairobi', beds:3, baths:3, size:'1,800 sqft', grad:['#2C4A3B','#16261D'], shape:'apt'},
+    {tier:'Milki', cat:'residential', price:'34,900,000', title:'3-Bed Courtyard Bungalow', loc:'Nakuru East', beds:3, baths:3, size:'2,400 sqft', grad:['#3B443C','#16261D'], shape:'house'},
+  ];
+
+  function shapeSVG(shape, id){
+    const paths = {
+      house: `<polygon points="20,140 100,70 180,140" fill="none" stroke="#D9AE64" stroke-width="1.2"/><rect x="40" y="140" width="120" height="80" fill="none" stroke="#D9AE64" stroke-width="1.2"/>`,
+      plot: `<polygon points="20,40 180,40 200,190 10,170" fill="none" stroke="#D9AE64" stroke-width="1.2"/><line x1="20" y1="40" x2="200" y2="190" stroke="#D9AE64" stroke-width="0.6" opacity="0.5"/>`,
+      block: `<rect x="30" y="50" width="140" height="170" fill="none" stroke="#D9AE64" stroke-width="1.2"/><line x1="30" y1="90" x2="170" y2="90" stroke="#D9AE64" stroke-width="0.6"/><line x1="30" y1="130" x2="170" y2="130" stroke="#D9AE64" stroke-width="0.6"/><line x1="30" y1="170" x2="170" y2="170" stroke="#D9AE64" stroke-width="0.6"/>`,
+      apt: `<rect x="45" y="40" width="110" height="180" fill="none" stroke="#D9AE64" stroke-width="1.2"/><line x1="45" y1="80" x2="155" y2="80" stroke="#D9AE64" stroke-width="0.6"/><line x1="45" y1="120" x2="155" y2="120" stroke="#D9AE64" stroke-width="0.6"/><line x1="45" y1="160" x2="155" y2="160" stroke="#D9AE64" stroke-width="0.6"/>`
+    };
+    return `<svg class="art" viewBox="0 0 200 260" preserveAspectRatio="xMidYMid slice">
+      <defs><linearGradient id="g${id}" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="${arguments[2][0]}"/><stop offset="100%" stop-color="${arguments[2][1]}"/>
+      </linearGradient></defs>
+      <rect width="200" height="260" fill="url(#g${id})"/>
+      <g opacity="0.85">${paths[shape]}</g>
+    </svg>`;
+  }
+
+  const grid = document.getElementById('listingsGrid');
+  function render(filter){
+    grid.innerHTML = '';
+    listings
+      .filter(l => filter === 'all' || l.cat === filter)
+      .forEach((l, i) => {
+        const card = document.createElement('div');
+        card.className = 'listing-card';
+        card.innerHTML = `
+          <div class="listing-media">
+            ${shapeSVG(l.shape, i, l.grad)}
+            <div class="tier-tag">${l.tier}</div>
+            <button class="fav-btn" aria-label="Save listing">♡</button>
+          </div>
+          <div class="listing-body">
+            <div class="listing-price">KSh ${l.price} ${l.cat==='rental' ? '' : '<span>total</span>'}</div>
+            <div class="listing-title">${l.title}</div>
+            <div class="listing-loc">📍 ${l.loc}</div>
+            <div class="listing-specs">
+              <span><b>${l.beds}</b> bed</span>
+              <span><b>${l.baths}</b> bath</span>
+              <span><b>${l.size}</b></span>
+            </div>
+          </div>`;
+        grid.appendChild(card);
+      });
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.listing-card').forEach((c, i) => {
+        setTimeout(() => c.classList.add('visible'), i * 70);
+      });
+    });
+  }
+  render('all');
+
+  document.querySelectorAll('.filter-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      render(tab.dataset.filter);
+    });
+  });
+
+  // fav toggle
+  grid.addEventListener('click', (e) => {
+    if(e.target.classList.contains('fav-btn')){
+      e.target.textContent = e.target.textContent === '♡' ? '♥' : '♡';
+      e.target.style.color = e.target.textContent === '♥' ? '#8B4530' : '#1A1F1B';
+    }
+  });
+
+  // ---------- Reveal on scroll ----------
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.15});
+  revealEls.forEach(el => io.observe(el));
+
+  // ---------- Metric counters ----------
+  const metrics = document.querySelectorAll('.metric b[data-count]');
+  const mio = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        const el = entry.target;
+        const target = parseInt(el.dataset.count, 10);
+        let current = 0;
+        const step = Math.max(1, Math.round(target / 40));
+        const tick = () => {
+          current += step;
+          if(current >= target){ el.textContent = target; return; }
+          el.textContent = current;
+          requestAnimationFrame(tick);
+        };
+        tick();
+        mio.unobserve(el);
+      }
+    });
+  }, {threshold:0.5});
+  metrics.forEach(el => mio.observe(el));
+
+  // ---------- Nav background on scroll ----------
+  const nav = document.querySelector('.site-nav');
+  window.addEventListener('scroll', () => {
+    nav.style.boxShadow = window.scrollY > 20 ? '0 8px 24px -12px rgba(26,31,27,0.15)' : 'none';
+  });
+})();
+</script>
+
+</body>
+</html>

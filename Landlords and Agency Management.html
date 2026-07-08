@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Landlords & Agencies Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4bb543;
+            --warning: #ffcc00;
+            --danger: #dc3545;
+            --card-bg: #ffffff;
+            --body-bg: #f5f7fb;
+            --text: #333333;
+            --text-light: #6c757d;
+            --border: #dee2e6;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        .dark-mode {
+            --primary: #5a6ff0;
+            --secondary: #4a4fde;
+            --accent: #5acff0;
+            --light: #2d3748;
+            --dark: #f8f9fa;
+            --card-bg: #1a202c;
+            --body-bg: #121826;
+            --text: #e2e8f0;
+            --text-light: #a0aec0;
+            --border: #2d3748;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--body-bg);
+            color: var(--text);
+            transition: var(--transition);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header & Navigation */
+        header {
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 10px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            color: var(--primary);
+        }
+
+        .mode-toggle {
+            display: flex;
+            background-color: var(--light);
+            border-radius: 50px;
+            padding: 5px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .mode-option {
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            z-index: 1;
+            transition: var(--transition);
+        }
+
+        .mode-slider {
+            position: absolute;
+            height: calc(100% - 10px);
+            width: 50%;
+            background-color: var(--primary);
+            border-radius: 50px;
+            top: 5px;
+            left: 5px;
+            transition: var(--transition);
+        }
+
+        .mode-toggle.agency .mode-slider {
+            left: calc(50% - 5px);
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0;
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+
+        .hero-content {
+            flex: 1;
+        }
+
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .hero-image img {
+            max-width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: var(--text-light);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* Features Section */
+        .section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px var(--shadow);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px var(--shadow);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: white;
+            font-size: 1.8rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-card p {
+            color: var(--text-light);
+        }
+
+        /* Calculator Section */
+        .calculator-section {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 10px 30px var(--shadow);
+            margin: 50px 0;
+        }
+
+        .calculator-container {
+            display: flex;
+            gap: 50px;
+            align-items: flex-start;
+        }
+
+        .calculator-form {
+            flex: 1;
+        }
+
+        .calculator-result {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 15px;
+            padding: 30px;
+            color: white;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            color: var(--text);
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        .range-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .range-value {
+            min-width: 60px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .result-amount {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+
+        .result-breakdown {
+            text-align: left;
+            margin-top: 30px;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            text-align: center;
+            padding: 80px 0;
+            border-radius: 20px;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .cta-section p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-light {
+            background-color: white;
+            color: var(--primary);
+        }
+
+        .btn-light:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--card-bg);
+            padding: 60px 0 30px;
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            text-decoration: none;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--light);
+            color: var(--text);
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid var(--border);
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .hero-buttons {
+                justify-content: center;
+            }
+            
+            .calculator-container {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header & Navigation -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="fas fa-home"></i>
+                    <span>Mwarokin Estates</span>
+                </div>
+                
+                <div class="nav-links">
+                    <a href="#">Home</a>
+                    <a href="#">Features</a>
+                    <a href="#">Pricing</a>
+                    <a href="#">About</a>
+                    <a href="#">Contact</a>
+                </div>
+                
+                <div class="nav-actions">
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    
+                    <div class="mode-toggle" id="modeToggle">
+                        <div class="mode-slider"></div>
+                        <div class="mode-option">Landlord</div>
+                        <div class="mode-option">Agency</div>
+                    </div>
+                    
+                    <button class="btn btn-outline">Log In</button>
+                    <button class="btn btn-primary">Sign Up</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Dynamic Property Management Made Simple</h1>
+                <p>Mwarokin Estates empowers landlords and agencies with data-driven payment adjustments, transparent communication, and real-time updates for tenants.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-play-circle"></i> Watch Demo
+                    </button>
+                    <button class="btn btn-outline">
+                        <i class="fas fa-download"></i> Download App
+                    </button>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1073&q=80" alt="Mwarokin Estates App Dashboard">
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Powerful Features</h2>
+                <p>Mwarokin Estates provides everything you need to manage properties efficiently and transparently.</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Data-Driven Adjustments</h3>
+                    <p>Make payment changes based on real economic data, government directives, or market conditions - not arbitrary increases.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3>Automated Notifications</h3>
+                    <p>Tenants receive instant notifications about payment changes with detailed explanations and advance notice periods.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <h3>Real-Time Calculator</h3>
+                    <p>Calculate new payment amounts with our dynamic calculator that factors in all variables and provides transparent breakdowns.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <h3>Manual Payment System</h3>
+                    <p>Flexible payment system that allows for manual adjustments while maintaining transparency and automatic updates.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Dual Mode Interface</h3>
+                    <p>Switch seamlessly between landlord and agency views with customized features for each user type.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Transparent Records</h3>
+                    <p>Maintain complete audit trails of all payment changes with justifications and tenant acknowledgment.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Calculator Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Payment Adjustment Calculator</h2>
+                <p>See how different factors affect rental payments in real-time</p>
+            </div>
+            
+            <div class="calculator-section">
+                <div class="calculator-container">
+                    <div class="calculator-form">
+                        <div class="form-group">
+                            <label for="currentRent">Current Monthly Rent ($)</label>
+                            <input type="number" id="currentRent" class="form-control" value="1500" min="500" max="10000">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="economyFactor">Economic Adjustment (%)</label>
+                            <div class="range-container">
+                                <input type="range" id="economyFactor" class="form-control" min="-10" max="10" value="2" step="0.5">
+                                <span class="range-value" id="economyValue">2%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="govtDirective">Government Directive Impact (%)</label>
+                            <div class="range-container">
+                                <input type="range" id="govtDirective" class="form-control" min="-5" max="5" value="0" step="0.5">
+                                <span class="range-value" id="govtValue">0%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="amenities">Amenities & Services Fee ($)</label>
+                            <input type="number" id="amenities" class="form-control" value="100" min="0" max="500">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="taxes">Property Taxes ($)</label>
+                            <input type="number" id="taxes" class="form-control" value="75" min="0" max="300">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="communityFees">Community Resources Fee ($)</label>
+                            <input type="number" id="communityFees" class="form-control" value="50" min="0" max="200">
+                        </div>
+                    </div>
+                    
+                    <div class="calculator-result">
+                        <h3>New Monthly Payment</h3>
+                        <div class="result-amount" id="newPayment">$1,725.00</div>
+                        <p>This reflects a <span id="changePercentage">15.0%</span> change from previous payment</p>
+                        
+                        <div class="result-breakdown">
+                            <h4>Payment Breakdown</h4>
+                            <div class="breakdown-item">
+                                <span>Base Rent:</span>
+                                <span id="breakdownRent">$1,530.00</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span>Amenities:</span>
+                                <span id="breakdownAmenities">$100.00</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span>Taxes:</span>
+                                <span id="breakdownTaxes">$75.00</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span>Community Fees:</span>
+                                <span id="breakdownCommunity">$50.00</span>
+                            </div>
+                            <div class="breakdown-item" style="border-top: 2px solid rgba(255,255,255,0.5); font-weight: bold;">
+                                <span>Total:</span>
+                                <span id="breakdownTotal">$1,725.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section">
+        <div class="container">
+            <div class="cta-section">
+                <h2>Ready to Transform Your Property Management?</h2>
+                <p>Join thousands of landlords and agencies using Mwarokin Estates to create transparent, data-driven payment systems that benefit both property owners and tenants.</p>
+                <div class="cta-buttons">
+                    <button class="btn btn-light">
+                        <i class="fas fa-user-plus"></i> Sign Up as Landlord
+                    </button>
+                    <button class="btn btn-outline" style="border-color: white; color: white;">
+                        <i class="fas fa-building"></i> Sign Up as Agency
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Mwarokin Estates</h3>
+                    <p>Transparent, data-driven property management for the modern era.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Product</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Use Cases</a></li>
+                        <li><a href="#">Integrations</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Community</a></li>
+                        <li><a href="#">Webinars</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Company</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Partners</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>Mwarokin Estates -Land Lords & Agency Mangement- &copy; 2026. All rights reserved. | <a href="Privacy.html" style="color: var(--text-light);">Privacy Policy</a> | <a href="Term.html" style="color: var(--text-light);">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+        
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            
+            if (document.body.classList.contains('dark-mode')) {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            } else {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            }
+        });
+        
+        // Mode Toggle (Landlord/Agency)
+        const modeToggle = document.getElementById('modeToggle');
+        
+        modeToggle.addEventListener('click', () => {
+            modeToggle.classList.toggle('agency');
+            
+            // Update page content based on mode
+            if (modeToggle.classList.contains('agency')) {
+                document.querySelector('.logo span').textContent = 'Mwarokin Estates Agencies';
+                document.querySelector('h1').innerHTML = 'Agency Property Management <span style="display:block;">At Scale</span>';
+                document.querySelector('.hero p').textContent = 'Manage multiple properties efficiently with our agency-focused tools for data-driven payment adjustments and transparent tenant communications.';
+            } else {
+                document.querySelector('.logo span').textContent = 'Mwarokin Estates';
+                document.querySelector('h1').innerHTML = 'Dynamic Property Management Made Simple';
+                document.querySelector('.hero p').textContent = 'Mwarokin Estates empowers landlords and agencies with data-driven payment adjustments, transparent communication, and real-time updates for tenants.';
+            }
+        });
+        
+        // Payment Calculator
+        const currentRent = document.getElementById('currentRent');
+        const economyFactor = document.getElementById('economyFactor');
+        const economyValue = document.getElementById('economyValue');
+        const govtDirective = document.getElementById('govtDirective');
+        const govtValue = document.getElementById('govtValue');
+        const amenities = document.getElementById('amenities');
+        const taxes = document.getElementById('taxes');
+        const communityFees = document.getElementById('communityFees');
+        
+        const newPayment = document.getElementById('newPayment');
+        const changePercentage = document.getElementById('changePercentage');
+        
+        const breakdownRent = document.getElementById('breakdownRent');
+        const breakdownAmenities = document.getElementById('breakdownAmenities');
+        const breakdownTaxes = document.getElementById('breakdownTaxes');
+        const breakdownCommunity = document.getElementById('breakdownCommunity');
+        const breakdownTotal = document.getElementById('breakdownTotal');
+        
+        function updateCalculator() {
+            const rent = parseFloat(currentRent.value);
+            const economy = parseFloat(economyFactor.value);
+            const govt = parseFloat(govtDirective.value);
+            const amenitiesVal = parseFloat(amenities.value);
+            const taxesVal = parseFloat(taxes.value);
+            const communityVal = parseFloat(communityFees.value);
+            
+            // Calculate adjusted rent
+            const adjustedRent = rent * (1 + (economy + govt) / 100);
+            
+            // Calculate total
+            const total = adjustedRent + amenitiesVal + taxesVal + communityVal;
+            
+            // Calculate percentage change
+            const originalTotal = rent + amenitiesVal + taxesVal + communityVal;
+            const percentageChange = ((total - originalTotal) / originalTotal * 100).toFixed(1);
+            
+            // Update display
+            newPayment.textContent = `$${total.toFixed(2)}`;
+            changePercentage.textContent = `${percentageChange}%`;
+            
+            breakdownRent.textContent = `$${adjustedRent.toFixed(2)}`;
+            breakdownAmenities.textContent = `$${amenitiesVal.toFixed(2)}`;
+            breakdownTaxes.textContent = `$${taxesVal.toFixed(2)}`;
+            breakdownCommunity.textContent = `$${communityVal.toFixed(2)}`;
+            breakdownTotal.textContent = `$${total.toFixed(2)}`;
+        }
+        
+        // Event listeners for calculator inputs
+        currentRent.addEventListener('input', updateCalculator);
+        economyFactor.addEventListener('input', function() {
+            economyValue.textContent = `${this.value}%`;
+            updateCalculator();
+        });
+        govtDirective.addEventListener('input', function() {
+            govtValue.textContent = `${this.value}%`;
+            updateCalculator();
+        });
+        amenities.addEventListener('input', updateCalculator);
+        taxes.addEventListener('input', updateCalculator);
+        communityFees.addEventListener('input', updateCalculator);
+        
+        // Initialize calculator
+        updateCalculator();
+    </script>
+</body>
+</html>

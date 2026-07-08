@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Mwarokin Estates Real Estate: Premium Property Solutions with Advanced Multilingual Support">
+    <meta name="keywords" content="real estate, properties, homes, luxury, investment, translation, multilingual">
+    <meta name="author" content="Mwarokin Estates Real Estate Team">
+    
+    <title>Mwarokin Estates - Language Support</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTMgOUgxNk0zNiA5SDIxTTMgOVYyMEgxNkw5IDIwTDkgOU0zIDRWMTZNMzYgNFYxNk0zIDRIMTZNMTYgNEgyMU0yMSA0VjhNMTYgNFY4TTE2IDhIMjFNMTYgOFYxM0gyMVY4TTE2IDEzSDIxTTE2IDEzVjE2SDIxVjEzTTE2IDE2SDIxTTE2IDE2VjIwSDIxVjE2IiBzdHJva2U9IiMyNTc1ZmMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPg==">
+    
+    <!-- Stylesheets -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons/css/flag-icons.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-gradient-start: #1e3a8a;
+            --primary-gradient-end: #3b82f6;
+            --secondary-gradient-start: #f59e0b;
+            --secondary-gradient-end: #d97706;
+            --background-light: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        body {
+            background-color: var(--background-light);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-primary);
+            scroll-behavior: smooth;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
+        }
+        
+        .gradient-bg-secondary {
+            background: linear-gradient(135deg, var(--secondary-gradient-start) 0%, var(--secondary-gradient-end) 100%);
+        }
+        
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.125);
+        }
+        
+        .property-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .property-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--card-shadow);
+        }
+        
+        .heart-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .heart-icon:hover {
+            color: #e53e3e;
+            transform: scale(1.1);
+        }
+        
+        .price-tag {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(30, 58, 138, 0.9);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .property-status {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(34, 197, 94, 0.9);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .chat-bubble {
+            border-radius: 20px;
+            padding: 12px 16px;
+            margin: 8px 0;
+            max-width: 80%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .user-bubble {
+            background: #3b82f6;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .agent-bubble {
+            background: #f1f5f9;
+            color: var(--text-primary);
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .translation-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 50px;
+            padding: 10px 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .translation-indicator:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+        }
+        
+        .language-option {
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+        
+        .language-option:hover {
+            transform: scale(1.02);
+            background-color: #eff6ff;
+        }
+        
+        .speech-wave {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 30px;
+            height: 30px;
+        }
+        
+        .speech-bar {
+            width: 3px;
+            height: 100%;
+            background-color: #3b82f6;
+            border-radius: 3px;
+            animation: speech-wave 1.5s ease-in-out infinite;
+        }
+        
+        .speech-bar:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .speech-bar:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        .speech-bar:nth-child(4) {
+            animation-delay: 0.6s;
+        }
+        
+        .speech-bar:nth-child(5) {
+            animation-delay: 0.8s;
+        }
+        
+        @keyframes speech-wave {
+            0%, 100% { height: 30%; }
+            50% { height: 100%; }
+        }
+        
+        .property-feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+        }
+        
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-gradient-start), var(--primary-gradient-end));
+            border-radius: 2px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary-gradient-start) 0%, var(--secondary-gradient-end) 100%);
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+        }
+        
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gradient-end);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .property-image {
+            transition: transform 0.5s ease;
+        }
+        
+        .property-card:hover .property-image {
+            transform: scale(1.05);
+        }
+        
+        .quick-question {
+            transition: all 0.3s ease;
+        }
+        
+        .quick-question:hover {
+            background-color: #3b82f6;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .language-selector {
+            transition: all 0.3s ease;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .language-selector:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        /* Animation for page load */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        
+        /* Property details modal */
+        .property-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background: white;
+            margin: 2% auto;
+            width: 90%;
+            max-width: 1000px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .close-modal:hover {
+            background: rgba(0, 0, 0, 0.7);
+            transform: scale(1.1);
+        }
+        
+        /* Schedule tour form */
+        .schedule-form {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Translation Indicator -->
+    <div class="translation-indicator animate-fadeInUp">
+        <span class="text-sm font-medium" id="currentLanguage">English</span>
+        <div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+            <i class="fas fa-language text-blue-600 text-xs"></i>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="text-2xl font-bold text-blue-700">Mwarokin Estates</div>
+                    <div class="ml-2 text-xs text-blue-500 font-semibold bg-blue-50 px-2 py-1 rounded-full"></div>
+                </div>
+                
+                <div class="hidden md:flex space-x-8">
+                    <a href="Rent.html" class="nav-link font-medium text-gray-700 hover:text-blue-600">Rent</a>
+                    <a href="ManageBills.html" class="nav-link font-medium text-gray-700 hover:text-blue-600" data-translate="properties">Manage Bills</a>
+                    <a href="LipaMdogo.html" class="nav-link font-medium text-gray-700 hover:text-blue-600" data-translate="agents">Lipa Mdogo Mdogo</a>
+                    <a href="Payments.html" class="nav-link font-medium text-gray-700 hover:text-blue-600" data-translate="payments">Payments</a>
+                    <a href="Communication.html" class="nav-link font-medium text-gray-700 hover:text-blue-600" data-translate="communication">Communication</a>
+                    <a href="Tenant Profile.html" class="nav-link font-medium text-gray-700 hover:text-blue-600" data-translate="communication">Tenant Profile</a>
+                </div>
+                
+                <!-- Language Selector -->
+                <div class="flex items-center space-x-4">
+                    <div class="relative group">
+                        <button class="flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-lg language-selector">
+                            <i class="fas fa-language text-blue-600"></i>
+                            <span class="text-sm font-medium" data-translate="language">Language</span>
+                            <i class="fas fa-chevron-down text-xs text-blue-600"></i>
+                        </button>
+                        <div class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 hidden group-hover:block z-50 border border-gray-100">
+                            <div class="language-option px-4 py-3 cursor-pointer flex items-center" data-lang="english">
+                                <span class="fi fi-us mr-3 rounded-sm"></span>
+                                <span>English</span>
+                            </div>
+                            <div class="language-option px-4 py-3 cursor-pointer flex items-center" data-lang="spanish">
+                                <span class="fi fi-es mr-3 rounded-sm"></span>
+                                <span>Español</span>
+                            </div>
+                            <div class="language-option px-4 py-3 cursor-pointer flex items-center" data-lang="french">
+                                <span class="fi fi-fr mr-3 rounded-sm"></span>
+                                <span>Français</span>
+                            </div>
+                            <div class="language-option px-4 py-3 cursor-pointer flex items-center" data-lang="mandarin">
+                                <span class="fi fi-cn mr-3 rounded-sm"></span>
+                                <span>中文</span>
+                            </div>
+                            <div class="language-option px-4 py-3 cursor-pointer flex items-center" data-lang="arabic">
+                                <span class="fi fi-sa mr-3 rounded-sm"></span>
+                                <span>العربية</span>
+                            </div>
+                            <div class="language-option px-4 py-3 cursor-pointer flex items-center" data-lang="hindi">
+                                <span class="fi fi-in mr-3 rounded-sm"></span>
+                                <span>हिन्दी</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white py-20">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center animate-fadeInUp">
+                <h1 class="text-5xl md:text-6xl font-bold mb-6" data-translate="hero_title">Invest in Your Happiness.</h1>
+                <p class="text-xl md:text-2xl mb-10 text-blue-100" data-translate="hero_subtitle">Begin Your Home Story By Experience More Living and Create Your Sanctuary.</p>
+                
+                <!-- Search Bar -->
+                <div class="bg-white rounded-2xl shadow-2xl p-6 mb-12">
+                    <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+                        <div class="flex-grow relative">
+                            <i class="fas fa-search absolute left-4 top-4 text-gray-400"></i>
+                            <input type="text" placeholder="Enter city, neighborhood, or address" class="w-full pl-12 pr-4 py-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800" data-translate-placeholder="search_placeholder">
+                        </div>
+                        <select class="p-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 bg-white">
+                            <option data-translate="all_properties">All Property Types</option>
+                            <option data-translate="single_family">Single Family</option>
+                            <option data-translate="apartment">Apartment</option>
+                            <option data-translate="condominium">Condominium</option>
+                            <option data-translate="townhouse">Townhouse</option>
+                            <option data-translate="luxury_villa">Luxury Villa</option>
+                        </select>
+                        <select class="p-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 bg-white">
+                            <option data-translate="price_range">Price Range</option>
+                            <option data-translate="under_200k">Under $200,000</option>
+                            <option data-translate="200k_500k">$200,000 - $500,000</option>
+                            <option data-translate="500k_1m">$500,000 - $1M</option>
+                            <option data-translate="over_1m">Over $1M</option>
+                        </select>
+                        <button class="btn-primary px-8 py-4 rounded-xl font-semibold text-lg" data-translate="search_button">
+                            <i class="fas fa-search mr-2"></i>Search
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col md:flex-row justify-center space-y-6 md:space-y-0 md:space-x-12">
+                    <div class="flex flex-col items-center">
+                        <div class="text-4xl font-bold">1,250+</div>
+                        <div class="mt-2 text-blue-100" data-translate="properties_text">Properties</div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="text-4xl font-bold">98%</div>
+                        <div class="mt-2 text-blue-100" data-translate="satisfaction_text">Client Satisfaction</div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="text-4xl font-bold">25+</div>
+                        <div class="mt-2 text-blue-100" data-translate="experience_text">Years Experience</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Translation Panel -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-5xl mx-auto bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 shadow-lg">
+                <h2 class="text-3xl font-bold mb-2 text-center text-blue-800" data-translate="translation_title">Mwarokin Estates Real-Time Translation</h2>
+                <p class="text-center mb-8 text-blue-700" data-translate="translation_subtitle">Communicate effortlessly with our advanced translation system</p>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <h3 class="font-semibold mb-4 text-blue-700 text-lg" data-translate="text_translation">Text Translation</h3>
+                        <textarea class="w-full h-40 p-4 border border-gray-200 rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Type text to translate" id="textToTranslate"></textarea>
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                            <select class="p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white w-full sm:w-auto" id="translationSource">
+                                <option value="auto" data-translate="detect_language">Detect Language</option>
+                                <option value="sw">Swahili</option>
+                                <option value="en">English</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                                <option value="zh">Mandarin</option>
+                                <option value="ar">Arabic</option>
+                                <option value="hi">Hindi</option>
+                            </select>
+                            <button class="btn-primary px-6 py-3 rounded-lg font-medium flex items-center w-full sm:w-auto justify-center" id="translateText">
+                                <i class="fas fa-exchange-alt mr-2"></i>
+                                <span data-translate="translate_button">Translate</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <h3 class="font-semibold mb-4 text-blue-700 text-lg">Translation Result</h3>
+                        <div class="h-40 p-4 border border-gray-200 rounded-xl mb-4 bg-gray-50 overflow-y-auto" id="translationResult">
+                            <p class="text-gray-500 text-center py-12" data-translate="translation_placeholder">Translated text will appear here</p>
+                        </div>
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                            <select class="p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white w-full sm:w-auto" id="translationTarget">
+                                <option value="sw">Swahili</option>
+                                <option value="en">English</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                                <option value="zh">Mandarin</option>
+                                <option value="ar">Arabic</option>
+                                <option value="hi">Hindi</option>
+                            </select>
+                            <button class="btn-secondary px-6 py-3 rounded-lg font-medium flex items-center w-full sm:w-auto justify-center" id="speakTranslation">
+                                <i class="fas fa-volume-up mr-2"></i>
+                                <span data-translate="speak_button">Speak</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 text-center">
+                    <button class="btn-primary px-6 py-3 rounded-lg mr-4 mb-4" id="startVoiceInput">
+                        <i class="fas fa-microphone mr-2"></i>
+                        <span data-translate="voice_input">Voice Input</span>
+                    </button>
+                    <button class="bg-gray-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-700 transition" id="clearTranslation">
+                        <i class="fas fa-trash-alt mr-2"></i>
+                        <span data-translate="clear_button">Clear</span>
+                    </button>
+                    
+                    <div id="voiceInputStatus" class="mt-6 hidden">
+                        <div class="flex items-center justify-center text-blue-600">
+                            <div class="speech-wave mr-3">
+                                <div class="speech-bar"></div>
+                                <div class="speech-bar"></div>
+                                <div class="speech-bar"></div>
+                                <div class="speech-bar"></div>
+                                <div class="speech-bar"></div>
+                            </div>
+                            <span class="font-medium" data-translate="listening">Listening...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Properties -->
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-4 section-title" data-translate="featured_properties">Featured Properties</h2>
+            <p class="text-center text-gray-600 max-w-2xl mx-auto mb-12" data-translate="featured_subtitle">Discover our handpicked selection of premium properties in Mwarokin Estates</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Property 1 -->
+                <div class="property-card bg-white rounded-2xl overflow-hidden animate-fadeInUp">
+                    <div class="relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=400&q=80" alt="Luxury Villa" class="w-full h-64 object-cover property-image">
+                        <div class="price-tag">$850,000</div>
+                        <div class="property-status" data-translate="for_sale">For Sale</div>
+                        <button class="absolute top-4 right-16 text-white bg-gray-800 bg-opacity-50 rounded-full p-3 heart-icon">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2" data-translate="property1_title">Luxury Waterfront Villa</h3>
+                        <p class="text-gray-600 mb-4 flex items-center"><i class="fas fa-map-marker-alt mr-2 text-blue-500"></i><span data-translate="property1_location">North Mwarokin Estates, MW 12345</span></p>
+                        <div class="flex justify-between text-sm text-gray-500 border-b border-gray-200 pb-4 mb-4">
+                            <div class="property-feature">
+                                <i class="fas fa-bed text-blue-500"></i>
+                                <span data-translate="beds">4 Beds</span>
+                            </div>
+                            <div class="property-feature">
+                                <i class="fas fa-bath text-blue-500"></i>
+                                <span data-translate="baths">3 Baths</span>
+                            </div>
+                            <div class="property-feature">
+                                <i class="fas fa-ruler-combined text-blue-500"></i>
+                                <span data-translate="area">3,200 sq.ft.</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <button class="text-blue-600 font-semibold hover:text-blue-800 transition view-details" data-property="1" data-translate="view_details">View Details</button>
+                            <button class="btn-primary px-4 py-2 rounded-lg text-sm schedule-tour" data-property="1" data-translate="schedule_tour">Schedule Tour</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Property 2 -->
+                <div class="property-card bg-white rounded-2xl overflow-hidden animate-fadeInUp" style="animation-delay: 0.2s">
+                    <div class="relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1600566753052-d04fcfc4b5eb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=400&q=80" alt="Modern Apartment" class="w-full h-64 object-cover property-image">
+                        <div class="price-tag">$425,000</div>
+                        <div class="property-status" data-translate="for_sale">For Sale</div>
+                        <button class="absolute top-4 right-16 text-white bg-gray-800 bg-opacity-50 rounded-full p-3 heart-icon">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2" data-translate="property2_title">Modern Downtown Apartment</h3>
+                        <p class="text-gray-600 mb-4 flex items-center"><i class="fas fa-map-marker-alt mr-2 text-blue-500"></i><span data-translate="property2_location">Central Mwarokin Estates, MW 12345</span></p>
+                        <div class="flex justify-between text-sm text-gray-500 border-b border-gray-200 pb-4 mb-4">
+                            <div class="property-feature">
+                                <i class="fas fa-bed text-blue-500"></i>
+                                <span data-translate="beds">2 Beds</span>
+                            </div>
+                            <div class="property-feature">
+                                <i class="fas fa-bath text-blue-500"></i>
+                                <span data-translate="baths">2 Baths</span>
+                            </div>
+                            <div class="property-feature">
+                                <i class="fas fa-ruler-combined text-blue-500"></i>
+                                <span data-translate="area">1,200 sq.ft.</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <button class="text-blue-600 font-semibold hover:text-blue-800 transition view-details" data-property="2" data-translate="view_details">View Details</button>
+                            <button class="btn-primary px-4 py-2 rounded-lg text-sm schedule-tour" data-property="2" data-translate="schedule_tour">Schedule Tour</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Property 3 -->
+                <div class="property-card bg-white rounded-2xl overflow-hidden animate-fadeInUp" style="animation-delay: 0.4s">
+                    <div class="relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=400&q=80" alt="Family Home" class="w-full h-64 object-cover property-image">
+                        <div class="price-tag">$2,500/mo</div>
+                        <div class="property-status" style="background: rgba(245, 158, 11, 0.9);" data-translate="for_rent">For Rent</div>
+                        <button class="absolute top-4 right-16 text-white bg-gray-800 bg-opacity-50 rounded-full p-3 heart-icon">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2" data-translate="property3_title">Suburban Family Home</h3>
+                        <p class="text-gray-600 mb-4 flex items-center"><i class="fas fa-map-marker-alt mr-2 text-blue-500"></i><span data-translate="property3_location">East Mwarokin Estates, MW 12345</span></p>
+                        <div class="flex justify-between text-sm text-gray-500 border-b border-gray-200 pb-4 mb-4">
+                            <div class="property-feature">
+                                <i class="fas fa-bed text-blue-500"></i>
+                                <span data-translate="beds">3 Beds</span>
+                            </div>
+                            <div class="property-feature">
+                                <i class="fas fa-bath text-blue-500"></i>
+                                <span data-translate="baths">2.5 Baths</span>
+                            </div>
+                            <div class="property-feature">
+                                <i class="fas fa-ruler-combined text-blue-500"></i>
+                                <span data-translate="area">2,100 sq.ft.</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <button class="text-blue-600 font-semibold hover:text-blue-800 transition view-details" data-property="3" data-translate="view_details">View Details</button>
+                            <button class="btn-primary px-4 py-2 rounded-lg text-sm schedule-tour" data-property="3" data-translate="schedule_tour">Schedule Tour</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <button class="bg-white text-blue-600 border border-blue-600 px-8 py-3 rounded-xl font-medium hover:bg-blue-50 transition" data-translate="view_all">View All Properties</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Real-time Chat Interface -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+                <div class="gradient-bg text-white p-6">
+                    <h3 class="text-2xl font-semibold" data-translate="chat_title">Mwarokin Estates Real Estate Assistant</h3>
+                    <p class="text-blue-100" data-translate="chat_subtitle">Ask me about properties, neighborhoods, or scheduling tours</p>
+                </div>
+                
+                <div id="chatbox" class="h-80 overflow-y-auto bg-gray-50 p-6">
+                    <div class="agent-bubble chat-bubble">
+                        <p data-translate="welcome_message">Hello! Welcome to Mwarokin Estates Real Estate. How can I assist you today?</p>
+                        <p class="text-xs text-gray-500 mt-1">Just now</p>
+                    </div>
+                </div>
+                
+                <div class="p-6 border-t border-gray-200">
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <div class="flex-grow relative">
+                            <i class="fas fa-comment absolute left-4 top-4 text-gray-400"></i>
+                            <input type="text" id="userInput" placeholder="Ask about properties, neighborhoods, or scheduling..." 
+                                class="w-full pl-12 pr-4 py-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" data-translate-placeholder="chat_placeholder">
+                        </div>
+                        <button id="sendMessage" class="btn-primary px-6 py-4 rounded-xl">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                        <button id="voiceInput" class="btn-secondary px-6 py-4 rounded-xl">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <button id="translateChat" class="bg-purple-600 text-white px-6 py-4 rounded-xl hover:bg-purple-700 transition">
+                            <i class="fas fa-language"></i>
+                        </button>
+                    </div>
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <button class="quick-question bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm" data-translate="apartments_query">Show me apartments</button>
+                        <button class="quick-question bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm" data-translate="home_worth">What's my home worth?</button>
+                        <button class="quick-question bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm" data-translate="schedule_tour">Schedule a tour</button>
+                        <button class="quick-question bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm" data-translate="neighborhood_info">Neighborhood info</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Property Details Modal -->
+    <div id="propertyModal" class="property-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="modalContent" class="p-0">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Tour Modal -->
+    <div id="scheduleModal" class="property-modal">
+        <div class="modal-content max-w-2xl">
+            <span class="close-modal">&times;</span>
+            <div class="p-8">
+                <h3 class="text-2xl font-bold mb-6 text-center" data-translate="schedule_tour">Schedule a Property Tour</h3>
+                <form class="schedule-form">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-gray-700 mb-2" data-translate="full_name">Full Name</label>
+                            <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2" data-translate="email">Email Address</label>
+                            <input type="email" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2" data-translate="phone">Phone Number</label>
+                            <input type="tel" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2" data-translate="preferred_date">Preferred Date</label>
+                            <input type="date" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 mb-2" data-translate="property_interested">Property Interested In</label>
+                        <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" id="propertyName" readonly>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 mb-2" data-translate="message">Additional Message</label>
+                        <textarea class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="4" data-translate-placeholder="message_placeholder" placeholder="Any specific requests or questions..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary w-full py-3 rounded-lg font-semibold text-lg" data-translate="submit_request">Submit Request</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+                <div>
+                    <h3 class="text-2xl font-bold mb-6">Mwarokin Estates </h3>
+                    <p class="text-gray-400 mb-6" data-translate="footer_description">Premium property solutions with real estate years of experience serving the Mwarokin Estates community.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition transform hover:-translate-y-1"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition transform hover:-translate-y-1"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition transform hover:-translate-y-1"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition transform hover:-translate-y-1"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-lg mb-6" data-translate="quick_links">Quick Links</h4>
+                    <ul class="space-y-3">
+                        <li><a href="AutomateGPRSPinLocator.html" class="text-gray-400 hover:text-white transition" data-translate="agents_link">My Location</a></li>
+                        <li><a href="Renovations.html" class="text-gray-400 hover:text-white transition" data-translate="valuation_link">Renovations</a></li>
+                        <li><a href="Neighborhoods.html" class="text-gray-400 hover:text-white transition" data-translate="neighborhoods_link">Neighbourhoods</a></li>
+                        <li><a href="Accessibility.html" class="text-gray-400 hover:text-white transition" data-translate="properties_link">People With Disabilities</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-lg mb-6" data-translate="resources">Resources</h4>
+                    <ul class="space-y-3">
+                        <li><a href="Buying.html" class="text-gray-400 hover:text-white transition" data-translate="buying">Buying Property</a></li>
+                        <li><a href="Selling.html" class="text-gray-400 hover:text-white transition" data-translate="selling">Selling Property</a></li>
+                        <li><a href="Upgrade&DowngradeRelocation.html" class="text-gray-400 hover:text-white transition" data-translate="market_reports">Upgrade & Downgrade Relocation</a></li>
+                        <li><a href="Wearables.html" class="text-gray-400 hover:text-white transition" data-translate="Wearables">Wearables</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-lg mb-6" data-translate="contact_us">Contact Us</h4>
+                    <address class="text-gray-400 not-italic space-y-3">
+                        <p class="flex items-start"><i class="fas fa-map-marker-alt mr-3 mt-1 text-blue-400"></i> <span data-translate="footer_address">Africa & Global</span></p>
+                        <p class="flex items-center"><i class="fas fa-phone mr-3 text-blue-400"></i> (254) 704-919-388</p>
+                        <p class="flex items-center"><i class="fas fa-envelope mr-3 text-blue-400"></i> info@Mwarokin Estatesrealestate.com</p>
+                    </address>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-400">
+                <p>Mwarokin Estates -Real Time Translation- &copy; 2026. All rights reserved. Powered By: Syllogism Technology Africa.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Translation System
+        document.addEventListener('DOMContentLoaded', function() {
+            // Language data
+            const languageData = {
+                english: {
+                    hero_title: "Find Your Dream Home in Mwarokin Estates",
+                    hero_subtitle: "Premium properties, expert agents, and personalized service for all your real estate needs",
+                    search_placeholder: "Enter city, neighborhood, or address",
+                    all_properties: "All Property Types",
+                    single_family: "Single Family",
+                    apartment: "Apartment",
+                    condominium: "Condominium",
+                    townhouse: "Townhouse",
+                    luxury_villa: "Luxury Villa",
+                    price_range: "Price Range",
+                    under_200k: "Under $200,000",
+                    "200k_500k": "$200,000 - $500,000",
+                    "500k_1m": "$500,000 - $1M",
+                    over_1m: "Over $1M",
+                    search_button: "Search",
+                    properties_text: "Properties",
+                    satisfaction_text: "Client Satisfaction",
+                    experience_text: "Years Experience",
+                    translation_title: "Mwarokin Estates Real-Time Translation",
+                    translation_subtitle: "Communicate effortlessly with our advanced translation system",
+                    text_translation: "Text Translation",
+                    detect_language: "Detect Language",
+                    translate_button: "Translate",
+                    translation_placeholder: "Translated text will appear here",
+                    speak_button: "Speak",
+                    voice_input: "Voice Input",
+                    clear_button: "Clear",
+                    listening: "Listening...",
+                    featured_properties: "Featured Properties",
+                    featured_subtitle: "Discover our handpicked selection of premium properties in Mwarokin Estates",
+                    for_sale: "For Sale",
+                    property1_title: "Luxury Waterfront Villa",
+                    property1_location: "North Mwarokin Estates, MW 12345",
+                    beds: "Beds",
+                    baths: "Baths",
+                    area: "Area",
+                    view_details: "View Details",
+                    schedule_tour: "Schedule Tour",
+                    property2_title: "Modern Downtown Apartment",
+                    property2_location: "Central Mwarokin Estates, MW 12345",
+                    property3_title: "Suburban Family Home",
+                    property3_location: "East Mwarokin Estates, MW 12345",
+                    for_rent: "For Rent",
+                    view_all: "View All Properties",
+                    chat_title: "Mwarokin Estates Real Estate Assistant",
+                    chat_subtitle: "Ask me about properties, neighborhoods, or scheduling tours",
+                    welcome_message: "Hello! Welcome to Mwarokin Estates Real Estate. How can I assist you today?",
+                    chat_placeholder: "Ask about properties, neighborhoods, or scheduling...",
+                    apartments_query: "Show me apartments",
+                    home_worth: "What's my home worth?",
+                    schedule_tour: "Schedule a tour",
+                    neighborhood_info: "Neighborhood info",
+                    quick_links: "Quick Links",
+                    properties_link: "Properties",
+                    agents_link: "Agents",
+                    neighborhoods_link: "Neighborhoods",
+                    valuation_link: "Home Valuation",
+                    resources: "Resources",
+                    buying_guide: "Buying Guide",
+                    selling_guide: "Selling Guide",
+                    market_reports: "Market Reports",
+                    blog: "Blog",
+                    contact_us: "Contact Us",
+                    footer_address: "123 Estate Avenue, Mwarokin Estates",
+                    footer_description: "Premium property solutions with over 25 years of experience serving the Mwarokin Estates community.",
+                    language: "Language",
+                    sign_in: "Sign In",
+                    full_name: "Full Name",
+                    email: "Email Address",
+                    phone: "Phone Number",
+                    preferred_date: "Preferred Date",
+                    property_interested: "Property Interested In",
+                    message: "Additional Message",
+                    message_placeholder: "Any specific requests or questions...",
+                    submit_request: "Submit Request"
+                },
+                spanish: {
+                    hero_title: "Encuentra Tu Hogar Soñado en Mwarokin Estates",
+                    hero_subtitle: "Propiedades premium, agentes expertos y servicio personalizado para todas sus necesidades inmobiliarias",
+                    search_placeholder: "Ingrese ciudad, vecindario o dirección",
+                    all_properties: "Todos los Tipos de Propiedades",
+                    single_family: "Unifamiliar",
+                    apartment: "Apartamento",
+                    condominium: "Condominio",
+                    townhouse: "Casa Adosada",
+                    luxury_villa: "Villa de Lujo",
+                    price_range: "Rango de Precios",
+                    under_200k: "Menos de $200,000",
+                    "200k_500k": "$200,000 - $500,000",
+                    "500k_1m": "$500,000 - $1M",
+                    over_1m: "Más de $1M",
+                    search_button: "Buscar",
+                    properties_text: "Propiedades",
+                    satisfaction_text: "Satisfacción del Cliente",
+                    experience_text: "Años de Experiencia",
+                    translation_title: "Traducción en Tiempo Real de Mwarokin Estates",
+                    translation_subtitle: "Comuníquese sin esfuerzo con nuestro sistema de traducción avanzado",
+                    text_translation: "Traducción de Texto",
+                    detect_language: "Detectar Idioma",
+                    translate_button: "Traducir",
+                    translation_placeholder: "El texto traducido aparecerá aquí",
+                    speak_button: "Hablar",
+                    voice_input: "Entrada de Voz",
+                    clear_button: "Limpiar",
+                    listening: "Escuchando...",
+                    featured_properties: "Propiedades Destacadas",
+                    featured_subtitle: "Descubra nuestra selección de propiedades premium en Mwarokin Estates",
+                    for_sale: "En Venta",
+                    property1_title: "Villa de Lujo frente al Mar",
+                    property1_location: "North Mwarokin Estates, MW 12345",
+                    beds: "Hab",
+                    baths: "Baños",
+                    area: "Área",
+                    view_details: "Ver Detalles",
+                    schedule_tour: "Programar Visita",
+                    property2_title: "Apartamento Moderno en el Centro",
+                    property2_location: "Central Mwarokin Estates, MW 12345",
+                    property3_title: "Hogar Familiar en los Suburbios",
+                    property3_location: "East Mwarokin Estates, MW 12345",
+                    for_rent: "Para Alquilar",
+                    view_all: "Ver Todas las Propiedades",
+                    chat_title: "Asistente de Mwarokin Estates Real Estate",
+                    chat_subtitle: "Pregúnteme sobre propiedades, vecindarios o programación de visitas",
+                    welcome_message: "¡Hola! Bienvenido a Mwarokin Estates Real Estate. ¿Cómo puedo ayudarle hoy?",
+                    chat_placeholder: "Pregunte sobre propiedades, vecindarios o programación...",
+                    apartments_query: "Muéstreme apartamentos",
+                    home_worth: "¿Cuánto vale mi casa?",
+                    schedule_tour: "Programar una visita",
+                    neighborhood_info: "Información del vecindario",
+                    quick_links: "Enlaces Rápidos",
+                    properties_link: "Propiedades",
+                    agents_link: "Agentes",
+                    neighborhoods_link: "Vecindarios",
+                    valuation_link: "Valoración de Vivienda",
+                    resources: "Recursos",
+                    buying_guide: "Guía de Compra",
+                    selling_guide: "Guía de Venta",
+                    market_reports: "Informes de Mercado",
+                    blog: "Blog",
+                    contact_us: "Contáctenos",
+                    footer_address: "123 Avenida Estate, Mwarokin Estates",
+                    footer_description: "Soluciones inmobiliarias premium con más de 25 años de experiencia sirviendo a la comunidad de Mwarokin Estates.",
+                    language: "Idioma",
+                    sign_in: "Iniciar Sesión",
+                    full_name: "Nombre Completo",
+                    email: "Correo Electrónico",
+                    phone: "Número de Teléfono",
+                    preferred_date: "Fecha Preferida",
+                    property_interested: "Propiedad de Interés",
+                    message: "Mensaje Adicional",
+                    message_placeholder: "Cualquier solicitud o pregunta específica...",
+                    submit_request: "Enviar Solicitud"
+                },
+                french: {
+                    hero_title: "Trouvez la Maison de Vos Rêves à Mwarokin Estates",
+                    hero_subtitle: "Propriétés premium, agents experts et service personnalisé pour tous vos besoins immobiliers",
+                    search_placeholder: "Entrez la ville, le quartier ou l'adresse",
+                    all_properties: "Tous les Types de Propriétés",
+                    single_family: "Famille Unique",
+                    apartment: "Appartement",
+                    condominium: "Condominium",
+                    townhouse: "Maison de Ville",
+                    luxury_villa: "Villa de Luxe",
+                    price_range: "Tranche de Prix",
+                    under_200k: "Moins de 200 000 $",
+                    "200k_500k": "200 000 $ - 500 000 $",
+                    "500k_1m": "500 000 $ - 1 M$",
+                    over_1m: "Plus de 1 M$",
+                    search_button: "Rechercher",
+                    properties_text: "Propriétés",
+                    satisfaction_text: "Satisfaction Client",
+                    experience_text: "Années d'Expérience",
+                    translation_title: "Traduction en Temps Réel Mwarokin Estates",
+                    translation_subtitle: "Communiquez sans effort avec notre système de traduction avancé",
+                    text_translation: "Traduction de Texte",
+                    detect_language: "Détecter la Langue",
+                    translate_button: "Traduire",
+                    translation_placeholder: "Le texte traduit apparaîtra ici",
+                    speak_button: "Parler",
+                    voice_input: "Entrée Vocale",
+                    clear_button: "Effacer",
+                    listening: "Écoute...",
+                    featured_properties: "Propriétés en Vedette",
+                    featured_subtitle: "Découvrez notre sélection de propriétés premium à Mwarokin Estates",
+                    for_sale: "À Vendre",
+                    property1_title: "Villa de Luxe au Bord de l'Eau",
+                    property1_location: "North Mwarokin Estates, MW 12345",
+                    beds: "Lits",
+                    baths: "Salles de Bain",
+                    area: "Surface",
+                    view_details: "Voir les Détails",
+                    schedule_tour: "Planifier une Visite",
+                    property2_title: "Appartement Moderne en Centre-Ville",
+                    property2_location: "Central Mwarokin Estates, MW 12345",
+                    property3_title: "Maison Familiale en Banlieue",
+                    property3_location: "East Mwarokin Estates, MW 12345",
+                    for_rent: "À Louer",
+                    view_all: "Voir Toutes les Propriétés",
+                    chat_title: "Assistant Mwarokin Estates Real Estate",
+                    chat_subtitle: "Demandez-moi des propriétés, des quartiers ou la planification de visites",
+                    welcome_message: "Bonjour! Bienvenue à Mwarokin Estates Real Estate. Comment puis-je vous aider aujourd'hui?",
+                    chat_placeholder: "Demandez des propriétés, des quartiers ou la planification...",
+                    apartments_query: "Montrez-moi des appartements",
+                    home_worth: "Combien vaut ma maison?",
+                    schedule_tour: "Planifier une visite",
+                    neighborhood_info: "Informations sur le quartier",
+                    quick_links: "Liens Rapides",
+                    properties_link: "Propriétés",
+                    agents_link: "Agents",
+                    neighborhoods_link: "Quartiers",
+                    valuation_link: "Évaluation Immobilière",
+                    resources: "Ressources",
+                    buying_guide: "Guide d'Achat",
+                    selling_guide: "Guide de Vente",
+                    market_reports: "Rapports de Marché",
+                    blog: "Blog",
+                    contact_us: "Contactez-Nous",
+                    footer_address: "123 Estate Avenue, Mwarokin Estates",
+                    footer_description: "Solutions immobilières premium avec plus de 25 ans d'expérience au service de la communauté Mwarokin Estates.",
+                    language: "Langue",
+                    sign_in: "Se Connecter",
+                    full_name: "Nom Complet",
+                    email: "Adresse Email",
+                    phone: "Numéro de Téléphone",
+                    preferred_date: "Date Préférée",
+                    property_interested: "Propriété qui Vous Intéresse",
+                    message: "Message Supplémentaire",
+                    message_placeholder: "Toute demande ou question spécifique...",
+                    submit_request: "Soumettre la Demande"
+                }
+            };
+
+            // Set current language
+            let currentLanguage = 'english';
+            const currentLanguageElement = document.getElementById('currentLanguage');
+            
+            // Function to change language
+            function changeLanguage(lang) {
+                currentLanguage = lang;
+                currentLanguageElement.textContent = lang.charAt(0).toUpperCase() + lang.slice(1);
+                
+                // Update all translatable elements
+                document.querySelectorAll('[data-translate]').forEach(element => {
+                    const key = element.getAttribute('data-translate');
+                    if (languageData[lang] && languageData[lang][key]) {
+                        element.textContent = languageData[lang][key];
+                    }
+                });
+                
+                // Update placeholder texts
+                document.querySelectorAll('[data-translate-placeholder]').forEach(element => {
+                    const key = element.getAttribute('data-translate-placeholder');
+                    if (languageData[lang] && languageData[lang][key]) {
+                        element.setAttribute('placeholder', languageData[lang][key]);
+                    }
+                });
+            }
+            
+            // Language selection event listeners
+            document.querySelectorAll('.language-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    changeLanguage(lang);
+                });
+            });
+            
+            // Text translation functionality
+            document.getElementById('translateText').addEventListener('click', function() {
+                const textToTranslate = document.getElementById('textToTranslate').value;
+                const sourceLang = document.getElementById('translationSource').value;
+                const targetLang = document.getElementById('translationTarget').value;
+                
+                if (!textToTranslate.trim()) {
+                    document.getElementById('translationResult').innerHTML = '<p class="text-red-500 text-center py-10">Please enter text to translate</p>';
+                    return;
+                }
+                
+                // Simulate translation (in a real app, this would call a translation API)
+                document.getElementById('translationResult').innerHTML = `
+                    <p class="font-semibold text-blue-700">Translated Text:</p>
+                    <p class="mt-2 p-2 bg-blue-50 rounded-lg">${textToTranslate} [Translated to ${targetLang}]</p>
+                    <p class="text-xs text-gray-500 mt-4">Translation powered by Mwarokin Estates Translate</p>
+                `;
+            });
+            
+            // Voice input simulation
+            document.getElementById('startVoiceInput').addEventListener('click', function() {
+                const voiceInputStatus = document.getElementById('voiceInputStatus');
+                voiceInputStatus.classList.remove('hidden');
+                
+                // Simulate voice input processing
+                setTimeout(() => {
+                    voiceInputStatus.classList.add('hidden');
+                    document.getElementById('textToTranslate').value = "I'm looking for a 3 bedroom apartment in the city center";
+                    document.getElementById('translationResult').innerHTML = `
+                        <p class="font-semibold text-blue-700">Translated Text:</p>
+                        <p class="mt-2 p-2 bg-blue-50 rounded-lg">I'm looking for a 3 bedroom apartment in the city center [Translated to en]</p>
+                        <p class="text-xs text-gray-500 mt-4">Translation powered by Mwarokin Estates Translate</p>
+                    `;
+                }, 3000);
+            });
+            
+            // Clear translation
+            document.getElementById('clearTranslation').addEventListener('click', function() {
+                document.getElementById('textToTranslate').value = '';
+                document.getElementById('translationResult').innerHTML = '<p class="text-gray-500 text-center py-12" data-translate="translation_placeholder">Translated text will appear here</p>';
+                // Update the placeholder text in case language has changed
+                const key = document.getElementById('translationResult').querySelector('p').getAttribute('data-translate');
+                if (languageData[currentLanguage] && languageData[currentLanguage][key]) {
+                    document.getElementById('translationResult').querySelector('p').textContent = languageData[currentLanguage][key];
+                }
+            });
+            
+            // Speak translation
+            document.getElementById('speakTranslation').addEventListener('click', function() {
+                const translationText = document.getElementById('translationResult').innerText;
+                if (translationText.includes('Translated text will appear here') || translationText.includes('Please enter text')) {
+                    return;
+                }
+                
+                alert(`Reading translation in ${currentLanguage}...`);
+                // In a real implementation, this would use the Web Speech API
+            });
+            
+            // Property Details Modal
+            const propertyModal = document.getElementById('propertyModal');
+            const scheduleModal = document.getElementById('scheduleModal');
+            const closeButtons = document.querySelectorAll('.close-modal');
+            
+            // Property data
+            const properties = {
+                1: {
+                    title: "Luxury Waterfront Villa",
+                    price: "$850,000",
+                    status: "For Sale",
+                    location: "North Mwarokin Estates, MW 12345",
+                    beds: 4,
+                    baths: 3,
+                    area: "3,200 sq.ft.",
+                    year: 2018,
+                    description: "This stunning waterfront villa offers breathtaking views and luxurious living spaces. Featuring an open floor plan, gourmet kitchen, and expansive outdoor entertaining area with pool.",
+                    features: ["Waterfront", "Swimming Pool", "Gourmet Kitchen", "Home Theater", "Wine Cellar", "Smart Home System"],
+                    images: [
+                        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=400&q=80",
+                        "https://images.unsplash.com/photo-1613490493576-7fde63acd811?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=400&q=80",
+                        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=400&q=80"
+                    ]
+                },
+                2: {
+                    title: "Modern Downtown Apartment",
+                    price: "$425,000",
+                    status: "For Sale",
+                    location: "Central Mwarokin Estates, MW 12345",
+                    beds: 2,
+                    baths: 2,
+                    area: "1,200 sq.ft.",
+                    year: 2020,
+                    description: "Contemporary urban living at its finest. This stylish apartment features floor-to-ceiling windows, high-end finishes, and access to premium building amenities.",
+                    features: ["City Views", "Concierge", "Fitness Center", "Rooftop Terrace", "Secure Parking", "Pet Friendly"],
+                    images: [
+                        "https://images.unsplash.com/photo-1600566753052-d04fcfc4b5eb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=400&q=80",
+                        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=400&q=80",
+                        "https://images.unsplash.com/photo-1613490493576-7fde63acd811?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=400&q=80"
+                    ]
+                },
+                3: {
+                    title: "Suburban Family Home",
+                    price: "$2,500/mo",
+                    status: "For Rent",
+                    location: "East Mwarokin Estates, MW 12345",
+                    beds: 3,
+                    baths: 2.5,
+                    area: "2,100 sq.ft.",
+                    year: 2015,
+                    description: "Perfect for families, this spacious home offers a large backyard, updated kitchen, and comfortable living spaces in a friendly neighborhood with excellent schools.",
+                    features: ["Large Backyard", "Updated Kitchen", "Family Room", "Garage", "Near Schools", "Quiet Neighborhood"],
+                    images: [
+                        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=400&q=80",
+                        "https://images.unsplash.com/photo-1613490493576-7fde63acd811?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=400&q=80",
+                        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=400&q=80"
+                    ]
+                }
+            };
+            
+            // View Details buttons
+            document.querySelectorAll('.view-details').forEach(button => {
+                button.addEventListener('click', function() {
+                    const propertyId = this.getAttribute('data-property');
+                    const property = properties[propertyId];
+                    
+                    document.getElementById('modalContent').innerHTML = `
+                        <div class="property-details">
+                            <div class="relative">
+                                <div class="swiper propertySwiper h-96">
+                                    <div class="swiper-wrapper">
+                                        ${property.images.map(img => `
+                                            <div class="swiper-slide">
+                                                <img src="${img}" alt="${property.title}" class="w-full h-full object-cover">
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                    <div class="swiper-button-next text-white"></div>
+                                    <div class="swiper-button-prev text-white"></div>
+                                    <div class="swiper-pagination"></div>
+                                </div>
+                                <div class="absolute top-6 left-6 bg-white bg-opacity-90 rounded-full px-4 py-2 font-semibold text-blue-700">${property.price}</div>
+                                <div class="absolute top-6 right-6 bg-green-500 text-white rounded-full px-4 py-2 font-semibold">${property.status}</div>
+                            </div>
+                            <div class="p-8">
+                                <h2 class="text-3xl font-bold mb-4">${property.title}</h2>
+                                <p class="text-gray-600 mb-6 flex items-center"><i class="fas fa-map-marker-alt mr-2 text-blue-500"></i>${property.location}</p>
+                                
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                                    <div class="bg-blue-50 p-4 rounded-lg text-center">
+                                        <i class="fas fa-bed text-blue-500 text-xl mb-2"></i>
+                                        <p class="font-semibold">${property.beds} Beds</p>
+                                    </div>
+                                    <div class="bg-blue-50 p-4 rounded-lg text-center">
+                                        <i class="fas fa-bath text-blue-500 text-xl mb-2"></i>
+                                        <p class="font-semibold">${property.baths} Baths</p>
+                                    </div>
+                                    <div class="bg-blue-50 p-4 rounded-lg text-center">
+                                        <i class="fas fa-ruler-combined text-blue-500 text-xl mb-2"></i>
+                                        <p class="font-semibold">${property.area}</p>
+                                    </div>
+                                    <div class="bg-blue-50 p-4 rounded-lg text-center">
+                                        <i class="fas fa-calendar-alt text-blue-500 text-xl mb-2"></i>
+                                        <p class="font-semibold">Year: ${property.year}</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-8">
+                                    <h3 class="text-xl font-semibold mb-4">Description</h3>
+                                    <p class="text-gray-700">${property.description}</p>
+                                </div>
+                                
+                                <div class="mb-8">
+                                    <h3 class="text-xl font-semibold mb-4">Features</h3>
+                                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                        ${property.features.map(feature => `
+                                            <div class="flex items-center">
+                                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                                <span>${feature}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                                
+                                <div class="flex flex-col sm:flex-row gap-4">
+                                    <button class="btn-primary flex-1 py-3 rounded-lg font-semibold text-lg schedule-tour-modal" data-property="${propertyId}">
+                                        <i class="fas fa-calendar-alt mr-2"></i>Schedule a Tour
+                                    </button>
+                                    <button class="bg-gray-100 text-gray-700 flex-1 py-3 rounded-lg font-semibold text-lg hover:bg-gray-200 transition">
+                                        <i class="fas fa-download mr-2"></i>Download Brochure
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    propertyModal.style.display = 'block';
+                    
+                    // Initialize Swiper
+                    if (typeof Swiper !== 'undefined') {
+                        new Swiper('.propertySwiper', {
+                            loop: true,
+                            pagination: {
+                                el: '.swiper-pagination',
+                                clickable: true,
+                            },
+                            navigation: {
+                                nextEl: '.swiper-button-next',
+                                prevEl: '.swiper-button-prev',
+                            },
+                        });
+                    }
+                    
+                    // Add event listener for schedule tour in modal
+                    document.querySelector('.schedule-tour-modal').addEventListener('click', function() {
+                        propertyModal.style.display = 'none';
+                        openScheduleModal(propertyId);
+                    });
+                });
+            });
+            
+            // Schedule Tour buttons
+            document.querySelectorAll('.schedule-tour').forEach(button => {
+                button.addEventListener('click', function() {
+                    const propertyId = this.getAttribute('data-property');
+                    openScheduleModal(propertyId);
+                });
+            });
+            
+            function openScheduleModal(propertyId) {
+                const property = properties[propertyId];
+                document.getElementById('propertyName').value = property.title;
+                scheduleModal.style.display = 'block';
+            }
+            
+            // Close modals
+            closeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    propertyModal.style.display = 'none';
+                    scheduleModal.style.display = 'none';
+                });
+            });
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', function(event) {
+                if (event.target === propertyModal) {
+                    propertyModal.style.display = 'none';
+                }
+                if (event.target === scheduleModal) {
+                    scheduleModal.style.display = 'none';
+                }
+            });
+            
+            // Real Estate Chat Assistant
+            const chatbox = document.getElementById('chatbox');
+            const userInput = document.getElementById('userInput');
+            const sendButton = document.getElementById('sendMessage');
+            const voiceButton = document.getElementById('voiceInput');
+            const translateChatButton = document.getElementById('translateChat');
+            const quickQuestions = document.querySelectorAll('.quick-question');
+            
+            // Function to add message to chat
+            function addMessage(message, isUser = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = isUser ? 'user-bubble chat-bubble' : 'agent-bubble chat-bubble';
+                
+                const messageText = document.createElement('p');
+                messageText.textContent = message;
+                
+                const timeText = document.createElement('p');
+                timeText.className = 'text-xs text-gray-500 mt-1';
+                timeText.textContent = 'Just now';
+                
+                messageDiv.appendChild(messageText);
+                messageDiv.appendChild(timeText);
+                
+                chatbox.appendChild(messageDiv);
+                chatbox.scrollTop = chatbox.scrollHeight;
+            }
+            
+            // Function to handle user messages
+            function handleUserMessage(message) {
+                addMessage(message, true);
+                
+                // Simulate AI response with a delay
+                setTimeout(() => {
+                    const lowerMessage = message.toLowerCase();
+                    
+                    if (lowerMessage.includes('apartment') || lowerMessage.includes('condo') || lowerMessage.includes('studio')) {
+                        const apts = Object.values(properties).filter(p => p.title.toLowerCase().includes('apartment'));
+                        addMessage(`We have ${apts.length} apartments available. For example, our ${apts[0].title} in ${apts[0].location} features ${apts[0].beds} beds, ${apts[0].baths} baths, and is ${apts[0].area} for ${apts[0].price}. Would you like to schedule a viewing?`);
+                    } 
+                    else if (lowerMessage.includes('house') || lowerMessage.includes('home') || lowerMessage.includes('family')) {
+                        const houses = Object.values(properties).filter(p => p.title.toLowerCase().includes('home') || p.title.toLowerCase().includes('house'));
+                        addMessage(`We have several family homes available. Our ${houses[0].title} in ${houses[0].location} has ${houses[0].beds} bedrooms, ${houses[0].baths} bathrooms, and is ${houses[0].area} for ${houses[0].price}. Would you like more details?`);
+                    }
+                    else if (lowerMessage.includes('luxury') || lowerMessage.includes('villa') || lowerMessage.includes('mansion')) {
+                        const luxury = Object.values(properties).filter(p => p.title.toLowerCase().includes('villa') || p.title.toLowerCase().includes('luxury'));
+                        addMessage(`For luxury properties, we have our exquisite ${luxury[0].title} in ${luxury[0].location}. This property features ${luxury[0].beds} bedrooms, ${luxury[0].baths} bathrooms, and ${luxury[0].area} of living space for ${luxury[0].price}. Should I send you the full portfolio?`);
+                    }
+                    else if (lowerMessage.includes('schedule') || lowerMessage.includes('tour') || lowerMessage.includes('viewing')) {
+                        addMessage("I'd be happy to schedule a property viewing for you. What day would work best? We have availability this Thursday and Friday, or next week.");
+                    }
+                    else if (lowerMessage.includes('worth') || lowerMessage.includes('value') || lowerMessage.includes('price')) {
+                        addMessage("To provide an accurate home valuation, I'll need some details about your property. How many bedrooms and bathrooms do you have? What's the approximate square footage?");
+                    }
+                    else if (lowerMessage.includes('neighborhood') || lowerMessage.includes('area') || lowerMessage.includes('location')) {
+                        addMessage("Mwarokin Estates has several wonderful neighborhoods, each with its own character. The North area offers waterfront properties, Central is perfect for urban living, and the East has family-friendly suburbs. Which area interests you most?");
+                    }
+                    else if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
+                        addMessage("Hello! Welcome to Mwarokin Estates Real Estate. How can I assist you with your property search today?");
+                    }
+                    else {
+                        addMessage("I'm here to help you with all your real estate needs. You can ask me about properties, neighborhoods, scheduling tours, or getting a home valuation.");
+                    }
+                }, 1000);
+            }
+            
+            // Event listener for send button
+            sendButton.addEventListener('click', function() {
+                const message = userInput.value.trim();
+                if (message) {
+                    handleUserMessage(message);
+                    userInput.value = '';
+                }
+            });
+            
+            // Event listener for Enter key
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendButton.click();
+                }
+            });
+            
+            // Event listeners for quick questions
+            quickQuestions.forEach(button => {
+                button.addEventListener('click', function() {
+                    userInput.value = this.textContent;
+                    sendButton.click();
+                });
+            });
+            
+            // Voice input for chat
+            voiceButton.addEventListener('click', function() {
+                alert("Voice input activated. Speak now...");
+                // In a real implementation, this would use the Web Speech API
+                
+                // Simulate voice input after a delay
+                setTimeout(() => {
+                    userInput.value = "I'm interested in apartments near the city center";
+                    sendButton.click();
+                }, 2000);
+            });
+            
+            // Translate chat
+            translateChatButton.addEventListener('click', function() {
+                alert(`Translating chat to ${currentLanguage}...`);
+                // In a real implementation, this would translate the chat history
+            });
+            
+            // Initialize with welcome message
+            addMessage("Hello! Welcome to Mwarokin Estates Real Estate. How can I assist you today?");
+        });
+    </script>
+    
+    <!-- Swiper JS for property image carousel -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+</body>
+</html>

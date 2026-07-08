@@ -1,0 +1,1786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mwarokin Estates -Landlord Management</title>
+
+    <!-- Google Fonts + Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <style>
+        /* ── Reset & Base ── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0f1a2b;
+            --primary-light: #1a2a3f;
+            --primary-lighter: #2a3f5a;
+            --accent: #d4a853;
+            --accent-hover: #c99b42;
+            --bg: #f0f4f9;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.25s ease;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 10px;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: 260px;
+            background: var(--primary);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            padding: 28px 18px 24px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 100;
+            transition: transform var(--transition);
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 36px;
+            padding-left: 6px;
+        }
+
+        .sidebar-brand .brand-icon {
+            width: 42px;
+            height: 42px;
+            background: var(--accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .sidebar-brand h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        .sidebar-brand h1 span {
+            color: var(--accent);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-nav .nav-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: rgba(255, 255, 255, 0.35);
+            padding: 16px 10px 6px;
+            font-weight: 600;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 11px 14px;
+            border-radius: var(--radius-sm);
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .sidebar-nav a i {
+            width: 20px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+
+        .sidebar-nav a.active {
+            background: var(--accent);
+            color: var(--primary);
+            font-weight: 600;
+            box-shadow: 0 4px 14px rgba(212, 168, 83, 0.3);
+        }
+
+        .sidebar-nav a .badge {
+            margin-left: auto;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .sidebar-nav a.active .badge {
+            background: rgba(15, 26, 43, 0.2);
+            color: var(--primary);
+        }
+
+        .sidebar-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 18px;
+            margin-top: 8px;
+        }
+
+        .sidebar-footer .user-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 6px;
+            border-radius: var(--radius-sm);
+            transition: background var(--transition);
+            cursor: pointer;
+        }
+
+        .sidebar-footer .user-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .sidebar-footer .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 14px;
+        }
+
+        .sidebar-footer .user-info {
+            flex: 1;
+        }
+        .sidebar-footer .user-info .name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .sidebar-footer .user-info .role {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* ── Main ── */
+        .main {
+            margin-left: 260px;
+            flex: 1;
+            padding: 24px 32px 40px;
+            min-height: 100vh;
+            transition: margin var(--transition);
+        }
+
+        /* ── Top Bar ── */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .topbar-left .menu-toggle {
+            display: none;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 8px 12px;
+            font-size: 18px;
+            cursor: pointer;
+            color: var(--text);
+            transition: all var(--transition);
+        }
+
+        .topbar-left .menu-toggle:hover {
+            background: var(--bg);
+        }
+
+        .topbar-left h2 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        .topbar-left h2 small {
+            font-weight: 400;
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-left: 8px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .topbar-right .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 6px 16px 6px 18px;
+            gap: 10px;
+            transition: all var(--transition);
+            min-width: 200px;
+        }
+
+        .topbar-right .search-box:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(212, 168, 83, 0.15);
+        }
+
+        .topbar-right .search-box i {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .topbar-right .search-box input {
+            border: none;
+            outline: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 13px;
+            padding: 8px 0;
+            width: 140px;
+            color: var(--text);
+        }
+
+        .topbar-right .search-box input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .topbar-right .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--card);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 16px;
+            cursor: pointer;
+            transition: all var(--transition);
+            position: relative;
+        }
+
+        .topbar-right .icon-btn:hover {
+            background: var(--bg);
+            border-color: var(--accent);
+            color: var(--text);
+        }
+
+        .topbar-right .icon-btn .dot {
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            border: 2px solid var(--card);
+        }
+
+        /* ── Page Container ── */
+        .page {
+            display: none;
+            animation: fadeUp 0.35s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── Stats Grid ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 20px 22px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: transform var(--transition), box-shadow var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.07);
+        }
+
+        .stat-card .label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-top: 4px;
+            letter-spacing: -0.5px;
+        }
+
+        .stat-card .change {
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 6px;
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+        .stat-card .change.up {
+            color: #16a34a;
+            background: #dcfce7;
+        }
+        .stat-card .change.down {
+            color: #dc2626;
+            background: #fee2e2;
+        }
+
+        .stat-card .icon-wrap {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .stat-card .icon-wrap.blue {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+        .stat-card .icon-wrap.gold {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        .stat-card .icon-wrap.green {
+            background: #d1fae5;
+            color: #059669;
+        }
+        .stat-card .icon-wrap.pink {
+            background: #fce4ec;
+            color: #db2777;
+        }
+
+        /* ── Cards ── */
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            padding: 22px 24px;
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .card-header h3 {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .card-header .action-link {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--accent);
+            text-decoration: none;
+            cursor: pointer;
+            transition: color var(--transition);
+        }
+        .card-header .action-link:hover {
+            color: var(--accent-hover);
+        }
+
+        /* ── Tables ── */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        table th {
+            text-align: left;
+            padding: 12px 10px 12px 0;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        table td {
+            padding: 12px 10px 12px 0;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-badge.active {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+        .status-badge.pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        .status-badge.vacant {
+            background: #e2e8f0;
+            color: #475569;
+        }
+        .status-badge.occupied {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+        .status-badge.maintenance {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .btn-sm {
+            padding: 5px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition);
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .btn-sm:hover {
+            background: var(--border);
+        }
+
+        .btn-sm.primary {
+            background: var(--accent);
+            color: var(--primary);
+        }
+        .btn-sm.primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-sm.outline {
+            background: transparent;
+            border: 1px solid var(--border);
+        }
+        .btn-sm.outline:hover {
+            background: var(--bg);
+        }
+
+        /* ── Property Grid ── */
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .property-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 18px 20px 20px;
+            box-shadow: var(--shadow);
+            transition: all var(--transition);
+        }
+
+        .property-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .property-card .title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+
+        .property-card .address {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .property-card .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 18px;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .property-card .meta i {
+            width: 16px;
+            color: var(--accent);
+        }
+
+        .property-card .meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .property-card .price {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--primary);
+        }
+
+        .property-card .price small {
+            font-weight: 400;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* ── Maintenance List ── */
+        .maint-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .maint-item:last-child {
+            border-bottom: none;
+        }
+
+        .maint-item .info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .maint-item .info .title {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .maint-item .info .sub {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .maint-item .info .sub i {
+            margin-right: 4px;
+        }
+
+        /* ── Contacts Grid ── */
+        .contacts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .contact-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px 18px;
+            text-align: center;
+            transition: all var(--transition);
+        }
+
+        .contact-card:hover {
+            border-color: var(--accent);
+            box-shadow: var(--shadow);
+        }
+
+        .contact-card .avatar-lg {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: 600;
+            font-size: 18px;
+            color: var(--primary);
+        }
+
+        .contact-card .name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .contact-card .role {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ── Reports list ── */
+        .report-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 14px;
+        }
+
+        .report-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all var(--transition);
+            cursor: pointer;
+        }
+
+        .report-item:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .report-item i {
+            font-size: 22px;
+            color: var(--accent);
+            width: 32px;
+        }
+
+        .report-item .info .name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .report-item .info .desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ── Settings / Forms ── */
+        .setting-group {
+            margin-bottom: 22px;
+        }
+
+        .setting-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .setting-group .hint {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .setting-group input,
+        .setting-group select,
+        .setting-group textarea {
+            width: 100%;
+            max-width: 480px;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 14px;
+            transition: border var(--transition);
+            background: var(--bg);
+        }
+
+        .setting-group input:focus,
+        .setting-group select:focus,
+        .setting-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(212, 168, 83, 0.12);
+        }
+
+        .setting-group .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .setting-group .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 10px 28px;
+            border-radius: var(--radius-sm);
+            border: none;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all var(--transition);
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .btn:hover {
+            background: var(--border);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(212, 168, 83, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg);
+        }
+
+        .flex-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        /* ── File Manager ── */
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 14px;
+        }
+
+        .file-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px 14px;
+            text-align: center;
+            transition: all var(--transition);
+        }
+
+        .file-item:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .file-item i {
+            font-size: 32px;
+            color: var(--accent);
+            margin-bottom: 6px;
+        }
+
+        .file-item .name {
+            font-weight: 500;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-item .size {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ── Affiliate ── */
+        .affiliate-balance {
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 18px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .affiliate-balance .amount {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .affiliate-balance .label {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 1024px) {
+            .main {
+                padding: 20px 20px 32px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 270px;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 16px 16px 28px;
+            }
+
+            .topbar-left .menu-toggle {
+                display: flex;
+            }
+
+            .topbar-right .search-box {
+                min-width: unset;
+                width: 140px;
+            }
+
+            .topbar-right .search-box input {
+                width: 80px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            }
+
+            .property-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contacts-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+
+            .report-list {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .setting-group input,
+            .setting-group select,
+            .setting-group textarea {
+                max-width: 100%;
+            }
+
+            .card {
+                padding: 16px 16px;
+            }
+
+            .affiliate-balance {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .topbar-right .search-box {
+                width: 100%;
+            }
+
+            .topbar-right .search-box input {
+                width: 100%;
+            }
+
+            .report-list {
+                grid-template-columns: 1fr;
+            }
+
+            .file-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* ── Overlay ── */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 99;
+        }
+
+        .sidebar-overlay.open {
+            display: block;
+        }
+
+        /* ── Misc ── */
+        .text-accent {
+            color: var(--accent);
+        }
+        .text-muted {
+            color: var(--text-muted);
+        }
+        .mt-2 {
+            margin-top: 8px;
+        }
+        .mb-2 {
+            margin-bottom: 8px;
+        }
+        .gap-2 {
+            gap: 8px;
+        }
+        .fw-600 {
+            font-weight: 600;
+        }
+        .fs-13 {
+            font-size: 13px;
+        }
+        .flex {
+            display: flex;
+        }
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .flex-center {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* simple chart placeholder */
+        .chart-placeholder {
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 20px 16px;
+            height: 120px;
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .chart-placeholder .bar {
+            flex: 1;
+            background: var(--accent);
+            border-radius: 4px 4px 0 0;
+            min-height: 12px;
+            transition: height 0.6s ease;
+            opacity: 0.7;
+        }
+
+        .chart-placeholder .bar:nth-child(1) {
+            height: 60%;
+        }
+        .chart-placeholder .bar:nth-child(2) {
+            height: 80%;
+        }
+        .chart-placeholder .bar:nth-child(3) {
+            height: 45%;
+        }
+        .chart-placeholder .bar:nth-child(4) {
+            height: 90%;
+        }
+        .chart-placeholder .bar:nth-child(5) {
+            height: 55%;
+        }
+        .chart-placeholder .bar:nth-child(6) {
+            height: 70%;
+        }
+        .chart-placeholder .bar:nth-child(7) {
+            height: 85%;
+        }
+        .chart-placeholder .bar:nth-child(8) {
+            height: 40%;
+        }
+        .chart-placeholder .bar:nth-child(9) {
+            height: 75%;
+        }
+        .chart-placeholder .bar:nth-child(10) {
+            height: 65%;
+        }
+        .chart-placeholder .bar:nth-child(11) {
+            height: 50%;
+        }
+        .chart-placeholder .bar:nth-child(12) {
+            height: 95%;
+        }
+
+        .chart-placeholder .bar:hover {
+            opacity: 1;
+            background: var(--accent-hover);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ─── Sidebar Overlay ─── -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ─── Sidebar ─── -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">ME</div>
+            <h1>Mwarokin <span> Estates</span></h1>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-label">Main</div>
+            <a class="active" data-page="dashboard"><i class="fas fa-th-large"></i> Dashboard</a>
+            <a data-page="properties"><i class="fas fa-building"></i> Properties</a>
+            <a data-page="units"><i class="fas fa-door-open"></i> Units</a>
+            <a data-page="maintenance"><i class="fas fa-tools"></i> Maintenance <span class="badge">8</span></a>
+            <a data-page="tenants"><i class="fas fa-users"></i> Tenants</a>
+
+            <div class="nav-label">Management</div>
+            <a data-page="listings"><i class="fas fa-list-ul"></i> Listings</a>
+            <a data-page="contacts"><i class="fas fa-address-book"></i> Contacts</a>
+            <a data-page="reports"><i class="fas fa-chart-bar"></i> Reports</a>
+            <a data-page="filemanager"><i class="fas fa-folder-open"></i> File Manager</a>
+
+            <div class="nav-label">System</div>
+            <a data-page="settings"><i class="fas fa-cog"></i> Settings</a>
+            <a data-page="affiliate"><i class="fas fa-hand-holding-usd"></i> Affiliate</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-card">
+                <div class="avatar">DK</div>
+                <div class="user-info">
+                    <div class="name">David Kariuki</div>
+                    <div class="role">Property Manager</div>
+                </div>
+                <i class="fas fa-ellipsis-v" style="color:rgba(255,255,255,0.3);font-size:14px;"></i>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ─── Main ─── -->
+    <main class="main">
+
+        <!-- Top Bar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h2 id="pageTitle">Dashboard <small>overview</small></h2>
+            </div>
+            <div class="topbar-right">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search..." />
+                </div>
+                <button class="icon-btn" aria-label="Notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="dot"></span>
+                </button>
+                <button class="icon-btn" aria-label="Messages">
+                    <i class="fas fa-envelope"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- PAGE: Dashboard                                  -->
+        <!-- ════════════════════════════════════════════════ -->
+        <section class="page active" id="page-dashboard">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon-wrap blue"><i class="fas fa-building"></i></div>
+                    <div class="label">Properties</div>
+                    <div class="value">24</div>
+                    <div class="change up"><i class="fas fa-arrow-up"></i> +3 this month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon-wrap gold"><i class="fas fa-door-open"></i></div>
+                    <div class="label">Units</div>
+                    <div class="value">68</div>
+                    <div class="change up"><i class="fas fa-arrow-up"></i> +5</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon-wrap green"><i class="fas fa-user-check"></i></div>
+                    <div class="label">Occupied</div>
+                    <div class="value">54</div>
+                    <div class="change up"><i class="fas fa-arrow-up"></i> 79%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon-wrap pink"><i class="fas fa-wrench"></i></div>
+                    <div class="label">Maintenance</div>
+                    <div class="value">8</div>
+                    <div class="change down"><i class="fas fa-arrow-down"></i> 2 pending</div>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Rental Revenue <span class="text-muted fs-13 fw-400">(last 12 months)</span></h3>
+                        <a class="action-link">View full report →</a>
+                    </div>
+                    <div class="chart-placeholder">
+                        <div class="bar" style="height:55%;"></div>
+                        <div class="bar" style="height:72%;"></div>
+                        <div class="bar" style="height:48%;"></div>
+                        <div class="bar" style="height:88%;"></div>
+                        <div class="bar" style="height:64%;"></div>
+                        <div class="bar" style="height:91%;"></div>
+                        <div class="bar" style="height:76%;"></div>
+                        <div class="bar" style="height:52%;"></div>
+                        <div class="bar" style="height:83%;"></div>
+                        <div class="bar" style="height:69%;"></div>
+                        <div class="bar" style="height:58%;"></div>
+                        <div class="bar" style="height:95%;"></div>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-top:6px;">
+                        <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+                        <span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Recent Activity</h3>
+                        <a class="action-link">View all</a>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:12px;">
+                        <div><span class="status-badge active">●</span> <strong>Unit 4B</strong> – leased to Sandra Lamar</div>
+                        <div><span class="status-badge pending">●</span> <strong>Maintenance #635</strong> – plumbing issue</div>
+                        <div><span class="status-badge occupied">●</span> <strong>Boston Ave</strong> – rent payment received</div>
+                        <div><span class="status-badge vacant">●</span> <strong>Unit 90</strong> – now vacant</div>
+                        <div><span class="status-badge maintenance">●</span> <strong>Service Pro</strong> – Carter Carpenter assigned</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top:8px;">
+                <div class="card-header">
+                    <h3>Quick Actions</h3>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:12px;">
+                    <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Property</button>
+                    <button class="btn btn-primary"><i class="fas fa-user-plus"></i> Add Tenant</button>
+                    <button class="btn btn-primary"><i class="fas fa-tools"></i> New Maintenance</button>
+                    <button class="btn btn-outline"><i class="fas fa-file-alt"></i> Generate Report</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- PAGE: Properties                                -->
+        <!-- ════════════════════════════════════════════════ -->
+        <section class="page" id="page-properties">
+            <div class="flex-between mb-2">
+                <div></div>
+                <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Property</button>
+            </div>
+            <div class="property-grid">
+                <div class="property-card">
+                    <div class="title">Boston Ave</div>
+                    <div class="address">23 Boston Ave, Medford, MA 02155</div>
+                    <div class="meta">
+                        <span><i class="fas fa-vector-square"></i> 1 Bed · 1.5 Bath</span>
+                        <span><i class="fas fa-ruler-combined"></i> 549 sqft</span>
+                        <span><span class="status-badge vacant">Vacant</span></span>
+                    </div>
+                    <div class="price">$33,000 <small>MIGHT RENT</small></div>
+                </div>
+
+                <div class="property-card">
+                    <div class="title">Boylston Street</div>
+                    <div class="address">883-885 Boylston St, Boston, MA 02116</div>
+                    <div class="meta">
+                        <span><i class="fas fa-vector-square"></i> 2 Bed · 2 Bath</span>
+                        <span><i class="fas fa-ruler-combined"></i> 1,200 sqft</span>
+                        <span><span class="status-badge occupied">Occupied</span></span>
+                    </div>
+                    <div class="price">$7,000 <small>MIGHT RENT</small></div>
+                </div>
+
+                <div class="property-card">
+                    <div class="title">Panorama Tower</div>
+                    <div class="address">Panorama Tower, Miami Downtown</div>
+                    <div class="meta">
+                        <span><i class="fas fa-vector-square"></i> 3 Bed · 2 Bath</span>
+                        <span><i class="fas fa-ruler-combined"></i> 1,850 sqft</span>
+                        <span><span class="status-badge occupied">Occupied</span></span>
+                    </div>
+                    <div class="price">$12,500 <small>MIGHT RENT</small></div>
+                </div>
+
+                <div class="property-card">
+                    <div class="title">345 Park Avenue</div>
+                    <div class="address">345 Park Ave, New York, NY</div>
+                    <div class="meta">
+                        <span><i class="fas fa-vector-square"></i> 2 Bed · 2 Bath</span>
+                        <span><i class="fas fa-ruler-combined"></i> 980 sqft</span>
+                        <span><span class="status-badge vacant">Vacant</span></span>
+                    </div>
+                    <div class="price">$8,200 <small>MIGHT RENT</small></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- PAGE: Units                                     -->
+        <!-- ════════════════════════════════════════════════ -->
+        <section class="page" id="page-units">
+            <div class="card">
+                <div class="card-header">
+                    <h3>All Units</h3>
+                    <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Unit</button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr><th>Unit</th><th>Property</th><th>Status</th><th>Beds</th><th>Baths</th><th>Rent</th><th></th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Unit 1</strong></td><td>Boylston Street</td><td><span class="status-badge occupied">Occupied</span></td><td>2</td><td>2</td><td>$7,000</td><td><button class="btn-sm outline">View</button></td></tr>
+                            <tr><td><strong>Unit 2</strong></td><td>Boylston Street</td><td><span class="status-badge occupied">Occupied</span></td><td>2</td><td>2</td><td>$500</td><td><button class="btn-sm outline">View</button></td></tr>
+                            <tr><td><strong>Unit 90</strong></td><td>Boylston Street</td><td><span class="status-badge occupied">Occupied</span></td><td>1</td><td>1</td><td>$0</td><td><button class="btn-sm outline">View</button></td></tr>
+                            <tr><td><strong>Unit 402</strong></td><td>1000 A Washington Blvd</td><td><span class="status-badge vacant">Vacant</span></td><td>2</td><td>2</td><td>$6,800</td><td><button class="btn-sm outline">View</button></td></tr>
+                            <tr><td><strong>Unit 4B</strong></td><td>Boston Ave</td><td><span class="status-badge active">Active</span></td><td>1</td><td>1.5</td><td>$33,000</td><td><button class="btn-sm outline">View</button></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><h3>Keys &amp; Locks</h3></div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">
+                    <div style="background:var(--bg);padding:14px;border-radius:var(--radius-sm);"><strong>Main door</strong> — Unit 90 <span class="text-muted fs-13">(Boylston)</span></div>
+                    <div style="background:var(--bg);padding:14px;border-radius:var(--radius-sm);"><strong>Security door</strong> — ID 385 <span class="text-muted fs-13">(345 Park)</span></div>
+                    <div style="background:var(--bg);padding:14px;border-radius:var(--radius-sm);"><strong>Main door</strong> — Unit 402 <span class="text-muted fs-13">(Washington)</span></div>
+                    <div style="background:var(--bg);padding:14px;border-radius:var(--radius-sm);"><strong>Main door</strong> — Unit 402 <span class="text-muted fs-13">(Bay City)</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- PAGE: Maintenance                              -->
+        <!-- ════════════════════════════════════════════════ -->
+        <section class="page" id="page-maintenance">
+            <div class="flex-between mb-2">
+                <div><span class="status-badge maintenance">8 Open</span> <span class="text-muted fs-13">· 3 in progress</span></div>
+                <button class="btn btn-primary"><i class="fas fa-plus"></i> New Request</button>
+            </div>
+
+            <div class="card">
+                <div class="maint-item">
+                    <div class="info">
+                        <div class="title">#635162 · Household / Cleaning / Bathroom</div>
+                        <div class="sub"><i class="fas fa-map-pin"></i> 70D Bay City Blvd</div>
+                    </div>
+                    <span class="status-badge pending">New</span>
+                </div>
+                <div class="maint-item">
+                    <div class="info">
+                        <div class="title">#635163 · House Exterior / Roof</div>
+                        <div class="sub"><i class="fas fa-map-pin"></i> 1000 A Westington Blvd</div>
+                    </div>
+                    <span class="status-badge pending">New</span>
+                </div>
+                <div class="maint-item">
+                    <div class="info">
+                        <div class="title">#635164 · Outdoors / Fencing</div>
+                        <div class="sub"><i class="fas fa-map-pin"></i> 7205 Bay City Blvd</div>
+                    </div>
+                    <span class="status-badge active">Assigned</span>
+                </div>
+                <div class="maint-item">
+                    <div class="info">
+                        <div class="title">#635165 · Plumbing / Drain</div>
+                        <div class="sub"><i class="fas fa-map-pin"></i> Boylston Street, Unit 2</div>
+                    </div>
+                    <span class="status-badge maintenance">In Progress</span>
+                </div>
+                <div class="maint-item">
+                    <div class="info">
+                        <div class="title">#635166 · Electrical / Outlets</div>
+                        <div class="sub"><i class="fas fa-map-pin"></i> 345 Park Avenue</div>
+                    </div>
+                    <span class="status-badge pending">New</span>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                <div class="card">
+                    <h3 style="font-size:15px;margin-bottom:12px;">📋 Request a Quote</h3>
+                    <p class="text-muted fs-13">Find local professionals, handymen, and services near you.</p>
+                    <button class="btn btn-primary mt-2" style="width:100%;">Get Offers</button>
+                </div>
+                <div class="card">
+                    <h3 style="font-size:15px;margin-bottom:12px;">🔧 Service Pros Near You</h3>
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                        <div class="flex-between"><span><strong>Marion Brian</strong> <span class="text-muted fs-13">· $250k total</span></span> <button class="btn-sm outline">View</button></div>
+                        <div class="flex-between"><span><strong>Chris Nollan</strong> <span class="text-muted fs-13">· $250k total</span></span> <button class="btn-sm outline">View</button></div>
+                        <div class="flex-between"><span><strong>Carter Carpenter</strong> <span class="text-muted fs-13">· $250k total</span></span> <button class="btn-sm outline">View</button></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- PAGE: Tenants                                  -->
+        <!-- ════════════════════════════════════════════════ -->
+        <section class="page" id="page-tenants">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Applications <span class="text-muted fs-13 fw-400">(8 total)</span></h3>
+                    <button class="btn-sm primary"><i class="fas fa-filter"></i> Filter</button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Applicant</th><th>Property</th><th>Applied</th><th>Status</th><th></th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>Mindy Jackson</strong></td><td>233 Broadway</td><td>Aug 03, 2020</td><td><span class="status-badge pending">New</span></td><td><button class="btn-sm primary">View</button></td></tr>
+                            <tr><td><strong>Sandra Lamar</strong></td><td>1003 S Michigan Ave</td><td>Aug 03, 2020</td><td><span class="status-badge pending">New</span></td><td><button class="btn-sm primary">View</button></td></tr>
+                            <tr><td><strong>Bob Cook</strong></td><td>233 Broadway</td><td>Jul 14, 2020</td><td><span class="status-badge pending">New</span></td><td><button class="btn-sm primary">View</button></td></tr>
+                            <tr><td><strong>George Connor</strong></td><td>7205 Bay City Blvd</td><td>Jul 14, 2020</td><td><span class="status-badge pending">New</span></td><td><button class="btn-sm primary">View</button></td></tr>
+                            <tr><td><strong>Amelia J Wood</strong></td><td>7202 Bay City Blvd</td><td>Nov 23, 2017</td><td><span class="status-badge active">In Review</span></td><td><button class="btn-sm primary">View</button></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><h3>Tenant Screening</h3></div>
+                <div style="display:flex;flex-wrap:wrap;gap:16px;">
+                    <div style="background:var(--bg);padding:16px 20px;border-radius:var(--radius-sm);flex:1;min-width:160px;">
+                        <div class="text-muted fs-13">Background Check</div>
+                        <div class="fw-600" style="font-size:20px;">$25.00</div>
+                        <button class="btn-sm primary mt-2">Request</button>
+                    </div>
+                    <div style="background:var(--bg);padding:16px 20px;border-radius:var(--radius-sm);flex:1;min-width:160px;">
+                        <div class="text-muted fs-13">Full Check</div>
+                        <div class="fw-600" style="font-size:20px;">$39.00</div>
+                        <button class="btn-sm primary mt-2">Request</button>
+                    </div>
+                    <div style="background:var(--bg);padding:16px 20px;border-radius:var(--radius-sm);flex:1;min-width:160px;">
+                        <div class="text-muted fs-13">Credit Check</div>
+                        <div class="fw-600" style="font-size:20px;">$30.00</div>
+                        <button class="btn-sm primary mt-2">Request</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- PAGE: Listings                                 -->
+        <!-- ════════════════════════════════════════════════ -->
+        <section class="page" id="page-listings">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Leads</h3>
+                    <button class="btn-sm primary"><i class="fas fa-plus"></i> Add Lead</button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Name</th><th>Phone</th><th>Date</th><th></th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>John Nickolson</strong></td><td>1.234.567.6545</td><td>11/24/2021</td><td><button class="btn-sm outline">View</button></td></tr>
+                            <tr><td><strong>Harry Davidson</strong></td><td>1.234.567.6543</td><td>02/25/2020</td><td><button class="btn-sm outline">View</button></td></tr>
+                            <tr><td><strong>Christina Roy</strong></td><td>1.234.567.6543</td><td>11/11/2019</td><td><button class="btn-sm outline">View</button></td></tr>
+                            <tr><td><strong>Michael Rork</strong></td><td>1.234.567.6543</td><td>02/24/2020</td><td><button class="btn-sm outline">View</button></td></tr>
+                            <tr><td><strong>Dorothy Brooks</strong></td><td>1.234.567.6543</td><td>07/13/2020</td><td><button class="btn-sm outline">View</button></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- PAGE: Contacts                                 -->
+        <!-- ════════════════════════════════════════════════ -->
+        <section class="page" id="page-contacts">
+            <div class="flex-between mb-2">
+                <h3 style="font-size:16px;font-weight:600;">Service Pros</h3>
+                <button class="btn btn-primary btn-sm"><i class="fas fa-user-plus"></i> Add Contact</button>
+            </div>
+            <div class="contacts-grid">
+                <div class="contact-card"><div class="avatar-lg">AP</div><div class="name">Armour Plumbing</div><div class="role">Other</div></div>
+                <div class="contact-card"><div class="avatar-lg">BB</div><div class="name">Bob Builder</div><div class="role">Other</div></div>
+                <div class="contact-card"><div class="avatar-lg">CC</div><div class="name">Carter Carpenter</div><div class="role">General Hardware</div></div>
+                <div class="contact-card"><div class="avatar-lg">CC</div><div class="name">Comcast Corporation</div><div class="role">Other</div></div>
+                <div class="contact-card"><div class="avatar-lg">HE</div><div class="name">Hudsons Energy</div><div class="role">Other</div></div>
+                <div class="contact-card"><div class="avatar-lg">JJ</div><div class="name">Jack Johnson</div><div class="role">Repair &amp; Equipment</div></div>
+                <div class="contact-card"><div class="avatar-lg">JP</div><div class="name">Joe Plumber</div><div class="role">Other</div></div>
+                <div class="contact-card"><div class="avatar-lg">BC</div><div class="name">Brenda Cloud</div><div class="role">Service Pro</div></div>
+            </div>
+
+            <div class="card" style="margin-top:20px;">
+                <div class="card-header"><h3>Contact Detail — Carter Carpenter</h3></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                    <div><span class="text-muted fs-13">First name</span><div class="fw-600">Carter</div></div>
+                    <div><span class="text-muted fs-13">Last name</span><div class="fw-600">Carpenter</div></div>
+                    <div><span class="text-muted fs-13">Email</span><div class="fw-600">servicepro@mwarokin.com</div></div>
+                    <div><span class="text-muted fs-13">Category</span><div class="fw-600">Hardware / Parts / Equipment</div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- PAGE: Reports                                  -->
+        <!-- ════════════════════════════════════════════════ -->
+        <section class="page" id="page-reports">
+            <div class="report-list">
+                <div class="report-item"><i class="fas fa-chart-line"></i><div class="info"><div class="name">Rentability</div><div class="desc">Market trends &amp; investment analysis</div></div></div>
+                <div class="report-item"><i class="fas fa-file-invoice-dollar"></i><div class="info"><div class="name">Tax Preparation</div><div class="desc">Simple &amp; accurate tax planning</div></div></div>
+                <div class="report-item"><i class="fas fa-file-alt"></i><div class="info"><div class="name">Property Statement</div><div class="desc">Reports for property managers</div></div></div>
+                <div class="report-item"><i class="fas fa-file-pdf"></i><div class="info"><div class="name">1099 Tax Form</div><div class="desc">NEC &amp; MISC forms</div></div></div>
+                <div class="report-item"><i class="fas fa-user-check"></i><div class="info"><div class="name">Tenant Screening</div><div class="desc">Background &amp; credit checks</div></div></div>
+                <div class="report-item"><i class="fas fa-list"></i><div class="info"><div class="name">Rent Roll</div><div class="desc">Active leases &amp; balance sheet</div></div></div>
+                <div class="report-item"><i class="fas fa-address-card"></i><div class="info"><div class="name">Contacts Information</div><div class="desc">All contacts in one report</div></div></div>
+                <div class="report-item"><i class="fas fa-tools"></i><div class="info"><div class="name">Maintenance Requests</div><div class="desc">Open &amp; closed requests</div></div></div>
+            </div>
+
+            <div class="card" style="margin-top:16px;">
+                <div class="card-header"><h3>Tax Preparation</h3></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                    <div><label class="text-muted fs-13">Date Range</label><select style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;"><option>All time</option><option>2022</option><option>2023</option></select></div>
+                    <div><label class="text-muted fs-13">Property</label><select style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;"><option>All properties</option><option>Boston Ave</option><option>Boylston Street</option></select></div>
+                </div>
+                <div style="display:flex;gap:12px;margin-top:12px;">
+                    <button class="btn btn-primary"><i class="fas fa-eye"></i> Preview</button>
+                    <button class="btn btn-outline"><i class="fas fa-download"></i> Download</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- PAGE: File Manager                             -->
+        <!-- ════════════════════════════════════════════════ -->
+        <section class="page" id="page-filemanager">
+            <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;">
+                <div style="background:var(--card);padding:12px 18px;border-radius:var(--radius-sm);border:1px solid var(--border);"><i class="fas fa-folder" style="color:var(--accent);"></i> All files <span class="text-muted fs-13">597</span></div>
+                <div style="background:var(--card);padding:12px 18px;border-radius:var(--radius-sm);border:1px solid var(--border);"><i class="fas fa-image" style="color:var(--accent);"></i> Images <span class="text-muted fs-13">574</span></div>
+                <div style="background:var(--card);padding:12px 18px;border-radius:var(--radius-sm);border:1px solid var(--border);"><i class="fas fa-file-alt" style="color:var(--accent);"></i> Documents <span class="text-muted fs-13">22</span></div>
+                <div style="background:var(--card);padding:12px 18px;border-radius:var(--radius-sm);border:1px solid var(--border);"><i class="fas fa-video" style="color:var(--accent);"></i> Videos <span class="text-muted fs-13">1</span></div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 2fr;gap:16px;">
+                <div class="card">
+                    <h4 style="font-size:14px;margin-bottom:10px;">Storage</h4>
+                    <div style="background:var(--bg);padding:10px 14px;border-radius:8px;margin-bottom:6px;"><span class="text-muted">Used</span> <strong>381.42 MB</strong> / 100 GB</div>
+                    <div style="background:var(--bg);padding:10px 14px;border-radius:8px;margin-bottom:6px;"><span class="text-muted">Images</span> <strong>14.89 MB</strong> / 100 GB</div>
+                    <div style="background:var(--bg);padding:10px 14px;border-radius:8px;"><span class="text-muted">Documents</span> <strong>18.67 MB</strong> / 100 GB</div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3>Recent Files</h3></div>
+                    <div class="file-grid">
+                        <div class="file-item"><i class="fas fa-file-pdf"></i><div class="name">Lease_Agreement.pdf</div><div class="size">84.5 KB</div></div>
+                        <div class="file-item"><i class="fas fa-file-image"></i><div class="name">Property_Photo_1.jpg</div><div class="size">2.8 MB</div></div>
+                        <div class="file-item"><i class="fas fa-file-word"></i><div class="name">Welcome_Letter.docx</div><div class="size">289 KB</div></div>
+                        <div class="file-item"><i class="fas fa-file-video"></i><div class="name">Tour_Video.mp4</div><div class="size">51.1 MB</div></div>
+                        <div class="file-item"><i class="fas fa-file-alt"></i><div class="name">Inspection_Report.pdf</div><div class="size">606 KB</div></div>
+                        <div class="file-item"><i class="fas fa-file-excel"></i><div class="name">Rent_Roll.xlsx</div><div class="size">2.2 MB</div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- PAGE: Settings                                 -->
+        <!-- ════════════════════════════════════════════════ -->
+        <section class="page" id="page-settings">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                <div class="card">
+                    <h3 style="font-size:16px;margin-bottom:12px;">Stripe Connect</h3>
+                    <p class="text-muted fs-13">Select the account type and provide information for identity verification.</p>
+                    <div style="display:flex;gap:10px;margin:12px 0;">
+                        <button class="btn btn-primary btn-sm">Individual</button>
+                        <button class="btn btn-outline btn-sm">Business</button>
+                    </div>
+                    <button class="btn btn-primary"><i class="fab fa-stripe"></i> Get Started</button>
+                </div>
+
+                <div class="card">
+                    <h3 style="font-size:16px;margin-bottom:12px;">Listing Website</h3>
+                    <div class="setting-group">
+                        <label>Website Title</label>
+                        <input type="text" value="Evans Property Rentals" />
+                    </div>
+                    <div class="checkbox-group" style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
+                        <label><input type="checkbox" checked /> Rentals page</label>
+                        <label><input type="checkbox" /> Company website</label>
+                    </div>
+                    <button class="btn btn-primary mt-2">Update</button>
+                </div>
+
+                <div class="card">
+                    <h3 style="font-size:16px;margin-bottom:12px;">Document Templates</h3>
+                    <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                        <span class="status-badge active">Tenant Agreement</span>
+                        <span class="status-badge active">Owner Agreement</span>
+                        <span class="status-badge active">Pet Addendum</span>
+                        <span class="status-badge active">Rent Increase</span>
+                        <span class="status-badge active">Lead Paint Disclosure</span>
+                        <span class="status-badge active">Welcome Letter</span>
+                        <span class="status-badge active">Smoke-Free Addendum</span>
+                    </div>
+                    <button class="btn btn-outline mt-2"><i class="fas fa-plus"></i> Add Template</button>
+                </div>
+
+                <div class="card">
+                    <h3 style="font-size:16px;margin-bottom:12px;">Maintenance Settings</h3>
+                    <div class="checkbox-group" style="display:flex;flex-direction:column;gap:6px;">
+                        <label><input type="checkbox" /> Auto-share maintenance with owners</label>
+                        <label><input type="checkbox" /> Auto-assign Service Pro</label>
+                        <label><input type="checkbox" /> Review requests</label>
+                    </div>
+                    <button class="btn btn-primary mt-2">Update</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- PAGE: Affiliate                                -->
+        <!-- ════════════════════════════════════════════════ -->
+        <section class="page" id="page-affiliate">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Affiliate Program</h3>
+                    <div style="display:flex;gap:6px;">
+                        <button class="btn-sm outline">Promotions</button>
+                        <button class="btn-sm primary">Referrals</button>
+                        <button class="btn-sm outline">Payout History</button>
+                    </div>
+                </div>
+
+                <div class="affiliate-balance">
+                    <div><span class="label">Balance</span><div class="amount">$9.00</div></div>
+                    <div><span class="label">Qualified referrals</span><div class="fw-600" style="font-size:20px;">7</div></div>
+                    <div><span class="label">Signed up</span><div class="fw-600" style="font-size:20px;">5</div></div>
+                    <div><span class="label">Invited</span><div class="fw-600" style="font-size:20px;">5</div></div>
+                </div>
+
+                <div style="background:var(--bg);padding:14px 18px;border-radius:var(--radius-sm);margin-bottom:16px;">
+                    <span class="text-muted fs-13">Your unique link</span>
+                    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                        <code style="background:var(--card);padding:6px 14px;border-radius:6px;border:1px solid var(--border);font-size:13px;flex:1;">https://mwarokin.com/signup?affiliate=ME123</code>
+                        <button class="btn-sm primary"><i class="fas fa-copy"></i> Copy</button>
+                    </div>
+                </div>
+
+                <p class="text-muted fs-13">Once you reach $50, you can withdraw funds to your bank account. Max withdrawal: $500.</p>
+                <button class="btn btn-primary mt-2"><i class="fas fa-credit-card"></i> Withdraw</button>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><h3>Referrals</h3></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Status</th><th>Signed On</th><th>Email</th><th></th></tr></thead>
+                        <tbody>
+                            <tr><td><span class="status-badge active">Signed</span></td><td>Jun 15, 2023</td><td>johndoe@email.com</td><td><button class="btn-sm outline">Resend</button></td></tr>
+                            <tr><td><span class="status-badge pending">Invited</span></td><td>—</td><td>janedoe@email.com</td><td><button class="btn-sm outline">Resend</button></td></tr>
+                            <tr><td><span class="status-badge active">Signed</span></td><td>Jun 25, 2023</td><td>alex@email.com</td><td><button class="btn-sm outline">Resend</button></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // ─── Sidebar Toggle ───
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const toggleBtn = document.getElementById('menuToggle');
+
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        });
+
+        overlay.addEventListener('click', closeSidebar);
+
+        // ─── Navigation ───
+        const navLinks = document.querySelectorAll('.sidebar-nav a[data-page]');
+        const pages = document.querySelectorAll('.page');
+        const pageTitle = document.getElementById('pageTitle');
+
+        const pageNames = {
+            dashboard: 'Dashboard',
+            properties: 'Properties',
+            units: 'Units',
+            maintenance: 'Maintenance',
+            tenants: 'Tenants',
+            listings: 'Listings',
+            contacts: 'Contacts',
+            reports: 'Reports',
+            filemanager: 'File Manager',
+            settings: 'Settings',
+            affiliate: 'Affiliate'
+        };
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const pageId = link.dataset.page;
+
+                // Update active link
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+
+                // Update pages
+                pages.forEach(p => p.classList.remove('active'));
+                const target = document.getElementById('page-' + pageId);
+                if (target) target.classList.add('active');
+
+                // Update title
+                const name = pageNames[pageId] || pageId;
+                pageTitle.innerHTML = name + ' <small>' + (pageId === 'dashboard' ? 'overview' : 'management') + '</small>';
+
+                // Close sidebar on mobile
+                closeSidebar();
+            });
+        });
+
+        // ─── Responsive: close sidebar on resize to desktop ───
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                closeSidebar();
+            }
+        });
+
+        // ─── Small demo: chart bars hover effect ───
+        document.querySelectorAll('.chart-placeholder .bar').forEach(bar => {
+            bar.addEventListener('mouseenter', () => {
+                bar.style.opacity = '1';
+                bar.style.background = '#c99b42';
+            });
+            bar.addEventListener('mouseleave', () => {
+                bar.style.opacity = '0.7';
+                bar.style.background = '';
+            });
+        });
+
+        // ─── Console friendly ───
+        console.log('🏠 Mwarokin Estates · Property Management UI loaded.');
+    </script>
+
+</body>
+</html>

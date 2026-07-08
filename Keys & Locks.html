@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mwarokin Estates — Home Page</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .me-root {
+    font-family: 'DM Sans', sans-serif;
+    background: #0d1f15;
+    min-height: 100vh;
+    color: #e8ddb5;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .me-bg-pattern {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle at 20% 20%, rgba(184,143,60,0.06) 0%, transparent 50%),
+                      radial-gradient(circle at 80% 80%, rgba(26,62,38,0.8) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .me-header {
+    background: #0a1710;
+    border-bottom: 1px solid rgba(184,143,60,0.25);
+    padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: relative; z-index: 2;
+  }
+
+  .me-logo {
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .me-logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #b88f3c, #e8c96a);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: #0a1710;
+  }
+
+  .me-logo-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px; font-weight: 600; color: #e8c96a;
+    letter-spacing: 0.02em;
+  }
+
+  .me-logo-sub { font-size: 10px; color: rgba(184,143,60,0.6); letter-spacing: 0.08em; text-transform: uppercase; }
+
+  .me-header-nav {
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .me-nav-btn {
+    background: rgba(184,143,60,0.08);
+    border: 1px solid rgba(184,143,60,0.18);
+    color: rgba(232,205,106,0.7);
+    border-radius: 8px; padding: 6px 14px;
+    font-size: 12px; cursor: pointer; transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .me-nav-btn:hover { background: rgba(184,143,60,0.18); color: #e8c96a; }
+  .me-nav-btn.active { background: rgba(184,143,60,0.22); color: #e8c96a; border-color: rgba(184,143,60,0.45); }
+
+  .me-breadcrumb {
+    font-size: 11px; color: rgba(232,205,106,0.4); padding: 10px 24px;
+    letter-spacing: 0.04em; position: relative; z-index: 2;
+  }
+
+  .me-breadcrumb span { color: rgba(232,205,106,0.7); }
+
+  .me-content { padding: 0 24px 32px; position: relative; z-index: 2; }
+
+  .me-page-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px; font-weight: 500; color: #e8c96a;
+    margin-bottom: 4px; letter-spacing: 0.01em;
+  }
+
+  .me-page-sub { font-size: 12px; color: rgba(184,143,60,0.5); margin-bottom: 20px; }
+
+  .me-stats-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .me-stat {
+    background: #0f1e15;
+    border: 1px solid rgba(184,143,60,0.18);
+    border-radius: 10px; padding: 14px 16px;
+    position: relative; overflow: hidden;
+    cursor: pointer; transition: border-color 0.2s;
+  }
+
+  .me-stat:hover { border-color: rgba(184,143,60,0.4); }
+
+  .me-stat::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, #b88f3c, #e8c96a);
+    opacity: 0; transition: opacity 0.2s;
+  }
+
+  .me-stat:hover::before { opacity: 1; }
+
+  .me-stat-icon {
+    font-size: 20px; color: #b88f3c; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .me-stat-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px; font-weight: 600; color: #e8c96a; line-height: 1;
+    margin-bottom: 2px;
+  }
+
+  .me-stat-label { font-size: 11px; color: rgba(184,143,60,0.5); }
+
+  .me-stat-badge {
+    position: absolute; top: 12px; right: 12px;
+    font-size: 10px; padding: 2px 7px; border-radius: 20px;
+  }
+
+  .badge-ok { background: rgba(26,110,60,0.3); color: #5dcc8a; border: 1px solid rgba(26,110,60,0.4); }
+  .badge-warn { background: rgba(184,143,60,0.15); color: #e8c96a; border: 1px solid rgba(184,143,60,0.35); }
+  .badge-alert { background: rgba(180,50,50,0.15); color: #f07070; border: 1px solid rgba(180,50,50,0.3); }
+
+  .me-grid { display: grid; grid-template-columns: 1fr 340px; gap: 16px; }
+
+  .me-section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px; font-weight: 500; color: #e8c96a;
+    margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+  }
+
+  .me-section-title::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, rgba(184,143,60,0.3), transparent);
+  }
+
+  .keys-panel {
+    background: #0a1710; border: 1px solid rgba(184,143,60,0.15);
+    border-radius: 12px; padding: 16px;
+  }
+
+  .keys-search {
+    display: flex; gap: 8px; margin-bottom: 14px;
+  }
+
+  .keys-search input {
+    flex: 1; background: rgba(184,143,60,0.06);
+    border: 1px solid rgba(184,143,60,0.2);
+    border-radius: 8px; padding: 8px 12px;
+    color: #e8ddb5; font-size: 12px;
+    font-family: 'DM Sans', sans-serif; outline: none;
+  }
+
+  .keys-search input::placeholder { color: rgba(184,143,60,0.35); }
+  .keys-search input:focus { border-color: rgba(184,143,60,0.5); }
+
+  .btn-gold {
+    background: linear-gradient(135deg, #b88f3c, #e8c96a);
+    border: none; border-radius: 8px; padding: 8px 14px;
+    color: #0a1710; font-size: 12px; font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer; white-space: nowrap; transition: opacity 0.2s;
+  }
+
+  .btn-gold:hover { opacity: 0.88; }
+
+  .btn-outline {
+    background: transparent;
+    border: 1px solid rgba(184,143,60,0.3); border-radius: 8px; padding: 8px 14px;
+    color: rgba(232,205,106,0.7); font-size: 12px;
+    font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s;
+  }
+
+  .btn-outline:hover { border-color: rgba(184,143,60,0.6); color: #e8c96a; }
+
+  .key-tabs {
+    display: flex; gap: 4px; margin-bottom: 14px;
+    background: rgba(0,0,0,0.2); border-radius: 8px; padding: 3px;
+  }
+
+  .key-tab {
+    flex: 1; text-align: center; padding: 6px; border-radius: 6px;
+    font-size: 11px; cursor: pointer; transition: all 0.2s;
+    color: rgba(184,143,60,0.5);
+  }
+
+  .key-tab.active {
+    background: rgba(184,143,60,0.18);
+    color: #e8c96a; border: 1px solid rgba(184,143,60,0.3);
+  }
+
+  .key-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .key-item {
+    background: rgba(184,143,60,0.04);
+    border: 1px solid rgba(184,143,60,0.12);
+    border-radius: 10px; padding: 12px 14px;
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer; transition: all 0.2s;
+    position: relative;
+  }
+
+  .key-item:hover {
+    background: rgba(184,143,60,0.09);
+    border-color: rgba(184,143,60,0.28);
+  }
+
+  .key-item.selected {
+    background: rgba(184,143,60,0.12);
+    border-color: rgba(184,143,60,0.45);
+  }
+
+  .key-icon-wrap {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; position: relative;
+  }
+
+  .key-icon-wrap.physical {
+    background: rgba(184,143,60,0.15);
+    border: 1px solid rgba(184,143,60,0.25);
+  }
+
+  .key-icon-wrap.digital {
+    background: rgba(26,90,60,0.25);
+    border: 1px solid rgba(26,110,60,0.3);
+  }
+
+  .key-icon-wrap.fob {
+    background: rgba(40,60,120,0.25);
+    border: 1px solid rgba(60,90,180,0.3);
+  }
+
+  .key-icon-wrap i { font-size: 18px; }
+  .key-icon-wrap.physical i { color: #b88f3c; }
+  .key-icon-wrap.digital i { color: #5dcc8a; }
+  .key-icon-wrap.fob i { color: #7ab0f0; }
+
+  .key-info { flex: 1; min-width: 0; }
+  .key-name { font-size: 13px; font-weight: 500; color: #e8ddb5; margin-bottom: 2px; }
+  .key-unit { font-size: 11px; color: rgba(184,143,60,0.5); }
+
+  .key-meta { text-align: right; flex-shrink: 0; }
+  .key-status { font-size: 11px; margin-bottom: 3px; }
+  .key-holder { font-size: 10px; color: rgba(184,143,60,0.4); }
+
+  .status-dot {
+    display: inline-block; width: 6px; height: 6px;
+    border-radius: 50%; margin-right: 4px; vertical-align: middle;
+  }
+
+  .dot-active { background: #5dcc8a; box-shadow: 0 0 4px rgba(93,204,138,0.5); }
+  .dot-issued { background: #e8c96a; box-shadow: 0 0 4px rgba(232,201,106,0.4); }
+  .dot-lost { background: #f07070; box-shadow: 0 0 4px rgba(240,112,112,0.4); }
+  .dot-spare { background: rgba(184,143,60,0.4); }
+
+  .key-action-dots {
+    position: absolute; top: 10px; right: 10px;
+    font-size: 14px; color: rgba(184,143,60,0.3);
+    padding: 2px 4px; border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .key-item:hover .key-action-dots { color: rgba(184,143,60,0.7); }
+
+  .side-panel { display: flex; flex-direction: column; gap: 14px; }
+
+  .lock-panel, .activity-panel, .qr-panel {
+    background: #0a1710; border: 1px solid rgba(184,143,60,0.15);
+    border-radius: 12px; padding: 16px;
+  }
+
+  .lock-visual {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 18px 0 10px;
+    margin-bottom: 14px;
+  }
+
+  .lock-body {
+    width: 72px; height: 86px;
+    background: #0d1f15;
+    border: 2px solid rgba(184,143,60,0.45);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; margin-bottom: 4px;
+    box-shadow: 0 0 20px rgba(184,143,60,0.08);
+  }
+
+  .lock-body.locked { border-color: rgba(184,143,60,0.45); }
+  .lock-body.unlocked { border-color: rgba(93,204,138,0.5); box-shadow: 0 0 20px rgba(93,204,138,0.1); }
+
+  .lock-keyhole {
+    width: 18px; height: 28px;
+    background: rgba(184,143,60,0.12);
+    border: 1px solid rgba(184,143,60,0.3);
+    border-radius: 9px 9px 3px 3px;
+    position: relative;
+  }
+
+  .lock-keyhole::after {
+    content: ''; position: absolute;
+    bottom: 2px; left: 50%; transform: translateX(-50%);
+    width: 4px; height: 10px;
+    background: rgba(184,143,60,0.4); border-radius: 2px;
+  }
+
+  .lock-shackle {
+    width: 38px; height: 26px;
+    border: 2.5px solid rgba(184,143,60,0.55);
+    border-bottom: none; border-radius: 20px 20px 0 0;
+    margin: 0 auto;
+    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  .lock-shackle.open { transform: translateY(-14px) rotate(20deg); }
+
+  .lock-name-display {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px; color: #e8c96a; text-align: center;
+    margin-bottom: 2px;
+  }
+
+  .lock-sub-display {
+    font-size: 10px; color: rgba(184,143,60,0.4);
+    text-align: center; margin-bottom: 14px;
+  }
+
+  .lock-toggle-row {
+    display: flex; gap: 8px;
+  }
+
+  .lock-btn {
+    flex: 1; padding: 9px;
+    border-radius: 8px; font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer; transition: all 0.2s; text-align: center;
+  }
+
+  .lock-btn-lock {
+    background: rgba(184,143,60,0.12);
+    border: 1px solid rgba(184,143,60,0.3);
+    color: #e8c96a;
+  }
+
+  .lock-btn-unlock {
+    background: rgba(26,110,60,0.15);
+    border: 1px solid rgba(26,110,60,0.35);
+    color: #5dcc8a;
+  }
+
+  .lock-btn:hover { opacity: 0.8; }
+
+  .lock-list-mini { display: flex; flex-direction: column; gap: 7px; margin-top: 14px; }
+
+  .lock-mini-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px;
+    background: rgba(184,143,60,0.04);
+    border: 1px solid rgba(184,143,60,0.1);
+    border-radius: 8px; cursor: pointer; transition: all 0.2s;
+  }
+
+  .lock-mini-item:hover { border-color: rgba(184,143,60,0.25); }
+
+  .lock-mini-item i { font-size: 15px; color: #b88f3c; flex-shrink: 0; }
+  .lock-mini-name { flex: 1; font-size: 12px; color: #e8ddb5; }
+  .lock-mini-state { font-size: 10px; }
+  .state-locked { color: rgba(184,143,60,0.7); }
+  .state-unlocked { color: #5dcc8a; }
+
+  .activity-list { display: flex; flex-direction: column; gap: 0; }
+
+  .activity-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(184,143,60,0.07);
+    font-size: 11px;
+  }
+
+  .activity-item:last-child { border-bottom: none; }
+
+  .activity-dot-wrap {
+    flex-shrink: 0; padding-top: 3px;
+  }
+
+  .activity-text { flex: 1; }
+  .activity-who { color: #e8ddb5; font-weight: 500; }
+  .activity-what { color: rgba(184,143,60,0.5); }
+  .activity-time { color: rgba(184,143,60,0.35); font-size: 10px; margin-top: 1px; }
+
+  .qr-display {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+
+  .qr-box {
+    width: 88px; height: 88px;
+    background: rgba(184,143,60,0.06);
+    border: 1px solid rgba(184,143,60,0.25);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+
+  .qr-inner {
+    display: grid; grid-template-columns: repeat(7,10px); gap: 1.5px;
+  }
+
+  .qr-cell { width: 10px; height: 10px; border-radius: 1px; }
+  .qr-on { background: #b88f3c; }
+  .qr-off { background: transparent; }
+
+  .qr-label {
+    font-size: 10px; color: rgba(184,143,60,0.45);
+    text-align: center; line-height: 1.4;
+  }
+
+  .qr-code-text {
+    font-family: monospace; font-size: 11px;
+    color: rgba(184,143,60,0.6);
+    background: rgba(184,143,60,0.08);
+    padding: 4px 10px; border-radius: 6px;
+    border: 1px solid rgba(184,143,60,0.15);
+  }
+
+  .me-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(184,143,60,0.2), transparent);
+    margin: 16px 0;
+  }
+
+  .key-count-badge {
+    background: rgba(184,143,60,0.15);
+    border: 1px solid rgba(184,143,60,0.25);
+    color: #e8c96a; font-size: 10px;
+    padding: 2px 7px; border-radius: 20px; margin-left: 6px;
+  }
+
+  .access-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 10px; padding: 3px 8px; border-radius: 20px; margin: 2px;
+  }
+
+  .chip-perm { background: rgba(26,110,60,0.2); color: #5dcc8a; border: 1px solid rgba(26,110,60,0.3); }
+  .chip-temp { background: rgba(184,143,60,0.12); color: #e8c96a; border: 1px solid rgba(184,143,60,0.25); }
+  .chip-maint { background: rgba(60,90,180,0.15); color: #7ab0f0; border: 1px solid rgba(60,90,180,0.25); }
+
+  .action-bar {
+    display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap;
+  }
+
+  .action-mini {
+    display: flex; align-items: center; gap: 5px;
+    padding: 6px 11px; border-radius: 7px;
+    font-size: 11px; cursor: pointer; transition: all 0.2s;
+    border: 1px solid rgba(184,143,60,0.18);
+    color: rgba(184,143,60,0.7);
+    background: rgba(184,143,60,0.05);
+  }
+
+  .action-mini:hover { border-color: rgba(184,143,60,0.4); color: #e8c96a; }
+  .action-mini i { font-size: 13px; }
+</style>
+
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;">Mwarokin Estates — Keys and Locks Management</h2>
+
+<div class="me-root">
+  <div class="me-bg-pattern"></div>
+
+  <div class="me-header">
+    <div class="me-logo">
+      <div class="me-logo-icon"><i class="ti ti-building-estate" aria-hidden="true"></i></div>
+      <div>
+        <div class="me-logo-text">Mwarokin Estates</div>
+        <div class="me-logo-sub">Property Management System</div>
+      </div>
+    </div>
+    <div class="me-header-nav">
+      <button class="me-nav-btn">Dashboard</button>
+      <button class="me-nav-btn">Properties</button>
+      <button class="me-nav-btn">Tenants</button>
+      <button class="me-nav-btn active">Keys & Locks</button>
+      <button class="me-nav-btn">Reports</button>
+    </div>
+  </div>
+
+  <div class="me-breadcrumb">DASHBOARD / SETTINGS / <span>KEYS & LOCKS</span></div>
+
+  <div class="me-content">
+    <div class="me-page-title"><i class="ti ti-key" aria-hidden="true" style="font-size:22px;vertical-align:-3px;margin-right:8px;color:#b88f3c;"></i>Keys & Access Control</div>
+    <div class="me-page-sub">Manage physical keys, digital access codes, and lock status across all Mwarokin properties</div>
+
+    <div class="me-stats-row">
+      <div class="me-stat">
+        <div class="me-stat-icon"><i class="ti ti-key" aria-hidden="true"></i></div>
+        <div class="me-stat-val">147</div>
+        <div class="me-stat-label">Total Keys</div>
+        <span class="me-stat-badge badge-ok">All tracked</span>
+      </div>
+      <div class="me-stat">
+        <div class="me-stat-icon"><i class="ti ti-lock" aria-hidden="true"></i></div>
+        <div class="me-stat-val">38</div>
+        <div class="me-stat-label">Smart Locks</div>
+        <span class="me-stat-badge badge-ok">Online</span>
+      </div>
+      <div class="me-stat">
+        <div class="me-stat-icon"><i class="ti ti-user-check" aria-hidden="true"></i></div>
+        <div class="me-stat-val">112</div>
+        <div class="me-stat-label">Keys Issued</div>
+        <span class="me-stat-badge badge-warn">4 pending</span>
+      </div>
+      <div class="me-stat">
+        <div class="me-stat-icon"><i class="ti ti-alert-triangle" aria-hidden="true"></i></div>
+        <div class="me-stat-val">3</div>
+        <div class="me-stat-label">Lost / Flagged</div>
+        <span class="me-stat-badge badge-alert">Action needed</span>
+      </div>
+    </div>
+
+    <div class="me-grid">
+      <div>
+        <div class="keys-panel">
+          <div class="me-section-title"><i class="ti ti-key" aria-hidden="true" style="font-size:15px;color:#b88f3c;"></i> Key Registry <span class="key-count-badge">147</span></div>
+
+          <div class="keys-search">
+            <input type="text" placeholder="Search by unit, holder, or key ID…" />
+            <button class="btn-gold"><i class="ti ti-plus" aria-hidden="true" style="font-size:12px;vertical-align:-1px;"></i> Issue Key</button>
+            <button class="btn-outline"><i class="ti ti-filter" aria-hidden="true" style="font-size:12px;vertical-align:-1px;"></i></button>
+          </div>
+
+          <div class="key-tabs">
+            <div class="key-tab active">All Keys</div>
+            <div class="key-tab">Physical</div>
+            <div class="key-tab">Digital</div>
+            <div class="key-tab">Key Fobs</div>
+            <div class="key-tab">Spares</div>
+          </div>
+
+          <div class="key-list" id="keyList">
+
+            <div class="key-item selected">
+              <div class="key-icon-wrap physical"><i class="ti ti-key" aria-hidden="true"></i></div>
+              <div class="key-info">
+                <div class="key-name">Master Key — Block A</div>
+                <div class="key-unit">Mwarokin Heights, Westlands · KY-0011</div>
+                <div style="margin-top:5px;">
+                  <span class="access-chip chip-perm"><i class="ti ti-shield-check" aria-hidden="true" style="font-size:9px;"></i> Full access</span>
+                  <span class="access-chip chip-maint"><i class="ti ti-tools" aria-hidden="true" style="font-size:9px;"></i> Maintenance</span>
+                </div>
+              </div>
+              <div class="key-meta">
+                <div class="key-status"><span class="status-dot dot-issued"></span><span style="color:#e8c96a;font-size:11px;">Issued</span></div>
+                <div class="key-holder">Caretaker · James M.</div>
+              </div>
+              <div class="key-action-dots">···</div>
+            </div>
+
+            <div class="key-item">
+              <div class="key-icon-wrap digital"><i class="ti ti-device-mobile" aria-hidden="true"></i></div>
+              <div class="key-info">
+                <div class="key-name">Digital PIN — Unit 4B</div>
+                <div class="key-unit">Mwarokin Suites, Kilimani · DK-0047</div>
+                <div style="margin-top:5px;">
+                  <span class="access-chip chip-temp"><i class="ti ti-clock" aria-hidden="true" style="font-size:9px;"></i> Expires 30 Jul</span>
+                </div>
+              </div>
+              <div class="key-meta">
+                <div class="key-status"><span class="status-dot dot-active"></span><span style="color:#5dcc8a;font-size:11px;">Active</span></div>
+                <div class="key-holder">Tenant · Amina K.</div>
+              </div>
+              <div class="key-action-dots">···</div>
+            </div>
+
+            <div class="key-item">
+              <div class="key-icon-wrap fob"><i class="ti ti-radio" aria-hidden="true"></i></div>
+              <div class="key-info">
+                <div class="key-name">RFID Fob — Parking Level 2</div>
+                <div class="key-unit">Mwarokin Plaza, CBD · FB-0089</div>
+                <div style="margin-top:5px;">
+                  <span class="access-chip chip-perm"><i class="ti ti-car" aria-hidden="true" style="font-size:9px;"></i> Parking only</span>
+                </div>
+              </div>
+              <div class="key-meta">
+                <div class="key-status"><span class="status-dot dot-active"></span><span style="color:#5dcc8a;font-size:11px;">Active</span></div>
+                <div class="key-holder">Tenant · Brian O.</div>
+              </div>
+              <div class="key-action-dots">···</div>
+            </div>
+
+            <div class="key-item">
+              <div class="key-icon-wrap physical"><i class="ti ti-key" aria-hidden="true"></i></div>
+              <div class="key-info">
+                <div class="key-name">Unit Key — 7C Front Door</div>
+                <div class="key-unit">Mwarokin Gardens, Lavington · KY-0023</div>
+                <div style="margin-top:5px;">
+                  <span class="access-chip chip-temp"><i class="ti ti-clock" aria-hidden="true" style="font-size:9px;"></i> Temp — 7 days</span>
+                </div>
+              </div>
+              <div class="key-meta">
+                <div class="key-status"><span class="status-dot dot-lost"></span><span style="color:#f07070;font-size:11px;">Reported Lost</span></div>
+                <div class="key-holder">Ex-tenant · Grace N.</div>
+              </div>
+              <div class="key-action-dots">···</div>
+            </div>
+
+            <div class="key-item">
+              <div class="key-icon-wrap digital"><i class="ti ti-qrcode" aria-hidden="true"></i></div>
+              <div class="key-info">
+                <div class="key-name">QR Access — Gym & Amenities</div>
+                <div class="key-unit">Mwarokin Heights, Westlands · QR-0018</div>
+                <div style="margin-top:5px;">
+                  <span class="access-chip chip-perm"><i class="ti ti-swimming" aria-hidden="true" style="font-size:9px;"></i> Amenities</span>
+                </div>
+              </div>
+              <div class="key-meta">
+                <div class="key-status"><span class="status-dot dot-active"></span><span style="color:#5dcc8a;font-size:11px;">Active</span></div>
+                <div class="key-holder">Resident · Fatuma A.</div>
+              </div>
+              <div class="key-action-dots">···</div>
+            </div>
+
+            <div class="key-item">
+              <div class="key-icon-wrap physical"><i class="ti ti-key" aria-hidden="true"></i></div>
+              <div class="key-info">
+                <div class="key-name">Spare Key — Unit 2A</div>
+                <div class="key-unit">Mwarokin Suites, Kilimani · KY-0031-S</div>
+                <div style="margin-top:5px;">
+                  <span class="access-chip chip-maint"><i class="ti ti-archive" aria-hidden="true" style="font-size:9px;"></i> In safe</span>
+                </div>
+              </div>
+              <div class="key-meta">
+                <div class="key-status"><span class="status-dot dot-spare"></span><span style="color:rgba(184,143,60,0.6);font-size:11px;">Spare</span></div>
+                <div class="key-holder">Office · Secure storage</div>
+              </div>
+              <div class="key-action-dots">···</div>
+            </div>
+
+          </div>
+
+          <div class="action-bar">
+            <div class="action-mini"><i class="ti ti-download" aria-hidden="true"></i> Export registry</div>
+            <div class="action-mini"><i class="ti ti-report" aria-hidden="true"></i> Audit log</div>
+            <div class="action-mini"><i class="ti ti-rotate-clockwise" aria-hidden="true"></i> Revoke bulk</div>
+            <div class="action-mini"><i class="ti ti-printer" aria-hidden="true"></i> Print tags</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-panel">
+
+        <div class="lock-panel">
+          <div class="me-section-title" style="font-size:14px;"><i class="ti ti-lock" aria-hidden="true" style="font-size:13px;color:#b88f3c;"></i> Lock Control</div>
+
+          <div class="lock-visual">
+            <div class="lock-shackle" id="shackle"></div>
+            <div class="lock-body" id="lockBody">
+              <div class="lock-keyhole"></div>
+            </div>
+          </div>
+
+          <div class="lock-name-display">Block A — Main Entrance</div>
+          <div class="lock-sub-display">Smart Lock · ZL-400 · Last activity: 2 mins ago</div>
+
+          <div class="lock-toggle-row">
+            <button class="lock-btn lock-btn-lock" onclick="setLock(true)"><i class="ti ti-lock" aria-hidden="true" style="font-size:13px;vertical-align:-2px;"></i> Lock</button>
+            <button class="lock-btn lock-btn-unlock" onclick="setLock(false)"><i class="ti ti-lock-open" aria-hidden="true" style="font-size:13px;vertical-align:-2px;"></i> Unlock</button>
+          </div>
+
+          <div class="me-divider"></div>
+
+          <div style="font-size:11px;color:rgba(184,143,60,0.5);margin-bottom:8px;letter-spacing:0.04em;">ALL PROPERTIES</div>
+          <div class="lock-list-mini">
+            <div class="lock-mini-item"><i class="ti ti-lock" aria-hidden="true"></i><span class="lock-mini-name">Block B — Main Gate</span><span class="lock-mini-state state-locked"><i class="ti ti-lock" aria-hidden="true" style="font-size:11px;"></i> Locked</span></div>
+            <div class="lock-mini-item"><i class="ti ti-lock-open" aria-hidden="true" style="color:#5dcc8a;"></i><span class="lock-mini-name">Gym Entrance</span><span class="lock-mini-state state-unlocked"><i class="ti ti-lock-open" aria-hidden="true" style="font-size:11px;"></i> Open</span></div>
+            <div class="lock-mini-item"><i class="ti ti-lock" aria-hidden="true"></i><span class="lock-mini-name">Parking Gate P2</span><span class="lock-mini-state state-locked"><i class="ti ti-lock" aria-hidden="true" style="font-size:11px;"></i> Locked</span></div>
+            <div class="lock-mini-item"><i class="ti ti-lock-open" aria-hidden="true" style="color:#5dcc8a;"></i><span class="lock-mini-name">Rooftop Terrace</span><span class="lock-mini-state state-unlocked"><i class="ti ti-lock-open" aria-hidden="true" style="font-size:11px;"></i> Open</span></div>
+          </div>
+        </div>
+
+        <div class="activity-panel">
+          <div class="me-section-title" style="font-size:14px;"><i class="ti ti-history" aria-hidden="true" style="font-size:13px;color:#b88f3c;"></i> Recent Activity</div>
+          <div class="activity-list">
+            <div class="activity-item">
+              <div class="activity-dot-wrap"><span class="status-dot dot-active" style="display:block;"></span></div>
+              <div class="activity-text">
+                <div><span class="activity-who">James M.</span> <span class="activity-what">unlocked Block A main door</span></div>
+                <div class="activity-time">2 minutes ago · KY-0011</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot-wrap"><span class="status-dot dot-issued" style="display:block;"></span></div>
+              <div class="activity-text">
+                <div><span class="activity-who">Admin</span> <span class="activity-what">issued digital PIN to Amina K. — Unit 4B</span></div>
+                <div class="activity-time">1 hour ago · DK-0047</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot-wrap"><span class="status-dot dot-lost" style="display:block;"></span></div>
+              <div class="activity-text">
+                <div><span class="activity-who">Grace N.</span> <span class="activity-what">reported key lost — Unit 7C</span></div>
+                <div class="activity-time">3 hours ago · KY-0023</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot-wrap"><span class="status-dot dot-active" style="display:block;"></span></div>
+              <div class="activity-text">
+                <div><span class="activity-who">Brian O.</span> <span class="activity-what">fob access — Parking Level 2</span></div>
+                <div class="activity-time">5 hours ago · FB-0089</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot-wrap"><span class="status-dot dot-spare" style="display:block;"></span></div>
+              <div class="activity-text">
+                <div><span class="activity-who">Admin</span> <span class="activity-what">spare key logged to secure storage — 2A</span></div>
+                <div class="activity-time">Yesterday · KY-0031-S</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="qr-panel">
+          <div class="me-section-title" style="font-size:14px;"><i class="ti ti-qrcode" aria-hidden="true" style="font-size:13px;color:#b88f3c;"></i> Quick Access Code</div>
+          <div class="qr-display">
+            <div class="qr-box">
+              <div class="qr-inner" id="qrGrid"></div>
+            </div>
+            <div class="qr-code-text">ME-QR-4B-2025-A7</div>
+            <div class="qr-label">Scan to grant 24-hr temporary access<br>Unit 4B · Mwarokin Suites</div>
+            <div style="display:flex;gap:6px;margin-top:4px;">
+              <button class="btn-gold" style="font-size:11px;padding:6px 12px;"><i class="ti ti-download" aria-hidden="true" style="font-size:11px;vertical-align:-1px;"></i> Download</button>
+              <button class="btn-outline" style="font-size:11px;padding:6px 12px;"><i class="ti ti-refresh" aria-hidden="true" style="font-size:11px;vertical-align:-1px;"></i> Regenerate</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function setLock(locked) {
+    const shackle = document.getElementById('shackle');
+    const body = document.getElementById('lockBody');
+    if (locked) {
+      shackle.classList.remove('open');
+      body.classList.remove('unlocked');
+      body.classList.add('locked');
+    } else {
+      shackle.classList.add('open');
+      body.classList.remove('locked');
+      body.classList.add('unlocked');
+    }
+  }
+
+  const pat = [1,1,1,0,1,1,1,1,0,0,0,1,0,0,1,1,0,1,0,1,0,1,0,0,0,1,0,1,1,0,1,0,1,1,1,1,0,0,1,0,1,1,0,1,1,1,0];
+  const grid = document.getElementById('qrGrid');
+  pat.forEach(v => {
+    const c = document.createElement('div');
+    c.className = 'qr-cell ' + (v ? 'qr-on' : 'qr-off');
+    grid.appendChild(c);
+  });
+
+  document.querySelectorAll('.key-item').forEach(item => {
+    item.addEventListener('click', function() {
+      document.querySelectorAll('.key-item').forEach(i => i.classList.remove('selected'));
+      this.classList.add('selected');
+    });
+  });
+
+  document.querySelectorAll('.key-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.key-tab').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

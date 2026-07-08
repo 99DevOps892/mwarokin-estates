@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mwarokin Estates — Lipa Mdogo Mdogo | Live Rent Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Syne:wght@500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b1a14;
+  --bg-2:#0e2018;
+  --panel:#142c22;
+  --panel-2:#1a3629;
+  --panel-3:#0f251d;
+  --gold:#c9a227;
+  --gold-light:#ecd28a;
+  --gold-dim:rgba(201,162,39,.28);
+  --gold-hair:rgba(236,210,138,.16);
+  --cream:#f3ecd9;
+  --ink-dim:#9fb3a6;
+  --ink-faint:#6f8579;
+  --terracotta:#d3856b;
+  --sage:#7fb08f;
+  --radius:16px;
+  --radius-sm:10px;
+  --shadow:0 20px 50px -20px rgba(0,0,0,.6);
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:
+    radial-gradient(1100px 500px at 85% -10%, rgba(201,162,39,.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 20%, rgba(127,176,143,.08), transparent 55%),
+    var(--bg);
+  color:var(--cream);
+  font-family:'DM Sans',sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+::selection{background:var(--gold-dim);color:var(--cream);}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
+a{color:inherit;text-decoration:none;}
+h1,h2,h3{font-family:'Cormorant Garamond',serif;font-weight:600;letter-spacing:.2px;}
+.eyebrow{
+  font-family:'Syne',sans-serif;font-weight:700;font-size:.68rem;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--gold-light);
+  display:inline-flex;align-items:center;gap:8px;
+}
+.eyebrow::before{content:'';width:16px;height:1px;background:var(--gold);display:inline-block;}
+.card{
+  background:linear-gradient(160deg, var(--panel), var(--panel-3));
+  border:1px solid var(--gold-hair);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(6px);
+}
+button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;}
+input,select{
+  font-family:'DM Sans',sans-serif;background:var(--panel-2);
+  border:1px solid var(--gold-hair);color:var(--cream);
+  border-radius:var(--radius-sm);padding:12px 14px;font-size:.95rem;
+  outline:none;transition:border-color .2s var(--ease), box-shadow .2s var(--ease);width:100%;
+}
+input:focus,select:focus{border-color:var(--gold-dim);box-shadow:0 0 0 3px var(--gold-dim);}
+label{font-family:'Syne',sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-dim);display:block;margin-bottom:8px;}
+
+/* ---------- NAV ---------- */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(11,26,20,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--gold-hair);}
+.nav-inner{max-width:1180px;margin:0 auto;padding:16px 28px;display:flex;align-items:center;justify-content:space-between;}
+.brand{display:flex;align-items:center;gap:12px;}
+.brand-mark{width:38px;height:38px;border-radius:9px;background:linear-gradient(155deg,var(--gold-light),var(--gold));display:flex;align-items:center;justify-content:center;color:#1c2a20;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:1.35rem;}
+.brand-name{font-family:'Syne',sans-serif;font-weight:700;font-size:1.02rem;letter-spacing:.02em;}
+.brand-name span{color:var(--gold-light);font-weight:600;}
+.nav-links{list-style:none;display:flex;gap:30px;}
+.nav-links a{font-family:'Syne',sans-serif;font-size:.78rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-dim);position:relative;padding-bottom:4px;transition:color .2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--gold-light);}
+.nav-links a.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--gold);}
+.live-pill{display:flex;align-items:center;gap:8px;background:var(--panel-2);border:1px solid var(--gold-hair);border-radius:30px;padding:7px 14px;font-family:'Syne',sans-serif;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--sage);}
+.dot-live{width:7px;height:7px;border-radius:50%;background:var(--sage);box-shadow:0 0 0 0 rgba(127,176,143,.6);animation:pulse-live 1.8s infinite;}
+@keyframes pulse-live{0%{box-shadow:0 0 0 0 rgba(127,176,143,.55);}70%{box-shadow:0 0 0 9px rgba(127,176,143,0);}100%{box-shadow:0 0 0 0 rgba(127,176,143,0);}}
+.navToggle{display:none;background:none;color:var(--cream);font-size:1.2rem;}
+
+/* ---------- HERO ---------- */
+.hero{padding:64px 0 40px;}
+.hero-grid{display:grid;grid-template-columns:1.15fr .95fr;gap:52px;align-items:center;}
+.hero h1{font-size:2.7rem;line-height:1.14;margin:16px 0 18px;font-weight:500;}
+.hero h1 em{font-style:italic;color:var(--gold-light);font-weight:600;}
+.lead{color:var(--ink-dim);font-size:1.03rem;max-width:48ch;}
+.balance-card{padding:30px 30px 26px;position:relative;overflow:hidden;}
+.balance-card::before{content:'';position:absolute;inset:0;background:radial-gradient(220px 160px at 100% 0%, var(--gold-dim), transparent 70%);pointer-events:none;}
+.balance-figure{font-family:'Cormorant Garamond',serif;font-size:3.1rem;font-weight:600;margin:8px 0 4px;transition:opacity .25s;}
+.balance-figure sup{font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--gold-light);vertical-align:6px;margin-right:6px;font-weight:700;}
+.balance-sub{color:var(--ink-dim);font-size:.88rem;margin-bottom:20px;}
+.balance-meta{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--gold-hair);padding-top:18px;}
+.balance-meta .num{font-family:'Syne',sans-serif;font-weight:700;font-size:1.15rem;color:var(--gold-light);}
+.balance-meta .lbl{font-size:.7rem;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.08em;margin-top:2px;}
+
+/* ---------- SECTIONS ---------- */
+section{padding:52px 0;}
+.section-head{max-width:640px;margin-bottom:30px;}
+.section-head h2{font-size:1.9rem;margin:10px 0 8px;font-weight:500;}
+.section-head p{color:var(--ink-dim);font-size:.95rem;}
+
+/* setup */
+.setup-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
+.card-pad{padding:30px;}
+.amenity-row{display:grid;grid-template-columns:1fr 130px 40px;gap:10px;margin-bottom:10px;align-items:center;}
+.icon-btn{background:var(--panel-2);border:1px solid var(--gold-hair);color:var(--terracotta);width:40px;height:40px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;transition:.2s;}
+.icon-btn:hover{background:rgba(211,133,107,.14);}
+.add-line{background:none;border:1px dashed var(--gold-hair);color:var(--gold-light);padding:10px 16px;border-radius:var(--radius-sm);font-size:.85rem;margin-top:6px;display:inline-flex;gap:8px;align-items:center;transition:.2s;}
+.add-line:hover{border-color:var(--gold);background:var(--gold-dim);}
+.totals-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--gold-hair);border-radius:var(--radius-sm);overflow:hidden;margin-top:24px;}
+.totals-strip .t{background:var(--panel-2);padding:16px;text-align:center;}
+.totals-strip .num{font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;color:var(--gold-light);}
+.totals-strip .lbl{font-size:.68rem;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.08em;margin-top:3px;}
+.btn-gold{background:linear-gradient(155deg,var(--gold-light),var(--gold));color:#1c2a20;font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;padding:14px 24px;border-radius:var(--radius-sm);display:inline-flex;align-items:center;gap:9px;transition:transform .2s var(--ease), box-shadow .2s var(--ease);}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 12px 24px -10px rgba(201,162,39,.5);}
+.btn-ghost{background:none;border:1px solid var(--gold-hair);color:var(--ink-dim);font-family:'Syne',sans-serif;font-weight:600;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;padding:14px 22px;border-radius:var(--radius-sm);display:inline-flex;align-items:center;gap:9px;transition:.2s;}
+.btn-ghost:hover{border-color:var(--gold-dim);color:var(--gold-light);}
+
+/* live tracking */
+.track-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:26px;align-items:stretch;}
+.ring-wrap{display:flex;flex-direction:column;align-items:center;padding:34px 26px;text-align:center;}
+.ring-svg{width:210px;height:210px;}
+.ring-bg{fill:none;stroke:var(--panel-2);stroke-width:13;}
+.ring-fg{fill:none;stroke:url(#goldGrad);stroke-width:13;stroke-linecap:round;transition:stroke-dashoffset 1s var(--ease);}
+.ring-center-pct{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:2.5rem;fill:var(--cream);}
+.ring-center-cap{font-family:'Syne',sans-serif;font-size:.62rem;letter-spacing:.16em;fill:var(--ink-faint);}
+.ring-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:26px;width:100%;}
+.stat-pill{background:var(--panel-2);border:1px solid var(--gold-hair);border-radius:var(--radius-sm);padding:14px;}
+.stat-pill .num{font-family:'Syne',sans-serif;font-weight:700;color:var(--gold-light);font-size:1rem;}
+.stat-pill .lbl{font-size:.66rem;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.07em;margin-top:3px;}
+
+.beadcard{padding:30px;display:flex;flex-direction:column;}
+.bead-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
+.bead-head h3{font-size:1.25rem;font-weight:500;}
+.bead-head span{font-size:.78rem;color:var(--ink-faint);}
+.bead-sub{color:var(--ink-dim);font-size:.85rem;margin-bottom:22px;}
+.bead-trail{display:flex;flex-wrap:wrap;gap:9px;align-items:center;}
+.bead{
+  width:24px;height:24px;border-radius:50%;
+  background:var(--panel-2);border:1.5px solid var(--gold-hair);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Sans',sans-serif;font-size:.58rem;color:var(--ink-faint);
+  position:relative;transition:transform .3s var(--ease), background .3s, border-color .3s;
+  flex:0 0 auto;
+}
+.bead.paid{background:radial-gradient(circle at 35% 30%, var(--gold-light), var(--gold));border-color:var(--gold);color:#1c2a20;font-weight:700;box-shadow:0 4px 10px -3px rgba(201,162,39,.6);}
+.bead.today{border-color:var(--sage);box-shadow:0 0 0 3px rgba(127,176,143,.18);}
+.bead.today::after{content:'';position:absolute;inset:-5px;border:1px dashed var(--sage);border-radius:50%;opacity:.6;}
+.bead.new-pop{animation:beadPop .55s var(--ease);}
+@keyframes beadPop{0%{transform:scale(.4);}55%{transform:scale(1.28);}100%{transform:scale(1);}}
+.bead-legend{display:flex;gap:22px;margin-top:22px;flex-wrap:wrap;font-size:.78rem;color:var(--ink-dim);}
+.bead-legend span{display:flex;align-items:center;gap:8px;}
+.swatch-dot{width:14px;height:14px;border-radius:50%;display:inline-block;}
+.suggest-strip{margin-top:auto;padding-top:22px;border-top:1px solid var(--gold-hair);font-size:.88rem;color:var(--ink-dim);margin-top:24px;}
+.suggest-strip b{color:var(--gold-light);}
+
+/* pay section */
+.pay-card{padding:32px;}
+.chip-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;}
+.chip{background:var(--panel-2);border:1px solid var(--gold-hair);color:var(--cream);padding:9px 18px;border-radius:30px;font-size:.86rem;cursor:pointer;transition:.2s;}
+.chip:hover{border-color:var(--gold-dim);}
+.chip.sel{background:var(--gold-dim);border-color:var(--gold);color:var(--gold-light);font-weight:600;}
+.pay-row{display:grid;grid-template-columns:1.4fr 1fr auto;gap:16px;align-items:end;}
+@media(max-width:760px){.pay-row{grid-template-columns:1fr;}}
+
+/* ledger + live feed */
+.split-grid{display:grid;grid-template-columns:1.3fr .95fr;gap:26px;align-items:start;}
+table{width:100%;border-collapse:collapse;}
+th{font-family:'Syne',sans-serif;font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-faint);text-align:left;padding:10px 12px;border-bottom:1px solid var(--gold-hair);}
+td{padding:13px 12px;font-size:.88rem;border-bottom:1px solid var(--gold-hair);color:var(--ink-dim);}
+td.amt{color:var(--gold-light);font-weight:600;font-family:'Syne',sans-serif;}
+.badge{padding:4px 11px;border-radius:20px;font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;}
+.badge.sent{background:rgba(127,176,143,.14);color:var(--sage);}
+.empty-state{text-align:center;padding:34px 10px;color:var(--ink-faint);font-size:.88rem;font-style:italic;}
+
+.feed-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+.feed{display:flex;flex-direction:column;gap:2px;max-height:420px;overflow-y:auto;padding-right:4px;}
+.feed::-webkit-scrollbar{width:5px;}
+.feed::-webkit-scrollbar-thumb{background:var(--gold-hair);border-radius:6px;}
+.feed-item{display:flex;gap:13px;padding:14px 4px;border-bottom:1px solid var(--gold-hair);animation:slideIn .45s var(--ease);}
+@keyframes slideIn{from{opacity:0;transform:translateX(14px);}to{opacity:1;transform:translateX(0);}}
+.feed-icon{width:38px;height:38px;border-radius:10px;background:var(--panel-2);border:1px solid var(--gold-hair);display:flex;align-items:center;justify-content:center;color:var(--gold-light);flex-shrink:0;}
+.feed-body div:first-child{font-size:.88rem;}
+.feed-body b{color:var(--gold-light);}
+.feed-time{font-size:.72rem;color:var(--ink-faint);margin-top:3px;}
+
+/* ---------- TOAST + MODAL ---------- */
+#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(140%);background:var(--panel);border:1px solid var(--gold-hair);color:var(--cream);padding:14px 22px;border-radius:30px;box-shadow:var(--shadow);display:flex;align-items:center;gap:10px;font-size:.88rem;z-index:200;transition:transform .4s var(--ease);}
+#toast.show{transform:translateX(-50%) translateY(0);}
+#toast i{color:var(--sage);}
+.modal-backdrop{position:fixed;inset:0;background:rgba(6,14,10,.72);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:300;opacity:0;pointer-events:none;transition:opacity .3s;}
+.modal-backdrop.show{opacity:1;pointer-events:all;}
+.modal{background:linear-gradient(160deg,var(--panel),var(--panel-3));border:1px solid var(--gold-dim);border-radius:20px;padding:40px 36px;text-align:center;max-width:380px;width:90%;transform:scale(.9);transition:transform .3s var(--ease);box-shadow:0 30px 70px -20px rgba(0,0,0,.7);}
+.modal-backdrop.show .modal{transform:scale(1);}
+.coin{width:64px;height:64px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--gold-light),var(--gold));display:flex;align-items:center;justify-content:center;margin:0 auto 18px;color:#1c2a20;font-size:1.4rem;animation:coinSpin .7s var(--ease);}
+@keyframes coinSpin{from{transform:rotateY(180deg) scale(.5);opacity:0;}to{transform:rotateY(0) scale(1);opacity:1;}}
+.modal .amt{font-family:'Cormorant Garamond',serif;font-size:2.1rem;font-weight:600;color:var(--gold-light);margin:8px 0;}
+
+footer{border-top:1px solid var(--gold-hair);padding:36px 0;margin-top:20px;}
+.foot-grid{display:flex;flex-wrap:wrap;gap:24px;justify-content:center;color:var(--ink-dim);font-size:.85rem;margin-bottom:16px;}
+.foot-grid i{color:var(--gold-light);margin-right:8px;}
+.copyright{text-align:center;color:var(--ink-faint);font-size:.8rem;}
+.copyright a{color:var(--gold-light);}
+
+@media(max-width:900px){
+  .hero-grid,.track-grid,.split-grid{grid-template-columns:1fr;}
+  .setup-grid{grid-template-columns:1fr;}
+  .nav-links{position:fixed;top:71px;left:0;right:0;background:var(--bg-2);flex-direction:column;padding:20px 28px;gap:18px;border-bottom:1px solid var(--gold-hair);transform:translateY(-130%);transition:transform .3s var(--ease);}
+  .nav-links.open{transform:translateY(0);}
+  .navToggle{display:block;}
+  .live-pill{display:none;}
+}
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="nav-inner">
+    <a href="#" class="brand">
+      <div class="brand-mark">M</div>
+      <div class="brand-name">Mwarokin <span>Estates</span></div>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="LipaMdogo.html">Lipa Mdogo Mdogo</a></li>
+      <li><a href="Payments.html">Payments</a></li>
+      <li><a href="Rent.html">Rent</a></li>
+      <li><a href="My Profile.html">My Profile</a></li>
+    </ul>
+    <div class="live-pill"><span class="dot-live"></span> Live Ledger</div>
+    <button class="navToggle" id="navToggle"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+
+<header class="hero wrap hero-grid">
+  <div>
+    <span class="eyebrow">Pay Little, Owe Less</span>
+    <h1>Lipa <em>Mdogo Mdogo</em><br>your rent clears, one small deposit at a time.</h1>
+    <p class="lead">Set your month once. Then chip away at the balance in whatever amounts suit your pocket — every shilling lands on the ledger the instant you send it, your landlord is notified in real time, and the bead trail below fills in as you go.</p>
+  </div>
+  <div class="card balance-card">
+    <span class="eyebrow">Balance Owed — <span id="heroMonthLabel">This Month</span></span>
+    <div class="balance-figure"><sup>KSh</sup><span id="heroBalance">0</span></div>
+    <div class="balance-sub" id="heroSub">Set up your rent below to begin tracking.</div>
+    <div class="balance-meta">
+      <div><div class="num" id="heroPaidPct">0%</div><div class="lbl">Cleared</div></div>
+      <div><div class="num" id="heroDaysLeft">—</div><div class="lbl">Days Left</div></div>
+      <div><div class="num" id="heroSuggest">—</div><div class="lbl">Per Day</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- SETUP -->
+<section id="setup">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Step One</span>
+      <h2>Set up this month's rent</h2>
+      <p>Enter the base rent and any amenities billed this month — Mwarokin totals your balance owed automatically.</p>
+    </div>
+    <div class="card card-pad">
+      <div class="setup-grid">
+        <div class="field"><label>Tenant Name</label><input type="text" id="tenantName" placeholder="e.g. Amina Wanjiru"></div>
+        <div class="field"><label>Unit / Account No.</label><input type="text" id="accountNo" placeholder="e.g. MWK-2201"></div>
+        <div class="field"><label>Billing Month</label><input type="month" id="billMonth"></div>
+        <div class="field"><label>Base Monthly Rent (KSh)</label><input type="number" id="baseRent" min="0" placeholder="e.g. 45000"></div>
+      </div>
+      <div style="margin-top:22px;">
+        <label>Amenities & Extra Charges</label>
+        <div id="amenityList"></div>
+        <button class="add-line" id="addAmenity"><i class="fas fa-plus"></i> Add Amenity</button>
+      </div>
+      <div class="totals-strip">
+        <div class="t"><div class="num" id="sumRent">KSh 0</div><div class="lbl">Rent</div></div>
+        <div class="t"><div class="num" id="sumAmenities">KSh 0</div><div class="lbl">Amenities</div></div>
+        <div class="t"><div class="num" id="sumCarry">KSh 0</div><div class="lbl">Carried Over</div></div>
+        <div class="t"><div class="num" id="sumTotal">KSh 0</div><div class="lbl">Total Due</div></div>
+      </div>
+      <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap;">
+        <button class="btn-gold" id="saveSetup"><i class="fas fa-check"></i> Save & Start Tracking</button>
+        <button class="btn-ghost" id="resetMonth"><i class="fas fa-rotate-left"></i> Start New Month</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE TRACKING -->
+<section id="tracking">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Live · Updates Instantly</span>
+      <h2>Watch the balance move</h2>
+      <p>The ring fills the moment a contribution lands. Each bead on the trail is one day of the month — it turns gold the day you pay.</p>
+    </div>
+    <div class="track-grid">
+      <div class="card ring-wrap">
+        <svg class="ring-svg" viewBox="0 0 200 200">
+          <defs>
+            <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ecd28a"/><stop offset="100%" stop-color="#c9a227"/>
+            </linearGradient>
+          </defs>
+          <circle class="ring-bg" cx="100" cy="100" r="82"></circle>
+          <circle class="ring-fg" id="ringFg" cx="100" cy="100" r="82" transform="rotate(-90 100 100)"></circle>
+          <text x="100" y="96" text-anchor="middle" class="ring-center-pct" id="ringPercentText">0%</text>
+          <text x="100" y="120" text-anchor="middle" class="ring-center-cap">CLEARED</text>
+        </svg>
+        <div class="ring-stats">
+          <div class="stat-pill"><div class="num" id="statTotal">KSh 0</div><div class="lbl">Total Due</div></div>
+          <div class="stat-pill"><div class="num" id="statPaid">KSh 0</div><div class="lbl">Paid So Far</div></div>
+          <div class="stat-pill"><div class="num" id="statRemaining">KSh 0</div><div class="lbl">Remaining</div></div>
+          <div class="stat-pill"><div class="num" id="statFinish">—</div><div class="lbl">Projected Clear</div></div>
+        </div>
+      </div>
+
+      <div class="card beadcard">
+        <div class="bead-head"><h3 id="calMonthTitle">Month</h3><span id="calDaysNote">— days</span></div>
+        <div class="bead-sub">Every bead is a day. Gold beads are days you sent a contribution.</div>
+        <div class="bead-trail" id="beadTrail"></div>
+        <div class="bead-legend">
+          <span><span class="swatch-dot" style="background:linear-gradient(160deg,var(--gold-light),var(--gold));"></span>Contribution made</span>
+          <span><span class="swatch-dot" style="background:var(--panel-2);border:1px solid var(--gold-hair);"></span>No payment yet</span>
+          <span><span class="swatch-dot" style="border:1.5px dashed var(--sage);background:var(--panel-2);"></span>Today</span>
+        </div>
+        <div class="suggest-strip" id="suggestNote"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAYMENT -->
+<section id="pay">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Step Two</span>
+      <h2>Lipa Sasa — make a contribution</h2>
+      <p>Send any amount toward this month's balance. It's deducted immediately and your landlord is notified the moment it lands.</p>
+    </div>
+    <div class="card pay-card">
+      <label>Quick Amounts (KSh)</label>
+      <div class="chip-row" id="chipRow">
+        <span class="chip" data-amt="200">200</span>
+        <span class="chip" data-amt="500">500</span>
+        <span class="chip" data-amt="1000">1,000</span>
+        <span class="chip" data-amt="2500">2,500</span>
+        <span class="chip" data-amt="5000">5,000</span>
+      </div>
+      <div class="pay-row">
+        <div class="field"><label>Contribution Amount (KSh)</label><input type="number" id="payAmount" min="1" placeholder="Enter amount"></div>
+        <div class="field"><label>Pay Via</label>
+          <select id="payMethod"><option>M-Pesa</option><option>SylloPay</option><option>Bank Transfer</option></select>
+        </div>
+        <button class="btn-gold" id="submitPay"><i class="fas fa-coins"></i> Lipa Sasa</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RECORDS + LIVE FEED -->
+<section id="records">
+  <div class="wrap split-grid">
+    <div class="card card-pad">
+      <div class="section-head" style="margin-bottom:14px;"><span class="eyebrow">Your Records</span><h2 style="font-size:1.45rem;">Payment History</h2></div>
+      <table>
+        <thead><tr><th>Date</th><th>Amount</th><th>Method</th><th>Balance After</th><th>Status</th></tr></thead>
+        <tbody id="ledgerBody"></tbody>
+      </table>
+      <div class="empty-state" id="ledgerEmpty">No contributions recorded yet this month.</div>
+    </div>
+
+    <div class="card card-pad">
+      <div class="feed-head">
+        <div class="section-head" style="margin-bottom:0;"><span class="eyebrow">Landlord Account</span><h2 style="font-size:1.45rem;">Live Activity</h2></div>
+        <div class="live-pill" style="display:flex;"><span class="dot-live"></span> Live</div>
+      </div>
+      <div class="feed" id="feed"><div class="empty-state">No activity yet.</div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div><i class="fas fa-map-marker-alt"></i> Africa & Global</div>
+      <div><i class="fas fa-phone-alt"></i> +254-704-919-388</div>
+      <div><i class="fas fa-envelope"></i> Property@Mwarokin.com</div>
+    </div>
+    <div class="copyright">Mwarokin Estates — Lipa Mdogo Mdogo &copy; 2026. Powered by <a href="https://www.syllogismtechnologyafrica.com">Syllogism Technology Africa</a>.</div>
+  </div>
+</footer>
+
+<div id="toast"><i class="fas fa-check-circle"></i><span id="toastText"></span></div>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal">
+    <div class="coin"><i class="fas fa-hand-holding-dollar"></i></div>
+    <h3 id="modalTitle">Payment Received</h3>
+    <div class="amt" id="modalAmt">KSh 0</div>
+    <p id="modalBody" style="color:var(--ink-dim);font-size:.9rem;">Sent to landlord account. Balance updated.</p>
+    <button class="btn-gold" style="margin-top:20px;" onclick="closeModal()">Continue</button>
+  </div>
+</div>
+
+<script>
+/* ---------- STATE (in-memory, persisted via window.storage) ---------- */
+const STORE_KEY = 'mwarokin_lipa_mdogo_v2';
+const el = id => document.getElementById(id);
+const today = new Date();
+const defaultMonth = today.toISOString().slice(0,7);
+
+let state = {
+  tenantName:'', accountNo:'', billMonth: defaultMonth,
+  baseRent:0, amenities:[], carryOver:0,
+  totalDue:0, paid:0, payments:[], notifications:[]
+};
+
+async function loadState(){
+  try{
+    const res = await window.storage.get(STORE_KEY);
+    if(res && res.value) state = JSON.parse(res.value);
+  }catch(e){ /* no saved state yet */ }
+}
+async function saveState(){
+  try{ await window.storage.set(STORE_KEY, JSON.stringify(state)); }catch(e){}
+}
+
+function fmt(n){ return 'KSh ' + Math.round(n).toLocaleString('en-KE'); }
+
+/* ---------- AMENITIES ---------- */
+function renderAmenities(){
+  const list = el('amenityList');
+  list.innerHTML = '';
+  state.amenities.forEach((a,i)=>{
+    const row = document.createElement('div');
+    row.className = 'amenity-row';
+    row.innerHTML = `
+      <input type="text" value="${a.name}" placeholder="Amenity name" data-idx="${i}" data-field="name">
+      <input type="number" value="${a.cost}" placeholder="Cost" data-idx="${i}" data-field="cost">
+      <button class="icon-btn" data-remove="${i}"><i class="fas fa-times"></i></button>`;
+    list.appendChild(row);
+  });
+  list.querySelectorAll('input').forEach(inp=>{
+    inp.addEventListener('input', e=>{
+      const i=+e.target.dataset.idx, f=e.target.dataset.field;
+      state.amenities[i][f] = f==='cost' ? (+e.target.value||0) : e.target.value;
+      recalcTotals();
+    });
+  });
+  list.querySelectorAll('[data-remove]').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      state.amenities.splice(+e.currentTarget.dataset.remove,1);
+      renderAmenities(); recalcTotals();
+    });
+  });
+}
+el('addAmenity').addEventListener('click', ()=>{ state.amenities.push({name:'',cost:0}); renderAmenities(); });
+
+function recalcTotals(){
+  const rent = +el('baseRent').value || 0;
+  const amenitiesSum = state.amenities.reduce((s,a)=> s + (+a.cost||0), 0);
+  const carry = +state.carryOver || 0;
+  const total = rent + amenitiesSum + carry;
+  el('sumRent').textContent = fmt(rent);
+  el('sumAmenities').textContent = fmt(amenitiesSum);
+  el('sumCarry').textContent = fmt(carry);
+  el('sumTotal').textContent = fmt(total);
+  return {rent, amenitiesSum, carry, total};
+}
+
+el('saveSetup').addEventListener('click', async ()=>{
+  const {rent,total} = recalcTotals();
+  state.tenantName = el('tenantName').value;
+  state.accountNo = el('accountNo').value;
+  state.billMonth = el('billMonth').value || defaultMonth;
+  state.baseRent = rent;
+  state.totalDue = total;
+  state.payments = state.payments || [];
+  state.notifications = state.notifications || [];
+  await saveState();
+  renderAll();
+  showToast('Rent and amenities saved. Your live balance is now tracking.');
+});
+
+el('resetMonth').addEventListener('click', async ()=>{
+  if(!confirm('Start a new month? Any unpaid balance will carry over automatically.')) return;
+  const remaining = Math.max(state.totalDue - state.paid, 0);
+  state.carryOver = remaining;
+  state.paid = 0;
+  state.payments = [];
+  state.notifications = [];
+  const [y,m] = state.billMonth.split('-').map(Number);
+  const nd = new Date(y, m, 1);
+  state.billMonth = nd.toISOString().slice(0,7);
+  el('billMonth').value = state.billMonth;
+  const {total} = recalcTotals();
+  state.totalDue = total;
+  await saveState();
+  renderAll();
+  showToast('New month started. Remaining balance carried forward.');
+});
+
+/* ---------- BEAD TRAIL (signature element) ---------- */
+function daysInMonth(y,m){ return new Date(y,m,0).getDate(); }
+
+function renderBeadTrail(){
+  const [y,m] = (state.billMonth||defaultMonth).split('-').map(Number);
+  const totalDays = daysInMonth(y,m);
+  const monthName = new Date(y,m-1,1).toLocaleString('default',{month:'long',year:'numeric'});
+  el('calMonthTitle').textContent = monthName;
+  el('calDaysNote').textContent = totalDays + ' days';
+
+  const paidDays = new Set((state.payments||[]).map(p=>p.day));
+  const isCurrentMonth = (today.getFullYear()===y && today.getMonth()+1===m);
+  const trail = el('beadTrail');
+  trail.innerHTML = '';
+  for(let d=1; d<=totalDays; d++){
+    const b = document.createElement('div');
+    b.className = 'bead';
+    if(paidDays.has(d)) b.classList.add('paid');
+    if(isCurrentMonth && d===today.getDate()) b.classList.add('today');
+    b.textContent = d;
+    b.dataset.day = d;
+    trail.appendChild(b);
+  }
+
+  let daysLeft = totalDays;
+  if(isCurrentMonth) daysLeft = Math.max(totalDays - today.getDate() + 1, 1);
+  const remaining = Math.max(state.totalDue - state.paid, 0);
+  const suggested = remaining > 0 ? Math.ceil(remaining/daysLeft) : 0;
+
+  el('heroDaysLeft').textContent = isCurrentMonth ? daysLeft : totalDays;
+  el('heroSuggest').textContent = suggested > 0 ? fmt(suggested).replace('KSh ','') : '0';
+
+  if(remaining > 0){
+    el('suggestNote').innerHTML = `At <b>${fmt(suggested)}/day</b> for the remaining <b>${daysLeft} days</b>, you'll fully clear this month's balance.`;
+    const finishDate = new Date(y, m-1, Math.min(totalDays, (isCurrentMonth?today.getDate():1) + Math.ceil(remaining/Math.max(suggested,1))));
+    el('statFinish').textContent = finishDate.toLocaleDateString('en-KE',{month:'short',day:'numeric'});
+  }else{
+    el('suggestNote').innerHTML = `<b>Balance fully cleared</b> for ${monthName}. Asante!`;
+    el('statFinish').textContent = '✓ Cleared';
+  }
+}
+
+/* ---------- RING + STATS ---------- */
+function renderRing(){
+  const total = state.totalDue||0, paid = state.paid||0;
+  const pct = total>0 ? Math.min(paid/total,1) : 0;
+  const r=82, circ=2*Math.PI*r;
+  const ring = el('ringFg');
+  ring.style.strokeDasharray = circ;
+  ring.style.strokeDashoffset = circ*(1-pct);
+  el('ringPercentText').textContent = Math.round(pct*100)+'%';
+  el('statTotal').textContent = fmt(total);
+  el('statPaid').textContent = fmt(paid);
+  el('statRemaining').textContent = fmt(Math.max(total-paid,0));
+  el('heroBalance').textContent = Math.round(Math.max(total-paid,0)).toLocaleString('en-KE');
+  el('heroPaidPct').textContent = Math.round(pct*100)+'%';
+  const [y,m] = (state.billMonth||defaultMonth).split('-');
+  el('heroMonthLabel').textContent = new Date(+y,+m-1,1).toLocaleString('default',{month:'long'});
+  el('heroSub').textContent = total>0 ? `Total due ${fmt(total)} for ${state.tenantName||'this unit'}.` : 'Set up your rent below to begin tracking.';
+}
+
+/* ---------- LEDGER ---------- */
+function renderLedger(){
+  const body = el('ledgerBody');
+  body.innerHTML = '';
+  const payments = state.payments||[];
+  el('ledgerEmpty').style.display = payments.length ? 'none' : 'block';
+  payments.slice().reverse().forEach(p=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${p.date}</td><td class="amt">${fmt(p.amount)}</td><td>${p.method}</td><td>${fmt(p.balanceAfter)}</td><td><span class="badge sent">Sent to Landlord</span></td>`;
+    body.appendChild(tr);
+  });
+}
+
+/* ---------- LIVE FEED ---------- */
+function renderFeed(animateLast){
+  const feed = el('feed');
+  const notes = state.notifications||[];
+  if(!notes.length){ feed.innerHTML = '<div class="empty-state">No activity yet.</div>'; return; }
+  feed.innerHTML = '';
+  notes.slice().reverse().forEach((n,idx)=>{
+    const item = document.createElement('div');
+    item.className = 'feed-item';
+    if(animateLast && idx===0){ item.style.animation='slideIn .5s var(--ease)'; }else{ item.style.animation='none'; }
+    item.innerHTML = `
+      <div class="feed-icon"><i class="fas fa-building-columns"></i></div>
+      <div class="feed-body">
+        <div><b>${fmt(n.amount)}</b> received from ${n.tenant||'tenant'} — sent to landlord account.</div>
+        <div class="feed-time">${n.time}</div>
+      </div>`;
+    feed.appendChild(item);
+  });
+}
+
+/* ---------- PAYMENT SUBMIT ---------- */
+el('chipRow').addEventListener('click', e=>{
+  if(!e.target.classList.contains('chip')) return;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));
+  e.target.classList.add('sel');
+  el('payAmount').value = e.target.dataset.amt;
+});
+
+el('submitPay').addEventListener('click', async ()=>{
+  const amount = +el('payAmount').value;
+  if(!amount || amount<=0){ showToast('Enter a valid amount first.'); return; }
+  if(state.totalDue<=0){ showToast('Set up your rent and amenities first.'); return; }
+  const remaining = Math.max(state.totalDue - state.paid, 0);
+  if(remaining<=0){ showToast("This month's balance is already fully cleared."); return; }
+
+  const method = el('payMethod').value;
+  const now = new Date();
+  state.paid += amount;
+  const balanceAfter = Math.max(state.totalDue - state.paid, 0);
+
+  state.payments = state.payments||[];
+  state.payments.push({
+    date: now.toLocaleDateString('en-KE',{day:'2-digit',month:'short',year:'numeric'}),
+    day: now.getDate(), amount, method, balanceAfter
+  });
+  state.notifications = state.notifications||[];
+  state.notifications.push({
+    amount, tenant: state.tenantName||'Tenant',
+    time: now.toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit'}) + ' · ' + now.toLocaleDateString('en-KE',{day:'2-digit',month:'short'})
+  });
+
+  await saveState();
+
+  // real-time updates: recalc everything immediately, animate ring + bead + feed
+  renderRing();
+  renderBeadTrail();
+  renderLedger();
+  renderFeed(true);
+  const justPaidBead = document.querySelector(`.bead[data-day="${now.getDate()}"]`);
+  if(justPaidBead) justPaidBead.classList.add('new-pop');
+
+  el('payAmount').value='';
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));
+  openModal(amount, balanceAfter);
+});
+
+/* ---------- MODAL / TOAST ---------- */
+function openModal(amount, balanceAfter){
+  el('modalAmt').textContent = fmt(amount);
+  if(balanceAfter<=0){
+    el('modalTitle').textContent = 'Balance Fully Cleared!';
+    el('modalBody').textContent = 'Sent to landlord account. Asante — no more contributions needed this month.';
+  }else{
+    el('modalTitle').textContent = 'Payment Received';
+    el('modalBody').textContent = `Sent to landlord account. Remaining balance: ${fmt(balanceAfter)}.`;
+  }
+  el('modalBackdrop').classList.add('show');
+}
+function closeModal(){ el('modalBackdrop').classList.remove('show'); }
+
+let toastTimer;
+function showToast(msg){
+  el('toastText').textContent = msg;
+  el('toast').classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> el('toast').classList.remove('show'), 3600);
+}
+
+/* ---------- RENDER ALL ---------- */
+function renderAll(){
+  recalcTotals();
+  renderBeadTrail();
+  renderRing();
+  renderLedger();
+  renderFeed(false);
+}
+function hydrateForm(){
+  el('tenantName').value = state.tenantName||'';
+  el('accountNo').value = state.accountNo||'';
+  el('billMonth').value = state.billMonth||defaultMonth;
+  el('baseRent').value = state.baseRent||'';
+  renderAmenities();
+}
+el('baseRent').addEventListener('input', recalcTotals);
+el('billMonth').addEventListener('change', async ()=>{ state.billMonth = el('billMonth').value; renderAll(); await saveState(); });
+el('navToggle').addEventListener('click', ()=> el('navLinks').classList.toggle('open'));
+
+/* ---------- INIT ---------- */
+(async function init(){
+  await loadState();
+  hydrateForm();
+  renderAll();
+})();
+</script>
+</body>
+</html>

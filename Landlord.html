@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Land Lord</title>
+    <link rel="icon" href="img/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="lib/animate/animate.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --info: #7209b7;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --hover-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+        
+        body {
+            font-family: 'Heebo', sans-serif;
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .dashboard-header {
+            background: var(--gradient);
+            color: white;
+            padding: 2rem 0;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,202.7C672,203,768,181,864,181.3C960,181,1056,203,1152,202.7C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            background-position: center bottom;
+        }
+        
+        .dashboard-header .container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .welcome-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 1.5rem;
+            border-left: 5px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .welcome-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--gradient);
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .stats-card i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .stats-card h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stats-card p {
+            color: #6c757d;
+            margin-bottom: 0;
+        }
+        
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .action-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient);
+        }
+        
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .action-card i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .action-card h4 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .action-card p {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .action-card .btn {
+            background: var(--primary);
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .action-card .btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        .recent-activity {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            margin-top: 2rem;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+            transition: all 0.2s ease;
+        }
+        
+        .activity-item:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+            border-radius: 8px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .activity-icon.payment {
+            background: var(--success);
+        }
+        
+        .activity-icon.maintenance {
+            background: var(--warning);
+        }
+        
+        .activity-icon.tenant {
+            background: var(--info);
+        }
+        
+        .nav-bar {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            background: white !important;
+        }
+        
+        .navbar-brand h1 {
+            font-weight: 800;
+            color: var(--primary) !important;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            color: var(--dark) !important;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary) !important;
+        }
+        
+        .nav-link.active {
+            color: var(--primary) !important;
+            font-weight: 600;
+        }
+        
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(67, 97, 238, 0.3);
+        }
+        
+        .search-section {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.15);
+        }
+        
+        .footer {
+            background: var(--dark);
+            margin-top: 4rem;
+        }
+        
+        .footer-menu a {
+            color: #adb5bd;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            margin-right: 1rem;
+        }
+        
+        .footer-menu a:hover {
+            color: white;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .back-to-top:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+            color: white;
+        }
+        
+        .section-title {
+            position: relative;
+            padding-bottom: 10px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--warning);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @media (max-width: 768px) {
+            .quick-actions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-card {
+                margin-bottom: 1rem;
+            }
+            
+            .dashboard-header {
+                padding: 1.5rem 0;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-xxl bg-white p-0">
+        <!-- Navigation Bar -->
+        <nav class="container-fluid nav-bar bg-transparent sticky-top">
+            <div class="navbar navbar-expand-lg bg-white navbar-light py-0 px-4">
+                <a href="index.html" class="navbar-brand d-flex align-items-center">
+                    <img class="img-fluid" src="Mwarokin Lg.png" alt="Icon" style="width: 30px; height: 30px;">
+                    <h2 class="m-0 text-primary ms-2">Mwarokin Estates</h2>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a href="LandLordDisplay.html" class="nav-link">Land Lord Display</a></li>
+                        <li class="nav-item"><a href="Managetenants.html" class="nav-link">Manage Tenants</a></li>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
+                            <div class="dropdown-menu">
+                                <a href="CareTakers.html" class="dropdown-item">Care Takers</a>
+                                <a href="VacancyLocator.html" class="dropdown-item">Vacancy Locator</a>
+                                <a href="CareTakers Dashboard.html" class="dropdown-item">CareTakers Views</a>
+                                <a href="Viewhomes.html" class="dropdown-item">View Homes</a>
+                                <a href="CareTakers Dashboards.html" class="dropdown-item">CareTakers Dashboard</a>
+                                <a href="Settings.html" class="dropdown-item">Settings</a>
+                                <a href="VacancyLocator.html" class="dropdown-item">Vacancy Locator</a>
+                                <a href="CalculatePendingRent.html" class="dropdown-item">Calculate Rent</a>
+                                <a href="LanguageSupport.html" class="dropdown-item">Language Support</a>
+                                <a href="Tenant Management Dashboard.html" class="dropdown-item">Tenant Management Dashboard</a>
+                                 <a href="Rent.html" class="dropdown-item">Rent</a>
+                                <a href="Payments.html" class="dropdown-item">Payments</a>
+                                 <a href="LipaMdogo.html" class="dropdown-item">Lipa Mdogo</a>
+                            </div>
+                        </li>
+                        <li class="nav-item"><a href="Communication.html" class="nav-link">Communication</a></li>
+                    </ul>
+                    <a href="LogOut.html" class="btn btn-primary px-3 d-none d-lg-flex">Log Out</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="display-5 fw-bold">Welcome back, Mr. Mwarema</h1>
+                        <p class="lead mb-0">Manage your properties and tenants efficiently</p>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <div class="d-flex justify-content-md-end">
+                            <div class="me-3">
+                                <p class="mb-0">Today</p>
+                                <h4 class="mb-0" id="current-date">Loading...</h4>
+                            </div>
+                            <div>
+                                <p class="mb-0">Properties</p>
+                                <h4 class="mb-0">12</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Search Section -->
+            <div class="search-section">
+                <h4 class="section-title">Property Search</h4>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" id="searchKeyword" placeholder="Search Keyword">
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" id="continentSelect">
+                            <option selected>Continents</option>
+                            <option value="1">Africa</option>
+                            <option value="2">Asia</option>
+                            <option value="3">Europe</option>
+                            <option value="4">Antarctica</option>
+                            <option value="5">North America</option>
+                            <option value="6">Australia</option>
+                            <option value="7">South America</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" id="countrySelect">
+                            <option selected>African Countries</option>
+                            <option value="Kenya">Kenya</option>
+                            <option value="Tanzania">Tanzania</option>
+                            <option value="Uganda">Uganda</option>
+                            <option value="Rwanda">Rwanda</option>
+                            <option value="Ethiopia">Ethiopia</option>
+                            <option value="Nigeria">Nigeria</option>
+                            <option value="Ghana">Ghana</option>
+                            <option value="South Africa">South Africa</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary w-100" onclick="getLocation()">Pin Location</button>
+                    </div>
+                </div>
+                <div id="locationResult" class="mt-3"></div>
+                <div id="currencyResult" class="mt-3"></div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <i class="fas fa-home"></i>
+                        <h3>12</h3>
+                        <p>Total Properties</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <i class="fas fa-users"></i>
+                        <h3>45</h3>
+                        <p>Active Tenants</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <h3>$12,450</h3>
+                        <p>Monthly Revenue</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <i class="fas fa-tasks"></i>
+                        <h3>7</h3>
+                        <p>Pending Tasks</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <h3 class="section-title fw-bold">Quick Actions</h3>
+            <div class="quick-actions-grid">
+                <div class="action-card">
+                    <i class="fas fa-home"></i>
+                    <h4>View Homes</h4>
+                    <p>Browse and manage all your properties</p>
+                    <a href="viewhomes.html" class="btn">View Properties</a>
+                </div>
+                <div class="action-card">
+                    <i class="fas fa-users"></i>
+                    <h4>Manage Tenants</h4>
+                    <p>Handle tenant applications and information</p>
+                    <a href="Managetenants.html" class="btn">Manage</a>
+                </div>
+                <div class="action-card">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <h4>Track Rent</h4>
+                    <p>Monitor rent payments and collections</p>
+                    <a href="Trackrent.html" class="btn">Track</a>
+                </div>
+                <div class="action-card">
+                    <i class="fas fa-tint"></i>
+                    <h4>Water Management</h4>
+                    <p>Manage water usage and billing</p>
+                    <a href="Water Management.html" class="btn">Manage</a>
+                </div>
+                <div class="action-card">
+                    <i class="fas fa-trash-alt"></i>
+                    <h4>Manage Trash</h4>
+                    <p>Schedule and track waste management</p>
+                    <a href="Manage Trash.html" class="btn">Manage</a>
+                </div>
+                <div class="action-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h4>Manage Security</h4>
+                    <p>Oversee property security systems</p>
+                    <a href="Manage Security.html" class="btn">Manage</a>
+                </div>
+                <div class="action-card">
+                    <i class="fas fa-comments"></i>
+                    <h4>Community Suggestions</h4>
+                    <p>Review and respond to tenant feedback</p>
+                    <a href="Community.html" class="btn">View</a>
+                </div>
+                <div class="action-card">
+                    <i class="fas fa-user-plus"></i>
+                    <h4>Register Care Taker</h4>
+                    <p>Add property caretakers to the system</p>
+                    <a href="Care Taker Registration.html" class="btn">Register</a>
+                </div>
+                <div class="action-card">
+                    <i class="fas fa-building"></i>
+                    <h4>Parking</h4>
+                    <p>Schedual Vehicle Parkings</p>
+                    <a href="Parking.html" class="btn">Register</a>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="recent-activity">
+                <h4 class="section-title fw-bold">Recent Activity</h4>
+                <div class="activity-item">
+                    <div class="activity-icon payment">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">Rent payment received</h6>
+                        <p class="mb-0 text-muted">From John Doe for Unit 101 - $1,200</p>
+                        <small class="text-muted">2 hours ago</small>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon maintenance">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">Maintenance request submitted</h6>
+                        <p class="mb-0 text-muted">Plumbing issue in Unit 205</p>
+                        <small class="text-muted">Yesterday</small>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon tenant">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">New tenant approved</h6>
+                        <p class="mb-0 text-muted">Sarah Johnson for Unit 304</p>
+                        <small class="text-muted">2 days ago</small>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon payment">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">Water bill generated</h6>
+                        <p class="mb-0 text-muted">For all properties - Due in 5 days</p>
+                        <small class="text-muted">3 days ago</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
+            <div class="container py-5">
+                <div class="row g-5">
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="text-white mb-4">Mwarokin Estates Will Assist.</h5>
+                        <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>Africa & Global</p>
+                        <p class="mb-2"><i class="fa fa-phone-alt me-3"></i> +254-704-919-388</p>
+                        <p class="mb-2"><i class="fa fa-envelope me-3"></i> Property@Mwarokin Estates.com</p>
+                        <div class="d-flex pt-2">
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="text-white mb-4">Quick Links</h5>
+                        <a class="btn btn-link text-white-50" href="Contact.html">Contact</a>
+                        <a class="btn btn-link text-white-50" href="Title Deeds.html">Mother Title</a>
+                        <a class="btn btn-link text-white-50" href="Titles Deed.html">Mortgage Calculator</a>
+                        <a class="btn btn-link text-white-50" href="AutomateGPRSPinLocator.html">My Locator</a>
+                        <a class="btn btn-link text-white-50" href="Renovations.html">Renovations</a>
+                        <a class="btn btn-link text-white-50" href="Lipa Mdogo Payment Plan.html">Lipa Mdogo Payment Plan</a>
+                        <a class="btn btn-link text-white-50" href="Neighborhoods.html">Neiborhoods</a>
+                        <a class="btn btn-link text-white-50" href="Upgrade&DowngradeRelocation.html">Upgrade & Downgrade Relocation</a>
+                        <a class="btn btn-link text-white-50" href="Wearables.html">Wearables</a>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="text-white mb-4">Home Gallery</h5>
+                        <div class="row g-2 pt-2">
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="img/property-1.jpg" alt="Property 1">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="img/property-2.jpg" alt="Property 2">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="img/property-3.jpg" alt="Property 3">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="img/property-4.jpg" alt="Property 4">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="img/property-5.jpg" alt="Property 5">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="img/property-6.jpg" alt="Property 6">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="text-white mb-4">Home Updates</h5>
+                        <p>Mwarokin Estates ensures we secure you a great home when available.</p>
+                        <div class="position-relative mx-auto" style="max-width: 400px;">
+                            <input class="form-control bg-transparent w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
+                            <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">Subscribe</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="copyright">
+                    <div class="row">
+                        <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                            Mwarokin Estates -Land Owners- 2026. <br> All Right Reserved. 
+                            Powered By: <a class="border-bottom" href="https://www.syllogismtechnology.co.ke">Syllogism Technology Africa</a>
+                        </div>
+                        <div class="col-md-6 text-center text-md-end">
+                            <div class="footer-menu">
+                                <a href="cookies.html">Cookies</a>
+                                <a href="Term.html">Terms and Conditions</a>
+                                <a href="Privacy.html">Privacy Policies</a>
+                                <a href="Faqs.html">FAQs</a> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="fas fa-arrow-up"></i></a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="js/main.js"></script>
+    
+    <script>
+        // Set current date
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', options);
+        
+        // Function to get the user's current location using GPS
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                document.getElementById("locationResult").innerHTML = 
+                    `<div class="alert alert-warning">Geolocation is not supported by this browser.</div>`;
+            }
+        }
+
+        function showPosition(position) {
+            const lat = position.coords.latitude;
+            const long = position.coords.longitude;
+
+            document.getElementById("locationResult").innerHTML = 
+                `<div class="alert alert-success">Location pinned: Latitude: ${lat.toFixed(6)}, Longitude: ${long.toFixed(6)}</div>`;
+        }
+
+        function showError(error) {
+            let message = "An unknown error occurred.";
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    message = "User denied the request for Geolocation.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message = "Location information is unavailable.";
+                    break;
+                case error.TIMEOUT:
+                    message = "The request to get user location timed out.";
+                    break;
+            }
+            document.getElementById("locationResult").innerHTML = `<div class="alert alert-warning">${message}</div>`;
+        }
+
+        // Function to change currency based on selected country and display the rate
+        const currencyRates = {
+            "Kenya": 1,
+            "Tanzania": 24.5,
+            "Uganda": 3700,
+            "Rwanda": 1200,
+            "Ethiopia": 54.5,
+            "Nigeria": 460,
+            "Ghana": 11.8,
+            "South Africa": 18.2
+        };
+
+        document.getElementById("countrySelect").addEventListener("change", function () {
+            const selectedCountry = this.value;
+            const rate = currencyRates[selectedCountry];
+
+            if (rate) {
+                document.getElementById("currencyResult").innerHTML = 
+                    `<div class="alert alert-info">Currency Rate for ${selectedCountry}: 1 USD = ${rate} Local Currency</div>`;
+            } else {
+                document.getElementById("currencyResult").innerHTML = 
+                    `<div class="alert alert-warning">Currency rate not available for selected country.</div>`;
+            }
+        });
+
+        // Back to top button functionality
+        const backToTopButton = document.querySelector('.back-to-top');
+        
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                backToTopButton.style.display = 'flex';
+            } else {
+                backToTopButton.style.display = 'none';
+            }
+        });
+        
+        backToTopButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        });
+    </script>
+</body>
+
+</html>

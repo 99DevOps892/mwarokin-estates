@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Leasing Draft</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3a86ff;
+            --primary-dark: #2667cc;
+            --secondary: #8338ec;
+            --accent: #ff006e;
+            --success: #06d6a0;
+            --warning: #ffd166;
+            --danger: #ef476f;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --border-radius: 16px;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f7fb;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: var(--gradient);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            background: white;
+            color: var(--primary);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: var(--warning);
+        }
+
+        nav a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--warning);
+            border-radius: 3px;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background-color: white;
+            color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid white;
+            color: white;
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, #f5f7fb 0%, #e4e8f0 100%);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80') no-repeat center right;
+            background-size: cover;
+            opacity: 0.1;
+            border-radius: 0 0 0 100px;
+        }
+
+        .hero-content {
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin: 0 auto 2.5rem;
+            color: var(--gray);
+            max-width: 600px;
+        }
+
+        .property-type-filter {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2.5rem;
+        }
+
+        .type-btn {
+            padding: 1rem 1.8rem;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .type-btn.active, .type-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        /* Property Grid */
+        .section-title {
+            font-size: 2.5rem;
+            margin: 4rem 0 2rem;
+            text-align: center;
+            color: var(--dark);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 5rem;
+        }
+
+        .property-card {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .property-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .property-image {
+            height: 220px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .property-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .property-card:hover .property-image img {
+            transform: scale(1.08);
+        }
+
+        .property-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--accent);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        .property-details {
+            padding: 1.8rem;
+        }
+
+        .property-details h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.7rem;
+        }
+
+        .property-location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray);
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+
+        .property-features {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.2rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+
+        .feature i {
+            color: var(--primary);
+        }
+
+        .property-price {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1.2rem;
+        }
+
+        .property-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .action-btn {
+            padding: 0.7rem 1.4rem;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .view-btn {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .view-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .save-btn {
+            background-color: transparent;
+            border: 1px solid #e0e0e0;
+            color: var(--gray);
+        }
+
+        .save-btn:hover {
+            background-color: #f5f5f5;
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .save-btn.saved {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .compliance-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .compliant {
+            background-color: rgba(6, 214, 160, 0.1);
+            color: var(--success);
+        }
+
+        .non-compliant {
+            background-color: rgba(239, 71, 111, 0.1);
+            color: var(--danger);
+        }
+
+        /* Lease Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            max-width: 900px;
+            width: 100%;
+            border-radius: var(--border-radius);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-height: 95vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.8rem;
+            background: var(--gradient);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 1.8rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .lease-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .lease-section h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1.2rem;
+            color: var(--dark);
+            padding-bottom: 0.7rem;
+            border-bottom: 2px solid #eee;
+        }
+
+        .lease-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .detail-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .detail-value {
+            font-weight: 500;
+        }
+
+        .clause-list {
+            list-style: none;
+        }
+
+        .clause-list li {
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .clause-list li:last-child {
+            border-bottom: none;
+        }
+
+        .risk-tag {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            background-color: rgba(255, 193, 7, 0.1);
+            color: #856404;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .modal-footer {
+            padding: 1.8rem;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .signature-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .signature-pad {
+            border: 1px dashed #ccc;
+            height: 150px;
+            margin: 1rem 0;
+            border-radius: 8px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            cursor: pointer;
+        }
+
+        .signature-pad.active {
+            border-color: var(--primary);
+        }
+
+        .signature-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* Download Section */
+        .download-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .download-options {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .download-btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            border: 1px solid #e0e0e0;
+        }
+
+        .download-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-column a {
+            color: #b0b0b0;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-column a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #b0b0b0;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .property-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1.2rem;
+            }
+            
+            nav ul {
+                gap: 1.2rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .property-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                max-width: 100%;
+            }
+            
+            .modal-footer {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .modal-footer .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-home"></i>
+                    <span>Mwarokin Estates </span>
+                </div>
+                <nav>
+                    <ul>
+                    <li><a href="LeaseAgent.html">Lease Agent</a></li>
+                    <li><a href="Titles Deed.html">Mortgage Calculator</a></li>
+                    <li><a href="Title Deeds.html">Mother Title</a></li>
+                    <li><a href="Schedual Viewing.html">Schedual Viewing</a></li>
+                    <li><a href="Accessibility.html">People With Disabailities</a></li>
+                    </ul>
+                </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1> Leasing Management</h1>
+                <p>Advanced leasing solutions for all property types with digital signing and instant downloads.</p>
+                <div class="property-type-filter">
+                    <button class="type-btn active"><i class="fas fa-home"></i> All Properties</button>
+                    <button class="type-btn"><i class="fas fa-building"></i> Commercial</button>
+                    <button class="type-btn"><i class="fas fa-tractor"></i> Agricultural</button>
+                    <button class="type-btn"><i class="fas fa-industry"></i> Industrial</button>
+                    <button class="type-btn"><i class="fas fa-landmark"></i> Government Land</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Property Listings -->
+    <section class="container">
+        <h2 class="section-title">Available Properties for Lease</h2>
+        <div class="property-grid" id="matchmaking-grid">
+            <!-- Property cards will be dynamically loaded here -->
+        </div>
+    </section>
+
+    <!-- Lease Modal -->
+    <div class="modal-overlay" id="lease-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Lease Agreement</h2>
+                <button class="close-btn" onclick="closeLeaseModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="lease-details">
+                    <!-- Lease details will be dynamically loaded here -->
+                </div>
+                
+                <!-- Signature Section -->
+                <div class="signature-section">
+                    <h3>Digital Signature</h3>
+                    <p>Sign the lease agreement digitally to complete the process</p>
+                    <div class="signature-pad" id="signature-pad">
+                        <span>Click here to sign</span>
+                    </div>
+                    <div class="signature-actions">
+                        <button class="btn" onclick="clearSignature()"><i class="fas fa-eraser"></i> Clear</button>
+                        <button class="btn btn-primary" onclick="saveSignature()"><i class="fas fa-save"></i> Save Signature</button>
+                    </div>
+                </div>
+                
+                <!-- Download Section -->
+                <div class="download-section">
+                    <h3>Download Lease Agreement</h3>
+                    <p>Download your signed lease agreement in your preferred format</p>
+                    <div class="download-options">
+                        <button class="download-btn" onclick="downloadLease('pdf')"><i class="fas fa-file-pdf"></i> PDF Format</button>
+                        <button class="download-btn" onclick="downloadLease('docx')"><i class="fas fa-file-word"></i> Word Document</button>
+                        <button class="download-btn" onclick="downloadLease('html')"><i class="fas fa-file-code"></i> Web Page</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeLeaseModal()">Close</button>
+                <button class="btn" style="background: var(--success); color: white;" onclick="signLease()"><i class="fas fa-check"></i> Sign & Finalize Lease</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Mwarokin Estates</h3>
+                    <p>Premium real estate leasing platform with digital solutions for all property types and market segments.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="Accessibility.html">People With Disabilities</a></li>
+                        <li><a href="Selling.html">Selling Property</a></li>
+                        <li><a href="Buying.html">Buying Property</a></li>
+                        <li><a href="VacancyLocator.html">Vacancy Locator</a></li>
+                        <li><a href="Contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Property Types</h3>
+                    <ul>
+                       <li><a href="LanguageSupport.html">Language Support</a></li>
+                        <li><a href="CalculatePendingRent.html">Calculate Rent</a></li>
+                        <li><a href="Title Deeds.html">Mother Title</a></li>
+                        <li><a href="Neighborhoods.html">Neighborhoods</a></li>
+                        <li><a href="Wearables.html">Wearables</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Info</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> Africa & Global </li>
+                        <li><i class="fas fa-phone"></i> (+254) 704 919 388</li>
+                        <li><i class="fas fa-envelope"></i> info@Mwarokin Estates.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+             Mwarokin Estates -Lease Draft- &copy; 2026. All rights reserved. Powered by: Syllogism Technnology Africa.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample property data
+        const properties = [
+            {
+                id: 1,
+                title: "Downtown Commercial Space",
+                location: "Central Business District",
+                type: "Commercial",
+                size: "2,500 sq ft",
+                price: "$4,500/month",
+                score: 9.2,
+                compliance: "compliant",
+                image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=600&h=400&q=80"
+            },
+            {
+                id: 2,
+                title: "Agricultural Farmland",
+                location: "Rural Valley Area",
+                type: "Agricultural",
+                size: "50 acres",
+                price: "$12,000/year",
+                score: 8.7,
+                compliance: "non-compliant",
+                image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=600&h=400&q=80"
+            },
+            {
+                id: 3,
+                title: "Industrial Warehouse",
+                location: "Industrial Park Zone",
+                type: "Industrial",
+                size: "10,000 sq ft",
+                price: "$8,200/month",
+                score: 8.9,
+                compliance: "compliant",
+                image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=600&h=400&q=80"
+            },
+            {
+                id: 4,
+                title: "Government Land Parcel",
+                location: "Suburban Development Area",
+                type: "Government",
+                size: "5 acres",
+                price: "$15,000/year",
+                score: 7.8,
+                compliance: "compliant",
+                image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&h=400&q=80"
+            },
+            {
+                id: 5,
+                title: "Mixed-Use Property",
+                location: "Urban Center",
+                type: "Commercial",
+                size: "7,500 sq ft",
+                price: "$12,500/month",
+                score: 9.5,
+                compliance: "compliant",
+                image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&h=400&q=80"
+            },
+            {
+                id: 6,
+                title: "Farm with Residence",
+                location: "Countryside",
+                type: "Agricultural",
+                size: "100 acres",
+                price: "$25,000/year",
+                score: 8.4,
+                compliance: "non-compliant",
+                image: "https://images.unsplash.com/photo-1472653525502-fc569e405f61?auto=format&fit=crop&w=600&h=400&q=80"
+            }
+        ];
+
+        // Function to load property cards
+        function loadPropertyCards() {
+            const propertyGrid = document.getElementById('matchmaking-grid');
+            propertyGrid.innerHTML = '';
+            
+            properties.forEach(property => {
+                const card = document.createElement('div');
+                card.className = 'property-card';
+                card.id = `property-${property.id}`;
+                
+                card.innerHTML = `
+                    <div class="property-image">
+                        <img src="${property.image}" alt="${property.title}">
+                        <span class="property-badge">${property.type}</span>
+                    </div>
+                    <div class="property-details">
+                        <h3>${property.title}</h3>
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${property.location}</span>
+                        </div>
+                        <div class="property-features">
+                            <div class="feature"><i class="fas fa-expand-arrows-alt"></i><span>${property.size}</span></div>
+                            <div class="feature"><i class="fas fa-star"></i><span>Score: ${property.score}</span></div>
+                        </div>
+                        <div class="property-price">${property.price}</div>
+                        <div class="property-actions">
+                            <button class="action-btn view-btn" onclick="loadLeaseDraft(${property.id})">
+                                <i class="fas fa-file-contract"></i> View Lease
+                            </button>
+                            <button class="action-btn save-btn" onclick="toggleSave(this)">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        </div>
+                        <span class="compliance-badge ${property.compliance === 'compliant' ? 'compliant' : 'non-compliant'}">
+                            <i class="fas fa-${property.compliance === 'compliant' ? 'check-circle' : 'exclamation-triangle'}"></i>
+                            ${property.compliance === 'compliant' ? 'Compliant' : 'Non-Compliant'}
+                        </span>
+                    </div>
+                `;
+                
+                propertyGrid.appendChild(card);
+            });
+        }
+
+        // Function to toggle save property
+        function toggleSave(button) {
+            button.classList.toggle('saved');
+            const icon = button.querySelector('i');
+            if (button.classList.contains('saved')) {
+                icon.className = 'fas fa-heart';
+                showNotification('Property saved to favorites', 'success');
+            } else {
+                icon.className = 'far fa-heart';
+                showNotification('Property removed from favorites', 'info');
+            }
+        }
+
+        // Function to load lease draft
+        async function loadLeaseDraft(propertyId) {
+            // In a real application, you would fetch this data from your API
+            const property = properties.find(p => p.id === propertyId);
+            
+            const leaseData = {
+                property: property.title,
+                tenant: "Tenant Corporation",
+                landlord: "Property Owner LLC",
+                duration: "24 months",
+                startDate: "2023-11-01",
+                endDate: "2025-10-31",
+                monthlyRent: property.price.replace('/month', ''),
+                securityDeposit: "$9,000",
+                clauses: [
+                    { name: "Duration", value: "24 months" },
+                    { name: "Rent Amount", value: property.price },
+                    { name: "Payment Due Date", value: "1st of each month" },
+                    { name: "Late Payment Fee", value: "$150 after 5-day grace period" },
+                    { name: "Maintenance Responsibility", value: "Tenant responsible for minor repairs" },
+                    { name: "Renewal Option", value: "Yes, with 60-day notice" },
+                    { name: "Subletting", value: "Not permitted without consent" }
+                ],
+                risks: ["Market volatility", "Tenant default risk", "Regulatory changes"]
+            };
+            
+            const detailsHtml = `
+                <div class="lease-section">
+                    <h3>Property & Parties</h3>
+                    <div class="lease-details-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Property</span>
+                            <span class="detail-value">${leaseData.property}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Tenant</span>
+                            <span class="detail-value">${leaseData.tenant}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Landlord</span>
+                            <span class="detail-value">${leaseData.landlord}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lease-section">
+                    <h3>Lease Terms</h3>
+                    <div class="lease-details-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Lease Duration</span>
+                            <span class="detail-value">${leaseData.duration}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Start Date</span>
+                            <span class="detail-value">${leaseData.startDate}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">End Date</span>
+                            <span class="detail-value">${leaseData.endDate}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Monthly Rent</span>
+                            <span class="detail-value">${leaseData.monthlyRent}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Security Deposit</span>
+                            <span class="detail-value">${leaseData.securityDeposit}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lease-section">
+                    <h3>Key Clauses</h3>
+                    <ul class="clause-list">
+                        ${leaseData.clauses.map(clause => `
+                            <li>
+                                <span>${clause.name}</span>
+                                <span class="detail-value">${clause.value}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+                
+                <div class="lease-section">
+                    <h3>Identified Risks</h3>
+                    <div>
+                        ${leaseData.risks.map(risk => `<span class="risk-tag">${risk}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('lease-details').innerHTML = detailsHtml;
+            document.getElementById('lease-modal').style.display = 'flex';
+            
+            // Initialize signature pad
+            initSignaturePad();
+        }
+
+        // Function to close lease modal
+        function closeLeaseModal() {
+            document.getElementById('lease-modal').style.display = 'none';
+        }
+
+        // Signature functionality
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        let canvas, ctx;
+
+        function initSignaturePad() {
+            const signaturePad = document.getElementById('signature-pad');
+            signaturePad.innerHTML = '<canvas id="signature-canvas" width="500" height="150"></canvas>';
+            
+            canvas = document.getElementById('signature-canvas');
+            ctx = canvas.getContext('2d');
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            // Event listeners for drawing
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            // Touch events for mobile devices
+            canvas.addEventListener('touchstart', handleTouchStart);
+            canvas.addEventListener('touchmove', handleTouchMove);
+            canvas.addEventListener('touchend', stopDrawing);
+        }
+
+        function startDrawing(e) {
+            isDrawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+            document.getElementById('signature-pad').classList.add('active');
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+            
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+            
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        function clearSignature() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            document.getElementById('signature-pad').classList.remove('active');
+        }
+
+        function saveSignature() {
+            if (canvas && ctx) {
+                const signatureData = canvas.toDataURL();
+                localStorage.setItem('leaseSignature', signatureData);
+                showNotification('Signature saved successfully', 'success');
+            } else {
+                showNotification('Please provide a signature first', 'warning');
+            }
+        }
+
+        // Download functionality
+        function downloadLease(format) {
+            let message = '';
+            switch(format) {
+                case 'pdf':
+                    message = 'PDF lease agreement is being generated and will download shortly';
+                    break;
+                case 'docx':
+                    message = 'Word document lease agreement is being generated and will download shortly';
+                    break;
+                case 'html':
+                    message = 'Web page lease agreement is being generated and will download shortly';
+                    break;
+            }
+            showNotification(message, 'success');
+            
+            // In a real application, you would make an API call to generate the document
+            // For demo purposes, we'll simulate a download
+            setTimeout(() => {
+                const link = document.createElement('a');
+                link.href = '#';
+                link.download = `lease-agreement.${format}`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }, 1500);
+        }
+
+        // Sign lease function
+        function signLease() {
+            const signature = localStorage.getItem('leaseSignature');
+            if (!signature) {
+                showNotification('Please provide a digital signature before signing', 'warning');
+                return;
+            }
+            
+            showNotification('Lease agreement signed successfully!', 'success');
+            
+            // In a real application, you would send the signed lease to your backend
+            setTimeout(() => {
+                closeLeaseModal();
+                showNotification('Signed lease agreement has been sent to all parties', 'info');
+            }, 2000);
+        }
+
+        // Notification function
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            // Add styles for notification
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? 'var(--success)' : type === 'warning' ? 'var(--warning)' : 'var(--primary)'};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                z-index: 3000;
+                transform: translateX(150%);
+                transition: transform 0.3s ease;
+                max-width: 400px;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 4 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(150%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 4000);
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPropertyCards();
+            
+            // Add event listeners to property type filters
+            const typeButtons = document.querySelectorAll('.type-btn');
+            typeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    typeButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    // In a real app, you would filter properties here
+                    showNotification(`Showing ${button.textContent.trim()} properties`, 'info');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

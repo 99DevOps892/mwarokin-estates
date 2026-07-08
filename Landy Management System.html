@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Landlords Management</title>
+    <style>
+        /* Consistent Beautiful UI CSS */
+        body {
+            font-family: 'Helvetica', Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .tab-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .tab-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .tab-button.active {
+            background: #2980b9;
+        }
+        .tab-button:hover {
+            background: #2980b9;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .section-header {
+            font-size: 1.5em;
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .metric {
+            font-size: 1.1em;
+            margin: 5px 0;
+        }
+        .list-item {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        .accordion {
+            background: #ecf0f1;
+            padding: 10px;
+            margin: 10px 0;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .accordion-content {
+            display: none;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #ecf0f1;
+            border-radius: 5px;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .action-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .action-btn:hover {
+            background: #219d52;
+        }
+        form {
+            margin: 20px 0;
+        }
+        input, select, textarea {
+            padding: 8px;
+            margin: 5px 0;
+            width: 100%;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+        }
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 5px;
+        }
+        .agent-section {
+            margin-top: 30px;
+            border-top: 1px solid #ecf0f1;
+            padding-top: 20px;
+        }
+        .agent-form {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        /* Chart Container */
+        .chart-container {
+            margin: 20px 0;
+            width: 100%;
+            max-width: 600px;
+        }
+        /* Timeline Styles */
+        .timeline {
+            position: relative;
+            margin: 20px 0;
+            padding-left: 30px;
+        }
+        .timeline-item {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 0;
+            width: 10px;
+            height: 10px;
+            background: #3498db;
+            border-radius: 50%;
+        }
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: -16px;
+            top: 10px;
+            width: 2px;
+            height: 100%;
+            background: #ecf0f1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Landlords 🏠  Management System</h1>
+
+        <!-- Tab Buttons -->
+        <div class="tab-buttons">
+            <button class="tab-button active" onclick="openTab('maintenance')">Maintenance Requests</button>
+            <button class="tab-button" onclick="openTab('renewals')">Lease Renewals</button>
+            <button class="tab-button" onclick="openTab('inspections')">Property Inspections</button>
+            <button class="tab-button" onclick="openTab('documents')">Document Management</button>
+            <button class="tab-button" onclick="openTab('analytics')">Advanced Analytics</button>
+            <button class="tab-button" onclick="openTab('communication')">Communication</button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div id="maintenance" class="tab-content active">
+            <div class="section-header"><span class="emoji">🛠️</span>Maintenance Requests</div>
+            <form id="maintenance-form" class="agent-form">
+                <select id="maint-property-id" required></select>
+                <textarea id="maint-description" placeholder="Describe the maintenance issue" required></textarea>
+                <select id="maint-priority" required>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select>
+                <button type="submit" class="action-btn">Submit Maintenance Request</button>
+            </form>
+            <div class="section-header">Open Maintenance Requests</div>
+            <div id="maintenance-list"></div>
+        </div>
+
+        <div id="renewals" class="tab-content">
+            <div class="section-header"><span class="emoji">📝</span>Lease Renewals</div>
+            <form id="renewal-form" class="agent-form">
+                <select id="renew-property-id" required></select>
+                <select id="renew-tenant-name" required></select>
+                <input type="date" id="renew-end-date" required>
+                <input type="number" id="renew-rent" placeholder="New Rent Amount" required>
+                <button type="submit" class="action-btn">Propose Renewal</button>
+            </form>
+            <div class="section-header">Pending Renewals</div>
+            <div id="renewal-list"></div>
+        </div>
+
+        <div id="inspections" class="tab-content">
+            <div class="section-header"><span class="emoji">🔍</span>Property Inspections</div>
+            <form id="inspection-form" class="agent-form">
+                <select id="insp-property-id" required></select>
+                <input type="date" id="insp-date" required>
+                <textarea id="insp-notes" placeholder="Inspection Notes" required></textarea>
+                <button type="submit" class="action-btn">Schedule Inspection</button>
+            </form>
+            <div class="section-header">Inspection History</div>
+            <div id="inspection-list" class="timeline"></div>
+        </div>
+
+        <div id="documents" class="tab-content">
+            <div class="section-header"><span class="emoji">📂</span>Document Management</div>
+            <form id="document-form" class="agent-form">
+                <select id="doc-property-id" required></select>
+                <input type="text" id="doc-title" placeholder="Document Title" required>
+                <input type="file" id="doc-file" accept=".pdf,.doc,.docx" required>
+                <button type="submit" class="action-btn">Upload Document</button>
+            </form>
+            <div class="section-header">Stored Documents</div>
+            <ul id="document-list"></ul>
+        </div>
+
+        <div id="analytics" class="tab-content">
+            <div class="section-header"><span class="emoji">📊</span>Advanced Analytics</div>
+            <div class="chart-container">
+                <canvas id="rent-trend-chart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="occupancy-chart"></canvas>
+            </div>
+            <button class="action-btn" onclick="updateAnalytics()">Refresh Analytics</button>
+        </div>
+
+        <div id="communication" class="tab-content">
+            <div class="section-header"><span class="emoji">📧</span>Communication Tools</div>
+            <form id="communication-form" class="agent-form">
+                <select id="comm-recipient" required>
+                    <option value="all">All Tenants</option>
+                    <option value="overdue">Overdue Tenants</option>
+                    <option value="select">Select Tenant</option>
+                </select>
+                <select id="comm-tenant-name" style="display: none;"></select>
+                <input type="text" id="comm-subject" placeholder="Subject" required>
+                <textarea id="comm-message" placeholder="Message" required></textarea>
+                <button type="submit" class="action-btn">Send Message</button>
+            </form>
+            <div class="section-header">Communication History</div>
+            <div id="communication-list" class="timeline"></div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="action-btn" onclick="exportAnalytics()">Export Analytics</button>
+            <button class="action-btn" onclick="syncData()">Sync with External Systems</button>
+            <button class="action-btn" onclick="navigateToPageOne()">Go to Main Dashboard</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Sample Data (Extend from Page 1, stored in localStorage)
+        let landlord = JSON.parse(localStorage.getItem('landlordData')) || {
+            name: 'John Doe',
+            email: 'john@example.com',
+            phone: '123-456-7890',
+            properties: [
+                {
+                    id: '1',
+                    address: '123 Main St',
+                    tenants: [
+                        { name: 'Tenant A', email: 'a@example.com', phone: '111-222-3333', rent_amount: 1200, payments: [{ date: new Date(2025, 8, 5), status: 'paid' }] },
+                        { name: 'Tenant B', email: 'b@example.com', phone: '444-555-6666', rent_amount: 1500, payments: [] }
+                    ],
+                    maintenance: [],
+                    renewals: [],
+                    inspections: [],
+                    documents: []
+                },
+                {
+                    id: '2',
+                    address: '456 Elm St',
+                    tenants: [
+                        { name: 'Tenant C', email: 'c@example.com', phone: '777-888-9999', rent_amount: 1000, payments: [{ date: new Date(2025, 8, 10), status: 'paid' }] }
+                    ],
+                    maintenance: [],
+                    renewals: [],
+                    inspections: [],
+                    documents: []
+                }
+            ],
+            communications: []
+        };
+
+        // Calculate Metrics (Reused from Page 1)
+        function calculateMetrics() {
+            const now = new Date(2025, 8, 11); // Fixed date: September 11, 2025
+            const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+            const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+
+            const properties = landlord.properties;
+            const totalProperties = properties.length;
+            const totalTenants = properties.reduce((sum, prop) => sum + (prop.tenants ? prop.tenants.length : 0), 0);
+            const avgTenantsPerProperty = totalProperties > 0 ? totalTenants / totalProperties : 0;
+
+            let paidTenants = [];
+            let overdueTenants = [];
+            let totalRentCollected = 0;
+            let totalOverdueAmount = 0;
+            let allRentAmounts = [];
+
+            let propertyMetrics = [];
+
+            properties.forEach(prop => {
+                const propTenants = prop.tenants || [];
+                const propTotalTenants = propTenants.length;
+                let propPaidTenants = [];
+                let propOverdueTenants = [];
+                let propRentCollected = 0;
+                let propOverdueAmount = 0;
+                let propRentAmounts = [];
+
+                propTenants.forEach(tenant => {
+                    const rent = tenant.rent_amount || 0;
+                    allRentAmounts.push(rent);
+                    propRentAmounts.push(rent);
+                    const monthlyPayments = (tenant.payments || []).filter(p => p.date >= currentMonthStart && p.date <= currentMonthEnd);
+                    const paidThisMonth = monthlyPayments.some(p => p.status === 'paid');
+
+                    if (paidThisMonth) {
+                        totalRentCollected += rent;
+                        propRentCollected += rent;
+                        paidTenants.push(tenant);
+                        propPaidTenants.push(tenant);
+                    } else {
+                        totalOverdueAmount += rent;
+                        propOverdueAmount += rent;
+                        overdueTenants.push(tenant);
+                        propOverdueTenants.push(tenant);
+                    }
+                });
+
+                const propPaidCount = propPaidTenants.length;
+                const propOverdueCount = propOverdueTenants.length;
+                let propOnTimePct = propTotalTenants > 0 ? (propPaidCount / propTotalTenants) * 100 : 0;
+                let propOverduePct = propTotalTenants > 0 ? (propOverdueCount / propTotalTenants) * 100 : 0;
+                let propAvgRentTenant = propTotalTenants > 0 ? propRentAmounts.reduce((a, b) => a + b, 0) / propTotalTenants : 0;
+                let propHighestRent = propRentAmounts.length > 0 ? Math.max(...propRentAmounts) : 0;
+                let propLowestRent = propRentAmounts.length > 0 ? Math.min(...propRentAmounts) : 0;
+                let propAvgRentPerProp = propRentAmounts.reduce((a, b) => a + b, 0);
+
+                propertyMetrics.push({
+                    property: prop,
+                    paidCount: propPaidCount,
+                    overdueCount: propOverdueCount,
+                    rentCollected: propRentCollected,
+                    overdueAmount: propOverdueAmount,
+                    onTimePct: propOnTimePct,
+                    overduePct: propOverduePct,
+                    avgRentTenant: propAvgRentTenant,
+                    highestRent: propHighestRent,
+                    lowestRent: propLowestRent,
+                    totalTenants: propTotalTenants,
+                    avgRentPerProp: propAvgRentPerProp,
+                    paidTenants: propPaidTenants,
+                    overdueTenants: propOverdueTenants
+                });
+            });
+
+            const totalTenantsOverall = allRentAmounts.length;
+            const paidCount = paidTenants.length;
+            const overdueCount = overdueTenants.length;
+            const onTimePercentage = totalTenantsOverall > 0 ? (paidCount / totalTenantsOverall) * 100 : 0;
+            const overduePercentage = totalTenantsOverall > 0 ? (overdueCount / totalTenantsOverall) * 100 : 0;
+            const avgRentPerTenant = totalTenantsOverall > 0 ? allRentAmounts.reduce((a, b) => a + b, 0) / totalTenantsOverall : 0;
+            const highestRent = allRentAmounts.length > 0 ? Math.max(...allRentAmounts) : 0;
+            const lowestRent = allRentAmounts.length > 0 ? Math.min(...allRentAmounts) : 0;
+
+            return {
+                totalProperties, totalTenants, avgTenantsPerProperty, paidTenants, overdueTenants,
+                totalRentCollected, totalOverdueAmount, allRentAmounts, propertyMetrics,
+                totalTenantsOverall, paidCount, overdueCount, onTimePercentage, overduePercentage,
+                avgRentPerTenant, highestRent, lowestRent
+            };
+        }
+
+        // Tab Switching
+        function openTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`[onclick="openTab('${tabId}')"]`).classList.add('active');
+        }
+
+        // Update Displays
+        function updateDisplays() {
+            const metrics = calculateMetrics();
+
+            // Populate Property Selects
+            const propSelects = [
+                document.getElementById('maint-property-id'),
+                document.getElementById('renew-property-id'),
+                document.getElementById('insp-property-id'),
+                document.getElementById('doc-property-id')
+            ];
+            propSelects.forEach(select => {
+                select.innerHTML = '<option value="">Select Property</option>';
+                landlord.properties.forEach(prop => {
+                    const option = document.createElement('option');
+                    option.value = prop.id;
+                    option.textContent = `${prop.address} (ID: ${prop.id})`;
+                    select.appendChild(option);
+                });
+            });
+
+            // Populate Tenant Select for Renewals
+            document.getElementById('renew-property-id').addEventListener('change', (e) => {
+                const propId = e.target.value;
+                const tenantSelect = document.getElementById('renew-tenant-name');
+                tenantSelect.innerHTML = '<option value="">Select Tenant</option>';
+                const prop = landlord.properties.find(p => p.id === propId);
+                if (prop) {
+                    prop.tenants.forEach(tenant => {
+                        const option = document.createElement('option');
+                        option.value = tenant.name;
+                        option.textContent = tenant.name;
+                        tenantSelect.appendChild(option);
+                    });
+                }
+            });
+
+            // Populate Tenant Select for Communication
+            document.getElementById('comm-recipient').addEventListener('change', (e) => {
+                const value = e.target.value;
+                const tenantSelect = document.getElementById('comm-tenant-name');
+                tenantSelect.style.display = value === 'select' ? 'block' : 'none';
+                if (value === 'select') {
+                    tenantSelect.innerHTML = '<option value="">Select Tenant</option>';
+                    landlord.properties.forEach(prop => {
+                        prop.tenants.forEach(tenant => {
+                            const option = document.createElement('option');
+                            option.value = tenant.name;
+                            option.textContent = `${tenant.name} (${prop.address})`;
+                            tenantSelect.appendChild(option);
+                        });
+                    });
+                }
+            });
+
+            // Maintenance Requests
+            const maintList = document.getElementById('maintenance-list');
+            maintList.innerHTML = '';
+            landlord.properties.forEach(prop => {
+                prop.maintenance.forEach(req => {
+                    const div = document.createElement('div');
+                    div.classList.add('accordion');
+                    div.textContent = `Property: ${prop.address} - ${req.description} (Priority: ${req.priority})`;
+                    div.onclick = () => {
+                        const content = div.nextSibling;
+                        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+                    };
+                    const content = document.createElement('div');
+                    content.classList.add('accordion-content');
+                    content.innerHTML = `Status: ${req.status}<br>Created: ${new Date(req.created).toLocaleDateString()}`;
+                    maintList.appendChild(div);
+                    maintList.appendChild(content);
+                });
+            });
+
+            // Lease Renewals
+            const renewList = document.getElementById('renewal-list');
+            renewList.innerHTML = '';
+            landlord.properties.forEach(prop => {
+                prop.renewals.forEach(renew => {
+                    const div = document.createElement('div');
+                    div.classList.add('accordion');
+                    div.textContent = `Property: ${prop.address} - Tenant: ${renew.tenant}`;
+                    div.onclick = () => {
+                        const content = div.nextSibling;
+                        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+                    };
+                    const content = document.createElement('div');
+                    content.classList.add('accordion-content');
+                    content.innerHTML = `New Rent: $${renew.rent}<br>End Date: ${new Date(renew.endDate).toLocaleDateString()}<br>Status: ${renew.status}`;
+                    renewList.appendChild(div);
+                    renewList.appendChild(content);
+                });
+            });
+
+            // Inspections
+            const inspList = document.getElementById('inspection-list');
+            inspList.innerHTML = '';
+            landlord.properties.forEach(prop => {
+                prop.inspections.forEach(insp => {
+                    const div = document.createElement('div');
+                    div.classList.add('timeline-item');
+                    div.innerHTML = `<strong>${prop.address}</strong><br>Date: ${new Date(insp.date).toLocaleDateString()}<br>Notes: ${insp.notes}`;
+                    inspList.appendChild(div);
+                });
+            });
+
+            // Documents
+            const docList = document.getElementById('document-list');
+            docList.innerHTML = '';
+            landlord.properties.forEach(prop => {
+                prop.documents.forEach(doc => {
+                    const li = document.createElement('li');
+                    li.classList.add('list-item');
+                    li.textContent = `${doc.title} (Property: ${prop.address})`;
+                    docList.appendChild(li);
+                });
+            });
+
+            // Communication History
+            const commList = document.getElementById('communication-list');
+            commList.innerHTML = '';
+            landlord.communications.forEach(comm => {
+                const div = document.createElement('div');
+                div.classList.add('timeline-item');
+                div.innerHTML = `<strong>${comm.subject}</strong><br>Recipient: ${comm.recipient}<br>Message: ${comm.message}<br>Sent: ${new Date(comm.date).toLocaleString()}`;
+                commList.appendChild(div);
+            });
+
+            // Analytics Charts
+            updateAnalytics();
+        }
+
+        // Analytics Charts
+        let rentTrendChart, occupancyChart;
+        function updateAnalytics() {
+            const metrics = calculateMetrics();
+
+            // Rent Trend Chart
+            if (rentTrendChart) rentTrendChart.destroy();
+            const rentCtx = document.getElementById('rent-trend-chart').getContext('2d');
+            rentTrendChart = new Chart(rentCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+                    datasets: [{
+                        label: 'Rent Collected ($)',
+                        data: [5000, 5200, 5100, 5300, 5400, 5500, 5600, 5700, metrics.totalRentCollected],
+                        borderColor: '#3498db',
+                        fill: false
+                    }, {
+                        label: 'Overdue Amount ($)',
+                        data: [500, 600, 550, 400, 450, 300, 350, 400, metrics.totalOverdueAmount],
+                        borderColor: '#e74c3c',
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+
+            // Occupancy Chart
+            if (occupancyChart) occupancyChart.destroy();
+            const occCtx = document.getElementById('occupancy-chart').getContext('2d');
+            occupancyChart = new Chart(occCtx, {
+                type: 'bar',
+                data: {
+                    labels: landlord.properties.map(p => p.address),
+                    datasets: [{
+                        label: 'Occupied Units',
+                        data: landlord.properties.map(p => p.tenants.length),
+                        backgroundColor: '#27ae60'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        // Form Handlers
+        // Maintenance Request
+        document.getElementById('maintenance-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const propId = document.getElementById('maint-property-id').value;
+            const description = document.getElementById('maint-description').value;
+            const priority = document.getElementById('maint-priority').value;
+            const prop = landlord.properties.find(p => p.id === propId);
+            if (prop) {
+                prop.maintenance.push({
+                    description,
+                    priority,
+                    status: 'Open',
+                    created: new Date()
+                });
+                saveData();
+                updateDisplays();
+                e.target.reset();
+                alert('Maintenance request submitted!');
+            }
+        });
+
+        // Lease Renewal
+        document.getElementById('renewal-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const propId = document.getElementById('renew-property-id').value;
+            const tenant = document.getElementById('renew-tenant-name').value;
+            const endDate = document.getElementById('renew-end-date').value;
+            const rent = parseFloat(document.getElementById('renew-rent').value);
+            const prop = landlord.properties.find(p => p.id === propId);
+            if (prop) {
+                prop.renewals.push({
+                    tenant,
+                    endDate: new Date(endDate),
+                    rent,
+                    status: 'Pending'
+                });
+                saveData();
+                updateDisplays();
+                e.target.reset();
+                alert('Lease renewal proposed!');
+            }
+        });
+
+        // Inspection
+        document.getElementById('inspection-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const propId = document.getElementById('insp-property-id').value;
+            const date = document.getElementById('insp-date').value;
+            const notes = document.getElementById('insp-notes').value;
+            const prop = landlord.properties.find(p => p.id === propId);
+            if (prop) {
+                prop.inspections.push({
+                    date: new Date(date),
+                    notes
+                });
+                saveData();
+                updateDisplays();
+                e.target.reset();
+                alert('Inspection scheduled!');
+            }
+        });
+
+        // Document Upload
+        document.getElementById('document-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const propId = document.getElementById('doc-property-id').value;
+            const title = document.getElementById('doc-title').value;
+            const file = document.getElementById('doc-file').files[0];
+            const prop = landlord.properties.find(p => p.id === propId);
+            if (prop && file) {
+                prop.documents.push({
+                    title,
+                    fileName: file.name
+                });
+                saveData();
+                updateDisplays();
+                e.target.reset();
+                alert('Document uploaded!');
+            }
+        });
+
+        // Communication
+        document.getElementById('communication-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const recipient = document.getElementById('comm-recipient').value;
+            const tenantName = document.getElementById('comm-tenant-name').value;
+            const subject = document.getElementById('comm-subject').value;
+            const message = document.getElementById('comm-message').value;
+            const actualRecipient = recipient === 'select' ? tenantName : recipient;
+            landlord.communications.push({
+                recipient: actualRecipient,
+                subject,
+                message,
+                date: new Date()
+            });
+            saveData();
+            updateDisplays();
+            e.target.reset();
+            alert('Message sent!');
+        });
+
+        // Action Buttons
+        function exportAnalytics() {
+            const metrics = calculateMetrics();
+            const report = `
+Analytics Report
+Total Properties: ${metrics.totalProperties}
+Total Tenants: ${metrics.totalTenantsOverall}
+Occupancy Rate: ${((metrics.totalTenantsOverall / (metrics.totalProperties * 10)) * 100).toFixed(1)}% (assuming 10 units/property)
+Rent Collected: $${metrics.totalRentCollected.toFixed(2)}
+Overdue: $${metrics.totalOverdueAmount.toFixed(2)}
+            `;
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'analytics_report.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+            alert('Analytics exported!');
+        }
+
+        function syncData() {
+            // Simulate sync with external systems
+            alert('Data synced with external systems (simulated).');
+        }
+
+        function navigateToPageOne() {
+            // Placeholder: In a real app, navigate to the main dashboard
+            window.location.href = 'LandlordsManagement.html';
+        }
+
+        // Save Data to localStorage
+        function saveData() {
+            localStorage.setItem('landlordData', JSON.stringify(landlord));
+        }
+
+        // Initial Update
+        updateDisplays();
+    </script>
+</body>
+</html>

@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Landlords Management</title>
+    <style>
+        /* Consistent Beautiful UI CSS */
+        body {
+            font-family: 'Helvetica', Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .tab-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .tab-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .tab-button.active {
+            background: #2980b9;
+        }
+        .tab-button:hover {
+            background: #2980b9;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .section-header {
+            font-size: 1.5em;
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .metric {
+            font-size: 1.1em;
+            margin: 5px 0;
+        }
+        .list-item {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        .accordion {
+            background: #ecf0f1;
+            padding: 10px;
+            margin: 10px 0;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .accordion-content {
+            display: none;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #ecf0f1;
+            border-radius: 5px;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .action-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .action-btn:hover {
+            background: #219d52;
+        }
+        form {
+            margin: 20px 0;
+        }
+        input, select, textarea {
+            padding: 8px;
+            margin: 5px 0;
+            width: 100%;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+        }
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 5px;
+        }
+        .agent-section {
+            margin-top: 30px;
+            border-top: 1px solid #ecf0f1;
+            padding-top: 20px;
+        }
+        .agent-form {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .chart-container {
+            margin: 20px 0;
+            width: 100%;
+            max-width: 600px;
+        }
+        .map-container {
+            width: 100%;
+            height: 400px;
+            margin: 20px 0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mwarokin Estates 🏠 Landlords Management System.</h1>
+
+        <!-- Tab Buttons -->
+        <div class="tab-buttons">
+            <button class="tab-button active" onclick="openTab('market')">Market Analysis</button>
+            <button class="tab-button" onclick="openTab('portfolio')">Portfolio Optimization</button>
+            <button class="tab-button" onclick="openTab('forecast')">Financial Forecasting</button>
+            <button class="tab-button" onclick="openTab('compliance')">Compliance Monitoring</button>
+            <button class="tab-button" onclick="openTab('feedback')">Tenant Feedback</button>
+            <button class="tab-button" onclick="openTab('map')">Property Map</button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div id="market" class="tab-content active">
+            <div class="section-header"><span class="emoji">📈</span>Market Analysis</div>
+            <form id="market-analysis-form" class="agent-form">
+                <input type="text" id="market-area" placeholder="Area (e.g., Downtown)" required>
+                <select id="market-property-type" required>
+                    <option value="residential">Residential</option>
+                    <option value="commercial">Commercial</option>
+                    <option value="land">Land</option>
+                </select>
+                <button type="submit" class="action-btn">Analyze Market</button>
+            </form>
+            <div id="market-analysis-result"></div>
+        </div>
+
+        <div id="portfolio" class="tab-content">
+            <div class="section-header"><span class="emoji">🏠</span>Portfolio Optimization</div>
+            <form id="portfolio-form" class="agent-form">
+                <select id="portfolio-property-id" required></select>
+                <button type="submit" class="action-btn">Optimize Portfolio</button>
+            </form>
+            <div id="portfolio-result"></div>
+            <div class="section-header">Portfolio Performance</div>
+            <div class="chart-container">
+                <canvas id="portfolio-performance-chart"></canvas>
+            </div>
+        </div>
+
+        <div id="forecast" class="tab-content">
+            <div class="section-header"><span class="emoji">💵</span>Financial Forecasting</div>
+            <form id="forecast-form" class="agent-form">
+                <select id="forecast-property-id" required></select>
+                <input type="number" id="forecast-period" placeholder="Forecast Period (Months)" required min="1">
+                <button type="submit" class="action-btn">Generate Forecast</button>
+            </form>
+            <div id="forecast-result"></div>
+            <div class="chart-container">
+                <canvas id="forecast-chart"></canvas>
+            </div>
+        </div>
+
+        <div id="compliance" class="tab-content">
+            <div class="section-header"><span class="emoji">⚖️</span>Compliance Monitoring</div>
+            <form id="compliance-monitoring-form" class="agent-form">
+                <select id="comp-monitor-property-id" required></select>
+                <button type="submit" class="action-btn">Check Compliance</button>
+            </form>
+            <div id="compliance-monitoring-result"></div>
+            <div class="section-header">Compliance Audit Log</div>
+            <div id="compliance-log" class="timeline"></div>
+        </div>
+
+        <div id="feedback" class="tab-content">
+            <div class="section-header"><span class="emoji">📣</span>Tenant Feedback</div>
+            <form id="feedback-form" class="agent-form">
+                <select id="feedback-property-id" required></select>
+                <select id="feedback-tenant-name" required></select>
+                <textarea id="feedback-text" placeholder="Tenant Feedback" required></textarea>
+                <select id="feedback-rating" required>
+                    <option value="1">1 - Poor</option>
+                    <option value="2">2</option>
+                    <option value="3">3 - Average</option>
+                    <option value="4">4</option>
+                    <option value="5">5 - Excellent</option>
+                </select>
+                <button type="submit" class="action-btn">Submit Feedback</button>
+            </form>
+            <div class="section-header">Feedback History</div>
+            <div id="feedback-list"></div>
+        </div>
+
+        <div id="map" class="tab-content">
+            <div class="section-header"><span class="emoji">🗺️</span>Property Map</div>
+            <div id="property-map" class="map-container"></div>
+            <form id="map-filter-form" class="agent-form">
+                <select id="map-property-type" required>
+                    <option value="all">All Properties</option>
+                    <option value="residential">Residential</option>
+                    <option value="commercial">Commercial</option>
+                    <option value="land">Land</option>
+                </select>
+                <button type="submit" class="action-btn">Filter Map</button>
+            </form>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="action-btn" onclick="exportStrategicReport()">Export Strategic Report</button>
+            <button class="action-btn" onclick="generatePortfolioSummary()">Generate Portfolio Summary</button>
+            <button class="action-btn" onclick="navigateToPageOne()">Go to Main Dashboard</button>
+            <button class="action-btn" onclick="navigateToPageTwo()">Go to Advanced Features</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <script>
+        // Sample Data (Extend from Page 1 and 2, stored in localStorage)
+        let landlord = JSON.parse(localStorage.getItem('landlordData')) || {
+            name: 'John Doe',
+            email: 'john@example.com',
+            phone: '123-456-7890',
+            properties: [
+                {
+                    id: '1',
+                    address: '123 Main St',
+                    type: 'residential',
+                    lat: 40.7128, // Simulated coordinates
+                    lng: -74.0060,
+                    tenants: [
+                        { name: 'Tenant A', email: 'a@example.com', phone: '111-222-3333', rent_amount: 1200, payments: [{ date: new Date(2025, 8, 5), status: 'paid' }] },
+                        { name: 'Tenant B', email: 'b@example.com', phone: '444-555-6666', rent_amount: 1500, payments: [] }
+                    ],
+                    maintenance: [],
+                    renewals: [],
+                    inspections: [],
+                    documents: [],
+                    feedback: []
+                },
+                {
+                    id: '2',
+                    address: '456 Elm St',
+                    type: 'commercial',
+                    lat: 40.7200,
+                    lng: -74.0100,
+                    tenants: [
+                        { name: 'Tenant C', email: 'c@example.com', phone: '777-888-9999', rent_amount: 1000, payments: [{ date: new Date(2025, 8, 10), status: 'paid' }] }
+                    ],
+                    maintenance: [],
+                    renewals: [],
+                    inspections: [],
+                    documents: [],
+                    feedback: []
+                }
+            ],
+            communications: [],
+            complianceLogs: []
+        };
+
+        // Initialize Map
+        let map;
+        function initMap() {
+            map = L.map('property-map').setView([40.7128, -74.0060], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            updateMap('all');
+        }
+
+        // Update Map
+        function updateMap(propertyType) {
+            map.eachLayer(layer => {
+                if (layer instanceof L.Marker) map.removeLayer(layer);
+            });
+            landlord.properties.forEach(prop => {
+                if (propertyType === 'all' || prop.type === propertyType) {
+                    L.marker([prop.lat, prop.lng])
+                        .addTo(map)
+                        .bindPopup(`<b>${prop.address}</b><br>Type: ${prop.type}<br>Tenants: ${prop.tenants.length}`);
+                }
+            });
+        }
+
+        // Calculate Metrics (Reused from Previous Pages)
+        function calculateMetrics() {
+            const now = new Date(2025, 8, 11); // Fixed date: September 11, 2025
+            const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+            const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+
+            const properties = landlord.properties;
+            const totalProperties = properties.length;
+            const totalTenants = properties.reduce((sum, prop) => sum + (prop.tenants ? prop.tenants.length : 0), 0);
+            const avgTenantsPerProperty = totalProperties > 0 ? totalTenants / totalProperties : 0;
+
+            let paidTenants = [];
+            let overdueTenants = [];
+            let totalRentCollected = 0;
+            let totalOverdueAmount = 0;
+            let allRentAmounts = [];
+
+            let propertyMetrics = [];
+
+            properties.forEach(prop => {
+                const propTenants = prop.tenants || [];
+                const propTotalTenants = propTenants.length;
+                let propPaidTenants = [];
+                let propOverdueTenants = [];
+                let propRentCollected = 0;
+                let propOverdueAmount = 0;
+                let propRentAmounts = [];
+
+                propTenants.forEach(tenant => {
+                    const rent = tenant.rent_amount || 0;
+                    allRentAmounts.push(rent);
+                    propRentAmounts.push(rent);
+                    const monthlyPayments = (tenant.payments || []).filter(p => p.date >= currentMonthStart && p.date <= currentMonthEnd);
+                    const paidThisMonth = monthlyPayments.some(p => p.status === 'paid');
+
+                    if (paidThisMonth) {
+                        totalRentCollected += rent;
+                        propRentCollected += rent;
+                        paidTenants.push(tenant);
+                        propPaidTenants.push(tenant);
+                    } else {
+                        totalOverdueAmount += rent;
+                        propOverdueAmount += rent;
+                        overdueTenants.push(tenant);
+                        propOverdueTenants.push(tenant);
+                    }
+                });
+
+                const propPaidCount = propPaidTenants.length;
+                const propOverdueCount = propOverdueTenants.length;
+                let propOnTimePct = propTotalTenants > 0 ? (propPaidCount / propTotalTenants) * 100 : 0;
+                let propOverduePct = propTotalTenants > 0 ? (propOverdueCount / propTotalTenants) * 100 : 0;
+                let propAvgRentTenant = propTotalTenants > 0 ? propRentAmounts.reduce((a, b) => a + b, 0) / propTotalTenants : 0;
+                let propHighestRent = propRentAmounts.length > 0 ? Math.max(...propRentAmounts) : 0;
+                let propLowestRent = propRentAmounts.length > 0 ? Math.min(...propRentAmounts) : 0;
+                let propAvgRentPerProp = propRentAmounts.reduce((a, b) => a + b, 0);
+
+                propertyMetrics.push({
+                    property: prop,
+                    paidCount: propPaidCount,
+                    overdueCount: propOverdueCount,
+                    rentCollected: propRentCollected,
+                    overdueAmount: propOverdueAmount,
+                    onTimePct: propOnTimePct,
+                    overduePct: propOverduePct,
+                    avgRentTenant: propAvgRentTenant,
+                    highestRent: propHighestRent,
+                    lowestRent: propLowestRent,
+                    totalTenants: propTotalTenants,
+                    avgRentPerProp: propAvgRentPerProp,
+                    paidTenants: propPaidTenants,
+                    overdueTenants: propOverdueTenants
+                });
+            });
+
+            const totalTenantsOverall = allRentAmounts.length;
+            const paidCount = paidTenants.length;
+            const overdueCount = overdueTenants.length;
+            const onTimePercentage = totalTenantsOverall > 0 ? (paidCount / totalTenantsOverall) * 100 : 0;
+            const overduePercentage = totalTenantsOverall > 0 ? (overdueCount / totalTenantsOverall) * 100 : 0;
+            const avgRentPerTenant = totalTenantsOverall > 0 ? allRentAmounts.reduce((a, b) => a + b, 0) / totalTenantsOverall : 0;
+            const highestRent = allRentAmounts.length > 0 ? Math.max(...allRentAmounts) : 0;
+            const lowestRent = allRentAmounts.length > 0 ? Math.min(...allRentAmounts) : 0;
+
+            return {
+                totalProperties, totalTenants, avgTenantsPerProperty, paidTenants, overdueTenants,
+                totalRentCollected, totalOverdueAmount, allRentAmounts, propertyMetrics,
+                totalTenantsOverall, paidCount, overdueCount, onTimePercentage, overduePercentage,
+                avgRentPerTenant, highestRent, lowestRent
+            };
+        }
+
+        // Tab Switching
+        function openTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`[onclick="openTab('${tabId}')"]`).classList.add('active');
+        }
+
+        // Update Displays
+        function updateDisplays() {
+            const metrics = calculateMetrics();
+
+            // Populate Property Selects
+            const propSelects = [
+                document.getElementById('portfolio-property-id'),
+                document.getElementById('forecast-property-id'),
+                document.getElementById('comp-monitor-property-id'),
+                document.getElementById('feedback-property-id')
+            ];
+            propSelects.forEach(select => {
+                select.innerHTML = '<option value="">Select Property</option>';
+                landlord.properties.forEach(prop => {
+                    const option = document.createElement('option');
+                    option.value = prop.id;
+                    option.textContent = `${prop.address} (ID: ${prop.id})`;
+                    select.appendChild(option);
+                });
+            });
+
+            // Populate Tenant Select for Feedback
+            document.getElementById('feedback-property-id').addEventListener('change', (e) => {
+                const propId = e.target.value;
+                const tenantSelect = document.getElementById('feedback-tenant-name');
+                tenantSelect.innerHTML = '<option value="">Select Tenant</option>';
+                const prop = landlord.properties.find(p => p.id === propId);
+                if (prop) {
+                    prop.tenants.forEach(tenant => {
+                        const option = document.createElement('option');
+                        option.value = tenant.name;
+                        option.textContent = tenant.name;
+                        tenantSelect.appendChild(option);
+                    });
+                }
+            });
+
+            // Portfolio Performance Chart
+            let portfolioChart;
+            if (portfolioChart) portfolioChart.destroy();
+            const portfolioCtx = document.getElementById('portfolio-performance-chart').getContext('2d');
+            portfolioChart = new Chart(portfolioCtx, {
+                type: 'bar',
+                data: {
+                    labels: landlord.properties.map(p => p.address),
+                    datasets: [{
+                        label: 'Net Operating Income ($)',
+                        data: landlord.properties.map(p => p.tenants.reduce((sum, t) => sum + (t.payments.some(p => p.status === 'paid') ? t.rent_amount : 0), 0) * 0.8),
+                        backgroundColor: '#3498db'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+
+            // Forecast Chart
+            let forecastChart;
+            if (forecastChart) forecastChart.destroy();
+            const forecastCtx = document.getElementById('forecast-chart').getContext('2d');
+            forecastChart = new Chart(forecastCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Month 1', 'Month 2', 'Month 3', 'Month 4', 'Month 5'],
+                    datasets: [{
+                        label: 'Projected Rent ($)',
+                        data: [5000, 5100, 5200, 5300, 5400], // Simulated
+                        borderColor: '#27ae60',
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+
+            // Compliance Log
+            const compLog = document.getElementById('compliance-log');
+            compLog.innerHTML = '';
+            landlord.complianceLogs.forEach(log => {
+                const div = document.createElement('div');
+                div.classList.add('timeline-item');
+                div.innerHTML = `<strong>${log.property}</strong><br>Check: ${log.check}<br>Result: ${log.result}<br>Date: ${new Date(log.date).toLocaleString()}`;
+                compLog.appendChild(div);
+            });
+
+            // Feedback List
+            const feedbackList = document.getElementById('feedback-list');
+            feedbackList.innerHTML = '';
+            landlord.properties.forEach(prop => {
+                prop.feedback.forEach(fb => {
+                    const div = document.createElement('div');
+                    div.classList.add('accordion');
+                    div.textContent = `Property: ${prop.address} - Tenant: ${fb.tenant} (Rating: ${fb.rating}/5)`;
+                    div.onclick = () => {
+                        const content = div.nextSibling;
+                        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+                    };
+                    const content = document.createElement('div');
+                    content.classList.add('accordion-content');
+                    content.innerHTML = `Feedback: ${fb.text}<br>Date: ${new Date(fb.date).toLocaleDateString()}`;
+                    feedbackList.appendChild(div);
+                    feedbackList.appendChild(content);
+                });
+            });
+        }
+
+        // Form Handlers
+        // Market Analysis
+        document.getElementById('market-analysis-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const area = document.getElementById('market-area').value;
+            const type = document.getElementById('market-property-type').value;
+            // Simulate RAG-based market analysis
+            document.getElementById('market-analysis-result').innerHTML = `
+                <p>Market Analysis for ${area} (${type}):</p>
+                <p>Average Sale Price: $${Math.floor(Math.random() * 500000 + 300000).toLocaleString()}</p>
+                <p>Rental Yield: ${(Math.random() * 5 + 3).toFixed(1)}%</p>
+                <p>Market Trends: Stable demand with slight price increase (Source: Simulated RAG data)</p>
+            `;
+        });
+
+        // Portfolio Optimization
+        document.getElementById('portfolio-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const propId = document.getElementById('portfolio-property-id').value;
+            const prop = landlord.properties.find(p => p.id === propId);
+            if (prop) {
+                // Simulate portfolio optimization
+                document.getElementById('portfolio-result').innerHTML = `
+                    <p>Optimization for ${prop.address}:</p>
+                    <p>Recommendation: Increase rent by 5% or improve amenities to boost occupancy.</p>
+                    <p>ROI Potential: ${(Math.random() * 10 + 5).toFixed(1)}% (simulated).</p>
+                `;
+            }
+        });
+
+        // Financial Forecasting
+        document.getElementById('forecast-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const propId = document.getElementById('forecast-property-id').value;
+            const period = parseInt(document.getElementById('forecast-period').value);
+            const prop = landlord.properties.find(p => p.id === propId);
+            if (prop) {
+                // Simulate forecast
+                const monthlyRent = prop.tenants.reduce((sum, t) => sum + t.rent_amount, 0);
+                const forecast = Array(period).fill().map((_, i) => monthlyRent * (1 + 0.01 * i));
+                document.getElementById('forecast-result').innerHTML = `
+                    <p>Financial Forecast for ${prop.address} (${period} months):</p>
+                    <p>Total Projected Revenue: $${forecast.reduce((a, b) => a + b, 0).toLocaleString()}</p>
+                    <p>Assumptions: 1% monthly growth (simulated).</p>
+                `;
+            }
+        });
+
+        // Compliance Monitoring
+        document.getElementById('compliance-monitoring-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const propId = document.getElementById('comp-monitor-property-id').value;
+            const prop = landlord.properties.find(p => p.id === propId);
+            if (prop) {
+                const log = {
+                    property: prop.address,
+                    check: 'Fair Housing & AML',
+                    result: 'Compliant',
+                    date: new Date()
+                };
+                landlord.complianceLogs.push(log);
+                saveData();
+                updateDisplays();
+                document.getElementById('compliance-monitoring-result').textContent = `Compliance check for ${prop.address}: Compliant (simulated).`;
+            }
+        });
+
+        // Tenant Feedback
+        document.getElementById('feedback-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const propId = document.getElementById('feedback-property-id').value;
+            const tenant = document.getElementById('feedback-tenant-name').value;
+            const text = document.getElementById('feedback-text').value;
+            const rating = document.getElementById('feedback-rating').value;
+            const prop = landlord.properties.find(p => p.id === propId);
+            if (prop) {
+                prop.feedback.push({
+                    tenant,
+                    text,
+                    rating,
+                    date: new Date()
+                });
+                saveData();
+                updateDisplays();
+                e.target.reset();
+                alert('Feedback submitted!');
+            }
+        });
+
+        // Map Filter
+        document.getElementById('map-filter-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const propertyType = document.getElementById('map-property-type').value;
+            updateMap(propertyType);
+        });
+
+        // Action Buttons
+        function exportStrategicReport() {
+            const metrics = calculateMetrics();
+            const report = `
+Strategic Report
+Total Properties: ${metrics.totalProperties}
+Total Tenants: ${metrics.totalTenantsOverall}
+Average Tenant Satisfaction: ${(landlord.properties.reduce((sum, p) => sum + p.feedback.reduce((s, f) => s + parseInt(f.rating), 0), 0) / landlord.properties.reduce((sum, p) => sum + p.feedback.length, 0) || 0).toFixed(1)}/5
+Projected Revenue (12 months): $${(metrics.totalRentCollected * 12 * 1.05).toLocaleString()}
+            `;
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'strategic_report.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+            alert('Strategic report exported!');
+        }
+
+        function generatePortfolioSummary() {
+            const metrics = calculateMetrics();
+            alert(`Portfolio Summary: ${metrics.totalProperties} properties, ${metrics.totalTenantsOverall} tenants, $${metrics.totalRentCollected.toLocaleString()} collected this month.`);
+        }
+
+        function navigateToPageOne() {
+            window.location.href = 'LandlordsManagement.html';
+        }
+
+        function navigateToPageTwo() {
+            window.location.href = 'LandlordsManagementPageTwo.html';
+        }
+
+        // Save Data to localStorage
+        function saveData() {
+            localStorage.setItem('landlordData', JSON.stringify(landlord));
+        }
+
+        // Initial Setup
+        initMap();
+        updateDisplays();
+    </script>
+</body>
+</html>

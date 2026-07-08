@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates -Lease Agents</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --accent: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --danger: #e63946;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            font-size: 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #d81b60;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-outline:hover {
+            background-color: white;
+            color: var(--primary);
+        }
+
+        .btn-sm {
+            padding: 0.4rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 5rem 0;
+            background: linear-gradient(rgba(67, 97, 238, 0.9), rgba(114, 9, 183, 0.9)), url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1973&q=80') no-repeat center center/cover;
+            color: white;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+
+        .search-box {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            max-width: 800px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            box-shadow: var(--box-shadow);
+        }
+
+        .search-input {
+            padding: 0.8rem;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        /* Features Section */
+        .section {
+            padding: 5rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .section-title p {
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 1.8rem;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .feature-card p {
+            color: var(--gray);
+        }
+
+        /* Listings Section */
+        .listings-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .listing-card {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .listing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .listing-image {
+            height: 200px;
+            background-color: var(--gray-light);
+            background-size: cover;
+            background-position: center;
+        }
+
+        .listing-content {
+            padding: 1.5rem;
+        }
+
+        .listing-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .listing-address {
+            color: var(--gray);
+            margin-bottom: 1rem;
+        }
+
+        .listing-details {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .listing-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray);
+        }
+
+        .listing-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            background: var(--gray-light);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--dark);
+        }
+
+        .tag.compliant {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .tag.risk {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        /* Dashboard Section */
+        .dashboard {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+        }
+
+        .dashboard-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .dashboard-tab {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            border-bottom: 3px solid transparent;
+        }
+
+        .dashboard-tab.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .dashboard-content {
+            padding: 2rem;
+        }
+
+        .dashboard-pane {
+            display: none;
+        }
+
+        .dashboard-pane.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        /* Status Indicators */
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status.approved {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status.pending {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .status.rejected {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        /* Notifications */
+        .notification-bell {
+            position: relative;
+            cursor: pointer;
+            margin-right: 1rem;
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .notification-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 350px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1rem;
+            z-index: 1000;
+            display: none;
+        }
+
+        .notification-item {
+            padding: 0.8rem;
+            border-bottom: 1px solid var(--gray-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .notification-item:hover {
+            background: var(--gray-light);
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .notification-time {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: #adb5bd;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #495057;
+            color: #adb5bd;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                margin-top: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .search-box {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .notification-dropdown {
+                width: 300px;
+                right: -50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-home"></i>
+                    Mwarokin
+                </div>
+                <ul class="nav-links">
+                    <li><a href="LeaseDraft.html">Lease Agreement</a></li>
+                    <li><a href="Titles Deed.html">Mortgage Calculator</a></li>
+                    <li><a href="Title Deeds.html">Mother Title</a></li>
+                    <li><a href="Schedual Viewing.html">Schedual Viewing</a></li>
+                    <li><a href="Accessibility.html">People With Disabailities</a></li>
+                </ul>
+                <div class="auth-buttons">
+                    <div class="notification-bell" id="notificationBell">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count" id="notificationCount">3</span>
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div class="notification-item">
+                                <div class="notification-title">New Tenant Application</div>
+                                <div class="notification-desc">John Smith applied for 123 Park Avenue</div>
+                                <div class="notification-time">10 minutes ago</div>
+                            </div>
+                            <div class="notification-item">
+                                <div class="notification-title">Lease Renewal Reminder</div>
+                                <div class="notification-desc">Lease for 456 Hillside Drive expires in 30 days</div>
+                                <div class="notification-time">2 hours ago</div>
+                            </div>
+                            <div class="notification-item">
+                                <div class="notification-title">Payment Received</div>
+                                <div class="notification-desc">$2,450 received from Sarah Johnson</div>
+                                <div class="notification-time">1 day ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Lease Agent Management.</h1>
+            <p>Streamline property listings, tenant verification, lease management, and compliance with our AI-powered platform.</p>
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Location, neighborhood, or ZIP" id="searchLocation">
+                <select class="search-input" id="propertyType">
+                    <option value="">Property Type</option>
+                    <option value="apartment">Apartment</option>
+                    <option value="house">House</option>
+                    <option value="condo">Condo</option>
+                    <option value="townhouse">Townhouse</option>
+                </select>
+                <select class="search-input" id="priceRange">
+                    <option value="">Price Range</option>
+                    <option value="0-1000">$0 - $1,000</option>
+                    <option value="1000-2000">$1,000 - $2,000</option>
+                    <option value="2000-3000">$2,000 - $3,000</option>
+                    <option value="3000+">$3,000+</option>
+                </select>
+                <button class="btn btn-primary" id="searchBtn">Search Properties</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Lease Agent Features</h2>
+                <p>Our platform combines cutting-edge technology with intuitive design to transform real estate management.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Compliance & KYC</h3>
+                    <p>Automated KYC verification and fair housing compliance checks to ensure regulatory adherence.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                    <h3>Lease Management</h3>
+                    <p>Generate, customize, and manage lease agreements with automated risk assessment.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>AI-Powered Matching</h3>
+                    <p>Intelligent property-to-tenant matching based on preferences and behavioral patterns.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>Analytics Dashboard</h3>
+                    <p>Comprehensive insights into property performance, tenant behavior, and market trends.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3>White Label Solutions</h3>
+                    <p>Customizable branding and interface to match your company's identity.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3>Multi-Locale Support</h3>
+                    <p>Support for multiple regions with locale-specific compliance rules and currencies.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Listings Section -->
+    <section class="section" id="listings">
+        <div class="container">
+            <div class="section-title">
+                <h2>Featured Properties</h2>
+                <p>Discover our carefully curated selection of properties with full compliance verification.</p>
+            </div>
+            <div class="listings-container">
+                <!-- Listing 1 -->
+                <div class="listing-card">
+                    <div class="listing-image" style="background-image: url('https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
+                    <div class="listing-content">
+                        <div class="listing-price">$2,450/month</div>
+                        <div class="listing-address">123 Park Avenue, New York, NY</div>
+                        <div class="listing-details">
+                            <div class="listing-detail">
+                                <i class="fas fa-bed"></i> 3 Beds
+                            </div>
+                            <div class="listing-detail">
+                                <i class="fas fa-bath"></i> 2 Baths
+                            </div>
+                            <div class="listing-detail">
+                                <i class="fas fa-ruler-combined"></i> 1,250 sqft
+                            </div>
+                        </div>
+                        <div class="listing-tags">
+                            <div class="tag">Apartment</div>
+                            <div class="tag compliant">Compliant</div>
+                        </div>
+                        <button class="btn btn-primary btn-sm schedule-btn" data-property="123 Park Avenue">Schedule Viewing</button>
+                    </div>
+                </div>
+
+                <!-- Listing 2 -->
+                <div class="listing-card">
+                    <div class="listing-image" style="background-image: url('https://images.unsplash.com/photo-1518780664697-55e3ad937233?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1965&q=80')"></div>
+                    <div class="listing-content">
+                        <div class="listing-price">$3,200/month</div>
+                        <div class="listing-address">456 Hillside Drive, San Francisco, CA</div>
+                        <div class="listing-details">
+                            <div class="listing-detail">
+                                <i class="fas fa-bed"></i> 4 Beds
+                            </div>
+                            <div class="listing-detail">
+                                <i class="fas fa-bath"></i> 3 Baths
+                            </div>
+                            <div class="listing-detail">
+                                <i class="fas fa-ruler-combined"></i> 2,100 sqft
+                            </div>
+                        </div>
+                        <div class="listing-tags">
+                            <div class="tag">House</div>
+                            <div class="tag compliant">Compliant</div>
+                            <div class="tag risk">Risk Assessment Needed</div>
+                        </div>
+                        <button class="btn btn-primary btn-sm schedule-btn" data-property="456 Hillside Drive">Schedule Viewing</button>
+                    </div>
+                </div>
+
+                <!-- Listing 3 -->
+                <div class="listing-card">
+                    <div class="listing-image" style="background-image: url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
+                    <div class="listing-content">
+                        <div class="listing-price">$1,850/month</div>
+                        <div class="listing-address">789 Downtown Loft, Chicago, IL</div>
+                        <div class="listing-details">
+                            <div class="listing-detail">
+                                <i class="fas fa-bed"></i> 2 Beds
+                            </div>
+                            <div class="listing-detail">
+                                <i class="fas fa-bath"></i> 1 Bath
+                            </div>
+                            <div class="listing-detail">
+                                <i class="fas fa-ruler-combined"></i> 950 sqft
+                            </div>
+                        </div>
+                        <div class="listing-tags">
+                            <div class="tag">Condo</div>
+                            <div class="tag compliant">Compliant</div>
+                        </div>
+                        <button class="btn btn-primary btn-sm schedule-btn" data-property="789 Downtown Loft">Schedule Viewing</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section class="section" id="dashboard">
+        <div class="container">
+            <div class="section-title">
+                <h2>Management Dashboard</h2>
+                <p>Access all your real estate management tools in one place.</p>
+            </div>
+            <div class="dashboard">
+                <div class="dashboard-tabs">
+                    <div class="dashboard-tab active" data-tab="kyc">KYC Verification</div>
+                    <div class="dashboard-tab" data-tab="compliance">Compliance Check</div>
+                    <div class="dashboard-tab" data-tab="lease">Lease Management</div>
+                    <div class="dashboard-tab" data-tab="analytics">Analytics</div>
+                </div>
+                <div class="dashboard-content">
+                    <!-- KYC Verification Pane -->
+                    <div class="dashboard-pane active" id="kyc-pane">
+                        <h3>Tenant KYC Verification</h3>
+                        <p>Verify tenant identity and run AML checks with our integrated compliance system.</p>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="kycName" placeholder="Enter tenant's full name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Date of Birth</label>
+                            <input type="date" class="form-control" id="kycDob">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Address</label>
+                            <input type="text" class="form-control" id="kycAddress" placeholder="Enter current address">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Document ID</label>
+                            <input type="text" class="form-control" id="kycDocument" placeholder="Enter government-issued ID">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Upload Document</label>
+                            <input type="file" class="form-control" id="kycFile">
+                        </div>
+                        
+                        <button class="btn btn-primary" id="kycCheckBtn">Run KYC Check</button>
+                        
+                        <div class="kyc-results" style="margin-top: 2rem; display: none;">
+                            <h4>KYC Results</h4>
+                            <div class="status approved">
+                                <i class="fas fa-check-circle"></i> Approved
+                            </div>
+                            <p>AML screening completed. No risks detected.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Compliance Check Pane -->
+                    <div class="dashboard-pane" id="compliance-pane">
+                        <h3>Property Compliance Check</h3>
+                        <p>Ensure your property listings comply with fair housing regulations.</p>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Select Property</label>
+                            <select class="form-control" id="complianceProperty">
+                                <option value="">123 Park Avenue, New York, NY</option>
+                                <option value="">456 Hillside Drive, San Francisco, CA</option>
+                                <option value="">789 Downtown Loft, Chicago, IL</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Property Description</label>
+                            <textarea class="form-control" id="complianceDescription" rows="5" placeholder="Enter property description for compliance analysis"></textarea>
+                        </div>
+                        
+                        <button class="btn btn-primary" id="complianceCheckBtn">Run Compliance Check</button>
+                        
+                        <div class="compliance-results" style="margin-top: 2rem; display: none;">
+                            <h4>Compliance Report</h4>
+                            <div class="status approved">
+                                <i class="fas fa-check-circle"></i> Compliant
+                            </div>
+                            <p>No fair housing violations detected in this listing.</p>
+                            <ul style="margin-top: 1rem;">
+                                <li>No discriminatory language found</li>
+                                <li>Description follows inclusive guidelines</li>
+                                <li>Meets US Fair Housing standards</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Lease Management Pane -->
+                    <div class="dashboard-pane" id="lease-pane">
+                        <h3>Lease Agreement Generator</h3>
+                        <p>Create customized lease agreements with automated risk assessment.</p>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Select Property</label>
+                            <select class="form-control" id="leaseProperty">
+                                <option value="">123 Park Avenue, New York, NY</option>
+                                <option value="">456 Hillside Drive, San Francisco, CA</option>
+                                <option value="">789 Downtown Loft, Chicago, IL</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Select Tenant</label>
+                            <select class="form-control" id="leaseTenant">
+                                <option value="">John Smith (Verified)</option>
+                                <option value="">Sarah Johnson (Pending)</option>
+                                <option value="">Michael Brown (Verified)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Lease Duration (Months)</label>
+                            <input type="number" class="form-control" id="leaseDuration" value="12">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Monthly Rent ($)</label>
+                            <input type="number" class="form-control" id="leaseRent" value="2450">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <input type="checkbox" id="leaseRenewal" checked> Include Renewal Option
+                            </label>
+                        </div>
+                        
+                        <button class="btn btn-primary" id="leaseGenerateBtn">Generate Lease Draft</button>
+                        
+                        <div class="lease-results" style="margin-top: 2rem; display: none;">
+                            <h4>Lease Draft Generated</h4>
+                            <p>Lease agreement has been created with the following details:</p>
+                            <ul style="margin-top: 1rem;">
+                                <li>Duration: 12 months</li>
+                                <li>Monthly Rent: $2,450</li>
+                                <li>Renewal Option: Yes</li>
+                                <li>Late Payment Penalty: $50 after 5-day grace period</li>
+                            </ul>
+                            <div class="status pending" style="margin-top: 1rem;">
+                                <i class="fas fa-exclamation-triangle"></i> Credit check recommended for renewal option
+                            </div>
+                            <button class="btn btn-primary" style="margin-top: 1rem;" id="downloadLeaseBtn">Download Lease Document</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Analytics Pane -->
+                    <div class="dashboard-pane" id="analytics-pane">
+                        <h3>Property Performance Analytics</h3>
+                        <p>Track key metrics and performance indicators for your properties.</p>
+                        
+                        <div class="analytics-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+                            <div class="metric-card" style="background: #e8f5e9; padding: 1.5rem; border-radius: var(--border-radius); text-align: center;">
+                                <div style="font-size: 2rem; font-weight: 700; color: #2e7d32;">92%</div>
+                                <div style="color: #2e7d32;">Occupancy Rate</div>
+                            </div>
+                            <div class="metric-card" style="background: #e3f2fd; padding: 1.5rem; border-radius: var(--border-radius); text-align: center;">
+                                <div style="font-size: 2rem; font-weight: 700; color: #1565c0;">$12.4K</div>
+                                <div style="color: #1565c0;">Monthly Revenue</div>
+                            </div>
+                            <div class="metric-card" style="background: #fff3e0; padding: 1.5rem; border-radius: var(--border-radius); text-align: center;">
+                                <div style="font-size: 2rem; font-weight: 700; color: #ef6c00;">4.7/5</div>
+                                <div style="color: #ef6c00;">Tenant Satisfaction</div>
+                            </div>
+                            <div class="metric-card" style="background: #fce4ec; padding: 1.5rem; border-radius: var(--border-radius); text-align: center;">
+                                <div style="font-size: 2rem; font-weight: 700; color: #ad1457;">3</div>
+                                <div style="color: #ad1457;">Pending Applications</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 2rem;">
+                            <h4>Compliance Status</h4>
+                            <div class="status approved" style="margin-right: 1rem;">
+                                <i class="fas fa-check-circle"></i> 12 Compliant Listings
+                            </div>
+                            <div class="status pending">
+                                <i class="fas fa-exclamation-triangle"></i> 2 Need Review
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Mwarokin</h3>
+                    <p>Modern real estate management platform with AI-powered compliance and leasing solutions.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Features</h3>
+                    <ul class="footer-links">
+                        <li><a href="Construction.html">Construction</a></li>
+                        <li><a href="DigitalKeyLogIn.html">Secure Login Digita Key</a></li>
+                        <li><a href="LeaseDraft.html">Leasing Management</a></li>
+                        <li><a href="LanguageSupport.html">Language Support</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="Renovations.html">Renovations</a></li>
+                        <li><a href="Unmapped.html">Unmapped</a></li>
+                        <li><a href="Neighborhoods.html">Neighbourhood</a></li>
+                        <li><a href="Wearables.html">Wearables</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">info@mwarokin.com</a></li>
+                        <li><a href="#">+254 704 919 388</a></li>
+                        <li><a href="#">Africa & Global</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+               Mwarokin - Lease Agent - &copy; 2026. All rights reserved. Powered by: Syllogism Technology Africa.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Schedule Viewing Modal -->
+    <div class="modal" id="scheduleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Schedule Property Viewing</h3>
+                <button class="modal-close" id="closeScheduleModal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Property</label>
+                <input type="text" class="form-control" id="modalProperty" readonly>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Your Name</label>
+                <input type="text" class="form-control" id="viewerName" placeholder="Enter your full name">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" id="viewerEmail" placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Phone</label>
+                <input type="tel" class="form-control" id="viewerPhone" placeholder="Enter your phone number">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Preferred Date</label>
+                <input type="date" class="form-control" id="viewingDate">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Preferred Time</label>
+                <select class="form-control" id="viewingTime">
+                    <option value="9:00 AM">9:00 AM</option>
+                    <option value="10:00 AM">10:00 AM</option>
+                    <option value="11:00 AM">11:00 AM</option>
+                    <option value="12:00 PM">12:00 PM</option>
+                    <option value="1:00 PM">1:00 PM</option>
+                    <option value="2:00 PM">2:00 PM</option>
+                    <option value="3:00 PM">3:00 PM</option>
+                    <option value="4:00 PM">4:00 PM</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" id="confirmScheduleBtn">Schedule Viewing</button>
+        </div>
+    </div>
+
+    <!-- Sign In Modal -->
+    <div class="modal" id="signInModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Sign In to Mwarokin</h3>
+                <button class="modal-close" id="closeSignInModal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" id="signInEmail" placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" id="signInPassword" placeholder="Enter your password">
+            </div>
+            <div class="form-group">
+                <label class="form-label">
+                    <input type="checkbox" id="rememberMe"> Remember me
+                </label>
+            </div>
+            <button class="btn btn-primary" id="confirmSignInBtn">Sign In</button>
+            <p style="text-align: center; margin-top: 1rem;">
+                <a href="#" style="color: var(--primary);">Forgot your password?</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Get Started Modal -->
+    <div class="modal" id="getStartedModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Get Started with Mwarokin</h3>
+                <button class="modal-close" id="closeGetStartedModal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="signUpName" placeholder="Enter your full name">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" id="signUpEmail" placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Phone</label>
+                <input type="tel" class="form-control" id="signUpPhone" placeholder="Enter your phone number">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Company (Optional)</label>
+                <input type="text" class="form-control" id="signUpCompany" placeholder="Enter your company name">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" id="signUpPassword" placeholder="Create a password">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" id="signUpConfirmPassword" placeholder="Confirm your password">
+            </div>
+            <div class="form-group">
+                <label class="form-label">
+                    <input type="checkbox" id="agreeTerms"> I agree to the <a href="#" style="color: var(--primary);">Terms of Service</a> and <a href="#" style="color: var(--primary);">Privacy Policy</a>
+                </label>
+            </div>
+            <button class="btn btn-primary" id="confirmGetStartedBtn">Create Account</button>
+        </div>
+    </div>
+
+    <script>
+        // Configure Toastr
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "5000"
+        };
+
+        // Dashboard Tabs Functionality
+        document.querySelectorAll('.dashboard-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and panes
+                document.querySelectorAll('.dashboard-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.dashboard-pane').forEach(p => p.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Show corresponding pane
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(`${tabId}-pane`).classList.add('active');
+            });
+        });
+
+        // Simulate KYC Check
+        document.getElementById('kycCheckBtn').addEventListener('click', function() {
+            const name = document.getElementById('kycName').value;
+            if (!name) {
+                toastr.error('Please enter tenant name');
+                return;
+            }
+            
+            const results = document.querySelector('.kyc-results');
+            results.style.display = 'block';
+            
+            // Show loading state
+            results.innerHTML = `
+                <h4>KYC Results</h4>
+                <div class="status pending">
+                    <i class="fas fa-spinner fa-spin"></i> Processing...
+                </div>
+            `;
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                results.innerHTML = `
+                    <h4>KYC Results</h4>
+                    <div class="status approved">
+                        <i class="fas fa-check-circle"></i> Approved
+                    </div>
+                    <p>AML screening completed. No risks detected for ${name}.</p>
+                `;
+                
+                // Send notification
+                addNotification('KYC Verification Complete', `${name} has been successfully verified`, 'success');
+                
+                // Simulate email notification
+                simulateEmailNotification('KYC Verification Complete', 
+                    `The KYC verification for ${name} has been completed successfully. No risks were detected.`);
+            }, 2000);
+        });
+
+        // Simulate Compliance Check
+        document.getElementById('complianceCheckBtn').addEventListener('click', function() {
+            const property = document.getElementById('complianceProperty').value;
+            if (!property) {
+                toastr.error('Please select a property');
+                return;
+            }
+            
+            const results = document.querySelector('.compliance-results');
+            results.style.display = 'block';
+            
+            // Show loading state
+            results.innerHTML = `
+                <h4>Compliance Report</h4>
+                <div class="status pending">
+                    <i class="fas fa-spinner fa-spin"></i> Analyzing...
+                </div>
+            `;
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                results.innerHTML = `
+                    <h4>Compliance Report</h4>
+                    <div class="status approved">
+                        <i class="fas fa-check-circle"></i> Compliant
+                    </div>
+                    <p>No fair housing violations detected in this listing.</p>
+                    <ul style="margin-top: 1rem;">
+                        <li>No discriminatory language found</li>
+                        <li>Description follows inclusive guidelines</li>
+                        <li>Meets US Fair Housing standards</li>
+                    </ul>
+                `;
+                
+                // Send notification
+                addNotification('Compliance Check Complete', `${property} is fully compliant`, 'success');
+                
+                // Simulate WhatsApp notification
+                simulateWhatsAppNotification(`Compliance check completed for ${property}. Property is fully compliant.`);
+            }, 2000);
+        });
+
+        // Simulate Lease Generation
+        document.getElementById('leaseGenerateBtn').addEventListener('click', function() {
+            const property = document.getElementById('leaseProperty').value;
+            const tenant = document.getElementById('leaseTenant').value;
+            
+            if (!property || !tenant) {
+                toastr.error('Please select both property and tenant');
+                return;
+            }
+            
+            const results = document.querySelector('.lease-results');
+            results.style.display = 'block';
+            
+            // Show loading state
+            results.innerHTML = `
+                <h4>Lease Draft Generated</h4>
+                <div class="status pending">
+                    <i class="fas fa-spinner fa-spin"></i> Generating lease...
+                </div>
+            `;
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                const duration = document.getElementById('leaseDuration').value;
+                const rent = document.getElementById('leaseRent').value;
+                const renewal = document.getElementById('leaseRenewal').checked ? 'Yes' : 'No';
+                
+                results.innerHTML = `
+                    <h4>Lease Draft Generated</h4>
+                    <p>Lease agreement has been created with the following details:</p>
+                    <ul style="margin-top: 1rem;">
+                        <li>Duration: ${duration} months</li>
+                        <li>Monthly Rent: $${rent}</li>
+                        <li>Renewal Option: ${renewal}</li>
+                        <li>Late Payment Penalty: $50 after 5-day grace period</li>
+                    </ul>
+                    <div class="status pending" style="margin-top: 1rem;">
+                        <i class="fas fa-exclamation-triangle"></i> Credit check recommended for renewal option
+                    </div>
+                    <button class="btn btn-primary" style="margin-top: 1rem;" id="downloadLeaseBtn">Download Lease Document</button>
+                `;
+                
+                // Send notification
+                addNotification('Lease Generated', `Lease agreement created for ${property}`, 'success');
+                
+                // Simulate Google Calendar notification
+                simulateCalendarNotification('Lease Agreement Ready', 
+                    `Lease agreement for ${property} with ${tenant} is ready for signing.`, 
+                    new Date(Date.now() + 24 * 60 * 60 * 1000)); // Tomorrow
+            }, 2000);
+        });
+
+        // Download Lease Document
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.id === 'downloadLeaseBtn') {
+                toastr.success('Lease document downloaded successfully');
+                
+                // Simulate sending document via email
+                simulateEmailNotification('Lease Agreement Document', 
+                    'Your lease agreement document is attached. Please review and sign.');
+            }
+        });
+
+        // Schedule Viewing Functionality
+        document.querySelectorAll('.schedule-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const property = this.getAttribute('data-property');
+                document.getElementById('modalProperty').value = property;
+                document.getElementById('scheduleModal').style.display = 'flex';
+            });
+        });
+
+        // Confirm Schedule Viewing
+        document.getElementById('confirmScheduleBtn').addEventListener('click', function() {
+            const name = document.getElementById('viewerName').value;
+            const email = document.getElementById('viewerEmail').value;
+            const phone = document.getElementById('viewerPhone').value;
+            const date = document.getElementById('viewingDate').value;
+            const time = document.getElementById('viewingTime').value;
+            const property = document.getElementById('modalProperty').value;
+            
+            if (!name || !email || !phone || !date) {
+                toastr.error('Please fill all required fields');
+                return;
+            }
+            
+            // Close modal
+            document.getElementById('scheduleModal').style.display = 'none';
+            
+            // Show success message
+            toastr.success(`Viewing scheduled for ${property} on ${date} at ${time}`);
+            
+            // Add notification
+            addNotification('Viewing Scheduled', 
+                `Viewing scheduled for ${property} on ${date} at ${time}`, 'info');
+            
+            // Simulate email confirmation
+            simulateEmailNotification('Property Viewing Confirmation', 
+                `Your viewing for ${property} has been scheduled for ${date} at ${time}. We look forward to seeing you!`);
+            
+            // Simulate WhatsApp reminder
+            simulateWhatsAppNotification(`Reminder: Your viewing for ${property} is scheduled for ${date} at ${time}.`);
+            
+            // Reset form
+            document.getElementById('viewerName').value = '';
+            document.getElementById('viewerEmail').value = '';
+            document.getElementById('viewerPhone').value = '';
+            document.getElementById('viewingDate').value = '';
+        });
+
+        // Notification Bell Functionality
+        document.getElementById('notificationBell').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const dropdown = document.getElementById('notificationDropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // Close notifications when clicking outside
+        document.addEventListener('click', function() {
+            document.getElementById('notificationDropdown').style.display = 'none';
+        });
+
+        // Add Notification Function
+        function addNotification(title, message, type = 'info') {
+            const dropdown = document.getElementById('notificationDropdown');
+            const countElement = document.getElementById('notificationCount');
+            
+            // Create new notification item
+            const newNotification = document.createElement('div');
+            newNotification.className = 'notification-item';
+            newNotification.innerHTML = `
+                <div class="notification-title">${title}</div>
+                <div class="notification-desc">${message}</div>
+                <div class="notification-time">Just now</div>
+            `;
+            
+            // Add to top of notifications
+            dropdown.insertBefore(newNotification, dropdown.firstChild);
+            
+            // Update notification count
+            const currentCount = parseInt(countElement.textContent);
+            countElement.textContent = currentCount + 1;
+            
+            // Show toast notification
+            if (type === 'success') {
+                toastr.success(message, title);
+            } else if (type === 'error') {
+                toastr.error(message, title);
+            } else if (type === 'warning') {
+                toastr.warning(message, title);
+            } else {
+                toastr.info(message, title);
+            }
+        }
+
+        // Simulate Email Notification
+        function simulateEmailNotification(subject, body) {
+            console.log(`EMAIL NOTIFICATION: ${subject} - ${body}`);
+            // In a real application, this would integrate with an email service like SendGrid, Mailgun, etc.
+        }
+
+        // Simulate WhatsApp Notification
+        function simulateWhatsAppNotification(message) {
+            console.log(`WHATSAPP NOTIFICATION: ${message}`);
+            // In a real application, this would integrate with WhatsApp Business API
+        }
+
+        // Simulate Google Calendar Notification
+        function simulateCalendarNotification(title, description, date) {
+            console.log(`CALENDAR NOTIFICATION: ${title} - ${description} - ${date}`);
+            // In a real application, this would integrate with Google Calendar API
+        }
+
+        // Modal Functionality
+        document.getElementById('signInBtn').addEventListener('click', function() {
+            document.getElementById('signInModal').style.display = 'flex';
+        });
+
+        document.getElementById('getStartedBtn').addEventListener('click', function() {
+            document.getElementById('getStartedModal').style.display = 'flex';
+        });
+
+        document.getElementById('closeScheduleModal').addEventListener('click', function() {
+            document.getElementById('scheduleModal').style.display = 'none';
+        });
+
+        document.getElementById('closeSignInModal').addEventListener('click', function() {
+            document.getElementById('signInModal').style.display = 'none';
+        });
+
+        document.getElementById('closeGetStartedModal').addEventListener('click', function() {
+            document.getElementById('getStartedModal').style.display = 'none';
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        });
+
+        // Sign In Functionality
+        document.getElementById('confirmSignInBtn').addEventListener('click', function() {
+            const email = document.getElementById('signInEmail').value;
+            const password = document.getElementById('signInPassword').value;
+            
+            if (!email || !password) {
+                toastr.error('Please enter both email and password');
+                return;
+            }
+            
+            // Close modal
+            document.getElementById('signInModal').style.display = 'none';
+            
+            // Show success message
+            toastr.success('Successfully signed in!');
+            
+            // In a real application, this would authenticate with a backend
+        });
+
+        // Get Started Functionality
+        document.getElementById('confirmGetStartedBtn').addEventListener('click', function() {
+            const name = document.getElementById('signUpName').value;
+            const email = document.getElementById('signUpEmail').value;
+            const password = document.getElementById('signUpPassword').value;
+            const confirmPassword = document.getElementById('signUpConfirmPassword').value;
+            const agreeTerms = document.getElementById('agreeTerms').checked;
+            
+            if (!name || !email || !password || !confirmPassword) {
+                toastr.error('Please fill all required fields');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                toastr.error('Passwords do not match');
+                return;
+            }
+            
+            if (!agreeTerms) {
+                toastr.error('Please agree to the Terms of Service and Privacy Policy');
+                return;
+            }
+            
+            // Close modal
+            document.getElementById('getStartedModal').style.display = 'none';
+            
+            // Show success message
+            toastr.success('Account created successfully! Welcome to Mwarokin.');
+            
+            // In a real application, this would create an account via API
+        });
+
+        // Property Search Functionality
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            const location = document.getElementById('searchLocation').value;
+            const propertyType = document.getElementById('propertyType').value;
+            const priceRange = document.getElementById('priceRange').value;
+            
+            let message = 'Searching properties';
+            if (location) message += ` in ${location}`;
+            if (propertyType) message += ` of type ${propertyType}`;
+            if (priceRange) message += ` in price range ${priceRange}`;
+            
+            toastr.info(message);
+            
+            // In a real application, this would call a search API
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Initialize with some demo notifications
+        window.addEventListener('load', function() {
+            // Demo notification after page load
+            setTimeout(() => {
+                addNotification('Welcome to Mwarokin', 'Your real estate management platform is ready to use!', 'success');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

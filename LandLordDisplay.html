@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Landlords Display</title>
+    <style>
+        /* Beautiful UI CSS */
+        body { font-family: 'Helvetica', Arial, sans-serif; background-color: #f4f7fa; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 20px; }
+        h1 { color: #2c3e50; text-align: center; }
+        .tab-buttons { display: flex; justify-content: center; margin-bottom: 20px; }
+        .tab-button { background: #3498db; color: white; border: none; padding: 10px 20px; margin: 0 5px; cursor: pointer; border-radius: 5px; transition: background 0.3s; }
+        .tab-button.active { background: #2980b9; }
+        .tab-button:hover { background: #2980b9; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .section-header { font-size: 1.5em; color: #34495e; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; margin-bottom: 20px; }
+        .metric { font-size: 1.1em; margin: 5px 0; }
+        .list-item { list-style-type: disc; margin-left: 20px; }
+        .accordion { background: #ecf0f1; padding: 10px; margin: 10px 0; cursor: pointer; border-radius: 5px; }
+        .accordion-content { display: none; padding: 10px; background: #fff; border: 1px solid #ecf0f1; border-radius: 5px; }
+        .action-buttons { display: flex; justify-content: center; margin-top: 20px; }
+        .action-btn { background: #27ae60; color: white; border: none; padding: 10px 20px; margin: 0 10px; cursor: pointer; border-radius: 5px; transition: background 0.3s; }
+        .action-btn:hover { background: #219d52; }
+        form { margin: 20px 0; }
+        input, select { padding: 8px; margin: 5px 0; width: 100%; border: 1px solid #bdc3c7; border-radius: 5px; }
+        .emoji { font-size: 1.2em; margin-right: 5px; }
+        /* Agentic Features Styles */
+        .agent-section { margin-top: 30px; border-top: 1px solid #ecf0f1; padding-top: 20px; }
+        .agent-form { background: #f9f9f9; padding: 15px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 Landlords Management System</h1>
+        
+        <!-- Tab Buttons -->
+        <div class="tab-buttons">
+            <button class="tab-button active" onclick="openTab('contact')">Contact Details</button>
+            <button class="tab-button" onclick="openTab('properties')">Properties</button>
+            <button class="tab-button" onclick="openTab('rent-summary')">Rent Summary</button>
+            <button class="tab-button" onclick="openTab('per-property')">Per-Property Metrics</button>
+            <button class="tab-button" onclick="openTab('services')">Available Services</button>
+            <button class="tab-button" onclick="openTab('agents')">Agentic Features</button>
+        </div>
+        
+        <!-- Tab Contents -->
+        <div id="contact" class="tab-content active">
+            <div class="section-header"><span class="emoji">📞</span>Contact Details</div>
+            <p class="metric">Name: <span id="landlord-name"></span></p>
+            <p class="metric">Email: <span id="landlord-email"></span></p>
+            <p class="metric">Phone: <span id="landlord-phone"></span></p>
+        </div>
+        
+        <div id="properties" class="tab-content">
+            <div class="section-header"><span class="emoji">🏘️</span>Properties Owned</div>
+            <p class="metric">Total Properties: <span id="total-properties"></span></p>
+            <ul id="properties-list"></ul>
+            <!-- Add Property Form -->
+            <div class="agent-section">
+                <h3>Add New Property</h3>
+                <form id="add-property-form">
+                    <input type="text" id="new-prop-id" placeholder="Property ID" required>
+                    <input type="text" id="new-prop-address" placeholder="Address" required>
+                    <button type="submit" class="action-btn">Add Property</button>
+                </form>
+            </div>
+        </div>
+        
+        <div id="rent-summary" class="tab-content">
+            <div class="section-header"><span class="emoji">💰</span>Overall Tenant and Rent Summary (This Month)</div>
+            <p class="metric">Total Tenants: <span id="total-tenants"></span></p>
+            <p class="metric">Paid This Month: <span id="paid-count"></span></p>
+            <p class="metric">Overdue: <span id="overdue-count"></span></p>
+            <p class="metric">Rent Collected: $<span id="rent-collected"></span></p>
+            <p class="metric">Overdue Amount: $<span id="overdue-amount"></span></p>
+            <p class="metric">On-Time %: <span id="on-time-pct"></span>%</p>
+            <p class="metric">Overdue %: <span id="overdue-pct"></span>%</p>
+            <p class="metric">Avg Rent per Tenant: $<span id="avg-rent-tenant"></span></p>
+            <p class="metric">Highest Rent: $<span id="highest-rent"></span></p>
+            <p class="metric">Lowest Rent: $<span id="lowest-rent"></span></p>
+            <p class="metric">Avg Tenants per Property: <span id="avg-tenants-prop"></span></p>
+            <p class="metric">Total Properties: <span id="total-properties-summary"></span></p>
+            <div class="section-header"><span class="emoji">✅</span>Tenants Who Paid</div>
+            <ul id="paid-tenants-list"></ul>
+            <div class="section-header"><span class="emoji">⚠️</span>Overdue Tenants</div>
+            <ul id="overdue-tenants-list"></ul>
+        </div>
+        
+        <div id="per-property" class="tab-content">
+            <div class="section-header"><span class="emoji">📊</span>Per-Property Detailed Metrics</div>
+            <div id="per-property-accordions"></div>
+        </div>
+        
+        <div id="services" class="tab-content">
+            <div class="section-header"><span class="emoji">🛠️</span>Available Services</div>
+            <ul id="services-list"></ul>
+        </div>
+        
+        <div id="agents" class="tab-content">
+            <div class="section-header">Agentic Features (Simulated Agents)</div>
+            <!-- Listing Agent -->
+            <div class="agent-section">
+                <h3>Listing Agent: Intake & Validate Listing</h3>
+                <form class="agent-form" id="listing-form">
+                    <input type="text" id="listing-address" placeholder="Property Address" required>
+                    <input type="text" id="listing-type" placeholder="Type (residential/commercial/land)" required>
+                    <button type="submit" class="action-btn">Validate Listing</button>
+                </form>
+                <p id="listing-result"></p>
+            </div>
+            <!-- Valuation Agent -->
+            <div class="agent-section">
+                <h3>Valuation Agent: Get Valuation</h3>
+                <form class="agent-form" id="valuation-form">
+                    <input type="text" id="val-address" placeholder="Address or Listing ID" required>
+                    <button type="submit" class="action-btn">Get Valuation</button>
+                </form>
+                <p id="valuation-result"></p>
+            </div>
+            <!-- Pricing Agent -->
+            <div class="agent-section">
+                <h3>Pricing Agent: Dynamic Pricing</h3>
+                <form class="agent-form" id="pricing-form">
+                    <input type="text" id="price-listing" placeholder="Listing ID" required>
+                    <button type="submit" class="action-btn">Suggest Price</button>
+                </form>
+                <p id="pricing-result"></p>
+            </div>
+            <!-- Matchmaking Agent -->
+            <div class="agent-section">
+                <h3>Matchmaking Agent: Match Buyers/Tenants</h3>
+                <form class="agent-form" id="match-form">
+                    <input type="text" id="match-profile" placeholder="Buyer/Tenant Profile (e.g., budget:1000)" required>
+                    <button type="submit" class="action-btn">Find Matches</button>
+                </form>
+                <p id="match-result"></p>
+            </div>
+            <!-- Lead CRM Agent -->
+            <div class="agent-section">
+                <h3>Lead CRM Agent: Capture Lead</h3>
+                <form class="agent-form" id="lead-form">
+                    <input type="text" id="lead-name" placeholder="Lead Name" required>
+                    <input type="email" id="lead-email" placeholder="Email" required>
+                    <button type="submit" class="action-btn">Add Lead</button>
+                </form>
+                <p id="lead-result"></p>
+            </div>
+            <!-- Lease Agent -->
+            <div class="agent-section">
+                <h3>Lease Agent: Create Draft Lease</h3>
+                <form class="agent-form" id="lease-form">
+                    <input type="text" id="lease-listing" placeholder="Listing ID" required>
+                    <input type="text" id="lease-applicant" placeholder="Applicant ID" required>
+                    <button type="submit" class="action-btn">Create Draft</button>
+                </form>
+                <p id="lease-result"></p>
+            </div>
+            <!-- Transaction Agent -->
+            <div class="agent-section">
+                <h3>Transaction Agent: Check Readiness</h3>
+                <form class="agent-form" id="transaction-form">
+                    <input type="text" id="trans-listing" placeholder="Listing ID" required>
+                    <button type="submit" class="action-btn">Check Status</button>
+                </form>
+                <p id="transaction-result"></p>
+            </div>
+            <!-- Compliance Agent -->
+            <div class="agent-section">
+                <h3>Compliance Agent: KYC/AML Check</h3>
+                <form class="agent-form" id="compliance-form">
+                    <input type="text" id="comp-user" placeholder="User ID" required>
+                    <button type="submit" class="action-btn">Perform Check</button>
+                </form>
+                <p id="compliance-result"></p>
+            </div>
+            <!-- Analytics Agent -->
+            <div class="agent-section">
+                <h3>Analytics Agent: Get KPIs</h3>
+                <button class="action-btn" onclick="getAnalytics()">Generate Analytics</button>
+                <p id="analytics-result"></p>
+            </div>
+            <!-- Add Tenant Form (Part of Lead/Lease) -->
+            <div class="agent-section">
+                <h3>Add New Tenant to Property</h3>
+                <form id="add-tenant-form">
+                    <select id="tenant-property-id" required></select>
+                    <input type="text" id="new-tenant-name" placeholder="Tenant Name" required>
+                    <input type="email" id="new-tenant-email" placeholder="Email" required>
+                    <input type="text" id="new-tenant-phone" placeholder="Phone" required>
+                    <input type="number" id="new-tenant-rent" placeholder="Rent Amount" required>
+                    <button type="submit" class="action-btn">Add Tenant</button>
+                </form>
+            </div>
+            <!-- Add Payment Form -->
+            <div class="agent-section">
+                <h3>Add Payment for Tenant</h3>
+                <form id="add-payment-form">
+                    <select id="payment-property-id" required></select>
+                    <select id="payment-tenant-name" required></select>
+                    <input type="date" id="payment-date" required>
+                    <select id="payment-status" required>
+                        <option value="paid">Paid</option>
+                        <option value="overdue">Overdue</option>
+                    </select>
+                    <button type="submit" class="action-btn">Add Payment</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="action-btn" onclick="refreshData()">Refresh Data</button>
+            <button class="action-btn" onclick="exportReport()">Export Report</button>
+            <button class="action-btn" onclick="sendReminders()">Send Reminders to Overdue</button>
+        </div>
+    </div>
+    
+    <script>
+        // Sample Data (Stored in localStorage for persistence)
+        let landlord = JSON.parse(localStorage.getItem('landlordData')) || {
+            name: 'John Doe',
+            email: 'john@example.com',
+            phone: '123-456-7890',
+            properties: [
+                {
+                    id: '1',
+                    address: '123 Main St',
+                    tenants: [
+                        {
+                            name: 'Tenant A',
+                            email: 'a@example.com',
+                            phone: '111-222-3333',
+                            rent_amount: 1200,
+                            payments: [
+                                { date: new Date(2025, 8, 5), status: 'paid' }  // September 2025
+                            ]
+                        },
+                        {
+                            name: 'Tenant B',
+                            email: 'b@example.com',
+                            phone: '444-555-6666',
+                            rent_amount: 1500,
+                            payments: []  // Overdue
+                        }
+                    ]
+                },
+                {
+                    id: '2',
+                    address: '456 Elm St',
+                    tenants: [
+                        {
+                            name: 'Tenant C',
+                            email: 'c@example.com',
+                            phone: '777-888-9999',
+                            rent_amount: 1000,
+                            payments: [
+                                { date: new Date(2025, 8, 10), status: 'paid' }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // Services List (Static)
+        const services = [
+            "Maintenance Requests", "Lease Renewals", "Payment Processing", "Tenant Screening",
+            "Property Inspections", "Legal Compliance", "Financial Reporting", "Communication Tools",
+            "Document Management", "Marketing and Advertising", "Online Portals", "Mobile Access",
+            "24/7 Support", "Analytics and Insights", "Customizable Workflows",
+            "Integration with Other Systems", "Automated Reminders and Notifications",
+            "Multi-Language Support", "User Roles and Permissions", "Data Security and Privacy",
+            "Regular Updates and Improvements", "Training and Onboarding", "Customer Success Management",
+            "Community Forums and Resources", "Feedback and Suggestions", "Scalability and Flexibility",
+            "Competitive Pricing and Packages"
+        ];
+
+        // Tab Switching
+        function openTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`[onclick="openTab('${tabId}')"]`).classList.add('active');
+        }
+
+        // Calculate Metrics (Similar to Python logic)
+        function calculateMetrics() {
+            const now = new Date(2025, 8, 11);  // Fixed date: September 11, 2025
+            const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+            const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+
+            const properties = landlord.properties;
+            const totalProperties = properties.length;
+            const totalTenants = properties.reduce((sum, prop) => sum + (prop.tenants ? prop.tenants.length : 0), 0);
+            const avgTenantsPerProperty = totalProperties > 0 ? totalTenants / totalProperties : 0;
+
+            let paidTenants = [];
+            let overdueTenants = [];
+            let totalRentCollected = 0;
+            let totalOverdueAmount = 0;
+            let allRentAmounts = [];
+
+            let propertyMetrics = [];
+
+            properties.forEach(prop => {
+                const propTenants = prop.tenants || [];
+                const propTotalTenants = propTenants.length;
+                let propPaidTenants = [];
+                let propOverdueTenants = [];
+                let propRentCollected = 0;
+                let propOverdueAmount = 0;
+                let propRentAmounts = [];
+
+                propTenants.forEach(tenant => {
+                    const rent = tenant.rent_amount || 0;
+                    allRentAmounts.push(rent);
+                    propRentAmounts.push(rent);
+                    const monthlyPayments = (tenant.payments || []).filter(p => p.date >= currentMonthStart && p.date <= currentMonthEnd);
+                    const paidThisMonth = monthlyPayments.some(p => p.status === 'paid');
+
+                    if (paidThisMonth) {
+                        totalRentCollected += rent;
+                        propRentCollected += rent;
+                        paidTenants.push(tenant);
+                        propPaidTenants.push(tenant);
+                    } else {
+                        totalOverdueAmount += rent;
+                        propOverdueAmount += rent;
+                        overdueTenants.push(tenant);
+                        propOverdueTenants.push(tenant);
+                    }
+                });
+
+                const propPaidCount = propPaidTenants.length;
+                const propOverdueCount = propOverdueTenants.length;
+                let propOnTimePct = propTotalTenants > 0 ? (propPaidCount / propTotalTenants) * 100 : 0;
+                let propOverduePct = propTotalTenants > 0 ? (propOverdueCount / propTotalTenants) * 100 : 0;
+                let propAvgRentTenant = propTotalTenants > 0 ? propRentAmounts.reduce((a, b) => a + b, 0) / propTotalTenants : 0;
+                let propHighestRent = propRentAmounts.length > 0 ? Math.max(...propRentAmounts) : 0;
+                let propLowestRent = propRentAmounts.length > 0 ? Math.min(...propRentAmounts) : 0;
+                let propAvgRentPerProp = propRentAmounts.reduce((a, b) => a + b, 0);
+
+                propertyMetrics.push({
+                    property: prop,
+                    paidCount: propPaidCount,
+                    overdueCount: propOverdueCount,
+                    rentCollected: propRentCollected,
+                    overdueAmount: propOverdueAmount,
+                    onTimePct: propOnTimePct,
+                    overduePct: propOverduePct,
+                    avgRentTenant: propAvgRentTenant,
+                    highestRent: propHighestRent,
+                    lowestRent: propLowestRent,
+                    totalTenants: propTotalTenants,
+                    avgRentPerProp: propAvgRentPerProp,
+                    paidTenants: propPaidTenants,
+                    overdueTenants: propOverdueTenants
+                });
+            });
+
+            const totalTenantsOverall = allRentAmounts.length;
+            const paidCount = paidTenants.length;
+            const overdueCount = overdueTenants.length;
+            const onTimePercentage = totalTenantsOverall > 0 ? (paidCount / totalTenantsOverall) * 100 : 0;
+            const overduePercentage = totalTenantsOverall > 0 ? (overdueCount / totalTenantsOverall) * 100 : 0;
+            const avgRentPerTenant = totalTenantsOverall > 0 ? allRentAmounts.reduce((a, b) => a + b, 0) / totalTenantsOverall : 0;
+            const highestRent = allRentAmounts.length > 0 ? Math.max(...allRentAmounts) : 0;
+            const lowestRent = allRentAmounts.length > 0 ? Math.min(...allRentAmounts) : 0;
+
+            return {
+                totalProperties, totalTenants, avgTenantsPerProperty, paidTenants, overdueTenants,
+                totalRentCollected, totalOverdueAmount, allRentAmounts, propertyMetrics,
+                totalTenantsOverall, paidCount, overdueCount, onTimePercentage, overduePercentage,
+                avgRentPerTenant, highestRent, lowestRent
+            };
+        }
+
+        // Update Displays
+        function updateDisplays() {
+            const metrics = calculateMetrics();
+
+            // Contact
+            document.getElementById('landlord-name').textContent = landlord.name;
+            document.getElementById('landlord-email').textContent = landlord.email;
+            document.getElementById('landlord-phone').textContent = landlord.phone;
+
+            // Properties
+            document.getElementById('total-properties').textContent = metrics.totalProperties;
+            const propList = document.getElementById('properties-list');
+            propList.innerHTML = '';
+            landlord.properties.forEach(prop => {
+                const li = document.createElement('li');
+                li.classList.add('list-item');
+                li.textContent = `${prop.address} (ID: ${prop.id})`;
+                propList.appendChild(li);
+            });
+
+            // Rent Summary
+            document.getElementById('total-tenants').textContent = metrics.totalTenantsOverall;
+            document.getElementById('paid-count').textContent = metrics.paidCount;
+            document.getElementById('overdue-count').textContent = metrics.overdueCount;
+            document.getElementById('rent-collected').textContent = metrics.totalRentCollected.toFixed(2);
+            document.getElementById('overdue-amount').textContent = metrics.totalOverdueAmount.toFixed(2);
+            document.getElementById('on-time-pct').textContent = metrics.onTimePercentage.toFixed(1);
+            document.getElementById('overdue-pct').textContent = metrics.overduePercentage.toFixed(1);
+            document.getElementById('avg-rent-tenant').textContent = metrics.avgRentPerTenant.toFixed(2);
+            document.getElementById('highest-rent').textContent = metrics.highestRent.toFixed(2);
+            document.getElementById('lowest-rent').textContent = metrics.lowestRent.toFixed(2);
+            document.getElementById('avg-tenants-prop').textContent = metrics.avgTenantsPerProperty.toFixed(1);
+            document.getElementById('total-properties-summary').textContent = metrics.totalProperties;
+
+            const paidList = document.getElementById('paid-tenants-list');
+            paidList.innerHTML = '';
+            metrics.paidTenants.forEach(tenant => {
+                const li = document.createElement('li');
+                li.classList.add('list-item');
+                li.textContent = `${tenant.name} (${tenant.email}, ${tenant.phone})`;
+                paidList.appendChild(li);
+            });
+
+            const overdueList = document.getElementById('overdue-tenants-list');
+            overdueList.innerHTML = '';
+            metrics.overdueTenants.forEach(tenant => {
+                const li = document.createElement('li');
+                li.classList.add('list-item');
+                li.textContent = `${tenant.name} (${tenant.email}, ${tenant.phone})`;
+                overdueList.appendChild(li);
+            });
+
+            // Per-Property
+            const perPropAcc = document.getElementById('per-property-accordions');
+            perPropAcc.innerHTML = '';
+            metrics.propertyMetrics.forEach(metric => {
+                const acc = document.createElement('div');
+                acc.classList.add('accordion');
+                acc.textContent = `Property: ${metric.property.address} (ID: ${metric.property.id})`;
+                acc.onclick = () => {
+                    const content = acc.nextSibling;
+                    content.style.display = content.style.display === 'block' ? 'none' : 'block';
+                };
+
+                const content = document.createElement('div');
+                content.classList.add('accordion-content');
+                content.innerHTML = `
+                    <p class="metric">Total Tenants: ${metric.totalTenants}</p>
+                    <p class="metric">Paid This Month: ${metric.paidCount}</p>
+                    <p class="metric">Overdue: ${metric.overdueCount}</p>
+                    <p class="metric">Rent Collected: $${metric.rentCollected.toFixed(2)}</p>
+                    <p class="metric">Overdue Amount: $${metric.overdueAmount.toFixed(2)}</p>
+                    <p class="metric">On-Time %: ${metric.onTimePct.toFixed(1)}%</p>
+                    <p class="metric">Overdue %: ${metric.overduePct.toFixed(1)}%</p>
+                    <p class="metric">Avg Rent per Tenant: $${metric.avgRentTenant.toFixed(2)}</p>
+                    <p class="metric">Highest Rent: $${metric.highestRent.toFixed(2)}</p>
+                    <p class="metric">Lowest Rent: $${metric.lowestRent.toFixed(2)}</p>
+                    <p class="metric">Avg Rent per Property: $${metric.avgRentPerProp.toFixed(2)}</p>
+                    <div class="section-header"><span class="emoji">✅</span>Paid Tenants</div>
+                    <ul>${metric.paidTenants.map(t => `<li class="list-item">${t.name} (${t.email}, ${t.phone})</li>`).join('')}</ul>
+                    <div class="section-header"><span class="emoji">⚠️</span>Overdue Tenants</div>
+                    <ul>${metric.overdueTenants.map(t => `<li class="list-item">${t.name} (${t.email}, ${t.phone})</li>`).join('')}</ul>
+                `;
+
+                perPropAcc.appendChild(acc);
+                perPropAcc.appendChild(content);
+            });
+
+            // Services
+            const servList = document.getElementById('services-list');
+            servList.innerHTML = '';
+            services.forEach(service => {
+                const li = document.createElement('li');
+                li.classList.add('list-item');
+                li.textContent = service;
+                servList.appendChild(li);
+            });
+
+            // Populate Selects for Forms
+            const propSelects = [document.getElementById('tenant-property-id'), document.getElementById('payment-property-id')];
+            propSelects.forEach(select => {
+                select.innerHTML = '<option value="">Select Property</option>';
+                landlord.properties.forEach(prop => {
+                    const option = document.createElement('option');
+                    option.value = prop.id;
+                    option.textContent = `${prop.address} (ID: ${prop.id})`;
+                    select.appendChild(option);
+                });
+            });
+
+            // Tenant Select for Payment
+            document.getElementById('payment-property-id').addEventListener('change', (e) => {
+                const propId = e.target.value;
+                const tenantSelect = document.getElementById('payment-tenant-name');
+                tenantSelect.innerHTML = '<option value="">Select Tenant</option>';
+                const prop = landlord.properties.find(p => p.id === propId);
+                if (prop) {
+                    prop.tenants.forEach(tenant => {
+                        const option = document.createElement('option');
+                        option.value = tenant.name;
+                        option.textContent = tenant.name;
+                        tenantSelect.appendChild(option);
+                    });
+                }
+            });
+        }
+
+        // Refresh Data
+        function refreshData() {
+            updateDisplays();
+            alert('Data refreshed successfully!');
+        }
+
+        // Export Report
+        function exportReport() {
+            const metrics = calculateMetrics();
+            const report = `
+Landlord: ${landlord.name}
+Email: ${landlord.email}
+Phone: ${landlord.phone}
+Total Properties: ${metrics.totalProperties}
+Total Tenants: ${metrics.totalTenantsOverall}
+Rent Collected: $${metrics.totalRentCollected.toFixed(2)}
+Overdue: $${metrics.totalOverdueAmount.toFixed(2)}
+            `;
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'landlord_report.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+            alert('Report exported!');
+        }
+
+        // Send Reminders
+        function sendReminders() {
+            const metrics = calculateMetrics();
+            if (metrics.overdueTenants.length > 0) {
+                alert(`Reminders sent to ${metrics.overdueTenants.length} overdue tenants (simulated).`);
+            } else {
+                alert('No overdue tenants.');
+            }
+        }
+
+        // Add Property
+        document.getElementById('add-property-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('new-prop-id').value;
+            const address = document.getElementById('new-prop-address').value;
+            if (landlord.properties.find(p => p.id === id)) {
+                alert('Property ID already exists.');
+                return;
+            }
+            landlord.properties.push({ id, address, tenants: [] });
+            saveData();
+            updateDisplays();
+            e.target.reset();
+            alert('Property added!');
+        });
+
+        // Add Tenant
+        document.getElementById('add-tenant-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const propId = document.getElementById('tenant-property-id').value;
+            const name = document.getElementById('new-tenant-name').value;
+            const email = document.getElementById('new-tenant-email').value;
+            const phone = document.getElementById('new-tenant-phone').value;
+            const rent = parseFloat(document.getElementById('new-tenant-rent').value);
+            const prop = landlord.properties.find(p => p.id === propId);
+            if (prop) {
+                prop.tenants.push({ name, email, phone, rent_amount: rent, payments: [] });
+                saveData();
+                updateDisplays();
+                e.target.reset();
+                alert('Tenant added!');
+            }
+        });
+
+        // Add Payment
+        document.getElementById('add-payment-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const propId = document.getElementById('payment-property-id').value;
+            const tenantName = document.getElementById('payment-tenant-name').value;
+            const dateStr = document.getElementById('payment-date').value;
+            const status = document.getElementById('payment-status').value;
+            const date = new Date(dateStr);
+            const prop = landlord.properties.find(p => p.id === propId);
+            if (prop) {
+                const tenant = prop.tenants.find(t => t.name === tenantName);
+                if (tenant) {
+                    tenant.payments.push({ date, status });
+                    saveData();
+                    updateDisplays();
+                    e.target.reset();
+                    alert('Payment added!');
+                }
+            }
+        });
+
+        // Agentic Features (Simulated)
+        // Listing Agent
+        document.getElementById('listing-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const address = document.getElementById('listing-address').value;
+            const type = document.getElementById('listing-type').value;
+            // Simulate validation
+            document.getElementById('listing-result').textContent = `Listing validated: ${type} at ${address}. Enriched with geocoding (simulated).`;
+        });
+
+        // Valuation Agent
+        document.getElementById('valuation-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const address = document.getElementById('val-address').value;
+            // Simulate
+            const low = Math.floor(Math.random() * 100000 + 200000);
+            const high = low + Math.floor(Math.random() * 50000);
+            document.getElementById('valuation-result').textContent = `Valuation for ${address}: $${low} - $${high} (confidence: 85%, sources: simulated comps).`;
+        });
+
+        // Pricing Agent
+        document.getElementById('pricing-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const listing = document.getElementById('price-listing').value;
+            // Simulate
+            const price = Math.floor(Math.random() * 1000 + 1000);
+            document.getElementById('pricing-result').textContent = `Suggested price for ${listing}: $${price} (considering market trends).`;
+        });
+
+        // Matchmaking Agent
+        document.getElementById('match-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const profile = document.getElementById('match-profile').value;
+            // Simulate
+            document.getElementById('match-result').textContent = `Matches for ${profile}: Property 1 (score: 0.9), Property 2 (score: 0.8).`;
+        });
+
+        // Lead CRM Agent
+        document.getElementById('lead-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('lead-name').value;
+            const email = document.getElementById('lead-email').value;
+            // Simulate
+            document.getElementById('lead-result').textContent = `Lead captured: ${name} (${email}). Scored and routed (simulated).`;
+        });
+
+        // Lease Agent
+        document.getElementById('lease-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const listing = document.getElementById('lease-listing').value;
+            const applicant = document.getElementById('lease-applicant').value;
+            // Simulate
+            document.getElementById('lease-result').textContent = `Lease draft created for ${listing} and ${applicant} (clauses and schedule simulated).`;
+        });
+
+        // Transaction Agent
+        document.getElementById('transaction-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const listing = document.getElementById('trans-listing').value;
+            // Simulate
+            document.getElementById('transaction-result').textContent = `Transaction readiness for ${listing}: Checklist complete (simulated).`;
+        });
+
+        // Compliance Agent
+        document.getElementById('compliance-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const user = document.getElementById('comp-user').value;
+            // Simulate
+            document.getElementById('compliance-result').textContent = `KYC/AML check for ${user}: Passed (simulated).`;
+        });
+
+        // Analytics Agent
+        function getAnalytics() {
+            const metrics = calculateMetrics();
+            document.getElementById('analytics-result').textContent = `KPIs: Conversion rate 75%, Occupancy 90%, NOI $${metrics.totalRentCollected * 0.8} (simulated).`;
+        }
+
+        // Save Data to localStorage
+        function saveData() {
+            localStorage.setItem('landlordData', JSON.stringify(landlord));
+        }
+
+        // Initial Update
+        updateDisplays();
+    </script>
+</body>
+</html>
