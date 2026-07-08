@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Tenant Management Overview</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2d3436, #d63031);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 5px solid #b71c1c;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        header p {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background-color: #d63031;
+            color: white;
+            font-size: 1.3em;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .stat-card {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h6 {
+            margin: 0;
+            color: #555;
+            font-size: 1em;
+        }
+
+        .stat-card h3 {
+            margin: 10px 0 0;
+            color: #d63031;
+            font-size: 1.8em;
+        }
+
+        .table {
+            margin-top: 20px;
+        }
+
+        .badge {
+            padding: 8px 12px;
+            font-size: 0.9em;
+        }
+
+        .btn-primary {
+            background-color: #d63031;
+            border-color: #d63031;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #b71c1c;
+            border-color: #b71c1c;
+        }
+
+        canvas {
+            max-height: 400px;
+        }
+
+        .tenant-message {
+            background-color: #e6ecef;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .tenant-message p {
+            margin: 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #2d3436;
+            color: white;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .container-fluid {
+                padding: 10px;
+            }
+
+            .stat-card {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Mwarokin Estates - Admin & Insights</h1>
+        <p>Manage tenant communications, monitor performance metrics, and generate reports.</p>
+    </header>
+
+    <div class="container-fluid">
+        <!-- Performance Metrics -->
+        <div class="card">
+            <div class="card-header">
+                <h5>Performance Metrics</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h6>Payment Compliance Rate</h6>
+                            <h3 id="compliance-rate">0%</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h6>Service Request Resolution Time</h6>
+                            <h3 id="resolution-time">0 hours</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h6>Overdue Accounts</h6>
+                            <h3 id="overdue-accounts">0</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h6>Tenant Satisfaction Score</h6>
+                            <h3 id="satisfaction-score">0/5</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tenant Communication Center -->
+        <div class="card">
+            <div class="card-header">
+                <h5>Tenant Communication Center</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Send Bulk Message</h6>
+                        <div class="form-group">
+                            <label for="message-type">Message Type:</label>
+                            <select id="message-type" class="form-control">
+                                <option value="announcement">Announcement</option>
+                                <option value="reminder">Payment Reminder</option>
+                                <option value="maintenance">Maintenance Update</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="message-content">Message Content:</label>
+                            <textarea id="message-content" class="form-control" rows="4" placeholder="Enter message..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="message-channel">Delivery Channel:</label>
+                            <select id="message-channel" class="form-control">
+                                <option value="email">Email</option>
+                                <option value="sms">SMS</option>
+                                <option value="whatsapp">WhatsApp</option>
+                                <option value="all">All Channels</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" onclick="sendBulkMessage()">Send Message</button>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Recent Messages</h6>
+                        <div id="message-log" class="message-log">
+                            <!-- Messages will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Generator -->
+        <div class="card">
+            <div class="card-header">
+                <h5>Custom Report Generator</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="report-type">Report Type:</label>
+                            <select id="report-type" class="form-control">
+                                <option value="financial">Financial Overview</option>
+                                <option value="service">Service Requests</option>
+                                <option value="tenant">Tenant Demographics</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="report-period">Period:</label>
+                            <select id="report-period" class="form-control">
+                                <option value="30">Last 30 Days</option>
+                                <option value="90">Last 90 Days</option>
+                                <option value="365">Last Year</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" onclick="generateReport()">Generate Report</button>
+                    </div>
+                    <div class="col-md-8">
+                        <canvas id="report-chart" style="max-height: 400px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Mwarokin Estates - Admin & Insights &copy; 2026. Powered By: Syllogism Technology Africa. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Simulated backend data
+        const adminData = {
+            metrics: {
+                complianceRate: 85.5,
+                resolutionTime: 24,
+                overdueAccounts: 3,
+                satisfactionScore: 4.2
+            },
+            messages: [
+                { date: '2025-09-01', type: 'Announcement', content: 'Community meeting scheduled for next week.', channel: 'Email' },
+                { date: '2025-09-05', type: 'Reminder', content: 'Rent due on 2025-09-10.', channel: 'SMS' }
+            ],
+            reportData: {
+                financial: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    data: [12000, 11000, 12500, 13000, 11500, 12200]
+                },
+                service: {
+                    labels: ['Plumbing', 'Electrical', 'General'],
+                    data: [15, 10, 8]
+                },
+                tenant: {
+                    labels: ['18-30', '31-50', '51+'],
+                    data: [20, 35, 15]
+                }
+            }
+        };
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Populate metrics
+            document.getElementById('compliance-rate').textContent = `${adminData.metrics.complianceRate}%`;
+            document.getElementById('resolution-time').textContent = `${adminData.metrics.resolutionTime} hours`;
+            document.getElementById('overdue-accounts').textContent = adminData.metrics.overdueAccounts;
+            document.getElementById('satisfaction-score').textContent = `${adminData.metrics.satisfactionScore}/5`;
+
+            // Populate message log
+            const messageLog = document.getElementById('message-log');
+            adminData.messages.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = 'tenant-message';
+                div.innerHTML = `<p>[${msg.date}] ${msg.type} (${msg.channel}): ${msg.content}</p>`;
+                messageLog.appendChild(div);
+            });
+
+            // Initialize report chart
+            const ctx = document.getElementById('report-chart').getContext('2d');
+            window.reportChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: adminData.reportData.financial.labels,
+                    datasets: [{
+                        label: 'Financial Overview ($)',
+                        data: adminData.reportData.financial.data,
+                        backgroundColor: '#d63031',
+                        borderColor: '#b71c1c',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Amount ($)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Month'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        // Send bulk message
+        function sendBulkMessage() {
+            const type = document.getElementById('message-type').value;
+            const content = document.getElementById('message-content').value;
+            const channel = document.getElementById('message-channel').value;
+
+            if (!content) {
+                alert('Please provide a message content.');
+                return;
+            }
+
+            const messageLog = document.getElementById('message-log');
+            const div = document.createElement('div');
+            div.className = 'tenant-message';
+            div.innerHTML = `<p>[${new Date().toISOString().split('T')[0]}] ${type} (${channel}): ${content}</p>`;
+            messageLog.appendChild(div);
+            alert(`Bulk message sent via ${channel}: ${content}`);
+            document.getElementById('message-content').value = '';
+            // In a real app, send to backend
+        }
+
+        // Generate report
+        function generateReport() {
+            const type = document.getElementById('report-type').value;
+            const period = document.getElementById('report-period').value;
+            const reportData = adminData.reportData[type];
+            const chartType = type === 'financial' ? 'bar' : 'pie';
+
+            window.reportChart.destroy();
+            const ctx = document.getElementById('report-chart').getContext('2d');
+            window.reportChart = new Chart(ctx, {
+                type: chartType,
+                data: {
+                    labels: reportData.labels,
+                    datasets: [{
+                        label: type.charAt(0).toUpperCase() + type.slice(1),
+                        data: reportData.data,
+                        backgroundColor: type === 'financial' ? '#d63031' : ['#d63031', '#b71c1c', '#ff7675'],
+                        borderColor: '#b71c1c',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: type === 'financial' ? {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Amount ($)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Month'
+                            }
+                        }
+                    } : {}
+                }<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates Real Estate Tenant Portal - Admin & Insights</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2d3436, #d63031);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 5px solid #b71c1c;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        header p {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background-color: #d63031;
+            color: white;
+            font-size: 1.3em;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .stat-card {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h6 {
+            margin: 0;
+            color: #555;
+            font-size: 1em;
+        }
+
+        .stat-card h3 {
+            margin: 10px 0 0;
+            color: #d63031;
+            font-size: 1.8em;
+        }
+
+        .table {
+            margin-top: 20px;
+        }
+
+        .badge {
+            padding: 8px 12px;
+            font-size: 0.9em;
+        }
+
+        .btn-primary {
+            background-color: #d63031;
+            border-color: #d63031;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #b71c1c;
+            border-color: #b71c1c;
+        }
+
+        canvas {
+            max-height: 400px;
+        }
+
+        .tenant-message {
+            background-color: #e6ecef;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .tenant-message p {
+            margin: 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #2d3436;
+            color: white;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .container-fluid {
+                padding: 10px;
+            }
+
+            .stat-card {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Mwarokin Estates Tenant Portal - Admin & Insights</h1>
+        <p>Manage tenant communications, monitor performance metrics, and generate reports.</p>
+    </header>
+
+    <div class="container-fluid">
+        <!-- Performance Metrics -->
+        <div class="card">
+            <div class="card-header">
+                <h5>Performance Metrics</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h6>Payment Compliance Rate</h6>
+                            <h3 id="compliance-rate">0%</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h6>Service Request Resolution Time</h6>
+                            <h3 id="resolution-time">0 hours</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h6>Overdue Accounts</h6>
+                            <h3 id="overdue-accounts">0</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h6>Tenant Satisfaction Score</h6>
+                            <h3 id="satisfaction-score">0/5</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tenant Communication Center -->
+        <div class="card">
+            <div class="card-header">
+                <h5>Tenant Communication Center</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Send Bulk Message</h6>
+                        <div class="form-group">
+                            <label for="message-type">Message Type:</label>
+                            <select id="message-type" class="form-control">
+                                <option value="announcement">Announcement</option>
+                                <option value="reminder">Payment Reminder</option>
+                                <option value="maintenance">Maintenance Update</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="message-content">Message Content:</label>
+                            <textarea id="message-content" class="form-control" rows="4" placeholder="Enter message..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="message-channel">Delivery Channel:</label>
+                            <select id="message-channel" class="form-control">
+                                <option value="email">Email</option>
+                                <option value="sms">SMS</option>
+                                <option value="whatsapp">WhatsApp</option>
+                                <option value="all">All Channels</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" onclick="sendBulkMessage()">Send Message</button>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Recent Messages</h6>
+                        <div id="message-log" class="message-log">
+                            <!-- Messages will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Generator -->
+        <div class="card">
+            <div class="card-header">
+                <h5>Custom Report Generator</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="report-type">Report Type:</label>
+                            <select id="report-type" class="form-control">
+                                <option value="financial">Financial Overview</option>
+                                <option value="service">Service Requests</option>
+                                <option value="tenant">Tenant Demographics</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="report-period">Period:</label>
+                            <select id="report-period" class="form-control">
+                                <option value="30">Last 30 Days</option>
+                                <option value="90">Last 90 Days</option>
+                                <option value="365">Last Year</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" onclick="generateReport()">Generate Report</button>
+                    </div>
+                    <div class="col-md-8">
+                        <canvas id="report-chart" style="max-height: 400px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Mwarokin Estates Real Estate &copy; 2025-2026 . All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Simulated backend data
+        const adminData = {
+            metrics: {
+                complianceRate: 85.5,
+                resolutionTime: 24,
+                overdueAccounts: 3,
+                satisfactionScore: 4.2
+            },
+            messages: [
+                { date: '2025-09-01', type: 'Announcement', content: 'Community meeting scheduled for next week.', channel: 'Email' },
+                { date: '2025-09-05', type: 'Reminder', content: 'Rent due on 2025-09-10.', channel: 'SMS' }
+            ],
+            reportData: {
+                financial: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    data: [12000, 11000, 12500, 13000, 11500, 12200]
+                },
+                service: {
+                    labels: ['Plumbing', 'Electrical', 'General'],
+                    data: [15, 10, 8]
+                },
+                tenant: {
+                    labels: ['18-30', '31-50', '51+'],
+                    data: [20, 35, 15]
+                }
+            }
+        };
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Populate metrics
+            document.getElementById('compliance-rate').textContent = `${adminData.metrics.complianceRate}%`;
+            document.getElementById('resolution-time').textContent = `${adminData.metrics.resolutionTime} hours`;
+            document.getElementById('overdue-accounts').textContent = adminData.metrics.overdueAccounts;
+            document.getElementById('satisfaction-score').textContent = `${adminData.metrics.satisfactionScore}/5`;
+
+            // Populate message log
+            const messageLog = document.getElementById('message-log');
+            adminData.messages.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = 'tenant-message';
+                div.innerHTML = `<p>[${msg.date}] ${msg.type} (${msg.channel}): ${msg.content}</p>`;
+                messageLog.appendChild(div);
+            });
+
+            // Initialize report chart
+            const ctx = document.getElementById('report-chart').getContext('2d');
+            window.reportChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: adminData.reportData.financial.labels,
+                    datasets: [{
+                        label: 'Financial Overview ($)',
+                        data: adminData.reportData.financial.data,
+                        backgroundColor: '#d63031',
+                        borderColor: '#b71c1c',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Amount ($)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Month'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        // Send bulk message
+        function sendBulkMessage() {
+            const type = document.getElementById('message-type').value;
+            const content = document.getElementById('message-content').value;
+            const channel = document.getElementById('message-channel').value;
+
+            if (!content) {
+                alert('Please provide a message content.');
+                return;
+            }
+
+            const messageLog = document.getElementById('message-log');
+            const div = document.createElement('div');
+            div.className = 'tenant-message';
+            div.innerHTML = `<p>[${new Date().toISOString().split('T')[0]}] ${type} (${channel}): ${content}</p>`;
+            messageLog.appendChild(div);
+            alert(`Bulk message sent via ${channel}: ${content}`);
+            document.getElementById('message-content').value = '';
+            // In a real app, send to backend
+        }
+
+        // Generate report
+        function generateReport() {
+            const type = document.getElementById('report-type').value;
+            const period = document.getElementById('report-period').value;
+            const reportData = adminData.reportData[type];
+            const chartType = type === 'financial' ? 'bar' : 'pie';
+
+            window.reportChart.destroy();
+            const ctx = document.getElementById('report-chart').getContext('2d');
+            window.reportChart = new Chart(ctx, {
+                type: chartType,
+                data: {
+                    labels: reportData.labels,
+                    datasets: [{
+                        label: type.charAt(0).toUpperCase() + type.slice(1),
+                        data: reportData.data,
+                        backgroundColor: type === 'financial' ? '#d63031' : ['#d63031', '#b71c1c', '#ff7675'],
+                        borderColor: '#b71c1c',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: type === 'financial' ? {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Amount ($)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Month'
+                            }
+                        }
+                    } : {}
+                }
+            });
+
+            alert(`Report generated for ${type} over the last ${period} days.`);
+            // In a real app, fetch data based on period
+        }
+    </script>
+</body>
+</html>

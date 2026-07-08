@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mwarokin Estates — Track-Rent Ledger</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --obsidian:#0B1710;
+  --forest-deep:#0F2318;
+  --forest:#153426;
+  --forest-glass:rgba(21,52,38,0.55);
+  --gold:#C9A84C;
+  --gold-soft:#E8D9AE;
+  --gold-dim:rgba(201,168,76,0.16);
+  --cream:#F6F3EA;
+  --paper:#FBFAF6;
+  --ink:#152018;
+  --ink-soft:#5B6B60;
+  --line:rgba(21,52,38,0.12);
+  --success:#3F8F5E;
+  --success-bg:rgba(63,143,94,0.12);
+  --warning:#C9863A;
+  --warning-bg:rgba(201,134,58,0.13);
+  --danger:#B0473F;
+  --danger-bg:rgba(176,71,63,0.12);
+  --info:#3E7CA6;
+  --info-bg:rgba(62,124,166,0.12);
+  --radius:16px;
+  --radius-sm:10px;
+  --shadow:0 20px 50px rgba(11,23,16,0.18);
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--cream);
+  color:var(--ink);
+  line-height:1.5;
+}
+::selection{background:var(--gold-dim); color:var(--ink);}
+a{text-decoration:none; color:inherit;}
+h1,h2,h3,h4{font-family:'Cormorant Garamond',serif; font-weight:600; letter-spacing:0.01em;}
+.eyebrow{
+  font-family:'Syne',sans-serif; font-weight:700; font-size:0.68rem;
+  letter-spacing:0.16em; text-transform:uppercase; color:var(--gold);
+}
+
+/* ============ NAV ============ */
+.site-nav{
+  position:sticky; top:0; z-index:200;
+  background:var(--obsidian);
+  border-bottom:1px solid rgba(201,168,76,0.15);
+}
+.nav-inner{
+  max-width:1320px; margin:0 auto; padding:0.9rem 1.75rem;
+  display:flex; align-items:center; justify-content:space-between; gap:1rem;
+}
+.brand{display:flex; align-items:center; gap:0.6rem;}
+.brand-logo{
+  width:38px; height:38px; border-radius:8px;
+  background:linear-gradient(135deg,var(--gold),#8f7226);
+  display:flex; align-items:center; justify-content:center; color:var(--obsidian); font-size:1rem;
+}
+.brand-name{font-family:'Syne',sans-serif; font-weight:700; color:var(--cream); font-size:1.05rem; letter-spacing:0.02em;}
+.brand-name span{color:var(--gold);}
+.nav-links{display:flex; gap:1.6rem; list-style:none; align-items:center;}
+.nav-links a{color:rgba(246,243,234,0.72); font-size:0.86rem; font-weight:500; transition:color 0.2s;}
+.nav-links a:hover, .nav-links a.active{color:var(--gold);}
+.nav-live{
+  display:flex; align-items:center; gap:6px; font-family:'Syne',sans-serif; font-size:0.68rem;
+  font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--success);
+  background:rgba(63,143,94,0.14); padding:6px 12px; border-radius:20px;
+}
+.nav-live::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--success); animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.35;}}
+.nav-toggler{display:none; background:none; border:none; color:var(--cream); font-size:1.2rem;}
+
+/* ============ HERO ============ */
+.hero{
+  background:
+    radial-gradient(ellipse at top left, rgba(201,168,76,0.10), transparent 55%),
+    linear-gradient(160deg, var(--obsidian) 0%, var(--forest-deep) 55%, var(--forest) 100%);
+  padding:3.5rem 1.75rem 2.5rem;
+  color:var(--cream);
+}
+.hero-inner{max-width:1320px; margin:0 auto;}
+.hero h1{font-size:clamp(2.1rem,3.6vw,3.1rem); color:var(--cream); max-width:800px; font-style:italic;}
+.hero p.sub{color:rgba(246,243,234,0.62); max-width:640px; margin-top:0.75rem; font-size:0.98rem;}
+.hero-stats{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+  background:rgba(201,168,76,0.15); border:1px solid rgba(201,168,76,0.18);
+  border-radius:var(--radius); overflow:hidden; margin-top:2.25rem;
+}
+.hero-stat{
+  background:rgba(255,255,255,0.03); padding:1.25rem 1.4rem; position:relative;
+}
+.hero-stat .num{font-family:'Cormorant Garamond',serif; font-size:2.1rem; color:var(--gold-soft); font-weight:600;}
+.hero-stat .lbl{font-size:0.72rem; color:rgba(246,243,234,0.5); text-transform:uppercase; letter-spacing:0.08em; margin-top:2px;}
+.hero-stat .trend{position:absolute; top:1rem; right:1.1rem; font-size:0.72rem; font-weight:700;}
+.trend-up{color:var(--success);} .trend-down{color:#E08B85;}
+
+/* ============ LAYOUT ============ */
+.wrap{max-width:1320px; margin:0 auto; padding:0 1.75rem 3rem;}
+.control-bar{
+  background:var(--paper); border:1px solid var(--line); border-radius:var(--radius);
+  padding:1.25rem 1.4rem; margin-top:-2rem; box-shadow:var(--shadow);
+  display:flex; flex-wrap:wrap; gap:0.9rem; align-items:flex-end; position:relative; z-index:5;
+}
+.field{display:flex; flex-direction:column; gap:5px; flex:1; min-width:150px;}
+.field label{font-size:0.68rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--ink-soft); font-weight:700; font-family:'Syne',sans-serif;}
+.field input, .field select{
+  border:1px solid var(--line); border-radius:var(--radius-sm); padding:0.6rem 0.75rem;
+  font-family:'DM Sans',sans-serif; font-size:0.85rem; background:#fff; color:var(--ink);
+}
+.field input:focus, .field select:focus{outline:none; border-color:var(--gold);}
+.btn{
+  font-family:'Syne',sans-serif; font-weight:700; font-size:0.8rem; letter-spacing:0.02em;
+  border-radius:var(--radius-sm); padding:0.65rem 1.1rem; border:1px solid transparent; cursor:pointer;
+  display:inline-flex; align-items:center; gap:7px; transition:all 0.2s; white-space:nowrap;
+}
+.btn-gold{background:var(--gold); color:var(--obsidian);}
+.btn-gold:hover{background:#b6963f; transform:translateY(-1px);}
+.btn-dark{background:var(--obsidian); color:var(--cream);}
+.btn-dark:hover{background:#000;}
+.btn-outline{background:transparent; border-color:var(--line); color:var(--ink);}
+.btn-outline:hover{border-color:var(--gold); color:var(--gold);}
+.btn-sm{padding:0.45rem 0.8rem; font-size:0.72rem;}
+
+.grid-main{display:grid; grid-template-columns:1.75fr 1fr; gap:1.5rem; margin-top:1.75rem;}
+.panel{
+  background:var(--paper); border:1px solid var(--line); border-radius:var(--radius);
+  box-shadow:0 6px 20px rgba(11,23,16,0.05); margin-bottom:1.5rem; overflow:hidden;
+}
+.panel-head{
+  padding:1.1rem 1.4rem; border-bottom:1px solid var(--line);
+  display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;
+}
+.panel-head h3{font-size:1.25rem;}
+.panel-body{padding:1.4rem;}
+
+/* ledger table */
+.ledger-table{width:100%; border-collapse:collapse; font-size:0.85rem;}
+.ledger-table th{
+  text-align:left; padding:0.7rem 0.8rem; font-family:'Syne',sans-serif; font-size:0.66rem;
+  text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-soft); border-bottom:1px solid var(--line);
+  cursor:pointer; user-select:none; white-space:nowrap;
+}
+.ledger-table th:hover{color:var(--gold);}
+.ledger-table td{padding:0.85rem 0.8rem; border-bottom:1px solid var(--line); vertical-align:middle;}
+.ledger-table tbody tr{transition:background 0.2s;}
+.ledger-table tbody tr:hover{background:rgba(201,168,76,0.06);}
+.ledger-table tbody tr.flash{animation:flashRow 1.8s ease;}
+@keyframes flashRow{0%{background:var(--gold-dim);}100%{background:transparent;}}
+.t-name{font-weight:600;}
+.t-sub{font-size:0.72rem; color:var(--ink-soft);}
+.pill{
+  display:inline-block; padding:0.28rem 0.7rem; border-radius:20px; font-size:0.68rem;
+  font-weight:700; font-family:'Syne',sans-serif; letter-spacing:0.02em; text-transform:capitalize;
+}
+.pill-paid{background:var(--success-bg); color:var(--success);}
+.pill-pending{background:var(--warning-bg); color:var(--warning);}
+.pill-overdue{background:var(--danger-bg); color:var(--danger);}
+.row-amt{font-weight:700; font-family:'Cormorant Garamond',serif; font-size:1.05rem;}
+.icon-btn{
+  width:30px; height:30px; border-radius:8px; border:1px solid var(--line); background:#fff;
+  display:inline-flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink-soft);
+  transition:all 0.2s; font-size:0.78rem;
+}
+.icon-btn:hover{border-color:var(--gold); color:var(--gold);}
+.empty-state{text-align:center; padding:3rem 1rem; color:var(--ink-soft);}
+.empty-state i{font-size:2rem; color:var(--gold-soft); margin-bottom:0.75rem; display:block;}
+
+/* chart */
+.chart-wrap{display:flex; align-items:flex-end; gap:10px; height:180px; padding-top:1rem;}
+.chart-col{flex:1; display:flex; flex-direction:column; align-items:center; gap:8px;}
+.chart-bar{width:100%; max-width:34px; border-radius:6px 6px 2px 2px; background:linear-gradient(180deg,var(--gold-soft),var(--gold)); transition:height 0.6s ease;}
+.chart-lbl{font-size:0.68rem; color:var(--ink-soft); font-family:'Syne',sans-serif;}
+
+/* map */
+#ledgerMap{height:260px; border-radius:0;}
+
+/* notifications */
+.notif-row{display:flex; gap:10px; padding:0.85rem 0; border-bottom:1px solid var(--line);}
+.notif-row:last-child{border-bottom:none;}
+.notif-dot{width:8px; height:8px; border-radius:50%; margin-top:6px; flex-shrink:0;}
+.notif-msg{font-size:0.83rem;}
+.notif-time{font-size:0.7rem; color:var(--ink-soft); margin-top:2px;}
+
+/* modal */
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(11,23,16,0.55); display:none;
+  align-items:center; justify-content:center; z-index:500; padding:1rem;
+}
+.modal-overlay.open{display:flex;}
+.modal-box{
+  background:var(--paper); border-radius:var(--radius); max-width:460px; width:100%;
+  box-shadow:0 30px 60px rgba(0,0,0,0.3); overflow:hidden;
+}
+.modal-header{padding:1.2rem 1.4rem; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;}
+.modal-header h4{font-size:1.3rem;}
+.modal-close{background:none; border:none; font-size:1rem; cursor:pointer; color:var(--ink-soft);}
+.modal-body{padding:1.4rem;}
+.receipt-grid{display:grid; grid-template-columns:1fr 1fr; gap:0.9rem; margin:1rem 0;}
+.field-label{font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-soft); font-family:'Syne',sans-serif; font-weight:700;}
+.field-val{font-size:0.9rem; margin-top:2px; font-weight:600;}
+.modal-footer{padding:1rem 1.4rem; border-top:1px solid var(--line); display:flex; justify-content:flex-end; gap:0.6rem;}
+
+/* toast */
+.toast-wrap{position:fixed; bottom:1.5rem; right:1.5rem; z-index:999; display:flex; flex-direction:column; gap:10px;}
+.toast-item{
+  background:var(--obsidian); color:var(--cream); border-left:3px solid var(--gold);
+  border-radius:10px; padding:0.9rem 1.1rem; min-width:280px; max-width:340px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.25); display:flex; gap:10px; align-items:flex-start;
+}
+.toast-icon{margin-top:2px;}
+.toast-title{font-family:'Syne',sans-serif; font-weight:700; font-size:0.82rem;}
+.toast-msg{font-size:0.78rem; color:rgba(246,243,234,0.7); margin-top:2px;}
+
+footer{
+  background:var(--obsidian); color:rgba(246,243,234,0.55); padding:2.5rem 1.75rem 1.5rem; font-size:0.8rem;
+}
+.footer-inner{max-width:1320px; margin:0 auto; display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem; border-top:1px solid rgba(201,168,76,0.15); padding-top:1.25rem;}
+
+@media (max-width:980px){
+  .grid-main{grid-template-columns:1fr;}
+  .hero-stats{grid-template-columns:repeat(2,1fr);}
+}
+@media (max-width:680px){
+  .nav-links{display:none;}
+  .nav-toggler{display:block;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <div class="brand-logo"><i class="fas fa-building"></i></div>
+      <span class="brand-name">Mwarokin <span>Estates</span></span>
+    </a>
+    <button class="nav-toggler" onclick="document.getElementById('navMenu').classList.toggle('show')"><i class="fas fa-bars"></i></button>
+    <ul class="nav-links" id="navMenu">
+      <li><a href="Landlord.html">Land Lords</a></li>
+      <li><a href="Managetenants.html">Manage Tenants</a></li>
+      <li><a href="Communication.html">Communication</a></li>
+      <li><a href="TrackProperties.html">Track Properties</a></li>
+      <li><a href="Subscription.html">Renew Subscription</a></li>
+    </ul>
+    <div class="nav-live"><span id="clockLive">Live Ledger</span></div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">Payment Ledger</div>
+    <h1>Every payment. Every tenant, unit &amp; minute — traced.</h1>
+    <p class="sub">Track-Rent now records who paid, which building and unit, when, how much, and where — the moment a tenant completes payment on the rent portal.</p>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="trend trend-up" id="trendCollected">+0%</div>
+        <div class="num" id="statCollected">KES 0</div>
+        <div class="lbl">Collected this month</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num" id="statTenantsCount">0</div>
+        <div class="lbl">Tenants tracked</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num" id="statPending">0</div>
+        <div class="lbl">Pending payments</div>
+      </div>
+      <div class="hero-stat">
+        <div class="trend trend-down" id="trendOverdue">—</div>
+        <div class="num" id="statOverdue">0</div>
+        <div class="lbl">Overdue accounts</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+
+  <!-- CONTROL BAR -->
+  <div class="control-bar">
+    <div class="field" style="flex:1.4;">
+      <label>Search</label>
+      <input type="text" id="fSearch" placeholder="Tenant, unit, building, transaction ID...">
+    </div>
+    <div class="field">
+      <label>Building</label>
+      <select id="fBuilding"><option value="all">All Buildings</option></select>
+    </div>
+    <div class="field">
+      <label>Location</label>
+      <select id="fLocation"><option value="all">All Locations</option></select>
+    </div>
+    <div class="field">
+      <label>Status</label>
+      <select id="fStatus">
+        <option value="all">All Statuses</option>
+        <option value="paid">Paid</option>
+        <option value="pending">Pending</option>
+        <option value="overdue">Overdue</option>
+      </select>
+    </div>
+    <div class="field" style="flex:0.8;">
+      <label>Since</label>
+      <input type="date" id="fSince">
+    </div>
+    <button class="btn btn-outline" onclick="resetFilters()"><i class="fas fa-rotate-left"></i> Reset</button>
+    <button class="btn btn-dark" onclick="exportCSV()"><i class="fas fa-download"></i> Export CSV</button>
+    <button class="btn btn-gold" onclick="simulateIncomingPayment()"><i class="fas fa-bolt"></i> Simulate Tenant Payment</button>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="grid-main">
+    <!-- LEFT -->
+    <div>
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Payment Ledger <span style="font-size:0.7rem; color:var(--ink-soft); font-family:'DM Sans';" id="resultCount"></span></h3>
+        </div>
+        <div class="panel-body" style="padding:0;">
+          <div style="overflow-x:auto;">
+            <table class="ledger-table" id="ledgerTable">
+              <thead>
+                <tr>
+                  <th data-sort="tenantName">Tenant</th>
+                  <th data-sort="building">Building &amp; Unit</th>
+                  <th data-sort="location">Location</th>
+                  <th data-sort="amount">Amount</th>
+                  <th data-sort="method">Method</th>
+                  <th data-sort="timestamp">Date &amp; Time</th>
+                  <th data-sort="status">Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="ledgerBody"></tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="emptyState" style="display:none;">
+            <i class="fas fa-receipt"></i>
+            No payments match these filters. Try widening your search.
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Collections Overview</h3>
+          <span style="font-size:0.75rem; color:var(--ink-soft);">Last 6 months</span>
+        </div>
+        <div class="panel-body">
+          <div class="chart-wrap" id="chartWrap"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div>
+      <div class="panel">
+        <div class="panel-head"><h3>Property Locations</h3></div>
+        <div class="panel-body" style="padding:0;">
+          <div id="ledgerMap"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Notifications</h3>
+          <span style="background:var(--gold); color:var(--obsidian); font-size:0.7rem; font-weight:700; padding:2px 9px; border-radius:20px; font-family:'Syne';" id="notifCount">0</span>
+        </div>
+        <div class="panel-body" id="notifBody"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h3>By Building</h3></div>
+        <div class="panel-body" id="buildingBreakdown"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RECEIPT MODAL -->
+<div class="modal-overlay" id="receiptModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h4>Payment Record</h4>
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div class="field-label">Transaction</div>
+          <div class="field-val" style="color:var(--gold);" id="mTxn">—</div>
+        </div>
+        <span class="pill" id="mStatus">—</span>
+      </div>
+      <div class="receipt-grid">
+        <div><div class="field-label">Tenant</div><div class="field-val" id="mTenant">—</div></div>
+        <div><div class="field-label">Tenant ID</div><div class="field-val" id="mTenantId">—</div></div>
+        <div><div class="field-label">Building</div><div class="field-val" id="mBuilding">—</div></div>
+        <div><div class="field-label">Unit</div><div class="field-val" id="mUnit">—</div></div>
+        <div><div class="field-label">Location</div><div class="field-val" id="mLocation">—</div></div>
+        <div><div class="field-label">Period</div><div class="field-val" id="mPeriod">—</div></div>
+        <div><div class="field-label">Method</div><div class="field-val" id="mMethod">—</div></div>
+        <div><div class="field-label">Date &amp; Time</div><div class="field-val" id="mTime">—</div></div>
+      </div>
+      <div style="border-top:1px dashed var(--line); padding-top:1rem; display:flex; justify-content:space-between; align-items:center;">
+        <span class="field-label">Amount Paid</span>
+        <span class="row-amt" id="mAmount">—</span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="window.print()"><i class="fas fa-print"></i> Print</button>
+      <button class="btn btn-gold btn-sm" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<footer>
+  <div class="footer-inner">
+    <div>Mwarokin Estates &copy; 2026 — Track-Rent Ledger. All Rights Reserved.</div>
+    <div>Powered by <a href="https://www.syllogismtechnologyafrica.com" style="color:var(--gold);">Syllogism Technology Africa</a></div>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* =========================================================================
+   PAYMENT LEDGER INTEGRATION SCHEMA
+   Storage key: "mwarokin_payment_ledger"  (localStorage, JSON array)
+   BroadcastChannel: "mwarokin_payments"   (cross-tab live sync)
+
+   Each record:
+   {
+     id, tenantId, tenantName, building, unit, location,
+     lat, lng, amount, currency, method, status, period, timestamp
+   }
+
+   Rent.html should push a record here inside completePayment(), e.g.:
+     const record = { id: txn, tenantId:'T-789456', tenantName:'...',
+       building:'Sunrise Apartments', unit: propUnit, location:'Kangemi, Nairobi',
+       lat:-1.2795, lng:36.7589, amount: total, currency:'KES',
+       method: pmNames[activePM], status:'paid', period: month, timestamp: now.toISOString() };
+     const ledger = JSON.parse(localStorage.getItem('mwarokin_payment_ledger')||'[]');
+     ledger.unshift(record);
+     localStorage.setItem('mwarokin_payment_ledger', JSON.stringify(ledger));
+     new BroadcastChannel('mwarokin_payments').postMessage(record);
+   ========================================================================= */
+
+const STORAGE_KEY = 'mwarokin_payment_ledger';
+let channel;
+try { channel = new BroadcastChannel('mwarokin_payments'); } catch(e){ channel = null; }
+
+let ledger = [];
+let sortKey = 'timestamp';
+let sortDir = -1;
+let map, markers = {};
+
+const BUILDINGS = [
+  { name:'Sunrise Apartments', location:'Kangemi, Nairobi', lat:-1.2795, lng:36.7589 },
+  { name:'Baraka Heights',     location:'Taveta, Nairobi',  lat:-1.2200, lng:36.8700 },
+  { name:'Acacia Court',       location:'Kiambu',           lat:-1.1714, lng:36.8356 },
+  { name:'Jericho Villas',     location:'Jericho, Nairobi', lat:-1.2855, lng:36.8485 },
+  { name:'Milele Gardens',     location:'Westlands, Nairobi', lat:-1.2670, lng:36.8090 }
+];
+const TENANT_NAMES = ['Mwarema K.','Kisha Odhiambo','Joyce Wanjiru','Jane Achieng','Robin Bina','David Mutua','Faith Njeri','Peter Otieno'];
+const METHODS = ['M-Pesa','Kenya Bank Transfer','SylloPay Wallet','Mobile Money','Card'];
+
+function uid(){ return 'TXN-' + Math.floor(100000000 + Math.random()*900000000); }
+function pad(n){ return n.toString().padStart(2,'0'); }
+
+function seedLedger(){
+  const now = new Date();
+  const out = [];
+  for(let i=0;i<26;i++){
+    const b = BUILDINGS[i % BUILDINGS.length];
+    const daysAgo = Math.floor(Math.random()*150);
+    const d = new Date(now.getTime() - daysAgo*24*3600*1000);
+    const statusRoll = Math.random();
+    const status = statusRoll < 0.72 ? 'paid' : (statusRoll < 0.88 ? 'pending' : 'overdue');
+    const amount = [12000,18000,20500,22064,27500,35000][i % 6];
+    out.push({
+      id: uid(),
+      tenantId: 'T-' + (780000 + i*37),
+      tenantName: TENANT_NAMES[i % TENANT_NAMES.length],
+      building: b.name,
+      unit: (i % 12 + 1) + ['A','B','C'][i % 3],
+      location: b.location,
+      lat: b.lat + (Math.random()-0.5)*0.01,
+      lng: b.lng + (Math.random()-0.5)*0.01,
+      amount, currency:'KES',
+      method: METHODS[i % METHODS.length],
+      status,
+      period: d.toLocaleDateString('en-KE',{year:'numeric',month:'long'}),
+      timestamp: d.toISOString()
+    });
+  }
+  return out;
+}
+
+function loadLedger(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){ ledger = JSON.parse(raw); }
+    else { ledger = seedLedger(); saveLedger(); }
+  }catch(e){ ledger = seedLedger(); }
+}
+function saveLedger(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(ledger)); }catch(e){}
+}
+
+/* ===== FILTER STATE ===== */
+function populateFilterOptions(){
+  const bSel = document.getElementById('fBuilding');
+  const lSel = document.getElementById('fLocation');
+  const buildings = [...new Set(ledger.map(r=>r.building))].sort();
+  const locations = [...new Set(ledger.map(r=>r.location))].sort();
+  bSel.innerHTML = '<option value="all">All Buildings</option>' + buildings.map(b=>`<option value="${b}">${b}</option>`).join('');
+  lSel.innerHTML = '<option value="all">All Locations</option>' + locations.map(l=>`<option value="${l}">${l}</option>`).join('');
+}
+
+function getFiltered(){
+  const search = document.getElementById('fSearch').value.trim().toLowerCase();
+  const building = document.getElementById('fBuilding').value;
+  const location = document.getElementById('fLocation').value;
+  const status = document.getElementById('fStatus').value;
+  const since = document.getElementById('fSince').value;
+
+  let rows = ledger.filter(r=>{
+    if(building !== 'all' && r.building !== building) return false;
+    if(location !== 'all' && r.location !== location) return false;
+    if(status !== 'all' && r.status !== status) return false;
+    if(since && new Date(r.timestamp) < new Date(since)) return false;
+    if(search){
+      const hay = (r.tenantName+' '+r.unit+' '+r.building+' '+r.id+' '+r.tenantId).toLowerCase();
+      if(!hay.includes(search)) return false;
+    }
+    return true;
+  });
+
+  rows.sort((a,b)=>{
+    let av = a[sortKey], bv = b[sortKey];
+    if(sortKey === 'timestamp'){ av = new Date(av).getTime(); bv = new Date(bv).getTime(); }
+    if(typeof av === 'string') return av.localeCompare(bv) * sortDir;
+    return (av - bv) * sortDir;
+  });
+  return rows;
+}
+
+function fmtMoney(n){ return 'KES ' + Math.round(n).toLocaleString('en-KE'); }
+function fmtTime(iso){
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-KE',{month:'short',day:'numeric',year:'numeric'}) + ' · ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+
+function renderLedger(highlightId){
+  const rows = getFiltered();
+  const body = document.getElementById('ledgerBody');
+  document.getElementById('resultCount').textContent = `(${rows.length} of ${ledger.length})`;
+  document.getElementById('emptyState').style.display = rows.length ? 'none' : 'block';
+
+  body.innerHTML = rows.map(r => `
+    <tr class="${r.id === highlightId ? 'flash' : ''}" data-id="${r.id}">
+      <td><div class="t-name">${r.tenantName}</div><div class="t-sub">${r.tenantId}</div></td>
+      <td><div class="t-name">${r.building}</div><div class="t-sub">Unit ${r.unit}</div></td>
+      <td>${r.location}</td>
+      <td class="row-amt">${fmtMoney(r.amount)}</td>
+      <td>${r.method}</td>
+      <td>${fmtTime(r.timestamp)}</td>
+      <td><span class="pill pill-${r.status}">${r.status}</span></td>
+      <td><button class="icon-btn" onclick="openReceipt('${r.id}')" title="View receipt"><i class="fas fa-eye"></i></button></td>
+    </tr>
+  `).join('');
+}
+
+/* ===== SORT ===== */
+document.querySelectorAll('.ledger-table th[data-sort]').forEach(th=>{
+  th.addEventListener('click', ()=>{
+    const key = th.dataset.sort;
+    if(sortKey === key) sortDir *= -1; else { sortKey = key; sortDir = 1; }
+    renderLedger();
+  });
+});
+
+/* ===== STATS ===== */
+function computeStats(){
+  const now = new Date();
+  const thisMonth = ledger.filter(r=>{
+    const d = new Date(r.timestamp);
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear() && r.status === 'paid';
+  });
+  const collected = thisMonth.reduce((s,r)=>s+r.amount,0);
+  const tenants = new Set(ledger.map(r=>r.tenantId)).size;
+  const pending = ledger.filter(r=>r.status==='pending').length;
+  const overdue = ledger.filter(r=>r.status==='overdue').length;
+
+  document.getElementById('statCollected').textContent = fmtMoney(collected);
+  document.getElementById('statTenantsCount').textContent = tenants;
+  document.getElementById('statPending').textContent = pending;
+  document.getElementById('statOverdue').textContent = overdue;
+  document.getElementById('trendCollected').textContent = collected > 0 ? '+' + Math.min(99, Math.round((thisMonth.length/Math.max(1,ledger.length))*100)) + '%' : '—';
+  document.getElementById('trendOverdue').textContent = overdue > 0 ? overdue + ' flagged' : 'All clear';
+  document.getElementById('trendOverdue').className = 'trend ' + (overdue > 0 ? 'trend-down' : 'trend-up');
+}
+
+/* ===== CHART ===== */
+function renderChart(){
+  const now = new Date();
+  const months = [];
+  for(let i=5;i>=0;i--){
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    months.push(d);
+  }
+  const totals = months.map(m => ledger
+    .filter(r => { const d = new Date(r.timestamp); return d.getMonth()===m.getMonth() && d.getFullYear()===m.getFullYear() && r.status==='paid'; })
+    .reduce((s,r)=>s+r.amount,0));
+  const max = Math.max(...totals, 1);
+  document.getElementById('chartWrap').innerHTML = months.map((m,i)=>`
+    <div class="chart-col">
+      <div class="chart-bar" style="height:${Math.max(4, Math.round((totals[i]/max)*140))}px" title="${fmtMoney(totals[i])}"></div>
+      <div class="chart-lbl">${m.toLocaleDateString('en-KE',{month:'short'})}</div>
+    </div>`).join('');
+}
+
+/* ===== BUILDING BREAKDOWN ===== */
+function renderBuildingBreakdown(){
+  const map2 = {};
+  ledger.forEach(r=>{
+    map2[r.building] = map2[r.building] || { total:0, count:0 };
+    if(r.status==='paid'){ map2[r.building].total += r.amount; }
+    map2[r.building].count += 1;
+  });
+  const el = document.getElementById('buildingBreakdown');
+  el.innerHTML = Object.entries(map2).map(([b,v])=>`
+    <div style="display:flex; justify-content:space-between; padding:0.6rem 0; border-bottom:1px solid var(--line); font-size:0.85rem;">
+      <div><strong>${b}</strong><div class="t-sub">${v.count} record${v.count!==1?'s':''}</div></div>
+      <div class="row-amt" style="font-size:0.95rem;">${fmtMoney(v.total)}</div>
+    </div>`).join('');
+}
+
+/* ===== NOTIFICATIONS ===== */
+function renderNotifications(){
+  const overdue = ledger.filter(r=>r.status==='overdue').slice(0,4)
+    .map(r=>({color:'var(--danger)', msg:`${r.tenantName} — ${r.building} Unit ${r.unit} is overdue.`, time: fmtTime(r.timestamp)}));
+  const paidRecent = ledger.filter(r=>r.status==='paid')
+    .sort((a,b)=> new Date(b.timestamp)-new Date(a.timestamp)).slice(0,3)
+    .map(r=>({color:'var(--success)', msg:`${r.tenantName} paid ${fmtMoney(r.amount)} for ${r.building} Unit ${r.unit}.`, time: fmtTime(r.timestamp)}));
+  const items = [...overdue, ...paidRecent].slice(0,6);
+  document.getElementById('notifCount').textContent = items.length;
+  document.getElementById('notifBody').innerHTML = items.map(n=>`
+    <div class="notif-row">
+      <div class="notif-dot" style="background:${n.color};"></div>
+      <div><div class="notif-msg">${n.msg}</div><div class="notif-time">${n.time}</div></div>
+    </div>`).join('') || '<div class="t-sub">No notifications right now.</div>';
+}
+
+/* ===== MAP ===== */
+function initMap(){
+  map = L.map('ledgerMap', { scrollWheelZoom:false }).setView([-1.2650, 36.8100], 11);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution:'&copy; OpenStreetMap contributors'
+  }).addTo(map);
+  refreshMapMarkers();
+}
+function refreshMapMarkers(){
+  Object.values(markers).forEach(m=>map.removeLayer(m));
+  markers = {};
+  BUILDINGS.forEach(b=>{
+    const count = ledger.filter(r=>r.building===b.name).length;
+    const paidTotal = ledger.filter(r=>r.building===b.name && r.status==='paid').reduce((s,r)=>s+r.amount,0);
+    const marker = L.marker([b.lat, b.lng]).addTo(map)
+      .bindPopup(`<strong>${b.name}</strong><br>${b.location}<br>${count} records &middot; ${fmtMoney(paidTotal)} collected`);
+    markers[b.name] = marker;
+  });
+}
+
+/* ===== RECEIPT MODAL ===== */
+function openReceipt(id){
+  const r = ledger.find(x=>x.id===id);
+  if(!r) return;
+  document.getElementById('mTxn').textContent = r.id;
+  document.getElementById('mStatus').textContent = r.status;
+  document.getElementById('mStatus').className = 'pill pill-' + r.status;
+  document.getElementById('mTenant').textContent = r.tenantName;
+  document.getElementById('mTenantId').textContent = r.tenantId;
+  document.getElementById('mBuilding').textContent = r.building;
+  document.getElementById('mUnit').textContent = r.unit;
+  document.getElementById('mLocation').textContent = r.location;
+  document.getElementById('mPeriod').textContent = r.period;
+  document.getElementById('mMethod').textContent = r.method;
+  document.getElementById('mTime').textContent = fmtTime(r.timestamp);
+  document.getElementById('mAmount').textContent = fmtMoney(r.amount);
+  document.getElementById('receiptModal').classList.add('open');
+}
+function closeModal(){ document.getElementById('receiptModal').classList.remove('open'); }
+document.getElementById('receiptModal').addEventListener('click', e=>{ if(e.target.id==='receiptModal') closeModal(); });
+
+/* ===== FILTER EVENTS ===== */
+['fSearch','fBuilding','fLocation','fStatus','fSince'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', ()=>renderLedger());
+});
+function resetFilters(){
+  document.getElementById('fSearch').value='';
+  document.getElementById('fBuilding').value='all';
+  document.getElementById('fLocation').value='all';
+  document.getElementById('fStatus').value='all';
+  document.getElementById('fSince').value='';
+  renderLedger();
+}
+
+/* ===== EXPORT ===== */
+function exportCSV(){
+  const rows = getFiltered();
+  const header = ['Transaction','Tenant','Tenant ID','Building','Unit','Location','Amount','Currency','Method','Status','Period','Timestamp'];
+  const lines = [header.join(',')];
+  rows.forEach(r=>{
+    lines.push([r.id,r.tenantName,r.tenantId,r.building,r.unit,r.location,r.amount,r.currency,r.method,r.status,r.period,r.timestamp]
+      .map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
+  });
+  const blob = new Blob([lines.join('\n')], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'mwarokin-track-rent-ledger.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Export ready', 'Your ledger CSV has downloaded.', 'info');
+}
+
+/* ===== LIVE INCOMING PAYMENTS ===== */
+function ingestPayment(record, opts={}){
+  ledger.unshift(record);
+  saveLedger();
+  populateFilterOptions();
+  renderAll(record.id);
+  if(!opts.silent){
+    showToast('Payment received', `${record.tenantName} paid ${fmtMoney(record.amount)} — ${record.building}, Unit ${record.unit}.`, 'success');
+  }
+}
+
+function simulateIncomingPayment(){
+  const b = BUILDINGS[Math.floor(Math.random()*BUILDINGS.length)];
+  const now = new Date();
+  const record = {
+    id: uid(),
+    tenantId: 'T-' + Math.floor(700000+Math.random()*90000),
+    tenantName: TENANT_NAMES[Math.floor(Math.random()*TENANT_NAMES.length)],
+    building: b.name,
+    unit: Math.floor(Math.random()*12+1) + ['A','B','C'][Math.floor(Math.random()*3)],
+    location: b.location,
+    lat: b.lat + (Math.random()-0.5)*0.01,
+    lng: b.lng + (Math.random()-0.5)*0.01,
+    amount: [12000,18000,20500,22064,27500][Math.floor(Math.random()*5)],
+    currency:'KES',
+    method: METHODS[Math.floor(Math.random()*METHODS.length)],
+    status:'paid',
+    period: now.toLocaleDateString('en-KE',{year:'numeric',month:'long'}),
+    timestamp: now.toISOString()
+  };
+  ingestPayment(record);
+  if(channel) channel.postMessage(record);
+}
+
+// Listen for real payments streamed from Rent.html (same origin, other tab)
+if(channel){
+  channel.onmessage = (e)=> ingestPayment(e.data);
+}
+window.addEventListener('storage', (e)=>{
+  if(e.key === STORAGE_KEY){ loadLedger(); renderAll(); }
+});
+
+/* ===== TOAST ===== */
+function showToast(title, msg, type){
+  const colors = {success:'var(--success)', error:'var(--danger)', warning:'var(--warning)', info:'var(--info)'};
+  const icons = {success:'fa-check-circle', error:'fa-times-circle', warning:'fa-exclamation-triangle', info:'fa-info-circle'};
+  const wrap = document.getElementById('toastWrap');
+  const t = document.createElement('div');
+  t.className = 'toast-item';
+  t.style.borderLeftColor = colors[type] || 'var(--gold)';
+  t.innerHTML = `<i class="fas ${icons[type]||'fa-bell'} toast-icon" style="color:${colors[type]||'var(--gold)'};"></i>
+    <div><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div>`;
+  wrap.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(20px)'; t.style.transition='all 0.3s'; setTimeout(()=>t.remove(),300); }, 4500);
+}
+
+/* ===== INIT ===== */
+function renderAll(highlightId){
+  renderLedger(highlightId);
+  computeStats();
+  renderChart();
+  renderBuildingBreakdown();
+  renderNotifications();
+  refreshMapMarkers();
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  loadLedger();
+  populateFilterOptions();
+  initMap();
+  renderAll();
+});
+</script>
+</body>
+</html>

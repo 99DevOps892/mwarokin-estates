@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mwarokin Estates – Premium Town House</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏘️</text></svg>" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        /* ── ROOT VARIABLES ── */
+        :root {
+            --primary: #0d2b4e;
+            --primary-light: #1a3f6a;
+            --primary-dark: #081c33;
+            --accent: #d4a853;
+            --accent-light: #e8c97a;
+            --accent-glow: rgba(212, 168, 83, 0.3);
+            --gold-gradient: linear-gradient(135deg, #d4a853, #f5e6b0);
+            --bg-light: #f8f6f2;
+            --text-dark: #1a1a2e;
+            --text-muted: #6b6b7a;
+            --shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 12px 40px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.12);
+            --shadow-xl: 0 40px 80px rgba(0, 0, 0, 0.18);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --font-primary: 'Inter', sans-serif;
+            --font-display: 'Playfair Display', serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background: var(--bg-light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* ── SCROLLBAR ── */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-light);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-light);
+        }
+
+        /* ── NAVBAR ── */
+        .navbar-premium {
+            background: rgba(255, 255, 255, 0.92) !important;
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(212, 168, 83, 0.15);
+            padding: 12px 0;
+            transition: var(--transition);
+            box-shadow: 0 2px 30px rgba(0, 0, 0, 0.04);
+        }
+        .navbar-premium.scrolled {
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+            background: rgba(255, 255, 255, 0.98) !important;
+        }
+        .navbar-premium .navbar-brand h1 {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 1.6rem;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+        .navbar-premium .navbar-brand img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            padding: 2px;
+            transition: var(--transition);
+        }
+        .navbar-premium .navbar-brand:hover img {
+            transform: rotate(-8deg) scale(1.05);
+        }
+        .navbar-premium .nav-link {
+            font-weight: 500;
+            color: var(--text-dark) !important;
+            padding: 8px 18px !important;
+            border-radius: 50px;
+            transition: var(--transition);
+            position: relative;
+            font-size: 0.92rem;
+        }
+        .navbar-premium .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2.5px;
+            background: var(--gold-gradient);
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+        .navbar-premium .nav-link:hover::after,
+        .navbar-premium .nav-link.active::after {
+            width: 60%;
+        }
+        .navbar-premium .nav-link:hover {
+            color: var(--primary) !important;
+            background: rgba(212, 168, 83, 0.08);
+        }
+        .navbar-premium .btn-gold {
+            background: var(--gold-gradient);
+            color: #fff;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 20px rgba(212, 168, 83, 0.3);
+        }
+        .navbar-premium .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(212, 168, 83, 0.45);
+            color: #fff;
+        }
+        .dropdown-menu-premium {
+            border: none;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-lg);
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 168, 83, 0.1);
+        }
+        .dropdown-menu-premium .dropdown-item {
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        .dropdown-menu-premium .dropdown-item:hover {
+            background: rgba(212, 168, 83, 0.1);
+            color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        /* ── HERO SEARCH ── */
+        .hero-search {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-light) 100%);
+            padding: 40px 0 50px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-search::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(212, 168, 83, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .hero-search::after {
+            content: '';
+            position: absolute;
+            bottom: -40%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(212, 168, 83, 0.05) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .hero-search .container {
+            position: relative;
+            z-index: 2;
+        }
+        .hero-search .form-control,
+        .hero-search .form-select {
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+            transition: var(--transition);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(4px);
+        }
+        .hero-search .form-control:focus,
+        .hero-search .form-select:focus {
+            box-shadow: 0 0 0 4px rgba(212, 168, 83, 0.25);
+            background: #fff;
+        }
+        .hero-search .btn-gold {
+            background: var(--gold-gradient);
+            color: #fff;
+            border: none;
+            padding: 16px 40px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 4px 25px rgba(212, 168, 83, 0.35);
+            width: 100%;
+        }
+        .hero-search .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 35px rgba(212, 168, 83, 0.5);
+        }
+        .hero-search .btn-outline-gold {
+            background: transparent;
+            color: #fff;
+            border: 2px solid rgba(212, 168, 83, 0.5);
+            padding: 14px 32px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            transition: var(--transition);
+            width: 100%;
+        }
+        .hero-search .btn-outline-gold:hover {
+            background: rgba(212, 168, 83, 0.15);
+            border-color: var(--accent);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+        .location-result {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-sm);
+            padding: 12px 20px;
+            color: #fff;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .currency-result {
+            background: rgba(212, 168, 83, 0.15);
+            border: 1px solid rgba(212, 168, 83, 0.2);
+            border-radius: var(--radius-sm);
+            padding: 12px 20px;
+            color: var(--accent-light);
+            font-weight: 500;
+        }
+
+        /* ── SECTION HEADERS ── */
+        .section-title {
+            font-family: var(--font-display);
+            font-weight: 800;
+            color: var(--primary-dark);
+            letter-spacing: -0.5px;
+        }
+        .section-title span {
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .section-subtitle {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            max-width: 600px;
+            line-height: 1.7;
+        }
+
+        /* ── PROPERTY CARDS ── */
+        .property-card {
+            background: #fff;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .property-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border-color: rgba(212, 168, 83, 0.15);
+        }
+        .property-card .card-img-wrap {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 16/10;
+            background: #eae8e4;
+        }
+        .property-card .card-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+        .property-card:hover .card-img-wrap img {
+            transform: scale(1.05);
+        }
+        .property-card .card-badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: var(--gold-gradient);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(212, 168, 83, 0.3);
+        }
+        .property-card .card-type {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(4px);
+            color: var(--primary);
+            letter-spacing: 0.3px;
+        }
+        .property-card .card-favorite {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(4px);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: var(--transition);
+            font-size: 1rem;
+        }
+        .property-card .card-favorite:hover {
+            background: #fff;
+            color: #e74c3c;
+            transform: scale(1.1);
+        }
+        .property-card .card-body {
+            padding: 20px 22px 18px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .property-card .card-price {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+        .property-card .card-price small {
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: var(--text-muted);
+            font-family: var(--font-primary);
+        }
+        .property-card .card-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-dark);
+            margin: 6px 0 4px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+        .property-card .card-title:hover {
+            color: var(--primary);
+        }
+        .property-card .card-location {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+        .property-card .card-location i {
+            color: var(--accent);
+        }
+        .property-card .card-features {
+            display: flex;
+            border-top: 1px solid #f0ede8;
+            padding-top: 14px;
+            margin-top: auto;
+            gap: 8px;
+        }
+        .property-card .card-features span {
+            flex: 1;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .property-card .card-features span i {
+            color: var(--accent);
+            font-size: 0.85rem;
+        }
+        .property-card .card-availability {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 14px;
+            border-radius: 50px;
+            display: inline-block;
+            margin-top: 10px;
+            align-self: flex-start;
+        }
+        .property-card .card-availability.available {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .property-card .card-availability.unavailable {
+            background: #fce4ec;
+            color: #c62828;
+        }
+        .property-card .btn-check {
+            margin-top: 12px;
+            border-radius: 50px;
+            padding: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            transition: var(--transition);
+            width: 100%;
+        }
+        .property-card .btn-check:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(13, 43, 78, 0.25);
+        }
+
+        /* ── FILTERS ── */
+        .filter-section {
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 24px 28px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+        .filter-section .form-control,
+        .filter-section .form-select {
+            border: 2px solid #f0ede8;
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            background: #faf9f7;
+        }
+        .filter-section .form-control:focus,
+        .filter-section .form-select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(212, 168, 83, 0.1);
+            background: #fff;
+        }
+        .filter-section .btn-filter {
+            background: var(--gold-gradient);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 12px 32px;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 4px 20px rgba(212, 168, 83, 0.25);
+            width: 100%;
+        }
+        .filter-section .btn-filter:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(212, 168, 83, 0.4);
+        }
+        .filter-section .form-check-label {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+        }
+        .filter-section .form-check-input:checked {
+            background-color: var(--accent);
+            border-color: var(--accent);
+        }
+        .filter-section .form-check-input:focus {
+            box-shadow: 0 0 0 3px rgba(212, 168, 83, 0.2);
+        }
+
+        /* ── CHATBOT ── */
+        .chat-section {
+            background: linear-gradient(135deg, #f8f6f2 0%, #fff 100%);
+            padding: 60px 0;
+        }
+        .chat-container {
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            background: #fff;
+            padding: 28px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .chat-container .chat-box {
+            height: 280px;
+            overflow-y: auto;
+            background: #faf9f7;
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            border: 1px solid #f0ede8;
+        }
+        .chat-container .chat-box .message {
+            padding: 12px 18px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 10px;
+            max-width: 80%;
+            animation: fadeInUp 0.3s ease;
+        }
+        .chat-container .chat-box .message.user {
+            background: var(--primary);
+            color: #fff;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-container .chat-box .message.bot {
+            background: #fff;
+            border: 1px solid #f0ede8;
+            color: var(--text-dark);
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+            box-shadow: var(--shadow-sm);
+        }
+        .chat-container .chat-box .message.bot .bot-icon {
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .chat-container .input-group {
+            gap: 10px;
+        }
+        .chat-container .input-group input {
+            border: 2px solid #f0ede8;
+            border-radius: var(--radius-sm);
+            padding: 14px 18px;
+            font-size: 0.95rem;
+            flex: 1;
+            transition: var(--transition);
+        }
+        .chat-container .input-group input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(212, 168, 83, 0.1);
+            outline: none;
+        }
+        .chat-container .input-group .btn-send {
+            background: var(--gold-gradient);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 14px 28px;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 4px 20px rgba(212, 168, 83, 0.25);
+        }
+        .chat-container .input-group .btn-send:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(212, 168, 83, 0.4);
+        }
+        .chat-container .input-group .btn-voice {
+            background: #f0ede8;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 14px 22px;
+            font-weight: 600;
+            color: var(--text-dark);
+            transition: var(--transition);
+        }
+        .chat-container .input-group .btn-voice:hover {
+            background: var(--primary);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+        .chat-container .quick-reply {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .chat-container .quick-reply .btn-qr {
+            background: #f0ede8;
+            border: none;
+            border-radius: 50px;
+            padding: 6px 18px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: var(--transition);
+            color: var(--text-dark);
+        }
+        .chat-container .quick-reply .btn-qr:hover {
+            background: var(--accent);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── FOOTER ── */
+        .footer-premium {
+            background: var(--primary-dark);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 60px 0 30px;
+        }
+        .footer-premium h5 {
+            color: #fff;
+            font-weight: 700;
+            margin-bottom: 20px;
+            font-family: var(--font-display);
+            letter-spacing: 0.5px;
+        }
+        .footer-premium .footer-link {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            display: block;
+            padding: 4px 0;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        .footer-premium .footer-link:hover {
+            color: var(--accent-light);
+            transform: translateX(4px);
+        }
+        .footer-premium .social-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.6);
+            transition: var(--transition);
+            margin-right: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            text-decoration: none;
+        }
+        .footer-premium .social-btn:hover {
+            background: var(--accent);
+            color: #fff;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(212, 168, 83, 0.3);
+        }
+        .footer-premium .copyright {
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 24px;
+            margin-top: 30px;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+        .footer-premium .copyright a {
+            color: var(--accent-light);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* ── BACK TO TOP ── */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gold-gradient);
+            color: #fff;
+            border: none;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 25px rgba(212, 168, 83, 0.35);
+            transition: var(--transition);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .back-to-top:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 35px rgba(212, 168, 83, 0.5);
+            color: #fff;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .navbar-premium .navbar-brand h1 {
+                font-size: 1.2rem;
+            }
+            .hero-search {
+                padding: 30px 0 40px;
+            }
+            .property-card .card-price {
+                font-size: 1.2rem;
+            }
+            .chat-container {
+                padding: 16px;
+            }
+            .filter-section {
+                padding: 16px;
+            }
+            .section-title {
+                font-size: 1.6rem;
+            }
+        }
+        @media (max-width: 576px) {
+            .hero-search .btn-gold,
+            .hero-search .btn-outline-gold {
+                padding: 12px 20px;
+                font-size: 0.85rem;
+            }
+            .property-card .card-features span {
+                font-size: 0.7rem;
+            }
+        }
+
+        /* ── UTILITIES ── */
+        .text-gold {
+            color: var(--accent);
+        }
+        .bg-gold-gradient {
+            background: var(--gold-gradient);
+        }
+        .border-gold {
+            border-color: var(--accent) !important;
+        }
+        .shadow-gold {
+            box-shadow: 0 4px 25px rgba(212, 168, 83, 0.2);
+        }
+        .gap-2 {
+            gap: 0.5rem;
+        }
+        .gap-3 {
+            gap: 1rem;
+        }
+
+        /* Glow pulse for live indicators */
+        .live-pulse {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #2ecc71;
+            margin-right: 8px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.4;
+                transform: scale(0.85);
+            }
+        }
+
+        /* ── STATS BADGE ── */
+        .stat-badge {
+            background: rgba(212, 168, 83, 0.1);
+            border-radius: 50px;
+            padding: 4px 16px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ==================== NAVBAR ==================== -->
+    <nav class="navbar navbar-expand-lg navbar-premium sticky-top" id="mainNav">
+        <div class="container">
+            <a href="#" class="navbar-brand d-flex align-items-center gap-2">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%230d2b4e' width='100' height='100' rx='20'/%3E%3Ctext x='50' y='68' font-size='48' text-anchor='middle' fill='%23d4a853' font-family='sans-serif'%3E🏘%3C/text%3E%3C/svg%3E" alt="Mwarokin" style="width:40px;height:40px;border-radius:12px;" />
+                <h1 class="m-0">Mwarokin Estates </h1>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navCollapse">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+                    <li class="nav-item"><a href="#" class="nav-link active">Home</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Manage Bills</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Payments</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Lipa Mdogo</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Rent</a></li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
+                        <div class="dropdown-menu dropdown-menu-premium">
+                            <a href="#" class="dropdown-item"><i class="fa-regular fa-user me-2"></i>My Profile</a>
+                            <a href="#" class="dropdown-item"><i class="fa-regular fa-image me-2"></i>Our Media</a>
+                            <a href="#" class="dropdown-item"><i class="fa-regular fa-compass me-2"></i>Vacancy Locator</a>
+                            <a href="#" class="dropdown-item"><i class="fa-regular fa-calculator me-2"></i>Calculate Rent</a>
+                            <a href="#" class="dropdown-item"><i class="fa-regular fa-language me-2"></i>Language Support</a>
+                            <a href="#" class="dropdown-item"><i class="fa-regular fa-hammer me-2"></i>Renovation</a>
+                        </div>
+                    </li>
+                    <li class="nav-item"><a href="#" class="nav-link">Communication</a></li>
+                    <li class="nav-item ms-lg-2">
+                        <a href="#" class="btn btn-gold">Log Out</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ==================== HERO SEARCH ==================== -->
+    <section class="hero-search">
+        <div class="container">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-10">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" id="searchKeyword" placeholder="Search Keyword…" />
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" id="continentSelect">
+                                <option selected>All Continents</option>
+                                <option>Africa</option><option>Asia</option><option>Europe</option>
+                                <option>Antarctica</option><option>North America</option>
+                                <option>Australia</option><option>South America</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" id="countrySelect">
+                                <option selected>Select Country</option>
+                                <option>Kenya</option><option>Nigeria</option><option>South Africa</option>
+                                <option>Egypt</option><option>Morocco</option><option>Ghana</option>
+                                <option>Tanzania</option><option>Uganda</option><option>Rwanda</option>
+                                <option>Zambia</option><option>Zimbabwe</option><option>Botswana</option>
+                                <option>Namibia</option><option>Mozambique</option><option>Angola</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-outline-gold" onclick="getLocation()">
+                        <i class="fa-solid fa-location-dot me-2"></i>Pin Location
+                    </button>
+                </div>
+            </div>
+            <div class="row g-3 mt-2">
+                <div class="col-md-6">
+                    <div id="locationResult" class="location-result"><i class="fa-regular fa-map me-2"></i>Waiting for location…</div>
+                </div>
+                <div class="col-md-6">
+                    <div id="currencyResult" class="currency-result"><i class="fa-regular fa-money-bill-1 me-2"></i>Select a country to see currency rate</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== PROPERTY LISTINGS ==================== -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-4 align-items-end mb-4">
+                <div class="col-lg-6">
+                    <h2 class="section-title">Premium <span>Properties</span></h2>
+                    <p class="section-subtitle">Discover our curated collection of luxury town houses and estates, tailored to your lifestyle.</p>
+                </div>
+                <div class="col-lg-6 text-lg-end">
+                    <span class="stat-badge"><span class="live-pulse"></span><span id="propertyCount">12</span> properties available</span>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filter-section mb-4">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <input type="number" id="priceMin" class="form-control" placeholder="Min Price" />
+                    </div>
+                    <div class="col-md-3">
+                        <input type="number" id="priceMax" class="form-control" placeholder="Max Price" />
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" id="locationFilter" class="form-control" placeholder="Location…" />
+                    </div>
+                    <div class="col-md-3">
+                        <button id="filterBtn" class="btn btn-filter"><i class="fa-solid fa-sliders me-2"></i>Apply Filters</button>
+                    </div>
+                </div>
+                <div class="row g-3 mt-2">
+                    <div class="col-md-4">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="status" value="for rent" id="rentOpt" />
+                            <label class="form-check-label" for="rentOpt">For Rent</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="status" value="for sale" id="saleOpt" />
+                            <label class="form-check-label" for="saleOpt">For Sale</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="status" value="for buy" id="buyOpt" />
+                            <label class="form-check-label" for="buyOpt">For Buy</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="availability" value="true" id="availOpt" />
+                            <label class="form-check-label" for="availOpt">Available</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="availability" value="false" id="unavailOpt" />
+                            <label class="form-check-label" for="unavailOpt">Unavailable</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <button class="btn btn-outline-secondary btn-sm" onclick="resetFilters()">
+                            <i class="fa-regular fa-rotate-right me-1"></i>Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Property Grid -->
+            <div id="propertyContainer" class="row g-4">
+                <!-- Rendered by JS -->
+            </div>
+
+            <div class="text-center mt-5">
+                <button class="btn btn-gold px-5 py-3" style="border-radius:50px;font-weight:700;">
+                    <i class="fa-regular fa-compass me-2"></i>Browse More Properties
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== CHATBOT ==================== -->
+    <section class="chat-section">
+        <div class="container">
+            <div class="text-center mb-4">
+                <h2 class="section-title"><span>Mwarokin</span> Assistant</h2>
+                <p class="section-subtitle mx-auto">Your AI-powered real estate companion. Ask anything about properties, payments, or services.</p>
+            </div>
+            <div class="chat-container">
+                <div id="chatDisplay" class="chat-box">
+                    <div class="message bot">
+                        <span class="bot-icon">🏘️</span> Welcome to Mwarokin Estates! How can I assist you today?
+                    </div>
+                </div>
+                <div class="quick-reply" id="quickReplies">
+                    <button class="btn-qr" onclick="sendQuick('Show me available properties')">🏠 Available properties</button>
+                    <button class="btn-qr" onclick="sendQuick('What is the rent price?')">💰 Rent prices</button>
+                    <button class="btn-qr" onclick="sendQuick('How to pay bills?')">📄 Pay bills</button>
+                    <button class="btn-qr" onclick="sendQuick('Schedule a viewing')">📅 Schedule viewing</button>
+                </div>
+                <div class="input-group mt-3">
+                    <input type="text" id="userInput" class="form-control" placeholder="Type your question…" autofocus />
+                    <button class="btn btn-send" onclick="handleUserInput()"><i class="fa-regular fa-paper-plane me-1"></i> Send</button>
+                    <button class="btn btn-voice" onclick="startVoiceInput()"><i class="fa-solid fa-microphone"></i></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer-premium">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                    <h5>Mwarokin Estates</h5>
+                    <p style="font-size:0.9rem;line-height:1.8;">Redefining luxury living across Africa. Premium town houses, estates, and property management.</p>
+                    <div class="d-flex gap-2 mt-3">
+                        <a href="#" class="social-btn"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="#" class="social-btn"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="social-btn"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="#" class="social-btn"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="#" class="social-btn"><i class="fa-brands fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>Quick Links</h5>
+                    <a href="#" class="footer-link">Mother Title</a>
+                    <a href="#" class="footer-link">Mortgage Calculator</a>
+                    <a href="#" class="footer-link">My Locator</a>
+                    <a href="#" class="footer-link">Lipa Mdogo Payment Plan</a>
+                    <a href="#" class="footer-link">Neighborhoods</a>
+                    <a href="#" class="footer-link">Upgrade &amp; Relocation</a>
+                    <a href="#" class="footer-link">Wearables</a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>Contact</h5>
+                    <p style="font-size:0.9rem;"><i class="fa-regular fa-map-pin me-2 text-gold"></i> Nairobi, Kenya</p>
+                    <p style="font-size:0.9rem;"><i class="fa-regular fa-phone me-2 text-gold"></i> +254-704-919-388</p>
+                    <p style="font-size:0.9rem;"><i class="fa-regular fa-envelope me-2 text-gold"></i> property@mwarokin.com</p>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>Subscribe</h5>
+                    <p style="font-size:0.9rem;">Get the latest property updates and exclusive offers.</p>
+                    <div class="d-flex gap-2">
+                        <input class="form-control bg-transparent border-light" style="border-radius:50px;padding:12px 18px;color:#fff;" type="email" placeholder="Your email" />
+                        <button class="btn btn-gold" style="border-radius:50px;padding:12px 24px;white-space:nowrap;">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>Mwarokin – Town House &copy; 2026. All Rights Reserved. Powered by <a href="#">Syllogism Technology Africa</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== BACK TO TOP ==================== -->
+    <a href="#" class="back-to-top" id="backToTop"><i class="fa-solid fa-arrow-up"></i></a>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+    <script>
+        // ────────────────────────────────────────────────
+        // 1. PROPERTY DATA
+        // ────────────────────────────────────────────────
+        const properties = [{
+            id: 1,
+            type: 'Apartment',
+            status: 'for sale',
+            location: 'New York, USA',
+            price: 12345,
+            availability: true,
+            img: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&h=400&fit=crop',
+            beds: 3,
+            baths: 2,
+            sqft: 1000
+        }, {
+            id: 2,
+            type: 'Villa',
+            status: 'for rent',
+            location: 'Los Angeles, USA',
+            price: 15000,
+            availability: true,
+            img: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&h=400&fit=crop',
+            beds: 4,
+            baths: 3,
+            sqft: 1800
+        }, {
+            id: 3,
+            type: 'Office',
+            status: 'for sale',
+            location: 'Chicago, USA',
+            price: 9500,
+            availability: false,
+            img: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=400&fit=crop',
+            beds: 2,
+            baths: 1,
+            sqft: 750
+        }, {
+            id: 4,
+            type: 'Building',
+            status: 'for rent',
+            location: 'Miami, USA',
+            price: 22000,
+            availability: true,
+            img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&h=400&fit=crop',
+            beds: 5,
+            baths: 4,
+            sqft: 2500
+        }, {
+            id: 5,
+            type: 'Home',
+            status: 'for sale',
+            location: 'Austin, USA',
+            price: 18500,
+            availability: true,
+            img: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&h=400&fit=crop',
+            beds: 3,
+            baths: 2,
+            sqft: 1400
+        }, {
+            id: 6,
+            type: 'Shop',
+            status: 'for rent',
+            location: 'San Francisco, USA',
+            price: 8000,
+            availability: false,
+            img: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=600&h=400&fit=crop',
+            beds: 1,
+            baths: 1,
+            sqft: 500
+        }, {
+            id: 7,
+            type: 'Penthouse',
+            status: 'for sale',
+            location: 'Dubai, UAE',
+            price: 45000,
+            availability: true,
+            img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&h=400&fit=crop',
+            beds: 4,
+            baths: 4,
+            sqft: 3200
+        }, {
+            id: 8,
+            type: 'Town House',
+            status: 'for rent',
+            location: 'London, UK',
+            price: 28000,
+            availability: true,
+            img: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600&h=400&fit=crop',
+            beds: 3,
+            baths: 3,
+            sqft: 2000
+        }, {
+            id: 9,
+            type: 'Condo',
+            status: 'for sale',
+            location: 'Toronto, CA',
+            price: 32000,
+            availability: false,
+            img: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=600&h=400&fit=crop',
+            beds: 2,
+            baths: 2,
+            sqft: 1100
+        }];
+
+        let filteredProperties = [...properties];
+
+        // ────────────────────────────────────────────────
+        // 2. RENDER PROPERTIES
+        // ────────────────────────────────────────────────
+        function renderProperties(list) {
+            const container = document.getElementById('propertyContainer');
+            container.innerHTML = '';
+            if (!list.length) {
+                container.innerHTML =
+                    `<div class="col-12 text-center py-5"><h4 class="text-muted">No properties match your filters.</h4></div>`;
+                document.getElementById('propertyCount').textContent = '0';
+                return;
+            }
+            list.forEach(p => {
+                const availClass = p.availability ? 'available' : 'unavailable';
+                const availText = p.availability ? 'Available' : 'Unavailable';
+                const statusLabel = p.status.replace('for ', '').toUpperCase();
+                const card = document.createElement('div');
+                card.className = 'col-lg-4 col-md-6';
+                card.innerHTML = `
+                    <div class="property-card">
+                        <div class="card-img-wrap">
+                            <img src="${p.img}" alt="${p.type}" loading="lazy" />
+                            <span class="card-badge">${statusLabel}</span>
+                            <span class="card-type">${p.type}</span>
+                            <button class="card-favorite" onclick="toggleFavorite(this)"><i class="fa-regular fa-heart"></i></button>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-price">$${p.price.toLocaleString()} <small>/ ${p.status.includes('rent') ? 'mo' : 'one-time'}</small></div>
+                            <a href="#" class="card-title">${p.type} in ${p.location}</a>
+                            <div class="card-location"><i class="fa-regular fa-location-dot me-1"></i>${p.location}</div>
+                            <div class="card-features">
+                                <span><i class="fa-regular fa-ruler-combined"></i> ${p.sqft} Sqft</span>
+                                <span><i class="fa-regular fa-bed"></i> ${p.beds} Bed</span>
+                                <span><i class="fa-regular fa-bath"></i> ${p.baths} Bath</span>
+                            </div>
+                            <span class="card-availability ${availClass}">${availText}</span>
+                            <button class="btn-check" onclick="checkAvailability(${p.id})"><i class="fa-regular fa-circle-check me-2"></i>Check Availability</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            document.getElementById('propertyCount').textContent = list.length;
+        }
+
+        // ────────────────────────────────────────────────
+        // 3. FILTERS
+        // ────────────────────────────────────────────────
+        function applyFilters() {
+            const priceMin = parseInt(document.getElementById('priceMin').value) || 0;
+            const priceMax = parseInt(document.getElementById('priceMax').value) || Infinity;
+            const location = document.getElementById('locationFilter').value.toLowerCase().trim();
+            const statusEl = document.querySelector('input[name="status"]:checked');
+            const status = statusEl ? statusEl.value : null;
+            const availEl = document.querySelector('input[name="availability"]:checked');
+            const availability = availEl ? availEl.value === 'true' : null;
+
+            filteredProperties = properties.filter(p => {
+                if (p.price < priceMin || p.price > priceMax) return false;
+                if (location && !p.location.toLowerCase().includes(location)) return false;
+                if (status && p.status !== status) return false;
+                if (availability !== null && p.availability !== availability) return false;
+                return true;
+            });
+            renderProperties(filteredProperties);
+        }
+
+        function resetFilters() {
+            document.getElementById('priceMin').value = '';
+            document.getElementById('priceMax').value = '';
+            document.getElementById('locationFilter').value = '';
+            document.querySelectorAll('input[name="status"]').forEach(el => el.checked = false);
+            document.querySelectorAll('input[name="availability"]').forEach(el => el.checked = false);
+            filteredProperties = [...properties];
+            renderProperties(filteredProperties);
+        }
+
+        document.getElementById('filterBtn').addEventListener('click', applyFilters);
+
+        // ────────────────────────────────────────────────
+        // 4. AVAILABILITY CHECK
+        // ────────────────────────────────────────────────
+        function checkAvailability(id) {
+            const p = properties.find(x => x.id === id);
+            if (!p) return;
+            if (p.availability) {
+                alert(`✅ ${p.type} in ${p.location} is AVAILABLE for ${p.status}. Price: $${p.price.toLocaleString()}`);
+            } else {
+                alert(`❌ ${p.type} in ${p.location} is currently UNAVAILABLE.`);
+            }
+        }
+
+        function toggleFavorite(btn) {
+            const icon = btn.querySelector('i');
+            icon.classList.toggle('fa-regular');
+            icon.classList.toggle('fa-solid');
+            icon.style.color = icon.classList.contains('fa-solid') ? '#e74c3c' : '';
+            btn.classList.toggle('text-danger');
+        }
+
+        // ────────────────────────────────────────────────
+        // 5. LOCATION & CURRENCY
+        // ────────────────────────────────────────────────
+        function getLocation() {
+            const res = document.getElementById('locationResult');
+            if (!navigator.geolocation) {
+                res.innerHTML = '<i class="fa-regular fa-triangle-exclamation me-2"></i>Geolocation not supported.';
+                return;
+            }
+            res.innerHTML = '<i class="fa-regular fa-spinner fa-spin me-2"></i>Fetching location…';
+            navigator.geolocation.getCurrentPosition(
+                pos => {
+                    const { latitude, longitude } = pos.coords;
+                    res.innerHTML =
+                        `<i class="fa-regular fa-check-circle me-2 text-gold"></i>📍 Lat: ${latitude.toFixed(6)}, Lng: ${longitude.toFixed(6)}`;
+                },
+                err => {
+                    res.innerHTML = `<i class="fa-regular fa-circle-exclamation me-2"></i>${err.message}`;
+                }
+            );
+        }
+
+        const currencyRates = {
+            Kenya: 145.50,
+            Nigeria: 750.00,
+            'South Africa': 19.20,
+            Egypt: 48.50,
+            Morocco: 10.80,
+            Ghana: 14.20,
+            Tanzania: 2650,
+            Uganda: 3780,
+            Rwanda: 1300,
+            Zambia: 24.50,
+            Zimbabwe: 322,
+            Botswana: 13.80,
+            Namibia: 19.20,
+            Mozambique: 64.00,
+            Angola: 830
+        };
+
+        document.getElementById('countrySelect').addEventListener('change', function() {
+            const country = this.value;
+            const rate = currencyRates[country];
+            const el = document.getElementById('currencyResult');
+            if (rate) {
+                el.innerHTML =
+                    `<i class="fa-regular fa-coins me-2"></i>${country}: <strong>${rate.toLocaleString()} KES</strong> (approx. exchange rate)`;
+            } else {
+                el.innerHTML = `<i class="fa-regular fa-circle-info me-2"></i>Select a country to see the currency rate.`;
+            }
+        });
+
+        // ────────────────────────────────────────────────
+        // 6. CHATBOT
+        // ────────────────────────────────────────────────
+        const chatDisplay = document.getElementById('chatDisplay');
+        const userInput = document.getElementById('userInput');
+
+        function addMessage(text, isUser = false) {
+            const div = document.createElement('div');
+            div.className = `message ${isUser ? 'user' : 'bot'}`;
+            if (!isUser) {
+                div.innerHTML = `<span class="bot-icon">🏘️</span> ${text}`;
+            } else {
+                div.textContent = text;
+            }
+            chatDisplay.appendChild(div);
+            chatDisplay.scrollTop = chatDisplay.scrollHeight;
+        }
+
+        function getBotResponse(msg) {
+            const lower = msg.toLowerCase();
+            if (lower.includes('available') || lower.includes('property') || lower.includes('home') || lower.includes(
+                    'house')) {
+                const avail = properties.filter(p => p.availability).length;
+                return `We have ${avail} properties currently available. Would you like me to list them or help you filter by price or location?`;
+            }
+            if (lower.includes('rent') || lower.includes('price') || lower.includes('cost')) {
+                const avg = properties.reduce((s, p) => s + p.price, 0) / properties.length;
+                return `Our properties range from $${Math.min(...properties.map(p=>p.price)).toLocaleString()} to $${Math.max(...properties.map(p=>p.price)).toLocaleString()}. The average price is $${Math.round(avg).toLocaleString()}. What's your budget?`;
+            }
+            if (lower.includes('pay') || lower.includes('bill') || lower.includes('payment')) {
+                return `You can manage bills and payments from the "Payments" section in the navigation. We support M-Pesa, bank transfer, and card payments. Need help with a specific payment?`;
+            }
+            if (lower.includes('view') || lower.includes('schedule') || lower.includes('tour')) {
+                return `I can help you schedule a viewing! Please provide your preferred date and time, and I'll arrange a tour with our agent.`;
+            }
+            if (lower.includes('hello') || lower.includes('hi') || lower.includes('hey')) {
+                return `Hello! 👋 How can I help you with your property search today?`;
+            }
+            return `Thank you for your question. I'm here to help with property listings, rent prices, payments, and viewings. Could you please rephrase or choose one of the quick replies below?`;
+        }
+
+        function handleUserInput() {
+            const text = userInput.value.trim();
+            if (!text) return;
+            addMessage(text, true);
+            userInput.value = '';
+            setTimeout(() => {
+                const reply = getBotResponse(text);
+                addMessage(reply, false);
+            }, 400);
+        }
+
+        function sendQuick(text) {
+            addMessage(text, true);
+            setTimeout(() => {
+                const reply = getBotResponse(text);
+                addMessage(reply, false);
+            }, 400);
+        }
+
+        userInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') handleUserInput();
+        });
+
+        // ────────────────────────────────────────────────
+        // 7. VOICE INPUT
+        // ────────────────────────────────────────────────
+        function startVoiceInput() {
+            const btn = document.querySelector('.btn-voice');
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert('Voice input is not supported in this browser. Please use Chrome or Edge.');
+                return;
+            }
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+            btn.innerHTML = '<i class="fa-solid fa-microphone-slash"></i> Listening…';
+            btn.style.background = '#d4a853';
+            btn.style.color = '#fff';
+            recognition.start();
+            recognition.onresult = event => {
+                const transcript = event.results[0][0].transcript;
+                userInput.value = transcript;
+                btn.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+                btn.style.background = '';
+                btn.style.color = '';
+                handleUserInput();
+            };
+            recognition.onerror = () => {
+                btn.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+                btn.style.background = '';
+                btn.style.color = '';
+                alert('Voice recognition failed. Please try again or type your question.');
+            };
+            recognition.onend = () => {
+                btn.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+                btn.style.background = '';
+                btn.style.color = '';
+            };
+        }
+
+        // ────────────────────────────────────────────────
+        // 8. BACK TO TOP
+        // ────────────────────────────────────────────────
+        const backBtn = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 400) {
+                backBtn.classList.add('visible');
+            } else {
+                backBtn.classList.remove('visible');
+            }
+        });
+        backBtn.addEventListener('click', e => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // ────────────────────────────────────────────────
+        // 9. NAVBAR SCROLL EFFECT
+        // ────────────────────────────────────────────────
+        const nav = document.getElementById('mainNav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 60);
+        });
+
+        // ────────────────────────────────────────────────
+        // 10. INIT
+        // ────────────────────────────────────────────────
+        renderProperties(properties);
+
+        // Auto-detect location on load
+        setTimeout(getLocation, 800);
+
+        console.log('🏘️ Mwarokin Estates – Premium UI loaded successfully.');
+    </script>
+
+</body>
+</html>
