@@ -1,0 +1,288 @@
+Based on the provided data description, I propose a **modern, normalized relational database schema** for Mwarokin Estates. The system manages **tenants**, **landlords**, **properties**, **property management agencies**, **leases**, **rent payments**, and **notifications**. The schema eliminates redundancy, ensures data integrity, and supports efficient reporting.
+
+---
+
+## Core Entities & Relationships
+
+![Entity-Relationship Diagram (simplified)](https://via.placeholder.com/800x400?text=ER+Diagram+Placeholder)
+
+- **Agency** – property management companies (optional).
+- **Landlord** – property owners.
+- **Tenant** – individuals renting properties.
+- **Property** – individual rental units/houses.
+- **Lease** – contract linking a tenant, a property, and optionally a management agency.
+- **RentPayment** – instalment records.
+- **Notification** – eviction/rent reminders sent to tenants or landlords.
+- **Amenity** – (optional) a lookup table for property features.
+
+---
+
+## Table Definitions (PostgreSQL Syntax)
+
+### 1. `agencies`
+Stores property management firms.
+
+| Column      | Type           | Description                     |
+|-------------|----------------|---------------------------------|
+| `id`        | UUID (PK)      | Primary key                     |
+| `name`      | VARCHAR(100)   | Agency name                     |
+| `phone`     | VARCHAR(20)    | Contact number                  |
+| `email`     | VARCHAR(100)   | Email address                   |
+| `address`   | TEXT           | Physical address                |
+| `created_at`| TIMESTAMP      | Auto-set                        |
+| `updated_at`| TIMESTAMP      | Auto-update                     |
+
+```sql
+CREATE TABLE agencies (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    email VARCHAR(100),
+    address TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+---
+
+### 2. `landlords`
+Property owners. A landlord may be associated with one agency (if managed).
+
+| Column            | Type           | Description                           |
+|-------------------|----------------|---------------------------------------|
+| `id`              | UUID (PK)      |                                       |
+| `first_name`      | VARCHAR(50)    |                                       |
+| `last_name`       | VARCHAR(50)    |                                       |
+| `phone`           | VARCHAR(20)    |                                       |
+| `email`           | VARCHAR(100)   |                                       |
+| `bank_account`    | VARCHAR(50)    | Dues bank account                     |
+| `id_passport`     | VARCHAR(30)    | ID/Passport number                    |
+| `profile_picture` | TEXT           | URL or path to image                  |
+| `agency_id`       | UUID (FK)      | References `agencies.id` (nullable)   |
+| `created_at`      | TIMESTAMP      |                                       |
+| `updated_at`      | TIMESTAMP      |                                       |
+
+```sql
+CREATE TABLE landlords (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    phone VARCHAR(20),
+    email VARCHAR(100),
+    bank_account VARCHAR(50),
+    id_passport VARCHAR(30),
+    profile_picture TEXT,
+    agency_id UUID REFERENCES agencies(id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+---
+
+### 3. `tenants`
+Individuals renting properties.
+
+| Column            | Type           | Description                           |
+|-------------------|----------------|---------------------------------------|
+| `id`              | UUID (PK)      |                                       |
+| `first_name`      | VARCHAR(50)    |                                       |
+| `last_name`       | VARCHAR(50)    |                                       |
+| `phone`           | VARCHAR(20)    |                                       |
+| `email`           | VARCHAR(100)   |                                       |
+| `gender`          | VARCHAR(10)    |                                       |
+| `id_passport`     | VARCHAR(30)    |                                       |
+| `profile_picture` | TEXT           | URL or path                           |
+| `created_at`      | TIMESTAMP      |                                       |
+| `updated_at`      | TIMESTAMP      |                                       |
+
+```sql
+CREATE TABLE tenants (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    phone VARCHAR(20),
+    email VARCHAR(100),
+    gender VARCHAR(10),
+    id_passport VARCHAR(30),
+    profile_picture TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+---
+
+### 4. `properties`
+Each rental unit/house.
+
+| Column            | Type           | Description                               |
+|-------------------|----------------|-------------------------------------------|
+| `id`              | UUID (PK)      |                                           |
+| `property_type`   | VARCHAR(30)    | e.g., Apartment, Bungalow, Condo          |
+| `home_spice`      | VARCHAR(50)    | "Home Spice" – maybe interior style/size? |
+| `house_no`        | VARCHAR(20)    | Unit/house number                         |
+| `address`         | TEXT           | Full location                             |
+| `amenities`       | JSONB          | Flexible list: { "pool": true, "gym": false } |
+| `landlord_id`     | UUID (FK)      | References `landlords.id`                 |
+| `agency_id`       | UUID (FK)      | Management agency (if any)                |
+| `created_at`      | TIMESTAMP      |                                           |
+| `updated_at`      | TIMESTAMP      |                                           |
+
+```sql
+CREATE TABLE properties (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    property_type VARCHAR(30),
+    home_spice VARCHAR(50),
+    house_no VARCHAR(20),
+    address TEXT NOT NULL,
+    amenities JSONB DEFAULT '{}',
+    landlord_id UUID NOT NULL REFERENCES landlords(id) ON DELETE RESTRICT,
+    agency_id UUID REFERENCES agencies(id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+---
+
+### 5. `leases`
+Contracts between a tenant and a property. A lease also records the rent amount and validity period.
+
+| Column            | Type           | Description                               |
+|-------------------|----------------|-------------------------------------------|
+| `id`              | UUID (PK)      |                                           |
+| `property_id`     | UUID (FK)      | References `properties.id`                |
+| `tenant_id`       | UUID (FK)      | References `tenants.id`                   |
+| `start_date`      | DATE           | Lease start                               |
+| `end_date`        | DATE           | Lease end (nullable if ongoing)           |
+| `rent_amount`     | DECIMAL(10,2)  | Monthly rent                              |
+| `deposit`         | DECIMAL(10,2)  | Security deposit                          |
+| `status`          | VARCHAR(20)    | active / expired / terminated             |
+| `created_at`      | TIMESTAMP      |                                           |
+| `updated_at`      | TIMESTAMP      |                                           |
+
+```sql
+CREATE TABLE leases (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    property_id UUID NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+    tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    start_date DATE NOT NULL,
+    end_date DATE,
+    rent_amount DECIMAL(10,2) NOT NULL,
+    deposit DECIMAL(10,2),
+    status VARCHAR(20) DEFAULT 'active',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+---
+
+### 6. `rent_payments`
+Records each rent instalment, linked to a lease.
+
+| Column            | Type           | Description                               |
+|-------------------|----------------|-------------------------------------------|
+| `id`              | UUID (PK)      |                                           |
+| `lease_id`        | UUID (FK)      | References `leases.id`                    |
+| `amount`          | DECIMAL(10,2)  | Paid amount                               |
+| `payment_date`    | DATE           | When paid                                 |
+| `receipt_number`  | VARCHAR(30)    | Unique receipt reference                  |
+| `payment_method`  | VARCHAR(20)    | Cash, Bank Transfer, M-Pesa, etc.         |
+| `status`          | VARCHAR(20)    | paid / pending / overdue                  |
+| `created_at`      | TIMESTAMP      |                                           |
+
+```sql
+CREATE TABLE rent_payments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    lease_id UUID NOT NULL REFERENCES leases(id) ON DELETE CASCADE,
+    amount DECIMAL(10,2) NOT NULL,
+    payment_date DATE NOT NULL,
+    receipt_number VARCHAR(30) UNIQUE,
+    payment_method VARCHAR(20),
+    status VARCHAR(20) DEFAULT 'paid',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+---
+
+### 7. `notifications`
+Stores automated or manual alerts.
+
+| Column            | Type           | Description                               |
+|-------------------|----------------|-------------------------------------------|
+| `id`              | UUID (PK)      |                                           |
+| `entity_type`     | VARCHAR(20)    | 'tenant' or 'landlord'                    |
+| `entity_id`       | UUID           | Corresponding tenant/landlord UUID        |
+| `type`            | VARCHAR(30)    | eviction / rent_reminder / general        |
+| `message`         | TEXT           | Notification content                      |
+| `sent_date`       | TIMESTAMP      | When sent                                 |
+| `is_read`         | BOOLEAN        | Default false                             |
+| `created_at`      | TIMESTAMP      |                                           |
+
+```sql
+CREATE TABLE notifications (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    entity_type VARCHAR(20) NOT NULL CHECK (entity_type IN ('tenant', 'landlord')),
+    entity_id UUID NOT NULL,
+    type VARCHAR(30) NOT NULL,
+    message TEXT NOT NULL,
+    sent_date TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+---
+
+### 8. `reports` (Optional – Materialized View)
+For monthly summaries, you can create a **materialized view** that aggregates rent payments, active leases, etc. Example:
+
+```sql
+CREATE MATERIALIZED VIEW monthly_reports AS
+SELECT 
+    DATE_TRUNC('month', rp.payment_date) AS report_month,
+    l.property_id,
+    p.landlord_id,
+    COUNT(DISTINCT l.tenant_id) AS active_tenants,
+    SUM(rp.amount) AS total_collected,
+    AVG(rp.amount) AS avg_rent
+FROM rent_payments rp
+JOIN leases l ON rp.lease_id = l.id
+JOIN properties p ON l.property_id = p.id
+WHERE rp.status = 'paid'
+GROUP BY report_month, l.property_id, p.landlord_id;
+```
+
+---
+
+## Additional Notes
+
+- **Indexes**: Add indexes on foreign keys (`property_id`, `tenant_id`, `landlord_id`, `agency_id`) and frequently filtered columns (`status`, `payment_date`, `start_date`, `end_date`).
+- **Computed Counts**: "No. of properties" for landlords/tenants can be obtained via `COUNT` queries; not stored to avoid redundancy.
+- **Flexible Amenities**: JSONB allows storing arbitrary key‑value pairs (e.g., `{"swimming_pool": true, "parking": "covered"}`).
+- **Soft Deletes**: Consider adding `deleted_at` columns for soft-deletion if needed.
+- **Security**: Implement row‑level security (RLS) if multi‑agency access is required.
+
+---
+
+## How This Maps to Your Input
+
+| Original Field(s)          | Mapped Table/Column                               |
+|----------------------------|---------------------------------------------------|
+| First Name, Last Name, Cell, Genders, I.D/Passports, Pictures | `tenants` or `landlords`                          |
+| Locations, House No, Home Spice, Amenities, Property Type | `properties`                                      |
+| Rent Payment, Monthly Receipts | `rent_payments` (receipt numbers)              |
+| Dues Bank Acc, Landlords/Owner Banks Acc | `landlords.bank_account`                     |
+| Tenants (list)             | Derived via `leases`                              |
+| Eviction Notifications, Rent Reminder Notifications | `notifications`                            |
+| Rent Picture S (pictures)  | Could be a separate `documents` table or stored as URLs in `rent_payments` |
+| Property Management, Agency details | `agencies`                                 |
+| Total Monthly Reports      | Materialized view or query                      |
+
+---
+
+This schema is **scalable**, **maintainable**, and aligns with modern practices (UUIDs, timestamps, relational integrity). It supports all the listed features while enabling sophisticated reporting and notifications.
