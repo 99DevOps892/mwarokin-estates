@@ -1,0 +1,119 @@
+<!-- Update analytics section -->
+<div class="analytics" style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); grid-column: 1 / -1; margin-top: 25px;">
+    <h2><i class="fas fa-chart-line"></i> Analytics Dashboard</h2>
+    <canvas id="kpi-time-series" style="max-height: 300px;"></canvas>
+</div>
+
+<!-- Update lease modal -->
+<div id="lease-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000;">
+    <div style="background: white; max-width: 600px; margin: 50px auto; padding: 20px; border-radius: 12px;">
+        <h2>Edit Lease Draft</h2>
+        <div id="lease-details">
+            <label>Monthly Rent ($): <input id="lease-rent" type="number" value="2000"></label><br>
+            <label>Duration (months): <input id="lease-duration" type="number" value="12"></label><br>
+            <label>Renewal Option: <input id="lease-renewal" type="checkbox"></label><br>
+            <label>Late Penalty ($): <input id="lease-penalty" type="number" value="50"></label><br>
+            <p id="lease-risks"></p>
+        </div>
+        <button onclick="saveLeaseDraft()" style="margin-top: 15px; padding: 10px; background: #3182ce; color: white; border: none; border-radius: 8px;">Save</button>
+        <button onclick="closeLeaseModal()" style="margin-top: 15px; padding: 10px; background: #c70039; color: white; border: none; border-radius: 8px;">Close</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+async function loadAnalytics() {
+    const apiKey = "YOUR_API_KEY";
+    try {
+        const response = await fetch('/analytics/report', {
+            method: 'POST',
+            headers: { "X-API-Key": apiKey, "Content-Type": "application/json" },
+            body: JSON.stringify({
+                time_range_start: new Date(Date.now() - 30*24*60*60*1000).toISOString(),
+                time_range_end: new Date().toISOString()
+            })
+        });
+        const report = await response.json();
+        const ctx = document.getElementById('kpi-time-series').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Last 30 Days'], // Mock single point; extend with real time-series data
+                datasets: [
+                    {
+                        label: 'Conversion Rate (%)',
+                        data: [report.kpis.conversion_rate * 100],
+                        borderColor: '#3182ce',
+                        backgroundColor: 'rgba(49, 130, 206, 0.2)',
+                        fill: true
+                    },
+                    {
+                        label: 'Avg Time to Lease (days)',
+                        data: [report.kpis.avg_time_to_lease_days],
+                        borderColor: '#ff5733',
+                        backgroundColor: 'rgba(255, 87, 51, 0.2)',
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true }
+                },
+                plugins: {
+                    title: { display: true, text: 'KPI Trends' }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Failed to load analytics:', error);
+    }
+}
+
+async function loadLeaseDraft(leaseId) {
+    const apiKey = "YOUR_API_KEY";
+    try {
+        const response = await fetch('/lease/create_draft', {
+            method: 'POST',
+            headers: { "X-API-Key": apiKey, "Content-Type": "application/json" },
+            body: JSON.stringify({
+                tenant_id: "tenant1",
+                listing_id: "listing1",
+                applicant_id: "applicant1",
+                terms: {
+                    duration_months: parseInt(document.getElementById('lease-duration').value),
+                    monthly_rent: parseFloat(document.getElementById('lease-rent').value),
+                    renewal_option: document.getElementById('lease-renewal').checked,
+                    late_payment_penalty: parseFloat(document.getElementById('lease-penalty').value)
+                }
+            })
+        });
+        const lease = await response.json();
+        document.getElementById('lease-rent').value = lease.clauses.rent;
+        document.getElementById('lease-duration').value = lease.clauses.duration;
+        document.getElementById('lease-renewal').checked = lease.clauses.renewal_option;
+        document.getElementById('lease-penalty').value = lease.clauses.late_payment_penalty.amount;
+        document.getElementById('lease-risks').innerHTML = `<strong>Risks:</strong> ${lease.risks.join(', ') || 'None'}`;
+        document.getElementById('lease-modal').style.display = 'flex';
+    } catch (error) {
+        console.error('Failed to load lease:', error);
+    }
+}
+
+async function saveLeaseDraft() {
+    await loadLeaseDraft('lease1'); // Re-save with updated values
+}
+
+function closeLeaseModal() {
+    document.getElementById('lease-modal').style.display = 'none';
+}
+
+// Load on page load
+document.addEventListener('DOMContentLoaded', () => {
+    loadAnalytics();
+    // Trigger lease modal on button click
+    document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', () => loadLeaseDraft('lease1'));
+    });
+});
+</script>

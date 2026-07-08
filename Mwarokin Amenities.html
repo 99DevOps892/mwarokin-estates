@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mwarokin Estates — The Amenities Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,450;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root{
+    --ink:#14201B;
+    --ink-2:#1B2922;
+    --panel:#1E2B23;
+    --panel-line:#33453A;
+    --brass:#C9A24B;
+    --brass-soft:#E4C978;
+    --terracotta:#C1653B;
+    --sage:#8FAE8B;
+    --sage-dim:#5B7360;
+    --ivory:#F3EFE4;
+    --ivory-dim:#C9C2AF;
+    --muted:#9CAE9E;
+    --danger:#C1543B;
+    --radius:2px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      radial-gradient(ellipse at top left, rgba(201,162,75,0.06), transparent 45%),
+      radial-gradient(ellipse at bottom right, rgba(193,101,59,0.05), transparent 50%),
+      var(--ink);
+    color:var(--ivory);
+    font-family:'Inter',sans-serif;
+    line-height:1.5;
+  }
+  h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--brass);color:var(--ink);}
+  ::-webkit-scrollbar{width:9px;}
+  ::-webkit-scrollbar-track{background:var(--ink);}
+  ::-webkit-scrollbar-thumb{background:var(--panel-line);border-radius:10px;}
+
+  /* ===== Nav ===== */
+  .nav{
+    position:sticky;top:0;z-index:200;
+    background:rgba(20,32,27,0.92);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--panel-line);
+  }
+  .nav-inner{max-width:1240px;margin:0 auto;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand-mark{
+    width:38px;height:38px;border:1px solid var(--brass);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif;color:var(--brass);font-size:1.1rem;
+    transform:rotate(45deg);
+  }
+  .brand-mark span{transform:rotate(-45deg);}
+  .brand-text{display:flex;flex-direction:column;line-height:1.1;}
+  .brand-text b{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:600;}
+  .brand-text small{font-size:.68rem;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;}
+  .nav-links{display:flex;gap:30px;align-items:center;}
+  .nav-links a{font-size:.85rem;color:var(--ivory-dim);transition:color .2s;position:relative;padding:4px 0;}
+  .nav-links a:hover,.nav-links a.active{color:var(--brass-soft);}
+  .nav-links a.active::after{content:'';position:absolute;bottom:-3px;left:0;right:0;height:1px;background:var(--brass);}
+  .unit-chip{
+    display:flex;align-items:center;gap:8px;border:1px solid var(--panel-line);
+    padding:7px 14px;font-size:.75rem;color:var(--ivory-dim);
+  }
+  .unit-chip i{color:var(--sage);font-size:.6rem;}
+  .nav-toggle{display:none;background:none;border:1px solid var(--panel-line);color:var(--ivory);padding:8px 12px;font-size:1rem;}
+
+  /* ===== Hero ===== */
+  .hero{max-width:1240px;margin:0 auto;padding:80px 28px 50px;}
+  .hero-eyebrow{
+    display:flex;align-items:center;gap:10px;color:var(--brass);
+    font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;margin-bottom:22px;
+  }
+  .hero-eyebrow .line{width:34px;height:1px;background:var(--brass);}
+  .hero h1{font-size:clamp(2.4rem,5vw,4rem);max-width:780px;font-weight:600;color:var(--ivory);}
+  .hero h1 em{font-style:italic;color:var(--brass-soft);font-weight:450;}
+  .hero p.lede{max-width:560px;color:var(--ivory-dim);font-size:1.02rem;margin-top:20px;}
+
+  .status-strip{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    border:1px solid var(--panel-line);margin-top:46px;
+  }
+  .status-cell{
+    padding:22px 24px;border-right:1px solid var(--panel-line);
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .status-cell:last-child{border-right:none;}
+  .status-cell .label{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+  .status-cell .value{font-family:'IBM Plex Mono',monospace;font-size:1.6rem;color:var(--ivory);display:flex;align-items:baseline;gap:6px;}
+  .status-cell .value small{font-size:.85rem;color:var(--muted);}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--sage);display:inline-block;animation:pulse 2s infinite;}
+  @keyframes pulse{0%{opacity:1;}50%{opacity:.35;}100%{opacity:1;}}
+
+  /* ===== Section headers ===== */
+  .section{max-width:1240px;margin:0 auto;padding:80px 28px;}
+  .section-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:36px;border-bottom:1px solid var(--panel-line);padding-bottom:22px;}
+  .section-head h2{font-size:2rem;color:var(--ivory);}
+  .section-head p{color:var(--muted);font-size:.9rem;max-width:420px;text-align:right;}
+
+  /* ===== Facility Board Grid ===== */
+  .board{display:grid;grid-template-columns:repeat(auto-fill,minmax(370px,1fr));gap:1px;background:var(--panel-line);border:1px solid var(--panel-line);}
+  .bay{background:var(--panel);padding:28px;display:flex;flex-direction:column;gap:16px;position:relative;transition:background .25s;}
+  .bay:hover{background:var(--ink-2);}
+  .bay-top{display:flex;justify-content:space-between;align-items:flex-start;}
+  .bay-id{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--brass);letter-spacing:.1em;}
+  .bay-icon{width:42px;height:42px;border:1px solid var(--panel-line);display:flex;align-items:center;justify-content:center;color:var(--brass-soft);font-size:1.1rem;}
+  .bay h3{font-size:1.3rem;color:var(--ivory);margin-top:2px;}
+  .plate{
+    display:inline-flex;align-items:center;gap:6px;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
+    padding:4px 10px;border:1px solid;width:fit-content;
+  }
+  .plate.open{color:var(--sage);border-color:var(--sage-dim);}
+  .plate.busy{color:var(--brass-soft);border-color:var(--brass);}
+  .plate.maint{color:var(--danger);border-color:var(--danger);}
+  .bay-desc{color:var(--ivory-dim);font-size:.85rem;}
+  .gauge-row{display:flex;flex-direction:column;gap:6px;margin-top:2px;}
+  .gauge-row .g-label{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+  .gauge{height:5px;background:var(--ink);position:relative;overflow:hidden;}
+  .gauge-fill{height:100%;background:linear-gradient(90deg,var(--sage-dim),var(--sage));transition:width .5s ease;}
+  .gauge-fill.brass{background:linear-gradient(90deg,var(--brass),var(--brass-soft));}
+  .gauge-fill.warn{background:linear-gradient(90deg,var(--terracotta),var(--danger));}
+
+  .bay-form{display:flex;flex-direction:column;gap:10px;margin-top:8px;border-top:1px dashed var(--panel-line);padding-top:16px;}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  label.f{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:block;}
+  input,select,textarea{
+    width:100%;background:var(--ink);border:1px solid var(--panel-line);color:var(--ivory);
+    padding:9px 11px;font-family:'Inter',sans-serif;font-size:.85rem;outline:none;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--brass);}
+  textarea{resize:vertical;min-height:56px;}
+
+  .btn{
+    border:1px solid var(--brass);background:transparent;color:var(--brass-soft);
+    padding:10px 18px;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;
+    cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;font-weight:600;
+  }
+  .btn:hover{background:var(--brass);color:var(--ink);}
+  .btn.ghost{border-color:var(--panel-line);color:var(--ivory-dim);}
+  .btn.ghost:hover{border-color:var(--muted);background:transparent;color:var(--ivory);}
+  .btn.danger{border-color:var(--danger);color:var(--danger);}
+  .btn.danger:hover{background:var(--danger);color:var(--ivory);}
+  .btn.small{padding:7px 12px;font-size:.68rem;}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;}
+  .btn:disabled{opacity:.4;cursor:not-allowed;}
+
+  .confirm-note{
+    font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--sage);
+    border:1px dashed var(--sage-dim);padding:8px 10px;display:none;
+  }
+  .confirm-note.show{display:block;animation:fadeIn .3s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+  .slot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+  .slot{
+    border:1px solid var(--panel-line);padding:8px 4px;text-align:center;font-size:.7rem;
+    font-family:'IBM Plex Mono',monospace;cursor:pointer;color:var(--ivory-dim);transition:all .15s;
+  }
+  .slot.taken{color:var(--muted);border-color:var(--panel-line);cursor:not-allowed;opacity:.4;text-decoration:line-through;}
+  .slot.selected{background:var(--brass);color:var(--ink);border-color:var(--brass);}
+  .slot:not(.taken):hover{border-color:var(--brass);color:var(--brass-soft);}
+
+  /* ===== Activity Ledger ===== */
+  .ledger{border:1px solid var(--panel-line);}
+  .ledger-head{
+    display:grid;grid-template-columns:120px 1fr 160px 130px;
+    padding:14px 22px;border-bottom:1px solid var(--panel-line);
+    font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
+  }
+  .ledger-row{
+    display:grid;grid-template-columns:120px 1fr 160px 130px;
+    padding:14px 22px;border-bottom:1px solid var(--panel-line);
+    font-size:.83rem;align-items:center;color:var(--ivory-dim);
+  }
+  .ledger-row:last-child{border-bottom:none;}
+  .ledger-row .code{color:var(--brass-soft);font-family:'IBM Plex Mono',monospace;}
+  .ledger-row .time{font-family:'IBM Plex Mono',monospace;color:var(--muted);font-size:.76rem;}
+  .tag{font-size:.66rem;padding:3px 8px;border:1px solid;letter-spacing:.05em;text-transform:uppercase;width:fit-content;}
+  .tag.ok{color:var(--sage);border-color:var(--sage-dim);}
+  .tag.pending{color:var(--brass-soft);border-color:var(--brass);}
+  .empty-ledger{padding:40px 22px;text-align:center;color:var(--muted);font-size:.85rem;}
+
+  /* ===== Emergency strip ===== */
+  .emergency{
+    background:var(--ink-2);border:1px solid var(--danger);margin-top:80px;
+    display:flex;align-items:center;justify-content:space-between;padding:26px 32px;flex-wrap:wrap;gap:16px;
+  }
+  .emergency-left{display:flex;align-items:center;gap:16px;}
+  .emergency-left i{color:var(--danger);font-size:1.4rem;}
+  .emergency-left b{font-family:'Fraunces',serif;font-size:1.15rem;}
+  .emergency-left p{color:var(--muted);font-size:.82rem;margin-top:2px;}
+
+  /* ===== Footer ===== */
+  footer{border-top:1px solid var(--panel-line);margin-top:60px;}
+  .footer-inner{max-width:1240px;margin:0 auto;padding:56px 28px 30px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;}
+  .footer-inner h5{font-family:'Fraunces',serif;font-size:1rem;margin-bottom:16px;color:var(--ivory);}
+  .footer-inner p,.footer-inner a{color:var(--muted);font-size:.85rem;display:block;margin-bottom:10px;}
+  .footer-inner a:hover{color:var(--brass-soft);}
+  .footer-bottom{border-top:1px solid var(--panel-line);text-align:center;padding:22px;color:var(--muted);font-size:.78rem;}
+  .footer-bottom a{color:var(--brass-soft);}
+
+  /* toast */
+  .toast-wrap{position:fixed;bottom:24px;right:24px;z-index:400;display:flex;flex-direction:column;gap:10px;}
+  .toastx{
+    background:var(--panel);border:1px solid var(--brass);padding:14px 18px;font-size:.82rem;
+    min-width:260px;display:flex;align-items:center;gap:10px;animation:slideIn .3s ease;
+  }
+  .toastx.err{border-color:var(--danger);}
+  @keyframes slideIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
+
+  @media(max-width:900px){
+    .status-strip{grid-template-columns:repeat(2,1fr);}
+    .status-cell:nth-child(2){border-right:none;}
+    .footer-inner{grid-template-columns:1fr 1fr;}
+    .nav-links{display:none;}
+    .nav-toggle{display:block;}
+    .field-row{grid-template-columns:1fr;}
+    .ledger-head,.ledger-row{grid-template-columns:90px 1fr 110px;}
+    .ledger-head span:nth-child(4),.ledger-row .time{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="brand">
+      <div class="brand-mark"><span>M</span></div>
+      <div class="brand-text">
+        <b>Mwarokin Estates</b>
+        <small>Facility Ledger</small>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="index.html">Overview</a>
+      <a href="ManageBills.html">Bills</a>
+      <a href="Payments.html">Payments</a>
+      <a href="Rent.html">Rent</a>
+      <a href="Contact.html">Contact</a>
+    </div>
+    <div class="unit-chip"><i class="fas fa-circle"></i> Unit B-14 · Active Resident</div>
+    <button class="nav-toggle"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow"><span class="line"></span> Facility Directory — Block B, Mwarokin Estates</div>
+  <h1>Every amenity, <em>booked, tracked</em><br>and accounted for.</h1>
+  <p class="lede">This is the live register of estate facilities available to your unit — reserve a slot, check real-time status, or report an issue directly to the estate office. Every action here is logged to your household record.</p>
+
+  <div class="status-strip">
+    <div class="status-cell">
+      <span class="label">Facilities Open</span>
+      <span class="value" id="statOpen">9<small>/ 10</small></span>
+    </div>
+    <div class="status-cell">
+      <span class="label">Your Active Bookings</span>
+      <span class="value" id="statBookings">0</span>
+    </div>
+    <div class="status-cell">
+      <span class="label">Estate Status</span>
+      <span class="value"><span class="dot"></span> <span style="font-size:1rem;">Normal</span></span>
+    </div>
+    <div class="status-cell">
+      <span class="label">Ledger Entries Today</span>
+      <span class="value" id="statLedger">0</span>
+    </div>
+  </div>
+</section>
+
+<!-- FACILITY BOARD -->
+<section class="section">
+  <div class="section-head">
+    <h2>The Facility Board</h2>
+    <p>Bay numbers correspond to the estate office registry. Select, reserve, or flag — every request reaches the facilities team within the hour.</p>
+  </div>
+
+  <div class="board" id="board">
+
+    <!-- 01 PARKING -->
+    <div class="bay">
+      <div class="bay-top">
+        <div>
+          <div class="bay-id">BAY / 01</div>
+          <h3>Resident Parking</h3>
+        </div>
+        <div class="bay-icon"><i class="fas fa-car-side"></i></div>
+      </div>
+      <span class="plate open" id="plate-parking"><i class="fas fa-circle" style="font-size:.5rem;"></i> 6 Bays Free</span>
+      <p class="bay-desc">Covered resident bays and open visitor parking. Reserve a visitor bay up to 48 hours ahead.</p>
+      <div class="bay-form">
+        <div class="field-row">
+          <div>
+            <label class="f">Bay Type</label>
+            <select id="parkType"><option>Visitor Bay</option><option>Resident Bay (2nd Car)</option><option>Disability Bay</option></select>
+          </div>
+          <div>
+            <label class="f">Date</label>
+            <input type="date" id="parkDate">
+          </div>
+        </div>
+        <div>
+          <label class="f">Vehicle Reg. Plate</label>
+          <input type="text" id="parkPlate" placeholder="KDA 001B">
+        </div>
+        <div class="btn-row">
+          <button class="btn" onclick="reserveParking()">Reserve Bay</button>
+        </div>
+        <div class="confirm-note" id="parkConfirm"></div>
+      </div>
+    </div>
+
+    <!-- 02 POOL -->
+    <div class="bay">
+      <div class="bay-top">
+        <div>
+          <div class="bay-id">BAY / 02</div>
+          <h3>Swimming Pool</h3>
+        </div>
+        <div class="bay-icon"><i class="fas fa-person-swimming"></i></div>
+      </div>
+      <span class="plate open"><i class="fas fa-circle" style="font-size:.5rem;"></i> Open · Closes 21:00</span>
+      <div class="gauge-row">
+        <div class="g-label"><span>Current occupancy</span><span id="poolOccVal">6 / 20</span></div>
+        <div class="gauge"><div class="gauge-fill" id="poolOccBar" style="width:30%;"></div></div>
+      </div>
+      <p class="bay-desc">Book a lap lane for a 45-minute session. Children under 12 require a guardian booking.</p>
+      <div class="bay-form">
+        <label class="f">Available Slots Today</label>
+        <div class="slot-grid" id="poolSlots"></div>
+        <div class="btn-row">
+          <button class="btn" onclick="bookPool()">Book Selected Slot</button>
+        </div>
+        <div class="confirm-note" id="poolConfirm"></div>
+      </div>
+    </div>
+
+    <!-- 03 GYM -->
+    <div class="bay">
+      <div class="bay-top">
+        <div>
+          <div class="bay-id">BAY / 03</div>
+          <h3>Fitness Room</h3>
+        </div>
+        <div class="bay-icon"><i class="fas fa-dumbbell"></i></div>
+      </div>
+      <span class="plate open"><i class="fas fa-circle" style="font-size:.5rem;"></i> Open 24 Hours</span>
+      <div class="gauge-row">
+        <div class="g-label"><span>Equipment in use</span><span id="gymOccVal">4 / 12 stations</span></div>
+        <div class="gauge"><div class="gauge-fill brass" id="gymOccBar" style="width:33%;"></div></div>
+      </div>
+      <p class="bay-desc">Reserve a 1-hour access window during peak hours (6–9am, 5–8pm). Off-peak is walk-in.</p>
+      <div class="bay-form">
+        <div class="field-row">
+          <div>
+            <label class="f">Time Window</label>
+            <select id="gymSlot"><option>06:00 – 07:00</option><option>07:00 – 08:00</option><option>17:00 – 18:00</option><option>18:00 – 19:00</option><option>19:00 – 20:00</option></select>
+          </div>
+          <div>
+            <label class="f">Party Size</label>
+            <input type="number" id="gymSize" min="1" max="4" value="1">
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn" onclick="bookGym()">Reserve Window</button>
+        </div>
+        <div class="confirm-note" id="gymConfirm"></div>
+      </div>
+    </div>
+
+    <!-- 04 SECURITY -->
+    <div class="bay">
+      <div class="bay-top">
+        <div>
+          <div class="bay-id">BAY / 04</div>
+          <h3>Perimeter Security</h3>
+        </div>
+        <div class="bay-icon"><i class="fas fa-shield-halved"></i></div>
+      </div>
+      <span class="plate open"><i class="fas fa-circle" style="font-size:.5rem;"></i> All Gates Manned</span>
+      <p class="bay-desc">Register a visitor pass so the gate has your guest's details in advance, or reach the duty guard directly.</p>
+      <div class="bay-form">
+        <div class="field-row">
+          <div>
+            <label class="f">Visitor Name</label>
+            <input type="text" id="secName" placeholder="Full name">
+          </div>
+          <div>
+            <label class="f">Gate of Entry</label>
+            <select id="secGate"><option>Main Gate</option><option>Gate B (Service)</option><option>Pedestrian Gate</option></select>
+          </div>
+        </div>
+        <div>
+          <label class="f">Expected On</label>
+          <input type="date" id="secDate">
+        </div>
+        <div class="btn-row">
+          <button class="btn" onclick="issuePass()">Issue Visitor Pass</button>
+          <button class="btn danger small" onclick="contactGuard()"><i class="fas fa-phone"></i>&nbsp; Duty Guard</button>
+        </div>
+        <div class="confirm-note" id="secConfirm"></div>
+      </div>
+    </div>
+
+    <!-- 05 GENERATOR -->
+    <div class="bay">
+      <div class="bay-top">
+        <div>
+          <div class="bay-id">BAY / 05</div>
+          <h3>Standby Generator</h3>
+        </div>
+        <div class="bay-icon"><i class="fas fa-plug-circle-bolt"></i></div>
+      </div>
+      <span class="plate open" id="genPlate"><i class="fas fa-circle" style="font-size:.5rem;"></i> Auto-Standby</span>
+      <div class="gauge-row">
+        <div class="g-label"><span>Fuel reserve</span><span id="genFuelVal">78%</span></div>
+        <div class="gauge"><div class="gauge-fill brass" id="genFuelBar" style="width:78%;"></div></div>
+      </div>
+      <p class="bay-desc">Kicks in automatically within 8 seconds of a grid outage, covering common areas and lifts.</p>
+      <div class="bay-form">
+        <label class="f">Report a Fault</label>
+        <textarea id="genFault" placeholder="Describe what you're experiencing (e.g. no backup power during last outage)"></textarea>
+        <div class="btn-row">
+          <button class="btn ghost" onclick="reportGenerator()">Submit Fault Report</button>
+        </div>
+        <div class="confirm-note" id="genConfirm"></div>
+      </div>
+    </div>
+
+    <!-- 06 WATER -->
+    <div class="bay">
+      <div class="bay-top">
+        <div>
+          <div class="bay-id">BAY / 06</div>
+          <h3>Water Backup</h3>
+        </div>
+        <div class="bay-icon"><i class="fas fa-droplet"></i></div>
+      </div>
+      <span class="plate open"><i class="fas fa-circle" style="font-size:.5rem;"></i> Tank Feeding Normally</span>
+      <div class="gauge-row">
+        <div class="g-label"><span>Reserve tank level</span><span id="waterVal">64%</span></div>
+        <div class="gauge"><div class="gauge-fill" id="waterBar" style="width:64%;"></div></div>
+      </div>
+      <p class="bay-desc">10,000L borehole reserve supplements county supply automatically below 30% mains pressure.</p>
+      <div class="bay-form">
+        <label class="f">Report Low Pressure / Outage</label>
+        <div class="field-row">
+          <div>
+            <label class="f">Unit</label>
+            <input type="text" id="waterUnit" placeholder="e.g. B-14" value="B-14">
+          </div>
+          <div>
+            <label class="f">Severity</label>
+            <select id="waterSeverity"><option>Low pressure</option><option>No water</option><option>Discoloured water</option></select>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn ghost" onclick="reportWater()">Report Issue</button>
+        </div>
+        <div class="confirm-note" id="waterConfirm"></div>
+      </div>
+    </div>
+
+    <!-- 07 WIFI -->
+    <div class="bay">
+      <div class="bay-top">
+        <div>
+          <div class="bay-id">BAY / 07</div>
+          <h3>Estate Wi-Fi</h3>
+        </div>
+        <div class="bay-icon"><i class="fas fa-wifi"></i></div>
+      </div>
+      <span class="plate open"><i class="fas fa-circle" style="font-size:.5rem;"></i> Network Stable</span>
+      <div class="gauge-row">
+        <div class="g-label"><span>Common-area throughput</span><span id="wifiVal">—</span></div>
+        <div class="gauge"><div class="gauge-fill brass" id="wifiBar" style="width:0%;"></div></div>
+      </div>
+      <p class="bay-desc">Shared fibre serves the clubhouse, gym and pool deck. In-unit internet is billed separately.</p>
+      <div class="bay-form">
+        <div class="btn-row">
+          <button class="btn ghost" onclick="runSpeedTest()" id="wifiBtn">Run Speed Check</button>
+          <button class="btn small" onclick="raiseWifiTicket()">Raise Support Ticket</button>
+        </div>
+        <div class="confirm-note" id="wifiConfirm"></div>
+      </div>
+    </div>
+
+    <!-- 08 COMMUNITY HALL -->
+    <div class="bay">
+      <div class="bay-top">
+        <div>
+          <div class="bay-id">BAY / 08</div>
+          <h3>Community Hall</h3>
+        </div>
+        <div class="bay-icon"><i class="fas fa-people-roof"></i></div>
+      </div>
+      <span class="plate open" id="hallPlate"><i class="fas fa-circle" style="font-size:.5rem;"></i> Available This Week</span>
+      <p class="bay-desc">Seats up to 80. Refundable KES 5,000 caretaking deposit applies, settled via your estate account.</p>
+      <div class="bay-form">
+        <div class="field-row">
+          <div>
+            <label class="f">Event Date</label>
+            <input type="date" id="hallDate">
+          </div>
+          <div>
+            <label class="f">Duration (hrs)</label>
+            <input type="number" id="hallHours" min="1" max="8" value="3">
+          </div>
+        </div>
+        <div>
+          <label class="f">Purpose</label>
+          <input type="text" id="hallPurpose" placeholder="e.g. Family gathering, book club">
+        </div>
+        <div class="btn-row">
+          <button class="btn" onclick="bookHall()">Request Booking</button>
+        </div>
+        <div class="confirm-note" id="hallConfirm"></div>
+      </div>
+    </div>
+
+    <!-- 09 PLAYGROUND -->
+    <div class="bay">
+      <div class="bay-top">
+        <div>
+          <div class="bay-id">BAY / 09</div>
+          <h3>Children's Play Area</h3>
+        </div>
+        <div class="bay-icon"><i class="fas fa-child-reaching"></i></div>
+      </div>
+      <span class="plate open"><i class="fas fa-circle" style="font-size:.5rem;"></i> Open 7:00 – 19:00</span>
+      <p class="bay-desc">Fenced play area with soft-fall flooring, supervised by resident guardians. No entry after dusk.</p>
+      <div class="bay-form">
+        <label class="f">Flag Equipment for Maintenance</label>
+        <select id="playIssue">
+          <option>Swing set</option>
+          <option>Slide</option>
+          <option>Soft-fall flooring</option>
+          <option>Fencing / gate lock</option>
+          <option>Shade netting</option>
+        </select>
+        <div class="btn-row">
+          <button class="btn ghost" onclick="reportPlayground()">Flag for Repair</button>
+        </div>
+        <div class="confirm-note" id="playConfirm"></div>
+      </div>
+    </div>
+
+    <!-- 10 GARDENS -->
+    <div class="bay">
+      <div class="bay-top">
+        <div>
+          <div class="bay-id">BAY / 10</div>
+          <h3>Landscaped Gardens</h3>
+        </div>
+        <div class="bay-icon"><i class="fas fa-seedling"></i></div>
+      </div>
+      <span class="plate maint" id="gardenPlate"><i class="fas fa-circle" style="font-size:.5rem;"></i> Groundskeeping — East Lawn</span>
+      <p class="bay-desc">Communal gardens and walking paths, maintained on a rotating weekly schedule by the estate crew.</p>
+      <div class="bay-form">
+        <label class="f">Next Scheduled Section</label>
+        <div class="mono" style="font-size:.78rem;color:var(--muted);border:1px solid var(--panel-line);padding:10px;">
+          Mon — East Lawn &nbsp;·&nbsp; Wed — Perimeter Hedges &nbsp;·&nbsp; Fri — Play Area Borders
+        </div>
+        <div class="btn-row">
+          <button class="btn small" onclick="reportGarden()">Report Overgrowth / Hazard</button>
+        </div>
+        <div class="confirm-note" id="gardenConfirm"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- LEDGER -->
+<section class="section">
+  <div class="section-head">
+    <h2>Your Household Ledger</h2>
+    <p>Every booking and report you submit today is recorded here and forwarded to the estate office.</p>
+  </div>
+  <div class="ledger">
+    <div class="ledger-head">
+      <span>Bay</span><span>Entry</span><span>Status</span><span>Time</span>
+    </div>
+    <div id="ledgerBody">
+      <div class="empty-ledger" id="ledgerEmpty">No entries yet today — reserve a facility or file a report above to begin your ledger.</div>
+    </div>
+  </div>
+
+  <div class="emergency">
+    <div class="emergency-left">
+      <i class="fas fa-triangle-exclamation"></i>
+      <div>
+        <b>Estate Emergency Line</b>
+        <p>For fire, medical, or security emergencies, do not use this ledger — call the duty office directly.</p>
+      </div>
+    </div>
+    <a href="tel:+254704919388" class="btn danger">+254 704 919 388</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <h5>Mwarokin Estates</h5>
+      <p>Africa &amp; Global · Facilities Office, Block B Reception</p>
+      <p><i class="fas fa-phone-alt" style="margin-right:8px;color:var(--brass);"></i>+254-704-919-388</p>
+      <p><i class="fas fa-envelope" style="margin-right:8px;color:var(--brass);"></i>property@mwarokin.com</p>
+    </div>
+    <div>
+      <h5>Quick Links</h5>
+      <a href="Accessibility.html">People With Disabilities</a>
+      <a href="Upgrade&DowngradeRelocation.html">Relocation</a>
+      <a href="Wearables.html">Wearables</a>
+    </div>
+    <div>
+      <h5>Facilities</h5>
+      <a href="#board">Facility Board</a>
+      <a href="#board">Book a Bay</a>
+      <a href="Contact.html">Report an Issue</a>
+    </div>
+    <div>
+      <h5>Estate Office Hours</h5>
+      <p>Mon – Sat: 7:00am – 7:00pm</p>
+      <p>Sunday: 9:00am – 3:00pm</p>
+      <p>Security desk: 24 hours</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    Mwarokin Estates — The Amenities Ledger &copy; 2026. All Rights Reserved. Powered by <a href="https://www.syllogismtechnologyafrica.com">Syllogism Technology Africa</a>
+  </div>
+</footer>
+
+<script>
+/* ---------- State ---------- */
+let ledger = JSON.parse(localStorage.getItem('mwarokin_ledger') || '[]');
+let bookingCount = parseInt(localStorage.getItem('mwarokin_bookings') || '0');
+
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+document.getElementById('parkDate')?.setAttribute('min', todayStr());
+document.getElementById('secDate')?.setAttribute('min', todayStr());
+document.getElementById('hallDate')?.setAttribute('min', todayStr());
+if(document.getElementById('parkDate')) document.getElementById('parkDate').value = todayStr();
+if(document.getElementById('secDate')) document.getElementById('secDate').value = todayStr();
+
+function genCode(prefix){
+  return prefix + '-' + Math.random().toString(36).substr(2,5).toUpperCase();
+}
+
+function nowTime(){
+  return new Date().toLocaleTimeString('en-KE', {hour:'2-digit', minute:'2-digit'});
+}
+
+function logEntry(bay, entry, status){
+  ledger.unshift({bay, entry, status, time: nowTime()});
+  ledger = ledger.slice(0, 30);
+  localStorage.setItem('mwarokin_ledger', JSON.stringify(ledger));
+  renderLedger();
+  bookingCount++;
+  localStorage.setItem('mwarokin_bookings', bookingCount);
+  document.getElementById('statBookings').textContent = bookingCount;
+  document.getElementById('statLedger').textContent = ledger.length;
+}
+
+function renderLedger(){
+  const body = document.getElementById('ledgerBody');
+  if(ledger.length === 0){
+    body.innerHTML = '<div class="empty-ledger" id="ledgerEmpty">No entries yet today — reserve a facility or file a report above to begin your ledger.</div>';
+    return;
+  }
+  body.innerHTML = ledger.map(r => `
+    <div class="ledger-row">
+      <span class="code">${r.bay}</span>
+      <span>${r.entry}</span>
+      <span><span class="tag ${r.status==='Confirmed'?'ok':'pending'}">${r.status}</span></span>
+      <span class="time">${r.time}</span>
+    </div>
+  `).join('');
+  document.getElementById('statLedger').textContent = ledger.length;
+}
+
+function showToast(msg, isErr=false){
+  const wrap = document.getElementById('toastWrap');
+  const t = document.createElement('div');
+  t.className = 'toastx' + (isErr ? ' err' : '');
+  t.innerHTML = `<i class="fas ${isErr?'fa-circle-exclamation':'fa-check'}" style="color:${isErr?'var(--danger)':'var(--brass)'}"></i> ${msg}`;
+  wrap.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(20px)'; setTimeout(()=>t.remove(),300); }, 3800);
+}
+
+function confirmBox(id, text){
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.classList.add('show');
+}
+
+/* ---------- 01 Parking ---------- */
+function reserveParking(){
+  const type = document.getElementById('parkType').value;
+  const date = document.getElementById('parkDate').value;
+  const plate = document.getElementById('parkPlate').value.trim();
+  if(!plate){ showToast('Enter the vehicle registration plate', true); return; }
+  const code = genCode('PARK');
+  confirmBox('parkConfirm', `Reserved · ${type} · ${date} · Plate ${plate.toUpperCase()} · Ref ${code}`);
+  logEntry('BAY-01', `${type} reserved for ${plate.toUpperCase()} on ${date}`, 'Confirmed');
+  showToast('Parking bay reserved');
+  document.getElementById('parkPlate').value = '';
+}
+
+/* ---------- 02 Pool ---------- */
+const poolTaken = ['08:00','12:00','17:00'];
+const poolAllSlots = ['07:00','08:00','09:00','10:00','12:00','13:00','16:00','17:00','18:00','19:00'];
+let poolSelected = null;
+function renderPoolSlots(){
+  const grid = document.getElementById('poolSlots');
+  grid.innerHTML = poolAllSlots.map(s => {
+    const taken = poolTaken.includes(s);
+    return `<div class="slot ${taken?'taken':''}" data-slot="${s}" onclick="${taken?'':`selectPoolSlot('${s}')`}">${s}</div>`;
+  }).join('');
+}
+function selectPoolSlot(s){
+  poolSelected = s;
+  document.querySelectorAll('#poolSlots .slot').forEach(el=>{
+    el.classList.toggle('selected', el.dataset.slot === s);
+  });
+}
+function bookPool(){
+  if(!poolSelected){ showToast('Select a time slot first', true); return; }
+  const code = genCode('POOL');
+  confirmBox('poolConfirm', `Lane booked · 45-min session at ${poolSelected} · Ref ${code}`);
+  logEntry('BAY-02', `Lap lane booked for ${poolSelected} session`, 'Confirmed');
+  showToast('Pool slot booked');
+  poolTaken.push(poolSelected);
+  poolSelected = null;
+  renderPoolSlots();
+  let occ = Math.min(20, parseInt(document.getElementById('poolOccVal').textContent) + 1);
+  document.getElementById('poolOccVal').textContent = occ + ' / 20';
+  document.getElementById('poolOccBar').style.width = (occ/20*100) + '%';
+}
+renderPoolSlots();
+
+/* ---------- 03 Gym ---------- */
+function bookGym(){
+  const slot = document.getElementById('gymSlot').value;
+  const size = document.getElementById('gymSize').value;
+  const code = genCode('GYM');
+  confirmBox('gymConfirm', `Window reserved · ${slot} · Party of ${size} · Ref ${code}`);
+  logEntry('BAY-03', `Fitness room window ${slot} for party of ${size}`, 'Confirmed');
+  showToast('Gym window reserved');
+  let occ = Math.min(12, parseInt(document.getElementById('gymOccVal').textContent.split(' ')[0]) + parseInt(size));
+  document.getElementById('gymOccVal').textContent = occ + ' / 12 stations';
+  document.getElementById('gymOccBar').style.width = (occ/12*100) + '%';
+}
+
+/* ---------- 04 Security ---------- */
+function issuePass(){
+  const name = document.getElementById('secName').value.trim();
+  const gate = document.getElementById('secGate').value;
+  const date = document.getElementById('secDate').value;
+  if(!name){ showToast('Enter the visitor\'s name', true); return; }
+  const code = genCode('PASS');
+  confirmBox('secConfirm', `Pass issued for ${name} · ${gate} · ${date} · Show code ${code} at the gate`);
+  logEntry('BAY-04', `Visitor pass issued for ${name} at ${gate}`, 'Confirmed');
+  showToast('Visitor pass issued');
+  document.getElementById('secName').value = '';
+}
+function contactGuard(){
+  logEntry('BAY-04', 'Duty guard contacted from resident portal', 'Confirmed');
+  showToast('Connecting you to the duty guard…');
+}
+
+/* ---------- 05 Generator ---------- */
+function reportGenerator(){
+  const note = document.getElementById('genFault').value.trim();
+  if(!note){ showToast('Describe the fault before submitting', true); return; }
+  const code = genCode('GEN');
+  confirmBox('genConfirm', `Fault report filed · Ref ${code} · Facilities team notified`);
+  logEntry('BAY-05', 'Generator fault reported: ' + note.slice(0,60), 'Pending');
+  showToast('Fault report sent to facilities team');
+  document.getElementById('genFault').value = '';
+}
+
+/* ---------- 06 Water ---------- */
+function reportWater(){
+  const unit = document.getElementById('waterUnit').value.trim();
+  const sev = document.getElementById('waterSeverity').value;
+  if(!unit){ showToast('Enter your unit number', true); return; }
+  const code = genCode('WTR');
+  confirmBox('waterConfirm', `Reported · ${sev} · Unit ${unit} · Ref ${code}`);
+  logEntry('BAY-06', `${sev} reported for unit ${unit}`, 'Pending');
+  showToast('Water issue reported');
+}
+
+/* ---------- 07 WiFi ---------- */
+function runSpeedTest(){
+  const btn = document.getElementById('wifiBtn');
+  btn.disabled = true;
+  btn.textContent = 'Checking…';
+  document.getElementById('wifiVal').textContent = 'Testing…';
+  let pct = 0;
+  const bar = document.getElementById('wifiBar');
+  const iv = setInterval(()=>{
+    pct += 12;
+    bar.style.width = Math.min(pct,100) + '%';
+    if(pct >= 100){
+      clearInterval(iv);
+      const speed = (Math.random()*40 + 60).toFixed(1);
+      document.getElementById('wifiVal').textContent = speed + ' Mbps';
+      btn.disabled = false;
+      btn.textContent = 'Run Speed Check';
+      showToast('Common-area network: ' + speed + ' Mbps');
+      logEntry('BAY-07', `Speed check run · ${speed} Mbps recorded`, 'Confirmed');
+    }
+  }, 180);
+}
+function raiseWifiTicket(){
+  const code = genCode('WIFI');
+  confirmBox('wifiConfirm', `Support ticket raised · Ref ${code} · IT team notified`);
+  logEntry('BAY-07', 'Wi-Fi support ticket raised', 'Pending');
+  showToast('Support ticket raised');
+}
+
+/* ---------- 08 Hall ---------- */
+function bookHall(){
+  const date = document.getElementById('hallDate').value;
+  const hours = document.getElementById('hallHours').value;
+  const purpose = document.getElementById('hallPurpose').value.trim();
+  if(!date || !purpose){ showToast('Fill in the date and purpose', true); return; }
+  const code = genCode('HALL');
+  confirmBox('hallConfirm', `Request sent · ${date}, ${hours}h · KES 5,000 deposit due on confirmation · Ref ${code}`);
+  logEntry('BAY-08', `Hall requested for ${date} (${hours}h) — ${purpose}`, 'Pending');
+  showToast('Hall booking request submitted');
+  document.getElementById('hallPurpose').value = '';
+}
+
+/* ---------- 09 Playground ---------- */
+function reportPlayground(){
+  const item = document.getElementById('playIssue').value;
+  const code = genCode('PLAY');
+  confirmBox('playConfirm', `Flagged for repair · ${item} · Ref ${code}`);
+  logEntry('BAY-09', `${item} flagged for maintenance`, 'Pending');
+  showToast('Maintenance flagged');
+}
+
+/* ---------- 10 Garden ---------- */
+function reportGarden(){
+  const code = genCode('GDN');
+  confirmBox('gardenConfirm', `Report filed · Grounds team notified · Ref ${code}`);
+  logEntry('BAY-10', 'Overgrowth / hazard reported in gardens', 'Pending');
+  showToast('Grounds team notified');
+}
+
+/* ---------- Live-ish gauges ---------- */
+setInterval(()=>{
+  const fuel = document.getElementById('genFuelBar');
+  let v = parseInt(document.getElementById('genFuelVal').textContent);
+  v = Math.max(40, v - (Math.random() < 0.3 ? 1 : 0));
+  document.getElementById('genFuelVal').textContent = v + '%';
+  fuel.style.width = v + '%';
+
+  const wv = document.getElementById('waterBar');
+  let w = parseInt(document.getElementById('waterVal').textContent);
+  w = Math.min(95, Math.max(20, w + (Math.random()<0.5 ? -1 : 1)));
+  document.getElementById('waterVal').textContent = w + '%';
+  wv.style.width = w + '%';
+}, 8000);
+
+/* init */
+renderLedger();
+document.getElementById('statBookings').textContent = bookingCount;
+document.getElementById('statLedger').textContent = ledger.length;
+</script>
+
+</body>
+</html>

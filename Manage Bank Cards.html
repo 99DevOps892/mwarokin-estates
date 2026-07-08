@@ -1,0 +1,2018 @@
+==Manage Bank Card===<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Syllo Pay – Manage Bank Cards</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+    <!-- Font Awesome 6 (Free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <style>
+        /* ============================================
+                   ROOT VARIABLES & RESET
+                   ============================================ */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0b0d15;
+            --bg-secondary: #12162a;
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --bg-card-hover: rgba(255, 255, 255, 0.08);
+            --bg-glass: rgba(255, 255, 255, 0.03);
+            --border-glass: rgba(255, 255, 255, 0.06);
+            --text-primary: #f0f2f8;
+            --text-secondary: #a8b2d9;
+            --text-muted: #6b7aa8;
+            --gold: #d4a145;
+            --gold-light: #e8c97a;
+            --gold-glow: rgba(212, 161, 69, 0.25);
+            --gold-gradient: linear-gradient(135deg, #d4a145 0%, #f0d080 50%, #b8883a 100%);
+            --blue-accent: #4f7cff;
+            --green-accent: #2ed573;
+            --red-accent: #ff6b6b;
+            --shadow-card: 0 20px 60px rgba(0, 0, 0, 0.6);
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+            --radius-xs: 8px;
+            --transition: 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            overflow: hidden;
+            line-height: 1.5;
+        }
+
+        /* ============================================
+                   SCROLLBAR
+                   ============================================ */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 10px;
+        }
+
+        /* ============================================
+                   SIDEBAR
+                   ============================================ */
+        .sidebar {
+            width: 260px;
+            min-height: 100vh;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-glass);
+            padding: 28px 20px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid var(--border-glass);
+            margin-bottom: 28px;
+        }
+
+        .sidebar-brand .brand-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: var(--radius-sm);
+            background: var(--gold-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #0b0d15;
+            font-weight: 700;
+            box-shadow: 0 4px 20px var(--gold-glow);
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand .brand-text {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+        .sidebar-brand .brand-text span {
+            color: var(--gold);
+            font-weight: 300;
+            display: block;
+            font-size: 11px;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            margin-top: 1px;
+            opacity: 0.7;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .sidebar-nav .nav-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.4px;
+            color: var(--text-muted);
+            padding: 12px 12px 6px;
+            font-weight: 600;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: var(--transition);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .sidebar-nav a i {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav a.active {
+            background: var(--gold-gradient);
+            color: #0b0d15;
+            font-weight: 600;
+            box-shadow: 0 4px 24px var(--gold-glow);
+        }
+
+        .sidebar-nav a.active i {
+            color: #0b0d15;
+        }
+
+        .sidebar-nav a .badge {
+            margin-left: auto;
+            background: var(--gold);
+            color: #0b0d15;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+
+        .sidebar-footer {
+            padding-top: 20px;
+            border-top: 1px solid var(--border-glass);
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-footer .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gold-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #0b0d15;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-footer .user-info {
+            flex: 1;
+        }
+        .sidebar-footer .user-info .name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .sidebar-footer .user-info .role {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* ============================================
+                   MAIN CONTENT
+                   ============================================ */
+        .main {
+            flex: 1;
+            padding: 28px 36px 40px;
+            overflow-y: auto;
+            height: 100vh;
+            background: radial-gradient(ellipse at 20% 50%, rgba(212, 161, 69, 0.04) 0%, transparent 70%),
+                radial-gradient(ellipse at 80% 20%, rgba(79, 124, 255, 0.03) 0%, transparent 60%),
+                var(--bg-primary);
+        }
+
+        /* --- Top Bar --- */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-glass);
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .topbar-left h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .topbar-left h1 span {
+            color: var(--gold);
+        }
+        .topbar-left p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 2px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .topbar-right .sync-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-card);
+            padding: 8px 18px 8px 14px;
+            border-radius: 40px;
+            border: 1px solid var(--border-glass);
+            font-size: 13px;
+            color: var(--text-secondary);
+            cursor: default;
+        }
+        .topbar-right .sync-status .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green-accent);
+            display: inline-block;
+            animation: pulse-dot 2s infinite;
+        }
+        .topbar-right .sync-status .dot.warning {
+            background: var(--gold);
+        }
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(0.85);
+            }
+        }
+
+        .topbar-right .btn-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 1px solid var(--border-glass);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+        .topbar-right .btn-icon:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+            border-color: var(--gold);
+        }
+        .topbar-right .btn-icon .notif-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--red-accent);
+            border-radius: 50%;
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            border: 2px solid var(--bg-primary);
+        }
+
+        /* ============================================
+                   STATS ROW
+                   ============================================ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            padding: 20px 22px;
+            backdrop-filter: blur(8px);
+            transition: var(--transition);
+        }
+        .stat-card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(212, 161, 69, 0.2);
+            transform: translateY(-2px);
+        }
+        .stat-card .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .stat-card .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-top: 4px;
+            letter-spacing: -0.5px;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-card .stat-value.blue {
+            background: linear-gradient(135deg, #4f7cff, #8ab4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-card .stat-value.green {
+            background: linear-gradient(135deg, #2ed573, #7bed9f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-card .stat-change {
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 6px;
+            color: var(--green-accent);
+        }
+        .stat-card .stat-change.negative {
+            color: var(--red-accent);
+        }
+
+        /* ============================================
+                   SECTION HEADERS
+                   ============================================ */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 32px 0 18px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .section-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+        .section-header h2 i {
+            color: var(--gold);
+            margin-right: 10px;
+        }
+        .section-header .actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--gold-gradient);
+            border: none;
+            color: #0b0d15;
+            font-weight: 600;
+            font-size: 13px;
+            padding: 10px 22px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font);
+            box-shadow: 0 4px 20px var(--gold-glow);
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 32px var(--gold-glow);
+        }
+        .btn-primary i {
+            font-size: 14px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-glass);
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 13px;
+            padding: 9px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-outline:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border-color: var(--gold);
+        }
+
+        /* ============================================
+                   BANK CARDS GRID
+                   ============================================ */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .bank-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 24px 26px 26px;
+            transition: var(--transition);
+            backdrop-filter: blur(8px);
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+        }
+        .bank-card::before {
+            content: '';
+            position: absolute;
+            top: -60%;
+            right: -40%;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(212, 161, 69, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .bank-card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(212, 161, 69, 0.25);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .bank-card .card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+        .bank-card .card-type {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .bank-card .card-type i {
+            font-size: 28px;
+            color: var(--gold);
+        }
+        .bank-card .card-type .type-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .bank-card .card-default {
+            background: var(--gold-gradient);
+            color: #0b0d15;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 3px 12px;
+            border-radius: 20px;
+            letter-spacing: 0.8px;
+        }
+
+        .bank-card .card-number {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: var(--text-primary);
+            margin-bottom: 14px;
+            font-family: 'Inter', monospace;
+        }
+
+        .bank-card .card-details {
+            display: flex;
+            gap: 28px;
+            margin-bottom: 18px;
+        }
+        .bank-card .card-details .detail {
+            display: flex;
+            flex-direction: column;
+        }
+        .bank-card .card-details .detail .label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-muted);
+        }
+        .bank-card .card-details .detail .value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 2px;
+        }
+
+        .bank-card .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-glass);
+        }
+        .bank-card .card-footer .balance {
+            font-size: 18px;
+            font-weight: 700;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .bank-card .card-footer .actions {
+            display: flex;
+            gap: 8px;
+        }
+        .bank-card .card-footer .actions button {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 4px 6px;
+            border-radius: var(--radius-xs);
+        }
+        .bank-card .card-footer .actions button:hover {
+            color: var(--text-primary);
+            background: var(--bg-card);
+        }
+        .bank-card .card-footer .actions button.edit:hover {
+            color: var(--gold);
+        }
+        .bank-card .card-footer .actions button.delete:hover {
+            color: var(--red-accent);
+        }
+
+        .card-add {
+            border: 2px dashed var(--border-glass);
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-muted);
+            gap: 12px;
+        }
+        .card-add:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            background: var(--bg-card);
+        }
+        .card-add i {
+            font-size: 38px;
+        }
+        .card-add span {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        /* ============================================
+                   CALENDAR SYNC SECTION
+                   ============================================ */
+        .calendar-sync-wrap {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin-top: 6px;
+        }
+
+        @media (max-width: 1000px) {
+            .calendar-sync-wrap {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .calendar-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 24px 26px;
+            backdrop-filter: blur(8px);
+        }
+
+        .calendar-panel .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+        .calendar-panel .panel-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .calendar-panel .panel-header h3 i {
+            color: var(--gold);
+        }
+        .calendar-panel .panel-header .month-nav {
+            display: flex;
+            gap: 8px;
+        }
+        .calendar-panel .panel-header .month-nav button {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            color: var(--text-secondary);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .calendar-panel .panel-header .month-nav button:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+            border-color: var(--gold);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            text-align: center;
+        }
+        .calendar-grid .day-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 6px 0;
+        }
+        .calendar-grid .day {
+            padding: 8px 0;
+            border-radius: var(--radius-xs);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: var(--transition);
+            cursor: default;
+            position: relative;
+        }
+        .calendar-grid .day:hover {
+            background: var(--bg-card-hover);
+        }
+        .calendar-grid .day.today {
+            background: var(--gold-gradient);
+            color: #0b0d15;
+            font-weight: 700;
+            box-shadow: 0 4px 16px var(--gold-glow);
+        }
+        .calendar-grid .day.has-event::after {
+            content: '';
+            width: 5px;
+            height: 5px;
+            background: var(--gold);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .calendar-grid .day.other-month {
+            color: var(--text-muted);
+            opacity: 0.4;
+        }
+        .calendar-grid .day.past {
+            opacity: 0.3;
+        }
+
+        .sync-events {
+            margin-top: 18px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-glass);
+        }
+        .sync-events .event-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 10px 12px;
+            border-radius: var(--radius-xs);
+            transition: var(--transition);
+        }
+        .sync-events .event-item:hover {
+            background: var(--bg-card);
+        }
+        .sync-events .event-item .event-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--gold);
+            flex-shrink: 0;
+        }
+        .sync-events .event-item .event-dot.blue {
+            background: var(--blue-accent);
+        }
+        .sync-events .event-item .event-dot.green {
+            background: var(--green-accent);
+        }
+        .sync-events .event-item .event-info {
+            flex: 1;
+        }
+        .sync-events .event-item .event-info .title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .sync-events .event-item .event-info .time {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .sync-events .event-item .event-status {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--green-accent);
+            background: rgba(46, 213, 115, 0.12);
+            padding: 2px 12px;
+            border-radius: 20px;
+        }
+
+        /* --- Sync Controls --- */
+        .sync-controls {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 24px 26px;
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sync-controls .sync-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .sync-controls .sync-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .sync-controls .sync-header h3 i {
+            color: var(--gold);
+        }
+
+        .toggle-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .toggle-wrap .toggle-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        .toggle {
+            width: 48px;
+            height: 28px;
+            background: var(--bg-card);
+            border-radius: 40px;
+            border: 1px solid var(--border-glass);
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+        .toggle.active {
+            background: var(--gold-gradient);
+            border-color: var(--gold);
+        }
+        .toggle .toggle-knob {
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        .toggle.active .toggle-knob {
+            left: 23px;
+            background: #0b0d15;
+        }
+
+        .sync-info {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 12px 16px;
+            background: var(--bg-glass);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-glass);
+        }
+        .sync-info .row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+        .sync-info .row .label {
+            color: var(--text-muted);
+        }
+        .sync-info .row .value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        .sync-info .row .value.gold {
+            color: var(--gold);
+        }
+
+        .sync-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .sync-actions .btn-sync {
+            flex: 1;
+            min-width: 120px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            color: var(--text-secondary);
+            padding: 10px 16px;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .sync-actions .btn-sync:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+            border-color: var(--gold);
+        }
+        .sync-actions .btn-sync.primary {
+            background: var(--gold-gradient);
+            color: #0b0d15;
+            border-color: transparent;
+            box-shadow: 0 4px 20px var(--gold-glow);
+        }
+        .sync-actions .btn-sync.primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 32px var(--gold-glow);
+        }
+
+        /* ============================================
+                   TRANSACTIONS (mini)
+                   ============================================ */
+        .transactions-mini {
+            margin-top: 8px;
+        }
+        .transactions-mini .tx-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-glass);
+        }
+        .transactions-mini .tx-item:last-child {
+            border-bottom: none;
+        }
+        .transactions-mini .tx-item .tx-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+        .transactions-mini .tx-item .tx-info {
+            flex: 1;
+        }
+        .transactions-mini .tx-item .tx-info .tx-name {
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+        .transactions-mini .tx-item .tx-info .tx-date {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .transactions-mini .tx-item .tx-amount {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .transactions-mini .tx-item .tx-amount.positive {
+            color: var(--green-accent);
+        }
+        .transactions-mini .tx-item .tx-amount.negative {
+            color: var(--red-accent);
+        }
+
+        /* ============================================
+                   MODAL (Add Card)
+                   ============================================ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(12px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-overlay.show {
+            display: flex;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 32px 36px;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: var(--shadow-card);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        .modal .modal-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .modal .modal-header .close {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 24px;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 4px 8px;
+            border-radius: var(--radius-xs);
+        }
+        .modal .modal-header .close:hover {
+            color: var(--text-primary);
+            background: var(--bg-card);
+        }
+
+        .modal .form-group {
+            margin-bottom: 18px;
+        }
+        .modal .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+        .modal .form-group input,
+        .modal .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-glass);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: var(--font);
+            transition: var(--transition);
+            outline: none;
+        }
+        .modal .form-group input:focus,
+        .modal .form-group select:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px var(--gold-glow);
+        }
+        .modal .form-group input::placeholder {
+            color: var(--text-muted);
+        }
+        .modal .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .modal .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--gold-gradient);
+            border: none;
+            border-radius: var(--radius-sm);
+            color: #0b0d15;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font);
+            margin-top: 8px;
+            box-shadow: 0 4px 24px var(--gold-glow);
+        }
+        .modal .btn-submit:hover {
+            transform: scale(1.01);
+            box-shadow: 0 6px 36px var(--gold-glow);
+        }
+
+        /* ============================================
+                   RESPONSIVE
+                   ============================================ */
+        @media (max-width: 820px) {
+            .sidebar {
+                width: 72px;
+                padding: 20px 12px;
+            }
+            .sidebar-brand .brand-text,
+            .sidebar-nav a span,
+            .sidebar-nav .nav-label,
+            .sidebar-footer .user-info,
+            .sidebar-nav a .badge {
+                display: none;
+            }
+            .sidebar-brand .brand-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+                margin: 0 auto;
+            }
+            .sidebar-nav a {
+                justify-content: center;
+                padding: 12px;
+            }
+            .sidebar-nav a i {
+                font-size: 20px;
+                margin: 0;
+            }
+            .sidebar-footer {
+                justify-content: center;
+            }
+            .sidebar-footer .avatar {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+            .main {
+                padding: 20px 18px 30px;
+            }
+            .topbar-left h1 {
+                font-size: 20px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            .calendar-sync-wrap {
+                grid-template-columns: 1fr;
+            }
+            .modal {
+                padding: 24px 20px;
+            }
+            .modal .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .topbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .topbar-right {
+                justify-content: space-between;
+                flex-wrap: wrap;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .stat-card .stat-value {
+                font-size: 22px;
+            }
+            .sync-actions {
+                flex-direction: column;
+            }
+            .sync-actions .btn-sync {
+                min-width: auto;
+            }
+        }
+
+        /* ============================================
+                   UTILITY
+                   ============================================ */
+        .mt-1 {
+            margin-top: 6px;
+        }
+        .mt-2 {
+            margin-top: 12px;
+        }
+        .mt-3 {
+            margin-top: 20px;
+        }
+        .mb-2 {
+            margin-bottom: 12px;
+        }
+        .flex {
+            display: flex;
+        }
+        .flex-center {
+            align-items: center;
+            justify-content: center;
+        }
+        .gap-8 {
+            gap: 8px;
+        }
+        .gap-12 {
+            gap: 12px;
+        }
+        .text-gold {
+            color: var(--gold);
+        }
+        .text-muted {
+            color: var(--text-muted);
+        }
+        .text-sm {
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================
+    SIDEBAR
+    ============================================ -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">⚡</div>
+            <div class="brand-text">
+                Mwarokin
+                <span>Estates · Premium</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-label">Main</div>
+            <a href="#" class="active">
+                <i class="fas fa-th-large"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-credit-card"></i>
+                <span>Bank Cards</span>
+                <span class="badge">4</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Calendar</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Transactions</span>
+            </a>
+
+            <div class="nav-label" style="margin-top:20px;">Tools</div>
+            <a href="#">
+                <i class="fas fa-sync-alt"></i>
+                <span>Sync Google</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-chart-pie"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="avatar">JD</div>
+            <div class="user-info">
+                <div class="name">James Donovan</div>
+                <div class="role">Estate Manager</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ============================================
+    MAIN CONTENT
+    ============================================ -->
+    <main class="main">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <h1>Welcome back, <span>James</span></h1>
+                <p><i class="fas fa-building" style="color:var(--gold);margin-right:6px;"></i> Mwarokin Estates · Premium Portfolio</p>
+            </div>
+            <div class="topbar-right">
+                <div class="sync-status">
+                    <span class="dot"></span>
+                    <span>Google Sync Active</span>
+                </div>
+                <button class="btn-icon" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="notif-dot"></span>
+                </button>
+                <button class="btn-icon" title="Profile">
+                    <i class="fas fa-user-circle"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- STATS -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Cards</div>
+                <div class="stat-value">4</div>
+                <div class="stat-change"><i class="fas fa-arrow-up"></i> +1 this month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Balance</div>
+                <div class="stat-value blue">$284,500</div>
+                <div class="stat-change"><i class="fas fa-arrow-up"></i> +12.4%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Upcoming Payments</div>
+                <div class="stat-value green">$18,200</div>
+                <div class="stat-change">Due in 6 days</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Sync Status</div>
+                <div class="stat-value" style="font-size:22px; -webkit-text-fill-color: var(--green-accent); background: none; color: var(--green-accent);">
+                    <i class="fas fa-check-circle"></i> Live
+                </div>
+                <div class="stat-change">Last sync: 2 min ago</div>
+            </div>
+        </section>
+
+        <!-- BANK CARDS -->
+        <div class="section-header">
+            <h2><i class="fas fa-credit-card"></i> Your Bank Cards</h2>
+            <div class="actions">
+                <button class="btn-primary" id="openAddCard">
+                    <i class="fas fa-plus"></i> Add Card
+                </button>
+            </div>
+        </div>
+
+        <div class="cards-grid" id="cardsGrid">
+            <!-- Cards injected by JS -->
+        </div>
+
+        <!-- CALENDAR + SYNC -->
+        <div class="section-header" style="margin-top:40px;">
+            <h2><i class="fas fa-calendar-alt"></i> Google Calendar Sync</h2>
+            <div class="actions">
+                <button class="btn-outline" id="refreshCalendar">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+        </div>
+
+        <div class="calendar-sync-wrap">
+            <!-- Calendar Panel -->
+            <div class="calendar-panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-calendar-day"></i> <span id="calendarMonthLabel">June 2026</span></h3>
+                    <div class="month-nav">
+                        <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                        <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <div class="calendar-grid" id="calendarGrid">
+                    <!-- Rendered by JS -->
+                </div>
+
+                <div class="sync-events">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                        <span style="font-size:13px;font-weight:600;color:var(--text-secondary);">
+                            <i class="fas fa-clock" style="color:var(--gold);margin-right:6px;"></i> Upcoming Events
+                        </span>
+                        <span style="font-size:11px;color:var(--text-muted);">Synced with Google</span>
+                    </div>
+                    <div id="eventsList">
+                        <!-- Events injected by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sync Controls -->
+            <div class="sync-controls">
+                <div class="sync-header">
+                    <h3><i class="fas fa-cloud-upload-alt"></i> Sync Settings</h3>
+                    <div class="toggle-wrap">
+                        <span class="toggle-label">Auto-sync</span>
+                        <div class="toggle active" id="autoSyncToggle">
+                            <div class="toggle-knob"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sync-info">
+                    <div class="row">
+                        <span class="label">Google Account</span>
+                        <span class="value">james@mwarokin.estate</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">Calendar</span>
+                        <span class="value gold">Mwarokin Estate Events</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">Last Sync</span>
+                        <span class="value" id="lastSyncTime">Today, 2:34 PM</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">Events Synced</span>
+                        <span class="value" id="eventsSyncedCount">12</span>
+                    </div>
+                </div>
+
+                <div class="sync-actions">
+                    <button class="btn-sync primary" id="forceSyncBtn">
+                        <i class="fas fa-sync-alt"></i> Sync Now
+                    </button>
+                    <button class="btn-sync" id="connectGoogleBtn">
+                        <i class="fab fa-google"></i> Connect Google
+                    </button>
+                    <button class="btn-sync" id="exportCalendarBtn">
+                        <i class="fas fa-file-export"></i> Export
+                    </button>
+                </div>
+
+                <div style="margin-top:4px;padding:10px 14px;background:rgba(212,161,69,0.06);border-radius:var(--radius-sm);border-left:3px solid var(--gold);">
+                    <span style="font-size:12px;color:var(--text-secondary);">
+                        <i class="fas fa-info-circle" style="color:var(--gold);margin-right:8px;"></i>
+                        All estate payment reminders &amp; inspections are auto-synced to your Google Calendar.
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRANSACTIONS MINI -->
+        <div class="section-header" style="margin-top:36px;">
+            <h2><i class="fas fa-receipt"></i> Recent Transactions</h2>
+            <a href="#" style="color:var(--text-muted);font-size:13px;text-decoration:none;transition:var(--transition);">
+                View all <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="transactions-mini" id="transactionsMini">
+            <!-- Injected by JS -->
+        </div>
+
+        <!-- footer spacer -->
+        <div style="height:20px;"></div>
+    </main>
+
+    <!-- ============================================
+    MODAL – ADD CARD
+    ============================================ -->
+    <div class="modal-overlay" id="addCardModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-plus-circle" style="color:var(--gold);margin-right:10px;"></i> Add Bank Card</h2>
+                <button class="close" id="closeAddCard">&times;</button>
+            </div>
+            <form id="addCardForm">
+                <div class="form-group">
+                    <label>Cardholder Name</label>
+                    <input type="text" placeholder="John Doe" value="James Donovan" required />
+                </div>
+                <div class="form-group">
+                    <label>Card Number</label>
+                    <input type="text" placeholder="4111 1111 1111 1111" value="4532 8912 3456 7890" required />
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Expiry</label>
+                        <input type="text" placeholder="MM/YY" value="08/28" required />
+                    </div>
+                    <div class="form-group">
+                        <label>CVV</label>
+                        <input type="text" placeholder="•••" value="123" required />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Card Type</label>
+                    <select>
+                        <option value="visa">Visa</option>
+                        <option value="mastercard" selected>Mastercard</option>
+                        <option value="amex">American Express</option>
+                        <option value="discover">Discover</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-check"></i> Add Card
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================
+    JAVASCRIPT
+    ============================================ -->
+    <script>
+        (function() {
+            'use strict';
+
+            // ============================================
+            // DATA
+            // ============================================
+            const cardsData = [{
+                id: 1,
+                type: 'Visa',
+                number: '•••• •••• •••• 4821',
+                expiry: '06/27',
+                holder: 'James Donovan',
+                balance: 84500,
+                default: true,
+                icon: 'fab fa-cc-visa'
+            }, {
+                id: 2,
+                type: 'Mastercard',
+                number: '•••• •••• •••• 7356',
+                expiry: '11/28',
+                holder: 'James Donovan',
+                balance: 132000,
+                default: false,
+                icon: 'fab fa-cc-mastercard'
+            }, {
+                id: 3,
+                type: 'Amex',
+                number: '•••• •••• •••• 2390',
+                expiry: '03/29',
+                holder: 'James Donovan',
+                balance: 68000,
+                default: false,
+                icon: 'fab fa-cc-amex'
+            }];
+
+            const eventsData = [
+                { title: 'Estate Inspection', date: '2026-06-28', time: '09:00 AM', dot: 'gold' },
+                { title: 'Rent Payment Due', date: '2026-07-01', time: '11:59 PM', dot: 'blue' },
+                { title: 'Board Meeting', date: '2026-07-05', time: '02:00 PM', dot: 'green' },
+                { title: 'Maintenance Review', date: '2026-07-12', time: '10:30 AM', dot: 'gold' },
+            ];
+
+            const transactionsData = [
+                { name: 'Rent Payment — Unit 4B', date: 'Today, 10:24 AM', amount: '+$2,400', positive: true },
+                { name: 'Maintenance Fee', date: 'Yesterday, 3:10 PM', amount: '-$180', positive: false },
+                { name: 'Security Deposit Refund', date: 'Jun 24, 2026', amount: '+$1,200', positive: true },
+                { name: 'Utility Bill', date: 'Jun 22, 2026', amount: '-$340', positive: false },
+                { name: 'Tenant Application Fee', date: 'Jun 20, 2026', amount: '+$75', positive: true },
+            ];
+
+            let currentMonth = new Date().getMonth();
+            let currentYear = new Date().getFullYear();
+            let cardIdCounter = 4;
+
+            // ============================================
+            // DOM REFS
+            // ============================================
+            const cardsGrid = document.getElementById('cardsGrid');
+            const calendarGrid = document.getElementById('calendarGrid');
+            const calendarMonthLabel = document.getElementById('calendarMonthLabel');
+            const eventsList = document.getElementById('eventsList');
+            const transactionsMini = document.getElementById('transactionsMini');
+            const lastSyncTime = document.getElementById('lastSyncTime');
+            const eventsSyncedCount = document.getElementById('eventsSyncedCount');
+
+            const addCardModal = document.getElementById('addCardModal');
+            const openAddCardBtn = document.getElementById('openAddCard');
+            const closeAddCardBtn = document.getElementById('closeAddCard');
+            const addCardForm = document.getElementById('addCardForm');
+
+            const prevMonthBtn = document.getElementById('prevMonth');
+            const nextMonthBtn = document.getElementById('nextMonth');
+            const refreshCalendarBtn = document.getElementById('refreshCalendar');
+            const forceSyncBtn = document.getElementById('forceSyncBtn');
+            const autoSyncToggle = document.getElementById('autoSyncToggle');
+            const connectGoogleBtn = document.getElementById('connectGoogleBtn');
+            const exportCalendarBtn = document.getElementById('exportCalendarBtn');
+
+            // ============================================
+            // RENDER CARDS
+            // ============================================
+            function renderCards() {
+                cardsGrid.innerHTML = '';
+                cardsData.forEach(card => {
+                    const el = document.createElement('div');
+                    el.className = 'bank-card';
+                    el.innerHTML = `
+                        <div class="card-top">
+                            <div class="card-type">
+                                <i class="${card.icon}"></i>
+                                <span class="type-name">${card.type}</span>
+                            </div>
+                            ${card.default ? '<span class="card-default">Default</span>' : ''}
+                        </div>
+                        <div class="card-number">${card.number}</div>
+                        <div class="card-details">
+                            <div class="detail">
+                                <span class="label">Cardholder</span>
+                                <span class="value">${card.holder}</span>
+                            </div>
+                            <div class="detail">
+                                <span class="label">Expires</span>
+                                <span class="value">${card.expiry}</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <span class="balance">$${card.balance.toLocaleString()}</span>
+                            <div class="actions">
+                                <button class="edit" data-id="${card.id}" title="Edit"><i class="fas fa-pen"></i></button>
+                                <button class="delete" data-id="${card.id}" title="Remove"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                    `;
+                    cardsGrid.appendChild(el);
+
+                    // Delete handler
+                    el.querySelector('.delete').addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const id = parseInt(this.dataset.id);
+                        const idx = cardsData.findIndex(c => c.id === id);
+                        if (idx > -1) {
+                            cardsData.splice(idx, 1);
+                            renderCards();
+                            updateStats();
+                            showNotification('Card removed successfully.');
+                        }
+                    });
+
+                    // Edit handler (simulated)
+                    el.querySelector('.edit').addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        showNotification('Edit card feature — open card details.');
+                    });
+                });
+
+                // Add card placeholder
+                const addEl = document.createElement('div');
+                addEl.className = 'card-add';
+                addEl.innerHTML = `
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Add New Card</span>
+                `;
+                addEl.addEventListener('click', () => {
+                    addCardModal.classList.add('show');
+                });
+                cardsGrid.appendChild(addEl);
+                updateStats();
+            }
+
+            // ============================================
+            // UPDATE STATS
+            // ============================================
+            function updateStats() {
+                const totalCards = cardsData.length;
+                const totalBalance = cardsData.reduce((sum, c) => sum + c.balance, 0);
+                const statValues = document.querySelectorAll('.stat-value');
+                if (statValues.length >= 3) {
+                    statValues[0].textContent = totalCards;
+                    statValues[1].textContent = '$' + totalBalance.toLocaleString();
+                }
+                // Update events count
+                if (eventsSyncedCount) {
+                    eventsSyncedCount.textContent = eventsData.length;
+                }
+            }
+
+            // ============================================
+            // RENDER CALENDAR
+            // ============================================
+            function renderCalendar(month, year) {
+                const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'
+                ];
+                calendarMonthLabel.textContent = `${monthNames[month]} ${year}`;
+
+                const firstDay = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+                const today = new Date();
+                const todayDate = today.getDate();
+                const todayMonth = today.getMonth();
+                const todayYear = today.getFullYear();
+
+                let html = '';
+                const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                dayLabels.forEach(label => {
+                    html += `<div class="day-label">${label}</div>`;
+                });
+
+                // Previous month days
+                const startOffset = firstDay;
+                for (let i = startOffset - 1; i >= 0; i--) {
+                    const d = daysInPrevMonth - i;
+                    html += `<div class="day other-month">${d}</div>`;
+                }
+
+                // Current month days
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const isToday = (d === todayDate && month === todayMonth && year === todayYear);
+                    const isPast = (year < todayYear) || (year === todayYear && month < todayMonth) ||
+                        (year === todayYear && month === todayMonth && d < todayDate);
+                    const hasEvent = eventsData.some(e => {
+                        const ed = new Date(e.date);
+                        return ed.getDate() === d && ed.getMonth() === month && ed.getFullYear() === year;
+                    });
+                    let cls = 'day';
+                    if (isToday) cls += ' today';
+                    if (isPast && !isToday) cls += ' past';
+                    if (hasEvent) cls += ' has-event';
+                    html += `<div class="${cls}">${d}</div>`;
+                }
+
+                // Next month days to fill grid
+                const totalCells = startOffset + daysInMonth;
+                const remaining = (7 - (totalCells % 7)) % 7;
+                for (let d = 1; d <= remaining; d++) {
+                    html += `<div class="day other-month">${d}</div>`;
+                }
+
+                calendarGrid.innerHTML = html;
+            }
+
+            // ============================================
+            // RENDER EVENTS
+            // ============================================
+            function renderEvents() {
+                eventsList.innerHTML = '';
+                const sorted = [...eventsData].sort((a, b) => new Date(a.date) - new Date(b.date));
+                const upcoming = sorted.filter(e => new Date(e.date) >= new Date());
+                const display = upcoming.length > 0 ? upcoming.slice(0, 4) : sorted.slice(0, 4);
+
+                if (display.length === 0) {
+                    eventsList.innerHTML = `
+                        <div style="padding:16px 0;text-align:center;color:var(--text-muted);font-size:13px;">
+                            <i class="fas fa-calendar-minus" style="display:block;font-size:24px;margin-bottom:6px;"></i>
+                            No upcoming events. Sync with Google to populate.
+                        </div>
+                    `;
+                    return;
+                }
+
+                display.forEach(e => {
+                    const el = document.createElement('div');
+                    el.className = 'event-item';
+                    const dotColor = e.dot === 'gold' ? 'var(--gold)' : e.dot === 'blue' ? 'var(--blue-accent)' :
+                        'var(--green-accent)';
+                    el.innerHTML = `
+                        <span class="event-dot" style="background:${dotColor};"></span>
+                        <div class="event-info">
+                            <div class="title">${e.title}</div>
+                            <div class="time"><i class="far fa-calendar-alt" style="margin-right:4px;"></i>${e.date} · ${e.time}</div>
+                        </div>
+                        <span class="event-status">Upcoming</span>
+                    `;
+                    eventsList.appendChild(el);
+                });
+            }
+
+            // ============================================
+            // RENDER TRANSACTIONS
+            // ============================================
+            function renderTransactions() {
+                transactionsMini.innerHTML = '';
+                transactionsData.slice(0, 5).forEach(tx => {
+                    const el = document.createElement('div');
+                    el.className = 'tx-item';
+                    const sign = tx.positive ? '+' : '';
+                    const cls = tx.positive ? 'positive' : 'negative';
+                    el.innerHTML = `
+                        <div class="tx-icon"><i class="fas fa-${tx.positive ? 'arrow-down' : 'arrow-up'}"></i></div>
+                        <div class="tx-info">
+                            <div class="tx-name">${tx.name}</div>
+                            <div class="tx-date">${tx.date}</div>
+                        </div>
+                        <div class="tx-amount ${cls}">${sign}${tx.amount}</div>
+                    `;
+                    transactionsMini.appendChild(el);
+                });
+            }
+
+            // ============================================
+            // NOTIFICATION TOAST
+            // ============================================
+            function showNotification(msg) {
+                const existing = document.querySelector('.toast-notification');
+                if (existing) existing.remove();
+
+                const toast = document.createElement('div');
+                toast.className = 'toast-notification';
+                toast.style.cssText = `
+                    position: fixed; bottom: 30px; right: 30px;
+                    background: var(--bg-secondary);
+                    border: 1px solid var(--border-glass);
+                    border-left: 4px solid var(--gold);
+                    padding: 16px 24px;
+                    border-radius: var(--radius-sm);
+                    color: var(--text-primary);
+                    font-size: 14px;
+                    font-weight: 500;
+                    box-shadow: var(--shadow-card);
+                    z-index: 9999;
+                    backdrop-filter: blur(16px);
+                    max-width: 380px;
+                    animation: slideUp 0.4s ease;
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                `;
+                toast.innerHTML = `<i class="fas fa-check-circle" style="color:var(--gold);font-size:20px;"></i> ${msg}`;
+                document.body.appendChild(toast);
+
+                // Inject keyframe if not exists
+                if (!document.getElementById('toastKeyframes')) {
+                    const style = document.createElement('style');
+                    style.id = 'toastKeyframes';
+                    style.textContent = `
+                        @keyframes slideUp {
+                            from { opacity:0; transform: translateY(30px) scale(0.95); }
+                            to { opacity:1; transform: translateY(0) scale(1); }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(20px)';
+                    toast.style.transition = '0.4s ease';
+                    setTimeout(() => toast.remove(), 500);
+                }, 3500);
+            }
+
+            // ============================================
+            // MODAL CONTROLS
+            // ============================================
+            openAddCardBtn.addEventListener('click', () => {
+                addCardModal.classList.add('show');
+            });
+
+            closeAddCardBtn.addEventListener('click', () => {
+                addCardModal.classList.remove('show');
+            });
+
+            addCardModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('show');
+                }
+            });
+
+            addCardForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = this.querySelector('input[placeholder="John Doe"]').value.trim() || 'Cardholder';
+                const number = this.querySelector('input[placeholder="4111 1111 1111 1111"]').value.trim() ||
+                    '•••• •••• •••• 9999';
+                const expiry = this.querySelector('input[placeholder="MM/YY"]').value.trim() || '01/30';
+                const typeSelect = this.querySelector('select');
+                const type = typeSelect.options[typeSelect.selectedIndex].text;
+
+                const iconMap = {
+                    'Visa': 'fab fa-cc-visa',
+                    'Mastercard': 'fab fa-cc-mastercard',
+                    'American Express': 'fab fa-cc-amex',
+                    'Discover': 'fab fa-cc-discover'
+                };
+
+                const newCard = {
+                    id: cardIdCounter++,
+                    type: type,
+                    number: '•••• •••• •••• ' + (Math.floor(1000 + Math.random() * 9000)),
+                    expiry: expiry,
+                    holder: name,
+                    balance: Math.floor(10000 + Math.random() * 200000),
+                    default: cardsData.length === 0,
+                    icon: iconMap[type] || 'fas fa-credit-card'
+                };
+
+                cardsData.push(newCard);
+                renderCards();
+                addCardModal.classList.remove('show');
+                this.reset();
+                showNotification(`Card (${type}) added successfully!`);
+            });
+
+            // ============================================
+            // CALENDAR NAVIGATION
+            // ============================================
+            prevMonthBtn.addEventListener('click', () => {
+                if (currentMonth === 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                } else {
+                    currentMonth--;
+                }
+                renderCalendar(currentMonth, currentYear);
+            });
+
+            nextMonthBtn.addEventListener('click', () => {
+                if (currentMonth === 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                } else {
+                    currentMonth++;
+                }
+                renderCalendar(currentMonth, currentYear);
+            });
+
+            refreshCalendarBtn.addEventListener('click', () => {
+                renderCalendar(currentMonth, currentYear);
+                renderEvents();
+                showNotification('Calendar refreshed successfully.');
+            });
+
+            // ============================================
+            // SYNC CONTROLS
+            // ============================================
+            forceSyncBtn.addEventListener('click', () => {
+                const now = new Date();
+                const timeStr = now.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit' });
+                lastSyncTime.textContent = `Today, ${timeStr}`;
+                eventsSyncedCount.textContent = eventsData.length;
+                showNotification('Google Calendar sync completed. All events up to date.');
+                // Simulate new event
+                const newEvent = {
+                    title: 'Sync Triggered — Manual',
+                    date: new Date().toISOString().slice(0, 10),
+                    time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                    dot: 'gold'
+                };
+                eventsData.push(newEvent);
+                renderEvents();
+                renderCalendar(currentMonth, currentYear);
+            });
+
+            autoSyncToggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const isActive = this.classList.contains('active');
+                showNotification(isActive ? 'Auto-sync enabled.' : 'Auto-sync disabled.');
+                const dot = document.querySelector('.sync-status .dot');
+                if (dot) {
+                    dot.classList.toggle('warning', !isActive);
+                }
+                const statusText = document.querySelector('.sync-status span:last-child');
+                if (statusText) {
+                    statusText.textContent = isActive ? 'Google Sync Active' : 'Sync Paused';
+                }
+            });
+
+            connectGoogleBtn.addEventListener('click', () => {
+                showNotification('🔗 Google account connected: james@mwarokin.estate');
+            });
+
+            exportCalendarBtn.addEventListener('click', () => {
+                showNotification('📤 Calendar exported as .ics (simulated).');
+            });
+
+            // ============================================
+            // KEYBOARD SHORTCUT (ESC to close modal)
+            // ============================================
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && addCardModal.classList.contains('show')) {
+                    addCardModal.classList.remove('show');
+                }
+            });
+
+            // ============================================
+            // INIT
+            // ============================================
+            renderCards();
+            renderCalendar(currentMonth, currentYear);
+            renderEvents();
+            renderTransactions();
+            updateStats();
+
+            // Set initial last sync
+            const now = new Date();
+            lastSyncTime.textContent = `Today, ${now.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'})}`;
+            eventsSyncedCount.textContent = eventsData.length;
+
+            // Auto-sync toggle initial state
+            if (autoSyncToggle.classList.contains('active')) {
+                document.querySelector('.sync-status .dot')?.classList.remove('warning');
+            }
+
+            console.log('🏛️ Mwarokin Estates · Premium Bank Card Manager loaded.');
+            console.log('📅 Google Calendar Sync ready.');
+
+        })();
+    </script>
+
+</body>
+</html>

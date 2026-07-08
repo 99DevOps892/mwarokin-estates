@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mwarokin Estates — Agent Console</title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<meta content="Agent performance, commissions and territory management for Mwarokin Estates" name="description">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+:root{
+  --navy-950:#0E1016;
+  --navy-900:#151824;
+  --navy-800:#1D212F;
+  --paper:#F7F5F0;
+  --card:#FFFFFF;
+  --ink:#1A1D29;
+  --ink-soft:#6B7180;
+  --ink-faint:#9497A3;
+  --border:#E8E3D8;
+  --border-soft:#EFEBE0;
+  --bronze:#C9A24B;
+  --bronze-deep:#9C7A2E;
+  --bronze-glow:rgba(201,162,75,0.18);
+  --indigo:#4F46E5;
+  --indigo-soft:rgba(79,70,229,0.09);
+  --emerald:#177A54;
+  --emerald-soft:rgba(23,122,84,0.1);
+  --amber:#B4791A;
+  --amber-soft:rgba(180,121,26,0.1);
+  --rose:#BC3B3B;
+  --rose-soft:rgba(188,59,59,0.1);
+  --radius:14px;
+  --shadow-sm:0 1px 2px rgba(20,17,10,0.04);
+  --shadow-md:0 8px 24px rgba(20,17,10,0.07);
+  --shadow-lg:0 20px 48px rgba(20,17,10,0.12);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  min-height:100vh;
+  font-size:14.5px;
+  -webkit-font-smoothing:antialiased;
+}
+.mono{font-family:'IBM Plex Mono',monospace;}
+h1,h2,h3,h4,.display{font-family:'Sora',sans-serif;}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-thumb{background:#D8D2C2;border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+
+/* ---------- SIDEBAR ---------- */
+.sidebar{
+  position:fixed;left:0;top:0;width:264px;height:100vh;
+  background:var(--navy-950);
+  border-right:1px solid rgba(255,255,255,0.06);
+  display:flex;flex-direction:column;z-index:1000;
+}
+.brand{
+  padding:1.75rem 1.5rem 1.4rem;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  display:flex;align-items:center;gap:0.75rem;
+}
+.brand-mark{
+  width:38px;height:38px;border-radius:9px;
+  background:linear-gradient(155deg,var(--bronze),var(--bronze-deep));
+  display:flex;align-items:center;justify-content:center;
+  color:#1C1508;font-size:1rem;font-weight:800;flex-shrink:0;
+}
+.brand-text h1{color:#fff;font-size:1.02rem;font-weight:700;letter-spacing:0.2px;}
+.brand-text span{color:var(--bronze);font-size:0.68rem;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;}
+
+.nav{padding:1.3rem 0.9rem;flex:1;overflow-y:auto;}
+.nav-label{color:rgba(255,255,255,0.32);font-size:0.66rem;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;padding:0.9rem 0.7rem 0.5rem;}
+.nav-item{
+  display:flex;align-items:center;gap:0.8rem;
+  padding:0.62rem 0.75rem;border-radius:9px;margin-bottom:2px;
+  color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.87rem;font-weight:500;
+  transition:all .18s;position:relative;cursor:pointer;
+}
+.nav-item i{width:18px;text-align:center;font-size:0.92rem;}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:#fff;}
+.nav-item.active{background:var(--bronze-glow);color:#fff;}
+.nav-item.active::before{content:'';position:absolute;left:-0.9rem;top:0.3rem;bottom:0.3rem;width:3px;border-radius:3px;background:var(--bronze);}
+.nav-pill{margin-left:auto;background:rgba(255,255,255,0.09);color:rgba(255,255,255,0.75);font-size:0.68rem;font-weight:700;padding:0.1rem 0.45rem;border-radius:20px;}
+
+.sidebar-foot{
+  padding:1rem;border-top:1px solid rgba(255,255,255,0.06);
+}
+.foot-card{
+  background:rgba(255,255,255,0.04);border-radius:11px;padding:0.85rem;
+  display:flex;align-items:center;gap:0.7rem;
+}
+.foot-avatar{width:36px;height:36px;border-radius:9px;background:linear-gradient(155deg,var(--indigo),#3730A3);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.82rem;flex-shrink:0;}
+.foot-name{color:#fff;font-size:0.82rem;font-weight:600;}
+.foot-role{color:rgba(255,255,255,0.45);font-size:0.7rem;}
+
+/* ---------- MAIN ---------- */
+.main{margin-left:264px;padding:1.6rem 2rem 3rem;max-width:1560px;}
+
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:1.5rem;margin-bottom:1.6rem;flex-wrap:wrap;}
+.topbar-title h2{font-size:1.42rem;font-weight:700;letter-spacing:-0.3px;}
+.topbar-title p{color:var(--ink-soft);font-size:0.85rem;margin-top:0.15rem;}
+.topbar-actions{display:flex;align-items:center;gap:0.7rem;}
+
+.search-box{position:relative;}
+.search-box input{
+  width:260px;padding:0.6rem 0.9rem 0.6rem 2.4rem;border:1px solid var(--border);
+  border-radius:10px;background:var(--card);font-size:0.85rem;font-family:'Inter';
+  transition:all .2s;
+}
+.search-box input:focus{outline:none;border-color:var(--bronze);box-shadow:0 0 0 3px var(--bronze-glow);}
+.search-box i{position:absolute;left:0.85rem;top:50%;transform:translateY(-50%);color:var(--ink-faint);font-size:0.8rem;}
+
+.select-chip{
+  padding:0.6rem 0.9rem;border:1px solid var(--border);border-radius:10px;background:var(--card);
+  font-size:0.83rem;color:var(--ink-soft);font-weight:500;cursor:pointer;display:flex;align-items:center;gap:0.5rem;
+}
+.btn{
+  border:none;border-radius:10px;padding:0.62rem 1.05rem;font-size:0.84rem;font-weight:600;
+  cursor:pointer;display:inline-flex;align-items:center;gap:0.5rem;font-family:'Inter';transition:all .18s;
+}
+.btn-bronze{background:linear-gradient(155deg,var(--bronze),var(--bronze-deep));color:#1C1508;box-shadow:var(--shadow-sm);}
+.btn-bronze:hover{filter:brightness(1.06);box-shadow:var(--shadow-md);}
+.btn-ghost{background:var(--card);border:1px solid var(--border);color:var(--ink);}
+.btn-ghost:hover{border-color:var(--ink-faint);}
+.icon-btn{
+  width:40px;height:40px;border-radius:10px;border:1px solid var(--border);background:var(--card);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;color:var(--ink-soft);
+}
+.icon-btn:hover{border-color:var(--ink-faint);}
+.badge-dot{position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:var(--rose);color:#fff;font-size:0.6rem;display:flex;align-items:center;justify-content:center;font-weight:700;border:2px solid var(--paper);}
+
+/* ---------- KPI STRIP ---------- */
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.6rem;}
+.kpi{
+  background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);
+  padding:1.15rem 1.3rem;position:relative;overflow:hidden;box-shadow:var(--shadow-sm);
+}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--bronze),transparent);}
+.kpi-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.7rem;}
+.kpi-label{color:var(--ink-soft);font-size:0.76rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
+.kpi-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:0.9rem;}
+.kpi-value{font-family:'IBM Plex Mono';font-size:1.55rem;font-weight:700;letter-spacing:-0.5px;}
+.kpi-sub{font-size:0.78rem;margin-top:0.4rem;font-weight:600;display:flex;align-items:center;gap:0.3rem;}
+.up{color:var(--emerald);} .down{color:var(--rose);}
+
+/* ---------- RANK LADDER (signature) ---------- */
+.ladder-card{background:var(--navy-950);border-radius:18px;padding:1.7rem 1.8rem 1.5rem;margin-bottom:1.6rem;position:relative;overflow:hidden;box-shadow:var(--shadow-lg);}
+.ladder-card::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 85% 0%,rgba(201,162,75,0.14),transparent 55%);pointer-events:none;}
+.ladder-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.3rem;position:relative;}
+.ladder-head h3{color:#fff;font-size:1.08rem;font-weight:700;display:flex;align-items:center;gap:0.55rem;}
+.ladder-head p{color:rgba(255,255,255,0.45);font-size:0.8rem;margin-top:0.2rem;}
+.ladder-legend{color:rgba(255,255,255,0.4);font-size:0.72rem;}
+.ladder{display:flex;flex-direction:column;gap:0.55rem;position:relative;}
+.rung{
+  display:grid;grid-template-columns:140px 1fr 150px 44px;align-items:center;gap:1rem;
+  background:rgba(255,255,255,0.035);border:1px solid rgba(255,255,255,0.07);
+  border-radius:12px;padding:0.85rem 1.1rem;transition:all .2s;
+}
+.rung:hover{background:rgba(255,255,255,0.06);}
+.rung-tier{display:flex;align-items:center;gap:0.6rem;}
+.tier-glyph{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.82rem;font-weight:800;font-family:'Sora';flex-shrink:0;}
+.tier-name{color:#fff;font-weight:700;font-size:0.88rem;}
+.tier-req{color:rgba(255,255,255,0.38);font-size:0.68rem;}
+.rung-avatars{display:flex;align-items:center;}
+.rung-avatar{
+  width:32px;height:32px;border-radius:50%;border:2px solid var(--navy-950);
+  display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;color:#fff;
+  margin-left:-9px;cursor:pointer;transition:transform .15s;font-family:'Sora';
+}
+.rung-avatar:first-child{margin-left:0;}
+.rung-avatar:hover{transform:translateY(-3px);z-index:5;}
+.rung-more{width:32px;height:32px;border-radius:50%;border:2px solid var(--navy-950);background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;font-size:0.62rem;font-weight:700;margin-left:-9px;}
+.rung-commission{color:#fff;font-family:'IBM Plex Mono';font-weight:600;font-size:0.85rem;text-align:right;}
+.rung-commission span{display:block;color:rgba(255,255,255,0.35);font-family:'Inter';font-size:0.65rem;font-weight:500;text-align:right;margin-top:1px;}
+.rung-arrow{color:rgba(255,255,255,0.25);text-align:center;font-size:0.85rem;}
+
+/* ---------- GRID LAYOUT ---------- */
+.grid-2{display:grid;grid-template-columns:1.62fr 1fr;gap:1.4rem;margin-bottom:1.4rem;align-items:start;}
+.panel{background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);box-shadow:var(--shadow-sm);}
+.panel-head{display:flex;justify-content:space-between;align-items:center;padding:1.1rem 1.3rem;border-bottom:1px solid var(--border-soft);}
+.panel-title{font-size:0.98rem;font-weight:700;display:flex;align-items:center;gap:0.55rem;}
+.panel-title i{color:var(--bronze-deep);font-size:0.9rem;}
+.panel-actions{display:flex;gap:0.4rem;}
+.chip{font-size:0.7rem;font-weight:700;padding:0.2rem 0.55rem;border-radius:20px;letter-spacing:0.2px;}
+.chip-tab{padding:0.4rem 0.8rem;border-radius:8px;font-size:0.78rem;font-weight:600;color:var(--ink-soft);cursor:pointer;border:1px solid transparent;}
+.chip-tab.active{background:var(--indigo-soft);color:var(--indigo);}
+
+/* Agent directory table */
+.table-wrap{padding:0.4rem 0;}
+table{width:100%;border-collapse:collapse;}
+th{
+  text-align:left;padding:0.6rem 1.3rem;font-size:0.68rem;font-weight:700;color:var(--ink-faint);
+  text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border-soft);cursor:pointer;user-select:none;
+}
+th i{font-size:0.62rem;margin-left:0.3rem;opacity:0.5;}
+td{padding:0.75rem 1.3rem;border-bottom:1px solid var(--border-soft);font-size:0.84rem;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr.agent-row{cursor:pointer;transition:background .15s;}
+tr.agent-row:hover{background:#FBFAF7;}
+.agent-cell{display:flex;align-items:center;gap:0.7rem;}
+.a-avatar{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.78rem;flex-shrink:0;font-family:'Sora';}
+.a-name{font-weight:600;}
+.a-sub{color:var(--ink-faint);font-size:0.72rem;margin-top:1px;}
+.status-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:0.4rem;}
+.status-text{font-size:0.78rem;font-weight:600;}
+.tier-pill{font-size:0.68rem;font-weight:700;padding:0.22rem 0.55rem;border-radius:6px;font-family:'Sora';}
+.kyc-badge{font-size:0.68rem;font-weight:600;display:inline-flex;align-items:center;gap:0.3rem;}
+.mono-cell{font-family:'IBM Plex Mono';font-weight:600;}
+
+/* Territory / pipeline mini panel */
+.territory-list{padding:1rem 1.3rem;display:flex;flex-direction:column;gap:0.85rem;}
+.terr-item{display:flex;align-items:center;gap:0.8rem;}
+.terr-name{flex:1;}
+.terr-name b{font-size:0.83rem;font-weight:600;display:block;}
+.terr-name span{font-size:0.7rem;color:var(--ink-faint);}
+.terr-bar-track{width:100%;height:6px;background:var(--border-soft);border-radius:6px;margin-top:0.35rem;overflow:hidden;}
+.terr-bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--bronze),var(--bronze-deep));}
+.terr-val{font-family:'IBM Plex Mono';font-size:0.8rem;font-weight:700;white-space:nowrap;}
+
+/* Pipeline (funnel) */
+.pipeline{padding:1rem 1.3rem;display:flex;flex-direction:column;gap:0.65rem;}
+.pipe-stage{display:flex;align-items:center;gap:0.9rem;}
+.pipe-label{width:96px;font-size:0.76rem;font-weight:600;color:var(--ink-soft);flex-shrink:0;}
+.pipe-track{flex:1;height:26px;background:var(--border-soft);border-radius:7px;overflow:hidden;position:relative;}
+.pipe-fill{height:100%;border-radius:7px;display:flex;align-items:center;justify-content:flex-end;padding-right:0.5rem;color:#fff;font-size:0.72rem;font-weight:700;font-family:'IBM Plex Mono';}
+
+/* Payouts */
+.payout-row{display:flex;align-items:center;gap:0.9rem;padding:0.85rem 1.3rem;border-bottom:1px solid var(--border-soft);}
+.payout-row:last-child{border-bottom:none;}
+.payout-info{flex:1;}
+.payout-info b{font-size:0.85rem;font-weight:600;}
+.payout-info span{display:block;font-size:0.72rem;color:var(--ink-faint);margin-top:1px;}
+.payout-amt{font-family:'IBM Plex Mono';font-weight:700;font-size:0.9rem;}
+
+/* Activity feed */
+.activity-item{display:flex;gap:0.8rem;padding:0.75rem 1.3rem;border-bottom:1px solid var(--border-soft);}
+.activity-item:last-child{border-bottom:none;}
+.act-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;flex-shrink:0;}
+.act-body p{font-size:0.82rem;line-height:1.4;}
+.act-body span{font-size:0.7rem;color:var(--ink-faint);}
+
+/* ---------- DRAWER (agent profile) ---------- */
+.overlay{position:fixed;inset:0;background:rgba(14,16,22,0.5);backdrop-filter:blur(2px);z-index:2000;opacity:0;pointer-events:none;transition:opacity .25s;}
+.overlay.show{opacity:1;pointer-events:auto;}
+.drawer{
+  position:fixed;top:0;right:-460px;width:440px;height:100vh;background:var(--card);z-index:2001;
+  box-shadow:-20px 0 50px rgba(0,0,0,0.15);transition:right .3s cubic-bezier(.2,.8,.2,1);overflow-y:auto;
+}
+.drawer.show{right:0;}
+.drawer-head{padding:1.6rem;background:var(--navy-950);position:relative;}
+.drawer-close{position:absolute;top:1.2rem;right:1.3rem;color:rgba(255,255,255,0.6);cursor:pointer;font-size:1.1rem;}
+.drawer-agent{display:flex;align-items:center;gap:1rem;margin-top:0.5rem;}
+.drawer-avatar{width:58px;height:58px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:1.2rem;font-family:'Sora';}
+.drawer-agent h3{color:#fff;font-size:1.1rem;font-weight:700;}
+.drawer-agent p{color:rgba(255,255,255,0.5);font-size:0.78rem;margin-top:2px;}
+.drawer-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.7rem;padding:1.2rem 1.6rem;border-bottom:1px solid var(--border-soft);}
+.dstat b{display:block;font-family:'IBM Plex Mono';font-size:1.05rem;font-weight:700;}
+.dstat span{font-size:0.68rem;color:var(--ink-faint);text-transform:uppercase;letter-spacing:0.4px;}
+.drawer-section{padding:1.2rem 1.6rem;border-bottom:1px solid var(--border-soft);}
+.drawer-section h4{font-size:0.8rem;font-weight:700;margin-bottom:0.8rem;text-transform:uppercase;letter-spacing:0.4px;color:var(--ink-soft);}
+.mini-listing{display:flex;align-items:center;gap:0.7rem;padding:0.6rem 0;border-bottom:1px solid var(--border-soft);}
+.mini-listing:last-child{border-bottom:none;}
+.mini-thumb{width:42px;height:42px;border-radius:8px;background:var(--indigo-soft);display:flex;align-items:center;justify-content:center;color:var(--indigo);font-size:0.85rem;}
+.mini-info b{font-size:0.82rem;display:block;}
+.mini-info span{font-size:0.7rem;color:var(--ink-faint);}
+.drawer-actions{padding:1.3rem 1.6rem;display:flex;gap:0.6rem;}
+
+/* ---------- MODAL (invite agent) ---------- */
+.modal{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-46%);width:480px;max-width:92vw;
+  background:var(--card);border-radius:16px;box-shadow:var(--shadow-lg);z-index:2001;opacity:0;pointer-events:none;
+  transition:all .25s;
+}
+.modal.show{opacity:1;transform:translate(-50%,-50%);pointer-events:auto;}
+.modal-head{padding:1.4rem 1.6rem;border-bottom:1px solid var(--border-soft);display:flex;justify-content:space-between;align-items:center;}
+.modal-head h3{font-size:1.05rem;font-weight:700;}
+.modal-body{padding:1.4rem 1.6rem;display:flex;flex-direction:column;gap:1rem;}
+.field label{font-size:0.76rem;font-weight:600;color:var(--ink-soft);display:block;margin-bottom:0.4rem;}
+.field input,.field select{
+  width:100%;padding:0.65rem 0.85rem;border:1px solid var(--border);border-radius:9px;font-size:0.85rem;font-family:'Inter';
+}
+.field input:focus,.field select:focus{outline:none;border-color:var(--bronze);box-shadow:0 0 0 3px var(--bronze-glow);}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:0.9rem;}
+.modal-foot{padding:1.2rem 1.6rem;border-top:1px solid var(--border-soft);display:flex;justify-content:flex-end;gap:0.6rem;}
+
+/* toast */
+.toast-wrap{position:fixed;bottom:1.5rem;right:1.5rem;z-index:3000;display:flex;flex-direction:column;gap:0.6rem;}
+.toast{
+  background:var(--navy-950);color:#fff;padding:0.85rem 1.1rem;border-radius:10px;font-size:0.83rem;
+  display:flex;align-items:center;gap:0.6rem;box-shadow:var(--shadow-lg);transform:translateX(20px);opacity:0;
+  transition:all .3s;border-left:3px solid var(--bronze);
+}
+.toast.show{transform:translateX(0);opacity:1;}
+
+@media (max-width:1200px){.grid-2{grid-template-columns:1fr;}.kpi-strip{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:768px){
+  .sidebar{transform:translateX(-100%);} .main{margin-left:0;padding:1.2rem;}
+  .kpi-strip{grid-template-columns:1fr;} .rung{grid-template-columns:110px 1fr 100px;}
+  .rung-arrow{display:none;} .search-box input{width:170px;}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="brand">
+    <div class="brand-mark">ME</div>
+    <div class="brand-text">
+      <h1>Mwarokin Estates</h1>
+      <span>Agent Console</span>
+    </div>
+  </div>
+  <div class="nav">
+    <div class="nav-label">Overview</div>
+    <a class="nav-item active"><i class="fas fa-chart-pie"></i><span>Agent Dashboard</span></a>
+    <a class="nav-item"><i class="fas fa-home"></i><span>Properties</span></a>
+    <a class="nav-item"><i class="fas fa-users"></i><span>Tenants</span></a>
+    <div class="nav-label">Agent Operations</div>
+    <a class="nav-item"><i class="fas fa-id-badge"></i><span>Agent Directory</span><span class="nav-pill">32</span></a>
+    <a class="nav-item"><i class="fas fa-filter"></i><span>Lead Pipeline</span><span class="nav-pill">58</span></a>
+    <a class="nav-item"><i class="fas fa-map-marked-alt"></i><span>Territories</span></a>
+    <a class="nav-item"><i class="fas fa-coins"></i><span>Commissions</span></a>
+    <a class="nav-item"><i class="fas fa-medal"></i><span>Rank &amp; Incentives</span></a>
+    <a class="nav-item"><i class="fas fa-calendar-alt"></i><span>Viewings &amp; Tasks</span></a>
+    <div class="nav-label">System</div>
+    <a class="nav-item"><i class="fas fa-file-invoice-dollar"></i><span>Payout Requests</span><span class="nav-pill">6</span></a>
+    <a class="nav-item"><i class="fas fa-robot"></i><span>AI Agents</span></a>
+    <a class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></a>
+  </div>
+  <div class="sidebar-foot">
+    <div class="foot-card">
+      <div class="foot-avatar">RM</div>
+      <div>
+        <div class="foot-name">Robin Mwarema</div>
+        <div class="foot-role">Estate Director</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <div class="topbar">
+    <div class="topbar-title">
+      <h2>Agent Dashboard</h2>
+      <p>Performance, commissions and territory coverage across all Mwarokin agencies</p>
+    </div>
+    <div class="topbar-actions">
+      <div class="search-box"><i class="fas fa-search"></i><input id="agentSearch" placeholder="Search agents, phone, territory…"></div>
+      <div class="select-chip"><i class="fas fa-map-marker-alt" style="color:var(--bronze-deep);"></i><span id="regionLabel">All Nairobi zones</span><i class="fas fa-chevron-down" style="font-size:0.65rem;"></i></div>
+      <button class="icon-btn"><i class="fas fa-bell"></i><span class="badge-dot">6</span></button>
+      <button class="btn btn-bronze" onclick="openModal()"><i class="fas fa-user-plus"></i>Invite Agent</button>
+    </div>
+  </div>
+
+  <!-- KPI STRIP -->
+  <div class="kpi-strip">
+    <div class="kpi">
+      <div class="kpi-top"><span class="kpi-label">Commission Payable</span><div class="kpi-icon" style="background:var(--bronze-glow);color:var(--bronze-deep);"><i class="fas fa-coins"></i></div></div>
+      <div class="kpi-value">KES 1,842,300</div>
+      <div class="kpi-sub up"><i class="fas fa-arrow-up"></i> 14.2% vs last month</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-top"><span class="kpi-label">Active Agents</span><div class="kpi-icon" style="background:var(--indigo-soft);color:var(--indigo);"><i class="fas fa-id-badge"></i></div></div>
+      <div class="kpi-value">32</div>
+      <div class="kpi-sub up"><i class="fas fa-arrow-up"></i> 4 onboarded this month</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-top"><span class="kpi-label">Leads This Month</span><div class="kpi-icon" style="background:var(--emerald-soft);color:var(--emerald);"><i class="fas fa-bullseye"></i></div></div>
+      <div class="kpi-value">318</div>
+      <div class="kpi-sub up"><i class="fas fa-arrow-up"></i> 22% conversion to viewing</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-top"><span class="kpi-label">Avg Deal Close Time</span><div class="kpi-icon" style="background:var(--amber-soft);color:var(--amber);"><i class="fas fa-stopwatch"></i></div></div>
+      <div class="kpi-value">6.4 <span style="font-size:0.95rem;color:var(--ink-faint);">days</span></div>
+      <div class="kpi-sub down"><i class="fas fa-arrow-down"></i> 1.1 days faster</div>
+    </div>
+  </div>
+
+  <!-- RANK LADDER -->
+  <div class="ladder-card">
+    <div class="ladder-head">
+      <div>
+        <h3><i class="fas fa-layer-group" style="color:var(--bronze);"></i> Agent Rank Ladder</h3>
+        <p>Progression tiers from the Mwarokin agent incentive programme</p>
+      </div>
+      <div class="ladder-legend">Sorted by commission earned this quarter</div>
+    </div>
+    <div class="ladder" id="ladder"></div>
+  </div>
+
+  <!-- ROW 1 -->
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title"><i class="fas fa-id-badge"></i> Agent Directory</div>
+        <div class="panel-actions">
+          <div class="chip-tab active" data-filter="all">All</div>
+          <div class="chip-tab" data-filter="active">Active</div>
+          <div class="chip-tab" data-filter="pending">Pending KYC</div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th onclick="sortAgents('name')">Agent <i class="fas fa-sort"></i></th>
+              <th onclick="sortAgents('tier')">Tier <i class="fas fa-sort"></i></th>
+              <th onclick="sortAgents('status')">Status</th>
+              <th onclick="sortAgents('deals')">Deals <i class="fas fa-sort"></i></th>
+              <th onclick="sortAgents('commission')">Commission <i class="fas fa-sort"></i></th>
+              <th>KYC</th>
+            </tr>
+          </thead>
+          <tbody id="agentTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><div class="panel-title"><i class="fas fa-map-marked-alt"></i> Territory Coverage</div></div>
+      <div class="territory-list" id="territoryList"></div>
+    </div>
+  </div>
+
+  <!-- ROW 2 -->
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title"><i class="fas fa-filter"></i> Lead Pipeline</div>
+        <div class="panel-actions"><button class="btn btn-ghost" style="padding:0.4rem 0.8rem;font-size:0.76rem;"><i class="fas fa-plus"></i> New Lead</button></div>
+      </div>
+      <div class="pipeline" id="pipeline"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><div class="panel-title"><i class="fas fa-stream"></i> Live Activity</div></div>
+      <div id="activityFeed" style="max-height:290px;overflow-y:auto;"></div>
+    </div>
+  </div>
+
+  <!-- ROW 3 -->
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title"><i class="fas fa-file-invoice-dollar"></i> Payout Requests</div>
+        <div class="panel-actions"><span class="chip" style="background:var(--amber-soft);color:var(--amber);">6 pending</span></div>
+      </div>
+      <div id="payoutList"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><div class="panel-title"><i class="fas fa-calendar-check"></i> Upcoming Viewings</div></div>
+      <div id="viewingsList" style="padding:1rem 1.3rem;display:flex;flex-direction:column;gap:0.85rem;"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- DRAWER -->
+<div class="overlay" id="overlay" onclick="closeAll()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <i class="fas fa-times drawer-close" onclick="closeAll()"></i>
+    <div class="drawer-agent">
+      <div class="drawer-avatar" id="dAvatar">—</div>
+      <div>
+        <h3 id="dName">—</h3>
+        <p id="dSub">—</p>
+      </div>
+    </div>
+  </div>
+  <div class="drawer-stats">
+    <div class="dstat"><b id="dDeals">—</b><span>Deals Closed</span></div>
+    <div class="dstat"><b id="dConv">—</b><span>Conversion</span></div>
+    <div class="dstat"><b id="dComm">—</b><span>Commission</span></div>
+  </div>
+  <div class="drawer-section">
+    <h4>Assigned Listings</h4>
+    <div id="dListings"></div>
+  </div>
+  <div class="drawer-section">
+    <h4>Recent Deals</h4>
+    <div id="dDeals2"></div>
+  </div>
+  <div class="drawer-actions">
+    <button class="btn btn-bronze" style="flex:1;justify-content:center;" onclick="toast('Message sent to agent')"><i class="fas fa-paper-plane"></i> Message</button>
+    <button class="btn btn-ghost" style="flex:1;justify-content:center;" onclick="toast('Payout review opened')"><i class="fas fa-coins"></i> Review Payout</button>
+  </div>
+</div>
+
+<!-- INVITE MODAL -->
+<div class="overlay" id="overlay2" onclick="closeAll()"></div>
+<div class="modal" id="modal">
+  <div class="modal-head"><h3><i class="fas fa-user-plus" style="color:var(--bronze-deep);margin-right:0.4rem;"></i>Invite New Agent</h3><i class="fas fa-times" style="cursor:pointer;color:var(--ink-faint);" onclick="closeAll()"></i></div>
+  <div class="modal-body">
+    <div class="field-row">
+      <div class="field"><label>Full Name</label><input placeholder="e.g. Wanjiru Kamau"></div>
+      <div class="field"><label>Phone Number</label><input placeholder="+254 7…"></div>
+    </div>
+    <div class="field"><label>Email Address</label><input placeholder="agent@mwarokinestates.co.ke"></div>
+    <div class="field-row">
+      <div class="field"><label>Assigned Territory</label>
+        <select><option>Kilimani</option><option>Westlands</option><option>Ruaka</option><option>South B / C</option><option>Kasarani</option><option>Karen</option></select>
+      </div>
+      <div class="field"><label>Starting Tier</label>
+        <select><option>Msingi (Foundation)</option><option>Jengo (Builder)</option><option>Milki (Owner)</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="modal-foot">
+    <button class="btn btn-ghost" onclick="closeAll()">Cancel</button>
+    <button class="btn btn-bronze" onclick="sendInvite()"><i class="fas fa-paper-plane"></i> Send Invite</button>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+/* ================= DATA ================= */
+const TIERS = [
+  {key:'taifa', name:'Taifa', req:'150+ deals · Nation-wide mandate', color:'#C9A24B', glyph:'#1C1508', bg:'linear-gradient(155deg,#E9C876,#B9903B)'},
+  {key:'milki', name:'Milki', req:'80+ deals · Ownership tier', color:'#9C8CE0', glyph:'#1C1508', bg:'linear-gradient(155deg,#B9ADEE,#7A6BC9)'},
+  {key:'jengo', name:'Jengo', req:'35+ deals · Building tier', color:'#6FB6A8', glyph:'#0B221C', bg:'linear-gradient(155deg,#8FD2C4,#4C9484)'},
+  {key:'msingi', name:'Msingi', req:'0+ deals · Foundation tier', color:'#8C93A6', glyph:'#12141C', bg:'linear-gradient(155deg,#AAB1C4,#6B7286)'},
+];
+
+const AGENTS = [
+  {name:'Kevin Otieno', territory:'Kilimani', tier:'taifa', status:'active', deals:162, commission:284500, kyc:'verified', conv:'34%', color:'#4F46E5'},
+  {name:'Amina Yusuf', territory:'Westlands', tier:'taifa', status:'active', deals:158, commission:271200, kyc:'verified', conv:'31%', color:'#C9A24B'},
+  {name:'Brian Kiplagat', territory:'Karen', tier:'milki', status:'active', deals:96, commission:168300, kyc:'verified', conv:'27%', color:'#177A54'},
+  {name:'Faith Njoroge', territory:'Ruaka', tier:'milki', status:'active', deals:88, commission:151900, kyc:'verified', conv:'25%', color:'#BC3B3B'},
+  {name:'Dennis Mwangi', territory:'South B', tier:'milki', status:'on leave', deals:81, commission:139800, kyc:'verified', conv:'22%', color:'#B4791A'},
+  {name:'Cynthia Wafula', territory:'Kasarani', tier:'jengo', status:'active', deals:52, commission:88400, kyc:'pending', conv:'19%', color:'#4F46E5'},
+  {name:'Peter Kamau', territory:'South C', tier:'jengo', status:'active', deals:47, commission:79600, kyc:'verified', conv:'21%', color:'#177A54'},
+  {name:'Grace Achieng', territory:'Westlands', tier:'jengo', status:'active', deals:41, commission:71200, kyc:'verified', conv:'18%', color:'#C9A24B'},
+  {name:'Samuel Kiprono', territory:'Kilimani', tier:'jengo', status:'suspended', deals:38, commission:64100, kyc:'rejected', conv:'14%', color:'#BC3B3B'},
+  {name:'Lucy Chebet', territory:'Ruaka', tier:'msingi', status:'active', deals:19, commission:32800, kyc:'pending', conv:'16%', color:'#177A54'},
+  {name:'Hassan Ali', territory:'Karen', tier:'msingi', status:'active', deals:14, commission:24100, kyc:'verified', conv:'12%', color:'#4F46E5'},
+  {name:'Mercy Wanjiru', territory:'South B', tier:'msingi', status:'active', deals:9, commission:15600, kyc:'pending', conv:'10%', color:'#B4791A'},
+];
+
+const TERRITORIES = [
+  {name:'Kilimani', agents:6, listings:84, pct:88},
+  {name:'Westlands', agents:5, listings:71, pct:76},
+  {name:'Ruaka', agents:4, listings:52, pct:63},
+  {name:'Karen', agents:4, listings:38, pct:54},
+  {name:'South B / C', agents:5, listings:46, pct:49},
+  {name:'Kasarani', agents:3, listings:29, pct:38},
+];
+
+const PIPELINE = [
+  {stage:'New Lead', count:58, color:'#8C93A6'},
+  {stage:'Contacted', count:41, color:'#4F46E5'},
+  {stage:'Viewing', count:26, color:'#B4791A'},
+  {stage:'Offer', count:14, color:'#6FB6A8'},
+  {stage:'Closed', count:9, color:'#177A54'},
+];
+
+const PAYOUTS = [
+  {name:'Kevin Otieno', amount:48200, date:'Requested 2h ago', status:'pending'},
+  {name:'Amina Yusuf', amount:39600, date:'Requested 5h ago', status:'pending'},
+  {name:'Brian Kiplagat', amount:22100, date:'Requested yesterday', status:'pending'},
+  {name:'Grace Achieng', amount:14300, date:'Approved · paid out', status:'done'},
+  {name:'Faith Njoroge', amount:27900, date:'Approved · paid out', status:'done'},
+];
+
+const VIEWINGS = [
+  {title:'2BR Apartment — Kilimani Ridge', agent:'Kevin Otieno', time:'Today, 2:30 PM'},
+  {title:'Office Suite — Westlands Square', agent:'Amina Yusuf', time:'Today, 4:00 PM'},
+  {title:'Townhouse — Ruaka Greens', agent:'Faith Njoroge', time:'Tomorrow, 10:00 AM'},
+  {title:'Studio — South B Court', agent:'Cynthia Wafula', time:'Tomorrow, 1:15 PM'},
+];
+
+const ACTIVITY = [
+  {icon:'fa-handshake', color:'var(--emerald)', bg:'var(--emerald-soft)', text:'<b>Brian Kiplagat</b> closed a deal on Karen Villa 12', time:'12 minutes ago'},
+  {icon:'fa-user-plus', color:'var(--indigo)', bg:'var(--indigo-soft)', text:'<b>Lucy Chebet</b> submitted KYC documents', time:'48 minutes ago'},
+  {icon:'fa-coins', color:'var(--bronze-deep)', bg:'var(--bronze-glow)', text:'Payout of <b>KES 39,600</b> requested by Amina Yusuf', time:'2 hours ago'},
+  {icon:'fa-eye', color:'var(--amber)', bg:'var(--amber-soft)', text:'<b>Grace Achieng</b> scheduled a viewing in Westlands', time:'3 hours ago'},
+  {icon:'fa-exclamation-triangle', color:'var(--rose)', bg:'var(--rose-soft)', text:'<b>Samuel Kiprono</b> flagged for KYC rejection', time:'5 hours ago'},
+  {icon:'fa-medal', color:'var(--bronze-deep)', bg:'var(--bronze-glow)', text:'<b>Kevin Otieno</b> promoted to Taifa tier', time:'Yesterday'},
+];
+
+function initials(n){return n.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();}
+function fmt(n){return 'KES ' + n.toLocaleString();}
+const tierInfo = k => TIERS.find(t=>t.key===k);
+
+/* ============ RANK LADDER ============ */
+function renderLadder(){
+  const el = document.getElementById('ladder');
+  el.innerHTML = TIERS.map(t=>{
+    const members = AGENTS.filter(a=>a.tier===t.key).sort((a,b)=>b.commission-a.commission);
+    const totalComm = members.reduce((s,a)=>s+a.commission,0);
+    const shown = members.slice(0,6);
+    const extra = members.length - shown.length;
+    return `
+    <div class="rung">
+      <div class="rung-tier">
+        <div class="tier-glyph" style="background:${t.bg};color:${t.glyph};">${t.name[0]}</div>
+        <div><div class="tier-name">${t.name}</div><div class="tier-req">${t.req}</div></div>
+      </div>
+      <div class="rung-avatars">
+        ${shown.map(a=>`<div class="rung-avatar" style="background:${a.color};" title="${a.name} — ${fmt(a.commission)}">${initials(a.name)}</div>`).join('')}
+        ${extra>0?`<div class="rung-more">+${extra}</div>`:''}
+      </div>
+      <div class="rung-commission">${fmt(totalComm)}<span>${members.length} agents</span></div>
+      <div class="rung-arrow"><i class="fas fa-chevron-up"></i></div>
+    </div>`;
+  }).join('');
+}
+
+/* ============ AGENT TABLE ============ */
+let currentFilter = 'all';
+let sortKey = 'commission';
+let sortDir = -1;
+
+function statusMeta(s){
+  if(s==='active') return {color:'#177A54', label:'Active'};
+  if(s==='on leave') return {color:'#B4791A', label:'On Leave'};
+  return {color:'#BC3B3B', label:'Suspended'};
+}
+function kycMeta(k){
+  if(k==='verified') return {icon:'fa-circle-check', color:'#177A54', label:'Verified'};
+  if(k==='pending') return {icon:'fa-clock', color:'#B4791A', label:'Pending'};
+  return {icon:'fa-circle-xmark', color:'#BC3B3B', label:'Rejected'};
+}
+
+function renderAgents(){
+  let list = [...AGENTS];
+  const q = document.getElementById('agentSearch').value.toLowerCase();
+  if(q) list = list.filter(a=>a.name.toLowerCase().includes(q) || a.territory.toLowerCase().includes(q));
+  if(currentFilter==='active') list = list.filter(a=>a.status==='active');
+  if(currentFilter==='pending') list = list.filter(a=>a.kyc==='pending');
+  list.sort((a,b)=> (a[sortKey] > b[sortKey] ? 1 : -1) * sortDir);
+
+  const body = document.getElementById('agentTableBody');
+  body.innerHTML = list.map((a,i)=>{
+    const t = tierInfo(a.tier), s = statusMeta(a.status), k = kycMeta(a.kyc);
+    return `
+    <tr class="agent-row" onclick="openDrawer('${a.name.replace(/'/g,"\\'")}')">
+      <td><div class="agent-cell">
+        <div class="a-avatar" style="background:${a.color};">${initials(a.name)}</div>
+        <div><div class="a-name">${a.name}</div><div class="a-sub">${a.territory}</div></div>
+      </div></td>
+      <td><span class="tier-pill" style="background:${t.color}22;color:${t.color==='#8C93A6'?'#5B6072':t.color};">${t.name}</span></td>
+      <td><span class="status-dot" style="background:${s.color};"></span><span class="status-text" style="color:${s.color};">${s.label}</span></td>
+      <td class="mono-cell">${a.deals}</td>
+      <td class="mono-cell">${fmt(a.commission)}</td>
+      <td><span class="kyc-badge" style="color:${k.color};"><i class="fas ${k.icon}"></i>${k.label}</span></td>
+    </tr>`;
+  }).join('');
+}
+function sortAgents(key){
+  if(sortKey===key) sortDir *= -1; else {sortKey=key; sortDir=-1;}
+  renderAgents();
+}
+document.getElementById('agentSearch').addEventListener('input', renderAgents);
+document.querySelectorAll('.chip-tab').forEach(el=>{
+  el.addEventListener('click', ()=>{
+    document.querySelectorAll('.chip-tab').forEach(c=>c.classList.remove('active'));
+    el.classList.add('active');
+    currentFilter = el.dataset.filter;
+    renderAgents();
+  });
+});
+
+/* ============ TERRITORY ============ */
+function renderTerritories(){
+  document.getElementById('territoryList').innerHTML = TERRITORIES.map(t=>`
+    <div class="terr-item">
+      <div class="terr-name">
+        <b>${t.name}</b><span>${t.agents} agents · ${t.listings} listings</span>
+        <div class="terr-bar-track"><div class="terr-bar-fill" style="width:${t.pct}%;"></div></div>
+      </div>
+      <div class="terr-val">${t.pct}%</div>
+    </div>`).join('');
+}
+
+/* ============ PIPELINE ============ */
+function renderPipeline(){
+  const max = Math.max(...PIPELINE.map(p=>p.count));
+  document.getElementById('pipeline').innerHTML = PIPELINE.map(p=>`
+    <div class="pipe-stage">
+      <div class="pipe-label">${p.stage}</div>
+      <div class="pipe-track"><div class="pipe-fill" style="width:${(p.count/max*100)}%;background:${p.color};">${p.count}</div></div>
+    </div>`).join('');
+}
+
+/* ============ ACTIVITY ============ */
+function renderActivity(){
+  document.getElementById('activityFeed').innerHTML = ACTIVITY.map(a=>`
+    <div class="activity-item">
+      <div class="act-icon" style="background:${a.bg};color:${a.color};"><i class="fas ${a.icon}"></i></div>
+      <div class="act-body"><p>${a.text}</p><span>${a.time}</span></div>
+    </div>`).join('');
+}
+
+/* ============ PAYOUTS ============ */
+function renderPayouts(){
+  document.getElementById('payoutList').innerHTML = PAYOUTS.map(p=>`
+    <div class="payout-row">
+      <div class="payout-info"><b>${p.name}</b><span>${p.date}</span></div>
+      <div class="payout-amt">${fmt(p.amount)}</div>
+      ${p.status==='pending'
+        ? `<button class="btn btn-bronze" style="padding:0.4rem 0.75rem;font-size:0.74rem;" onclick="approvePayout(this)">Approve</button>`
+        : `<span class="chip" style="background:var(--emerald-soft);color:var(--emerald);">Paid</span>`}
+    </div>`).join('');
+}
+function approvePayout(btn){
+  btn.outerHTML = '<span class="chip" style="background:var(--emerald-soft);color:var(--emerald);">Paid</span>';
+  toast('Payout approved and queued for disbursement');
+}
+
+/* ============ VIEWINGS ============ */
+function renderViewings(){
+  document.getElementById('viewingsList').innerHTML = VIEWINGS.map(v=>`
+    <div style="display:flex;align-items:center;gap:0.8rem;">
+      <div style="width:38px;height:38px;border-radius:9px;background:var(--indigo-soft);color:var(--indigo);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fas fa-calendar-day" style="font-size:0.8rem;"></i></div>
+      <div style="flex:1;">
+        <div style="font-size:0.83rem;font-weight:600;">${v.title}</div>
+        <div style="font-size:0.72rem;color:var(--ink-faint);">${v.agent} · ${v.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ============ DRAWER ============ */
+function openDrawer(name){
+  const a = AGENTS.find(x=>x.name===name);
+  if(!a) return;
+  document.getElementById('dAvatar').textContent = initials(a.name);
+  document.getElementById('dAvatar').style.background = a.color;
+  document.getElementById('dName').textContent = a.name;
+  document.getElementById('dSub').textContent = `${a.territory} · ${tierInfo(a.tier).name} tier`;
+  document.getElementById('dDeals').textContent = a.deals;
+  document.getElementById('dConv').textContent = a.conv;
+  document.getElementById('dComm').textContent = fmt(a.commission).replace('KES ','');
+  document.getElementById('dListings').innerHTML = `
+    <div class="mini-listing"><div class="mini-thumb"><i class="fas fa-building"></i></div><div class="mini-info"><b>${a.territory} Heights, Unit 4B</b><span>Active listing · 2BR</span></div></div>
+    <div class="mini-listing"><div class="mini-thumb"><i class="fas fa-house"></i></div><div class="mini-info"><b>${a.territory} Court, Unit 12</b><span>Active listing · Studio</span></div></div>`;
+  document.getElementById('dDeals2').innerHTML = `
+    <div class="mini-listing"><div class="mini-thumb" style="background:var(--emerald-soft);color:var(--emerald);"><i class="fas fa-check"></i></div><div class="mini-info"><b>Closed — Apt 304</b><span>${fmt(Math.round(a.commission*0.18))} commission</span></div></div>
+    <div class="mini-listing"><div class="mini-thumb" style="background:var(--emerald-soft);color:var(--emerald);"><i class="fas fa-check"></i></div><div class="mini-info"><b>Closed — Suite 12B</b><span>${fmt(Math.round(a.commission*0.14))} commission</span></div></div>`;
+  document.getElementById('drawer').classList.add('show');
+  document.getElementById('overlay').classList.add('show');
+}
+
+/* ============ MODAL ============ */
+function openModal(){
+  document.getElementById('modal').classList.add('show');
+  document.getElementById('overlay2').classList.add('show');
+}
+function closeAll(){
+  document.getElementById('drawer').classList.remove('show');
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('modal').classList.remove('show');
+  document.getElementById('overlay2').classList.remove('show');
+}
+function sendInvite(){
+  closeAll();
+  toast('Invitation sent — agent will receive onboarding link via SMS & email');
+}
+
+/* ============ TOAST ============ */
+function toast(msg){
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<i class="fas fa-circle-check" style="color:var(--bronze);"></i> ${msg}`;
+  wrap.appendChild(el);
+  requestAnimationFrame(()=>el.classList.add('show'));
+  setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(), 300); }, 3600);
+}
+
+/* ============ INIT ============ */
+renderLadder();
+renderAgents();
+renderTerritories();
+renderPipeline();
+renderActivity();
+renderPayouts();
+renderViewings();
+
+/* live pulse: occasional new activity */
+setInterval(()=>{
+  const feed = document.getElementById('activityFeed');
+  const pool = [
+    {icon:'fa-eye', color:'var(--indigo)', bg:'var(--indigo-soft)', text:'New lead assigned in <b>Kilimani</b>'},
+    {icon:'fa-coins', color:'var(--bronze-deep)', bg:'var(--bronze-glow)', text:'Commission credited to <b>Peter Kamau</b>'},
+  ];
+  const p = pool[Math.floor(Math.random()*pool.length)];
+  const div = document.createElement('div');
+  div.className = 'activity-item';
+  div.style.opacity = '0';
+  div.innerHTML = `<div class="act-icon" style="background:${p.bg};color:${p.color};"><i class="fas ${p.icon}"></i></div><div class="act-body"><p>${p.text}</p><span>Just now</span></div>`;
+  feed.prepend(div);
+  requestAnimationFrame(()=>div.style.transition='opacity .4s', div.style.opacity='1');
+  while(feed.children.length>7) feed.removeChild(feed.lastChild);
+}, 20000);
+</script>
+</body>
+</html>

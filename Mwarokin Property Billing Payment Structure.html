@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Property Billing Payment Structure</title>
+    <meta name="description" content="Streamline property management with Mwarokin Estates's comprehensive billing and analytics platform">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+    :root {
+        --primary: #7c3aed; /* Vibrant purple for a modern feel */
+        --primary-dark: #5b21b6;
+        --secondary: #22d3ee; /* Bright cyan for contrast */
+        --accent: #facc15; /* Warm yellow for highlights */
+        --dark: #0f172a;
+        --darker: #020617;
+        --light: #f8fafc;
+        --gray: #94a3b8;
+        --card-bg: rgba(15, 23, 42, 0.8); /* More transparent glassmorphism */
+        --card-border: rgba(124, 58, 237, 0.2);
+        --glow: 0 0 20px rgba(124, 58, 237, 0.4);
+        --modal-bg: rgba(30, 41, 59, 0.85);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+        /* Modern font stack */
+    }
+
+    body {
+        background: linear-gradient(145deg, var(--darker) 0%, var(--dark) 100%);
+        color: var(--light);
+        min-height: 100vh;
+        overflow-x: hidden;
+        line-height: 1.6;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2.5rem;
+    }
+
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(124, 58, 237, 0.15);
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+    }
+
+    .logo-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--glow);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .logo-icon:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 25px rgba(124, 58, 237, 0.6);
+    }
+
+    .logo h1 {
+        font-size: 2.2rem;
+        font-weight: 800;
+        background: linear-gradient(to right, var(--light), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.5px;
+    }
+
+    .nav-controls {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .btn {
+        padding: 0.9rem 1.8rem;
+        border-radius: 12px;
+        border: none;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .btn:hover::before {
+        left: 100%;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: var(--light);
+        box-shadow: var(--glow);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0 25px rgba(124, 58, 237, 0.7);
+    }
+
+    .btn-outline {
+        background: transparent;
+        color: var(--light);
+        border: 2px solid var(--primary);
+        backdrop-filter: blur(4px);
+    }
+
+    .btn-outline:hover {
+        background: rgba(124, 58, 237, 0.15);
+        transform: translateY(-3px);
+    }
+
+    /* Hero Section */
+    .hero {
+        text-align: center;
+        padding: 4rem 2rem;
+        margin-bottom: 3rem;
+        position: relative;
+        overflow: hidden;
+        border-radius: 24px;
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(34, 211, 238, 0.05) 100%);
+        border: 1px solid var(--card-border);
+        backdrop-filter: blur(10px);
+    }
+
+    .hero h2 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(to right, var(--light), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1.2;
+    }
+
+    .hero p {
+        font-size: 1.3rem;
+        max-width: 700px;
+        margin: 0 auto 2.5rem;
+        color: var(--gray);
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    /* Features Section */
+    .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 4rem;
+    }
+
+    .feature-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(12px);
+        border-radius: 20px;
+        padding: 2.5rem;
+        border: 1px solid var(--card-border);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+        transition: all 0.4s ease;
+        text-align: center;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        box-shadow: var(--glow);
+    }
+
+    .feature-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--light);
+    }
+
+    .feature-card p {
+        color: var(--gray);
+        line-height: 1.6;
+    }
+
+    .dashboard {
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+        gap: 2.5rem;
+        animation: slideUp 0.6s ease-out;
+    }
+
+    .sidebar {
+        background: var(--card-bg);
+        backdrop-filter: blur(12px);
+        border-radius: 20px;
+        padding: 2.5rem;
+        border: 1px solid var(--card-border);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        padding: 1.2rem;
+        border-radius: 12px;
+        margin-bottom: 0.6rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1.1rem;
+    }
+
+    .nav-item.active {
+        background: linear-gradient(90deg, rgba(124, 58, 237, 0.2), rgba(124, 58, 237, 0.1));
+        border-left: 5px solid var(--primary);
+        transform: translateX(5px);
+    }
+
+    .nav-item:hover:not(.active) {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateX(3px);
+    }
+
+    .nav-item i {
+        width: 24px;
+        text-align: center;
+        color: var(--secondary);
+        font-size: 1.2rem;
+    }
+
+    .main-content {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2.5rem;
+    }
+
+    .card {
+        background: var(--card-bg);
+        backdrop-filter: blur(12px);
+        border-radius: 20px;
+        padding: 2.5rem;
+        border: 1px solid var(--card-border);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+        margin-bottom: 2.5rem;
+        transition: all 0.4s ease;
+        animation: slideUp 0.7s ease-out;
+    }
+
+    .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .card-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        background: linear-gradient(to right, var(--light), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .card-actions {
+        display: flex;
+        gap: 0.8rem;
+    }
+
+    .icon-btn {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: var(--light);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .icon-btn:hover {
+        background: rgba(124, 58, 237, 0.25);
+        border-color: var(--primary);
+        transform: scale(1.1);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 0.5rem;
+    }
+
+    th, td {
+        padding: 1.2rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    th {
+        color: var(--secondary);
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    td {
+        font-size: 1rem;
+        color: var(--light);
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 0.4rem 1rem;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: transform 0.3s ease;
+    }
+
+    .badge:hover {
+        transform: scale(1.05);
+    }
+
+    .badge-primary {
+        background: rgba(124, 58, 237, 0.25);
+        color: var(--primary);
+    }
+
+    .badge-success {
+        background: rgba(34, 211, 238, 0.25);
+        color: var(--secondary);
+    }
+
+    .badge-warning {
+        background: rgba(250, 204, 21, 0.25);
+        color: var(--accent);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(12px);
+        border-radius: 18px;
+        padding: 2rem;
+        border: 1px solid var(--card-border);
+        display: flex;
+        flex-direction: column;
+        transition: all 0.4s ease;
+        animation: slideUp 0.8s ease-out;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin: 0.8rem 0;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+        color: var(--gray);
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .progress-bar {
+        height: 10px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 5px;
+        margin-top: 1.2rem;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .progress-fill {
+        height: 100%;
+        border-radius: 5px;
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+        transition: width 0.5s ease-in-out;
+    }
+
+    .feature-list {
+        list-style: none;
+    }
+
+    .feature-list li {
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        font-size: 1.1rem;
+        transition: transform 0.3s ease;
+    }
+
+    .feature-list li:hover {
+        transform: translateX(5px);
+    }
+
+    .feature-list li:last-child {
+        border-bottom: none;
+    }
+
+    .feature-list i {
+        color: var(--secondary);
+        font-size: 1.2rem;
+    }
+
+    .chart-container {
+        height: 320px;
+        margin-top: 1.5rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 1rem;
+    }
+
+    .glowing-border {
+        position: relative;
+    }
+
+    .glowing-border::before {
+        content: '';
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        right: -3px;
+        bottom: -3px;
+        background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent), var(--primary));
+        border-radius: 24px;
+        z-index: -1;
+        animation: glowing 4s linear infinite;
+        background-size: 400%;
+        filter: blur(12px);
+        opacity: 0.6;
+    }
+
+    @keyframes glowing {
+        0% { background-position: 0 0; }
+        50% { background-position: 400% 0; }
+        100% { background-position: 0 0; }
+    }
+
+    .pricing-toggle {
+        display: flex;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 0.3rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .toggle-option {
+        flex: 1;
+        text-align: center;
+        padding: 0.9rem;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+
+    .toggle-option.active {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: var(--light);
+    }
+
+    .pricing-card {
+        text-align: center;
+        padding: 2.5rem;
+        border-radius: 20px;
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .pricing-card.featured {
+        border: 2px solid var(--primary);
+        transform: scale(1.05);
+        box-shadow: var(--glow);
+    }
+
+    .pricing-card.featured::before {
+        content: 'POPULAR';
+        position: absolute;
+        top: 25px;
+        right: -40px;
+        background: var(--primary);
+        color: var(--light);
+        padding: 0.3rem 2.5rem;
+        transform: rotate(45deg);
+        font-size: 0.9rem;
+        font-weight: 700;
+    }
+
+    .pricing-header {
+        margin-bottom: 2.5rem;
+    }
+
+    .pricing-price {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin: 1.2rem 0;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .pricing-period {
+        color: var(--gray);
+        font-size: 1.1rem;
+    }
+
+    .pricing-features {
+        list-style: none;
+        margin: 2.5rem 0;
+    }
+
+    .pricing-features li {
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        font-size: 1.1rem;
+    }
+
+    .pricing-features li:last-child {
+        border-bottom: none;
+    }
+
+    .pricing-features i {
+        color: var(--secondary);
+        margin-right: 0.6rem;
+    }
+
+    .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2.5rem;
+    }
+
+    /* Modal styles */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.75);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    .modal-content {
+        background: var(--modal-bg);
+        backdrop-filter: blur(15px);
+        padding: 3rem;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 550px;
+        position: relative;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+        transform: scale(0.8);
+        animation: modalPop 0.4s ease-out forwards;
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        cursor: pointer;
+        font-size: 1.8rem;
+        color: var(--gray);
+        transition: color 0.3s ease;
+    }
+
+    .modal-close:hover {
+        color: var(--secondary);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.6rem;
+        color: var(--secondary);
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 1rem;
+        border-radius: 10px;
+        border: 1px solid var(--card-border);
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--light);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: var(--secondary);
+        box-shadow: 0 0 10px rgba(34, 211, 238, 0.3);
+    }
+
+    .loading-spinner {
+        border: 5px solid rgba(255, 255, 255, 0.2);
+        border-top: 5px solid var(--secondary);
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        margin: 1rem auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: -100%;
+        background: var(--card-bg);
+        backdrop-filter: blur(12px);
+        padding: 1.2rem 1.5rem;
+        border-radius: 12px;
+        border: 1px solid var(--card-border);
+        box-shadow: var(--glow);
+        z-index: 1000;
+        max-width: 350px;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        animation: slideIn 0.5s ease-out forwards;
+        font-size: 1rem;
+        color: var(--light);
+    }
+
+    .notification::before {
+        content: '\f0f3'; /* Font Awesome bell icon */
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        color: var(--secondary);
+        font-size: 1.2rem;
+    }
+
+    @keyframes slideIn {
+        0% { right: -100%; }
+        100% { right: 20px; }
+    }
+
+    .floating-elements {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    .floating-element {
+        position: absolute;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary) 0%, transparent 70%);
+        opacity: 0.15;
+        animation: float 15s infinite ease-in-out;
+        filter: blur(20px);
+    }
+
+    @keyframes float {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        33% { transform: translate(40px, -60px) rotate(120deg); }
+        66% { transform: translate(-30px, 30px) rotate(240deg); }
+        100% { transform: translate(0, 0) rotate(360deg); }
+    }
+
+    .notification-dot {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--secondary);
+        animation: pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(0.8); opacity: 0.9; }
+        50% { transform: scale(1.3); opacity: 0.6; }
+        100% { transform: scale(0.8); opacity: 0.9; }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes modalPop {
+        from { transform: scale(0.8); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+
+    /* Footer */
+    footer {
+        margin-top: 5rem;
+        padding-top: 3rem;
+        border-top: 1px solid rgba(124, 58, 237, 0.15);
+        text-align: center;
+        color: var(--gray);
+    }
+
+    .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .footer-links a {
+        color: var(--gray);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover {
+        color: var(--secondary);
+    }
+
+    @media (max-width: 1200px) {
+        .dashboard {
+            grid-template-columns: 1fr;
+        }
+
+        .main-content {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .pricing-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .features {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            padding: 1.5rem;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .pricing-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .features {
+            grid-template-columns: 1fr;
+        }
+
+        .pricing-card.featured {
+            transform: scale(1);
+        }
+
+        header {
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .nav-controls {
+            width: 100%;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+        }
+
+        .modal-content {
+            padding: 2rem;
+            max-width: 90%;
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+        }
+
+        .hero-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+</style>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="floating-element" style="width: 300px; height: 300px; top: 10%; left: 5%;"></div>
+        <div class="floating-element" style="width: 200px; height: 200px; top: 60%; left: 80%;"></div>
+        <div class="floating-element" style="width: 150px; height: 150px; top: 20%; left: 70%;"></div>
+        <div class="floating-element" style="width: 250px; height: 250px; top: 70%; left: 10%;"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <h1>Mwarokin Estates</h1>
+            </div>
+            <div class="nav-controls">
+                <button class="btn btn-outline" id="analyticsBtn">
+                    <i class="fas fa-chart-line"></i> Analytics
+                </button>
+                <button class="btn btn-primary" id="upgradeBtn">
+                    <i class="fas fa-rocket"></i> Upgrade Plan
+                </button>
+                <div style="position: relative;">
+                    <button class="icon-btn" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <div class="notification-dot"></div>
+                </div>
+                <button class="icon-btn" id="userBtn">
+                    <i class="fas fa-user"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <h2>Property Management with Intelligent Billing</h2>
+            <p>Mwarokin Estates provides a comprehensive platform for property owners and managers to handle billing, payments, and analytics in one seamless interface.</p>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <h3>Automated Billing</h3>
+                <p>Generate and send invoices automatically with customizable templates and recurring billing options.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <h3>Advanced Analytics</h3>
+                <p>Gain insights into your property performance with detailed reports and visual analytics.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Tenant Management</h3>
+                <p>Manage tenant information, track payments, and communicate efficiently all in one place.</p>
+            </div>
+        </section>
+
+        <div class="dashboard">
+            <div class="sidebar">
+                <div class="nav-item active" data-section="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="nav-item" data-section="billing">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Billing</span>
+                </div>
+                <div class="nav-item" data-section="analytics">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Analytics</span>
+                </div>
+                <div class="nav-item" data-section="properties">
+                    <i class="fas fa-users"></i>
+                    <span>Properties</span>
+                </div>
+                <div class="nav-item" data-section="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </div>
+                <div class="nav-item" data-section="support">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Support</span>
+                </div>
+            </div>
+
+            <div class="main-content" id="mainContent">
+                <div id="dashboardSection">
+                    <div class="stats-grid">
+                        <div class="stat-card glowing-border">
+                            <div class="stat-label">Total Revenue</div>
+                            <div class="stat-value" id="totalRevenue">Ksh 2.4M</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="revenueProgress" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Active Properties</div>
+                            <div class="stat-value" id="activeProperties">142</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="propertiesProgress" style="width: 60%"></div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Occupancy Rate</div>
+                            <div class="stat-value" id="occupancyRate">92%</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="occupancyProgress" style="width: 92%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Property Billing Structure</h2>
+                            <div class="card-actions">
+                                <button class="icon-btn" id="downloadBilling">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="icon-btn" id="printBilling">
+                                    <i class="fas fa-print"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <table id="billingTable">
+                            <thead>
+                                <tr>
+                                    <th>No. of Homes</th>
+                                    <th>Monthly Fee (Ksh)</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="billingTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Transaction Analytics</h2>
+                            <div class="card-actions">
+                                <button class="icon-btn" id="filterChart">
+                                    <i class="fas fa-filter"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="transactionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">RIO Algorithm Fees</h2>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Transaction Type</th>
+                                <th>Fee</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Rent Payment</td>
+                                <td>1% (Capped at Ksh 500)</td>
+                            </tr>
+                            <tr>
+                                <td>Utility Payment</td>
+                                <td>0.5% (Capped at Ksh 200)</td>
+                            </tr>
+                            <tr>
+                                <td>Maintenance Request</td>
+                                <td>Flat Ksh 100 per request</td>
+                            </tr>
+                            <tr>
+                                <td>Other Services</td>
+                                <td>Custom (as agreed)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <br>
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Payment Features</h2>
+                    </div>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-mobile-alt"></i> Flexible payment options</li>
+                        <li><i class="fas fa-receipt"></i> Automated receipts & reminders</li>
+                        <li><i class="fas fa-tachometer-alt"></i> Tenant & Landlord dashboards</li>
+                        <li><i class="fas fa-users"></i> Bulk payments for agents</li>
+                        <li><i class="fas fa-chart-bar"></i> Monthly analytics & reporting</li>
+                        <li><i class="fas fa-shield-alt"></i> Secure escrow for deposits</li>
+                        <li><i class="fas fa-coins"></i> Affordable micro-fees</li>
+                        <li><i class="fas fa-robot"></i> Agentic management tools</li>
+                    </ul>
+                </div>
+                 <br>
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Quick Actions</h2>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <button class="btn btn-outline" id="addPropertyBtn" style="justify-content: center;">
+                            <i class="fas fa-plus"></i> Add Property
+                        </button>
+                        <button class="btn btn-outline" id="generateReportBtn" style="justify-content: center;">
+                            <i class="fas fa-file-export"></i> Generate Report
+                        </button>
+                        <button class="btn btn-outline" id="refreshDataBtn" style="justify-content: center;">
+                            <i class="fas fa-sync"></i> Refresh Data
+                        </button>
+                        <button class="btn btn-outline" id="settingsBtn" style="justify-content: center;">
+                            <i class="fas fa-cog"></i> Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+         <br>
+        <!-- Footer -->
+        <footer>
+            <div class="footer-links">
+                <a href="Accessibility.html">People With Disabilities</a>
+                <a href="Contact.html">Contact</a>
+                <a href="Cookies.html">Cookies</a>
+                <a href="Term.html">Terms of Service</a>
+                <a href="Wearables.html">Wearables</a>
+            </div>
+            <p>Mwarokin Estates -Property Billing- &copy; 2026. All rights reserved. Powered by: Syllogism Technology Africa.</p>
+        </footer>
+    </div>
+
+    <!-- Modal for Adding Property -->
+    <div class="modal" id="addPropertyModal">
+        <div class="modal-content">
+            <span class="modal-close" id="closeModal">&times;</span>
+            <h2>Add New Property</h2>
+            <form id="addPropertyForm">
+                <div class="form-group">
+                    <label for="propertyName">Property Name</label>
+                    <input type="text" id="propertyName" required>
+                </div>
+                <div class="form-group">
+                    <label for="propertyType">Property Type</label>
+                    <select id="propertyType" required>
+                        <option value="Residential">Residential</option>
+                        <option value="Commercial">Commercial</option>
+                        <option value="Multi-Estate">Multi-Estate</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="numHomes">Number of Homes</label>
+                    <input type="number" id="numHomes" required min="1">
+                </div>
+                <div class="form-group">
+                    <label for="monthlyFee">Monthly Fee (Ksh)</label>
+                    <input type="number" id="monthlyFee" required min="0">
+                </div>
+                <button type="submit" class="btn btn-primary">Add Property</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Simulated backend data
+        let statsData = {
+            totalRevenue: 2400000,
+            activeProperties: 142,
+            occupancyRate: 92
+        };
+
+        let billingData = [
+            { homes: "0 - 10", fee: "7,000 - 15,000", status: "Active" },
+            { homes: "11 - 30", fee: "15,000 - 30,000", status: "Active" },
+            { homes: "31 - 100", fee: "30,000 - 60,000", status: "Active" },
+            { homes: "101 - 500", fee: "60,000 - 150,000", status: "Popular" },
+            { homes: "501 - 1000+", fee: "150,000 - 200,000", status: "Enterprise" },
+            { homes: "Multi-Estates", fee: "1,000,000 (3-6 Months)", status: "Custom" }
+        ];
+
+        let transactionData = {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+            rentPayments: [120, 150, 180, 90, 170, 200, 160],
+            utilityPayments: [80, 100, 120, 70, 110, 140, 100]
+        };
+
+        let notifications = [];
+
+        // Initialize Chart.js
+        let transactionChart;
+        function initChart() {
+            const ctx = document.getElementById('transactionChart').getContext('2d');
+            transactionChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: transactionData.labels,
+                    datasets: [
+                        {
+                            label: 'Rent Payments',
+                            data: transactionData.rentPayments,
+                            backgroundColor: 'rgba(99, 102, 241, 0.7)',
+                            borderColor: 'rgba(99, 102, 241, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Utility Payments',
+                            data: transactionData.utilityPayments,
+                            backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                            borderColor: 'rgba(16, 185, 129, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: 'rgba(255, 255, 255, 0.7)' }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: 'rgba(255, 255, 255, 0.7)' }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: 'rgba(255, 255, 255, 0.7)' } }
+                    }
+                }
+            });
+        }
+
+        // Update stats
+        function updateStats() {
+            document.getElementById('totalRevenue').textContent = `Ksh ${(statsData.totalRevenue / 1000000).toFixed(1)}M`;
+            document.getElementById('activeProperties').textContent = statsData.activeProperties;
+            document.getElementById('occupancyRate').textContent = `${statsData.occupancyRate}%`;
+            document.getElementById('revenueProgress').style.width = `${Math.min(statsData.totalRevenue / 5000000 * 100, 100)}%`;
+            document.getElementById('propertiesProgress').style.width = `${Math.min(statsData.activeProperties / 200 * 100, 100)}%`;
+            document.getElementById('occupancyProgress').style.width = `${statsData.occupancyRate}%`;
+        }
+
+        // Update billing table
+        function updateBillingTable() {
+            const tbody = document.getElementById('billingTableBody');
+            tbody.innerHTML = '';
+            billingData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.homes}</td>
+                    <td>${row.fee}</td>
+                    <td><span class="badge badge-${row.status.toLowerCase()}">${row.status}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Simulate real-time data updates
+        function simulateRealTimeUpdates() {
+            setInterval(() => {
+                // Update stats
+                statsData.totalRevenue += Math.floor(Math.random() * 10000);
+                statsData.activeProperties += Math.floor(Math.random() * 2) - 1;
+                statsData.occupancyRate = Math.min(100, Math.max(0, statsData.occupancyRate + (Math.random() * 2 - 1)));
+                updateStats();
+
+                // Update chart
+                const newMonth = transactionData.labels[transactionData.labels.length - 1];
+                transactionData.labels.push(newMonth);
+                transactionData.rentPayments.push(Math.floor(Math.random() * 50) + 100);
+                transactionData.utilityPayments.push(Math.floor(Math.random() * 40) + 60);
+                if (transactionData.labels.length > 7) {
+                    transactionData.labels.shift();
+                    transactionData.rentPayments.shift();
+                    transactionData.utilityPayments.shift();
+                }
+                transactionChart.data.labels = transactionData.labels;
+                transactionChart.data.datasets[0].data = transactionData.rentPayments;
+                transactionChart.data.datasets[1].data = transactionData.utilityPayments;
+                transactionChart.update();
+
+                // Add notification
+                addNotification(`New transaction: Ksh ${Math.floor(Math.random() * 1000)} received.`);
+            }, 5000);
+        }
+
+        // Notification system
+        function addNotification(message) {
+            notifications.push({ message, timestamp: new Date() });
+            const notificationContainer = document.createElement('div');
+            notificationContainer.className = 'notification';
+            notificationContainer.textContent = message;
+            document.body.appendChild(notificationContainer);
+            setTimeout(() => {
+                notificationContainer.remove();
+                notifications = notifications.filter(n => n.message !== message);
+            }, 5000);
+        }
+
+        // Sidebar navigation
+        function setupSidebarNavigation() {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    const section = this.dataset.section;
+                    updateMainContent(section);
+                });
+            });
+        }
+
+        // Update main content based on section
+        function updateMainContent(section) {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = '';
+            if (section === 'dashboard') {
+                mainContent.innerHTML = document.getElementById('dashboardSection').innerHTML;
+                initChart();
+            } else {
+                mainContent.innerHTML = `<div class="card"><h2 class="card-title">${section.charAt(0).toUpperCase() + section.slice(1)}</h2><p>Content for ${section} section coming soon...</p></div>`;
+            }
+        }
+
+        // Add property modal
+        function setupAddPropertyModal() {
+            const modal = document.getElementById('addPropertyModal');
+            const openBtn = document.getElementById('addPropertyBtn');
+            const closeBtn = document.getElementById('closeModal');
+            const form = document.getElementById('addPropertyForm');
+
+            openBtn.addEventListener('click', () => {
+                modal.style.display = 'flex';
+            });
+
+            closeBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const property = {
+                    name: document.getElementById('propertyName').value,
+                    type: document.getElementById('propertyType').value,
+                    numHomes: parseInt(document.getElementById('numHomes').value),
+                    monthlyFee: parseInt(document.getElementById('monthlyFee').value)
+                };
+                // Save to localStorage
+                const properties = JSON.parse(localStorage.getItem('properties') || '[]');
+                properties.push(property);
+                localStorage.setItem('properties', JSON.stringify(properties));
+                // Update stats
+                statsData.activeProperties += 1;
+                statsData.totalRevenue += property.monthlyFee;
+                updateStats();
+                // Add notification
+                addNotification(`New property "${property.name}" added.`);
+                modal.style.display = 'none';
+                form.reset();
+            });
+        }
+
+        // Quick actions
+        function setupQuickActions() {
+            document.getElementById('generateReportBtn').addEventListener('click', () => {
+                addNotification('Report generation started...');
+                // Simulate report generation
+                setTimeout(() => {
+                    const report = `Total Revenue: Ksh ${statsData.totalRevenue}\nActive Properties: ${statsData.activeProperties}\nOccupancy Rate: ${statsData.occupancyRate}%`;
+                    const blob = new Blob([report], { type: 'text/plain' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'report.txt';
+                    link.click();
+                    addNotification('Report generated successfully.');
+                }, 2000);
+            });
+
+            document.getElementById('refreshDataBtn').addEventListener('click', () => {
+                addNotification('Refreshing data...');
+                updateStats();
+                updateBillingTable();
+                transactionChart.update();
+                addNotification('Data refreshed.');
+            });
+
+            document.getElementById('settingsBtn').addEventListener('click', () => {
+                updateMainContent('settings');
+            });
+
+            document.getElementById('downloadBilling').addEventListener('click', () => {
+                const csv = billingData.map(row => `${row.homes},${row.fee},${row.status}`).join('\n');
+                const blob = new Blob([`Homes,Fee,Status\n${csv}`], { type: 'text/csv' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'billing.csv';
+                link.click();
+                addNotification('Billing data downloaded.');
+            });
+
+            document.getElementById('printBilling').addEventListener('click', () => {
+                window.print();
+                addNotification('Printing billing data...');
+            });
+
+            document.getElementById('filterChart').addEventListener('click', () => {
+                addNotification('Chart filter applied (mock).');
+            });
+
+            // New hero section buttons
+            document.getElementById('getStartedBtn').addEventListener('click', () => {
+                addNotification('Welcome to Mwarokin Estates! Getting started...');
+                // In a real app, this would redirect to signup
+            });
+
+            document.getElementById('demoBtn').addEventListener('click', () => {
+                addNotification('Opening demo video...');
+                // In a real app, this would open a modal with a video
+            });
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', () => {
+            initChart();
+            updateStats();
+            updateBillingTable();
+            setupSidebarNavigation();
+            setupAddPropertyModal();
+            setupQuickActions();
+            simulateRealTimeUpdates();
+        });
+    </script>
+</body>
+</html>

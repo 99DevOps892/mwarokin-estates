@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mwarokin Estates — Manage Bills</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ═══════════════════════════════════════════
+       MWAROKIN DESIGN TOKENS
+    ═══════════════════════════════════════════ */
+    :root {
+      --forest:        #0d2818;
+      --forest-mid:    #1a3d28;
+      --forest-light:  #244d34;
+      --forest-pale:   #2e6040;
+      --gold:          #c9a84c;
+      --gold-light:    #e2c27a;
+      --gold-pale:     #f0dba8;
+      --gold-dim:      rgba(201,168,76,0.14);
+      --gold-glow:     rgba(201,168,76,0.07);
+      --obsidian:      #080f0b;
+      --surface:       #111f16;
+      --surface-r:     #172a1e;
+      --surface-card:  #1c3323;
+      --ivory:         #f5f0e8;
+      --ivory-dim:     rgba(245,240,232,0.72);
+      --ivory-muted:   rgba(245,240,232,0.44);
+      --ivory-subtle:  rgba(245,240,232,0.13);
+      --success:       #4caf7d;
+      --warning:       #e8a838;
+      --danger:        #d64f3c;
+      --info:          #4a9ebb;
+      --radius:        14px;
+      --radius-sm:     8px;
+      --radius-pill:   50px;
+      --shadow:        0 8px 32px rgba(0,0,0,0.45);
+      --shadow-gold:   0 4px 24px rgba(201,168,76,0.12);
+      --transition:    all 0.28s cubic-bezier(0.4,0,0.2,1);
+      --border:        1px solid rgba(201,168,76,0.12);
+      --border-s:      1px solid rgba(201,168,76,0.28);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--obsidian);
+      color: var(--ivory);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width:6px; }
+    ::-webkit-scrollbar-track { background:var(--obsidian); }
+    ::-webkit-scrollbar-thumb { background:var(--forest-pale); border-radius:3px; }
+
+    /* ═══ LAYOUT SHELL ═══ */
+    .shell {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      grid-template-rows: 70px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ═══ TOPBAR ═══ */
+    .topbar {
+      grid-column: 1 / -1;
+      background: var(--forest);
+      border-bottom: var(--border-s);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.5);
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 42px; height: 42px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: var(--forest); flex-shrink: 0;
+    }
+
+    .logo-text { display:flex; flex-direction:column; line-height:1.1; }
+    .logo-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem; font-weight: 600;
+      color: var(--gold-light); letter-spacing: 0.02em;
+    }
+    .logo-sub {
+      font-size: 0.6rem; font-weight: 500;
+      color: var(--ivory-muted); letter-spacing: 0.18em; text-transform: uppercase;
+    }
+
+    .topbar-nav { display:flex; gap:4px; }
+    .topbar-nav a {
+      text-decoration: none;
+      font-size: 0.82rem; font-weight: 500;
+      color: var(--ivory-muted);
+      padding: 7px 14px; border-radius: var(--radius-sm);
+      transition: var(--transition); letter-spacing: 0.02em;
+    }
+    .topbar-nav a:hover { color:var(--gold-light); background:var(--gold-glow); }
+    .topbar-nav a.active { color:var(--gold-light); background:var(--gold-dim); }
+
+    .topbar-right { display:flex; align-items:center; gap:14px; }
+
+    .icon-btn {
+      width:38px; height:38px; border-radius:50%;
+      background:var(--ivory-subtle); border:var(--border);
+      color:var(--ivory-dim); display:flex; align-items:center; justify-content:center;
+      cursor:pointer; transition:var(--transition); position:relative;
+    }
+    .icon-btn:hover { background:var(--gold-dim); color:var(--gold-light); border-color:rgba(201,168,76,0.3); }
+
+    .notif-dot {
+      position:absolute; top:6px; right:6px;
+      width:8px; height:8px; background:var(--gold);
+      border-radius:50%; border:2px solid var(--forest);
+      animation: pulse-d 2s ease infinite;
+    }
+    @keyframes pulse-d {
+      0%,100%{transform:scale(1);opacity:1;}
+      50%{transform:scale(1.3);opacity:.7;}
+    }
+
+    .avatar {
+      width:38px; height:38px; border-radius:50%;
+      background: linear-gradient(135deg,var(--gold),var(--forest-pale));
+      border:2px solid var(--gold);
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Syne',sans-serif; font-weight:700; font-size:0.82rem;
+      color:var(--forest); cursor:pointer; transition:var(--transition);
+    }
+    .avatar:hover { box-shadow:var(--shadow-gold); transform:scale(1.05); }
+
+    /* ═══ SIDEBAR ═══ */
+    .sidebar {
+      background: var(--forest);
+      border-right: var(--border);
+      padding: 28px 0;
+      overflow-y: auto;
+      position: sticky; top:70px;
+      height: calc(100vh - 70px);
+    }
+
+    .sidebar-label {
+      font-family:'Syne',sans-serif;
+      font-size:0.58rem; font-weight:700;
+      letter-spacing:0.22em; text-transform:uppercase;
+      color:var(--gold); padding:10px 24px 6px; opacity:.6;
+    }
+
+    .s-link {
+      display:flex; align-items:center; gap:12px;
+      padding:11px 24px; text-decoration:none;
+      color:var(--ivory-muted); font-size:0.84rem; font-weight:500;
+      transition:var(--transition); border-left:3px solid transparent;
+      cursor:pointer;
+    }
+    .s-link i { width:18px; text-align:center; font-size:0.9rem; opacity:.8; transition:var(--transition); }
+    .s-link:hover { background:var(--gold-glow); color:var(--gold-light); border-left-color:rgba(201,168,76,0.4); }
+    .s-link:hover i { opacity:1; }
+    .s-link.active { background:var(--gold-dim); color:var(--gold-light); border-left-color:var(--gold); }
+    .s-link.active i { opacity:1; color:var(--gold); }
+
+    .s-divider { height:1px; background:rgba(201,168,76,0.1); margin:12px 24px; }
+
+    /* ═══ MAIN ═══ */
+    .main { background:var(--surface); padding:32px; overflow-y:auto; }
+
+    /* ═══ PAGE HEADER ═══ */
+    .page-hero {
+      background: linear-gradient(135deg, var(--forest) 0%, var(--forest-mid) 55%, #1e4a2e 100%);
+      border: var(--border-s); border-radius:20px;
+      padding:36px 40px; margin-bottom:32px;
+      position:relative; overflow:hidden;
+    }
+    .page-hero::before {
+      content:''; position:absolute; top:-60px; right:-60px;
+      width:300px; height:300px;
+      background:radial-gradient(circle,rgba(201,168,76,0.13) 0%,transparent 70%);
+      border-radius:50%;
+    }
+    .page-hero::after {
+      content:''; position:absolute; bottom:-40px; left:25%;
+      width:220px; height:220px;
+      background:radial-gradient(circle,rgba(201,168,76,0.06) 0%,transparent 70%);
+      border-radius:50%;
+    }
+    .page-hero-inner { position:relative; z-index:1; display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:24px; }
+
+    .hero-eyebrow {
+      font-size:0.72rem; font-weight:500;
+      color:var(--gold); letter-spacing:0.18em; text-transform:uppercase; margin-bottom:8px;
+    }
+    .hero-h1 {
+      font-family:'Cormorant Garamond',serif;
+      font-size:2.5rem; font-weight:600; color:var(--ivory);
+      line-height:1.15; letter-spacing:-0.01em; margin-bottom:8px;
+    }
+    .hero-h1 em { color:var(--gold-light); font-style:italic; }
+    .hero-desc { color:var(--ivory-muted); font-size:0.88rem; max-width:480px; }
+
+    .hero-actions { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+
+    /* ═══ SUMMARY STAT STRIP ═══ */
+    .stat-strip {
+      display:grid; grid-template-columns:repeat(4,1fr);
+      gap:16px; margin-bottom:32px;
+    }
+    .stat-tile {
+      background:var(--surface-card); border:var(--border); border-radius:var(--radius);
+      padding:20px; display:flex; align-items:center; gap:14px;
+      transition:var(--transition); position:relative; overflow:hidden;
+    }
+    .stat-tile::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:3px;
+      background:var(--tile-color, var(--gold)); opacity:.7;
+    }
+    .stat-tile:hover { border-color:rgba(201,168,76,0.22); box-shadow:var(--shadow-gold); }
+    .stat-icon {
+      width:46px; height:46px; border-radius:12px;
+      background:var(--gold-dim); border:var(--border);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.1rem; color:var(--gold); flex-shrink:0;
+    }
+    .stat-icon.s-success { background:rgba(76,175,125,0.1); color:var(--success); border-color:rgba(76,175,125,0.2); }
+    .stat-icon.s-warning { background:rgba(232,168,56,0.1); color:var(--warning); border-color:rgba(232,168,56,0.2); }
+    .stat-icon.s-danger  { background:rgba(214,79,60,0.1); color:var(--danger); border-color:rgba(214,79,60,0.2); }
+    .stat-icon.s-info    { background:rgba(74,158,187,0.1); color:var(--info); border-color:rgba(74,158,187,0.2); }
+    .stat-num {
+      font-family:'Cormorant Garamond',serif; font-size:2rem;
+      font-weight:600; color:var(--ivory); line-height:1;
+    }
+    .stat-lbl { font-size:0.72rem; font-weight:500; color:var(--ivory-muted); text-transform:uppercase; letter-spacing:0.1em; margin-top:2px; }
+    .stat-sub { font-size:0.7rem; color:var(--success); margin-top:4px; }
+
+    /* ═══ SECTION HEADING ═══ */
+    .section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+    .section-title {
+      font-family:'Cormorant Garamond',serif; font-size:1.45rem; font-weight:600;
+      color:var(--ivory); letter-spacing:0.01em;
+    }
+    .section-title span { color:var(--gold); }
+    .section-act { font-size:0.78rem; color:var(--gold); font-weight:500; cursor:pointer; transition:var(--transition); }
+    .section-act:hover { color:var(--gold-light); }
+
+    /* ═══ CARDS ═══ */
+    .card {
+      background:var(--surface-card); border:var(--border); border-radius:var(--radius);
+      padding:24px; transition:var(--transition);
+    }
+    .card:hover { border-color:rgba(201,168,76,0.2); box-shadow:var(--shadow-gold); }
+    .card-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+    .card-label {
+      font-family:'Syne',sans-serif; font-size:0.78rem; font-weight:700;
+      letter-spacing:0.1em; text-transform:uppercase; color:var(--gold);
+    }
+    .card-ico {
+      width:36px; height:36px; border-radius:9px;
+      background:var(--gold-dim); border:var(--border);
+      display:flex; align-items:center; justify-content:center;
+      color:var(--gold); font-size:0.9rem;
+    }
+
+    /* ═══ TABS ═══ */
+    .tab-bar {
+      display:flex; gap:4px; margin-bottom:24px;
+      background:var(--surface-r); border:var(--border);
+      border-radius:var(--radius); padding:4px;
+    }
+    .tab {
+      flex:1; padding:10px 16px; text-align:center;
+      font-size:0.82rem; font-weight:600; cursor:pointer;
+      border-radius:10px; color:var(--ivory-muted);
+      transition:var(--transition); letter-spacing:0.03em;
+      border:none; background:transparent;
+    }
+    .tab:hover { color:var(--gold-light); }
+    .tab.active { background:var(--forest-mid); color:var(--gold-light); border:var(--border-s); }
+
+    /* ═══ BILL ROWS ═══ */
+    .bill-list { display:flex; flex-direction:column; gap:10px; }
+    .bill-row {
+      background:var(--surface-r); border:var(--border); border-radius:var(--radius);
+      padding:16px 20px; display:flex; align-items:center; gap:16px;
+      transition:var(--transition); cursor:pointer;
+    }
+    .bill-row:hover { border-color:rgba(201,168,76,0.25); background:var(--surface-card); transform:translateX(3px); }
+    .bill-row-icon {
+      width:44px; height:44px; border-radius:11px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center; font-size:1rem;
+      background:var(--gold-dim); color:var(--gold);
+    }
+    .bill-row-icon.ic-elec { background:rgba(232,168,56,0.12); color:var(--warning); }
+    .bill-row-icon.ic-water { background:rgba(74,158,187,0.12); color:var(--info); }
+    .bill-row-icon.ic-ok { background:rgba(76,175,125,0.12); color:var(--success); }
+    .bill-row-icon.ic-danger { background:rgba(214,79,60,0.12); color:var(--danger); }
+    .bill-row-info { flex:1; }
+    .bill-row-name { font-weight:600; font-size:0.9rem; color:var(--ivory); margin-bottom:2px; }
+    .bill-row-meta { font-size:0.74rem; color:var(--ivory-muted); }
+    .bill-row-right { text-align:right; flex-shrink:0; }
+    .bill-row-amount { font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:600; color:var(--gold-light); }
+    .bill-row-due { font-size:0.72rem; color:var(--ivory-muted); margin-top:2px; }
+
+    /* ═══ BADGES ═══ */
+    .badge {
+      font-size:0.64rem; font-weight:700; padding:3px 9px;
+      border-radius:var(--radius-pill); letter-spacing:0.08em; text-transform:uppercase;
+    }
+    .b-paid    { background:rgba(76,175,125,0.14); color:var(--success); border:1px solid rgba(76,175,125,0.25); }
+    .b-pending { background:rgba(232,168,56,0.14); color:var(--warning); border:1px solid rgba(232,168,56,0.25); }
+    .b-overdue { background:rgba(214,79,60,0.14); color:var(--danger); border:1px solid rgba(214,79,60,0.25); }
+    .b-sched   { background:var(--ivory-subtle); color:var(--ivory-muted); }
+
+    /* ═══ BUTTONS ═══ */
+    .btn {
+      font-family:'DM Sans',sans-serif; font-weight:600; font-size:0.8rem;
+      padding:10px 18px; border:none; border-radius:var(--radius-sm);
+      cursor:pointer; transition:var(--transition); letter-spacing:0.04em;
+      display:inline-flex; align-items:center; gap:7px; text-decoration:none;
+    }
+    .btn-gold {
+      background:linear-gradient(135deg,var(--gold),#b8924a);
+      color:var(--forest);
+    }
+    .btn-gold:hover { background:linear-gradient(135deg,var(--gold-light),var(--gold)); box-shadow:0 4px 18px rgba(201,168,76,0.3); transform:translateY(-1px); }
+    .btn-ghost { background:transparent; color:var(--ivory-dim); border:var(--border); }
+    .btn-ghost:hover { background:var(--ivory-subtle); color:var(--ivory); border-color:rgba(201,168,76,0.2); }
+    .btn-danger-soft { background:rgba(214,79,60,0.12); color:var(--danger); border:1px solid rgba(214,79,60,0.22); }
+    .btn-danger-soft:hover { background:rgba(214,79,60,0.2); }
+    .btn-sm { padding:7px 13px; font-size:0.74rem; }
+    .btn-block { width:100%; justify-content:center; }
+
+    /* ═══ FORM ═══ */
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .form-grid.cols-3 { grid-template-columns:1fr 1fr 1fr; }
+    .form-grid.cols-1 { grid-template-columns:1fr; }
+    .fg { display:flex; flex-direction:column; gap:6px; }
+    .fg-full { grid-column:1/-1; }
+    .fl {
+      font-size:0.72rem; font-weight:600; color:var(--ivory-muted);
+      letter-spacing:0.07em; text-transform:uppercase;
+    }
+    .fi {
+      background:var(--surface); border:var(--border); border-radius:var(--radius-sm);
+      padding:11px 14px; color:var(--ivory);
+      font-family:'DM Sans',sans-serif; font-size:0.88rem; outline:none;
+      transition:var(--transition); width:100%;
+    }
+    .fi:focus { border-color:rgba(201,168,76,0.4); box-shadow:0 0 0 3px rgba(201,168,76,0.08); }
+    .fi::placeholder { color:var(--ivory-muted); }
+    select.fi option { background:var(--forest); color:var(--ivory); }
+    textarea.fi { resize:vertical; min-height:80px; }
+
+    /* ═══ PAYMENT METHOD GRID ═══ */
+    .pay-grid {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:14px 0;
+    }
+    .pay-tile {
+      background:var(--surface); border:var(--border); border-radius:var(--radius-sm);
+      padding:14px 10px; text-align:center; cursor:pointer;
+      transition:var(--transition); color:var(--ivory-muted); font-size:0.78rem; font-weight:500;
+    }
+    .pay-tile i { display:block; font-size:1.3rem; margin-bottom:5px; }
+    .pay-tile:hover { border-color:rgba(201,168,76,0.3); color:var(--gold-light); background:var(--gold-glow); }
+    .pay-tile.active { border-color:var(--gold); background:var(--gold-dim); color:var(--gold-light); }
+
+    /* ═══ TRANSACTION TABLE ═══ */
+    .tx-table { width:100%; border-collapse:collapse; }
+    .tx-table th {
+      font-family:'Syne',sans-serif; font-size:0.65rem; font-weight:700;
+      letter-spacing:0.12em; text-transform:uppercase; color:var(--gold);
+      padding:10px 14px; border-bottom:var(--border-s); text-align:left;
+    }
+    .tx-table td { padding:13px 14px; border-bottom:1px solid rgba(201,168,76,0.07); font-size:0.84rem; color:var(--ivory-dim); }
+    .tx-table tr:hover td { background:var(--gold-glow); }
+    .tx-table tr:last-child td { border-bottom:none; }
+    .tx-icon {
+      width:34px; height:34px; border-radius:9px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center; font-size:0.85rem;
+    }
+    .amount-out { color:var(--danger); font-weight:600; }
+    .amount-in  { color:var(--success); font-weight:600; }
+
+    /* ═══ SEARCH BAR ═══ */
+    .search-wrap {
+      display:flex; align-items:center; gap:10px;
+      background:var(--surface-r); border:var(--border); border-radius:var(--radius-sm);
+      padding:10px 14px; flex:1;
+    }
+    .search-wrap i { color:var(--ivory-muted); font-size:0.85rem; }
+    .search-input {
+      background:transparent; border:none; outline:none;
+      color:var(--ivory); font-family:'DM Sans',sans-serif; font-size:0.85rem; flex:1;
+    }
+    .search-input::placeholder { color:var(--ivory-muted); }
+
+    /* ═══ FILTER ROW ═══ */
+    .filter-row { display:flex; gap:10px; align-items:center; margin-bottom:18px; flex-wrap:wrap; }
+    .filter-chip {
+      padding:6px 14px; border-radius:var(--radius-pill); font-size:0.75rem; font-weight:600;
+      border:var(--border); background:transparent; color:var(--ivory-muted);
+      cursor:pointer; transition:var(--transition); letter-spacing:0.04em;
+    }
+    .filter-chip:hover { color:var(--gold-light); border-color:rgba(201,168,76,0.3); }
+    .filter-chip.active { background:var(--gold-dim); color:var(--gold-light); border-color:var(--gold); }
+
+    /* ═══ CHAT ═══ */
+    .chat-shell {
+      background:var(--surface-r); border:var(--border); border-radius:var(--radius);
+      overflow:hidden; display:flex; flex-direction:column; height:360px;
+    }
+    .chat-hd {
+      padding:14px 18px; background:var(--forest-mid); border-bottom:var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .chat-hd-left { display:flex; align-items:center; gap:10px; }
+    .chat-av {
+      width:32px; height:32px; border-radius:50%;
+      background:var(--gold-dim); border:var(--border-s);
+      display:flex; align-items:center; justify-content:center; font-size:0.8rem; color:var(--gold);
+    }
+    .chat-nm { font-weight:600; font-size:0.86rem; color:var(--ivory); }
+    .online-dot { display:inline-block; width:7px; height:7px; background:var(--success); border-radius:50%; margin-left:6px; }
+    .ai-badge {
+      font-size:0.62rem; font-weight:700; padding:3px 8px;
+      background:var(--gold-dim); color:var(--gold); border:var(--border-s);
+      border-radius:var(--radius-pill); letter-spacing:0.1em; text-transform:uppercase;
+    }
+    .chat-msgs {
+      flex:1; padding:16px; overflow-y:auto;
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .chat-msg { max-width:78%; padding:10px 14px; border-radius:14px; font-size:0.83rem; line-height:1.5; }
+    .chat-msg.bot {
+      background:var(--forest-mid); border:var(--border); color:var(--ivory-dim);
+      align-self:flex-start; border-bottom-left-radius:4px;
+    }
+    .chat-msg.user {
+      background:linear-gradient(135deg,var(--forest-pale),var(--forest-mid));
+      border:1px solid rgba(201,168,76,0.2); color:var(--ivory);
+      align-self:flex-end; border-bottom-right-radius:4px;
+    }
+    .chat-in-row {
+      display:flex; gap:8px; padding:12px 16px;
+      border-top:var(--border); background:var(--surface-r);
+    }
+    .chat-in {
+      flex:1; background:var(--surface-card); border:var(--border);
+      border-radius:var(--radius-pill); padding:9px 16px;
+      color:var(--ivory); font-family:'DM Sans',sans-serif; font-size:0.83rem; outline:none;
+      transition:var(--transition);
+    }
+    .chat-in:focus { border-color:rgba(201,168,76,0.35); box-shadow:0 0 0 3px rgba(201,168,76,0.07); }
+    .chat-in::placeholder { color:var(--ivory-muted); }
+    .chat-send-btn {
+      width:38px; height:38px; border-radius:50%;
+      background:linear-gradient(135deg,var(--gold),#b8924a);
+      border:none; color:var(--forest); display:flex; align-items:center; justify-content:center;
+      cursor:pointer; transition:var(--transition);
+    }
+    .chat-send-btn:hover { transform:scale(1.08); box-shadow:0 4px 14px rgba(201,168,76,0.3); }
+    .voice-btn {
+      width:38px; height:38px; border-radius:50%;
+      background:var(--ivory-subtle); border:var(--border);
+      color:var(--ivory-dim); display:flex; align-items:center; justify-content:center;
+      cursor:pointer; transition:var(--transition);
+    }
+    .voice-btn:hover { background:var(--gold-dim); color:var(--gold-light); }
+    .voice-btn.listening { animation:pulse-v 1.2s infinite; background:rgba(214,79,60,0.15); color:var(--danger); }
+    @keyframes pulse-v {
+      0%,100%{box-shadow:0 0 0 0 rgba(214,79,60,0.4);}
+      50%{box-shadow:0 0 0 8px rgba(214,79,60,0);}
+    }
+
+    /* ═══ MODAL ═══ */
+    .modal-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,0.72); backdrop-filter:blur(4px);
+      z-index:400; align-items:center; justify-content:center;
+    }
+    .modal-overlay.open { display:flex; }
+    .modal-box {
+      background:var(--forest); border:var(--border-s); border-radius:20px;
+      width:90%; max-width:560px; max-height:90vh; overflow-y:auto;
+      padding:32px; box-shadow:0 24px 80px rgba(0,0,0,0.65);
+      animation:modal-in 0.28s cubic-bezier(0.4,0,0.2,1);
+    }
+    @keyframes modal-in {
+      from{opacity:0;transform:scale(0.95) translateY(12px);}
+      to{opacity:1;transform:scale(1) translateY(0);}
+    }
+    .modal-box.wide { max-width:680px; }
+    .modal-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+    .modal-title { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:600; color:var(--ivory); }
+    .modal-close {
+      width:34px; height:34px; border-radius:50%;
+      background:var(--ivory-subtle); border:var(--border);
+      color:var(--ivory-muted); display:flex; align-items:center; justify-content:center;
+      cursor:pointer; transition:var(--transition); font-size:1rem;
+    }
+    .modal-close:hover { background:rgba(214,79,60,0.15); color:var(--danger); }
+
+    /* ═══ PROGRESS ═══ */
+    .progress-wrap { background:rgba(255,255,255,0.06); border-radius:4px; height:5px; overflow:hidden; margin:8px 0; }
+    .progress-bar { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--gold),var(--success)); transition:width 1s ease; }
+
+    /* ═══ LOCATION STRIP ═══ */
+    .location-box {
+      background:var(--surface-r); border:var(--border); border-radius:var(--radius);
+      padding:20px; display:flex; align-items:center; gap:14px; margin-bottom:24px;
+    }
+    .loc-ico { width:40px; height:40px; border-radius:10px; background:var(--gold-dim); border:var(--border); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:1rem; flex-shrink:0; }
+    .loc-info { flex:1; }
+    .loc-title { font-weight:600; font-size:0.88rem; color:var(--ivory); margin-bottom:2px; }
+    .loc-sub { font-size:0.75rem; color:var(--ivory-muted); }
+    #locResult { font-size:0.8rem; color:var(--success); margin-top:6px; }
+
+    /* ═══ DOCUMENT CARDS ═══ */
+    .doc-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .doc-card {
+      background:var(--surface-r); border:var(--border); border-radius:var(--radius);
+      padding:16px; display:flex; align-items:center; gap:12px;
+      cursor:pointer; transition:var(--transition);
+    }
+    .doc-card:hover { border-color:rgba(201,168,76,0.25); background:var(--surface-card); }
+    .doc-card-ico {
+      width:38px; height:38px; border-radius:9px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center; font-size:0.9rem;
+    }
+    .doc-card-ico.t-pdf { background:rgba(214,79,60,0.12); color:var(--danger); }
+    .doc-card-ico.t-receipt { background:rgba(76,175,125,0.12); color:var(--success); }
+    .doc-card-ico.t-doc { background:rgba(74,158,187,0.12); color:var(--info); }
+    .doc-card-ico.t-gold { background:var(--gold-dim); color:var(--gold); }
+    .doc-name { font-weight:600; font-size:0.84rem; color:var(--ivory); }
+    .doc-date { font-size:0.72rem; color:var(--ivory-muted); }
+
+    /* ═══ TOAST ═══ */
+    #toast {
+      position:fixed; bottom:28px; right:28px;
+      background:var(--forest-mid); border:var(--border-s); border-radius:var(--radius);
+      padding:14px 20px; display:flex; align-items:center; gap:12px;
+      box-shadow:var(--shadow); z-index:999; min-width:290px;
+      transform:translateX(120%); transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+    #toast.show { transform:translateX(0); }
+    .t-ico { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .t-ico.ok { background:rgba(76,175,125,0.15); color:var(--success); }
+    .t-ico.err { background:rgba(214,79,60,0.15); color:var(--danger); }
+    #toastText { font-size:0.84rem; color:var(--ivory); font-weight:500; }
+
+    /* ═══ FOOTER ═══ */
+    footer {
+      background:var(--forest); border-top:var(--border);
+      padding:40px 32px 24px; margin-top:auto;
+    }
+    .footer-grid { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:40px; margin-bottom:32px; }
+    .footer-brand { font-family:'Cormorant Garamond',serif; font-size:1.2rem; color:var(--gold-light); margin-bottom:10px; }
+    .footer-desc { font-size:0.82rem; color:var(--ivory-muted); line-height:1.7; }
+    .footer-col-title { font-family:'Syne',sans-serif; font-size:0.68rem; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); margin-bottom:14px; }
+    .footer-links { display:flex; flex-direction:column; gap:8px; }
+    .footer-links a { color:var(--ivory-muted); font-size:0.82rem; text-decoration:none; transition:var(--transition); }
+    .footer-links a:hover { color:var(--gold-light); }
+    .footer-contact p { color:var(--ivory-muted); font-size:0.82rem; display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+    .footer-contact i { color:var(--gold); width:14px; }
+    .footer-bottom { border-top:var(--border); padding-top:18px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+    .footer-copy { font-size:0.76rem; color:var(--ivory-muted); }
+    .footer-copy a { color:var(--gold); text-decoration:none; }
+    .socials { display:flex; gap:8px; }
+    .social-btn {
+      width:32px; height:32px; border-radius:50%;
+      background:var(--ivory-subtle); border:var(--border);
+      display:flex; align-items:center; justify-content:center;
+      color:var(--ivory-muted); font-size:0.8rem; cursor:pointer;
+      transition:var(--transition); text-decoration:none;
+    }
+    .social-btn:hover { background:var(--gold-dim); color:var(--gold-light); border-color:rgba(201,168,76,0.3); }
+
+    /* ═══ FAB ═══ */
+    .fab {
+      position:fixed; bottom:28px; right:28px;
+      width:54px; height:54px; border-radius:50%;
+      background:linear-gradient(135deg,var(--gold),#b8924a);
+      border:none; color:var(--forest); font-size:1.2rem;
+      display:flex; align-items:center; justify-content:center;
+      box-shadow:0 6px 24px rgba(201,168,76,0.35); cursor:pointer;
+      transition:var(--transition); z-index:100;
+    }
+    .fab:hover { transform:scale(1.08) rotate(45deg); box-shadow:0 8px 32px rgba(201,168,76,0.5); }
+
+    /* ═══ UTILITY ═══ */
+    .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; }
+    .mb-12 { margin-bottom:12px; }
+    .mb-20 { margin-bottom:20px; }
+    .mb-32 { margin-bottom:32px; }
+    .mt-12 { margin-top:12px; }
+    .mt-16 { margin-top:16px; }
+    .text-muted { color:var(--ivory-muted); font-size:0.82rem; }
+    .text-gold { color:var(--gold); }
+    .divider { height:1px; background:rgba(201,168,76,0.1); margin:20px 0; }
+    .full { grid-column:1/-1; }
+
+    /* ═══ RESPONSIVE ═══ */
+    @media(max-width:1100px){
+      .shell{grid-template-columns:220px 1fr;}
+      .stat-strip{grid-template-columns:1fr 1fr;}
+      .footer-grid{grid-template-columns:1fr 1fr;}
+    }
+    @media(max-width:900px){
+      .shell{grid-template-columns:1fr;}
+      .sidebar{display:none;}
+      .main{padding:20px;}
+      .grid-2,.grid-3,.pay-grid{grid-template-columns:1fr;}
+      .form-grid{grid-template-columns:1fr;}
+      .stat-strip{grid-template-columns:1fr 1fr;}
+      .doc-grid{grid-template-columns:1fr;}
+      .footer-grid{grid-template-columns:1fr;}
+    }
+    @media(max-width:600px){
+      .hero-h1{font-size:1.9rem;}
+      .page-hero{padding:24px 20px;}
+      .stat-strip{grid-template-columns:1fr;}
+      .topbar{padding:0 16px;}
+      .topbar-nav{display:none;}
+    }
+  </style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ═══ TOPBAR ═══ -->
+  <header class="topbar">
+    <a class="logo-wrap" href="TenantPortal.html">
+      <div class="logo-icon"><i class="fas fa-city"></i></div>
+      <div class="logo-text">
+        <span class="logo-name">Mwarokin Estates</span>
+        <span class="logo-sub">Bill Management</span>
+      </div>
+    </a>
+
+    <nav class="topbar-nav">
+      <a href="My Profile.html">My Profile</a>
+      <a href="Trackrent.html">Track Rent</a>
+      <a href="Rent.html">Rent</a>
+      <a href="Neighborhoods.html">Neighborhoods</a>
+      <a href="LipaMdogo.html">Lipa Mdogo</a>
+    </nav>
+
+    <div class="topbar-right">
+      <div class="icon-btn" onclick="toast('No new alerts right now.')">
+        <i class="fas fa-bell" style="font-size:.9rem;"></i>
+        <span class="notif-dot"></span>
+      </div>
+      <div class="icon-btn" onclick="toast('Settings panel coming soon.')">
+        <i class="fas fa-cog" style="font-size:.9rem;"></i>
+      </div>
+      <div class="icon-btn" title="Log out" onclick="toast('Logging out...')">
+        <i class="fas fa-sign-out-alt" style="font-size:.9rem;"></i>
+      </div>
+      <div class="avatar">JD</div>
+    </div>
+  </header>
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <aside class="sidebar">
+    <div style="margin-bottom:6px;">
+      <div class="sidebar-label">Finances</div>
+      <a class="s-link" href="Rent.html"><i class="fas fa-file-contract"></i>Rent Payment</a>
+      <a class="s-link" href="LipaMdogo.html"><i class="fas fa-calendar-check"></i>Lipa Mdogo</a>
+      <a class="s-link" href="CalculatePendingRent.html"><i class="fas fa-calculator"></i>Pending Rent</a>
+      <a class="s-link" href="Trackrent.html"><i class="fas fa-chart-line"></i>Track Rent</a>
+    </div>
+    <div class="s-divider"></div>
+    <div style="margin-bottom:6px;">
+      <div class="sidebar-label">My Home</div>
+      <a class="s-link" href="Community.html"><i class="fas fa-users"></i>Community</a>
+      <a class="s-link" href="Parking.html"><i class="fas fa-parking"></i>Smart Parking</a>
+      <a class="s-link" href="Booking.html"><i class="fas fa-calendar-alt"></i>Booking</a>
+      <a class="s-link" href="Upgrade&DowngradeRelocation.html"><i class="fas fa-exchange-alt"></i>Relocation</a>
+      <a class="s-link" href="Wearables.html"><i class="fas fa-watch"></i>Wearables</a>
+    </div>
+    <div class="s-divider"></div>
+    <div>
+      <div class="sidebar-label">Account</div>
+      <a class="s-link" href="Tenant Profile.html"><i class="fas fa-user-circle"></i>Tenant Profile</a>
+      <a class="s-link" href="Communication.html"><i class="fas fa-comments"></i>Messages</a>
+      <a class="s-link" href="Settings.html"><i class="fas fa-sliders-h"></i>Settings</a>
+      <a class="s-link" href="LogOut.html"><i class="fas fa-sign-out-alt"></i>Log Out</a>
+    </div>
+  </aside>
+
+  <!-- ═══ MAIN ═══ -->
+  <main class="main">
+
+    <!-- PAGE HERO -->
+    <div class="page-hero mb-32">
+      <div class="page-hero-inner">
+        <div>
+          <p class="hero-eyebrow"><i class="fas fa-file-invoice-dollar" style="margin-right:6px;"></i>Bill Management</p>
+          <h1 class="hero-h1">Your <em>Bills,</em><br>All in One Place</h1>
+          <p class="hero-desc">Track, pay, and manage every bill for your unit at Mwarokin Estates. Submit new bills, view payment history, and stay ahead of every due date.</p>
+        </div>
+        <div class="hero-actions">
+          <button class="btn btn-gold" onclick="openModal('submitBillModal')">
+            <i class="fas fa-plus"></i> Submit Bill
+          </button>
+          <button class="btn btn-ghost" onclick="openModal('payModal')">
+            <i class="fas fa-paper-plane"></i> Make Payment
+          </button>
+          <button class="btn btn-ghost btn-sm" onclick="generateReport()">
+            <i class="fas fa-download"></i> Export
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAT STRIP -->
+    <div class="stat-strip mb-32">
+      <div class="stat-tile" style="--tile-color:var(--gold)">
+        <div class="stat-icon"><i class="fas fa-file-invoice"></i></div>
+        <div>
+          <div class="stat-num">12</div>
+          <div class="stat-lbl">Total Bills</div>
+          <div class="stat-sub">+2 this month</div>
+        </div>
+      </div>
+      <div class="stat-tile" style="--tile-color:var(--success)">
+        <div class="stat-icon s-success"><i class="fas fa-check-circle"></i></div>
+        <div>
+          <div class="stat-num">8</div>
+          <div class="stat-lbl">Paid</div>
+          <div class="stat-sub">67% completion</div>
+        </div>
+      </div>
+      <div class="stat-tile" style="--tile-color:var(--warning)">
+        <div class="stat-icon s-warning"><i class="fas fa-clock"></i></div>
+        <div>
+          <div class="stat-num">3</div>
+          <div class="stat-lbl">Pending</div>
+          <div class="stat-sub">Due in 5 days</div>
+        </div>
+      </div>
+      <div class="stat-tile" style="--tile-color:var(--danger)">
+        <div class="stat-icon s-danger"><i class="fas fa-exclamation-triangle"></i></div>
+        <div>
+          <div class="stat-num">1</div>
+          <div class="stat-lbl">Overdue</div>
+          <div class="stat-sub">7 days past due</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BILLS + LOCATION -->
+    <div class="grid-2 mb-32">
+
+      <!-- BILL LIST -->
+      <div class="card" style="grid-column:1/-1;">
+        <div class="card-head">
+          <span class="card-label">All Bills</span>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <div class="search-wrap">
+              <i class="fas fa-search"></i>
+              <input class="search-input" id="billSearch" placeholder="Search bills…" oninput="filterBills()">
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="openModal('submitBillModal')"><i class="fas fa-plus"></i> Add</button>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <button class="filter-chip active" onclick="setFilter(this,'all')">All</button>
+          <button class="filter-chip" onclick="setFilter(this,'paid')">Paid</button>
+          <button class="filter-chip" onclick="setFilter(this,'pending')">Pending</button>
+          <button class="filter-chip" onclick="setFilter(this,'overdue')">Overdue</button>
+        </div>
+
+        <div class="bill-list" id="billList">
+          <div class="bill-row" data-status="paid" onclick="openBillDetail('Rent', 'KSh 12,000', 'Oct 1, 2024', 'paid')">
+            <div class="bill-row-icon ic-ok"><i class="fas fa-home"></i></div>
+            <div class="bill-row-info">
+              <div class="bill-row-name">Monthly Rent — Unit A-304</div>
+              <div class="bill-row-meta">Paid Sep 1, 2024 · via M-Pesa</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span class="badge b-paid">Paid</span>
+              <div class="bill-row-right">
+                <div class="bill-row-amount">KSh 12,000</div>
+                <div class="bill-row-due">Oct 1, 2024</div>
+              </div>
+            </div>
+          </div>
+          <div class="bill-row" data-status="pending" onclick="openBillDetail('Electricity', 'KSh 1,500', 'Oct 5, 2024', 'pending')">
+            <div class="bill-row-icon ic-elec"><i class="fas fa-bolt"></i></div>
+            <div class="bill-row-info">
+              <div class="bill-row-name">Electricity — KPLC</div>
+              <div class="bill-row-meta">Due in 5 days · Acct 005023871</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span class="badge b-pending">Pending</span>
+              <div class="bill-row-right">
+                <div class="bill-row-amount">KSh 1,500</div>
+                <div class="bill-row-due">Oct 5, 2024</div>
+              </div>
+            </div>
+          </div>
+          <div class="bill-row" data-status="pending" onclick="openBillDetail('Water & Sewerage', 'KSh 800', 'Oct 10, 2024', 'pending')">
+            <div class="bill-row-icon ic-water"><i class="fas fa-tint"></i></div>
+            <div class="bill-row-info">
+              <div class="bill-row-name">Water & Sewerage — Nairobi Water</div>
+              <div class="bill-row-meta">Due Oct 10, 2024 · Meter 78920</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span class="badge b-pending">Pending</span>
+              <div class="bill-row-right">
+                <div class="bill-row-amount">KSh 800</div>
+                <div class="bill-row-due">Oct 10, 2024</div>
+              </div>
+            </div>
+          </div>
+          <div class="bill-row" data-status="paid" onclick="openBillDetail('Internet (Fiber)', 'KSh 3,500', 'Oct 8, 2024', 'paid')">
+            <div class="bill-row-icon ic-ok"><i class="fas fa-wifi"></i></div>
+            <div class="bill-row-info">
+              <div class="bill-row-name">Internet — Safaricom Fiber</div>
+              <div class="bill-row-meta">Paid Sep 8, 2024 · 100 Mbps plan</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span class="badge b-paid">Paid</span>
+              <div class="bill-row-right">
+                <div class="bill-row-amount">KSh 3,500</div>
+                <div class="bill-row-due">Oct 8, 2024</div>
+              </div>
+            </div>
+          </div>
+          <div class="bill-row" data-status="overdue" onclick="openBillDetail('Security Levy', 'KSh 500', 'Sep 30, 2024', 'overdue')">
+            <div class="bill-row-icon ic-danger"><i class="fas fa-shield-alt"></i></div>
+            <div class="bill-row-info">
+              <div class="bill-row-name">Security Levy — Block A</div>
+              <div class="bill-row-meta">7 days overdue · Please pay immediately</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span class="badge b-overdue">Overdue</span>
+              <div class="bill-row-right">
+                <div class="bill-row-amount" style="color:var(--danger);">KSh 500</div>
+                <div class="bill-row-due" style="color:var(--danger);">Sep 30, 2024</div>
+              </div>
+            </div>
+          </div>
+          <div class="bill-row" data-status="paid" onclick="openBillDetail('Parking', 'KSh 2,000', 'Oct 1, 2024', 'paid')">
+            <div class="bill-row-icon ic-ok"><i class="fas fa-parking"></i></div>
+            <div class="bill-row-info">
+              <div class="bill-row-name">Smart Parking — Bay P-12</div>
+              <div class="bill-row-meta">Paid Sep 1, 2024 · Monthly slot</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span class="badge b-paid">Paid</span>
+              <div class="bill-row-right">
+                <div class="bill-row-amount">KSh 2,000</div>
+                <div class="bill-row-due">Oct 1, 2024</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAYMENT PORTAL + SUMMARY -->
+    <div class="section-head mb-20">
+      <h2 class="section-title">Make a <span>Payment</span></h2>
+      <span class="section-act" onclick="openModal('payModal')">Open full payment portal →</span>
+    </div>
+
+    <div class="grid-2 mb-32">
+      <div class="card">
+        <div class="card-head">
+          <span class="card-label">Quick Pay</span>
+          <div class="card-ico"><i class="fas fa-paper-plane"></i></div>
+        </div>
+        <div class="pay-grid" id="payMethodGrid">
+          <div class="pay-tile active" data-m="mpesa" onclick="selectMethod(this)"><i class="fas fa-mobile-alt"></i>M-Pesa</div>
+          <div class="pay-tile" data-m="airtel" onclick="selectMethod(this)"><i class="fas fa-sim-card"></i>Airtel Money</div>
+          <div class="pay-tile" data-m="bank" onclick="selectMethod(this)"><i class="fas fa-university"></i>Bank Transfer</div>
+          <div class="pay-tile" data-m="equity" onclick="selectMethod(this)"><i class="fas fa-credit-card"></i>EazzyPay</div>
+          <div class="pay-tile" data-m="coop" onclick="selectMethod(this)"><i class="fas fa-piggy-bank"></i>Co-op Bank</div>
+          <div class="pay-tile" data-m="card" onclick="selectMethod(this)"><i class="fas fa-credit-card"></i>Visa / MC</div>
+        </div>
+        <div class="divider"></div>
+        <div class="fg mb-12">
+          <label class="fl">Amount (KSh)</label>
+          <input class="fi" id="qpAmount" type="number" value="14800" min="1" placeholder="Enter amount">
+        </div>
+        <div class="fg mb-20">
+          <label class="fl">Bill to Pay</label>
+          <select class="fi" id="qpBill">
+            <option value="rent">Monthly Rent — KSh 12,000</option>
+            <option value="elec">Electricity — KSh 1,500</option>
+            <option value="water">Water — KSh 800</option>
+            <option value="security">Security Levy — KSh 500</option>
+            <option value="all">All Outstanding Bills — KSh 14,800</option>
+          </select>
+        </div>
+        <button class="btn btn-gold btn-block" onclick="processQuickPay()">
+          <i class="fas fa-lock"></i> Pay Securely via SylloPay
+        </button>
+        <p class="text-muted" style="text-align:center;margin-top:8px;font-size:0.72rem;">
+          <i class="fas fa-shield-alt" style="color:var(--gold);margin-right:4px;"></i>256-bit SSL · Instant receipt on payment
+        </p>
+      </div>
+
+      <!-- SUMMARY CARD -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-label">Payment Summary</span>
+          <div class="card-ico"><i class="fas fa-receipt"></i></div>
+        </div>
+        <div style="margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;font-size:0.84rem;color:var(--ivory-dim);padding:9px 0;border-bottom:1px solid rgba(201,168,76,0.07);">
+            <span>Monthly Rent</span><span>KSh 12,000</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.84rem;color:var(--ivory-dim);padding:9px 0;border-bottom:1px solid rgba(201,168,76,0.07);">
+            <span>Electricity</span><span>KSh 1,500</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.84rem;color:var(--ivory-dim);padding:9px 0;border-bottom:1px solid rgba(201,168,76,0.07);">
+            <span>Water & Sewerage</span><span>KSh 800</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.84rem;color:var(--danger);padding:9px 0;border-bottom:1px solid rgba(201,168,76,0.07);">
+            <span>Security Levy <span class="badge b-overdue" style="margin-left:4px;">Overdue</span></span><span>KSh 500</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:12px 0;border-top:var(--border-s);margin-top:4px;">
+            <strong style="font-size:0.9rem;">Total Outstanding</strong>
+            <strong style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--gold-light);">KSh 14,800</strong>
+          </div>
+        </div>
+        <div class="progress-wrap"><div class="progress-bar" style="width:55%;background:linear-gradient(90deg,var(--danger),var(--warning));"></div></div>
+        <p class="text-muted mb-20" style="font-size:0.74rem;">45% of monthly obligations remain outstanding</p>
+        <div class="fg">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.82rem;color:var(--ivory-dim);">
+            <input type="checkbox" style="accent-color:var(--gold);"> Save payment method for future use
+          </label>
+        </div>
+        <div class="divider"></div>
+        <div class="card-label" style="margin-bottom:10px;">Documents & Receipts</div>
+        <div class="doc-grid">
+          <div class="doc-card" onclick="toast('Opening Lease Agreement…')">
+            <div class="doc-card-ico t-pdf"><i class="fas fa-file-pdf"></i></div>
+            <div><div class="doc-name">Lease Agreement</div><div class="doc-date">Jan 2024</div></div>
+          </div>
+          <div class="doc-card" onclick="toast('Opening July Receipt…')">
+            <div class="doc-card-ico t-receipt"><i class="fas fa-receipt"></i></div>
+            <div><div class="doc-name">Sep Rent Receipt</div><div class="doc-date">Sep 1, 2024</div></div>
+          </div>
+          <div class="doc-card" onclick="toast('Opening Utility Bills…')">
+            <div class="doc-card-ico t-doc"><i class="fas fa-file-alt"></i></div>
+            <div><div class="doc-name">Utility Summary</div><div class="doc-date">Sep 2024</div></div>
+          </div>
+          <div class="doc-card" onclick="toast('Opening Community Guidelines…')">
+            <div class="doc-card-ico t-gold"><i class="fas fa-file-contract"></i></div>
+            <div><div class="doc-name">Community Rules</div><div class="doc-date">Mar 2024</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRANSACTION HISTORY -->
+    <div class="section-head mb-20">
+      <h2 class="section-title">Transaction <span>History</span></h2>
+      <span class="section-act" onclick="toast('Full history export coming soon.')">Export CSV →</span>
+    </div>
+    <div class="card mb-32">
+      <div class="card-head">
+        <span class="card-label">Recent Payments</span>
+        <div class="search-wrap" style="max-width:240px;">
+          <i class="fas fa-search"></i>
+          <input class="search-input" placeholder="Search transactions…">
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="tx-table" id="txTable">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Description</th>
+              <th>Date</th>
+              <th>Method</th>
+              <th>Status</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody id="txBody">
+            <tr>
+              <td><div class="tx-icon" style="background:rgba(76,175,125,0.12);color:var(--success);border-radius:8px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-home"></i></div></td>
+              <td>Rent Payment — September 2024</td>
+              <td>Sep 1, 2024</td>
+              <td>M-Pesa</td>
+              <td><span class="badge b-paid">Paid</span></td>
+              <td class="amount-out">−KSh 12,000</td>
+            </tr>
+            <tr>
+              <td><div class="tx-icon" style="background:rgba(76,175,125,0.12);color:var(--success);border-radius:8px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-wifi"></i></div></td>
+              <td>Internet — Safaricom Fiber</td>
+              <td>Sep 8, 2024</td>
+              <td>Co-op Bank</td>
+              <td><span class="badge b-paid">Paid</span></td>
+              <td class="amount-out">−KSh 3,500</td>
+            </tr>
+            <tr>
+              <td><div class="tx-icon" style="background:rgba(76,175,125,0.12);color:var(--success);border-radius:8px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-parking"></i></div></td>
+              <td>Smart Parking — Bay P-12</td>
+              <td>Sep 1, 2024</td>
+              <td>M-Pesa</td>
+              <td><span class="badge b-paid">Paid</span></td>
+              <td class="amount-out">−KSh 2,000</td>
+            </tr>
+            <tr>
+              <td><div class="tx-icon" style="background:rgba(76,175,125,0.12);color:var(--success);border-radius:8px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-home"></i></div></td>
+              <td>Rent Payment — August 2024</td>
+              <td>Aug 1, 2024</td>
+              <td>Bank Transfer</td>
+              <td><span class="badge b-paid">Paid</span></td>
+              <td class="amount-out">−KSh 12,000</td>
+            </tr>
+            <tr>
+              <td><div class="tx-icon" style="background:rgba(232,168,56,0.12);color:var(--warning);border-radius:8px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-bolt"></i></div></td>
+              <td>Electricity — KPLC August</td>
+              <td>Aug 10, 2024</td>
+              <td>Airtel Money</td>
+              <td><span class="badge b-paid">Paid</span></td>
+              <td class="amount-out">−KSh 1,800</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- LOCATION + AI ASSISTANT -->
+    <div class="grid-2 mb-32">
+      <!-- LOCATION -->
+      <div>
+        <div class="section-head mb-20">
+          <h2 class="section-title">Property <span>Location</span></h2>
+        </div>
+        <div class="location-box">
+          <div class="loc-ico"><i class="fas fa-map-marker-alt"></i></div>
+          <div class="loc-info">
+            <div class="loc-title">Detect My Location</div>
+            <div class="loc-sub">Pin your GPS coordinates and match your Mwarokin property</div>
+            <div id="locResult"></div>
+          </div>
+          <button class="btn btn-gold btn-sm" onclick="detectLocation()">
+            <i class="fas fa-crosshairs"></i> Pin Location
+          </button>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <span class="card-label">Property Filter</span>
+          </div>
+          <div class="fg mb-12">
+            <label class="fl">Continent</label>
+            <select class="fi" id="continentSel">
+              <option>Africa</option>
+              <option>Asia</option>
+              <option>Europe</option>
+              <option>North America</option>
+              <option>South America</option>
+              <option>Australia</option>
+            </select>
+          </div>
+          <div class="fg mb-12">
+            <label class="fl">Country</label>
+            <select class="fi" id="countrySel" onchange="showCurrency()">
+              <option value="">Select country</option>
+              <option value="Kenya">Kenya</option>
+              <option value="Nigeria">Nigeria</option>
+              <option value="South Africa">South Africa</option>
+              <option value="Ghana">Ghana</option>
+              <option value="Tanzania">Tanzania</option>
+              <option value="Uganda">Uganda</option>
+              <option value="Ethiopia">Ethiopia</option>
+              <option value="Algeria">Algeria</option>
+              <option value="Egypt">Egypt</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">Search Property / Tenant</label>
+            <input class="fi" placeholder="Name, unit, or location…">
+          </div>
+          <div id="currencyBanner" style="margin-top:12px;display:none;">
+            <div style="background:var(--gold-dim);border:var(--border-s);border-radius:var(--radius-sm);padding:10px 14px;font-size:0.82rem;color:var(--gold-light);">
+              <i class="fas fa-money-bill-wave" style="margin-right:6px;"></i>
+              <span id="currencyText">Currency info here</span>
+            </div>
+          </div>
+          <button class="btn btn-ghost btn-block mt-12" onclick="toast('Property search functionality active.')">
+            <i class="fas fa-search"></i> Search Properties
+          </button>
+        </div>
+      </div>
+
+      <!-- AI ASSISTANT -->
+      <div>
+        <div class="section-head mb-20">
+          <h2 class="section-title">AI <span>Assistant</span></h2>
+          <span class="ai-badge">Powered by Claude</span>
+        </div>
+        <div class="chat-shell">
+          <div class="chat-hd">
+            <div class="chat-hd-left">
+              <div class="chat-av"><i class="fas fa-robot" style="font-size:.75rem;"></i></div>
+              <div>
+                <div class="chat-nm">Mwarokin Assistant <span class="online-dot"></span></div>
+                <div style="font-size:0.7rem;color:var(--ivory-muted);">Answers bill & payment questions</div>
+              </div>
+            </div>
+            <span class="ai-badge">AI</span>
+          </div>
+          <div class="chat-msgs" id="chatMsgs">
+            <div class="chat-msg bot">Habari! I'm your Mwarokin Estates assistant. I can help you manage bills, check payment status, or submit a new request. What do you need?</div>
+          </div>
+          <div class="chat-in-row">
+            <input class="chat-in" id="chatIn" placeholder="Ask about your bills, payments…">
+            <button class="voice-btn" id="voiceBtn" onclick="startVoice()" title="Voice input"><i class="fas fa-microphone" style="font-size:.85rem;"></i></button>
+            <button class="chat-send-btn" onclick="sendChat()"><i class="fas fa-paper-plane" style="font-size:.82rem;"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBMIT BILL (Staff Form) -->
+    <div class="section-head mb-20">
+      <h2 class="section-title">Submit <span>Client Bill</span></h2>
+      <span class="section-act">Staff Management Portal</span>
+    </div>
+    <div class="card mb-32">
+      <div class="card-head">
+        <span class="card-label">New Bill Entry</span>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost btn-sm" onclick="toast('Reminder settings coming soon.')"><i class="fas fa-bell"></i> Auto-Remind</button>
+          <div class="card-ico"><i class="fas fa-paper-plane"></i></div>
+        </div>
+      </div>
+      <div class="form-grid" id="staffForm">
+        <div class="fg">
+          <label class="fl">Tenant Name</label>
+          <input class="fi" id="tenantName" placeholder="e.g. John Doe" required>
+        </div>
+        <div class="fg">
+          <label class="fl">Landlord Name</label>
+          <input class="fi" id="landlordName" placeholder="e.g. James Mwarokin" required>
+        </div>
+        <div class="fg">
+          <label class="fl">Caretaker Name</label>
+          <input class="fi" id="caretakerName" placeholder="e.g. Mary Wambui" required>
+        </div>
+        <div class="fg">
+          <label class="fl">Property Location</label>
+          <input class="fi" id="propLocation" placeholder="e.g. Mwarokin Block A, Nairobi" required>
+        </div>
+        <div class="fg">
+          <label class="fl">Amount (KSh)</label>
+          <input class="fi" id="billAmount" type="number" placeholder="e.g. 12000" min="1" required>
+        </div>
+        <div class="fg">
+          <label class="fl">Bill Type</label>
+          <select class="fi" id="billType" required>
+            <option value="">Select bill type</option>
+            <option value="rent">My Rent</option>
+            <option value="electricity">Electricity</option>
+            <option value="water">Water</option>
+            <option value="gas">Gas</option>
+            <option value="trash">Trash / Garbage</option>
+            <option value="parking">Parking</option>
+            <option value="security">Security Levy</option>
+            <option value="internet">Internet</option>
+            <option value="cable">Cable TV</option>
+            <option value="community">Community Fee</option>
+            <option value="mortgage">Mortgage</option>
+            <option value="maintenance">Maintenance Levy</option>
+          </select>
+        </div>
+        <div class="fg fg-full">
+          <label class="fl">Notes (optional)</label>
+          <textarea class="fi" id="billNotes" placeholder="Any additional notes for this bill entry…"></textarea>
+        </div>
+        <div class="full" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.83rem;color:var(--ivory-dim);">
+            <input type="checkbox" id="autoRem" style="accent-color:var(--gold);"> Set up automatic payment reminders
+          </label>
+          <div style="display:flex;gap:10px;">
+            <button class="btn btn-ghost" onclick="clearStaffForm()"><i class="fas fa-undo"></i> Clear</button>
+            <button class="btn btn-gold" onclick="submitStaffBill()"><i class="fas fa-paper-plane"></i> Submit Bill</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer style="margin:0 -32px -32px;padding:40px 32px 24px;background:var(--forest);border-top:var(--border);">
+      <div class="footer-grid" style="margin-bottom:24px;">
+        <div>
+          <div class="footer-brand">Mwarokin Estates</div>
+          <p class="footer-desc">Premium Pan-African property management. Experience luxury living and seamless financial management across Africa and the globe.</p>
+          <div class="socials" style="margin-top:16px;">
+            <a class="social-btn" href="#"><i class="fab fa-twitter"></i></a>
+            <a class="social-btn" href="#"><i class="fab fa-facebook-f"></i></a>
+            <a class="social-btn" href="#"><i class="fab fa-linkedin-in"></i></a>
+            <a class="social-btn" href="#"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title">Quick Links</div>
+          <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="TenantPortal.html">Tenant Portal</a>
+            <a href="ManageBills.html">Manage Bills</a>
+            <a href="Rent.html">Rent Payment</a>
+            <a href="LipaMdogo.html">Lipa Mdogo</a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title">Services</div>
+          <div class="footer-links">
+            <a href="Parking.html">Smart Parking</a>
+            <a href="Wearables.html">Wearables</a>
+            <a href="Upgrade&DowngradeRelocation.html">Relocation</a>
+            <a href="Community.html">Community</a>
+            <a href="Faqs.html">FAQ</a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title">Contact</div>
+          <div class="footer-contact">
+            <p><i class="fas fa-phone-alt"></i> +254 704 919 388</p>
+            <p><i class="fas fa-envelope"></i> info@mwarokinestates.com</p>
+            <p><i class="fas fa-map-marker-alt"></i> Nairobi · Lagos · Johannesburg</p>
+            <p><i class="fas fa-globe-africa"></i> Africa & Global</p>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">Mwarokin Estates — Manage Bills &copy; 2026. All rights reserved. Powered by <a href="https://www.syllogismtechnology.co.ke">Syllogism Technology Africa</a></div>
+        <div class="footer-links" style="flex-direction:row;gap:16px;">
+          <a href="Cookies.html" style="font-size:0.74rem;">Cookies</a>
+          <a href="DueProcess.html" style="font-size:0.74rem;">Due Process</a>
+          <a href="LogOut.html" style="font-size:0.74rem;color:var(--gold);">Log Out</a>
+        </div>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<!-- FAB -->
+<button class="fab" onclick="openModal('submitBillModal')" title="Add new bill"><i class="fas fa-plus"></i></button>
+
+<!-- TOAST -->
+<div id="toast">
+  <div class="t-ico ok" id="tIco"><i class="fas fa-check"></i></div>
+  <div id="toastText">Done!</div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="payModal">
+  <div class="modal-box">
+    <div class="modal-hd">
+      <h3 class="modal-title">Make a Payment</h3>
+      <button class="modal-close" onclick="closeModal('payModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="pay-grid" style="margin-bottom:18px;" id="modalPayGrid">
+      <div class="pay-tile active" data-m="mpesa" onclick="selectMethod(this)"><i class="fas fa-mobile-alt"></i>M-Pesa</div>
+      <div class="pay-tile" data-m="airtel" onclick="selectMethod(this)"><i class="fas fa-sim-card"></i>Airtel Money</div>
+      <div class="pay-tile" data-m="bank" onclick="selectMethod(this)"><i class="fas fa-university"></i>Bank Transfer</div>
+      <div class="pay-tile" data-m="equity" onclick="selectMethod(this)"><i class="fas fa-credit-card"></i>EazzyPay</div>
+      <div class="pay-tile" data-m="coop" onclick="selectMethod(this)"><i class="fas fa-piggy-bank"></i>Co-op Bank</div>
+      <div class="pay-tile" data-m="card" onclick="selectMethod(this)"><i class="fas fa-credit-card"></i>Visa/Mastercard</div>
+    </div>
+    <div class="form-grid cols-1">
+      <div class="fg">
+        <label class="fl">Amount (KSh)</label>
+        <input class="fi" id="mPayAmt" type="number" value="14800" min="1">
+      </div>
+      <div class="fg">
+        <label class="fl">Bill Reference</label>
+        <select class="fi" id="mPayBill">
+          <option>All Outstanding Bills — KSh 14,800</option>
+          <option>Monthly Rent — KSh 12,000</option>
+          <option>Electricity — KSh 1,500</option>
+          <option>Water — KSh 800</option>
+          <option>Security Levy — KSh 500</option>
+        </select>
+      </div>
+    </div>
+    <div id="mMpesaField" style="margin-top:14px;">
+      <div class="fg">
+        <label class="fl">M-Pesa Phone Number</label>
+        <input class="fi" placeholder="+254 7XX XXX XXX">
+      </div>
+    </div>
+    <div id="mCardField" style="display:none;margin-top:14px;">
+      <div class="fg" style="margin-bottom:12px;">
+        <label class="fl">Card Number</label>
+        <input class="fi" placeholder="1234 5678 9012 3456">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="fg"><label class="fl">Expiry</label><input class="fi" placeholder="MM / YY"></div>
+        <div class="fg"><label class="fl">CVV</label><input class="fi" placeholder="123"></div>
+      </div>
+    </div>
+    <button class="btn btn-gold btn-block" style="margin-top:20px;" onclick="processModalPay()">
+      <i class="fas fa-lock"></i> Confirm & Pay Securely
+    </button>
+    <p style="text-align:center;margin-top:8px;font-size:0.72rem;color:var(--ivory-muted);">
+      <i class="fas fa-shield-alt" style="color:var(--gold);margin-right:4px;"></i>Secured by SylloPay · 256-bit SSL
+    </p>
+  </div>
+</div>
+
+<!-- SUBMIT BILL MODAL (Quick) -->
+<div class="modal-overlay" id="submitBillModal">
+  <div class="modal-box wide">
+    <div class="modal-hd">
+      <h3 class="modal-title">Add New Bill</h3>
+      <button class="modal-close" onclick="closeModal('submitBillModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="form-grid">
+      <div class="fg"><label class="fl">Tenant Name</label><input class="fi" id="mTenant" placeholder="Full name"></div>
+      <div class="fg"><label class="fl">Bill Type</label>
+        <select class="fi" id="mBillType">
+          <option value="">Select type</option>
+          <option>Rent</option><option>Electricity</option><option>Water</option>
+          <option>Internet</option><option>Security Levy</option><option>Parking</option>
+          <option>Gas</option><option>Trash</option><option>Community Fee</option><option>Mortgage</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Amount (KSh)</label><input class="fi" id="mAmt" type="number" placeholder="e.g. 12000" min="1"></div>
+      <div class="fg"><label class="fl">Due Date</label><input class="fi" id="mDue" type="date"></div>
+      <div class="fg fg-full"><label class="fl">Notes</label><textarea class="fi" id="mNotes" placeholder="Optional notes…" style="min-height:60px;"></textarea></div>
+    </div>
+    <button class="btn btn-gold btn-block" style="margin-top:18px;" onclick="submitModalBill()"><i class="fas fa-plus"></i> Add Bill</button>
+  </div>
+</div>
+
+<!-- BILL DETAIL MODAL -->
+<div class="modal-overlay" id="billDetailModal">
+  <div class="modal-box wide">
+    <div class="modal-hd">
+      <h3 class="modal-title" id="bdTitle">Bill Details</h3>
+      <button class="modal-close" onclick="closeModal('billDetailModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+      <div>
+        <div class="card-label mb-12">Bill Information</div>
+        <div style="display:flex;flex-direction:column;gap:0;">
+          <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(201,168,76,0.07);font-size:0.84rem;"><span style="color:var(--ivory-muted);">Bill Type</span><span id="bdType" style="color:var(--ivory);font-weight:500;"></span></div>
+          <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(201,168,76,0.07);font-size:0.84rem;"><span style="color:var(--ivory-muted);">Amount Due</span><span id="bdAmt" style="color:var(--gold-light);font-weight:600;font-family:'Cormorant Garamond',serif;font-size:1rem;"></span></div>
+          <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(201,168,76,0.07);font-size:0.84rem;"><span style="color:var(--ivory-muted);">Due Date</span><span id="bdDue" style="color:var(--ivory);font-weight:500;"></span></div>
+          <div style="display:flex;justify-content:space-between;padding:9px 0;font-size:0.84rem;"><span style="color:var(--ivory-muted);">Status</span><span id="bdStatus"></span></div>
+        </div>
+      </div>
+      <div>
+        <div class="card-label mb-12">Payment History</div>
+        <div id="bdHistory" style="display:flex;flex-direction:column;gap:0;"></div>
+      </div>
+    </div>
+    <button class="btn btn-gold btn-block" style="margin-top:20px;" onclick="closeModal('billDetailModal');openModal('payModal');">
+      <i class="fas fa-paper-plane"></i> Pay This Bill Now
+    </button>
+  </div>
+</div>
+
+<script>
+  /* ─── MODAL HELPERS ─── */
+  function openModal(id) { document.getElementById(id).classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  document.querySelectorAll('.modal-overlay').forEach(m => {
+    m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+  });
+
+  /* ─── TOAST ─── */
+  function toast(msg, err) {
+    const t = document.getElementById('toast');
+    const ico = document.getElementById('tIco');
+    document.getElementById('toastText').textContent = msg;
+    ico.className = err ? 't-ico err' : 't-ico ok';
+    ico.innerHTML = err ? '<i class="fas fa-exclamation"></i>' : '<i class="fas fa-check"></i>';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3200);
+  }
+
+  /* ─── BILL FILTER ─── */
+  let activeFilter = 'all';
+  function setFilter(btn, f) {
+    activeFilter = f;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    filterBills();
+  }
+  function filterBills() {
+    const q = document.getElementById('billSearch').value.toLowerCase();
+    document.querySelectorAll('#billList .bill-row').forEach(row => {
+      const matchF = activeFilter === 'all' || row.dataset.status === activeFilter;
+      const matchQ = row.textContent.toLowerCase().includes(q);
+      row.style.display = matchF && matchQ ? '' : 'none';
+    });
+  }
+
+  /* ─── PAYMENT METHOD SELECT ─── */
+  function selectMethod(el) {
+    const parent = el.closest('[id]') || el.parentElement;
+    parent.querySelectorAll('.pay-tile').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    const m = el.dataset.m;
+    const mpF = document.getElementById('mMpesaField');
+    const cdF = document.getElementById('mCardField');
+    if (mpF) mpF.style.display = m === 'mpesa' ? 'block' : 'none';
+    if (cdF) cdF.style.display = m === 'card' ? 'block' : 'none';
+  }
+
+  /* ─── QUICK PAY ─── */
+  function processQuickPay() {
+    const amt = document.getElementById('qpAmount').value;
+    const bill = document.getElementById('qpBill').selectedOptions[0].text;
+    const method = document.querySelector('#payMethodGrid .pay-tile.active')?.textContent.trim() || 'M-Pesa';
+    if (!amt || amt <= 0) { toast('Enter a valid amount.', true); return; }
+    toast(`KSh ${parseInt(amt).toLocaleString()} paid via ${method}. Receipt sent! ✓`);
+    addTxRow(bill.split(' — ')[0], new Date().toLocaleDateString('en-KE'), method, parseInt(amt).toLocaleString());
+  }
+
+  /* ─── MODAL PAY ─── */
+  function processModalPay() {
+    const amt = document.getElementById('mPayAmt').value;
+    const bill = document.getElementById('mPayBill').selectedOptions[0].text;
+    const method = document.querySelector('#modalPayGrid .pay-tile.active')?.textContent.trim() || 'M-Pesa';
+    closeModal('payModal');
+    toast(`KSh ${parseInt(amt).toLocaleString()} paid via ${method}. Receipt issued! ✓`);
+    addTxRow(bill.split(' — ')[0], new Date().toLocaleDateString('en-KE'), method, parseInt(amt).toLocaleString());
+  }
+
+  /* ─── ADD TX ROW ─── */
+  function addTxRow(desc, date, method, amt) {
+    const body = document.getElementById('txBody');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><div style="width:34px;height:34px;border-radius:8px;background:rgba(76,175,125,0.12);color:var(--success);display:flex;align-items:center;justify-content:center;"><i class="fas fa-check"></i></div></td>
+      <td>${desc}</td>
+      <td>${date}</td>
+      <td>${method}</td>
+      <td><span class="badge b-paid">Paid</span></td>
+      <td class="amount-out">−KSh ${amt}</td>`;
+    body.insertBefore(tr, body.firstChild);
+  }
+
+  /* ─── STAFF BILL SUBMIT ─── */
+  function submitStaffBill() {
+    const t = document.getElementById('tenantName').value.trim();
+    const l = document.getElementById('landlordName').value.trim();
+    const c = document.getElementById('caretakerName').value.trim();
+    const p = document.getElementById('propLocation').value.trim();
+    const a = document.getElementById('billAmount').value;
+    const b = document.getElementById('billType').value;
+    if (!t || !l || !c || !p || !a || !b) { toast('Please fill in all required fields.', true); return; }
+    if (parseFloat(a) <= 0) { toast('Amount must be greater than zero.', true); return; }
+    toast(`Bill for ${t} (${b}) submitted successfully!`);
+    clearStaffForm();
+    sendChatAuto(`Bill submitted for ${t}: ${b} at ${p}, KSh ${parseFloat(a).toLocaleString()}.`);
+  }
+
+  function clearStaffForm() {
+    ['tenantName','landlordName','caretakerName','propLocation','billAmount','billNotes'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('billType').value = '';
+    document.getElementById('autoRem').checked = false;
+  }
+
+  /* ─── MODAL BILL SUBMIT ─── */
+  function submitModalBill() {
+    const t = document.getElementById('mTenant').value.trim();
+    const b = document.getElementById('mBillType').value;
+    const a = document.getElementById('mAmt').value;
+    const d = document.getElementById('mDue').value;
+    if (!t || !b || !a) { toast('Fill in Tenant, Bill Type, and Amount.', true); return; }
+    const statusMap = { paid:'b-paid', pending:'b-pending', overdue:'b-overdue' };
+    const list = document.getElementById('billList');
+    const row = document.createElement('div');
+    row.className = 'bill-row';
+    row.dataset.status = 'pending';
+    row.innerHTML = `
+      <div class="bill-row-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+      <div class="bill-row-info">
+        <div class="bill-row-name">${b} — ${t}</div>
+        <div class="bill-row-meta">Added just now${d ? ' · Due ' + d : ''}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="badge b-pending">Pending</span>
+        <div class="bill-row-right">
+          <div class="bill-row-amount">KSh ${parseFloat(a).toLocaleString()}</div>
+          <div class="bill-row-due">${d || 'TBD'}</div>
+        </div>
+      </div>`;
+    list.insertBefore(row, list.firstChild);
+    closeModal('submitBillModal');
+    toast(`${b} bill for ${t} added!`);
+    document.getElementById('mTenant').value = '';
+    document.getElementById('mBillType').value = '';
+    document.getElementById('mAmt').value = '';
+    document.getElementById('mDue').value = '';
+    document.getElementById('mNotes').value = '';
+  }
+
+  /* ─── BILL DETAIL MODAL ─── */
+  function openBillDetail(type, amt, due, status) {
+    document.getElementById('bdTitle').textContent = `${type} — Bill Details`;
+    document.getElementById('bdType').textContent = type;
+    document.getElementById('bdAmt').textContent = amt;
+    document.getElementById('bdDue').textContent = due;
+    const bMap = { paid:'<span class="badge b-paid">Paid</span>', pending:'<span class="badge b-pending">Pending</span>', overdue:'<span class="badge b-overdue">Overdue</span>' };
+    document.getElementById('bdStatus').innerHTML = bMap[status] || '';
+    document.getElementById('bdHistory').innerHTML = `
+      <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(201,168,76,0.07);font-size:0.82rem;">
+        <div><div style="color:var(--ivory);font-weight:500;">September 2024</div><div style="color:var(--ivory-muted);font-size:0.72rem;">via M-Pesa</div></div>
+        <div style="text-align:right;"><div style="color:var(--gold-light);font-family:'Cormorant Garamond',serif;">${amt}</div><span class="badge b-paid">Paid</span></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(201,168,76,0.07);font-size:0.82rem;">
+        <div><div style="color:var(--ivory);font-weight:500;">August 2024</div><div style="color:var(--ivory-muted);font-size:0.72rem;">via Bank Transfer</div></div>
+        <div style="text-align:right;"><div style="color:var(--gold-light);font-family:'Cormorant Garamond',serif;">${amt}</div><span class="badge b-paid">Paid</span></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:9px 0;font-size:0.82rem;">
+        <div><div style="color:var(--ivory);font-weight:500;">July 2024</div><div style="color:var(--ivory-muted);font-size:0.72rem;">via Airtel Money</div></div>
+        <div style="text-align:right;"><div style="color:var(--gold-light);font-family:'Cormorant Garamond',serif;">${amt}</div><span class="badge b-paid">Paid</span></div>
+      </div>`;
+    openModal('billDetailModal');
+  }
+
+  /* ─── LOCATION ─── */
+  function detectLocation() {
+    const r = document.getElementById('locResult');
+    r.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:5px;"></i> Detecting…';
+    if (!navigator.geolocation) { r.innerHTML = '<span style="color:var(--danger);">Geolocation not supported.</span>'; return; }
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const lat = pos.coords.latitude.toFixed(5);
+        const lng = pos.coords.longitude.toFixed(5);
+        r.innerHTML = `<i class="fas fa-check-circle" style="color:var(--success);margin-right:4px;"></i> ${lat}, ${lng} · ±${Math.round(pos.coords.accuracy)}m`;
+        toast(`Location pinned: ${lat}, ${lng}`);
+      },
+      err => {
+        r.innerHTML = '<span style="color:var(--danger);">Access denied — check browser permissions.</span>';
+      },
+      { enableHighAccuracy:true, timeout:10000 }
+    );
+  }
+
+  /* ─── CURRENCY ─── */
+  const currencies = {
+    Kenya:        'KES · 1 USD = 130 KES',
+    Nigeria:      'NGN · 1 USD = 1,540 NGN',
+    'South Africa':'ZAR · 1 USD = 18.5 ZAR',
+    Ghana:        'GHS · 1 USD = 12.3 GHS',
+    Tanzania:     'TZS · 1 USD = 2,520 TZS',
+    Uganda:       'UGX · 1 USD = 3,760 UGX',
+    Ethiopia:     'ETB · 1 USD = 56.5 ETB',
+    Algeria:      'DZD · 1 USD = 135 DZD',
+    Egypt:        'EGP · 1 USD = 30.9 EGP',
+  };
+  function showCurrency() {
+    const c = document.getElementById('countrySel').value;
+    const b = document.getElementById('currencyBanner');
+    if (currencies[c]) {
+      document.getElementById('currencyText').textContent = currencies[c];
+      b.style.display = 'block';
+    } else {
+      b.style.display = 'none';
+    }
+  }
+
+  /* ─── REPORT ─── */
+  function generateReport() {
+    toast('Generating financial report… downloading shortly.');
+  }
+
+  /* ─── CHAT ─── */
+  const aiReplies = [
+    'I can help with that. Could you share more details about the bill in question?',
+    'Based on your payment history, all major bills are up to date except the Security Levy.',
+    'Your M-Pesa payments are typically confirmed within 30 seconds. Check your SMS for confirmation.',
+    'To dispute a bill, please use the Communication section to message management directly.',
+    'Your next rent due date is October 1, 2024. Would you like me to set a reminder?',
+    'Lipa Mdogo allows you to split large bills into weekly installments. Visit the Lipa Mdogo section to set it up.',
+    'Your total outstanding bills are KSh 14,800. Would you like to pay all at once via M-Pesa?',
+  ];
+
+  function sendChat() {
+    const input = document.getElementById('chatIn');
+    const msg = input.value.trim();
+    if (!msg) return;
+    appendMsg(msg, 'user');
+    input.value = '';
+    setTimeout(() => {
+      appendMsg(aiReplies[Math.floor(Math.random() * aiReplies.length)], 'bot');
+    }, 1200);
+  }
+
+  function sendChatAuto(msg) {
+    appendMsg(msg, 'user');
+    setTimeout(() => {
+      appendMsg(`Got it! I've recorded the bill and will notify all parties. Would you like me to schedule payment reminders?`, 'bot');
+    }, 1000);
+  }
+
+  function appendMsg(text, who) {
+    const feed = document.getElementById('chatMsgs');
+    const el = document.createElement('div');
+    el.className = `chat-msg ${who}`;
+    el.textContent = text;
+    feed.appendChild(el);
+    feed.scrollTop = feed.scrollHeight;
+  }
+
+  document.getElementById('chatIn').addEventListener('keypress', e => { if (e.key === 'Enter') sendChat(); });
+
+  /* ─── VOICE ─── */
+  function startVoice() {
+    const btn = document.getElementById('voiceBtn');
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      toast('Voice not supported in this browser.', true); return;
+    }
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const rec = new SR();
+    rec.lang = 'en-KE';
+    btn.classList.add('listening');
+    rec.start();
+    rec.onresult = e => {
+      document.getElementById('chatIn').value = e.results[0][0].transcript;
+      btn.classList.remove('listening');
+      sendChat();
+    };
+    rec.onerror = () => { btn.classList.remove('listening'); toast('Voice recognition error.', true); };
+    rec.onend = () => btn.classList.remove('listening');
+  }
+
+  /* ─── SIDEBAR ACTIVE ─── */
+  document.querySelectorAll('.s-link').forEach(l => {
+    l.addEventListener('click', function(e) {
+      if (this.getAttribute('href') === '#') e.preventDefault();
+      document.querySelectorAll('.s-link').forEach(x => x.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

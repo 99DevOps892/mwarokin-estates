@@ -1,0 +1,29 @@
+from openpyxl import Workbook
+from openpyxl.styles import Font
+
+wb=Workbook()
+wb.remove(wb.active)
+sheets={
+"Properties":["PropertyID","PropertyName","Owner","Estate","County","SubCounty","Ward","Address","TitleDeed","PlotNo","BuildingType","YearBuilt","Floors","Units","Latitude","Longitude","Boundary","Status","Manager","CreatedAt","UpdatedAt"],
+"BuildingsGPS":["PropertyID","Latitude","Longitude","Accuracy","Elevation","Compass","Timestamp"],
+"Units":["UnitID","PropertyID","UnitNo","Floor","BedroomType","SqFt","Rent","Deposit","Occupancy","MeterNo","Parking","QRCode"],
+"Amenities":["PropertyID","Amenity","Enabled"],
+"Tenants":["TenantID","UnitID","FullName","NationalID","Passport","KRAPIN","Phone","Email","Employer","EmergencyContact","Occupation","FamilyMembers","LeaseStart","LeaseEnd","Deposit","Photo","Signature"],
+"Leases":["LeaseID","TenantID","UnitID","Start","End","PDFPath","Status"],
+"Finance":["TxnID","PropertyID","Type","Category","Amount","Method","Reference","Date","Notes"],
+"Bills":["BillID","UnitID","Type","MeterReading","Amount","DueDate","Status"],
+"Payments":["PaymentID","TenantID","UnitID","InvoiceID","Amount","Method","Reference","PaidAt","Balance"],
+"LipaMdogo":["PlanID","TenantID","UnitID","MonthlyRent","DailyTarget","WeeklyTarget","Paid","Remaining","Progress","NextDue"],
+"Maintenance":["TicketID","PropertyID","UnitID","Issue","Priority","Assigned","Status","CreatedAt","ClosedAt"],
+"AuditLog":["EventID","Module","RecordID","Action","User","Timestamp"]
+}
+import pandas as pd, os
+out="/mnt/data"
+for name,cols in sheets.items():
+    ws=wb.create_sheet(name)
+    for c,col in enumerate(cols,1):
+        cell=ws.cell(row=1,column=c,value=col); cell.font=Font(bold=True)
+    pd.DataFrame(columns=cols).to_csv(os.path.join(out,f"{name}.csv"),index=False)
+xlsx=os.path.join(out,"Mwarokin_Estates_Data_Model.xlsx")
+wb.save(xlsx)
+print(xlsx)

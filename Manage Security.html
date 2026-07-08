@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Security Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            animation: slideDown 0.6s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #2c5364;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .alert-banner {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        .alert-banner.alert {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            animation: alert-pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        @keyframes alert-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        .alert-text {
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeIn 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(44, 83, 100, 0.4);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-alert {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-disarmed {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .camera-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .camera-view {
+            background: linear-gradient(135deg, #434343 0%, #000000 100%);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            color: white;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .camera-view:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(44, 83, 100, 0.5);
+        }
+
+        .camera-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .camera-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .camera-feed {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .camera-view:hover .camera-feed {
+            opacity: 1;
+        }
+
+        .camera-view.active .camera-feed {
+            opacity: 1;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .activity-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .activity-icon {
+            font-size: 2em;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #2c5364 0%, #203a43 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .activity-details h4 {
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .activity-details p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .activity-time {
+            margin-left: auto;
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        .visitor-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .visitor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .visitor-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .visitor-status {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+            background: #28a745;
+            color: white;
+        }
+
+        .visitor-status.pending {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .visitor-status.expired {
+            background: #6c757d;
+            color: white;
+        }
+
+        .visitor-info {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 130px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2c5364 0%, #203a43 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(44, 83, 100, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .large-card {
+            grid-column: 1 / -1;
+        }
+
+        .home-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .home-chip {
+            padding: 10px 20px;
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .home-chip:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(44, 83, 100, 0.4);
+        }
+
+        .home-chip.active {
+            background: linear-gradient(135deg, #2c5364 0%, #203a43 100%);
+            color: white;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #2c5364;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.5em;
+            color: #333;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #2c5364;
+            outline: none;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .camera-modal {
+            max-width: 900px;
+        }
+
+        .camera-modal-content {
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .camera-modal-header {
+            background: linear-gradient(135deg, #2c5364 0%, #203a43 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .camera-modal-title {
+            color: white;
+            font-size: 1.5em;
+        }
+
+        .camera-modal-body {
+            padding: 30px;
+        }
+
+        .camera-modal-feed {
+            width: 100%;
+            height: 400px;
+            background: #000;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .camera-modal-feed video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .camera-control-btn {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .camera-control-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .camera-control-btn.primary {
+            background: #2c5364;
+            color: white;
+        }
+
+        .camera-control-btn.primary:hover {
+            background: #203a43;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left: 5px solid #28a745;
+        }
+
+        .notification.error {
+            border-left: 5px solid #dc3545;
+        }
+
+        .notification.warning {
+            border-left: 5px solid #ffc107;
+        }
+
+        .notification-icon {
+            font-size: 1.5em;
+        }
+
+        .notification-content h4 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .notification-content p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .close-notification {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            color: #666;
+            margin-left: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Mwarokin Estates<span>🛡️</span> Security Management</h1>
+            <p class="subtitle">Monitor and control security across all properties</p>
+        </header>
+
+        <div class="alert-banner" id="alertBanner">
+            <div class="alert-text" id="alertText">✓ All Systems Operational - No Alerts</div>
+            <button class="btn btn-secondary" id="viewHistoryBtn">View History</button>
+        </div>
+
+        <div class="home-selector">
+            <div class="home-chip active" data-home="all">All Homes</div>
+            <div class="home-chip" data-home="villa-a">Villa A</div>
+            <div class="home-chip" data-home="villa-b">Villa B</div>
+            <div class="home-chip" data-home="apartment-1">Apartment 1</div>
+            <div class="home-chip" data-home="apartment-2">Apartment 2</div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Camera Feeds</h2>
+                    <span class="status-badge status-active" id="cameraStatus">4 Active</span>
+                </div>
+                <div class="camera-grid">
+                    <div class="camera-view" data-camera="front-gate">
+                        <img src="https://via.placeholder.com/300x200/333333/FFFFFF?text=Front+Gate" class="camera-feed" alt="Front Gate Camera">
+                        <div class="camera-icon">📹</div>
+                        <div class="camera-label">Front Gate</div>
+                    </div>
+                    <div class="camera-view" data-camera="back-yard">
+                        <img src="https://via.placeholder.com/300x200/333333/FFFFFF?text=Back+Yard" class="camera-feed" alt="Back Yard Camera">
+                        <div class="camera-icon">📹</div>
+                        <div class="camera-label">Back Yard</div>
+                    </div>
+                    <div class="camera-view" data-camera="parking">
+                        <img src="https://via.placeholder.com/300x200/333333/FFFFFF?text=Parking" class="camera-feed" alt="Parking Camera">
+                        <div class="camera-icon">📹</div>
+                        <div class="camera-label">Parking</div>
+                    </div>
+                    <div class="camera-view" data-camera="main-door">
+                        <img src="https://via.placeholder.com/300x200/333333/FFFFFF?text=Main+Door" class="camera-feed" alt="Main Door Camera">
+                        <div class="camera-icon">📹</div>
+                        <div class="camera-label">Main Door</div>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="viewAllFeedsBtn">View All Feeds</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Recent Activity</h2>
+                    <span class="status-badge status-active">Live</span>
+                </div>
+                <div id="activityList">
+                    <div class="activity-item">
+                        <div class="activity-icon">🚪</div>
+                        <div class="activity-details">
+                            <h4>Front Gate Opened</h4>
+                            <p>Resident access granted</p>
+                        </div>
+                        <div class="activity-time">2 min ago</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">🚗</div>
+                        <div class="activity-details">
+                            <h4>Vehicle Detected</h4>
+                            <p>Parking area - Car #234</p>
+                        </div>
+                        <div class="activity-time">15 min ago</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">👤</div>
+                        <div class="activity-details">
+                            <h4>Motion Detected</h4>
+                            <p>Back yard camera</p>
+                        </div>
+                        <div class="activity-time">1 hour ago</div>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" id="fullLogBtn">Full Log</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Current Visitors</h2>
+                    <span class="status-badge status-active" id="visitorCount">3 Active</span>
+                </div>
+                <div id="visitorList">
+                    <div class="visitor-card">
+                        <div class="visitor-header">
+                            <span class="visitor-name">John Delivery</span>
+                            <span class="visitor-status">Approved</span>
+                        </div>
+                        <p class="visitor-info">Purpose: Package Delivery • Arrived: 2:30 PM</p>
+                    </div>
+                    <div class="visitor-card">
+                        <div class="visitor-header">
+                            <span class="visitor-name">Sarah Maintenance</span>
+                            <span class="visitor-status">Approved</span>
+                        </div>
+                        <p class="visitor-info">Purpose: Plumbing Work • Arrived: 1:15 PM</p>
+                    </div>
+                    <div class="visitor-card">
+                        <div class="visitor-header">
+                            <span class="visitor-name">Mike Guest</span>
+                            <span class="visitor-status">Approved</span>
+                        </div>
+                        <p class="visitor-info">Purpose: Personal Visit • Arrived: 12:00 PM</p>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="addVisitorBtn">Add Visitor</button>
+                    <button class="btn btn-secondary" id="visitorHistoryBtn">View History</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Security Status</h2>
+                    <span class="status-badge status-active" id="securityStatus">Armed</span>
+                </div>
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <div class="stat-number" id="cameraCount">4</div>
+                        <div class="stat-label">Cameras</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="sensorCount">8</div>
+                        <div class="stat-label">Sensors</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="guardCount">3</div>
+                        <div class="stat-label">Guards</div>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-danger" id="disarmBtn">Disarm System</button>
+                    <button class="btn btn-secondary" id="securitySettingsBtn">Settings</button>
+                </div>
+            </div>
+
+            <div class="card large-card">
+                <div class="card-header">
+                    <h2 class="card-title">Quick Actions</h2>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="emergencyAlertBtn">Emergency Alert</button>
+                    <button class="btn btn-primary" id="callSecurityBtn">Call Security</button>
+                    <button class="btn btn-secondary" id="lockAllDoorsBtn">Lock All Doors</button>
+                    <button class="btn btn-secondary" id="viewRecordingsBtn">View Recordings</button>
+                    <button class="btn btn-secondary" id="generateReportBtn">Generate Report</button>
+                    <button class="btn btn-secondary" id="schedulePatrolBtn">Schedule Patrol</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Visitor Modal -->
+    <div class="modal" id="addVisitorModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Visitor</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="visitorName">Visitor Name</label>
+                    <input type="text" id="visitorName" class="form-control" placeholder="Enter visitor name">
+                </div>
+                <div class="form-group">
+                    <label for="visitorPurpose">Purpose of Visit</label>
+                    <select id="visitorPurpose" class="form-control">
+                        <option value="">Select purpose</option>
+                        <option value="Delivery">Delivery</option>
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="Personal Visit">Personal Visit</option>
+                        <option value="Business Meeting">Business Meeting</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="visitorDuration">Duration (hours)</label>
+                    <input type="number" id="visitorDuration" class="form-control" min="1" max="24" value="2">
+                </div>
+                <div class="form-group">
+                    <label for="visitorNotes">Additional Notes</label>
+                    <textarea id="visitorNotes" class="form-control" rows="3" placeholder="Any additional information..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelVisitorBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveVisitorBtn">Add Visitor</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Camera Modal -->
+    <div class="modal" id="cameraModal">
+        <div class="modal-content camera-modal-content">
+            <div class="camera-modal-header">
+                <h3 class="camera-modal-title" id="cameraModalTitle">Front Gate Camera</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="camera-modal-body">
+                <div class="camera-modal-feed">
+                    <video id="cameraLiveFeed" autoplay muted>
+                        <source src="" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div class="camera-controls">
+                    <button class="camera-control-btn" id="recordBtn">Record</button>
+                    <button class="camera-control-btn" id="snapshotBtn">Take Snapshot</button>
+                    <button class="camera-control-btn primary" id="fullscreenBtn">Fullscreen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div class="notification-icon" id="notificationIcon">✓</div>
+        <div class="notification-content">
+            <h4 id="notificationTitle">Success</h4>
+            <p id="notificationMessage">Operation completed successfully.</p>
+        </div>
+        <button class="close-notification">&times;</button>
+    </div>
+
+    <script>
+        // State management
+        const state = {
+            securityArmed: true,
+            currentHome: 'all',
+            visitors: [
+                { id: 1, name: 'John Delivery', purpose: 'Package Delivery', status: 'approved', arrived: '2:30 PM' },
+                { id: 2, name: 'Sarah Maintenance', purpose: 'Plumbing Work', status: 'approved', arrived: '1:15 PM' },
+                { id: 3, name: 'Mike Guest', purpose: 'Personal Visit', status: 'approved', arrived: '12:00 PM' }
+            ],
+            activities: [
+                { id: 1, type: 'door', icon: '🚪', title: 'Front Gate Opened', description: 'Resident access granted', time: '2 min ago' },
+                { id: 2, type: 'vehicle', icon: '🚗', title: 'Vehicle Detected', description: 'Parking area - Car #234', time: '15 min ago' },
+                { id: 3, type: 'motion', icon: '👤', title: 'Motion Detected', description: 'Back yard camera', time: '1 hour ago' }
+            ],
+            cameras: [
+                { id: 'front-gate', name: 'Front Gate', active: true },
+                { id: 'back-yard', name: 'Back Yard', active: true },
+                { id: 'parking', name: 'Parking', active: true },
+                { id: 'main-door', name: 'Main Door', active: true }
+            ]
+        };
+
+        // DOM Elements
+        const homeChips = document.querySelectorAll('.home-chip');
+        const alertBanner = document.getElementById('alertBanner');
+        const alertText = document.getElementById('alertText');
+        const securityStatus = document.getElementById('securityStatus');
+        const disarmBtn = document.getElementById('disarmBtn');
+        const addVisitorBtn = document.getElementById('addVisitorBtn');
+        const addVisitorModal = document.getElementById('addVisitorModal');
+        const cancelVisitorBtn = document.getElementById('cancelVisitorBtn');
+        const saveVisitorBtn = document.getElementById('saveVisitorBtn');
+        const visitorList = document.getElementById('visitorList');
+        const visitorCount = document.getElementById('visitorCount');
+        const activityList = document.getElementById('activityList');
+        const cameraViews = document.querySelectorAll('.camera-view');
+        const cameraModal = document.getElementById('cameraModal');
+        const cameraModalTitle = document.getElementById('cameraModalTitle');
+        const cameraLiveFeed = document.getElementById('cameraLiveFeed');
+        const notification = document.getElementById('notification');
+        const notificationTitle = document.getElementById('notificationTitle');
+        const notificationMessage = document.getElementById('notificationMessage');
+        const notificationIcon = document.getElementById('notificationIcon');
+        const closeNotification = document.querySelector('.close-notification');
+        const emergencyAlertBtn = document.getElementById('emergencyAlertBtn');
+        const callSecurityBtn = document.getElementById('callSecurityBtn');
+        const lockAllDoorsBtn = document.getElementById('lockAllDoorsBtn');
+
+        // Initialize the application
+        function init() {
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Start simulated real-time updates
+            startRealTimeUpdates();
+            
+            // Update UI with initial state
+            updateVisitorList();
+            updateActivityList();
+        }
+
+        // Set up all event listeners
+        function setupEventListeners() {
+            // Home selection
+            homeChips.forEach(chip => {
+                chip.addEventListener('click', function() {
+                    homeChips.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    state.currentHome = this.dataset.home;
+                    filterByHome(state.currentHome);
+                });
+            });
+
+            // Security system controls
+            disarmBtn.addEventListener('click', toggleSecuritySystem);
+            
+            // Visitor management
+            addVisitorBtn.addEventListener('click', () => openModal(addVisitorModal));
+            cancelVisitorBtn.addEventListener('click', () => closeModal(addVisitorModal));
+            saveVisitorBtn.addEventListener('click', addNewVisitor);
+            
+            // Camera feeds
+            cameraViews.forEach(cam => {
+                cam.addEventListener('click', function() {
+                    const cameraId = this.dataset.camera;
+                    openCameraModal(cameraId);
+                });
+            });
+            
+            // Modal close buttons
+            document.querySelectorAll('.close-modal').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const modal = this.closest('.modal');
+                    closeModal(modal);
+                });
+            });
+            
+            // Click outside modal to close
+            window.addEventListener('click', function(event) {
+                if (event.target.classList.contains('modal')) {
+                    closeModal(event.target);
+                }
+            });
+            
+            // Notification close
+            closeNotification.addEventListener('click', () => {
+                notification.classList.remove('show');
+            });
+            
+            // Quick actions
+            emergencyAlertBtn.addEventListener('click', triggerEmergencyAlert);
+            callSecurityBtn.addEventListener('click', callSecurity);
+            lockAllDoorsBtn.addEventListener('click', lockAllDoors);
+            
+            // Button animations
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+        }
+
+        // Filter content by selected home
+        function filterByHome(home) {
+            // In a real application, this would filter data from the server
+            // For demo purposes, we'll just update the UI to reflect the selection
+            document.querySelectorAll('.card-title').forEach(title => {
+                if (home === 'all') {
+                    title.textContent = title.textContent.replace(/ - .*$/, '');
+                } else {
+                    if (!title.textContent.includes(' - ')) {
+                        title.textContent += ` - ${home.charAt(0).toUpperCase() + home.slice(1)}`;
+                    }
+                }
+            });
+            
+            showNotification(`Viewing data for ${home === 'all' ? 'all homes' : home}`, 'info');
+        }
+
+        // Toggle security system armed/disarmed
+        function toggleSecuritySystem() {
+            state.securityArmed = !state.securityArmed;
+            
+            if (state.securityArmed) {
+                securityStatus.textContent = 'Armed';
+                securityStatus.className = 'status-badge status-active';
+                disarmBtn.textContent = 'Disarm System';
+                disarmBtn.className = 'btn btn-danger';
+                showNotification('Security system armed', 'success');
+            } else {
+                securityStatus.textContent = 'Disarmed';
+                securityStatus.className = 'status-badge status-disarmed';
+                disarmBtn.textContent = 'Arm System';
+                disarmBtn.className = 'btn btn-success';
+                showNotification('Security system disarmed', 'warning');
+            }
+        }
+
+        // Open modal
+        function openModal(modal) {
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.style.opacity = '1';
+            }, 10);
+        }
+
+        // Close modal
+        function closeModal(modal) {
+            modal.style.opacity = '0';
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+
+        // Add new visitor
+        function addNewVisitor() {
+            const name = document.getElementById('visitorName').value;
+            const purpose = document.getElementById('visitorPurpose').value;
+            const duration = document.getElementById('visitorDuration').value;
+            const notes = document.getElementById('visitorNotes').value;
+            
+            if (!name || !purpose) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            const newVisitor = {
+                id: state.visitors.length + 1,
+                name,
+                purpose,
+                status: 'approved',
+                arrived: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                duration,
+                notes
+            };
+            
+            state.visitors.unshift(newVisitor);
+            updateVisitorList();
+            closeModal(addVisitorModal);
+            
+            // Reset form
+            document.getElementById('visitorName').value = '';
+            document.getElementById('visitorPurpose').value = '';
+            document.getElementById('visitorDuration').value = '2';
+            document.getElementById('visitorNotes').value = '';
+            
+            showNotification(`Visitor ${name} added successfully`, 'success');
+        }
+
+        // Update visitor list in UI
+        function updateVisitorList() {
+            visitorList.innerHTML = '';
+            state.visitors.forEach(visitor => {
+                const visitorCard = document.createElement('div');
+                visitorCard.className = 'visitor-card';
+                visitorCard.innerHTML = `
+                    <div class="visitor-header">
+                        <span class="visitor-name">${visitor.name}</span>
+                        <span class="visitor-status ${visitor.status}">${visitor.status.charAt(0).toUpperCase() + visitor.status.slice(1)}</span>
+                    </div>
+                    <p class="visitor-info">Purpose: ${visitor.purpose} • Arrived: ${visitor.arrived}</p>
+                `;
+                visitorList.appendChild(visitorCard);
+            });
+            
+            visitorCount.textContent = `${state.visitors.length} Active`;
+        }
+
+        // Update activity list in UI
+        function updateActivityList() {
+            activityList.innerHTML = '';
+            state.activities.forEach(activity => {
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item';
+                activityItem.innerHTML = `
+                    <div class="activity-icon">${activity.icon}</div>
+                    <div class="activity-details">
+                        <h4>${activity.title}</h4>
+                        <p>${activity.description}</p>
+                    </div>
+                    <div class="activity-time">${activity.time}</div>
+                `;
+                activityList.appendChild(activityItem);
+            });
+        }
+
+        // Open camera modal
+        function openCameraModal(cameraId) {
+            const camera = state.cameras.find(cam => cam.id === cameraId);
+            if (!camera) return;
+            
+            cameraModalTitle.textContent = `${camera.name} Camera`;
+            
+            // In a real application, this would connect to a live feed
+            // For demo, we'll use a placeholder
+            cameraLiveFeed.innerHTML = `
+                <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            `;
+            cameraLiveFeed.load();
+            
+            openModal(cameraModal);
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            notification.className = 'notification';
+            
+            switch (type) {
+                case 'success':
+                    notification.classList.add('success');
+                    notificationTitle.textContent = 'Success';
+                    notificationIcon.textContent = '✓';
+                    break;
+                case 'error':
+                    notification.classList.add('error');
+                    notificationTitle.textContent = 'Error';
+                    notificationIcon.textContent = '✕';
+                    break;
+                case 'warning':
+                    notification.classList.add('warning');
+                    notificationTitle.textContent = 'Warning';
+                    notificationIcon.textContent = '⚠';
+                    break;
+                case 'info':
+                    notification.classList.add('info');
+                    notificationTitle.textContent = 'Info';
+                    notificationIcon.textContent = 'ℹ';
+                    break;
+            }
+            
+            notificationMessage.textContent = message;
+            notification.classList.add('show');
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+
+        // Quick action functions
+        function triggerEmergencyAlert() {
+            alertBanner.classList.add('alert');
+            alertText.textContent = '🚨 EMERGENCY ALERT TRIGGERED - SECURITY NOTIFIED';
+            showNotification('Emergency alert sent to security team', 'warning');
+            
+            // In a real application, this would send an alert to security personnel
+            setTimeout(() => {
+                alertBanner.classList.remove('alert');
+                alertText.textContent = '✓ All Systems Operational - No Alerts';
+            }, 10000);
+        }
+
+        function callSecurity() {
+            showNotification('Connecting to security team...', 'info');
+            // In a real application, this would initiate a call to security
+            setTimeout(() => {
+                showNotification('Connected to security team', 'success');
+            }, 2000);
+        }
+
+        function lockAllDoors() {
+            showNotification('Locking all doors...', 'info');
+            // In a real application, this would send a command to lock all doors
+            setTimeout(() => {
+                showNotification('All doors locked successfully', 'success');
+                
+                // Add activity for door locking
+                const newActivity = {
+                    id: state.activities.length + 1,
+                    type: 'door',
+                    icon: '🔒',
+                    title: 'All Doors Locked',
+                    description: 'Remote command executed',
+                    time: 'Just now'
+                };
+                
+                state.activities.unshift(newActivity);
+                updateActivityList();
+            }, 1500);
+        }
+
+        // Simulate real-time updates
+        function startRealTimeUpdates() {
+            // Simulate random activity updates
+            setInterval(() => {
+                if (Math.random() > 0.7) { // 30% chance of new activity
+                    const activities = [
+                        { type: 'motion', icon: '👤', title: 'Motion Detected', description: 'Front yard camera' },
+                        { type: 'vehicle', icon: '🚗', title: 'Vehicle Entered', description: 'Gate access - Resident' },
+                        { type: 'door', icon: '🚪', title: 'Back Door Opened', description: 'Resident access' },
+                        { type: 'system', icon: '🔧', title: 'System Check', description: 'Automatic system diagnostic completed' }
+                    ];
+                    
+                    const randomActivity = activities[Math.floor(Math.random() * activities.length)];
+                    const newActivity = {
+                        id: state.activities.length + 1,
+                        ...randomActivity,
+                        time: 'Just now'
+                    };
+                    
+                    state.activities.unshift(newActivity);
+                    
+                    // Keep only the last 10 activities
+                    if (state.activities.length > 10) {
+                        state.activities.pop();
+                    }
+                    
+                    updateActivityList();
+                }
+            }, 10000); // Check every 10 seconds
+        }
+
+        // Initialize the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
