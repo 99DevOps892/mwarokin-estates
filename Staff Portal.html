@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mwarokin Estates · Staff Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <!-- Chart.js for analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        /* ───────────── RESET & BASE ───────────── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --gold: #c9a03d;
+            --gold-dim: rgba(201, 160, 61, 0.15);
+            --gold-glow: rgba(201, 160, 61, 0.35);
+            --bg-dark: #080c16;
+            --bg-card: #0f1629;
+            --bg-sidebar: #0b111f;
+            --text-primary: #f0f3fa;
+            --text-secondary: #9aa4bf;
+            --text-muted: #6a7a94;
+            --border-subtle: rgba(201, 160, 61, 0.15);
+            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.45);
+            --radius: 1.25rem;
+            --radius-sm: 0.75rem;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        button {
+            cursor: pointer;
+            font-family: inherit;
+            border: none;
+            background: none;
+            color: inherit;
+        }
+        input,
+        select,
+        textarea {
+            font-family: inherit;
+            outline: none;
+            border: none;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-primary);
+            border-radius: var(--radius-sm);
+            padding: 0.75rem 1rem;
+            width: 100%;
+            border: 1px solid var(--border-subtle);
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px var(--gold-dim);
+            background: rgba(255, 255, 255, 0.06);
+        }
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239aa4bf' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 8px;
+        }
+
+        /* ───────────── APP LAYOUT ───────────── */
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ─── SIDEBAR ─── */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-subtle);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            margin-bottom: 1.5rem;
+        }
+        .sidebar-brand .icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #c9a03d, #8b6c2c);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .sidebar-brand .icon i {
+            font-size: 1.3rem;
+            color: #0a0c10;
+        }
+        .sidebar-brand h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #fef5e7;
+        }
+        .sidebar-brand h1 span {
+            color: var(--gold);
+        }
+        .sidebar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .sidebar-nav .nav-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--text-muted);
+            padding: 0.75rem 0.75rem 0.4rem;
+            font-weight: 600;
+        }
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.7rem 0.85rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: var(--transition);
+            position: relative;
+        }
+        .sidebar-nav a:hover {
+            background: rgba(201, 160, 61, 0.08);
+            color: var(--text-primary);
+        }
+        .sidebar-nav a.active {
+            background: var(--gold-dim);
+            color: var(--gold);
+        }
+        .sidebar-nav a i {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+        }
+        .sidebar-nav a .badge {
+            margin-left: auto;
+            background: var(--gold);
+            color: #0a0c10;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+        .sidebar-footer {
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .sidebar-footer .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a0c10;
+            font-size: 0.9rem;
+        }
+        .sidebar-footer .info .name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .sidebar-footer .info .role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .sidebar-footer .dots {
+            margin-left: auto;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+        .sidebar-footer .dots:hover {
+            color: var(--text-primary);
+        }
+
+        /* ─── MAIN CONTENT ─── */
+        .main {
+            flex: 1;
+            padding: 1.5rem 2rem 2rem;
+            overflow-y: auto;
+            min-width: 0;
+        }
+
+        /* Top Bar */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.75rem;
+        }
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .topbar-left .menu-toggle {
+            display: none;
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+        .topbar-left .menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+        .topbar-left h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        .topbar-left h2 span {
+            color: var(--gold);
+        }
+        .topbar-left p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .search-wrap {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            border-radius: 40px;
+            padding: 0.4rem 1rem;
+            gap: 8px;
+            min-width: 200px;
+            transition: var(--transition);
+        }
+        .search-wrap:focus-within {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px var(--gold-dim);
+        }
+        .search-wrap i {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .search-wrap input {
+            background: none;
+            border: none;
+            padding: 0.4rem 0;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            width: 100%;
+        }
+        .search-wrap input::placeholder {
+            color: var(--text-muted);
+        }
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .topbar-actions button {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: var(--transition);
+            position: relative;
+        }
+        .topbar-actions button:hover {
+            background: var(--gold-dim);
+            border-color: var(--gold);
+            color: var(--text-primary);
+        }
+        .topbar-actions .dot {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #e74c3c;
+            border: 2px solid var(--bg-dark);
+        }
+        .topbar-actions .avatar-sm {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: #0a0c10;
+            border: 2px solid var(--gold);
+        }
+
+        /* ─── STATS ─── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            padding: 1.2rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+        .stat-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-card);
+        }
+        .stat-card .left h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .stat-card .left p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+        .stat-card .icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        .stat-card .icon.gold {
+            background: var(--gold-dim);
+            color: var(--gold);
+        }
+        .stat-card .icon.blue {
+            background: rgba(52, 152, 219, 0.15);
+            color: #5dade2;
+        }
+        .stat-card .icon.purple {
+            background: rgba(155, 89, 182, 0.15);
+            color: #af7ac5;
+        }
+        .stat-card .icon.green {
+            background: rgba(46, 204, 113, 0.15);
+            color: #58d68d;
+        }
+        .stat-card .icon.red {
+            background: rgba(231, 76, 60, 0.15);
+            color: #e74c3c;
+        }
+
+        /* ─── SECTION HEADER ─── */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+            margin-top: 1.5rem;
+        }
+        .section-header h2,
+        .section-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-header h2 span,
+        .section-header h3 span {
+            color: var(--gold);
+        }
+        .btn-gold {
+            padding: 0.6rem 1.8rem;
+            background: linear-gradient(105deg, #c9a03d, #a47c2c);
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #0a0c10;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 6px 20px rgba(201, 160, 61, 0.25);
+        }
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(201, 160, 61, 0.35);
+            background: linear-gradient(105deg, #ddb24b, #c9a03d);
+        }
+        .btn-outline-gold {
+            background: transparent;
+            border: 1px solid rgba(201, 160, 61, 0.4);
+            border-radius: 40px;
+            padding: 0.5rem 1.4rem;
+            font-weight: 500;
+            color: var(--gold);
+            transition: var(--transition);
+        }
+        .btn-outline-gold:hover {
+            background: var(--gold-dim);
+            border-color: var(--gold);
+        }
+
+        /* ─── MAINTENANCE REQUESTS ─── */
+        .request-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .request-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 1rem 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+        .request-item:hover {
+            border-color: var(--gold);
+        }
+        .request-item .info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .request-item .info .title {
+            font-weight: 600;
+        }
+        .request-item .info .meta {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .request-item .info .meta i {
+            color: var(--gold);
+            margin-right: 4px;
+        }
+        .request-item .status {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: 4px 14px;
+            border-radius: 30px;
+            letter-spacing: 0.5px;
+        }
+        .status.open {
+            background: rgba(231, 76, 60, 0.15);
+            color: #e74c3c;
+        }
+        .status.in-progress {
+            background: rgba(241, 196, 15, 0.15);
+            color: #f1c40f;
+        }
+        .status.resolved {
+            background: rgba(46, 204, 113, 0.15);
+            color: #2ecc71;
+        }
+        .request-item .actions {
+            display: flex;
+            gap: 6px;
+        }
+        .request-item .actions button {
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+        .request-item .actions button:hover {
+            background: var(--gold-dim);
+            border-color: var(--gold);
+            color: var(--text-primary);
+        }
+        .request-item .actions button.primary {
+            background: var(--gold);
+            color: #0a0c10;
+            border-color: var(--gold);
+        }
+        .request-item .actions button.primary:hover {
+            background: #ddb24b;
+        }
+
+        /* ─── RENT COLLECTION ─── */
+        .rent-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+        @media (max-width: 768px) {
+            .rent-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .rent-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            padding: 1.2rem;
+        }
+        .rent-card h4 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        .rent-card h4 i {
+            color: var(--gold);
+        }
+        .payment-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 0.85rem;
+        }
+        .payment-item:last-child {
+            border-bottom: none;
+        }
+        .payment-item .tenant {
+            font-weight: 500;
+        }
+        .payment-item .amount {
+            color: var(--gold);
+            font-weight: 600;
+        }
+        .payment-item .date {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+        .payment-item .status-badge {
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+        .status-badge.paid {
+            background: rgba(46, 204, 113, 0.15);
+            color: #2ecc71;
+        }
+        .status-badge.pending {
+            background: rgba(241, 196, 15, 0.15);
+            color: #f1c40f;
+        }
+        .status-badge.overdue {
+            background: rgba(231, 76, 60, 0.15);
+            color: #e74c3c;
+        }
+
+        /* ─── LEASES ─── */
+        .lease-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        .lease-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 1rem 1.2rem;
+            transition: var(--transition);
+        }
+        .lease-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-card);
+        }
+        .lease-card .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .lease-card .top .property {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .lease-card .top .tenant {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        .lease-card .details {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .lease-card .details i {
+            color: var(--gold);
+            width: 20px;
+        }
+        .lease-card .expiry {
+            margin-top: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .lease-card .expiry .date {
+            font-size: 0.8rem;
+        }
+        .lease-card .expiry .tag {
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 2px 12px;
+            border-radius: 20px;
+            background: var(--gold-dim);
+            color: var(--gold);
+        }
+        .lease-card .expiry .tag.warning {
+            background: rgba(241, 196, 15, 0.15);
+            color: #f1c40f;
+        }
+        .lease-card .expiry .tag.danger {
+            background: rgba(231, 76, 60, 0.15);
+            color: #e74c3c;
+        }
+
+        /* ─── CHARTS ─── */
+        .chart-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+        .chart-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.25rem;
+        }
+        @media (max-width: 768px) {
+            .chart-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        .chart-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            padding: 1.2rem;
+        }
+        .chart-box h4 {
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        .chart-box canvas {
+            width: 100% !important;
+            height: auto !important;
+            max-height: 200px;
+        }
+
+        /* ─── OVERLAY (mobile) ─── */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+            display: none;
+            backdrop-filter: blur(4px);
+        }
+        .overlay.show {
+            display: block;
+        }
+
+        /* ─── TAB CONTENT ─── */
+        .tab-content {
+            display: none;
+            animation: fadeSlide 0.3s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeSlide {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ─── TOAST ─── */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--gold);
+            border-radius: var(--radius-sm);
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 300;
+            transform: translateY(120px);
+            opacity: 0;
+            transition: transform 0.4s ease, opacity 0.4s ease;
+            max-width: 400px;
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .toast i {
+            color: var(--gold);
+            font-size: 1.3rem;
+        }
+        .toast .msg {
+            font-size: 0.9rem;
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 992px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                transform: translateX(-100%);
+                width: 280px;
+                z-index: 200;
+                border-right: 1px solid var(--border-subtle);
+                box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .topbar-left .menu-toggle {
+                display: block;
+            }
+            .main {
+                padding: 1rem 1.2rem 1.5rem;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .rent-grid {
+                grid-template-columns: 1fr;
+            }
+            .chart-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 600px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .request-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .request-item .actions {
+                justify-content: flex-end;
+            }
+            .lease-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 420px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ─── MISC ─── */
+        .text-gold {
+            color: var(--gold);
+        }
+        .mt-1 {
+            margin-top: 0.5rem;
+        }
+        .mb-1 {
+            margin-bottom: 0.5rem;
+        }
+        .flex {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .gap-2 {
+            gap: 0.5rem;
+        }
+        .w-full {
+            width: 100%;
+        }
+        .footer {
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .footer span {
+            color: var(--gold);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ───────────── TOAST ───────────── -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span class="msg" id="toastMsg">Action completed</span>
+    </div>
+
+    <!-- ───────────── OVERLAY (mobile) ───────────── -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- ───────────── APP ───────────── -->
+    <div class="app">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="icon"><i class="fas fa-crown"></i></div>
+                <h1>Mwarokin<span>Estates</span></h1>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-label">Advanced</div>
+                <a href="#" class="active" data-tab="overview"><i class="fas fa-chart-pie"></i> Overview</a>
+                <a href="#" data-tab="maintenance"><i class="fas fa-tools"></i> Maintenance <span class="badge">5</span></a>
+                <a href="#" data-tab="rentals"><i class="fas fa-hand-holding-usd"></i> Rentals</a>
+                <a href="#" data-tab="leases"><i class="fas fa-file-signature"></i> Leases <span class="badge">8</span></a>
+                <a href="#" data-tab="analytics"><i class="fas fa-chart-line"></i> Analytics</a>
+
+                <div class="nav-label" style="margin-top:20px;">Settings</div>
+                <a href="#" data-tab="preferences"><i class="fas fa-sliders-h"></i> Preferences</a>
+                <a href="Staff-ID.html" id="backToMain"><i class="fas fa-arrow-left"></i> Back to Staff Portal</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="avatar">JD</div>
+                <div class="info">
+                    <div class="name">James Duncan</div>
+                    <div class="role">Property Manager</div>
+                </div>
+                <div class="dots"><i class="fas fa-ellipsis-v"></i></div>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="main">
+
+            <!-- Top Bar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                    <div>
+                        <h2>Advanced <span>Portal</span></h2>
+                        <p><i class="fas fa-map-pin"></i> Mwarokin Estates · Premium Tools</p>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <div class="search-wrap">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search maintenance, tenants..." id="globalSearch" />
+                    </div>
+                    <div class="topbar-actions">
+                        <button aria-label="Notifications"><i class="fas fa-bell"></i><span class="dot"></span></button>
+                        <button aria-label="Messages"><i class="fas fa-envelope"></i></button>
+                        <div class="avatar-sm">JD</div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- ─── OVERVIEW TAB ─── -->
+            <div id="tab-overview" class="tab-content active">
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="left"><h3>24</h3><p>Open Maintenance</p></div><div class="icon red"><i class="fas fa-tools"></i></div></div>
+                    <div class="stat-card"><div class="left"><h3>$48.2K</h3><p>Monthly Rent Collected</p></div><div class="icon green"><i class="fas fa-hand-holding-usd"></i></div></div>
+                    <div class="stat-card"><div class="left"><h3>8</h3><p>Active Leases</p></div><div class="icon blue"><i class="fas fa-file-signature"></i></div></div>
+                    <div class="stat-card"><div class="left"><h3>92%</h3><p>Occupancy Rate</p></div><div class="icon gold"><i class="fas fa-building"></i></div></div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:1.5rem;">
+                    <button class="btn-gold" id="quickMaintenance"><i class="fas fa-plus"></i> New Maintenance Request</button>
+                    <button class="btn-outline-gold" id="quickRent"><i class="fas fa-file-invoice"></i> Record Payment</button>
+                    <button class="btn-outline-gold" id="quickLease"><i class="fas fa-file-contract"></i> New Lease</button>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="section-header">
+                    <h3><i class="fas fa-clock" style="color:var(--gold);"></i> Recent <span>Activity</span></h3>
+                </div>
+                <div style="background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius);padding:0.5rem 1.2rem;">
+                    <div style="display:flex;align-items:center;gap:12px;padding:0.6rem 0;border-bottom:1px solid var(--border-subtle);">
+                        <div style="width:36px;height:36px;border-radius:50%;background:rgba(231,76,60,0.15);display:flex;align-items:center;justify-content:center;color:#e74c3c;"><i class="fas fa-tools"></i></div>
+                        <div style="flex:1;"><strong>Maintenance request #102</strong><div style="font-size:0.8rem;color:var(--text-secondary);">Leaking faucet in Unit 90 – assigned to John Kamau</div></div>
+                        <span style="font-size:0.7rem;color:var(--text-muted);">2h ago</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:0.6rem 0;border-bottom:1px solid var(--border-subtle);">
+                        <div style="width:36px;height:36px;border-radius:50%;background:rgba(46,204,113,0.15);display:flex;align-items:center;justify-content:center;color:#2ecc71;"><i class="fas fa-hand-holding-usd"></i></div>
+                        <div style="flex:1;"><strong>Rent payment received</strong><div style="font-size:0.8rem;color:var(--text-secondary);">$2,500 from Michael Brown for 159 Oak Lane</div></div>
+                        <span style="font-size:0.7rem;color:var(--text-muted);">5h ago</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:0.6rem 0;">
+                        <div style="width:36px;height:36px;border-radius:50%;background:rgba(52,152,219,0.15);display:flex;align-items:center;justify-content:center;color:#5dade2;"><i class="fas fa-file-signature"></i></div>
+                        <div style="flex:1;"><strong>Lease renewal</strong><div style="font-size:0.8rem;color:var(--text-secondary);">Sarah Kimani renewed lease for Unit 102 for 12 months</div></div>
+                        <span style="font-size:0.7rem;color:var(--text-muted);">Yesterday</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── MAINTENANCE TAB ─── -->
+            <div id="tab-maintenance" class="tab-content">
+                <div class="section-header">
+                    <h3><i class="fas fa-tools" style="color:var(--gold);"></i> Maintenance <span>Requests</span></h3>
+                    <button class="btn-gold" id="addMaintenanceBtn"><i class="fas fa-plus"></i> New Request</button>
+                </div>
+                <div class="request-list" id="maintenanceList">
+                    <!-- populated by JS -->
+                </div>
+            </div>
+
+            <!-- ─── RENTALS TAB ─── -->
+            <div id="tab-rentals" class="tab-content">
+                <div class="section-header">
+                    <h3><i class="fas fa-hand-holding-usd" style="color:var(--gold);"></i> Rent <span>Collection</span></h3>
+                    <button class="btn-gold" id="recordPaymentBtn"><i class="fas fa-plus"></i> Record Payment</button>
+                </div>
+                <div class="rent-grid">
+                    <div class="rent-card">
+                        <h4><i class="fas fa-check-circle"></i> Recent Payments</h4>
+                        <div id="recentPayments">
+                            <!-- populated by JS -->
+                        </div>
+                    </div>
+                    <div class="rent-card">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Overdue / Pending</h4>
+                        <div id="overduePayments">
+                            <!-- populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── LEASES TAB ─── -->
+            <div id="tab-leases" class="tab-content">
+                <div class="section-header">
+                    <h3><i class="fas fa-file-signature" style="color:var(--gold);"></i> Lease <span>Management</span></h3>
+                    <button class="btn-gold" id="addLeaseBtn"><i class="fas fa-plus"></i> New Lease</button>
+                </div>
+                <div class="lease-grid" id="leaseGrid">
+                    <!-- populated by JS -->
+                </div>
+            </div>
+
+            <!-- ─── ANALYTICS TAB ─── -->
+            <div id="tab-analytics" class="tab-content">
+                <div class="section-header">
+                    <h3><i class="fas fa-chart-line" style="color:var(--gold);"></i> Financial <span>Analytics</span></h3>
+                </div>
+                <div class="chart-row">
+                    <div class="chart-box">
+                        <h4>Monthly Rent Revenue</h4>
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                    <div class="chart-box">
+                        <h4>Maintenance Costs</h4>
+                        <canvas id="costChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container" style="margin-top:1.25rem;">
+                    <h4 style="margin-bottom:0.5rem;">Occupancy & Vacancy Trends</h4>
+                    <canvas id="occupancyChart" style="max-height:150px;"></canvas>
+                </div>
+            </div>
+
+            <!-- ─── PREFERENCES TAB ─── -->
+            <div id="tab-preferences" class="tab-content">
+                <div class="section-header">
+                    <h3><i class="fas fa-sliders-h" style="color:var(--gold);"></i> Preferences</h3>
+                </div>
+                <div style="background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius);padding:1.5rem;max-width:480px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid var(--border-subtle);">
+                        <span>Dark Mode</span>
+                        <div style="width:40px;height:22px;border-radius:20px;background:rgba(255,255,255,0.08);border:1px solid var(--border-subtle);position:relative;cursor:pointer;" class="toggle-switch active" id="darkToggle">
+                            <div style="width:16px;height:16px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:0.2s;" class="toggle-knob"></div>
+                        </div>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid var(--border-subtle);">
+                        <span>Email Notifications</span>
+                        <div style="width:40px;height:22px;border-radius:20px;background:rgba(255,255,255,0.08);border:1px solid var(--border-subtle);position:relative;cursor:pointer;" class="toggle-switch active" id="emailToggle">
+                            <div style="width:16px;height:16px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:0.2s;" class="toggle-knob"></div>
+                        </div>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;">
+                        <span>Auto‑assign Maintenance</span>
+                        <div style="width:40px;height:22px;border-radius:20px;background:rgba(255,255,255,0.08);border:1px solid var(--border-subtle);position:relative;cursor:pointer;" class="toggle-switch" id="autoAssignToggle">
+                            <div style="width:16px;height:16px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:0.2s;" class="toggle-knob"></div>
+                        </div>
+                    </div>
+                    <button class="btn-gold" style="margin-top:1.2rem;width:auto;padding:0.6rem 2rem;">Save Preferences</button>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <span>Mwarokin Estates</span>
+                <p>&copy; 2026 · Advanced Portal. Powered by <span>Syllogism Technology Africa</span></p>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- ───────────── JAVASCRIPT ───────────── -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // ─── DATA ───
+            const maintenanceRequests = [
+                { id: 1, title: 'Leaking faucet in kitchen', unit: 'Unit 90', priority: 'High', status: 'open',
+                    assigned: 'John Kamau', date: '2026-07-05' },
+                { id: 2, title: 'HVAC not cooling', unit: 'Unit 102', priority: 'Medium', status: 'in-progress',
+                    assigned: 'David Mwangi', date: '2026-07-04' },
+                { id: 3, title: 'Broken window glass', unit: 'Unit 45', priority: 'Low', status: 'open',
+                    assigned: 'Peter Ochieng', date: '2026-07-03' },
+                { id: 4, title: 'Electrical outlet sparking', unit: 'Unit 12', priority: 'High', status: 'in-progress',
+                    assigned: 'Mary Wanjiru', date: '2026-07-02' },
+                { id: 5, title: 'Garden irrigation repair', unit: 'Common Area', priority: 'Medium', status: 'resolved',
+                    assigned: 'Grace Akinyi', date: '2026-06-30' },
+            ];
+
+            const payments = [
+                { tenant: 'Michael Brown', unit: '159 Oak Lane', amount: 2500, date: '2026-07-01', status: 'paid' },
+                { tenant: 'Robert Johnson', unit: '567 Elm St', amount: 1800, date: '2026-06-28', status: 'paid' },
+                { tenant: 'Sarah Kimani', unit: 'Unit 102', amount: 2100, date: '2026-06-25', status: 'pending' },
+                { tenant: 'Emily Wanjiru', unit: 'Unit 90', amount: 1200, date: '2026-06-20', status: 'overdue' },
+                { tenant: 'David Ochieng', unit: 'Unit 45', amount: 850, date: '2026-06-15', status: 'overdue' },
+            ];
+
+            const leases = [
+                { id: 1, property: 'Boston Ave', tenant: 'Michael Brown', start: '2026-01-01', end: '2026-12-31',
+                    rent: 2500, status: 'active' },
+                { id: 2, property: 'Boylston St · Unit 1', tenant: 'Robert Johnson', start: '2026-03-15',
+                    end: '2027-03-14', rent: 1800, status: 'active' },
+                { id: 3, property: 'Unit 102', tenant: 'Sarah Kimani', start: '2025-07-01', end: '2026-06-30',
+                    rent: 2100, status: 'expiring' },
+                { id: 4, property: 'Unit 90', tenant: 'Emily Wanjiru', start: '2025-08-01', end: '2026-07-31',
+                    rent: 1200, status: 'active' },
+                { id: 5, property: 'Skyline Penthouse', tenant: 'David Ochieng', start: '2026-02-01', end: '2027-01-31',
+                    rent: 4500, status: 'active' },
+                { id: 6, property: 'Garden Lane Home', tenant: 'Grace Akinyi', start: '2025-05-01', end: '2026-04-30',
+                    rent: 2100, status: 'expired' },
+            ];
+
+            // ─── DOM REFS ───
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const menuToggle = document.getElementById('menuToggle');
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const tabLinks = document.querySelectorAll('.sidebar-nav a[data-tab]');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            // ─── TOAST ───
+            function showToast(msg, icon = 'fa-check-circle') {
+                toastMsg.textContent = msg;
+                toast.querySelector('i').className = 'fas ' + icon;
+                toast.classList.add('show');
+                clearTimeout(toast._hide);
+                toast._hide = setTimeout(() => toast.classList.remove('show'), 3500);
+            }
+
+            // ─── SIDEBAR TOGGLE ───
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('show');
+            });
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('show');
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                }
+            });
+
+            // ─── TAB NAVIGATION ───
+            function switchTab(tabId) {
+                tabContents.forEach(el => el.classList.remove('active'));
+                const target = document.getElementById('tab-' + tabId);
+                if (target) target.classList.add('active');
+                tabLinks.forEach(el => el.classList.remove('active'));
+                const link = document.querySelector('.sidebar-nav a[data-tab="' + tabId + '"]');
+                if (link) link.classList.add('active');
+                // Update topbar title
+                const titles = {
+                    overview: 'Advanced Overview',
+                    maintenance: 'Maintenance Requests',
+                    rentals: 'Rent Collection',
+                    leases: 'Lease Management',
+                    analytics: 'Analytics',
+                    preferences: 'Preferences'
+                };
+                const h2 = document.querySelector('.topbar-left h2');
+                if (h2 && titles[tabId]) {
+                    const parts = titles[tabId].split(' ');
+                    h2.innerHTML = parts[0] + ' <span>' + parts.slice(1).join(' ') + '</span>';
+                }
+                if (window.innerWidth <= 992) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                }
+            }
+
+            tabLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const tab = link.dataset.tab;
+                    switchTab(tab);
+                });
+            });
+
+            // ─── BACK TO MAIN ───
+            document.getElementById('backToMain').addEventListener('click', (e) => {
+                e.preventDefault();
+                showToast('Returning to main portal...', 'fa-arrow-left');
+                setTimeout(() => {
+                    window.location.href = 'staff-portal.html'; // adjust as needed
+                }, 800);
+            });
+
+            // ─── RENDER FUNCTIONS ───
+
+            function renderMaintenance() {
+                const container = document.getElementById('maintenanceList');
+                container.innerHTML = maintenanceRequests.map(req => `
+                    <div class="request-item">
+                        <div class="info">
+                            <div class="title">${req.title} <span style="font-weight:400;color:var(--text-secondary);font-size:0.8rem;">#${req.id}</span></div>
+                            <div class="meta">
+                                <span><i class="fas fa-building"></i> ${req.unit}</span>
+                                <span><i class="fas fa-user"></i> ${req.assigned}</span>
+                                <span><i class="fas fa-calendar-alt"></i> ${req.date}</span>
+                                <span><i class="fas fa-flag"></i> ${req.priority}</span>
+                            </div>
+                        </div>
+                        <div class="status ${req.status}">${req.status.replace('-',' ')}</div>
+                        <div class="actions">
+                            <button class="primary"><i class="fas fa-edit"></i> Update</button>
+                            <button><i class="fas fa-comment"></i> Comment</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            function renderPayments() {
+                const recent = document.getElementById('recentPayments');
+                const overdue = document.getElementById('overduePayments');
+                const paid = payments.filter(p => p.status === 'paid');
+                const pending = payments.filter(p => p.status === 'pending' || p.status === 'overdue');
+                recent.innerHTML = paid.slice(0, 4).map(p => `
+                    <div class="payment-item">
+                        <div>
+                            <div class="tenant">${p.tenant}</div>
+                            <div class="date">${p.unit} · ${p.date}</div>
+                        </div>
+                        <div>
+                            <div class="amount">$${p.amount}</div>
+                            <span class="status-badge paid">Paid</span>
+                        </div>
+                    </div>
+                `).join('');
+                overdue.innerHTML = pending.map(p => `
+                    <div class="payment-item">
+                        <div>
+                            <div class="tenant">${p.tenant}</div>
+                            <div class="date">${p.unit} · ${p.date}</div>
+                        </div>
+                        <div>
+                            <div class="amount">$${p.amount}</div>
+                            <span class="status-badge ${p.status}">${p.status}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            function renderLeases() {
+                const grid = document.getElementById('leaseGrid');
+                grid.innerHTML = leases.map(l => {
+                    const now = new Date();
+                    const end = new Date(l.end);
+                    const daysLeft = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
+                    let tagClass = 'tag';
+                    let tagText = 'Active';
+                    if (daysLeft < 0) { tagClass += ' danger';
+                        tagText = 'Expired'; } else if (daysLeft < 30) { tagClass += ' warning';
+                        tagText = 'Expiring soon'; } else { tagText = 'Active'; }
+                    return `
+                        <div class="lease-card">
+                            <div class="top">
+                                <span class="property">${l.property}</span>
+                                <span class="tenant">${l.tenant}</span>
+                            </div>
+                            <div class="details">
+                                <div><i class="fas fa-dollar-sign"></i> $${l.rent} / mo</div>
+                                <div><i class="fas fa-calendar-alt"></i> ${l.start} – ${l.end}</div>
+                            </div>
+                            <div class="expiry">
+                                <span class="date">${daysLeft >= 0 ? daysLeft + ' days remaining' : 'Expired'}</span>
+                                <span class="${tagClass}">${tagText}</span>
+                            </div>
+                            <div style="margin-top:8px;display:flex;gap:6px;">
+                                <button class="btn-outline-gold" style="padding:0.2rem 1rem;font-size:0.75rem;"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn-outline-gold" style="padding:0.2rem 1rem;font-size:0.75rem;"><i class="fas fa-file-pdf"></i> PDF</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // ─── CHARTS ───
+            let revenueChart, costChart, occupancyChart;
+
+            function initCharts() {
+                // Revenue Chart
+                const ctx1 = document.getElementById('revenueChart').getContext('2d');
+                revenueChart = new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Revenue ($)',
+                            data: [32000, 34000, 36000, 38000, 42000, 48200],
+                            backgroundColor: 'rgba(201, 160, 61, 0.6)',
+                            borderColor: '#c9a03d',
+                            borderWidth: 2,
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { labels: { color: '#9aa4bf' } } },
+                        scales: {
+                            y: { ticks: { color: '#9aa4bf' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+                            x: { ticks: { color: '#9aa4bf' }, grid: { display: false } }
+                        }
+                    }
+                });
+
+                // Cost Chart
+                const ctx2 = document.getElementById('costChart').getContext('2d');
+                costChart = new Chart(ctx2, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Plumbing', 'Electrical', 'HVAC', 'Landscaping', 'Other'],
+                        datasets: [{
+                            data: [3200, 1800, 1200, 800, 600],
+                            backgroundColor: ['#c9a03d', '#5dade2', '#58d68d', '#af7ac5', '#e74c3c'],
+                            borderColor: '#0f1629',
+                            borderWidth: 3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { position: 'bottom', labels: { color: '#9aa4bf' } } },
+                        cutout: '70%'
+                    }
+                });
+
+                // Occupancy Chart
+                const ctx3 = document.getElementById('occupancyChart').getContext('2d');
+                occupancyChart = new Chart(ctx3, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Occupancy %',
+                            data: [85, 88, 90, 89, 91, 92],
+                            borderColor: '#c9a03d',
+                            backgroundColor: 'rgba(201, 160, 61, 0.1)',
+                            fill: true,
+                            tension: 0.3,
+                            pointBackgroundColor: '#c9a03d'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { labels: { color: '#9aa4bf' } } },
+                        scales: {
+                            y: { min: 70, max: 100, ticks: { color: '#9aa4bf' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+                            x: { ticks: { color: '#9aa4bf' }, grid: { display: false } }
+                        }
+                    }
+                });
+            }
+
+            // ─── TOGGLE SWITCHES ───
+            document.querySelectorAll('.toggle-switch').forEach(el => {
+                el.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    const knob = this.querySelector('.toggle-knob');
+                    if (this.classList.contains('active')) {
+                        knob.style.left = '2px';
+                        this.style.background = 'rgba(201, 160, 61, 0.3)';
+                        this.style.borderColor = '#c9a03d';
+                    } else {
+                        knob.style.left = '20px';
+                        this.style.background = 'rgba(255,255,255,0.08)';
+                        this.style.borderColor = 'var(--border-subtle)';
+                    }
+                    const label = this.closest('div').querySelector('span')?.textContent || 'Setting';
+                    showToast(label + (this.classList.contains('active') ? ' enabled' : ' disabled'), 'fa-toggle-on');
+                });
+                // init state
+                if (el.classList.contains('active')) {
+                    el.querySelector('.toggle-knob').style.left = '2px';
+                    el.style.background = 'rgba(201, 160, 61, 0.3)';
+                    el.style.borderColor = '#c9a03d';
+                } else {
+                    el.querySelector('.toggle-knob').style.left = '20px';
+                }
+            });
+
+            // ─── BUTTON ACTIONS ───
+            document.getElementById('quickMaintenance').addEventListener('click', () => {
+                showToast('Opening new maintenance request form...', 'fa-plus-circle');
+                switchTab('maintenance');
+            });
+            document.getElementById('quickRent').addEventListener('click', () => {
+                showToast('Opening rent payment recorder...', 'fa-plus-circle');
+                switchTab('rentals');
+            });
+            document.getElementById('quickLease').addEventListener('click', () => {
+                showToast('Opening new lease wizard...', 'fa-plus-circle');
+                switchTab('leases');
+            });
+            document.getElementById('addMaintenanceBtn').addEventListener('click', () => showToast('New maintenance request form...',
+                'fa-plus-circle'));
+            document.getElementById('recordPaymentBtn').addEventListener('click', () => showToast('Record payment form...',
+                'fa-plus-circle'));
+            document.getElementById('addLeaseBtn').addEventListener('click', () => showToast('New lease wizard...',
+                'fa-plus-circle'));
+
+            // ─── GLOBAL SEARCH ───
+            document.getElementById('globalSearch').addEventListener('input', function() {
+                const q = this.value.toLowerCase().trim();
+                // Simple: filter maintenance list
+                const items = document.querySelectorAll('.request-item');
+                items.forEach(el => {
+                    const text = el.textContent.toLowerCase();
+                    el.style.display = text.includes(q) ? '' : 'none';
+                });
+            });
+
+            // ─── RENDER ALL ───
+            function renderAll() {
+                renderMaintenance();
+                renderPayments();
+                renderLeases();
+                initCharts();
+            }
+
+            // ─── INIT ───
+            renderAll();
+            // Set default tab
+            switchTab('overview');
+
+            console.log('🏢 Mwarokin Estates Advanced Portal loaded.');
+        });
+    </script>
+
+</body>
+</html>

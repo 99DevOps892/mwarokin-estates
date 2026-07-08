@@ -1,0 +1,2129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mwarokin Estates — Smart City Mass Surveillance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --void: #040810;
+  --deep: #070d1a;
+  --abyss: #0a1220;
+  --surface: #0e1826;
+  --panel: #111f30;
+  --panel-2: #152336;
+  --panel-3: #192840;
+  --border: rgba(0,200,255,0.08);
+  --border-2: rgba(0,200,255,0.18);
+  --border-3: rgba(0,200,255,0.35);
+  --cyan: #00c8ff;
+  --cyan-dim: rgba(0,200,255,0.12);
+  --cyan-glow: rgba(0,200,255,0.3);
+  --cyan-2: #4dd9ff;
+  --red: #ff3b3b;
+  --red-dim: rgba(255,59,59,0.12);
+  --red-glow: rgba(255,59,59,0.3);
+  --amber: #ffaa00;
+  --amber-dim: rgba(255,170,0,0.12);
+  --green: #00e676;
+  --green-dim: rgba(0,230,118,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --text: #cde4f5;
+  --text-2: #6a8fb0;
+  --text-3: #2f4a65;
+  --text-dim: rgba(205,228,245,0.35);
+  --font-display: 'Rajdhani', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --font-body: 'DM Sans', sans-serif;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { font-size: 15px; }
+
+body {
+  background: var(--void);
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Scanline overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,200,255,0.012) 2px,
+    rgba(0,200,255,0.012) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Corner bracket mixin */
+.bracket {
+  position: relative;
+}
+.bracket::before, .bracket::after {
+  content: '';
+  position: absolute;
+  width: 10px; height: 10px;
+  border-color: var(--cyan);
+  border-style: solid;
+}
+.bracket::before { top: 0; left: 0; border-width: 1px 0 0 1px; }
+.bracket::after  { bottom: 0; right: 0; border-width: 0 1px 1px 0; }
+
+/* ================== LAYOUT ================== */
+.app {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  grid-template-rows: 56px 1fr;
+  min-height: 100vh;
+}
+
+/* ================== TOPBAR ================== */
+.topbar {
+  grid-column: 1 / -1;
+  background: var(--deep);
+  border-bottom: 1px solid var(--border-2);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 20px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 220px;
+  flex-shrink: 0;
+}
+.brand-icon {
+  width: 32px; height: 32px;
+  border: 1px solid var(--border-3);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cyan-dim);
+  color: var(--cyan);
+  font-size: 14px;
+  position: relative;
+}
+.brand-icon::before, .brand-icon::after {
+  content: '';
+  position: absolute;
+  width: 5px; height: 5px;
+  border-color: var(--cyan);
+  border-style: solid;
+}
+.brand-icon::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; border-radius: 0; }
+.brand-icon::after  { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; border-radius: 0; }
+
+.brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.brand-sub {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--cyan);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.topbar-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.sys-status {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-2);
+  letter-spacing: 0.08em;
+}
+.sys-stat {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.sys-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+}
+.sys-dot.green { background: var(--green); box-shadow: 0 0 6px var(--green); animation: statblink 2s ease infinite; }
+.sys-dot.red { background: var(--red); box-shadow: 0 0 6px var(--red); }
+.sys-dot.amber { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+
+@keyframes statblink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+.topbar-time {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cyan);
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  background: var(--cyan-dim);
+  border: 1px solid var(--border-2);
+  border-radius: 4px;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alert-btn {
+  position: relative;
+  width: 34px; height: 34px;
+  border-radius: 6px;
+  border: 1px solid var(--border-2);
+  background: var(--surface);
+  color: var(--text-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+.alert-btn:hover { color: var(--cyan); border-color: var(--border-3); background: var(--cyan-dim); }
+.alert-count {
+  position: absolute;
+  top: 5px; right: 5px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--red);
+  border: 1px solid var(--void);
+  box-shadow: 0 0 6px var(--red);
+  animation: statblink 1.4s ease infinite;
+}
+
+.topbar-op {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 4px 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.topbar-op:hover { border-color: var(--border-2); }
+.op-avatar {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--cyan-dim);
+  border: 1px solid var(--border-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--cyan);
+}
+.op-name { font-size: 12px; font-weight: 500; }
+.op-role { font-family: var(--font-mono); font-size: 9px; color: var(--cyan); letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* ================== SIDEBAR ================== */
+.sidebar {
+  background: var(--deep);
+  border-right: 1px solid var(--border);
+  padding: 16px 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar::-webkit-scrollbar { width: 3px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 2px; }
+
+.nav-section {
+  padding: 0 12px;
+  margin-bottom: 8px;
+}
+.nav-section-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  padding: 8px 8px 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.nav-section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 2px;
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 400;
+  position: relative;
+  text-decoration: none;
+}
+.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+.nav-item.active {
+  color: var(--cyan);
+  background: var(--cyan-dim);
+  border: 1px solid var(--border-2);
+}
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 6px; bottom: 6px;
+  width: 2px;
+  background: var(--cyan);
+  border-radius: 0 2px 2px 0;
+  box-shadow: 0 0 8px var(--cyan);
+}
+.nav-item i { width: 16px; text-align: center; font-size: 13px; }
+.nav-badge {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+.nav-badge.red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,59,59,0.25); }
+.nav-badge.amber { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(255,170,0,0.25); }
+.nav-badge.cyan { background: var(--cyan-dim); color: var(--cyan); border: 1px solid var(--border-2); }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 12px;
+  border-top: 1px solid var(--border);
+}
+.sys-health {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}
+.sys-health-title {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: var(--text-3);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.health-bar-wrap { margin-bottom: 6px; }
+.health-bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-2);
+  margin-bottom: 3px;
+}
+.health-bar {
+  height: 3px;
+  background: var(--panel);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.health-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 1s ease;
+}
+.health-bar-fill.cyan { background: var(--cyan); }
+.health-bar-fill.green { background: var(--green); }
+.health-bar-fill.amber { background: var(--amber); }
+
+/* ================== MAIN ================== */
+.main {
+  background: var(--abyss);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.main::-webkit-scrollbar { width: 4px; }
+.main::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 2px; }
+
+/* ================== PAGE TABS ================== */
+.page-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--deep);
+  padding: 0 20px;
+  flex-shrink: 0;
+}
+.page-tab {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-2);
+  border-bottom: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.page-tab:hover { color: var(--text); }
+.page-tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+.page-tab i { font-size: 12px; }
+
+.tab-pane { display: none; padding: 20px; flex: 1; }
+.tab-pane.active { display: block; }
+
+/* ================== ALERT TICKER ================== */
+.alert-ticker {
+  background: var(--deep);
+  border-bottom: 1px solid var(--border);
+  padding: 6px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.ticker-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--red);
+  background: var(--red-dim);
+  border: 1px solid rgba(255,59,59,0.25);
+  padding: 2px 8px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.ticker-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--red); animation: statblink 1s ease infinite; }
+.ticker-scroll {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+.ticker-inner {
+  display: flex;
+  gap: 60px;
+  white-space: nowrap;
+  animation: tickerScroll 30s linear infinite;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-2);
+}
+.ticker-item { display: flex; align-items: center; gap: 8px; }
+.ticker-item .ti-time { color: var(--cyan); }
+.ticker-item .ti-loc { color: var(--amber); }
+.ticker-item .ti-red { color: var(--red); font-weight: 500; }
+@keyframes tickerScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ================== METRICS STRIP ================== */
+.metrics-strip {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.metric-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s;
+}
+.metric-tile:hover { border-color: var(--border-2); transform: translateY(-1px); }
+.metric-tile::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+}
+.metric-tile.cyan::after { background: linear-gradient(90deg, var(--cyan), transparent); }
+.metric-tile.green::after { background: linear-gradient(90deg, var(--green), transparent); }
+.metric-tile.red::after { background: linear-gradient(90deg, var(--red), transparent); }
+.metric-tile.amber::after { background: linear-gradient(90deg, var(--amber), transparent); }
+.metric-tile.purple::after { background: linear-gradient(90deg, var(--purple), transparent); }
+.metric-tile.blue::after { background: linear-gradient(90deg, #3b82f6, transparent); }
+
+.metric-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 6px;
+}
+.metric-value {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+.metric-value.cyan { color: var(--cyan); }
+.metric-value.green { color: var(--green); }
+.metric-value.red { color: var(--red); }
+.metric-value.amber { color: var(--amber); }
+.metric-value.purple { color: var(--purple); }
+.metric-value.blue { color: #3b82f6; }
+.metric-sub { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); }
+
+/* ================== CAMERA GRID ================== */
+.camera-grid-wrap {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.cam-cell {
+  background: #020608;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 16/9;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.cam-cell:hover { border-color: var(--border-3); }
+.cam-cell.alert-cam { border-color: rgba(255,59,59,0.5); box-shadow: 0 0 16px rgba(255,59,59,0.15); animation: alertPulse 2s ease infinite; }
+@keyframes alertPulse {
+  0%,100%{box-shadow:0 0 16px rgba(255,59,59,0.15);}
+  50%{box-shadow:0 0 28px rgba(255,59,59,0.4);}
+}
+
+/* Simulated camera background scenes */
+.cam-scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.cam-bg {
+  width: 100%; height: 100%;
+  position: relative;
+}
+/* Street scene */
+.scene-street { background: linear-gradient(180deg, #0a0f18 0%, #060c14 40%, #0c1520 100%); }
+.scene-mall   { background: linear-gradient(180deg, #12090a 0%, #0d0607 50%, #160b0c 100%); }
+.scene-gate   { background: linear-gradient(180deg, #070d0a 0%, #040a06 50%, #090e0b 100%); }
+.scene-road   { background: linear-gradient(180deg, #0a0a12 0%, #060611 50%, #0c0c1a 100%); }
+.scene-lobby  { background: linear-gradient(180deg, #0c0a06 0%, #0a0803 50%, #120f07 100%); }
+.scene-park   { background: linear-gradient(180deg, #060e0a 0%, #040c08 50%, #081309 100%); }
+
+/* Animated elements inside cameras */
+.cam-grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,200,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,200,255,0.04) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.cam-scanline {
+  position: absolute;
+  left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,200,255,0.6), transparent);
+  animation: scanMove 3s linear infinite;
+  pointer-events: none;
+}
+@keyframes scanMove {
+  0% { top: 0; opacity: 0.8; }
+  100% { top: 100%; opacity: 0.1; }
+}
+
+/* Moving silhouette dots */
+.cam-person {
+  position: absolute;
+  width: 6px; height: 14px;
+  background: rgba(200,220,255,0.5);
+  border-radius: 2px 2px 0 0;
+  bottom: 30%;
+  animation: personWalk 8s linear infinite;
+}
+.cam-person::before {
+  content: '';
+  position: absolute;
+  width: 8px; height: 8px;
+  background: rgba(200,220,255,0.5);
+  border-radius: 50%;
+  top: -9px;
+  left: -1px;
+}
+.cam-vehicle {
+  position: absolute;
+  width: 22px; height: 10px;
+  background: rgba(150,170,200,0.4);
+  border-radius: 3px;
+  bottom: 22%;
+}
+.cam-vehicle::before {
+  content:'';
+  position: absolute;
+  width: 14px; height: 6px;
+  background: rgba(150,170,200,0.3);
+  border-radius: 2px;
+  top: -5px; left: 3px;
+}
+
+@keyframes personWalk { 0%{left:-2%}100%{left:104%} }
+@keyframes carDrive    { 0%{right:-5%}100%{right:105%} }
+
+/* Bounding box detection */
+.cam-bbox {
+  position: absolute;
+  border: 1px solid;
+  border-radius: 2px;
+  animation: bboxPulse 2s ease infinite;
+}
+.cam-bbox.person { border-color: var(--cyan); }
+.cam-bbox.vehicle { border-color: var(--amber); }
+.cam-bbox.alert { border-color: var(--red); animation: bboxAlert 1s ease infinite; }
+@keyframes bboxPulse { 0%,100%{opacity:1}50%{opacity:0.6} }
+@keyframes bboxAlert  { 0%,100%{opacity:1;border-color:var(--red)}50%{opacity:0.7;border-color:rgba(255,59,59,0.5)} }
+
+.cam-label {
+  position: absolute;
+  top: 6px; left: 6px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--cyan);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  z-index: 5;
+}
+.cam-live-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 5px var(--red);
+  animation: statblink 1s ease infinite;
+}
+
+.cam-status-chip {
+  position: absolute;
+  top: 6px; right: 6px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  z-index: 5;
+}
+.cam-status-chip.online { background: rgba(0,230,118,0.2); color: var(--green); border: 1px solid rgba(0,230,118,0.35); }
+.cam-status-chip.offline { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,59,59,0.3); }
+.cam-status-chip.alert { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,59,59,0.4); animation: statblink 0.8s ease infinite; }
+.cam-status-chip.maint { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(255,170,0,0.3); }
+
+.cam-footer {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 6px 8px;
+  background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, transparent 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 5;
+}
+.cam-name { font-family: var(--font-display); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; color: var(--text); }
+.cam-location { font-family: var(--font-mono); font-size: 9px; color: var(--text-2); letter-spacing: 0.04em; }
+.cam-time { font-family: var(--font-mono); font-size: 9px; color: var(--cyan); }
+
+/* Tags for detected objects */
+.detection-tag {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  padding: 1px 5px;
+  border-radius: 2px;
+  z-index: 6;
+  white-space: nowrap;
+}
+.detection-tag.person { background: rgba(0,200,255,0.8); color: #000; }
+.detection-tag.vehicle { background: rgba(255,170,0,0.8); color: #000; }
+.detection-tag.alert { background: rgba(255,59,59,0.9); color: #fff; }
+
+/* ================== BOTTOM GRID ================== */
+.bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 12px;
+}
+
+/* ================== INCIDENTS PANEL ================== */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.panel-head {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--deep);
+}
+.panel-title {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.panel-title i { font-size: 13px; color: var(--cyan); }
+.panel-actions { display: flex; align-items: center; gap: 6px; }
+.pa-btn {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.pa-btn:hover, .pa-btn.active { color: var(--cyan); border-color: var(--border-2); background: var(--cyan-dim); }
+.panel-body { padding: 12px; }
+
+/* Incident items */
+.incident-list { display: flex; flex-direction: column; gap: 6px; }
+.incident-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: var(--panel);
+  border-left: 3px solid;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.incident-item:hover { background: var(--panel-2); transform: translateX(2px); }
+.incident-item.critical { border-left-color: var(--red); }
+.incident-item.warning  { border-left-color: var(--amber); }
+.incident-item.info     { border-left-color: var(--cyan); }
+.incident-item.resolved { border-left-color: var(--green); opacity: 0.6; }
+
+.inc-icon {
+  width: 30px; height: 30px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.inc-icon.critical { background: var(--red-dim); color: var(--red); }
+.inc-icon.warning  { background: var(--amber-dim); color: var(--amber); }
+.inc-icon.info     { background: var(--cyan-dim); color: var(--cyan); }
+.inc-icon.resolved { background: var(--green-dim); color: var(--green); }
+
+.inc-body { flex: 1; min-width: 0; }
+.inc-title { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 2px; line-height: 1.4; }
+.inc-meta { display: flex; gap: 10px; font-family: var(--font-mono); font-size: 10px; color: var(--text-2); }
+.inc-cam { color: var(--cyan); }
+.inc-actions { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
+.inc-action-btn {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  border: 1px solid;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+.inc-action-btn.ack { border-color: rgba(255,170,0,0.3); color: var(--amber); }
+.inc-action-btn.ack:hover { background: var(--amber-dim); }
+.inc-action-btn.view { border-color: var(--border-2); color: var(--cyan); }
+.inc-action-btn.view:hover { background: var(--cyan-dim); }
+.inc-action-btn.close { border-color: rgba(0,230,118,0.3); color: var(--green); }
+.inc-action-btn.close:hover { background: var(--green-dim); }
+
+/* ================== RIGHT PANEL (SCHEDULE + CAMERA DETAIL) ================== */
+.right-col { display: flex; flex-direction: column; gap: 12px; }
+
+/* Calendar */
+.mini-cal { padding: 12px; }
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.cal-month {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.cal-nav-btn {
+  width: 26px; height: 26px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  transition: all 0.2s;
+}
+.cal-nav-btn:hover { color: var(--cyan); border-color: var(--border-2); background: var(--cyan-dim); }
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.cal-day-hdr {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--text-3);
+  padding: 4px 0;
+  text-transform: uppercase;
+}
+.cal-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  transition: all 0.15s;
+  color: var(--text-2);
+  position: relative;
+}
+.cal-day:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+.cal-day.active { background: var(--cyan-dim); color: var(--cyan); border: 1px solid var(--border-2); }
+.cal-day.has-sched::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: var(--cyan);
+}
+.cal-day.other-month { color: var(--text-3); }
+.cal-day.today { color: var(--amber); }
+
+/* Schedule list in side panel */
+.sched-items { display: flex; flex-direction: column; gap: 6px; }
+.sched-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 12px;
+  border-radius: 6px;
+  background: var(--panel);
+  border-left: 2px solid;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sched-item:hover { background: var(--panel-2); }
+.sched-item.active-s { border-left-color: var(--cyan); }
+.sched-item.pending-s { border-left-color: var(--amber); }
+.sched-item.done-s { border-left-color: var(--green); }
+.sched-item.cancelled-s { border-left-color: var(--red); opacity: 0.55; }
+
+.sched-time {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--cyan);
+  flex-shrink: 0;
+  min-width: 44px;
+}
+.sched-info { flex: 1; min-width: 0; }
+.sched-cam { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sched-purpose { font-family: var(--font-mono); font-size: 10px; color: var(--text-2); }
+.sched-dur {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-3);
+  flex-shrink: 0;
+}
+
+/* New schedule btn */
+.new-sched-btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--cyan-dim);
+  border: 1px solid var(--border-2);
+  border-radius: 6px;
+  color: var(--cyan);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 8px;
+}
+.new-sched-btn:hover {
+  background: rgba(0,200,255,0.2);
+  border-color: var(--cyan);
+  box-shadow: 0 0 16px var(--cyan-glow);
+}
+
+/* ================== MODAL ================== */
+.modal-bg {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+}
+.modal-bg.open { display: flex; }
+.modal-box {
+  background: var(--panel);
+  border: 1px solid var(--border-2);
+  border-radius: 12px;
+  padding: 24px;
+  width: 90%;
+  max-width: 520px;
+  max-height: 88vh;
+  overflow-y: auto;
+  position: relative;
+}
+.modal-box::before, .modal-box::after {
+  content: '';
+  position: absolute;
+  width: 14px; height: 14px;
+  border-color: var(--cyan);
+  border-style: solid;
+}
+.modal-box::before { top: 0; left: 0; border-width: 1.5px 0 0 1.5px; }
+.modal-box::after  { bottom: 0; right: 0; border-width: 0 1.5px 1.5px 0; }
+
+.modal-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  width: 26px; height: 26px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-2);
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+.modal-close:hover { color: var(--red); border-color: rgba(255,59,59,0.4); background: var(--red-dim); }
+
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.modal-title i { font-size: 16px; }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-grp { margin-bottom: 14px; }
+.form-lbl {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  margin-bottom: 6px;
+}
+.form-ctrl {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 12px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  transition: all 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.form-ctrl:focus { outline: none; border-color: var(--border-3); background: var(--panel-2); box-shadow: 0 0 0 3px var(--cyan-dim); }
+.form-ctrl option { background: var(--panel); }
+textarea.form-ctrl { min-height: 80px; resize: vertical; }
+
+.form-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
+.btn-cancel {
+  padding: 9px 18px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-2);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-cancel:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+.btn-save {
+  padding: 9px 20px;
+  border-radius: 6px;
+  border: 1px solid var(--border-3);
+  background: var(--cyan-dim);
+  color: var(--cyan);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-save:hover { background: rgba(0,200,255,0.22); box-shadow: 0 0 16px var(--cyan-glow); }
+
+/* ================== SCHEDULE TAB ================== */
+#tab-schedule .sched-full { display: flex; flex-direction: column; gap: 12px; }
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+.time-cell {
+  padding: 8px 4px;
+  border-radius: 5px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-2);
+}
+.time-cell:hover { background: var(--panel-2); border-color: var(--border-2); color: var(--text); }
+.time-cell.taken { background: var(--red-dim); border-color: rgba(255,59,59,0.25); color: var(--red); cursor: not-allowed; opacity: 0.7; }
+.time-cell.selected { background: var(--cyan-dim); border-color: var(--border-3); color: var(--cyan); }
+
+/* Analytics row in schedule tab */
+.analytics-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.analytic-block {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  text-align: center;
+}
+.analytic-val {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--cyan);
+  margin-bottom: 3px;
+}
+.analytic-lbl { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* ================== AI DETECTION PANEL ================== */
+#tab-ai .ai-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.ai-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  transition: all 0.2s;
+}
+.ai-card:hover { border-color: var(--border-2); }
+.ai-card-title {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.ai-card-title i { color: var(--cyan); font-size: 12px; }
+
+.confidence-bar { margin-bottom: 8px; }
+.conf-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-2);
+  margin-bottom: 3px;
+}
+.conf-bar {
+  height: 4px;
+  background: var(--panel-3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.conf-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 1.5s ease;
+}
+.conf-fill.cyan { background: var(--cyan); }
+.conf-fill.green { background: var(--green); }
+.conf-fill.amber { background: var(--amber); }
+.conf-fill.red { background: var(--red); }
+
+/* Event log */
+.event-log { display: flex; flex-direction: column; gap: 4px; }
+.log-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border);
+}
+.log-row:last-child { border-bottom: none; }
+.log-time { color: var(--cyan); flex-shrink: 0; min-width: 42px; }
+.log-cam { color: var(--text-3); flex-shrink: 0; min-width: 60px; }
+.log-event { color: var(--text-2); flex: 1; }
+.log-tag { padding: 1px 6px; border-radius: 3px; font-size: 9px; flex-shrink: 0; }
+.log-tag.alert { background: var(--red-dim); color: var(--red); }
+.log-tag.normal { background: var(--green-dim); color: var(--green); }
+.log-tag.warn { background: var(--amber-dim); color: var(--amber); }
+
+/* ================== RESPONSIVE ================== */
+@media (max-width: 1200px) {
+  .app { grid-template-columns: 200px 1fr; }
+  .metrics-strip { grid-template-columns: repeat(3, 1fr); }
+  .camera-grid-wrap { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 900px) {
+  .app { grid-template-columns: 1fr; grid-template-rows: 56px auto 1fr; }
+  .sidebar { display: none; }
+  .bottom-grid { grid-template-columns: 1fr; }
+  .camera-grid-wrap { grid-template-columns: repeat(2, 1fr); }
+  .metrics-strip { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-icon"><i class="fas fa-shield-alt"></i></div>
+    <div class="brand-text">
+      <span class="brand-name">Mwarokin</span>
+      <span class="brand-sub">Estates Surveillance</span>
+    </div>
+  </div>
+  <div class="topbar-center">
+    <div class="sys-status">
+      <div class="sys-stat"><span class="sys-dot green"></span>48 ONLINE</div>
+      <div class="sys-stat"><span class="sys-dot red"></span>2 OFFLINE</div>
+      <div class="sys-stat"><span class="sys-dot amber"></span>3 MAINT</div>
+      <div class="sys-stat"><span class="sys-dot green"></span>AI ACTIVE</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="topbar-time" id="topbarClock">14:32:07</div>
+    <button class="alert-btn"><i class="fas fa-bell"></i><span class="alert-count"></span></button>
+    <button class="alert-btn"><i class="fas fa-expand"></i></button>
+    <div class="topbar-op">
+      <div class="op-avatar">RD</div>
+      <div>
+        <div class="op-name">Robin Donald</div>
+        <div class="op-role">Sr. Operator</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="nav-section">
+    <div class="nav-section-label">Overview</div>
+    <div class="nav-item active"><i class="fas fa-th-large"></i> Live Dashboard</div>
+    <div class="nav-item"><i class="fas fa-video"></i> Camera Matrix <span class="nav-badge cyan">53</span></div>
+    <div class="nav-item"><i class="fas fa-map-marked-alt"></i> City Map</div>
+    <div class="nav-item"><i class="fas fa-chart-area"></i> Analytics</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Monitoring</div>
+    <div class="nav-item"><i class="fas fa-traffic-light"></i> Traffic Systems</div>
+    <div class="nav-item"><i class="fas fa-users"></i> Crowd Monitoring</div>
+    <div class="nav-item"><i class="fas fa-car"></i> Vehicle Tracking <span class="nav-badge amber">2</span></div>
+    <div class="nav-item"><i class="fas fa-walking"></i> Pedestrian Flow</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Security</div>
+    <div class="nav-item"><i class="fas fa-exclamation-triangle"></i> Threat Detection <span class="nav-badge red">4</span></div>
+    <div class="nav-item"><i class="fas fa-fingerprint"></i> Biometric Systems</div>
+    <div class="nav-item"><i class="fas fa-robot"></i> AI Analysis</div>
+    <div class="nav-item"><i class="fas fa-bell"></i> Alert Systems <span class="nav-badge red">7</span></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Administration</div>
+    <div class="nav-item"><i class="fas fa-calendar-alt"></i> Schedule Viewing</div>
+    <div class="nav-item"><i class="fas fa-file-alt"></i> Reports</div>
+    <div class="nav-item"><i class="fas fa-users-cog"></i> User Management</div>
+    <div class="nav-item"><i class="fas fa-cog"></i> System Settings</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="sys-health">
+      <div class="sys-health-title">System Health</div>
+      <div class="health-bar-wrap">
+        <div class="health-bar-label"><span>CPU</span><span>68%</span></div>
+        <div class="health-bar"><div class="health-bar-fill cyan" style="width:68%"></div></div>
+      </div>
+      <div class="health-bar-wrap">
+        <div class="health-bar-label"><span>Storage</span><span>42%</span></div>
+        <div class="health-bar"><div class="health-bar-fill green" style="width:42%"></div></div>
+      </div>
+      <div class="health-bar-wrap">
+        <div class="health-bar-label"><span>Network</span><span>81%</span></div>
+        <div class="health-bar"><div class="health-bar-fill amber" style="width:81%"></div></div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- ALERT TICKER -->
+  <div class="alert-ticker">
+    <div class="ticker-label"><span class="ticker-dot"></span>LIVE ALERTS</div>
+    <div class="ticker-scroll">
+      <div class="ticker-inner" id="tickerInner">
+        <div class="ticker-item"><span class="ti-time">14:31:02</span><span class="ti-loc">CT-2847 · Central Station</span><span class="ti-red">⚠ Unattended bag detected — AI confidence 94%</span></div>
+        <div class="ticker-item"><span class="ti-time">14:28:44</span><span class="ti-loc">CT-3152 · Financial District</span><span>Vehicle overspeed — 87km/h in 50 zone</span></div>
+        <div class="ticker-item"><span class="ti-time">14:25:11</span><span class="ti-loc">CT-5632 · Shopping Mall</span><span class="ti-red">⚠ Crowd density CRITICAL — 340 pax/m²</span></div>
+        <div class="ticker-item"><span class="ti-time">14:20:38</span><span class="ti-loc">CT-4721 · Highway 5</span><span>License plate flagged — KPD 002 X (BOLO)</span></div>
+        <div class="ticker-item"><span class="ti-time">14:15:22</span><span class="ti-loc">CT-1198 · Nairobi CBD</span><span>Motion detected in restricted zone after hours</span></div>
+        <!-- duplicate for seamless loop -->
+        <div class="ticker-item"><span class="ti-time">14:31:02</span><span class="ti-loc">CT-2847 · Central Station</span><span class="ti-red">⚠ Unattended bag detected — AI confidence 94%</span></div>
+        <div class="ticker-item"><span class="ti-time">14:28:44</span><span class="ti-loc">CT-3152 · Financial District</span><span>Vehicle overspeed — 87km/h in 50 zone</span></div>
+        <div class="ticker-item"><span class="ti-time">14:25:11</span><span class="ti-loc">CT-5632 · Shopping Mall</span><span class="ti-red">⚠ Crowd density CRITICAL — 340 pax/m²</span></div>
+        <div class="ticker-item"><span class="ti-time">14:20:38</span><span class="ti-loc">CT-4721 · Highway 5</span><span>License plate flagged — KPD 002 X (BOLO)</span></div>
+        <div class="ticker-item"><span class="ti-time">14:15:22</span><span class="ti-loc">CT-1198 · Nairobi CBD</span><span>Motion detected in restricted zone after hours</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE TABS -->
+  <div class="page-tabs">
+    <div class="page-tab active" data-tab="live"><i class="fas fa-broadcast-tower"></i> Live View</div>
+    <div class="page-tab" data-tab="schedule"><i class="fas fa-calendar-alt"></i> Schedule Viewing</div>
+    <div class="page-tab" data-tab="ai"><i class="fas fa-robot"></i> AI Detection</div>
+    <div class="page-tab" data-tab="reports"><i class="fas fa-file-alt"></i> Reports</div>
+  </div>
+
+  <!-- ===== LIVE VIEW TAB ===== -->
+  <div class="tab-pane active" id="tab-live">
+
+    <!-- Metrics strip -->
+    <div class="metrics-strip">
+      <div class="metric-tile cyan">
+        <div class="metric-label">Cameras Online</div>
+        <div class="metric-value cyan" id="mOnline">48</div>
+        <div class="metric-sub">of 53 total</div>
+      </div>
+      <div class="metric-tile red">
+        <div class="metric-label">Active Alerts</div>
+        <div class="metric-value red" id="mAlerts">7</div>
+        <div class="metric-sub">4 critical · 3 warn</div>
+      </div>
+      <div class="metric-tile green">
+        <div class="metric-label">People Detected</div>
+        <div class="metric-value green" id="mPeople">1,284</div>
+        <div class="metric-sub">live count</div>
+      </div>
+      <div class="metric-tile amber">
+        <div class="metric-label">Vehicles Tracked</div>
+        <div class="metric-value amber" id="mVehicles">347</div>
+        <div class="metric-sub">2 flagged</div>
+      </div>
+      <div class="metric-tile purple">
+        <div class="metric-label">AI Detections/hr</div>
+        <div class="metric-value purple">2,491</div>
+        <div class="metric-sub">facial · object · LPR</div>
+      </div>
+      <div class="metric-tile blue">
+        <div class="metric-label">Avg Response</div>
+        <div class="metric-value blue">1.2s</div>
+        <div class="metric-sub">incident acknowledgement</div>
+      </div>
+    </div>
+
+    <!-- Camera grid -->
+    <div class="camera-grid-wrap">
+
+      <!-- CAM 1 – Central Station (ALERT) -->
+      <div class="cam-cell alert-cam" data-cam="CT-2847">
+        <div class="cam-scene">
+          <div class="cam-bg scene-street"></div>
+          <div class="cam-grid-overlay"></div>
+          <div class="cam-scanline"></div>
+          <!-- Detection boxes -->
+          <div class="cam-bbox alert" style="left:35%;top:20%;width:16%;height:50%"></div>
+          <div class="detection-tag alert" style="left:35%;top:18%">⚠ UNATTENDED BAG</div>
+          <div class="cam-bbox person" style="left:15%;top:30%;width:8%;height:40%"></div>
+          <div class="detection-tag person" style="left:14%;top:28%">PERSON 94%</div>
+          <div class="cam-bbox person" style="left:60%;top:35%;width:7%;height:35%"></div>
+          <div class="cam-person" style="bottom:32%;animation-duration:11s;"></div>
+          <!-- Heat-zone overlay -->
+          <div style="position:absolute;left:30%;top:10%;width:30%;height:65%;background:radial-gradient(ellipse,rgba(255,59,59,0.18),transparent 70%);pointer-events:none"></div>
+        </div>
+        <div class="cam-label"><span class="cam-live-dot"></span>CT-2847</div>
+        <div class="cam-status-chip alert">⚠ ALERT</div>
+        <div class="cam-footer">
+          <div><div class="cam-name">Central Station</div><div class="cam-location">Platform A — Nairobi</div></div>
+          <div class="cam-time" id="camTime1">14:32:07</div>
+        </div>
+      </div>
+
+      <!-- CAM 2 – Financial District -->
+      <div class="cam-cell" data-cam="CT-3152">
+        <div class="cam-scene">
+          <div class="cam-bg scene-road"></div>
+          <div class="cam-grid-overlay"></div>
+          <div class="cam-scanline" style="animation-delay:-1s"></div>
+          <div class="cam-bbox vehicle" style="left:20%;top:40%;width:25%;height:30%"></div>
+          <div class="detection-tag vehicle" style="left:20%;top:38%">KPD 002X 87km/h</div>
+          <div class="cam-bbox vehicle" style="left:55%;top:45%;width:20%;height:25%"></div>
+          <div class="detection-tag vehicle" style="left:55%;top:43%">KAC 441Z</div>
+          <div class="cam-vehicle" style="bottom:40%;animation:carDrive 7s linear infinite"></div>
+          <div style="position:absolute;left:18%;top:35%;width:28%;height:38%;background:radial-gradient(ellipse,rgba(255,170,0,0.15),transparent 70%);pointer-events:none"></div>
+        </div>
+        <div class="cam-label"><span class="cam-live-dot"></span>CT-3152</div>
+        <div class="cam-status-chip online">● ONLINE</div>
+        <div class="cam-footer">
+          <div><div class="cam-name">Financial District</div><div class="cam-location">Main St — LPR Active</div></div>
+          <div class="cam-time" id="camTime2">14:32:07</div>
+        </div>
+      </div>
+
+      <!-- CAM 3 – Shopping Mall (ALERT) -->
+      <div class="cam-cell alert-cam" data-cam="CT-5632">
+        <div class="cam-scene">
+          <div class="cam-bg scene-mall"></div>
+          <div class="cam-grid-overlay"></div>
+          <div class="cam-scanline" style="animation-delay:-2s"></div>
+          <div class="cam-bbox alert" style="left:10%;top:10%;width:80%;height:75%"></div>
+          <div class="detection-tag alert" style="left:12%;top:8%">CROWD DENSITY: CRITICAL</div>
+          <!-- Many person dots to show crowd -->
+          <div class="cam-person" style="bottom:35%;left:10%;animation-duration:14s"></div>
+          <div class="cam-person" style="bottom:38%;left:22%;animation-duration:10s;animation-delay:-3s"></div>
+          <div class="cam-person" style="bottom:32%;left:38%;animation-duration:12s;animation-delay:-6s"></div>
+          <div class="cam-person" style="bottom:36%;left:55%;animation-duration:16s;animation-delay:-2s"></div>
+          <div class="cam-person" style="bottom:34%;left:70%;animation-duration:9s;animation-delay:-8s"></div>
+          <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(255,59,59,0.12),transparent 75%);pointer-events:none"></div>
+        </div>
+        <div class="cam-label"><span class="cam-live-dot"></span>CT-5632</div>
+        <div class="cam-status-chip alert">⚠ CROWD ALERT</div>
+        <div class="cam-footer">
+          <div><div class="cam-name">Shopping Mall</div><div class="cam-location">Food Court — Westlands</div></div>
+          <div class="cam-time" id="camTime3">14:32:07</div>
+        </div>
+      </div>
+
+      <!-- CAM 4 – Highway -->
+      <div class="cam-cell" data-cam="CT-4721">
+        <div class="cam-scene">
+          <div class="cam-bg scene-road" style="background:linear-gradient(180deg,#060611 0%,#04040f 40%,#0a0a18 100%)"></div>
+          <div class="cam-grid-overlay"></div>
+          <div class="cam-scanline" style="animation-delay:-4s"></div>
+          <div class="cam-bbox vehicle" style="left:30%;top:38%;width:22%;height:28%"></div>
+          <div class="detection-tag vehicle" style="left:30%;top:36%">KDG 743H 62km/h</div>
+          <div class="cam-vehicle" style="bottom:38%;animation:carDrive 5s linear infinite;animation-delay:-1s"></div>
+          <div class="cam-vehicle" style="bottom:50%;animation:carDrive 9s linear infinite;animation-delay:-4s;background:rgba(100,140,180,0.4)"></div>
+        </div>
+        <div class="cam-label"><span class="cam-live-dot"></span>CT-4721</div>
+        <div class="cam-status-chip online">● ONLINE</div>
+        <div class="cam-footer">
+          <div><div class="cam-name">Highway 5 — Exit 23</div><div class="cam-location">Speed + LPR Monitoring</div></div>
+          <div class="cam-time" id="camTime4">14:32:07</div>
+        </div>
+      </div>
+
+      <!-- CAM 5 – Building Lobby -->
+      <div class="cam-cell" data-cam="CT-0811">
+        <div class="cam-scene">
+          <div class="cam-bg scene-lobby"></div>
+          <div class="cam-grid-overlay"></div>
+          <div class="cam-scanline" style="animation-delay:-1.5s"></div>
+          <div class="cam-bbox person" style="left:20%;top:25%;width:10%;height:50%"></div>
+          <div class="detection-tag person" style="left:20%;top:23%">STAFF · ID OK</div>
+          <div class="cam-bbox person" style="left:55%;top:30%;width:9%;height:42%"></div>
+          <div class="detection-tag person" style="left:55%;top:28%">VISITOR</div>
+          <div class="cam-person" style="bottom:40%;left:25%;animation-duration:18s"></div>
+          <div class="cam-person" style="bottom:38%;left:55%;animation-duration:22s;animation-delay:-5s"></div>
+        </div>
+        <div class="cam-label"><span class="cam-live-dot"></span>CT-0811</div>
+        <div class="cam-status-chip online">● ONLINE</div>
+        <div class="cam-footer">
+          <div><div class="cam-name">Tower A — Main Lobby</div><div class="cam-location">Facial Recognition Active</div></div>
+          <div class="cam-time" id="camTime5">14:32:07</div>
+        </div>
+      </div>
+
+      <!-- CAM 6 – Park (MAINTENANCE) -->
+      <div class="cam-cell" data-cam="CT-1984">
+        <div class="cam-scene">
+          <div class="cam-bg scene-park"></div>
+          <div class="cam-grid-overlay" style="background-image:linear-gradient(rgba(255,170,0,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,170,0,0.04) 1px,transparent 1px);"></div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px">
+            <i class="fas fa-wrench" style="font-size:22px;color:rgba(255,170,0,0.4)"></i>
+            <span style="font-family:var(--font-mono);font-size:10px;color:rgba(255,170,0,0.5);letter-spacing:0.15em;text-transform:uppercase">Camera Maintenance</span>
+            <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-3)">ETA: 16:00 today</span>
+          </div>
+        </div>
+        <div class="cam-label">CT-1984</div>
+        <div class="cam-status-chip maint">MAINT</div>
+        <div class="cam-footer">
+          <div><div class="cam-name">City Park — N. Entrance</div><div class="cam-location">Sensor replacement</div></div>
+          <div class="cam-time">—</div>
+        </div>
+      </div>
+
+    </div><!-- end camera-grid-wrap -->
+
+    <!-- Bottom grid -->
+    <div class="bottom-grid">
+
+      <!-- INCIDENTS panel -->
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title"><i class="fas fa-exclamation-triangle"></i> Active Incidents</div>
+          <div class="panel-actions">
+            <button class="pa-btn active">All</button>
+            <button class="pa-btn">Critical</button>
+            <button class="pa-btn">Today</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="incident-list">
+
+            <div class="incident-item critical">
+              <div class="inc-icon critical"><i class="fas fa-bag-shopping"></i></div>
+              <div class="inc-body">
+                <div class="inc-title">Unattended bag detected — suspicious object, no owner for 8+ minutes</div>
+                <div class="inc-meta"><span class="inc-cam">CT-2847</span><span>Central Station · Platform A</span><span>14:31:02</span></div>
+              </div>
+              <div class="inc-actions">
+                <button class="inc-action-btn ack">Dispatch</button>
+                <button class="inc-action-btn view">View</button>
+              </div>
+            </div>
+
+            <div class="incident-item critical">
+              <div class="inc-icon critical"><i class="fas fa-people-arrows"></i></div>
+              <div class="inc-body">
+                <div class="inc-title">Crowd density threshold exceeded — risk of stampede, 340 persons/m²</div>
+                <div class="inc-meta"><span class="inc-cam">CT-5632</span><span>Westlands Mall · Food Court</span><span>14:25:11</span></div>
+              </div>
+              <div class="inc-actions">
+                <button class="inc-action-btn ack">Alert</button>
+                <button class="inc-action-btn view">View</button>
+              </div>
+            </div>
+
+            <div class="incident-item warning">
+              <div class="inc-icon warning"><i class="fas fa-car-crash"></i></div>
+              <div class="inc-body">
+                <div class="inc-title">Vehicle KPD 002X travelling 87km/h — BOLO plate, direction: Westlands</div>
+                <div class="inc-meta"><span class="inc-cam">CT-3152</span><span>Financial District · Main St</span><span>14:28:44</span></div>
+              </div>
+              <div class="inc-actions">
+                <button class="inc-action-btn ack">Intercept</button>
+                <button class="inc-action-btn view">View</button>
+              </div>
+            </div>
+
+            <div class="incident-item warning">
+              <div class="inc-icon warning"><i class="fas fa-user-secret"></i></div>
+              <div class="inc-body">
+                <div class="inc-title">Facial recognition match — wanted individual #WL-2041 near N. Gate</div>
+                <div class="inc-meta"><span class="inc-cam">CT-0811</span><span>Tower A · Lobby</span><span>14:18:30</span></div>
+              </div>
+              <div class="inc-actions">
+                <button class="inc-action-btn ack">Ack</button>
+                <button class="inc-action-btn view">View</button>
+              </div>
+            </div>
+
+            <div class="incident-item info">
+              <div class="inc-icon info"><i class="fas fa-walking"></i></div>
+              <div class="inc-body">
+                <div class="inc-title">Perimeter breach detected — individual in restricted zone after 18:00</div>
+                <div class="inc-meta"><span class="inc-cam">CT-1198</span><span>Nairobi CBD · Block C</span><span>14:15:22</span></div>
+              </div>
+              <div class="inc-actions">
+                <button class="inc-action-btn close">Close</button>
+                <button class="inc-action-btn view">View</button>
+              </div>
+            </div>
+
+            <div class="incident-item resolved">
+              <div class="inc-icon resolved"><i class="fas fa-check-double"></i></div>
+              <div class="inc-body">
+                <div class="inc-title">Fire alarm triggered — confirmed false positive, canteen steam</div>
+                <div class="inc-meta"><span class="inc-cam">CT-3401</span><span>Mwarokin HQ · Kitchen</span><span>13:55:10</span></div>
+              </div>
+              <div class="inc-actions">
+                <button class="inc-action-btn view">Log</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COL -->
+      <div class="right-col">
+
+        <!-- Mini Calendar -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title"><i class="fas fa-calendar-alt"></i> Upcoming Schedules</div>
+            <div class="panel-actions">
+              <button class="pa-btn new-sched-trigger">+ New</button>
+            </div>
+          </div>
+          <div class="mini-cal">
+            <div class="cal-header">
+              <button class="cal-nav-btn" id="calPrev"><i class="fas fa-chevron-left"></i></button>
+              <div class="cal-month" id="calMonth">June 2026</div>
+              <button class="cal-nav-btn" id="calNext"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="cal-grid" id="calGrid">
+              <div class="cal-day-hdr">Su</div>
+              <div class="cal-day-hdr">Mo</div>
+              <div class="cal-day-hdr">Tu</div>
+              <div class="cal-day-hdr">We</div>
+              <div class="cal-day-hdr">Th</div>
+              <div class="cal-day-hdr">Fr</div>
+              <div class="cal-day-hdr">Sa</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Schedule items -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title"><i class="fas fa-clock"></i> Today's Viewings</div>
+          </div>
+          <div class="panel-body" style="padding-top:8px;padding-bottom:8px">
+            <div class="sched-items">
+              <div class="sched-item active-s">
+                <div class="sched-time">09:00</div>
+                <div class="sched-info"><div class="sched-cam">CT-2847 — Central Station</div><div class="sched-purpose">Routine Monitoring</div></div>
+                <div class="sched-dur">30m</div>
+              </div>
+              <div class="sched-item pending-s">
+                <div class="sched-time">10:30</div>
+                <div class="sched-info"><div class="sched-cam">CT-3152 — Financial Dist</div><div class="sched-purpose">Incident Investigation</div></div>
+                <div class="sched-dur">45m</div>
+              </div>
+              <div class="sched-item pending-s">
+                <div class="sched-time">14:00</div>
+                <div class="sched-info"><div class="sched-cam">CT-4721 — Highway 5</div><div class="sched-purpose">Operator Training</div></div>
+                <div class="sched-dur">60m</div>
+              </div>
+              <div class="sched-item done-s">
+                <div class="sched-time">11:00</div>
+                <div class="sched-info"><div class="sched-cam">CT-5632 — Shopping Mall</div><div class="sched-purpose">Crowd Analytics Review</div></div>
+                <div class="sched-dur">30m</div>
+              </div>
+              <div class="sched-item cancelled-s">
+                <div class="sched-time">16:00</div>
+                <div class="sched-info"><div class="sched-cam">CT-1984 — City Park</div><div class="sched-purpose">Maintenance</div></div>
+                <div class="sched-dur">90m</div>
+              </div>
+            </div>
+            <button class="new-sched-btn new-sched-trigger"><i class="fas fa-plus"></i> Schedule New Viewing</button>
+          </div>
+        </div>
+
+      </div><!-- end right-col -->
+    </div><!-- end bottom-grid -->
+  </div><!-- end tab-live -->
+
+  <!-- ===== SCHEDULE TAB ===== -->
+  <div class="tab-pane" id="tab-schedule">
+    <div class="sched-full">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title"><i class="fas fa-calendar-week"></i> Select Date &amp; Time</div>
+          </div>
+          <div class="mini-cal" style="padding:16px">
+            <div class="cal-header">
+              <button class="cal-nav-btn" id="calPrev2"><i class="fas fa-chevron-left"></i></button>
+              <div class="cal-month" id="calMonth2">June 2026</div>
+              <button class="cal-nav-btn" id="calNext2"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="cal-grid" id="calGrid2">
+              <div class="cal-day-hdr">Su</div>
+              <div class="cal-day-hdr">Mo</div>
+              <div class="cal-day-hdr">Tu</div>
+              <div class="cal-day-hdr">We</div>
+              <div class="cal-day-hdr">Th</div>
+              <div class="cal-day-hdr">Fr</div>
+              <div class="cal-day-hdr">Sa</div>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-3);margin-bottom:8px">Available Time Slots</div>
+            <div class="time-grid" id="timeGrid">
+              <!-- populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title"><i class="fas fa-list"></i> Scheduled Viewings</div>
+            <div class="panel-actions">
+              <button class="pa-btn active">All</button>
+              <button class="pa-btn">Today</button>
+              <button class="pa-btn">Upcoming</button>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="sched-items" id="schedFullList">
+              <div class="sched-item active-s">
+                <div class="sched-time">09:00</div>
+                <div class="sched-info"><div class="sched-cam">CT-2847 · Central Station Platform A</div><div class="sched-purpose">Routine Monitoring · 30 min · <span style="color:var(--green)">Active</span></div></div>
+              </div>
+              <div class="sched-item pending-s">
+                <div class="sched-time">10:30</div>
+                <div class="sched-info"><div class="sched-cam">CT-3152 · Financial District</div><div class="sched-purpose">Incident Investigation · 45 min · <span style="color:var(--amber)">Pending</span></div></div>
+              </div>
+              <div class="sched-item pending-s">
+                <div class="sched-time">14:00</div>
+                <div class="sched-info"><div class="sched-cam">CT-4721 · Highway 5 Exit 23</div><div class="sched-purpose">Operator Training · 60 min · <span style="color:var(--amber)">Pending</span></div></div>
+              </div>
+              <div class="sched-item done-s">
+                <div class="sched-time">11:00</div>
+                <div class="sched-info"><div class="sched-cam">CT-5632 · Shopping Mall</div><div class="sched-purpose">Crowd Analytics · 30 min · <span style="color:var(--green)">Done</span></div></div>
+              </div>
+              <div class="sched-item pending-s">
+                <div class="sched-time">Jun 3</div>
+                <div class="sched-info"><div class="sched-cam">CT-0811 · Tower A Lobby</div><div class="sched-purpose">Biometric Audit · 90 min · <span style="color:var(--amber)">Scheduled</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analytics -->
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title"><i class="fas fa-chart-bar"></i> Viewing Analytics</div>
+          <div class="panel-actions">
+            <button class="pa-btn active">Week</button>
+            <button class="pa-btn">Month</button>
+            <button class="pa-btn">Quarter</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="analytics-row">
+            <div class="analytic-block"><div class="analytic-val">142</div><div class="analytic-lbl">Total Viewings</div></div>
+            <div class="analytic-block"><div class="analytic-val">23m</div><div class="analytic-lbl">Avg Duration</div></div>
+            <div class="analytic-block"><div class="analytic-val">14:30</div><div class="analytic-lbl">Peak Time</div></div>
+            <div class="analytic-block"><div class="analytic-val">CT-2847</div><div class="analytic-lbl">Most Viewed</div></div>
+            <div class="analytic-block"><div class="analytic-val">28</div><div class="analytic-lbl">Scheduled</div></div>
+            <div class="analytic-block"><div class="analytic-val">78%</div><div class="analytic-lbl">Utilization</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== AI DETECTION TAB ===== -->
+  <div class="tab-pane" id="tab-ai">
+    <div class="ai-grid">
+      <div class="ai-card">
+        <div class="ai-card-title"><i class="fas fa-walking"></i> Pedestrian Detection</div>
+        <div class="confidence-bar"><div class="conf-label"><span>Person Recognition</span><span>97.2%</span></div><div class="conf-bar"><div class="conf-fill cyan" style="width:97%"></div></div></div>
+        <div class="confidence-bar"><div class="conf-label"><span>Posture Analysis</span><span>88.5%</span></div><div class="conf-bar"><div class="conf-fill green" style="width:89%"></div></div></div>
+        <div class="confidence-bar"><div class="conf-label"><span>Threat Behaviour</span><span>91.1%</span></div><div class="conf-bar"><div class="conf-fill amber" style="width:91%"></div></div></div>
+        <div class="confidence-bar"><div class="conf-label"><span>Age Estimation</span><span>82.3%</span></div><div class="conf-bar"><div class="conf-fill cyan" style="width:82%"></div></div></div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-card-title"><i class="fas fa-car"></i> Vehicle & LPR</div>
+        <div class="confidence-bar"><div class="conf-label"><span>Plate Recognition</span><span>99.1%</span></div><div class="conf-bar"><div class="conf-fill green" style="width:99%"></div></div></div>
+        <div class="confidence-bar"><div class="conf-label"><span>Speed Estimation</span><span>94.7%</span></div><div class="conf-bar"><div class="conf-fill cyan" style="width:95%"></div></div></div>
+        <div class="confidence-bar"><div class="conf-label"><span>Vehicle Type ID</span><span>96.3%</span></div><div class="conf-bar"><div class="conf-fill green" style="width:96%"></div></div></div>
+        <div class="confidence-bar"><div class="conf-label"><span>Color Recognition</span><span>89.8%</span></div><div class="conf-bar"><div class="conf-fill amber" style="width:90%"></div></div></div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-card-title"><i class="fas fa-fingerprint"></i> Facial Recognition</div>
+        <div class="confidence-bar"><div class="conf-label"><span>Face Detection</span><span>98.4%</span></div><div class="conf-bar"><div class="conf-fill green" style="width:98%"></div></div></div>
+        <div class="confidence-bar"><div class="conf-label"><span>Identity Match</span><span>93.6%</span></div><div class="conf-bar"><div class="conf-fill cyan" style="width:94%"></div></div></div>
+        <div class="confidence-bar"><div class="conf-label"><span>Watchlist Cross-ref</span><span>100%</span></div><div class="conf-bar"><div class="conf-fill green" style="width:100%"></div></div></div>
+        <div class="confidence-bar"><div class="conf-label"><span>Mask Detection</span><span>87.2%</span></div><div class="conf-bar"><div class="conf-fill amber" style="width:87%"></div></div></div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-card-title"><i class="fas fa-users"></i> Crowd Analytics</div>
+        <div class="confidence-bar"><div class="conf-label"><span>Crowd Count</span><span>95.8%</span></div><div class="conf-bar"><div class="conf-fill cyan" style="width:96%"></div></div></div>
+        <div class="confidence-bar"><div class="conf-label"><span>Density Mapping</span><span>92.1%</span></div><div class="conf-bar"><div class="conf-fill green" style="width:92%"></div></div></div>
+        <div class="confidence-bar"><div class="conf-label"><span>Flow Direction</span><span>88.9%</span></div><div class="conf-bar"><div class="conf-fill amber" style="width:89%"></div></div></div>
+        <div class="confidence-bar"><div class="conf-label"><span>Anomaly Detection</span><span>79.4%</span></div><div class="conf-bar"><div class="conf-fill red" style="width:79%"></div></div></div>
+      </div>
+    </div>
+
+    <!-- Event log -->
+    <div class="panel" style="margin-top:12px">
+      <div class="panel-head">
+        <div class="panel-title"><i class="fas fa-terminal"></i> Live Detection Log</div>
+        <div class="panel-actions"><button class="pa-btn">Export</button><button class="pa-btn">Clear</button></div>
+      </div>
+      <div class="panel-body">
+        <div class="event-log" id="eventLog">
+          <div class="log-row"><span class="log-time">14:32:07</span><span class="log-cam">CT-2847</span><span class="log-event">Unattended object — no owner detected for 8m 14s</span><span class="log-tag alert">CRITICAL</span></div>
+          <div class="log-row"><span class="log-time">14:31:55</span><span class="log-cam">CT-3152</span><span class="log-event">LPR match — KPD 002X · BOLO watchlist hit</span><span class="log-tag alert">ALERT</span></div>
+          <div class="log-row"><span class="log-time">14:31:22</span><span class="log-cam">CT-5632</span><span class="log-event">Crowd density 340/m² — threshold 200/m²</span><span class="log-tag alert">CRITICAL</span></div>
+          <div class="log-row"><span class="log-time">14:30:44</span><span class="log-cam">CT-0811</span><span class="log-event">Face match #WL-2041 — confidence 93.6%</span><span class="log-tag warn">WARNING</span></div>
+          <div class="log-row"><span class="log-time">14:29:10</span><span class="log-cam">CT-4721</span><span class="log-event">Vehicle speed 87 km/h in 50 zone — KPD 002X</span><span class="log-tag warn">WARNING</span></div>
+          <div class="log-row"><span class="log-time">14:28:02</span><span class="log-cam">CT-0811</span><span class="log-event">Visitor badge scan — access granted · John M.</span><span class="log-tag normal">NORMAL</span></div>
+          <div class="log-row"><span class="log-time">14:26:55</span><span class="log-cam">CT-3152</span><span class="log-event">7 pedestrians jaywalking detected — block 4A</span><span class="log-tag warn">WARNING</span></div>
+          <div class="log-row"><span class="log-time">14:25:30</span><span class="log-cam">CT-4721</span><span class="log-event">3 vehicles in convoy — pattern flagged for tracking</span><span class="log-tag warn">WARNING</span></div>
+          <div class="log-row"><span class="log-time">14:24:11</span><span class="log-cam">CT-2847</span><span class="log-event">Normal passenger flow — 142 pax/5min at Platform A</span><span class="log-tag normal">NORMAL</span></div>
+          <div class="log-row"><span class="log-time">14:22:47</span><span class="log-cam">CT-5632</span><span class="log-event">Fight posture detected — 2 individuals · dispatched</span><span class="log-tag alert">ALERT</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== REPORTS TAB ===== -->
+  <div class="tab-pane" id="tab-reports">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title"><i class="fas fa-file-pdf"></i> Daily Summary</div></div>
+        <div class="panel-body">
+          <div style="font-size:13px;color:var(--text-2);margin-bottom:12px;font-weight:300">June 1, 2026 · Auto-generated 00:05</div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-family:var(--font-mono);font-size:11px">
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-3)">Total Incidents</span><span style="color:var(--text)">24</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-3)">Critical Alerts</span><span style="color:var(--red)">7</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-3)">Persons Detected</span><span style="color:var(--cyan)">28,441</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-3)">Vehicles Tracked</span><span style="color:var(--amber)">8,912</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-3)">LPR Matches</span><span style="color:var(--amber)">12</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-3)">Camera Uptime</span><span style="color:var(--green)">96.2%</span></div>
+          </div>
+          <button class="new-sched-btn" style="margin-top:14px"><i class="fas fa-download"></i> Download PDF</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title"><i class="fas fa-chart-line"></i> Incident Trends</div></div>
+        <div class="panel-body">
+          <div style="font-size:13px;color:var(--text-2);margin-bottom:12px;font-weight:300">Last 7 days — all zones</div>
+          <!-- Simple ASCII-style chart -->
+          <div style="display:flex;align-items:flex-end;gap:6px;height:80px;padding:0 4px">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+              <div style="flex:1;width:100%;background:var(--cyan-dim);border:1px solid var(--border-2);border-radius:3px 3px 0 0;min-height:30px;max-height:70px;height:45px"></div>
+              <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-3)">Mo</div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+              <div style="flex:1;width:100%;background:var(--cyan-dim);border:1px solid var(--border-2);border-radius:3px 3px 0 0;height:62px"></div>
+              <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-3)">Tu</div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+              <div style="flex:1;width:100%;background:var(--amber-dim);border:1px solid rgba(255,170,0,0.25);border-radius:3px 3px 0 0;height:70px"></div>
+              <div style="font-family:var(--font-mono);font-size:9px;color:var(--amber)">We</div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+              <div style="flex:1;width:100%;background:var(--cyan-dim);border:1px solid var(--border-2);border-radius:3px 3px 0 0;height:38px"></div>
+              <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-3)">Th</div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+              <div style="flex:1;width:100%;background:var(--red-dim);border:1px solid rgba(255,59,59,0.25);border-radius:3px 3px 0 0;height:66px"></div>
+              <div style="font-family:var(--font-mono);font-size:9px;color:var(--red)">Fr</div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+              <div style="flex:1;width:100%;background:var(--cyan-dim);border:1px solid var(--border-2);border-radius:3px 3px 0 0;height:52px"></div>
+              <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-3)">Sa</div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+              <div style="flex:1;width:100%;background:var(--red-dim);border:1px solid rgba(255,59,59,0.3);border-radius:3px 3px 0 0;height:24px"></div>
+              <div style="font-family:var(--font-mono);font-size:9px;color:var(--cyan)">Su</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title"><i class="fas fa-map-pin"></i> Zone Heatmap</div></div>
+        <div class="panel-body">
+          <div style="font-size:13px;color:var(--text-2);margin-bottom:10px;font-weight:300">Incident density by zone</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:11px">
+              <span style="color:var(--text-3);min-width:120px">Financial Dist.</span>
+              <div style="flex:1;height:8px;background:var(--panel-3);border-radius:3px;overflow:hidden"><div style="width:82%;height:100%;background:var(--red);border-radius:3px"></div></div>
+              <span style="color:var(--red);min-width:28px">82%</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:11px">
+              <span style="color:var(--text-3);min-width:120px">Central Station</span>
+              <div style="flex:1;height:8px;background:var(--panel-3);border-radius:3px;overflow:hidden"><div style="width:74%;height:100%;background:var(--amber);border-radius:3px"></div></div>
+              <span style="color:var(--amber);min-width:28px">74%</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:11px">
+              <span style="color:var(--text-3);min-width:120px">Westlands Mall</span>
+              <div style="flex:1;height:8px;background:var(--panel-3);border-radius:3px;overflow:hidden"><div style="width:61%;height:100%;background:var(--amber);border-radius:3px"></div></div>
+              <span style="color:var(--amber);min-width:28px">61%</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:11px">
+              <span style="color:var(--text-3);min-width:120px">Highway 5</span>
+              <div style="flex:1;height:8px;background:var(--panel-3);border-radius:3px;overflow:hidden"><div style="width:48%;height:100%;background:var(--cyan);border-radius:3px"></div></div>
+              <span style="color:var(--cyan);min-width:28px">48%</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:11px">
+              <span style="color:var(--text-3);min-width:120px">City Park</span>
+              <div style="flex:1;height:8px;background:var(--panel-3);border-radius:3px;overflow:hidden"><div style="width:22%;height:100%;background:var(--green);border-radius:3px"></div></div>
+              <span style="color:var(--green);min-width:28px">22%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- SCHEDULE MODAL -->
+<div class="modal-bg" id="schedModal">
+  <div class="modal-box">
+    <button class="modal-close" id="schedModalClose"><i class="fas fa-times"></i></button>
+    <div class="modal-title"><i class="fas fa-calendar-plus"></i> Schedule Camera Viewing</div>
+    <div class="form-grp">
+      <label class="form-lbl">Camera Selection</label>
+      <select class="form-ctrl" id="fCamera">
+        <option value="">— Select a camera —</option>
+        <option>CT-2847 · Central Station Platform A</option>
+        <option>CT-3152 · Financial District Main St</option>
+        <option>CT-4721 · Highway 5 Exit 23</option>
+        <option>CT-5632 · Shopping Mall Food Court</option>
+        <option>CT-0811 · Tower A Main Lobby</option>
+        <option>CT-1984 · City Park N. Entrance (Maint.)</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-grp">
+        <label class="form-lbl">Date</label>
+        <input type="date" class="form-ctrl" id="fDate">
+      </div>
+      <div class="form-grp">
+        <label class="form-lbl">Start Time</label>
+        <input type="time" class="form-ctrl" id="fTime">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-grp">
+        <label class="form-lbl">Duration</label>
+        <select class="form-ctrl" id="fDuration">
+          <option>15 minutes</option>
+          <option selected>30 minutes</option>
+          <option>45 minutes</option>
+          <option>1 hour</option>
+          <option>1.5 hours</option>
+          <option>2 hours</option>
+        </select>
+      </div>
+      <div class="form-grp">
+        <label class="form-lbl">Purpose</label>
+        <select class="form-ctrl" id="fPurpose">
+          <option>Routine Monitoring</option>
+          <option>Incident Investigation</option>
+          <option>Operator Training</option>
+          <option>System Maintenance</option>
+          <option>Compliance Audit</option>
+          <option>Demonstration</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-grp">
+      <label class="form-lbl">Notes (optional)</label>
+      <textarea class="form-ctrl" id="fNotes" placeholder="Add context or instructions..."></textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn-cancel" id="schedModalCancel">Cancel</button>
+      <button class="btn-save" id="schedModalSave"><i class="fas fa-save"></i> Save Schedule</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// === CLOCK ===
+function updateClock() {
+  var now = new Date();
+  var h = String(now.getHours()).padStart(2,'0');
+  var m = String(now.getMinutes()).padStart(2,'0');
+  var s = String(now.getSeconds()).padStart(2,'0');
+  var t = h+':'+m+':'+s;
+  var el = document.getElementById('topbarClock');
+  if (el) el.textContent = t;
+  // Update cam times
+  ['camTime1','camTime2','camTime3','camTime4','camTime5'].forEach(function(id) {
+    var e = document.getElementById(id);
+    if (e) e.textContent = t;
+  });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// === TABS ===
+document.querySelectorAll('.page-tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.page-tab').forEach(function(t){t.classList.remove('active');});
+    document.querySelectorAll('.tab-pane').forEach(function(p){p.classList.remove('active');});
+    this.classList.add('active');
+    document.getElementById('tab-'+this.dataset.tab).classList.add('active');
+  });
+});
+
+// === CALENDAR ===
+var calDate = new Date(2026,5,1); // June 2026
+var schedDates = ['2026-06-01','2026-06-03','2026-06-05','2026-06-08','2026-06-15','2026-06-18'];
+var today = new Date();
+
+function renderCal(gridId, monthId, d) {
+  var grid = document.getElementById(gridId);
+  var label = document.getElementById(monthId);
+  if (!grid || !label) return;
+  // remove day cells (keep 7 headers)
+  while (grid.children.length > 7) grid.removeChild(grid.lastChild);
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  label.textContent = months[d.getMonth()] + ' ' + d.getFullYear();
+  var first = new Date(d.getFullYear(), d.getMonth(), 1);
+  var last  = new Date(d.getFullYear(), d.getMonth()+1, 0);
+  var start = first.getDay();
+  var days  = last.getDate();
+  var prevLast = new Date(d.getFullYear(), d.getMonth(), 0).getDate();
+  for (var i=start-1;i>=0;i--) {
+    var el=document.createElement('div'); el.className='cal-day other-month'; el.textContent=prevLast-i; grid.appendChild(el);
+  }
+  for (var i=1;i<=days;i++) {
+    var el=document.createElement('div'); el.className='cal-day';
+    el.textContent=i;
+    var ds = d.getFullYear()+'-'+(String(d.getMonth()+1).padStart(2,'0'))+'-'+(String(i).padStart(2,'0'));
+    if (schedDates.indexOf(ds)>-1) el.classList.add('has-sched');
+    if (i===1 && d.getMonth()===5 && d.getFullYear()===2026) el.classList.add('active');
+    if (i===today.getDate() && d.getMonth()===today.getMonth() && d.getFullYear()===today.getFullYear()) el.classList.add('today');
+    el.addEventListener('click',function(){ document.querySelectorAll('#'+gridId+' .cal-day').forEach(function(c){c.classList.remove('active');}); this.classList.add('active'); });
+    grid.appendChild(el);
+  }
+  var total=42, rem=total-(start+days);
+  for (var i=1;i<=rem;i++) {
+    var el=document.createElement('div'); el.className='cal-day other-month'; el.textContent=i; grid.appendChild(el);
+  }
+}
+
+renderCal('calGrid','calMonth',calDate);
+renderCal('calGrid2','calMonth2',calDate);
+
+document.getElementById('calPrev').addEventListener('click',function(){ calDate.setMonth(calDate.getMonth()-1); renderCal('calGrid','calMonth',calDate); });
+document.getElementById('calNext').addEventListener('click',function(){ calDate.setMonth(calDate.getMonth()+1); renderCal('calGrid','calMonth',calDate); });
+document.getElementById('calPrev2').addEventListener('click',function(){ calDate.setMonth(calDate.getMonth()-1); renderCal('calGrid2','calMonth2',calDate); });
+document.getElementById('calNext2').addEventListener('click',function(){ calDate.setMonth(calDate.getMonth()+1); renderCal('calGrid2','calMonth2',calDate); });
+
+// === TIME GRID ===
+var slots = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'];
+var taken = ['09:00','09:30','10:30','11:00'];
+function renderTimeGrid() {
+  var g = document.getElementById('timeGrid');
+  if (!g) return;
+  g.innerHTML = '';
+  slots.forEach(function(s) {
+    var el = document.createElement('div');
+    el.className = 'time-cell' + (taken.indexOf(s)>-1?' taken':'');
+    el.textContent = s;
+    if (taken.indexOf(s)===-1) el.addEventListener('click', function() {
+      document.querySelectorAll('.time-cell').forEach(function(c){c.classList.remove('selected');});
+      this.classList.add('selected');
+      document.getElementById('fTime').value = s;
+      openModal();
+    });
+    g.appendChild(el);
+  });
+}
+renderTimeGrid();
+
+// === MODAL ===
+function openModal() {
+  document.getElementById('schedModal').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('schedModal').classList.remove('open');
+}
+document.querySelectorAll('.new-sched-trigger').forEach(function(b){b.addEventListener('click',openModal);});
+document.getElementById('schedModalClose').addEventListener('click',closeModal);
+document.getElementById('schedModalCancel').addEventListener('click',closeModal);
+document.getElementById('schedModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.getElementById('schedModalSave').addEventListener('click',function() {
+  var cam = document.getElementById('fCamera').value;
+  if (!cam) { alert('Please select a camera.'); return; }
+  this.innerHTML = '<i class="fas fa-check"></i> Scheduled!';
+  this.style.background = 'var(--green-dim)';
+  this.style.color = 'var(--green)';
+  this.style.borderColor = 'rgba(0,230,118,0.35)';
+  setTimeout(function(){ closeModal(); }, 1000);
+  setTimeout(function(){
+    var b = document.getElementById('schedModalSave');
+    if (b) { b.innerHTML='<i class="fas fa-save"></i> Save Schedule'; b.style.cssText=''; }
+  }, 1500);
+});
+
+// === NAV items ===
+document.querySelectorAll('.nav-item').forEach(function(item) {
+  item.addEventListener('click', function() {
+    document.querySelectorAll('.nav-item').forEach(function(i){i.classList.remove('active');});
+    this.classList.add('active');
+  });
+});
+
+// === Panel action tabs ===
+document.querySelectorAll('.pa-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var siblings = this.parentElement.querySelectorAll('.pa-btn');
+    siblings.forEach(function(s){s.classList.remove('active');});
+    this.classList.add('active');
+  });
+});
+
+// === Live metric updates ===
+function randomFlux(val, range) { return val + Math.floor((Math.random()-0.5)*range*2); }
+setInterval(function() {
+  var p = document.getElementById('mPeople');
+  var v = document.getElementById('mVehicles');
+  if (p) p.textContent = randomFlux(1284,20).toLocaleString();
+  if (v) v.textContent = randomFlux(347,8);
+}, 4000);
+
+// === Live event log append ===
+var logEvents = [
+  ['CT-2847','Normal pedestrian flow — 68 pax detected','normal'],
+  ['CT-3152','Speed check OK — KBE 881M at 48km/h','normal'],
+  ['CT-4721','Pothole detected via vibration sensor','warn'],
+  ['CT-0811','Staff access granted — badge #A-2211','normal'],
+  ['CT-5632','Crowd density easing — 190 pax/m²','normal'],
+  ['CT-1198','Motion in zone B — security check dispatched','warn'],
+];
+var logIdx = 0;
+setInterval(function() {
+  var log = document.getElementById('eventLog');
+  if (!log) return;
+  var ev = logEvents[logIdx % logEvents.length]; logIdx++;
+  var now = new Date();
+  var t = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+':'+String(now.getSeconds()).padStart(2,'0');
+  var row = document.createElement('div');
+  row.className = 'log-row';
+  row.style.opacity = '0'; row.style.transition = 'opacity 0.5s';
+  row.innerHTML = '<span class="log-time">'+t+'</span><span class="log-cam">'+ev[0]+'</span><span class="log-event">'+ev[1]+'</span><span class="log-tag '+ev[2]+'">'+ev[2].toUpperCase()+'</span>';
+  log.insertBefore(row, log.firstChild);
+  setTimeout(function(){ row.style.opacity='1'; }, 50);
+  if (log.children.length > 20) log.removeChild(log.lastChild);
+}, 5000);
+</script>
+</body>
+</html>

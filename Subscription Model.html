@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mwarokin · Subscription Models</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome 6 (Free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <style>
+        /* ============================================
+                   RESET & BASE
+                   ============================================ */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --navy: #0e1a2b;
+            --navy-light: #1a2d44;
+            --gold: #c9a959;
+            --gold-light: #e8d5a3;
+            --gold-glow: rgba(201, 169, 89, 0.25);
+            --cream: #f8f5ee;
+            --white: #ffffff;
+            --gray-100: #f3f1ed;
+            --gray-200: #e8e4dc;
+            --gray-300: #d0cbc2;
+            --gray-600: #6b6560;
+            --gray-800: #2d2823;
+            --shadow-sm: 0 4px 20px rgba(14, 26, 43, 0.08);
+            --shadow-md: 0 12px 48px rgba(14, 26, 43, 0.12);
+            --shadow-lg: 0 24px 64px rgba(14, 26, 43, 0.18);
+            --radius: 20px;
+            --radius-sm: 12px;
+            --transition: 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--cream);
+            color: var(--gray-800);
+            min-height: 100vh;
+            padding: 24px;
+            background-image:
+                radial-gradient(ellipse at 10% 20%, rgba(201, 169, 89, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 90% 80%, rgba(14, 26, 43, 0.04) 0%, transparent 50%);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .app {
+            max-width: 1440px;
+            width: 100%;
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ============================================
+                   HEADER
+                   ============================================ */
+        .app-header {
+            background: var(--navy);
+            padding: 28px 48px 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-header::after {
+            content: '';
+            position: absolute;
+            top: -60%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(201, 169, 89, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .header-content {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gold);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--navy);
+            flex-shrink: 0;
+        }
+
+        .brand-text h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: -0.3px;
+            line-height: 1.2;
+        }
+
+        .brand-text h1 span {
+            color: var(--gold);
+        }
+
+        .brand-text .tagline {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 400;
+            letter-spacing: 0.3px;
+        }
+
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 6px 16px 6px 20px;
+            border-radius: 100px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .step-indicator .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.4);
+            transition: var(--transition);
+        }
+
+        .step-indicator .step.active {
+            color: var(--gold-light);
+        }
+
+        .step-indicator .step .num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            font-size: 12px;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+
+        .step-indicator .step.active .num {
+            background: var(--gold);
+            color: var(--navy);
+        }
+
+        .step-indicator .step .check {
+            display: none;
+            color: var(--gold);
+        }
+
+        .step-indicator .step.done .check {
+            display: inline;
+        }
+        .step-indicator .step.done .num {
+            display: none;
+        }
+
+        .step-indicator .divider {
+            width: 20px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ============================================
+                   INTRO
+                   ============================================ */
+        .intro {
+            padding: 28px 48px 8px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .intro-left h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--navy);
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .intro-left h2 i {
+            color: var(--gold);
+            margin-right: 8px;
+        }
+
+        .intro-left p {
+            font-size: 15px;
+            color: var(--gray-600);
+            margin-top: 6px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .intro-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--gray-100);
+            padding: 6px 12px 6px 16px;
+            border-radius: 100px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .intro-right .label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--gray-600);
+        }
+
+        .intro-right .count {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--navy);
+            background: var(--white);
+            padding: 2px 12px;
+            border-radius: 100px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* ============================================
+                   GRID
+                   ============================================ */
+        .plans-grid {
+            padding: 24px 48px 32px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        /* ============================================
+                   PLAN CARD
+                   ============================================ */
+        .plan-card {
+            background: var(--white);
+            border-radius: var(--radius-sm);
+            border: 2px solid var(--gray-200);
+            padding: 24px 20px 20px;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .plan-card:hover {
+            border-color: var(--gold-light);
+            box-shadow: var(--shadow-sm);
+            transform: translateY(-2px);
+        }
+
+        .plan-card.selected {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 4px var(--gold-glow), var(--shadow-md);
+            transform: translateY(-4px);
+        }
+
+        .plan-card .badge {
+            position: absolute;
+            top: -1px;
+            right: 16px;
+            background: var(--gold);
+            color: var(--navy);
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 14px 5px;
+            border-radius: 0 0 8px 8px;
+            opacity: 0;
+            transform: translateY(-6px);
+            transition: var(--transition);
+            pointer-events: none;
+        }
+
+        .plan-card.selected .badge {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .plan-card .card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .plan-card .card-header .icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+            background: rgba(201, 169, 89, 0.10);
+            color: var(--gold);
+        }
+
+        .plan-card .card-header .icon.navy {
+            background: rgba(14, 26, 43, 0.06);
+            color: var(--navy);
+        }
+
+        .plan-card .card-header .title-group {
+            flex: 1;
+        }
+
+        .plan-card .card-header .title-group h3 {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--navy);
+            letter-spacing: -0.2px;
+            line-height: 1.2;
+        }
+
+        .plan-card .card-header .title-group .sub {
+            font-size: 13px;
+            color: var(--gray-600);
+            font-weight: 400;
+            margin-top: 2px;
+        }
+
+        .plan-card .card-header .select-check {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid var(--gray-300);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: var(--transition);
+            background: var(--white);
+            margin-top: 2px;
+        }
+
+        .plan-card .card-header .select-check i {
+            font-size: 14px;
+            color: var(--white);
+            opacity: 0;
+            transform: scale(0.6);
+            transition: var(--transition);
+        }
+
+        .plan-card.selected .select-check {
+            background: var(--gold);
+            border-color: var(--gold);
+            box-shadow: 0 0 0 4px var(--gold-glow);
+        }
+
+        .plan-card.selected .select-check i {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .plan-card .price {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--gold);
+            margin: 6px 0 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .plan-card .price span {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-600);
+            letter-spacing: 0;
+        }
+
+        .plan-card .description {
+            font-size: 14px;
+            color: var(--gray-600);
+            line-height: 1.5;
+            margin-bottom: 12px;
+            flex: 1;
+        }
+
+        .plan-card .features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 12px;
+        }
+
+        .plan-card .features li {
+            font-size: 13px;
+            color: var(--gray-800);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+        }
+
+        .plan-card .features li i {
+            color: var(--gold);
+            font-size: 12px;
+            width: 18px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .plan-card .features li .muted {
+            color: var(--gray-600);
+            font-size: 12px;
+        }
+
+        .plan-card .tag {
+            display: inline-block;
+            background: var(--gray-100);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--gray-600);
+            padding: 2px 12px;
+            border-radius: 100px;
+            margin-top: 4px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            align-self: flex-start;
+        }
+
+        .plan-card .tag.popular {
+            background: rgba(201, 169, 89, 0.15);
+            color: var(--gold);
+        }
+
+        /* ============================================
+                   FOOTER / ACTIONS
+                   ============================================ */
+        .actions {
+            padding: 16px 48px 32px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            border-top: 1px solid var(--gray-200);
+            background: var(--gray-100);
+            border-radius: 0 0 var(--radius) var(--radius);
+        }
+
+        .actions .selected-info {
+            font-size: 14px;
+            color: var(--gray-600);
+        }
+
+        .actions .selected-info strong {
+            color: var(--navy);
+        }
+
+        .actions .selected-info .highlight {
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .actions .btn-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            padding: 12px 32px;
+            border-radius: 100px;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--navy);
+            color: var(--white);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #162b44;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(14, 26, 43, 0.2);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn-gold {
+            background: var(--gold);
+            color: var(--navy);
+        }
+
+        .btn-gold:hover:not(:disabled) {
+            background: #dbb96a;
+            box-shadow: 0 8px 24px rgba(201, 169, 89, 0.35);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--gray-300);
+            color: var(--gray-600);
+            padding: 10px 24px;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--navy);
+            color: var(--navy);
+            background: rgba(14, 26, 43, 0.04);
+        }
+
+        /* ============================================
+                   MODAL / SUMMARY OVERLAY
+                   ============================================ */
+        .summary-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(14, 26, 43, 0.6);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 24px;
+        }
+
+        .summary-overlay.open {
+            display: flex;
+        }
+
+        .summary-modal {
+            background: var(--white);
+            max-width: 600px;
+            width: 100%;
+            border-radius: var(--radius);
+            padding: 40px 40px 32px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            animation: fadeUp 0.35s ease;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .summary-modal .close-btn {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            font-size: 24px;
+            color: var(--gray-600);
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .summary-modal .close-btn:hover {
+            color: var(--navy);
+            transform: rotate(90deg);
+        }
+
+        .summary-modal h2 {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        .summary-modal .subtitle {
+            font-size: 16px;
+            color: var(--gray-600);
+            margin-bottom: 20px;
+        }
+
+        .summary-modal .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--gray-200);
+            font-size: 15px;
+        }
+
+        .summary-modal .detail-item:last-of-type {
+            border-bottom: none;
+        }
+
+        .summary-modal .detail-item .label {
+            color: var(--gray-600);
+        }
+        .summary-modal .detail-item .value {
+            font-weight: 600;
+            color: var(--navy);
+            text-align: right;
+        }
+
+        .summary-modal .detail-item .value.highlight {
+            color: var(--gold);
+        }
+
+        .summary-modal .features-list {
+            margin: 12px 0 20px;
+            padding: 0;
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px 12px;
+        }
+
+        .summary-modal .features-list li {
+            font-size: 14px;
+            color: var(--gray-800);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+        }
+
+        .summary-modal .features-list li i {
+            color: var(--gold);
+            font-size: 12px;
+            width: 18px;
+        }
+
+        .summary-modal .actions-modal {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        .summary-modal .actions-modal .btn {
+            flex: 1;
+            justify-content: center;
+            min-width: 120px;
+        }
+
+        /* ============================================
+                   RESPONSIVE
+                   ============================================ */
+        @media (max-width: 1024px) {
+            .app-header {
+                padding: 20px 28px;
+            }
+            .intro {
+                padding: 20px 28px 4px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .plans-grid {
+                padding: 16px 28px 24px;
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 16px;
+            }
+            .actions {
+                padding: 16px 28px 24px;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            .actions .btn-group {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 12px;
+            }
+            .app-header {
+                padding: 16px 16px 14px;
+            }
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            .brand-text h1 {
+                font-size: 18px;
+            }
+            .brand-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+            .step-indicator {
+                align-self: flex-start;
+                padding: 4px 12px 4px 16px;
+                font-size: 12px;
+            }
+            .step-indicator .step {
+                font-size: 12px;
+            }
+            .step-indicator .divider {
+                width: 12px;
+            }
+            .intro {
+                padding: 12px 16px 4px;
+            }
+            .intro-left h2 {
+                font-size: 22px;
+            }
+            .intro-left p {
+                font-size: 14px;
+            }
+            .plans-grid {
+                padding: 12px 16px 20px;
+                grid-template-columns: 1fr;
+            }
+            .actions {
+                padding: 12px 16px 20px;
+            }
+            .summary-modal {
+                padding: 24px 20px;
+                margin: 12px;
+            }
+            .summary-modal .features-list {
+                grid-template-columns: 1fr;
+            }
+            .summary-modal .actions-modal {
+                flex-direction: column;
+            }
+        }
+
+        /* scrollable features */
+        .plan-card .features {
+            max-height: 120px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .plan-card .features::-webkit-scrollbar {
+            width: 4px;
+        }
+        .plan-card .features::-webkit-scrollbar-track {
+            background: var(--gray-200);
+            border-radius: 4px;
+        }
+        .plan-card .features::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app" id="app">
+
+        <!-- ===== HEADER ===== -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="brand">
+                    <div class="brand-icon"><i class="fas fa-building"></i></div>
+                    <div class="brand-text">
+                        <h1>Mwarokin <span>Estates</span></h1>
+                        <div class="tagline">Premium Property Management · Smart Pricing</div>
+                    </div>
+                </div>
+                <div class="step-indicator" id="stepIndicator">
+                    <div class="step active" data-step="1">
+                        <span class="num">1</span>
+                        <span class="check"><i class="fas fa-check"></i></span>
+                        Select
+                    </div>
+                    <div class="divider"></div>
+                    <div class="step" data-step="2">
+                        <span class="num">2</span>
+                        <span class="check"><i class="fas fa-check"></i></span>
+                        Review
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ===== INTRO ===== -->
+        <div class="intro">
+            <div class="intro-left">
+                <h2><i class="fas fa-crown"></i> Choose Your Pricing Model</h2>
+                <p>Explore our full suite of modern pricing options — from revenue share and subscriptions to performance‑based and hybrid models. Select the one that fits your portfolio.</p>
+            </div>
+            <div class="intro-right">
+                <span class="label"><i class="fas fa-th-large"></i> Plans</span>
+                <span class="count" id="planCount">0</span>
+            </div>
+        </div>
+
+        <!-- ===== PLANS GRID ===== -->
+        <div class="plans-grid" id="plansGrid">
+            <!-- Cards will be rendered by JS -->
+        </div>
+
+        <!-- ===== ACTIONS ===== -->
+        <div class="actions" id="actionsFooter">
+            <div class="selected-info" id="selectedInfo">
+                <i class="fas fa-info-circle"></i> No plan selected yet
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-primary" id="nextBtn" disabled>
+                    <i class="fas fa-arrow-right"></i> Next Step
+                </button>
+                <button class="btn btn-outline" id="resetBtn">
+                    <i class="fas fa-undo-alt"></i> Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== SUMMARY MODAL ===== -->
+        <div class="summary-overlay" id="summaryOverlay">
+            <div class="summary-modal">
+                <button class="close-btn" id="closeSummary"><i class="fas fa-times"></i></button>
+                <h2 id="summaryTitle">Plan Summary</h2>
+                <div class="subtitle" id="summarySubtitle">Review your selected pricing model</div>
+                <div id="summaryDetails"></div>
+                <div class="actions-modal">
+                    <button class="btn btn-outline" id="editSelectionBtn"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="btn btn-gold" id="confirmBtn"><i class="fas fa-check-circle"></i> Confirm Selection</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        /* ============================================================
+           DATA – All pricing models
+           ============================================================ */
+        const MODELS = [{
+            id: 'revenue-share',
+            name: 'Revenue Sharing',
+            subtitle: '5% of monthly rent',
+            icon: 'fa-hand-holding-usd',
+            iconBg: 'gold',
+            price: '5%',
+            priceSuffix: 'per unit',
+            description: 'Pay only when your units are occupied. A 5% fee is automatically deducted before landlord disbursement.',
+            features: [
+                'No fixed monthly fee',
+                'Auto-deducted before payout',
+                'Full platform access',
+                'Ideal for variable occupancy'
+            ],
+            tag: 'Popular',
+            tagType: 'popular'
+        }, {
+            id: 'msingi',
+            name: 'Msingi',
+            subtitle: 'Foundation Plan',
+            icon: 'fa-seedling',
+            iconBg: 'navy',
+            price: 'KSh 2,500',
+            priceSuffix: '/mo',
+            description: 'Essential tools for individual landlords. Includes rent dashboard, tenant profiles, and basic KRA reports.',
+            features: [
+                'Rent Dashboard',
+                'Tenant Profiles',
+                'Water & Trash Billing',
+                'Basic KRA Reports',
+                'Lipa Mdogo',
+                'Mobile App',
+                'AI Rent Reminders',
+                'Digital Receipts',
+                'Online Statements',
+                '10 Units · 5 GB Storage'
+            ],
+            tag: 'Subscription',
+            tagType: ''
+        }, {
+            id: 'jengo',
+            name: 'Jengo',
+            subtitle: 'Building Plan',
+            icon: 'fa-building',
+            iconBg: 'navy',
+            price: 'KSh 6,500',
+            priceSuffix: '/mo',
+            description: 'Advanced management for property managers. Includes financial dashboard, caretaker portal, and lease management.',
+            features: [
+                'Everything in Msingi',
+                'Financial Dashboard',
+                'Caretaker Portal',
+                'Renovation Management',
+                'AI Maintenance Scheduling',
+                'Advanced KRA Reports',
+                'Lease Management',
+                'Tenant Screening',
+                'Occupancy Analytics',
+                '50 Units · 25 GB Storage'
+            ],
+            tag: 'Subscription',
+            tagType: ''
+        }, {
+            id: 'milki',
+            name: 'Milki',
+            subtitle: 'Estate Plan',
+            icon: 'fa-city',
+            iconBg: 'navy',
+            price: 'KSh 15,000',
+            priceSuffix: '/mo',
+            description: 'Complete estate management for property companies. Includes residential zones, security, and portfolio dashboard.',
+            features: [
+                'Everything in Jengo',
+                'Residential Zones',
+                'Security Management',
+                'Communication Centre',
+                'AI Predictive Maintenance',
+                'Investor Reports',
+                'Phone Support',
+                '250 Units · 100 GB Storage'
+            ],
+            tag: 'Subscription',
+            tagType: ''
+        }, {
+            id: 'taifa',
+            name: 'Taifa',
+            subtitle: 'Enterprise Plan',
+            icon: 'fa-globe-africa',
+            iconBg: 'navy',
+            price: 'KSh 45,000',
+            priceSuffix: '/mo',
+            description: 'Full white‑label platform for enterprise clients. Unlimited units, API integration, and dedicated account manager.',
+            features: [
+                'Everything in Milki',
+                'White Label Platform',
+                'API Integration',
+                'Multi-Currency',
+                'Enterprise Reports',
+                'SLA Guarantee',
+                'Dedicated Account Manager',
+                'On-site Training',
+                'Unlimited Units · 1 TB+ Storage'
+            ],
+            tag: 'Subscription',
+            tagType: ''
+        }, {
+            id: 'commission-per-unit',
+            name: 'Commission Per Unit',
+            subtitle: 'Fixed fee per occupied unit',
+            icon: 'fa-coins',
+            iconBg: 'gold',
+            price: 'KSh 500–1,200',
+            priceSuffix: '/unit/mo',
+            description: 'Predictable costs based on unit type. Bedsitter KSh 500, 1BR KSh 700, 2BR KSh 900, 3BR KSh 1,200, Commercial KSh 1,000.',
+            features: [
+                'No percentage – fixed fee',
+                'Transparent per‑unit pricing',
+                'Best for small landlords',
+                'Auto‑deducted'
+            ],
+            tag: 'Fixed',
+            tagType: ''
+        }, {
+            id: 'annual-membership',
+            name: 'Annual Membership',
+            subtitle: 'Pay once, save 10%',
+            icon: 'fa-calendar-check',
+            iconBg: 'gold',
+            price: 'KSh 27k – 486k',
+            priceSuffix: '/year',
+            description: 'Discounted annual pricing for all subscription plans. Includes priority support and bonus features.',
+            features: [
+                'Msingi: KSh 27,000/yr',
+                'Jengo: KSh 70,000/yr',
+                'Milki: KSh 162,000/yr',
+                'Taifa: KSh 486,000/yr',
+                'Save ~10% vs monthly'
+            ],
+            tag: 'Discount',
+            tagType: 'popular'
+        }, {
+            id: 'pay-per-property',
+            name: 'Pay Per Property',
+            subtitle: 'Flat rate per property',
+            icon: 'fa-home',
+            iconBg: 'navy',
+            price: 'KSh 4k – 16k',
+            priceSuffix: '/mo',
+            description: 'Charge per property, not per unit. Ideal for mixed‑use or small portfolios.',
+            features: [
+                '1 Property: KSh 4,000/mo',
+                '2 Properties: KSh 7,500/mo',
+                '5 Properties: KSh 16,000/mo',
+                'Simple and scalable'
+            ],
+            tag: 'Flat',
+            tagType: ''
+        }, {
+            id: 'tenant-placement',
+            name: 'Tenant Placement Fee',
+            subtitle: 'One‑time fee per new tenant',
+            icon: 'fa-user-plus',
+            iconBg: 'gold',
+            price: '25–50% of rent',
+            priceSuffix: 'or fixed fee',
+            description: 'Only charged when a new tenant is secured. No recurring management fee if you self‑manage afterwards.',
+            features: [
+                'Bedsitter: KSh 5,000',
+                '1BR: KSh 7,000',
+                '2BR: KSh 9,000',
+                '3BR: KSh 12,000',
+                'No monthly commitment'
+            ],
+            tag: 'One‑time',
+            tagType: ''
+        }, {
+            id: 'rent-collection-only',
+            name: 'Rent Collection Only',
+            subtitle: 'Payment processing only',
+            icon: 'fa-credit-card',
+            iconBg: 'navy',
+            price: 'KSh 250–500',
+            priceSuffix: '/unit/mo',
+            description: 'For landlords who only need rent collection, automated reminders, receipts, statements, and reconciliation.',
+            features: [
+                'Automated reminders',
+                'Digital receipts',
+                'Bank reconciliation',
+                'Mobile money collection',
+                'Low cost'
+            ],
+            tag: 'Essential',
+            tagType: ''
+        }, {
+            id: 'leasing-marketing',
+            name: 'Leasing & Marketing',
+            subtitle: 'One‑time service',
+            icon: 'fa-camera',
+            iconBg: 'gold',
+            price: 'From KSh 10,000',
+            priceSuffix: 'per property',
+            description: 'Professional photography, online advertising, property listing, tenant screening, and lease preparation.',
+            features: [
+                'Professional photos',
+                'Online listings',
+                'Tenant screening',
+                'Lease preparation',
+                'Full marketing support'
+            ],
+            tag: 'Service',
+            tagType: ''
+        }, {
+            id: 'maintenance-subscription',
+            name: 'Maintenance Subscription',
+            subtitle: 'Maintenance without full management',
+            icon: 'fa-tools',
+            iconBg: 'navy',
+            price: 'KSh 1,000–3,000',
+            priceSuffix: '/property/mo',
+            description: 'Scheduled inspections, contractor coordination, emergency response, and preventive maintenance.',
+            features: [
+                'Scheduled inspections',
+                'Contractor coordination',
+                'Emergency response',
+                'Preventive maintenance',
+                'Affordable'
+            ],
+            tag: 'Maintenance',
+            tagType: ''
+        }, {
+            id: 'premium-concierge',
+            name: 'Premium Concierge',
+            subtitle: 'Luxury & gated communities',
+            icon: 'fa-star',
+            iconBg: 'gold',
+            price: 'From KSh 25,000',
+            priceSuffix: '/mo',
+            description: 'Dedicated property manager, VIP tenant support, interior coordination, smart home monitoring, and executive reporting.',
+            features: [
+                'Dedicated manager',
+                'VIP tenant support',
+                'Interior coordination',
+                'Smart home monitoring',
+                'Executive reporting'
+            ],
+            tag: 'Luxury',
+            tagType: 'popular'
+        }, {
+            id: 'performance-based',
+            name: 'Performance‑Based',
+            subtitle: 'Base fee + bonuses',
+            icon: 'fa-chart-line',
+            iconBg: 'navy',
+            price: 'KSh 2,000 base',
+            priceSuffix: '+ bonuses',
+            description: 'Base fee plus bonuses for maintaining occupancy above 95%, reducing arrears, or cutting maintenance costs.',
+            features: [
+                'Base: KSh 2,000/mo',
+                'Bonus for >95% occupancy',
+                'Bonus for arrears reduction',
+                'Bonus for cost savings',
+                'Aligned incentives'
+            ],
+            tag: 'Performance',
+            tagType: ''
+        }, {
+            id: 'revenue-share-addons',
+            name: 'Revenue Share on Add‑ons',
+            subtitle: 'Share from value‑added services',
+            icon: 'fa-percent',
+            iconBg: 'gold',
+            price: 'Variable',
+            priceSuffix: 'commission',
+            description: 'Earn a share from utility billing, cleaning, security, parking, internet, furnished units, and storage rentals.',
+            features: [
+                'Utility billing admin',
+                'Cleaning services',
+                'Security services',
+                'Parking management',
+                'Internet packages',
+                'Storage rentals'
+            ],
+            tag: 'Additional',
+            tagType: ''
+        }, {
+            id: 'estate-enterprise',
+            name: 'Estate Enterprise License',
+            subtitle: 'Large portfolio license',
+            icon: 'fa-building-columns',
+            iconBg: 'navy',
+            price: 'KSh 75k – 120k+',
+            priceSuffix: '/mo',
+            description: 'For developers and organizations managing 500+ units. White‑label, API, multi‑company, and advanced analytics.',
+            features: [
+                '500 Units: KSh 75,000/mo',
+                '1,000 Units: KSh 120,000/mo',
+                'Unlimited: Custom quote',
+                'White‑label platform',
+                'API integration',
+                'Dedicated account manager'
+            ],
+            tag: 'Enterprise',
+            tagType: ''
+        }, {
+            id: 'transaction-based',
+            name: 'Transaction‑Based',
+            subtitle: 'Pay per transaction',
+            icon: 'fa-exchange-alt',
+            iconBg: 'gold',
+            price: 'KSh 20–500',
+            priceSuffix: 'per event',
+            description: 'Charge only when a transaction occurs. Ideal for low‑volume or seasonal portfolios.',
+            features: [
+                'Rent collection: KSh 50–100',
+                'Utility payment: KSh 20–50',
+                'Lease renewal: KSh 500',
+                'Maintenance request: KSh 100',
+                'Gateway fee: 0.5–1%'
+            ],
+            tag: 'Flexible',
+            tagType: ''
+        }, {
+            id: 'ai-smart-estate',
+            name: 'AI Smart Estate',
+            subtitle: 'Premium technology package',
+            icon: 'fa-robot',
+            iconBg: 'navy',
+            price: 'KSh 5,000–20,000',
+            priceSuffix: '/mo',
+            description: 'AI rent prediction, vacancy forecasting, automated tenant screening, fraud detection, and investment analytics.',
+            features: [
+                'AI rent prediction',
+                'Vacancy forecasting',
+                'Automated tenant screening',
+                'Fraud detection',
+                'Maintenance prediction',
+                'Financial insights',
+                'Investment analytics'
+            ],
+            tag: 'AI',
+            tagType: 'popular'
+        }, {
+            id: 'success-fee-recovery',
+            name: 'Success Fee for Rent Recovery',
+            subtitle: 'No upfront cost',
+            icon: 'fa-hand-holding-heart',
+            iconBg: 'gold',
+            price: '10–20%',
+            priceSuffix: 'of recovered arrears',
+            description: 'For landlords with rent arrears. No upfront charge — we earn a percentage of successfully recovered overdue rent.',
+            features: [
+                '10–20% of recovered amount',
+                'No upfront fee',
+                'Risk‑free',
+                'Motivated recovery'
+            ],
+            tag: 'Recovery',
+            tagType: ''
+        }, {
+            id: 'hybrid-plan',
+            name: 'Hybrid Plan',
+            subtitle: 'Fixed + variable',
+            icon: 'fa-layer-group',
+            iconBg: 'navy',
+            price: 'KSh 1,500 + 2–3%',
+            priceSuffix: '+ placement fee',
+            description: 'Low monthly platform fee plus a small management commission and a one‑time tenant placement fee. Flexible and scalable.',
+            features: [
+                'Platform fee: KSh 1,500–3,000/mo',
+                'Commission: 2–3% of rent',
+                'One‑time placement fee',
+                'Optional maintenance & legal',
+                'Best for diverse portfolios'
+            ],
+            tag: 'Recommended',
+            tagType: 'popular'
+        }];
+
+        /* ============================================================
+           STATE
+           ============================================================ */
+        let selectedId = null;
+        let currentStep = 1; // 1 = select, 2 = review
+
+        /* ============================================================
+           DOM REFS
+           ============================================================ */
+        const grid = document.getElementById('plansGrid');
+        const planCount = document.getElementById('planCount');
+        const nextBtn = document.getElementById('nextBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const selectedInfo = document.getElementById('selectedInfo');
+        const summaryOverlay = document.getElementById('summaryOverlay');
+        const closeSummary = document.getElementById('closeSummary');
+        const editBtn = document.getElementById('editSelectionBtn');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const summaryTitle = document.getElementById('summaryTitle');
+        const summarySubtitle = document.getElementById('summarySubtitle');
+        const summaryDetails = document.getElementById('summaryDetails');
+
+        const stepIndicator = document.getElementById('stepIndicator');
+
+        /* ============================================================
+           RENDER GRID
+           ============================================================ */
+        function renderCards() {
+            grid.innerHTML = '';
+            MODELS.forEach((model, index) => {
+                const card = document.createElement('div');
+                card.className = 'plan-card';
+                card.dataset.id = model.id;
+
+                // Badge
+                const badge = document.createElement('div');
+                badge.className = 'badge';
+                badge.innerHTML = '<i class="fas fa-check-circle"></i> Selected';
+                card.appendChild(badge);
+
+                // Header
+                const header = document.createElement('div');
+                header.className = 'card-header';
+
+                const icon = document.createElement('div');
+                icon.className = `icon ${model.iconBg === 'gold' ? '' : 'navy'}`;
+                icon.innerHTML = `<i class="fas ${model.icon}"></i>`;
+                header.appendChild(icon);
+
+                const titleGroup = document.createElement('div');
+                titleGroup.className = 'title-group';
+                titleGroup.innerHTML = `
+                    <h3>${model.name}</h3>
+                    <div class="sub">${model.subtitle}</div>
+                `;
+                header.appendChild(titleGroup);
+
+                const check = document.createElement('div');
+                check.className = 'select-check';
+                check.innerHTML = '<i class="fas fa-check"></i>';
+                header.appendChild(check);
+
+                card.appendChild(header);
+
+                // Price
+                const price = document.createElement('div');
+                price.className = 'price';
+                price.innerHTML = `${model.price} <span>${model.priceSuffix}</span>`;
+                card.appendChild(price);
+
+                // Description
+                const desc = document.createElement('div');
+                desc.className = 'description';
+                desc.textContent = model.description;
+                card.appendChild(desc);
+
+                // Features
+                const features = document.createElement('ul');
+                features.className = 'features';
+                model.features.forEach(f => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<i class="fas fa-check-circle"></i> ${f}`;
+                    features.appendChild(li);
+                });
+                card.appendChild(features);
+
+                // Tag
+                if (model.tag) {
+                    const tag = document.createElement('div');
+                    tag.className = `tag ${model.tagType === 'popular' ? 'popular' : ''}`;
+                    tag.textContent = model.tag;
+                    card.appendChild(tag);
+                }
+
+                // Click handler
+                card.addEventListener('click', () => selectPlan(model.id));
+
+                grid.appendChild(card);
+            });
+
+            planCount.textContent = MODELS.length;
+        }
+
+        /* ============================================================
+           SELECTION
+           ============================================================ */
+        function selectPlan(id) {
+            if (selectedId === id) {
+                // deselect?
+                return;
+            }
+
+            // Update cards
+            document.querySelectorAll('.plan-card').forEach(card => {
+                card.classList.toggle('selected', card.dataset.id === id);
+            });
+
+            selectedId = id;
+            updateUI();
+
+            // If step was 2, go back to step 1
+            if (currentStep === 2) {
+                setStep(1);
+            }
+        }
+
+        function updateUI() {
+            const model = MODELS.find(m => m.id === selectedId);
+            if (model) {
+                selectedInfo.innerHTML = `
+                    <i class="fas fa-check-circle" style="color:var(--gold);"></i>
+                    Selected: <strong>${model.name}</strong> —
+                    <span class="highlight">${model.price}</span> ${model.priceSuffix}
+                `;
+                nextBtn.disabled = false;
+            } else {
+                selectedInfo.innerHTML = `<i class="fas fa-info-circle"></i> No plan selected yet`;
+                nextBtn.disabled = true;
+            }
+        }
+
+        /* ============================================================
+           STEPS
+           ============================================================ */
+        function setStep(step) {
+            currentStep = step;
+            document.querySelectorAll('.step-indicator .step').forEach(el => {
+                const s = parseInt(el.dataset.step);
+                el.classList.toggle('active', s === step);
+                el.classList.toggle('done', s < step);
+            });
+
+            if (step === 2) {
+                // Show summary modal
+                showSummary();
+            }
+        }
+
+        /* ============================================================
+           SUMMARY MODAL
+           ============================================================ */
+        function showSummary() {
+            const model = MODELS.find(m => m.id === selectedId);
+            if (!model) return;
+
+            summaryTitle.textContent = model.name;
+            summarySubtitle.textContent = model.subtitle;
+
+            let html = `
+                <div class="detail-item">
+                    <span class="label">Price</span>
+                    <span class="value highlight">${model.price} <span style="font-weight:400;color:var(--gray-600);font-size:14px;">${model.priceSuffix}</span></span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Description</span>
+                    <span class="value" style="font-weight:400;text-align:right;max-width:60%;">${model.description}</span>
+                </div>
+            `;
+
+            if (model.features && model.features.length) {
+                html += `
+                    <div style="margin:8px 0 4px;font-weight:600;color:var(--navy);">Features</div>
+                    <ul class="features-list">
+                        ${model.features.map(f => `<li><i class="fas fa-check-circle"></i> ${f}</li>`).join('')}
+                    </ul>
+                `;
+            }
+
+            summaryDetails.innerHTML = html;
+            summaryOverlay.classList.add('open');
+        }
+
+        function closeSummaryModal() {
+            summaryOverlay.classList.remove('open');
+        }
+
+        /* ============================================================
+           EVENT LISTENERS
+           ============================================================ */
+        // Next button
+        nextBtn.addEventListener('click', () => {
+            if (!selectedId) return;
+            setStep(2);
+        });
+
+        // Reset
+        resetBtn.addEventListener('click', () => {
+            // Deselect all
+            document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+            selectedId = null;
+            updateUI();
+            if (currentStep === 2) {
+                setStep(1);
+            }
+            closeSummaryModal();
+        });
+
+        // Close modal
+        closeSummary.addEventListener('click', closeSummaryModal);
+        summaryOverlay.addEventListener('click', (e) => {
+            if (e.target === summaryOverlay) closeSummaryModal();
+        });
+
+        // Edit
+        editBtn.addEventListener('click', () => {
+            closeSummaryModal();
+            setStep(1);
+        });
+
+        // Confirm
+        confirmBtn.addEventListener('click', () => {
+            const model = MODELS.find(m => m.id === selectedId);
+            if (!model) return;
+            alert(`✅ You have confirmed the "${model.name}" plan.\n\nPrice: ${model.price} ${model.priceSuffix}\n\nA contract will be generated based on this selection.`);
+            closeSummaryModal();
+            // Optionally stay on step 2
+        });
+
+        // Keyboard escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeSummaryModal();
+        });
+
+        /* ============================================================
+           INIT
+           ============================================================ */
+        renderCards();
+        updateUI();
+
+        console.log('🏠 Mwarokin Estates · All pricing models loaded');
+        console.log(`📊 ${MODELS.length} plans available`);
+    </script>
+
+</body>
+</html>

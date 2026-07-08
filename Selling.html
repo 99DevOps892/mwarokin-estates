@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Selling</title>
+    <link rel="icon" href="img/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" rel="stylesheet">
+    <link href="lib/animate/animate.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a56db;
+            --secondary-color: #0e2a47;
+            --accent-color: #10b981;
+            --text-color: #1f2937;
+            --light-bg: #f8fafc;
+        }
+        
+        body {
+            font-family: 'Heebo', sans-serif;
+            color: var(--text-color);
+            background-color: var(--light-bg);
+        }
+        
+        .navbar-brand h1 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 4rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .property-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .property-image {
+            height: 220px;
+            object-fit: cover;
+            width: 100%;
+        }
+        
+        .price-tag {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0 0 0.5rem 0;
+            font-weight: 600;
+        }
+        
+        .status-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+        }
+        
+        .filter-section {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .chat-container {
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .chat-box {
+            background-color: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+        
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            max-width: 80%;
+        }
+        
+        .user-message {
+            background-color: var(--primary-color);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 0.25rem;
+        }
+        
+        .bot-message {
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            border-bottom-left-radius: 0.25rem;
+        }
+        
+        .map-container {
+            height: 300px;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(26, 86, 219, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-icon i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .advanced-filter {
+            background-color: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .property-details-modal img {
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .property-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .feature-tag {
+            background-color: #e5e7eb;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+        }
+        
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .property-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+        <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <a href="index.html" class="navbar-brand d-flex align-items-center">
+                <img class="img-fluid me-2" src="Mwarokin Lg.png" alt="Icon" style="width: 30px; height: 30px;">
+                <h2 class="m-0 text-primary">Mwarokin Estates</h2>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a href="property-agent.html" class="nav-link">Agents</a></li>
+                    <li class="nav-item"><a href="Title Deeds.html" class="nav-link">Mother Title</a></li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
+                        <div class="dropdown-menu">
+                            <a href="Buying.html" class="dropdown-item">Buying Property</a>
+                            <a href="Communication.html" class="dropdown-item">Communication</a>
+                            <a href="VacancyLocator.html" class="dropdown-item">Vacancy Locator</a>
+                            <a href="Renovations.html" class="dropdown-item">Renovations</a>
+                            <a href="CalculatePendingRent.html" class="dropdown-item">Calculate Pending Rent</a>
+                            <a href="LanguageSupport.html" class="dropdown-item">Language Support</a>
+                            <a href="Accessibility.html" class="dropdown-item">People With Disabilities</a>
+                        </div>
+                    </li>
+                    <li class="nav-item"><a href="Payments.html" class="nav-link">Payments</a></li>
+                    <li class="nav-item"><a href="Titles Deed.html" class="nav-link">Mortgage Calculations</a></li>
+                </ul>
+                <a href="Schedual Viewing.html" class="btn btn-primary px-3 ms-2">Schedual Viewing</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-5 fw-bold mb-3">Find Your Dream Property</h1>
+                    <p class="lead mb-4">Discover premium properties across Africa with real-time listings, advanced search, and AI-powered recommendations.</p>
+                    <div class="d-flex gap-2">
+                        <a href="#property-listings" class="btn btn-light btn-lg">Browse Properties</a>
+                        <a href="#sell-property" class="btn btn-outline-light btn-lg">Sell Property</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="map-container mt-4 mt-lg-0" id="hero-map"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advanced Search Section -->
+    <div class="container mb-5">
+        <div class="filter-section">
+            <h3 class="mb-4">Find Your Perfect Property</h3>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" class="form-control" id="searchKeyword" placeholder="Search by keyword, location...">
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" id="propertyType">
+                        <option value="">All Types</option>
+                        <option value="apartment">Apartment</option>
+                        <option value="house">House</option>
+                        <option value="villa">Villa</option>
+                        <option value="commercial">Commercial</option>
+                        <option value="land">Land</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" id="transactionType">
+                        <option value="">All Transactions</option>
+                        <option value="sale">For Sale</option>
+                        <option value="rent">For Rent</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" class="form-control" id="minPrice" placeholder="Min Price">
+                </div>
+                <div class="col-md-2">
+                    <input type="number" class="form-control" id="maxPrice" placeholder="Max Price">
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-primary w-100" id="searchBtn">Search</button>
+                </div>
+            </div>
+            
+            <!-- Advanced Filters Toggle -->
+            <div class="mt-3">
+                <a class="text-primary" data-bs-toggle="collapse" href="#advancedFilters" role="button">
+                    <i class="fas fa-sliders-h me-1"></i> Advanced Filters
+                </a>
+            </div>
+            
+            <!-- Advanced Filters -->
+            <div class="collapse mt-3" id="advancedFilters">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Bedrooms</label>
+                        <select class="form-select" id="bedrooms">
+                            <option value="">Any</option>
+                            <option value="1">1+</option>
+                            <option value="2">2+</option>
+                            <option value="3">3+</option>
+                            <option value="4">4+</option>
+                            <option value="5">5+</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Bathrooms</label>
+                        <select class="form-select" id="bathrooms">
+                            <option value="">Any</option>
+                            <option value="1">1+</option>
+                            <option value="2">2+</option>
+                            <option value="3">3+</option>
+                            <option value="4">4+</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Area (sq ft)</label>
+                        <input type="number" class="form-control" id="minArea" placeholder="Min Area">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">&nbsp;</label>
+                        <input type="number" class="form-control" id="maxArea" placeholder="Max Area">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="parking">
+                            <label class="form-check-label" for="parking">Parking</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="garden">
+                            <label class="form-check-label" for="garden">Garden</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="pool">
+                            <label class="form-check-label" for="pool">Swimming Pool</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="security">
+                            <label class="form-check-label" for="security">Security</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Location Pinning -->
+        <div class="advanced-filter">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h5 class="mb-3">Pin Your Location</h5>
+                    <p class="text-muted">Get property recommendations based on your current location</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-outline-primary" onclick="getLocation()">
+                        <i class="fas fa-map-marker-alt me-2"></i>Use My Location
+                    </button>
+                </div>
+            </div>
+            <div id="locationResult" class="mt-3"></div>
+            <div class="map-container mt-3" id="locationMap"></div>
+        </div>
+    </div>
+
+    <!-- Property Listings -->
+    <div class="container mb-5" id="property-listings">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Available Properties</h2>
+            <div class="d-flex gap-2">
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        Sort By: <span id="sortText">Newest</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item sort-option" data-sort="newest">Newest</a></li>
+                        <li><a class="dropdown-item sort-option" data-sort="price-low">Price: Low to High</a></li>
+                        <li><a class="dropdown-item sort-option" data-sort="price-high">Price: High to Low</a></li>
+                        <li><a class="dropdown-item sort-option" data-sort="area">Area</a></li>
+                    </ul>
+                </div>
+                <div class="btn-group" role="group">
+                    <input type="radio" class="btn-check" name="viewMode" id="gridView" autocomplete="off" checked>
+                    <label class="btn btn-outline-primary" for="gridView"><i class="fas fa-th"></i></label>
+                    
+                    <input type="radio" class="btn-check" name="viewMode" id="listView" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="listView"><i class="fas fa-list"></i></label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading properties...</p>
+        </div>
+        
+        <div class="property-grid" id="propertyContainer">
+            <!-- Properties will be dynamically loaded here -->
+        </div>
+        
+        <div class="text-center mt-5">
+            <button class="btn btn-primary" id="loadMoreBtn">Load More Properties</button>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="container-fluid bg-light py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2>Why Choose Mwarokin Estates?</h2>
+                <p class="lead">Our platform offers advanced features to simplify your property journey</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <div class="feature-icon mx-auto">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4>Secure Transactions</h4>
+                        <p class="text-muted">Blockchain-verified transactions with zero-trust security protocols</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <div class="feature-icon mx-auto">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h4>AI Assistant</h4>
+                        <p class="text-muted">Get personalized property recommendations with our AI assistant</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <div class="feature-icon mx-auto">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <h4>Real-time Mapping</h4>
+                        <p class="text-muted">Interactive maps with real-time property locations and neighborhood data</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sell Property Section -->
+    <div class="container py-5" id="sell-property">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h2>List Your Property with Mwarokin Estates</h2>
+                <p class="lead">Reach thousands of potential buyers and renters with our advanced listing platform</p>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Professional photography services</li>
+                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Virtual tours and 3D walkthroughs</li>
+                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Targeted marketing campaigns</li>
+                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Secure transaction processing</li>
+                </ul>
+                <button class="btn btn-primary btn-lg mt-3" data-bs-toggle="modal" data-bs-target="#listPropertyModal">List Your Property</button>
+            </div>
+            <div class="col-lg-6">
+                <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" class="img-fluid rounded" alt="Sell Property">
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot & Voice Assistant Section -->
+    <div class="container py-5" id="chat-section">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h2 class="text-center mb-4">Mwarokin Estates Assistant</h2>
+                <div class="chat-container">
+                    <div id="chat-display" class="chat-box">
+                        <div class="message bot-message">
+                            <strong>Mwarokin Estates Assistant:</strong> Hello! I'm here to help you find your perfect property. What type of property are you looking for?
+                        </div>
+                    </div>
+                    <div class="p-3 border-top">
+                        <div class="input-group">
+                            <input type="text" id="userInput" class="form-control" placeholder="Ask your question here...">
+                            <button class="btn btn-outline-primary" onclick="startVoiceInput()">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                            <button class="btn btn-primary" onclick="handleUserInput()">Send</button>
+                        </div>
+                        <div class="form-text mt-2">
+                            Try asking: "Show me 3 bedroom apartments in Nairobi under $200,000"
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="container-fluid bg-dark text-white-50 pt-5">
+        <div class="container py-5">
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="text-white mb-4">Mwarokin Estates Property Platform</h5>
+                    <p><i class="fa fa-map-marker-alt me-3"></i>Nairobi, Kenya</p>
+                    <p><i class="fa fa-phone-alt me-3"></i> +254-704-919-388</p>
+                    <p><i class="fa fa-envelope me-3"></i> info@Mwarokin Estates.com</p>
+                    <div class="d-flex pt-2">
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-youtube"></i></a>
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                      <div class="col-lg-3 col-md-6">
+                    <h5 class="text-white mb-4">Quick Links</h5>
+                    <a class="btn btn-link text-white-50" href="Contact.html">Contact</a>
+                    <a class="btn btn-link text-white-50" href="LeaseDraft.html">Lease Draft</a>
+                    <a class="btn btn-link text-white-50" href="Term.html">Terms</a>
+                    <a class="btn btn-link text-white-50" href="Neighborhoods.html">Neighborhoods</a>
+                    <a class="btn btn-link text-white-50" href="Renovations.html">Renovations</a>
+                    <a class="btn btn-link text-white-50" href="Privacy.html">Privacy</a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="text-white mb-4">Property Types</h5>
+                    <a class="btn btn-link text-white-50" href="Construction.html">Construction</a>
+                    <a class="btn btn-link text-white-50" href="Testimonial.html">Testimonial</a>
+                    <a class="btn btn-link text-white-50" href="Cookies.html">Land</a>
+                    <a class="btn btn-link text-white-50" href="Payments.html">Payments</a>
+                    <a class="btn btn-link text-white-50" href="Wearables.html">Wearbales</a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="text-white mb-4">Newsletter</h5>
+                    <p>Subscribe to get updates on new properties</p>
+                    <div class="position-relative mx-auto">
+                        <input class="form-control bg-transparent border-secondary w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
+                        <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="copyright text-center py-4">
+                <p>Mwarokin Estates -Selling Property- &copy; 2026. All Rights Reserved. Powered by <a href="https://www.syllogismtechnologyafrica.com" class="text-white">Syllogism Technology Africa. </a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- List Property Modal -->
+    <div class="modal fade" id="listPropertyModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">List Your Property</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="propertyForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Property Title</label>
+                                <input type="text" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Property Type</label>
+                                <select class="form-select" required>
+                                    <option value="">Select Type</option>
+                                    <option value="apartment">Apartment</option>
+                                    <option value="house">House</option>
+                                    <option value="villa">Villa</option>
+                                    <option value="commercial">Commercial</option>
+                                    <option value="land">Land</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Transaction Type</label>
+                                <select class="form-select" required>
+                                    <option value="">Select</option>
+                                    <option value="sale">For Sale</option>
+                                    <option value="rent">For Rent</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Price ($)</label>
+                                <input type="number" class="form-control" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Address</label>
+                                <input type="text" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Bedrooms</label>
+                                <input type="number" class="form-control" min="0">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Bathrooms</label>
+                                <input type="number" class="form-control" min="0">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Area (sq ft)</label>
+                                <input type="number" class="form-control" min="0">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-control" rows="4"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Upload Images</label>
+                                <input type="file" class="form-control" multiple accept="image/*">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="submitProperty()">List Property</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Property Details Modal -->
+    <div class="modal fade" id="propertyDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="propertyModalTitle">Property Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body property-details-modal">
+                    <div id="propertyCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+                        <div class="carousel-inner" id="propertyCarouselInner">
+                            <!-- Carousel items will be added dynamically -->
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </button>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h4 id="propertyDetailTitle"></h4>
+                            <p class="text-muted" id="propertyDetailLocation"></p>
+                            <p id="propertyDetailDescription"></p>
+                            
+                            <div class="property-features" id="propertyDetailFeatures">
+                                <!-- Features will be added dynamically -->
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title text-primary" id="propertyDetailPrice"></h5>
+                                    <p class="card-text" id="propertyDetailStatus"></p>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-primary">Contact Agent</button>
+                                        <button class="btn btn-outline-primary">Schedule Viewing</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="js/main.js"></script>
+    
+    <script>
+        // Property data structure
+        const properties = [
+            {
+                id: 1,
+                title: "Modern Apartment in Westlands",
+                type: "apartment",
+                status: "for sale",
+                location: "Westlands, Nairobi, Kenya",
+                price: 185000,
+                currency: "USD",
+                bedrooms: 3,
+                bathrooms: 2,
+                area: 1200,
+                description: "Beautiful modern apartment with stunning city views. Features include a spacious living area, modern kitchen, and a balcony.",
+                features: ["Parking", "Security", "Gym", "Swimming Pool", "Balcony"],
+                images: [
+                    "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1484154218962-a197022b5858?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+                ],
+                coordinates: [-1.265590, 36.806389],
+                dateAdded: "2024-01-15",
+                available: true
+            },
+            {
+                id: 2,
+                title: "Luxury Villa in Karen",
+                type: "villa",
+                status: "for rent",
+                location: "Karen, Nairobi, Kenya",
+                price: 3500,
+                currency: "USD",
+                bedrooms: 5,
+                bathrooms: 4,
+                area: 3500,
+                description: "Stunning luxury villa with expansive gardens, swimming pool, and modern amenities. Perfect for family living.",
+                features: ["Parking", "Security", "Garden", "Swimming Pool", "Maid's Quarters"],
+                images: [
+                    "https://images.unsplash.com/photo-1613977257363-707ba9348227?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+                ],
+                coordinates: [-1.3192, 36.7081],
+                dateAdded: "2024-01-10",
+                available: true
+            },
+            {
+                id: 3,
+                title: "Commercial Space in CBD",
+                type: "commercial",
+                status: "for sale",
+                location: "Nairobi CBD, Kenya",
+                price: 750000,
+                currency: "USD",
+                bedrooms: 0,
+                bathrooms: 2,
+                area: 2500,
+                description: "Prime commercial space in the heart of Nairobi CBD. Ideal for offices, retail, or mixed-use development.",
+                features: ["Parking", "Security", "Elevator", "AC", "High-Speed Internet"],
+                images: [
+                    "https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+                ],
+                coordinates: [-1.286389, 36.817223],
+                dateAdded: "2024-01-05",
+                available: true
+            },
+            {
+                id: 4,
+                title: "2-Bedroom Apartment in Kilimani",
+                type: "apartment",
+                status: "for rent",
+                location: "Kilimani, Nairobi, Kenya",
+                price: 1200,
+                currency: "USD",
+                bedrooms: 2,
+                bathrooms: 2,
+                area: 850,
+                description: "Cozy 2-bedroom apartment in the vibrant Kilimani neighborhood. Close to amenities and transportation.",
+                features: ["Parking", "Security", "Balcony", "Modern Kitchen"],
+                images: [
+                    "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+                ],
+                coordinates: [-1.3000, 36.7900],
+                dateAdded: "2024-01-12",
+                available: true
+            },
+            {
+                id: 5,
+                title: "Vacant Land in Ruaka",
+                type: "land",
+                status: "for sale",
+                location: "Ruaka, Kiambu, Kenya",
+                price: 150000,
+                currency: "USD",
+                bedrooms: 0,
+                bathrooms: 0,
+                area: 10000,
+                description: "Prime vacant land in the growing Ruaka area. Suitable for residential or commercial development.",
+                features: ["Title Deed", "Road Access", "Water Connection", "Electricity"],
+                images: [
+                    "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+                ],
+                coordinates: [-1.1833, 36.8500],
+                dateAdded: "2024-01-08",
+                available: true
+            },
+            {
+                id: 6,
+                title: "Family House in Runda",
+                type: "house",
+                status: "for sale",
+                location: "Runda, Nairobi, Kenya",
+                price: 650000,
+                currency: "USD",
+                bedrooms: 4,
+                bathrooms: 3,
+                area: 2800,
+                description: "Spacious family home in the exclusive Runda neighborhood. Features include a large garden and ample parking.",
+                features: ["Parking", "Security", "Garden", "Maid's Quarters", "Fireplace"],
+                images: [
+                    "https://images.unsplash.com/photo-1518780664697-55e3ad937233?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1493809842364-78817add7ffb?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+                ],
+                coordinates: [-1.2333, 36.8167],
+                dateAdded: "2024-01-03",
+                available: true
+            }
+        ];
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMaps();
+            displayProperties(properties);
+            setupEventListeners();
+        });
+
+        // Initialize maps
+        function initializeMaps() {
+            // Hero map
+            const heroMap = L.map('hero-map').setView([-1.2921, 36.8219], 10);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(heroMap);
+            
+            // Add property markers to hero map
+            properties.forEach(property => {
+                L.marker(property.coordinates)
+                    .addTo(heroMap)
+                    .bindPopup(`<b>${property.title}</b><br>${property.location}<br>$${property.price.toLocaleString()}`);
+            });
+            
+            // Location map
+            const locationMap = L.map('locationMap').setView([-1.2921, 36.8219], 10);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(locationMap);
+            
+            window.heroMap = heroMap;
+            window.locationMap = locationMap;
+        }
+
+        // Display properties in the grid
+        function displayProperties(propertiesToDisplay) {
+            const propertyContainer = document.getElementById('propertyContainer');
+            propertyContainer.innerHTML = '';
+            
+            if (propertiesToDisplay.length === 0) {
+                propertyContainer.innerHTML = '<div class="col-12 text-center py-5"><h4>No properties found matching your criteria</h4></div>';
+                return;
+            }
+            
+            propertiesToDisplay.forEach(property => {
+                const propertyCard = createPropertyCard(property);
+                propertyContainer.innerHTML += propertyCard;
+            });
+        }
+
+        // Create property card HTML
+        function createPropertyCard(property) {
+            const statusClass = property.status === 'for sale' ? 'bg-success' : 'bg-primary';
+            const statusText = property.status === 'for sale' ? 'For Sale' : 'For Rent';
+            
+            return `
+                <div class="property-card card h-100" data-id="${property.id}">
+                    <div class="position-relative">
+                        <img src="${property.images[0]}" class="property-image card-img-top" alt="${property.title}">
+                        <span class="status-badge badge ${statusClass}">${statusText}</span>
+                        <div class="price-tag">$${property.price.toLocaleString()}</div>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">${property.title}</h5>
+                        <p class="card-text text-muted">
+                            <i class="fas fa-map-marker-alt text-primary me-1"></i>${property.location}
+                        </p>
+                        <div class="property-features mb-3">
+                            ${property.features.slice(0, 3).map(feature => 
+                                `<span class="feature-tag">${feature}</span>`
+                            ).join('')}
+                        </div>
+                        <div class="mt-auto">
+                            <div class="d-flex justify-content-between text-muted small mb-2">
+                                <span><i class="fas fa-bed text-primary me-1"></i> ${property.bedrooms} Bed</span>
+                                <span><i class="fas fa-bath text-primary me-1"></i> ${property.bathrooms} Bath</span>
+                                <span><i class="fas fa-ruler-combined text-primary me-1"></i> ${property.area} sq ft</span>
+                            </div>
+                            <button class="btn btn-primary w-100 view-details" data-id="${property.id}">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search button
+            document.getElementById('searchBtn').addEventListener('click', filterProperties);
+            
+            // Enter key in search field
+            document.getElementById('searchKeyword').addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    filterProperties();
+                }
+            });
+            
+            // Sort options
+            document.querySelectorAll('.sort-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const sortType = this.getAttribute('data-sort');
+                    document.getElementById('sortText').textContent = this.textContent;
+                    sortProperties(sortType);
+                });
+            });
+            
+            // View mode toggle
+            document.getElementById('listView').addEventListener('change', function() {
+                if (this.checked) {
+                    document.getElementById('propertyContainer').classList.remove('property-grid');
+                    document.getElementById('propertyContainer').classList.add('row');
+                    document.querySelectorAll('.property-card').forEach(card => {
+                        card.classList.remove('col-lg-4', 'col-md-6');
+                        card.classList.add('col-12', 'mb-4');
+                    });
+                }
+            });
+            
+            document.getElementById('gridView').addEventListener('change', function() {
+                if (this.checked) {
+                    document.getElementById('propertyContainer').classList.add('property-grid');
+                    document.getElementById('propertyContainer').classList.remove('row');
+                }
+            });
+            
+            // Load more button
+            document.getElementById('loadMoreBtn').addEventListener('click', function() {
+                // In a real app, this would load more properties from an API
+                const loadingSpinner = document.getElementById('loadingSpinner');
+                loadingSpinner.style.display = 'block';
+                
+                setTimeout(() => {
+                    // Simulate loading more properties
+                    const moreProperties = [...properties]; // In reality, this would be an API call
+                    displayProperties([...properties, ...moreProperties]);
+                    loadingSpinner.style.display = 'none';
+                    this.style.display = 'none'; // Hide load more after "loading" all properties
+                }, 1500);
+            });
+            
+            // View details buttons (delegated event listener)
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('view-details')) {
+                    const propertyId = parseInt(e.target.getAttribute('data-id'));
+                    showPropertyDetails(propertyId);
+                }
+            });
+        }
+
+        // Filter properties based on search criteria
+        function filterProperties() {
+            const keyword = document.getElementById('searchKeyword').value.toLowerCase();
+            const propertyType = document.getElementById('propertyType').value;
+            const transactionType = document.getElementById('transactionType').value;
+            const minPrice = document.getElementById('minPrice').value;
+            const maxPrice = document.getElementById('maxPrice').value;
+            const bedrooms = document.getElementById('bedrooms').value;
+            const bathrooms = document.getElementById('bathrooms').value;
+            const minArea = document.getElementById('minArea').value;
+            const maxArea = document.getElementById('maxArea').value;
+            
+            const parking = document.getElementById('parking').checked;
+            const garden = document.getElementById('garden').checked;
+            const pool = document.getElementById('pool').checked;
+            const security = document.getElementById('security').checked;
+            
+            const filteredProperties = properties.filter(property => {
+                // Keyword search
+                if (keyword && !property.title.toLowerCase().includes(keyword) && 
+                    !property.location.toLowerCase().includes(keyword) && 
+                    !property.description.toLowerCase().includes(keyword)) {
+                    return false;
+                }
+                
+                // Property type filter
+                if (propertyType && property.type !== propertyType) {
+                    return false;
+                }
+                
+                // Transaction type filter
+                if (transactionType) {
+                    if (transactionType === 'sale' && property.status !== 'for sale') return false;
+                    if (transactionType === 'rent' && property.status !== 'for rent') return false;
+                }
+                
+                // Price range filter
+                if (minPrice && property.price < parseInt(minPrice)) return false;
+                if (maxPrice && property.price > parseInt(maxPrice)) return false;
+                
+                // Bedrooms filter
+                if (bedrooms && property.bedrooms < parseInt(bedrooms)) return false;
+                
+                // Bathrooms filter
+                if (bathrooms && property.bathrooms < parseInt(bathrooms)) return false;
+                
+                // Area filter
+                if (minArea && property.area < parseInt(minArea)) return false;
+                if (maxArea && property.area > parseInt(maxArea)) return false;
+                
+                // Feature filters
+                if (parking && !property.features.includes('Parking')) return false;
+                if (garden && !property.features.includes('Garden')) return false;
+                if (pool && !property.features.includes('Swimming Pool')) return false;
+                if (security && !property.features.includes('Security')) return false;
+                
+                return true;
+            });
+            
+            displayProperties(filteredProperties);
+        }
+
+        // Sort properties
+        function sortProperties(sortType) {
+            let sortedProperties = [...properties];
+            
+            switch(sortType) {
+                case 'price-low':
+                    sortedProperties.sort((a, b) => a.price - b.price);
+                    break;
+                case 'price-high':
+                    sortedProperties.sort((a, b) => b.price - a.price);
+                    break;
+                case 'area':
+                    sortedProperties.sort((a, b) => b.area - a.area);
+                    break;
+                case 'newest':
+                default:
+                    // Already sorted by date added in the data
+                    break;
+            }
+            
+            displayProperties(sortedProperties);
+        }
+
+        // Show property details in modal
+        function showPropertyDetails(propertyId) {
+            const property = properties.find(p => p.id === propertyId);
+            if (!property) return;
+            
+            // Set modal title
+            document.getElementById('propertyModalTitle').textContent = property.title;
+            document.getElementById('propertyDetailTitle').textContent = property.title;
+            document.getElementById('propertyDetailLocation').textContent = property.location;
+            document.getElementById('propertyDetailDescription').textContent = property.description;
+            document.getElementById('propertyDetailPrice').textContent = `$${property.price.toLocaleString()}`;
+            document.getElementById('propertyDetailStatus').textContent = property.status === 'for sale' ? 'For Sale' : 'For Rent';
+            
+            // Set features
+            const featuresContainer = document.getElementById('propertyDetailFeatures');
+            featuresContainer.innerHTML = '';
+            property.features.forEach(feature => {
+                featuresContainer.innerHTML += `<span class="feature-tag">${feature}</span>`;
+            });
+            
+            // Set carousel images
+            const carouselInner = document.getElementById('propertyCarouselInner');
+            carouselInner.innerHTML = '';
+            property.images.forEach((image, index) => {
+                const activeClass = index === 0 ? 'active' : '';
+                carouselInner.innerHTML += `
+                    <div class="carousel-item ${activeClass}">
+                        <img src="${image}" class="d-block w-100" alt="${property.title}">
+                    </div>
+                `;
+            });
+            
+            // Show the modal
+            const propertyModal = new bootstrap.Modal(document.getElementById('propertyDetailsModal'));
+            propertyModal.show();
+        }
+
+        // Get user location
+        function getLocation() {
+            if (navigator.geolocation) {
+                document.getElementById('locationResult').innerHTML = '<div class="alert alert-info">Getting your location...</div>';
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                document.getElementById('locationResult').innerHTML = '<div class="alert alert-danger">Geolocation is not supported by this browser.</div>';
+            }
+        }
+
+        function showPosition(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            
+            document.getElementById('locationResult').innerHTML = `
+                <div class="alert alert-success">
+                    Location found: Latitude ${lat.toFixed(6)}, Longitude ${lng.toFixed(6)}
+                </div>
+            `;
+            
+            // Update location map
+            window.locationMap.setView([lat, lng], 13);
+            L.marker([lat, lng]).addTo(window.locationMap)
+                .bindPopup('Your Location')
+                .openPopup();
+            
+            // In a real app, you would use these coordinates to find nearby properties
+            findNearbyProperties(lat, lng);
+        }
+
+        function showError(error) {
+            let message = 'An unknown error occurred.';
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    message = 'User denied the request for Geolocation.';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message = 'Location information is unavailable.';
+                    break;
+                case error.TIMEOUT:
+                    message = 'The request to get user location timed out.';
+                    break;
+            }
+            document.getElementById('locationResult').innerHTML = `<div class="alert alert-danger">${message}</div>`;
+        }
+
+        // Find properties near a location (simulated)
+        function findNearbyProperties(lat, lng) {
+            // In a real app, this would be an API call to find properties near the coordinates
+            // For now, we'll just show a message
+            document.getElementById('locationResult').innerHTML += `
+                <div class="alert alert-info mt-2">
+                    Searching for properties near your location...
+                </div>
+            `;
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                // This would normally filter properties based on proximity
+                // For demo, we'll just show all properties
+                displayProperties(properties);
+                document.getElementById('locationResult').innerHTML += `
+                    <div class="alert alert-success mt-2">
+                        Found ${properties.length} properties in your area.
+                    </div>
+                `;
+            }, 1500);
+        }
+
+        // Submit property form
+        function submitProperty() {
+            // In a real app, this would send the form data to a server
+            alert('Property listing submitted! In a real application, this would be saved to a database.');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('listPropertyModal'));
+            modal.hide();
+        }
+
+        // Chatbot functionality
+        function handleUserInput() {
+            const userInput = document.getElementById('userInput').value;
+            if (!userInput.trim()) return;
+            
+            addMessageToChat(userInput, 'user');
+            document.getElementById('userInput').value = '';
+            
+            // Simulate AI response
+            setTimeout(() => {
+                const response = generateAIResponse(userInput);
+                addMessageToChat(response, 'bot');
+            }, 1000);
+        }
+
+        function addMessageToChat(message, sender) {
+            const chatDisplay = document.getElementById('chat-display');
+            const messageClass = sender === 'user' ? 'user-message' : 'bot-message';
+            const senderName = sender === 'user' ? 'You' : 'Mwarokin Estates Assistant';
+            
+            const messageElement = document.createElement('div');
+            messageElement.className = `message ${messageClass}`;
+            messageElement.innerHTML = `<strong>${senderName}:</strong> ${message}`;
+            
+            chatDisplay.appendChild(messageElement);
+            chatDisplay.scrollTop = chatDisplay.scrollHeight;
+        }
+
+        function generateAIResponse(userInput) {
+            const input = userInput.toLowerCase();
+            
+            if (input.includes('apartment') || input.includes('house') || input.includes('property')) {
+                if (input.includes('3 bedroom') || input.includes('3 bed')) {
+                    return "I found several 3 bedroom properties that might interest you. Would you like me to show apartments, houses, or both?";
+                } else if (input.includes('nairobi')) {
+                    return "There are many great properties in Nairobi. Are you looking to buy or rent? What's your budget range?";
+                } else if (input.includes('budget') || input.includes('price')) {
+                    return "Properties in our database range from $50,000 to over $1,000,000. What's your preferred price range?";
+                }
+            }
+            
+            if (input.includes('help') || input.includes('what can you do')) {
+                return "I can help you find properties based on location, price, type, and features. I can also answer questions about the buying/renting process and connect you with agents.";
+            }
+            
+            return "I understand you're looking for property information. Could you tell me more about what you're looking for? For example, are you interested in buying or renting? What location and budget are you considering?";
+        }
+
+        // Voice input functionality
+        function startVoiceInput() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert('Speech recognition is not supported in your browser. Please use Chrome or Edge.');
+                return;
+            }
+            
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'en-US';
+            recognition.start();
+            
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('userInput').value = transcript;
+            };
+            
+            recognition.onerror = function(event) {
+                console.error('Speech recognition error', event.error);
+            };
+        }
+
+        // Keyboard shortcut for voice input
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'v') {
+                e.preventDefault();
+                startVoiceInput();
+            }
+        });
+    </script>
+</body>
+</html>

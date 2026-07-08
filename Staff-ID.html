@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mwarokin Estates · Staff-ID & Staff Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Syne:wght@500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<style>
+/* ═══════════════════════ TOKENS ═══════════════════════ */
+:root{
+  --obsidian:#070b12;
+  --obsidian-2:#0c1220;
+  --forest:#123326;
+  --forest-2:#1c4a37;
+  --gold:#cda355;
+  --gold-bright:#e8c477;
+  --gold-dim:rgba(205,163,85,.14);
+  --gold-line:rgba(205,163,85,.22);
+  --cream:#f4efe2;
+  --ink-1:#eef1f6;
+  --ink-2:#9aa7bd;
+  --ink-3:#5f6c82;
+  --good:#4caf7d;
+  --warn:#e0a53c;
+  --bad:#d8695f;
+  --radius-lg:1.4rem;
+  --radius-md:1rem;
+  --radius-sm:.6rem;
+  --shadow:0 20px 60px rgba(0,0,0,.5);
+  --ease:cubic-bezier(.4,0,.2,1);
+  --font-display:'Cormorant Garamond',serif;
+  --font-struct:'Syne',sans-serif;
+  --font-body:'DM Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-body);
+  background:
+    radial-gradient(1100px 700px at 12% -10%, rgba(28,74,55,.35), transparent 60%),
+    radial-gradient(900px 600px at 100% 0%, rgba(205,163,85,.08), transparent 55%),
+    var(--obsidian);
+  color:var(--ink-1);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:inherit;border:none;background:none;color:inherit}
+::selection{background:var(--gold-dim)}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--gold-line);border-radius:8px}
+
+input,select,textarea{
+  font-family:inherit;outline:none;color:var(--ink-1);
+  background:rgba(255,255,255,.035);
+  border:1px solid var(--gold-line);
+  border-radius:var(--radius-sm);
+  padding:.7rem .9rem;width:100%;font-size:.88rem;
+  transition:.2s var(--ease);
+}
+input::placeholder,textarea::placeholder{color:var(--ink-3)}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-dim);background:rgba(255,255,255,.055)}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239aa4bf' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .9rem center;padding-right:2.3rem}
+label.field-label{display:block;font-family:var(--font-struct);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--ink-2);margin-bottom:6px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:40px;font-weight:600;font-size:.85rem;padding:.7rem 1.4rem;transition:.2s var(--ease);white-space:nowrap}
+.btn-gold{background:linear-gradient(115deg,var(--gold-bright),var(--gold) 70%);color:#1a1305;box-shadow:0 10px 26px -8px rgba(205,163,85,.5)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 16px 30px -8px rgba(205,163,85,.6)}
+.btn-gold:active{transform:translateY(0)}
+.btn-ghost{background:rgba(255,255,255,.04);border:1px solid var(--gold-line);color:var(--ink-1)}
+.btn-ghost:hover{border-color:var(--gold);background:var(--gold-dim)}
+.btn-forest{background:linear-gradient(115deg,var(--forest-2),var(--forest));color:#eafff2;border:1px solid rgba(76,175,125,.4)}
+.btn-forest:hover{filter:brightness(1.15);transform:translateY(-1px)}
+.btn-danger{background:transparent;border:1px solid rgba(216,105,95,.5);color:#f0a89f}
+.btn-danger:hover{background:rgba(216,105,95,.14)}
+.btn-block{width:100%}
+.btn-sm{padding:.4rem .95rem;font-size:.75rem}
+.btn:disabled{opacity:.55;pointer-events:none}
+
+/* ═══════════════════════ LOGIN ═══════════════════════ */
+#loginOverlay{
+  position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+  padding:1.5rem;
+  background:
+    radial-gradient(900px 500px at 20% 10%, rgba(28,74,55,.5), transparent 60%),
+    radial-gradient(700px 500px at 85% 90%, rgba(205,163,85,.12), transparent 55%),
+    #030509;
+  transition:opacity .6s var(--ease),transform .6s var(--ease);
+}
+#loginOverlay.hidden{opacity:0;transform:scale(.96);pointer-events:none}
+.login-card{
+  max-width:460px;width:100%;
+  background:rgba(12,18,28,.72);backdrop-filter:blur(22px);
+  border-radius:1.8rem;border:1px solid var(--gold-line);
+  padding:2.2rem 2.1rem 2.4rem;box-shadow:var(--shadow),0 0 0 .5px rgba(205,163,85,.06);
+  position:relative;overflow:hidden;
+}
+.login-card::before{
+  content:'';position:absolute;top:-40%;left:-20%;width:70%;height:70%;
+  background:radial-gradient(circle,rgba(205,163,85,.16),transparent 70%);
+  pointer-events:none;
+}
+.login-brand{text-align:center;margin-bottom:1.7rem;position:relative}
+.login-brand .crest{
+  width:64px;height:64px;margin:0 auto .9rem;border-radius:22px;
+  background:linear-gradient(140deg,var(--gold-bright),var(--gold) 65%,#8a6a2f);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 14px 26px -8px rgba(205,163,85,.45);
+}
+.login-brand .crest i{font-size:1.9rem;color:#151006}
+.login-brand h1{font-family:var(--font-display);font-size:1.75rem;font-weight:600;color:var(--cream);line-height:1.15}
+.login-brand h1 em{font-style:normal;color:var(--gold-bright)}
+.login-brand .tag{font-family:var(--font-struct);font-size:.66rem;letter-spacing:2.2px;text-transform:uppercase;color:var(--gold);margin-top:5px}
+.login-brand .sub{color:var(--ink-2);font-size:.78rem;margin-top:8px}
+.login-step{display:none;animation:fadeSlide .35s var(--ease)}
+.login-step.active{display:block}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.field{margin-bottom:1.15rem}
+.iwrap{position:relative}
+.iwrap i.li{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--gold);font-size:.9rem;opacity:.8}
+.iwrap input{padding-left:42px}
+.iwrap .toggle-pw{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--ink-2);padding:5px}
+.iwrap .toggle-pw:hover{color:var(--gold)}
+.strength-bar{height:4px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;margin-top:8px}
+.strength-bar .fill{height:100%;width:0%;transition:.25s var(--ease)}
+.strength-text{font-size:.68rem;color:var(--ink-3);margin-top:4px;display:inline-block}
+.code-input{font-size:1.7rem;letter-spacing:.55rem;text-align:center;font-weight:700;font-family:var(--font-struct);padding:14px 10px}
+.timer-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,.35);padding:6px 16px;border-radius:30px;font-size:.78rem;font-weight:600;margin-top:1rem;border:1px solid var(--gold-line)}
+.loc-card{background:rgba(0,0,0,.28);border-radius:1rem;padding:.9rem 1.1rem;margin:1rem 0;border:1px solid var(--gold-line)}
+.loc-card p{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--ink-2);padding:4px 0}
+.loc-card p i{color:var(--gold);width:18px;text-align:center}
+.login-features{display:flex;justify-content:space-between;margin-top:1.4rem;font-size:.66rem;color:var(--ink-3);flex-wrap:wrap;gap:8px}
+.login-features span{display:flex;align-items:center;gap:4px}
+.login-features i{color:var(--gold)}
+.flex-row{display:flex;gap:10px;margin-top:6px}
+.flex-row>*{flex:1}
+.demo-hint{background:var(--gold-dim);border-left:3px solid var(--gold);padding:9px 13px;border-radius:10px;font-size:.72rem;margin-bottom:1.1rem;color:var(--ink-1)}
+
+/* ═══════════════════════ APP SHELL ═══════════════════════ */
+#app{display:none;min-height:100vh}
+#app.visible{display:flex}
+.sidebar{
+  width:264px;flex-shrink:0;height:100vh;position:sticky;top:0;overflow-y:auto;z-index:100;
+  background:linear-gradient(180deg,rgba(18,51,38,.5),rgba(7,11,18,.9));
+  border-right:1px solid var(--gold-line);padding:1.5rem 1rem;display:flex;flex-direction:column;
+  transition:transform .3s var(--ease);
+}
+.sidebar-brand{display:flex;align-items:center;gap:12px;padding-bottom:1.4rem;border-bottom:1px solid var(--gold-line);margin-bottom:1.3rem}
+.sidebar-brand .crest{width:42px;height:42px;border-radius:14px;background:linear-gradient(140deg,var(--gold-bright),var(--gold));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sidebar-brand .crest i{font-size:1.15rem;color:#151006}
+.sidebar-brand h1{font-family:var(--font-display);font-size:1.28rem;font-weight:600;color:var(--cream);line-height:1.1}
+.sidebar-brand h1 em{font-style:normal;color:var(--gold)}
+.sidebar-nav{flex:1;display:flex;flex-direction:column;gap:2px}
+.nav-label{font-family:var(--font-struct);font-size:.58rem;text-transform:uppercase;letter-spacing:1.4px;color:var(--ink-3);padding:.8rem .7rem .35rem;font-weight:700}
+.sidebar-nav a{display:flex;align-items:center;gap:12px;padding:.65rem .8rem;border-radius:.7rem;font-size:.87rem;font-weight:500;color:var(--ink-2);transition:.2s var(--ease);position:relative}
+.sidebar-nav a:hover{background:rgba(205,163,85,.07);color:var(--ink-1)}
+.sidebar-nav a.active{background:var(--gold-dim);color:var(--gold-bright)}
+.sidebar-nav a.active::before{content:'';position:absolute;left:-1rem;top:14%;bottom:14%;width:3px;border-radius:4px;background:var(--gold)}
+.sidebar-nav a i{width:18px;text-align:center;font-size:.95rem}
+.sidebar-nav a .badge{margin-left:auto;background:var(--gold);color:#151006;font-size:.6rem;font-weight:800;padding:2px 9px;border-radius:20px}
+.sidebar-idcard{margin-top:.6rem;border:1px solid var(--gold-line);border-radius:1rem;padding:.8rem;background:rgba(0,0,0,.25);cursor:pointer;transition:.2s var(--ease)}
+.sidebar-idcard:hover{border-color:var(--gold);background:var(--gold-dim)}
+.sidebar-idcard .row{display:flex;align-items:center;gap:10px}
+.sidebar-idcard .avatar{width:38px;height:38px;border-radius:10px;background:linear-gradient(140deg,var(--gold-bright),var(--gold));display:flex;align-items:center;justify-content:center;font-weight:800;color:#151006;font-size:.8rem;flex-shrink:0}
+.sidebar-idcard .info .name{font-weight:700;font-size:.82rem}
+.sidebar-idcard .info .role{font-size:.68rem;color:var(--ink-3)}
+.sidebar-idcard .cta{margin-top:8px;font-size:.66rem;color:var(--gold);font-weight:700;display:flex;align-items:center;gap:5px}
+.sidebar-footer{border-top:1px solid var(--gold-line);padding-top:.9rem;margin-top:.7rem}
+.sidebar-footer a{color:var(--ink-2)}
+.sidebar-footer a:hover{color:#f0a89f}
+
+.main{flex:1;padding:1.5rem 2rem 2.5rem;overflow-y:auto;min-width:0}
+.topbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.7rem}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.menu-toggle{display:none;font-size:1.25rem;color:var(--ink-2);padding:6px 9px;border-radius:8px}
+.menu-toggle:hover{background:rgba(255,255,255,.05);color:var(--ink-1)}
+.topbar-left h2{font-family:var(--font-struct);font-size:1.3rem;font-weight:700}
+.topbar-left h2 em{font-style:normal;color:var(--gold)}
+.topbar-left p{font-size:.78rem;color:var(--ink-2);margin-top:2px}
+.topbar-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.search-wrap{display:flex;align-items:center;background:rgba(255,255,255,.035);border:1px solid var(--gold-line);border-radius:40px;padding:.4rem .9rem;gap:8px;min-width:210px}
+.search-wrap:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-dim)}
+.search-wrap i{color:var(--ink-3);font-size:.85rem}
+.search-wrap input{background:none;border:none;padding:.35rem 0;font-size:.83rem}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.topbar-actions button{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.035);border:1px solid var(--gold-line);display:flex;align-items:center;justify-content:center;color:var(--ink-2);position:relative;transition:.2s var(--ease)}
+.topbar-actions button:hover{background:var(--gold-dim);border-color:var(--gold);color:var(--ink-1)}
+.topbar-actions .dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--bad);border:2px solid var(--obsidian)}
+.avatar-sm{width:38px;height:38px;border-radius:50%;background:linear-gradient(140deg,var(--gold-bright),var(--gold));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.78rem;color:#151006;border:2px solid var(--gold)}
+
+/* stats */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem;margin-bottom:2rem}
+.stat-card{background:rgba(255,255,255,.025);border:1px solid var(--gold-line);border-radius:var(--radius-lg);padding:1.2rem 1.4rem;display:flex;justify-content:space-between;align-items:center;transition:.2s var(--ease)}
+.stat-card:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:var(--shadow)}
+.stat-card h3{font-size:1.75rem;font-weight:800;letter-spacing:-.5px;font-family:var(--font-struct)}
+.stat-card p{font-size:.78rem;color:var(--ink-2);margin-top:2px}
+.stat-card .icon{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0}
+.icon.gold{background:var(--gold-dim);color:var(--gold)}
+.icon.forest{background:rgba(76,175,125,.15);color:var(--good)}
+.icon.blue{background:rgba(93,173,226,.15);color:#5dade2}
+.icon.purple{background:rgba(175,122,197,.15);color:#af7ac5}
+
+.section-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem;margin-bottom:1.2rem;margin-top:1.4rem}
+.section-header h3{font-family:var(--font-struct);font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:9px}
+.section-header h3 em{font-style:normal;color:var(--gold)}
+.view-tabs{display:flex;gap:4px;background:rgba(255,255,255,.02);border-radius:40px;padding:4px;border:1px solid var(--gold-line)}
+.view-tabs button{padding:.4rem 1rem;border-radius:30px;font-size:.78rem;font-weight:600;color:var(--ink-2);display:flex;align-items:center;gap:6px}
+.view-tabs button.active{background:var(--gold);color:#151006}
+
+/* unit cards */
+.unit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.2rem}
+.unit-card{background:rgba(255,255,255,.025);border:1px solid var(--gold-line);border-radius:var(--radius-lg);overflow:hidden;transition:.25s var(--ease)}
+.unit-card:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:var(--shadow)}
+.card-img{height:160px;position:relative;overflow:hidden;background:linear-gradient(135deg,#132419,#0c1220)}
+.card-img img{width:100%;height:100%;object-fit:cover}
+.badge-status{position:absolute;top:12px;left:12px;font-size:.62rem;font-weight:800;text-transform:uppercase;padding:4px 13px;border-radius:30px;letter-spacing:.5px;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.08)}
+.badge-status.vacant{color:#f1c04f}
+.badge-status.occupied{color:var(--good)}
+.badge-status.maintenance{color:var(--warn)}
+.fav{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;color:var(--ink-2);transition:.2s}
+.fav:hover,.fav.active{color:#f0a89f}
+.card-body{padding:1rem 1.2rem}
+.card-body .title{font-weight:700;font-size:1rem;font-family:var(--font-struct)}
+.card-body .address{font-size:.78rem;color:var(--ink-2);margin:3px 0 8px;display:flex;align-items:center;gap:5px}
+.card-body .specs{display:flex;gap:14px;font-size:.78rem;color:var(--ink-2);margin:6px 0 10px}
+.card-body .specs i{color:var(--gold);margin-right:3px}
+.card-body .price{font-size:1.15rem;font-weight:800;color:var(--gold)}
+.card-body .price span{font-size:.76rem;font-weight:400;color:var(--ink-2)}
+.card-footer{padding:.75rem 1.2rem;border-top:1px solid var(--gold-line);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.card-footer .actions{display:flex;gap:6px}
+.card-footer .actions button{padding:.32rem .85rem;border-radius:30px;font-size:.72rem;font-weight:600;background:rgba(255,255,255,.035);border:1px solid var(--gold-line);color:var(--ink-2);display:flex;align-items:center;gap:4px;transition:.2s var(--ease)}
+.card-footer .actions button:hover{background:var(--gold-dim);border-color:var(--gold);color:var(--ink-1)}
+.card-footer .actions button.primary{background:var(--gold);color:#151006;border-color:var(--gold)}
+.card-footer .actions button.primary:hover{background:var(--gold-bright)}
+.card-footer .file-count{font-size:.72rem;color:var(--ink-3)}
+
+/* amenities */
+.amenities-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1rem;margin-top:.5rem}
+.amenity-card{background:rgba(255,255,255,.025);border:1px solid var(--gold-line);border-radius:var(--radius-md);padding:1rem 1.2rem;display:flex;align-items:center;gap:13px;transition:.2s var(--ease)}
+.amenity-card:hover{border-color:var(--gold);transform:translateY(-2px)}
+.amenity-card .icon{width:42px;height:42px;border-radius:12px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--gold);flex-shrink:0}
+.amenity-card .info .name{font-weight:700;font-size:.92rem}
+.amenity-card .info .desc{font-size:.72rem;color:var(--ink-2)}
+.toggle{margin-left:auto;width:38px;height:21px;border-radius:20px;background:rgba(255,255,255,.08);border:1px solid var(--gold-line);position:relative;transition:.2s var(--ease);cursor:pointer;flex-shrink:0}
+.toggle.active{background:var(--gold);border-color:var(--gold)}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:#fff;transition:.2s var(--ease)}
+.toggle.active::after{left:18px}
+
+/* communication */
+.comm-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+@media (max-width:768px){.comm-grid{grid-template-columns:1fr}}
+.comm-card{background:rgba(255,255,255,.025);border:1px solid var(--gold-line);border-radius:var(--radius-lg);padding:1.2rem}
+.comm-card h4{display:flex;align-items:center;gap:8px;font-size:.98rem;margin-bottom:.7rem;font-family:var(--font-struct)}
+.comm-card h4 i{color:var(--gold)}
+.comm-message{display:flex;gap:11px;padding:.6rem 0;border-bottom:1px solid var(--gold-line)}
+.comm-message:last-child{border-bottom:none}
+.comm-message .avatar{width:34px;height:34px;border-radius:50%;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.74rem;color:var(--gold);flex-shrink:0}
+.comm-message .name{font-weight:700;font-size:.82rem}
+.comm-message .text{font-size:.78rem;color:var(--ink-2)}
+.comm-message .time{font-size:.63rem;color:var(--ink-3)}
+.comm-input{display:flex;gap:8px;margin-top:.75rem}
+.comm-input input{flex:1}
+.ann-item{padding:.55rem 0;border-bottom:1px solid var(--gold-line)}
+.ann-item:last-child{border-bottom:none}
+.ann-item .t{font-weight:700;font-size:.86rem}
+.ann-item .d{font-size:.78rem;color:var(--ink-2)}
+.ann-item .tm{font-size:.63rem;color:var(--ink-3)}
+
+/* pros */
+.pro-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem}
+.pro-card{background:rgba(255,255,255,.025);border:1px solid var(--gold-line);border-radius:var(--radius-md);padding:1rem 1.2rem;transition:.2s var(--ease)}
+.pro-card:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:var(--shadow)}
+.pro-card .top{display:flex;align-items:center;gap:12px}
+.pro-card .avatar{width:42px;height:42px;border-radius:50%;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.95rem;color:var(--gold);flex-shrink:0}
+.pro-card .name{font-weight:700;font-size:.92rem}
+.pro-card .specialty{font-size:.72rem;color:var(--ink-2)}
+.pro-card .rating{display:flex;align-items:center;gap:4px;font-size:.78rem;color:var(--gold);margin:7px 0 4px}
+.pro-card .rating span{color:var(--ink-2);margin-left:4px}
+.pro-card .contact{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.pro-card .contact button{padding:.3rem .85rem;border-radius:30px;font-size:.72rem;font-weight:600;background:rgba(255,255,255,.035);border:1px solid var(--gold-line);color:var(--ink-2);transition:.2s var(--ease)}
+.pro-card .contact button:hover{background:var(--gold-dim);border-color:var(--gold);color:var(--ink-1)}
+.pro-card .contact button.primary{background:var(--gold);color:#151006;border-color:var(--gold)}
+
+/* table */
+.table-wrap{overflow-x:auto;background:rgba(255,255,255,.02);border:1px solid var(--gold-line);border-radius:var(--radius-lg);padding:.4rem 0}
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+th{text-align:left;padding:.8rem 1.2rem;font-weight:700;font-size:.66rem;text-transform:uppercase;letter-spacing:.6px;color:var(--ink-3);border-bottom:1px solid var(--gold-line);font-family:var(--font-struct)}
+td{padding:.68rem 1.2rem;border-bottom:1px solid rgba(255,255,255,.03);color:var(--ink-2)}
+tr:hover td{background:rgba(255,255,255,.015)}
+.badge-role{font-size:.62rem;font-weight:700;padding:2px 12px;border-radius:30px;background:var(--gold-dim);color:var(--gold)}
+.badge-role.admin{background:rgba(216,105,95,.15);color:#f0a89f}
+.badge-role.manager{background:rgba(93,173,226,.15);color:#5dade2}
+.badge-role.staff{background:rgba(76,175,125,.15);color:var(--good)}
+.action-icons{display:flex;gap:7px}
+.action-icons button{padding:5px 9px;border-radius:7px;background:rgba(255,255,255,.035);border:1px solid var(--gold-line);color:var(--ink-3);font-size:.72rem;transition:.2s var(--ease)}
+.action-icons button:hover{background:var(--gold-dim);border-color:var(--gold);color:var(--ink-1)}
+.action-icons button.danger:hover{background:rgba(216,105,95,.15);border-color:#d8695f;color:#f0a89f}
+.action-icons button.gold:hover{background:var(--gold-dim);color:var(--gold)}
+
+.map-placeholder{background:rgba(255,255,255,.02);border:1px solid var(--gold-line);border-radius:var(--radius-lg);padding:2.4rem 1.5rem;text-align:center;color:var(--ink-2)}
+.map-placeholder i{font-size:2.4rem;color:var(--gold);opacity:.4;margin-bottom:.5rem}
+.map-placeholder p{font-weight:600}
+
+.footer{margin-top:2.4rem;padding-top:1.4rem;border-top:1px solid var(--gold-line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;font-size:.78rem;color:var(--ink-3)}
+.footer em{font-style:normal;color:var(--gold)}
+
+.tab-content{display:none;animation:fadeSlide .3s var(--ease)}
+.tab-content.active{display:block}
+.scroll-y{max-height:320px;overflow-y:auto;padding-right:4px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:150;display:none;backdrop-filter:blur(4px)}
+.overlay.show{display:block}
+
+/* toast */
+.toast{position:fixed;bottom:2rem;right:2rem;background:rgba(15,20,33,.95);border:1px solid var(--gold);border-radius:var(--radius-md);padding:1rem 1.4rem;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;z-index:400;transform:translateY(130px);opacity:0;transition:.4s var(--ease);max-width:400px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast i{color:var(--gold);font-size:1.2rem}
+.toast .msg{font-size:.87rem}
+
+/* modal system */
+.modal-backdrop{position:fixed;inset:0;background:rgba(2,4,8,.72);backdrop-filter:blur(6px);z-index:500;display:none;align-items:center;justify-content:center;padding:1.2rem}
+.modal-backdrop.show{display:flex}
+.modal-box{background:linear-gradient(180deg,rgba(18,51,38,.28),rgba(12,18,32,.97));border:1px solid var(--gold-line);border-radius:1.5rem;max-width:480px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow);animation:modalIn .28s var(--ease)}
+@keyframes modalIn{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:1.3rem 1.5rem 1rem;border-bottom:1px solid var(--gold-line)}
+.modal-head h3{font-family:var(--font-struct);font-size:1.05rem;display:flex;align-items:center;gap:9px}
+.modal-head h3 i{color:var(--gold)}
+.modal-close{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;color:var(--ink-2)}
+.modal-close:hover{background:rgba(216,105,95,.15);color:#f0a89f}
+.modal-body{padding:1.3rem 1.5rem}
+.modal-foot{display:flex;gap:10px;padding:1rem 1.5rem 1.4rem}
+.modal-foot>*{flex:1}
+.detail-row{display:flex;justify-content:space-between;padding:.55rem 0;border-bottom:1px solid var(--gold-line);font-size:.85rem}
+.detail-row:last-child{border-bottom:none}
+.detail-row span:first-child{color:var(--ink-2)}
+.detail-row span:last-child{font-weight:600}
+
+/* ID CARD (signature element) */
+.idcard-wrap{display:flex;flex-direction:column;align-items:center;gap:1.1rem}
+.idcard{
+  width:340px;max-width:100%;aspect-ratio:1.586/1;border-radius:1.1rem;position:relative;overflow:hidden;
+  background:
+    linear-gradient(120deg, rgba(255,255,255,.05) 0%, transparent 35%),
+    linear-gradient(155deg,#0c2a1e 0%,#123326 45%,#0a1a13 100%);
+  border:1px solid var(--gold-line);
+  box-shadow:0 25px 50px -12px rgba(0,0,0,.65), inset 0 0 0 1px rgba(205,163,85,.08);
+  padding:1rem 1.1rem;
+  color:var(--cream);
+  font-family:var(--font-body);
+}
+.idcard::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(115deg,transparent 40%,rgba(232,196,119,.16) 48%,rgba(232,196,119,.28) 50%,rgba(232,196,119,.16) 52%,transparent 60%);
+  background-size:220% 220%;
+  animation:sheen 5s linear infinite;
+  pointer-events:none;mix-blend-mode:screen;
+}
+@keyframes sheen{0%{background-position:180% 0}100%{background-position:-40% 100%}}
+.idcard .idc-top{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:2}
+.idcard .idc-brand{display:flex;align-items:center;gap:7px}
+.idcard .idc-brand .mini-crest{width:22px;height:22px;border-radius:6px;background:linear-gradient(140deg,var(--gold-bright),var(--gold));display:flex;align-items:center;justify-content:center}
+.idcard .idc-brand .mini-crest i{font-size:.62rem;color:#151006}
+.idcard .idc-brand span{font-family:var(--font-struct);font-size:.66rem;font-weight:700;letter-spacing:.6px}
+.idcard .idc-tier{font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:1.3px;color:var(--gold-bright);border:1px solid rgba(232,196,119,.4);padding:2px 9px;border-radius:20px}
+.idcard .idc-mid{display:flex;gap:14px;margin-top:.9rem;position:relative;z-index:2}
+.idcard .idc-photo{width:64px;height:64px;border-radius:14px;background:linear-gradient(140deg,var(--gold-bright),var(--gold));display:flex;align-items:center;justify-content:center;font-family:var(--font-struct);font-weight:800;font-size:1.35rem;color:#151006;flex-shrink:0;border:2px solid rgba(255,255,255,.15)}
+.idcard .idc-info .nm{font-family:var(--font-display);font-size:1.28rem;font-weight:700;line-height:1.05}
+.idcard .idc-info .rl{font-size:.72rem;color:var(--gold-bright);font-weight:600;margin-top:2px}
+.idcard .idc-info .idn{font-family:var(--font-struct);font-size:.72rem;letter-spacing:1px;color:#cfe6da;margin-top:6px}
+.idcard .idc-bottom{display:flex;justify-content:space-between;align-items:flex-end;margin-top:.9rem;position:relative;z-index:2}
+.idcard .idc-meta p{font-size:.6rem;color:#b9cdc0;line-height:1.5}
+.idcard .idc-meta b{color:var(--cream)}
+.idcard .idc-qr{width:46px;height:46px;border-radius:6px;background:#fff;padding:3px}
+.idcard .idc-qr svg{width:100%;height:100%}
+.idcard-actions{display:flex;gap:10px;width:100%;max-width:340px}
+.idcard-actions>*{flex:1}
+.idcard-note{font-size:.72rem;color:var(--ink-3);text-align:center;max-width:340px}
+
+@media print{
+  body *{visibility:hidden}
+  #printArea,#printArea *{visibility:visible}
+  #printArea{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#fff}
+}
+
+@media (max-width:992px){
+  .sidebar{position:fixed;top:0;left:0;bottom:0;transform:translateX(-100%);width:280px;z-index:200;box-shadow:0 0 40px rgba(0,0,0,.6)}
+  .sidebar.open{transform:translateX(0)}
+  .menu-toggle{display:block}
+  .main{padding:1rem 1.1rem 1.5rem}
+  .comm-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:600px){
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .unit-grid{grid-template-columns:1fr}
+  .amenities-grid{grid-template-columns:1fr 1fr}
+  .pro-grid{grid-template-columns:1fr}
+  .topbar{flex-direction:column;align-items:stretch}
+  .search-wrap{min-width:100%}
+  .login-card{padding:1.6rem}
+  .flex-row{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════ LOGIN ═══════ -->
+<div id="loginOverlay">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="crest"><i class="fas fa-crown"></i></div>
+      <h1>Mwarokin Estates<br /><em>Staff-ID Portal</em></h1>
+      <div class="tag">Secure Personnel Access</div>
+      <div class="sub">Multi-factor verified · Session encrypted end-to-end</div>
+    </div>
+
+    <div id="loginStep1" class="login-step active">
+      <div class="demo-hint"><i class="fas fa-lock" style="color:var(--gold);margin-right:6px;"></i>Restricted area — staff credentials plus device verification required.</div>
+      <form id="loginForm">
+        <div class="field">
+          <label class="field-label">Staff ID</label>
+          <div class="iwrap"><i class="fas fa-id-card li"></i><input type="text" id="staffIdInput" placeholder="e.g. MWK-1024" autocomplete="off" /></div>
+        </div>
+        <div class="field">
+          <label class="field-label">Password</label>
+          <div class="iwrap">
+            <i class="fas fa-key li"></i>
+            <input type="password" id="staffPwInput" placeholder="••••••••" />
+            <button type="button" class="toggle-pw" id="togglePwBtn"><i class="far fa-eye"></i></button>
+          </div>
+          <div class="strength-bar"><div class="fill" id="pwStrengthFill"></div></div>
+          <span class="strength-text" id="pwStrengthText">password strength</span>
+        </div>
+        <button type="submit" class="btn btn-gold btn-block" id="loginBtn"><span id="loginBtnText">continue</span> <i class="fas fa-arrow-right"></i></button>
+      </form>
+      <div class="login-features">
+        <span><i class="fas fa-shield-alt"></i> encrypted</span>
+        <span><i class="fas fa-fingerprint"></i> device check</span>
+        <span><i class="fas fa-clock"></i> auto timeout</span>
+      </div>
+    </div>
+
+    <div id="loginStep2" class="login-step">
+      <div style="text-align:center;margin-bottom:1rem;">
+        <i class="fas fa-mobile-alt" style="font-size:2.2rem;color:var(--gold);"></i>
+        <h3 style="font-family:var(--font-struct);font-size:1.05rem;margin:9px 0 4px;">two-factor verification</h3>
+        <p style="font-size:.8rem;color:var(--ink-2);">Enter the 6-digit code sent to your device</p>
+      </div>
+      <div class="field"><input type="text" id="twoFactorInput" class="code-input" placeholder="000000" maxlength="6" autocomplete="off" /></div>
+      <div class="flex-row">
+        <button type="button" id="resendCodeBtn" class="btn btn-ghost"><i class="fas fa-redo-alt"></i> resend</button>
+        <button type="button" id="verifyCodeBtn" class="btn btn-gold">verify</button>
+      </div>
+      <div class="timer-badge"><i class="far fa-hourglass-half"></i> <span id="countdownDisplay">02:00</span> remaining</div>
+    </div>
+
+    <div id="loginStep3" class="login-step">
+      <div style="background:rgba(76,175,125,.1);border-left:3px solid var(--good);padding:9px 13px;border-radius:10px;font-size:.74rem;margin-bottom:1rem;">
+        <i class="fas fa-map-marker-alt" style="color:var(--good);margin-right:6px;"></i> Secure location check
+      </div>
+      <div class="loc-card">
+        <p><i class="fas fa-globe-africa"></i><strong>Location</strong>&nbsp;<span id="locDisplay">Nairobi, Kenya</span></p>
+        <p><i class="fas fa-laptop"></i><strong>Device</strong>&nbsp;<span id="deviceDisplay">—</span></p>
+        <p><i class="fas fa-network-wired"></i><strong>IP</strong>&nbsp;<span id="ipDisplay">—</span></p>
+        <p><i class="far fa-calendar-alt"></i><strong>Login time</strong>&nbsp;<span id="timeDisplay">—</span></p>
+      </div>
+      <p style="font-size:.85rem;margin-bottom:1rem;">Is this you attempting to sign in?</p>
+      <div class="flex-row">
+        <button type="button" id="denyLoginBtn" class="btn btn-danger"><i class="fas fa-times-circle"></i> not me</button>
+        <button type="button" id="confirmLoginBtn" class="btn btn-forest"><i class="fas fa-check-circle"></i> yes, continue</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span class="msg" id="toastMsg">Action completed</span></div>
+<div class="overlay" id="overlay"></div>
+
+<!-- ═══════ APP ═══════ -->
+<div id="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="crest"><i class="fas fa-crown"></i></div>
+      <h1>Mwarokin<br /><em>Estates</em></h1>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-label">Main</div>
+      <a href="#" class="active" data-tab="dashboard"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a href="#" data-tab="properties"><i class="fas fa-building"></i> Properties <span class="badge" id="badgeProperties">8</span></a>
+      <a href="#" data-tab="units"><i class="fas fa-door-open"></i> Units <span class="badge" id="badgeUnits">4</span></a>
+      <a href="#" data-tab="amenities"><i class="fas fa-concierge-bell"></i> Amenities</a>
+      <div class="nav-label" style="margin-top:18px;">Management</div>
+      <a href="#" data-tab="communication"><i class="fas fa-comment-dots"></i> Communication</a>
+      <a href="#" data-tab="professionals"><i class="fas fa-tools"></i> Service Pros</a>
+      <a href="#" data-tab="staff"><i class="fas fa-users-cog"></i> Staff</a>
+      <div class="nav-label" style="margin-top:18px;">Settings</div>
+      <a href="#" data-tab="settings"><i class="fas fa-sliders-h"></i> Preferences</a>
+    </nav>
+
+    <div class="sidebar-idcard" id="openIdCardBtn">
+      <div class="row">
+        <div class="avatar" id="sidebarAvatarInit">JD</div>
+        <div class="info">
+          <div class="name" id="sidebarStaffName">James Duncan</div>
+          <div class="role" id="sidebarStaffRole">Property Manager</div>
+        </div>
+      </div>
+      <div class="cta"><i class="fas fa-id-badge"></i> View digital Staff ID</div>
+    </div>
+
+    <div class="sidebar-footer">
+      <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <div>
+          <h2 id="pageTitle">Staff <em>Dashboard</em></h2>
+          <p><i class="fas fa-map-pin"></i> Mwarokin Estates · Welcome back, <span id="welcomeName">James</span></p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="search-wrap"><i class="fas fa-search"></i><input type="text" placeholder="Search properties, units, staff..." id="globalSearch" /></div>
+        <div class="topbar-actions">
+          <button aria-label="Notifications" id="notifBtn"><i class="fas fa-bell"></i><span class="dot"></span></button>
+          <button aria-label="Messages" id="msgBellBtn"><i class="fas fa-envelope"></i></button>
+          <div class="avatar-sm" id="openIdCardBtn2" style="cursor:pointer;">JD</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- DASHBOARD -->
+    <div id="tab-dashboard" class="tab-content active">
+      <div class="stats-grid">
+        <div class="stat-card"><div><h3 id="statProperties">142</h3><p>Total Properties</p></div><div class="icon gold"><i class="fas fa-building"></i></div></div>
+        <div class="stat-card"><div><h3 id="statVacant">24</h3><p>Vacant Homes</p></div><div class="icon blue"><i class="fas fa-door-open"></i></div></div>
+        <div class="stat-card"><div><h3 id="statAgents">18</h3><p>Active Agents</p></div><div class="icon purple"><i class="fas fa-user-tie"></i></div></div>
+        <div class="stat-card"><div><h3>$82.5K</h3><p>Monthly Revenue</p></div><div class="icon forest"><i class="fas fa-arrow-up"></i></div></div>
+      </div>
+
+      <div class="section-header">
+        <h3><i class="fas fa-door-open" style="color:var(--gold);"></i> Vacant <em>Homes</em></h3>
+        <div class="view-tabs"><button class="active" id="vacantGridBtn"><i class="fas fa-th"></i> Grid</button><button id="vacantMapBtn"><i class="fas fa-map"></i> Map</button></div>
+      </div>
+      <div class="unit-grid" id="vacantGrid"></div>
+      <div class="map-placeholder" id="vacantMap" style="display:none;margin-top:.5rem;">
+        <i class="fas fa-map-marked-alt"></i><p>Interactive map showing vacant properties</p>
+        <span style="font-size:.78rem;opacity:.6;">24 vacant units across Mwarokin Estates</span>
+      </div>
+
+      <div class="section-header" style="margin-top:2rem;">
+        <h3><i class="fas fa-clock" style="color:var(--gold);"></i> Recent <em>Activity</em></h3>
+        <span style="font-size:.78rem;color:var(--ink-3);">Live feed</span>
+      </div>
+      <div style="background:rgba(255,255,255,.02);border:1px solid var(--gold-line);border-radius:var(--radius-lg);padding:.4rem 1.2rem;" id="activityFeed"></div>
+    </div>
+
+    <!-- PROPERTIES -->
+    <div id="tab-properties" class="tab-content">
+      <div class="section-header">
+        <h3><i class="fas fa-building" style="color:var(--gold);"></i> All <em>Properties</em></h3>
+        <button class="btn btn-gold btn-sm" id="addPropertyBtn"><i class="fas fa-plus"></i> Add Property</button>
+      </div>
+      <div class="unit-grid" id="propertiesGrid"></div>
+    </div>
+
+    <!-- UNITS -->
+    <div id="tab-units" class="tab-content">
+      <div class="section-header">
+        <h3><i class="fas fa-door-open" style="color:var(--gold);"></i> Unit <em>Management</em></h3>
+        <button class="btn btn-gold btn-sm" id="addUnitBtn"><i class="fas fa-plus"></i> Add Unit</button>
+      </div>
+      <div class="unit-grid" id="unitsGrid"></div>
+    </div>
+
+    <!-- AMENITIES -->
+    <div id="tab-amenities" class="tab-content">
+      <div class="section-header">
+        <h3><i class="fas fa-concierge-bell" style="color:var(--gold);"></i> Property <em>Amenities</em></h3>
+        <button class="btn btn-gold btn-sm" id="addAmenityBtn"><i class="fas fa-plus"></i> Add Amenity</button>
+      </div>
+      <div class="amenities-grid" id="amenitiesGrid"></div>
+    </div>
+
+    <!-- COMMUNICATION -->
+    <div id="tab-communication" class="tab-content">
+      <div class="section-header"><h3><i class="fas fa-comment-dots" style="color:var(--gold);"></i> Communication <em>Center</em></h3></div>
+      <div class="comm-grid">
+        <div class="comm-card">
+          <h4><i class="fas fa-inbox"></i> Recent Messages</h4>
+          <div class="scroll-y" id="messageList"></div>
+          <div class="comm-input"><input type="text" placeholder="Type a message..." id="msgInput" /><button class="btn btn-gold btn-sm" id="sendMsgBtn"><i class="fas fa-paper-plane"></i> Send</button></div>
+        </div>
+        <div class="comm-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.7rem;">
+            <h4 style="margin:0;"><i class="fas fa-bullhorn"></i> Announcements</h4>
+            <button class="btn btn-ghost btn-sm" id="addAnnBtn"><i class="fas fa-plus"></i> New</button>
+          </div>
+          <div id="announcementList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFESSIONALS -->
+    <div id="tab-professionals" class="tab-content">
+      <div class="section-header">
+        <h3><i class="fas fa-tools" style="color:var(--gold);"></i> Service <em>Professionals</em></h3>
+        <button class="btn btn-gold btn-sm" id="addProBtn"><i class="fas fa-plus"></i> Add Professional</button>
+      </div>
+      <div class="pro-grid" id="prosGrid"></div>
+    </div>
+
+    <!-- STAFF -->
+    <div id="tab-staff" class="tab-content">
+      <div class="section-header">
+        <h3><i class="fas fa-users-cog" style="color:var(--gold);"></i> Staff <em>Management</em></h3>
+        <button class="btn btn-gold btn-sm" id="addStaffBtn"><i class="fas fa-user-plus"></i> Add Staff</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Staff ID</th><th>Name</th><th>Role</th><th>Department</th><th>Status</th><th style="text-align:right;">Actions</th></tr></thead>
+          <tbody id="staffTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="tab-settings" class="tab-content">
+      <div class="section-header"><h3><i class="fas fa-sliders-h" style="color:var(--gold);"></i> Preferences</h3></div>
+      <div style="background:rgba(255,255,255,.025);border:1px solid var(--gold-line);border-radius:var(--radius-lg);padding:1.5rem;max-width:480px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--gold-line);"><span>Dark Mode</span><div class="toggle active" id="darkModeToggle"></div></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--gold-line);"><span>Email Notifications</span><div class="toggle active" id="emailToggle"></div></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;"><span>Two-Factor Authentication</span><div class="toggle active" id="mfaToggle"></div></div>
+        <button class="btn btn-gold" style="margin-top:1.2rem;" id="savePrefsBtn">Save Preferences</button>
+      </div>
+    </div>
+
+    <footer class="footer"><em>Mwarokin Estates</em><p>&copy; 2026 · All Rights Reserved. Powered by <em>Syllogism Technology Africa</em></p></footer>
+  </main>
+</div>
+
+<!-- ═══════ GENERIC MODAL ═══════ -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal-box" id="modalBox"></div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+/* ═══════════════ DATA ═══════════════ */
+let uid = 1000;
+const nextId = () => ++uid;
+
+let vacantHomes = [
+  { id: nextId(), title:'Boston Ave', address:'23 Boston Ave, Medford, MA', beds:1, baths:1, sqft:549, price:'$33,000', status:'vacant', files:2, img:'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400&h=250&fit=crop' },
+  { id: nextId(), title:'Boylston St · Unit 1', address:'883-885 Boylston St, Boston, MA', beds:2, baths:2, sqft:980, price:'$7,000', status:'vacant', files:1, img:'https://images.unsplash.com/photo-1513584684374-8bab748fbf90?w=400&h=250&fit=crop' },
+  { id: nextId(), title:'Boylston St · Unit 2', address:'883-885 Boylston St, Boston, MA', beds:2, baths:2, sqft:850, price:'$500', status:'vacant', files:3, img:'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&h=250&fit=crop' },
+  { id: nextId(), title:'Skyline Penthouse', address:'101 Skyline Drive, Riverside', beds:3, baths:3, sqft:2800, price:'$4,500', status:'vacant', files:4, img:'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400&h=250&fit=crop' },
+  { id: nextId(), title:'Garden Lane Home', address:'234 Garden Lane, Lavington', beds:3, baths:2, sqft:1950, price:'$2,100', status:'vacant', files:2, img:'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=250&fit=crop' },
+  { id: nextId(), title:'Modern Loft', address:'567 Loft Street, Kilimani', beds:2, baths:2, sqft:1400, price:'$1,950', status:'vacant', files:1, img:'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=250&fit=crop' },
+];
+let allProperties = [
+  ...vacantHomes.map(h=>({...h})),
+  { id: nextId(), title:'Oak Manor', address:'159 Oak Lane, Westlands', beds:4, baths:3, sqft:3200, price:'$5,200', status:'occupied', files:3, img:'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400&h=250&fit=crop' },
+  { id: nextId(), title:'Palm Court', address:'45 Palm Drive, Kilimani', beds:2, baths:2, sqft:1100, price:'$2,800', status:'occupied', files:2, img:'https://images.unsplash.com/photo-1513584684374-8bab748fbf90?w=400&h=250&fit=crop' },
+];
+let units = [
+  { id: nextId(), title:'Unit 90', address:'Mwarokin Estates, MA', beds:2, baths:1, sqft:780, price:'$1,200', status:'vacant', files:1, img:'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400&h=200&fit=crop' },
+  { id: nextId(), title:'Unit 102', address:'Mwarokin Estates, MA', beds:3, baths:2, sqft:1120, price:'$2,100', status:'occupied', files:2, img:'https://images.unsplash.com/photo-1513584684374-8bab748fbf90?w=400&h=200&fit=crop' },
+  { id: nextId(), title:'Unit 45', address:'Mwarokin Estates, MA', beds:1, baths:1, sqft:550, price:'$850', status:'maintenance', files:1, img:'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&h=200&fit=crop' },
+  { id: nextId(), title:'Unit 12', address:'Mwarokin Estates, MA', beds:2, baths:2, sqft:940, price:'$1,650', status:'vacant', files:2, img:'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400&h=200&fit=crop' },
+];
+let amenitiesData = [
+  { id: nextId(), name:'Swimming Pool', desc:'Heated outdoor pool', active:true, icon:'fa-swimming-pool' },
+  { id: nextId(), name:'Gym', desc:'24/7 fitness center', active:true, icon:'fa-dumbbell' },
+  { id: nextId(), name:'Parking', desc:'Secure underground parking', active:true, icon:'fa-parking' },
+  { id: nextId(), name:'Concierge', desc:'24/7 front desk service', active:false, icon:'fa-concierge-bell' },
+  { id: nextId(), name:'Garden', desc:'Landscaped communal garden', active:true, icon:'fa-tree' },
+  { id: nextId(), name:'Security', desc:'CCTV & access control', active:true, icon:'fa-shield-alt' },
+];
+let professionals = [
+  { id: nextId(), name:'John Kamau', specialty:'Plumbing', rating:4.8, jobs:42, phone:'+254 712 345 678', avatar:'JK' },
+  { id: nextId(), name:'Mary Wanjiru', specialty:'Electrical', rating:4.9, jobs:38, phone:'+254 723 456 789', avatar:'MW' },
+  { id: nextId(), name:'Peter Ochieng', specialty:'Carpentry', rating:4.6, jobs:29, phone:'+254 734 567 890', avatar:'PO' },
+  { id: nextId(), name:'Grace Akinyi', specialty:'Landscaping', rating:4.7, jobs:21, phone:'+254 745 678 901', avatar:'GA' },
+  { id: nextId(), name:'David Mwangi', specialty:'HVAC', rating:4.5, jobs:17, phone:'+254 756 789 012', avatar:'DM' },
+];
+let staffData = [
+  { id:'MWK-1001', name:'James Duncan', role:'Property Manager', dept:'Management', status:'Active' },
+  { id:'MWK-1002', name:'Sarah Kimani', role:'Tenant Relations', dept:'Leasing', status:'Active' },
+  { id:'MWK-1003', name:'Michael Otieno', role:'Maintenance Lead', dept:'Facilities', status:'Active' },
+  { id:'MWK-1004', name:'Emily Wanjiku', role:'Finance Officer', dept:'Finance', status:'On Leave' },
+  { id:'MWK-1005', name:'Robert Kiprop', role:'Marketing Specialist', dept:'Marketing', status:'Active' },
+];
+let messages = [
+  { name:'Sarah Kimani', text:'The tenant at Unit 90 is requesting a repair.', time:'10:32 AM' },
+  { name:'Michael Otieno', text:'Maintenance scheduled for the pool area tomorrow.', time:'9:15 AM' },
+  { name:'Emily Wanjiku', text:'Please review the Q3 financial report.', time:'Yesterday' },
+];
+let announcements = [
+  { t:'📢 Maintenance scheduled', d:'Pool area closed for repairs on Friday', tm:'2 hours ago' },
+  { t:'🏡 New property listings', d:'3 new vacant units added in Westlands', tm:'Yesterday' },
+  { t:'✅ Staff meeting', d:'Monthly review meeting at 3 PM in boardroom', tm:'2 days ago' },
+];
+let activity = [
+  { icon:'fa-key', color:'gold', t:'New Lease Signed', d:'Property at 567 Elm St leased to Robert Johnson', tm:'2h ago' },
+  { icon:'fa-home', color:'blue', t:'Property Added', d:'New vacant listing at 321 Maple Avenue', tm:'5h ago' },
+  { icon:'fa-file-invoice-dollar', color:'forest', t:'Payment Received', d:'Rent from Michael Brown for 159 Oak Lane', tm:'Yesterday' },
+];
+const currentStaff = { id:'MWK-1024', name:'James Duncan', role:'Property Manager', dept:'Management', issued:'Jan 2026', expires:'Jan 2028' };
+
+/* ═══════════════ DOM REFS ═══════════════ */
+const loginOverlay=document.getElementById('loginOverlay'), app=document.getElementById('app');
+const sidebar=document.getElementById('sidebar'), overlay=document.getElementById('overlay'), menuToggle=document.getElementById('menuToggle');
+const toast=document.getElementById('toast'), toastMsg=document.getElementById('toastMsg');
+const modalBackdrop=document.getElementById('modalBackdrop'), modalBox=document.getElementById('modalBox');
+
+function showToast(msg, icon='fa-check-circle'){
+  toastMsg.textContent=msg;
+  toast.querySelector('i').className='fas '+icon;
+  toast.classList.add('show');
+  clearTimeout(toast._h);
+  toast._h=setTimeout(()=>toast.classList.remove('show'),3200);
+}
+function pushActivity(icon,color,t,d){
+  activity.unshift({icon,color,t,d,tm:'Just now'});
+  activity=activity.slice(0,8);
+  renderActivity();
+}
+function initials(name){ return name.split(' ').filter(Boolean).map(n=>n[0]).join('').slice(0,2).toUpperCase(); }
+
+/* ═══════════════ LOGIN FLOW ═══════════════ */
+const loginForm=document.getElementById('loginForm'), staffIdInput=document.getElementById('staffIdInput'), staffPwInput=document.getElementById('staffPwInput');
+const togglePwBtn=document.getElementById('togglePwBtn'), pwStrengthFill=document.getElementById('pwStrengthFill'), pwStrengthText=document.getElementById('pwStrengthText');
+const loginBtn=document.getElementById('loginBtn'), loginBtnText=document.getElementById('loginBtnText');
+const step1=document.getElementById('loginStep1'), step2=document.getElementById('loginStep2'), step3=document.getElementById('loginStep3');
+const twoFactorInput=document.getElementById('twoFactorInput'), verifyCodeBtn=document.getElementById('verifyCodeBtn'), resendCodeBtn=document.getElementById('resendCodeBtn');
+const countdownDisplay=document.getElementById('countdownDisplay'), confirmLoginBtn=document.getElementById('confirmLoginBtn'), denyLoginBtn=document.getElementById('denyLoginBtn');
+const locDisplay=document.getElementById('locDisplay'), deviceDisplay=document.getElementById('deviceDisplay'), ipDisplay=document.getElementById('ipDisplay'), timeDisplay=document.getElementById('timeDisplay');
+
+let simulatedCode='', countdownSeconds=120, timerInterval=null;
+
+function evalPw(pw){
+  let s=0;
+  if(pw.length>=8)s++; if(/[a-z]/.test(pw)&&/[A-Z]/.test(pw))s++; if(/\d/.test(pw))s++; if(/[^a-zA-Z0-9]/.test(pw))s++;
+  pwStrengthFill.style.width=(s*25)+'%';
+  const labels=['enter password','weak','medium','strong','very strong'];
+  const colors=['#6c757d','#d8695f','#e0a53c','#5dade2','#4caf7d'];
+  pwStrengthFill.style.background=colors[s]; pwStrengthText.textContent=labels[s];
+}
+staffPwInput.addEventListener('input',()=>evalPw(staffPwInput.value));
+togglePwBtn.addEventListener('click',()=>{
+  const t=staffPwInput.type==='password'?'text':'password'; staffPwInput.type=t;
+  togglePwBtn.innerHTML=t==='password'?'<i class="far fa-eye"></i>':'<i class="far fa-eye-slash"></i>';
+});
+function generate2FA(){
+  simulatedCode=Math.floor(100000+Math.random()*900000).toString();
+  alert('🔐 DEMO: Your verification code is '+simulatedCode);
+  return simulatedCode;
+}
+function startCountdown(){
+  if(timerInterval) clearInterval(timerInterval);
+  countdownSeconds=120; updateCountdown();
+  timerInterval=setInterval(()=>{
+    countdownSeconds--; updateCountdown();
+    if(countdownSeconds<=0){ clearInterval(timerInterval); timerInterval=null; alert('Code expired. Request a new one.'); }
+  },1000);
+}
+function updateCountdown(){
+  const m=Math.floor(countdownSeconds/60), s=countdownSeconds%60;
+  countdownDisplay.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+function goToLoginStep(step){
+  document.querySelectorAll('.login-step').forEach(el=>el.classList.remove('active'));
+  document.getElementById('loginStep'+step).classList.add('active');
+}
+loginForm.addEventListener('submit',(e)=>{
+  e.preventDefault();
+  const id=staffIdInput.value.trim(), pw=staffPwInput.value;
+  if(!id||!pw){ showToast('Please enter Staff ID and password','fa-exclamation-circle'); return; }
+  loginBtn.disabled=true; loginBtnText.innerHTML='<i class="fas fa-spinner fa-pulse"></i> verifying...';
+  setTimeout(()=>{
+    generate2FA(); startCountdown(); goToLoginStep(2);
+    loginBtn.disabled=false; loginBtnText.textContent='continue';
+    showToast('2FA code sent to your device','fa-mobile-alt');
+  },1100);
+});
+verifyCodeBtn.addEventListener('click',()=>{
+  const code=twoFactorInput.value.trim();
+  if(code.length!==6){ showToast('Enter the 6-digit code','fa-exclamation-circle'); return; }
+  if(code===simulatedCode){ if(timerInterval)clearInterval(timerInterval); goToLoginStep(3); showToast('2FA verified successfully','fa-check-circle'); }
+  else showToast('Invalid code. Try again.','fa-times-circle');
+});
+twoFactorInput.addEventListener('input',(e)=>{ e.target.value=e.target.value.replace(/\D/g,'').slice(0,6); });
+resendCodeBtn.addEventListener('click',()=>{ generate2FA(); startCountdown(); showToast('New code sent','fa-redo-alt'); });
+
+confirmLoginBtn.addEventListener('click',()=>{
+  confirmLoginBtn.disabled=true; confirmLoginBtn.innerHTML='<i class="fas fa-spinner fa-pulse"></i> authenticating...';
+  setTimeout(()=>{
+    loginOverlay.classList.add('hidden'); app.classList.add('visible'); document.body.style.overflow='auto';
+    confirmLoginBtn.disabled=false; confirmLoginBtn.innerHTML='<i class="fas fa-check-circle"></i> yes, continue';
+    showToast('Welcome back, James!','fa-crown');
+    renderAll();
+  },750);
+});
+denyLoginBtn.addEventListener('click',()=>{
+  if(confirm('⚠️ Deny this login attempt? Security logs will be recorded.')){
+    showToast('Access denied. Contact administration.','fa-shield-alt');
+    setTimeout(()=>location.reload(),1400);
+  }
+});
+function setDeviceInfo(){
+  const ua=navigator.userAgent; let d='Chrome';
+  if(ua.includes('Firefox'))d='Firefox'; else if(ua.includes('Safari')&&!ua.includes('Chrome'))d='Safari';
+  if(ua.includes('Windows'))d+=' on Windows'; else if(ua.includes('Mac'))d+=' on macOS'; else if(ua.includes('Linux'))d+=' on Linux';
+  deviceDisplay.textContent=d; ipDisplay.textContent='197.248.84.1';
+  timeDisplay.textContent=new Date().toLocaleString('en-KE',{hour12:false});
+  locDisplay.textContent='Nairobi, Kenya (estimated)';
+}
+setDeviceInfo();
+
+/* ═══════════════ SIDEBAR / NAV ═══════════════ */
+menuToggle.addEventListener('click',()=>{ sidebar.classList.toggle('open'); overlay.classList.toggle('show'); });
+overlay.addEventListener('click',()=>{ sidebar.classList.remove('open'); overlay.classList.remove('show'); closeModal(); });
+document.addEventListener('keydown',(e)=>{ if(e.key==='Escape'){ sidebar.classList.remove('open'); overlay.classList.remove('show'); closeModal(); } });
+
+document.getElementById('logoutBtn').addEventListener('click',(e)=>{
+  e.preventDefault();
+  if(confirm('Are you sure you want to logout?')){
+    app.classList.remove('visible'); loginOverlay.classList.remove('hidden'); document.body.style.overflow='hidden';
+    goToLoginStep(1); staffIdInput.value=''; staffPwInput.value=''; twoFactorInput.value='';
+    showToast('Logged out successfully','fa-sign-out-alt');
+  }
+});
+
+const tabLinks=document.querySelectorAll('.sidebar-nav a[data-tab]');
+const tabContents=document.querySelectorAll('.tab-content');
+const titles={dashboard:['Staff','Dashboard'],properties:['Property','Management'],units:['Unit','Management'],amenities:['Property','Amenities'],communication:['Communication','Center'],professionals:['Service','Professionals'],staff:['Staff','Management'],settings:['','Preferences']};
+function switchTab(tabId){
+  tabContents.forEach(el=>el.classList.remove('active'));
+  const target=document.getElementById('tab-'+tabId); if(target) target.classList.add('active');
+  tabLinks.forEach(el=>el.classList.remove('active'));
+  const link=document.querySelector('.sidebar-nav a[data-tab="'+tabId+'"]'); if(link) link.classList.add('active');
+  const parts=titles[tabId]||['Staff','Dashboard'];
+  document.getElementById('pageTitle').innerHTML=parts[0]+' <em>'+parts[1]+'</em>';
+  if(window.innerWidth<=992){ sidebar.classList.remove('open'); overlay.classList.remove('show'); }
+}
+tabLinks.forEach(link=>link.addEventListener('click',(e)=>{ e.preventDefault(); switchTab(link.dataset.tab); }));
+
+/* ═══════════════ MODAL SYSTEM ═══════════════ */
+function openModal(html){ modalBox.innerHTML=html; modalBackdrop.classList.add('show'); }
+function closeModal(){ modalBackdrop.classList.remove('show'); modalBox.innerHTML=''; }
+modalBackdrop.addEventListener('click',(e)=>{ if(e.target===modalBackdrop) closeModal(); });
+
+function fieldHtml(label,id,val='',type='text',placeholder=''){
+  return `<div class="field"><label class="field-label">${label}</label><input type="${type}" id="${id}" value="${val}" placeholder="${placeholder}" /></div>`;
+}
+function selectHtml(label,id,options,val){
+  return `<div class="field"><label class="field-label">${label}</label><select id="${id}">${options.map(o=>`<option value="${o}" ${o===val?'selected':''}>${o}</option>`).join('')}</select></div>`;
+}
+
+/* ─── Property / Unit modal (shared shape) ─── */
+function openUnitModal(kind, mode, item){
+  const isProp = kind==='property';
+  const title = mode==='add' ? (isProp?'Add Property':'Add Unit') : (isProp?'Edit Property':'Edit Unit');
+  const d = item || { title:'', address:'', beds:2, baths:1, sqft:800, price:'$1,000', status:'vacant' };
+  openModal(`
+    <div class="modal-head"><h3><i class="fas ${isProp?'fa-building':'fa-door-open'}"></i> ${title}</h3><button class="modal-close" onclick="window.__closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      ${fieldHtml(isProp?'Property Name':'Unit Name','f_title',d.title)}
+      ${fieldHtml('Address','f_address',d.address)}
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+        ${fieldHtml('Beds','f_beds',d.beds,'number')}
+        ${fieldHtml('Baths','f_baths',d.baths,'number')}
+        ${fieldHtml('Sqft','f_sqft',d.sqft,'number')}
+      </div>
+      ${fieldHtml('Rent Price','f_price',d.price)}
+      ${selectHtml('Status','f_status',['vacant','occupied','maintenance'],d.status)}
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="window.__closeModal()">Cancel</button>
+      <button class="btn btn-gold" id="saveUnitBtn">${mode==='add'?'Add':'Save changes'}</button>
+    </div>
+  `);
+  document.getElementById('saveUnitBtn').addEventListener('click',()=>{
+    const title=document.getElementById('f_title').value.trim();
+    const address=document.getElementById('f_address').value.trim();
+    if(!title||!address){ showToast('Name and address are required','fa-exclamation-circle'); return; }
+    const payload={
+      title, address,
+      beds:+document.getElementById('f_beds').value||1,
+      baths:+document.getElementById('f_baths').value||1,
+      sqft:+document.getElementById('f_sqft').value||0,
+      price:document.getElementById('f_price').value.trim()||'$0',
+      status:document.getElementById('f_status').value,
+      img:'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400&h=250&fit=crop'
+    };
+    const list = isProp ? allProperties : units;
+    if(mode==='add'){
+      payload.id=nextId(); payload.files=0;
+      list.push(payload);
+      pushActivity(isProp?'fa-building':'fa-door-open', isProp?'gold':'blue', (isProp?'Property Added':'Unit Added'), `${payload.title} — ${payload.address}`);
+      showToast((isProp?'Property':'Unit')+' added','fa-plus-circle');
+    } else {
+      Object.assign(item, payload);
+      showToast((isProp?'Property':'Unit')+' updated','fa-check-circle');
+    }
+    if(isProp){ vacantHomes = allProperties.filter(p=>p.status==='vacant'); renderProperties(); renderVacantGrid(); }
+    else renderUnits();
+    updateBadges();
+    closeModal();
+  });
+}
+
+/* ─── Amenity modal ─── */
+function openAmenityModal(mode,item){
+  const d=item||{name:'',desc:'',icon:'fa-star',active:true};
+  openModal(`
+    <div class="modal-head"><h3><i class="fas fa-concierge-bell"></i> ${mode==='add'?'Add Amenity':'Edit Amenity'}</h3><button class="modal-close" onclick="window.__closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      ${fieldHtml('Amenity Name','f_name',d.name)}
+      ${fieldHtml('Description','f_desc',d.desc)}
+      ${selectHtml('Icon',"f_icon",['fa-swimming-pool','fa-dumbbell','fa-parking','fa-concierge-bell','fa-tree','fa-shield-alt','fa-wifi','fa-utensils'],d.icon)}
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="window.__closeModal()">Cancel</button><button class="btn btn-gold" id="saveAmenBtn">${mode==='add'?'Add':'Save changes'}</button></div>
+  `);
+  document.getElementById('saveAmenBtn').addEventListener('click',()=>{
+    const name=document.getElementById('f_name').value.trim();
+    if(!name){ showToast('Amenity name required','fa-exclamation-circle'); return; }
+    const payload={ name, desc:document.getElementById('f_desc').value.trim(), icon:document.getElementById('f_icon').value };
+    if(mode==='add'){ payload.id=nextId(); payload.active=true; amenitiesData.push(payload); showToast('Amenity added','fa-plus-circle'); pushActivity('fa-concierge-bell','gold','Amenity Added',name); }
+    else { Object.assign(item,payload); showToast('Amenity updated','fa-check-circle'); }
+    renderAmenities(); closeModal();
+  });
+}
+
+/* ─── Professional modal ─── */
+function openProModal(mode,item){
+  const d=item||{name:'',specialty:'',phone:'',rating:4.5,jobs:0};
+  openModal(`
+    <div class="modal-head"><h3><i class="fas fa-tools"></i> ${mode==='add'?'Add Professional':'Edit Professional'}</h3><button class="modal-close" onclick="window.__closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      ${fieldHtml('Full Name','f_name',d.name)}
+      ${fieldHtml('Specialty','f_specialty',d.specialty,'text','e.g. Plumbing')}
+      ${fieldHtml('Phone','f_phone',d.phone,'text','+254 7XX XXX XXX')}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        ${fieldHtml('Rating','f_rating',d.rating,'number')}
+        ${fieldHtml('Jobs completed','f_jobs',d.jobs,'number')}
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="window.__closeModal()">Cancel</button><button class="btn btn-gold" id="saveProBtn">${mode==='add'?'Add':'Save changes'}</button></div>
+  `);
+  document.getElementById('saveProBtn').addEventListener('click',()=>{
+    const name=document.getElementById('f_name').value.trim();
+    const specialty=document.getElementById('f_specialty').value.trim();
+    if(!name||!specialty){ showToast('Name and specialty are required','fa-exclamation-circle'); return; }
+    const payload={ name, specialty, phone:document.getElementById('f_phone').value.trim(), rating:+document.getElementById('f_rating').value||4.5, jobs:+document.getElementById('f_jobs').value||0, avatar:initials(name) };
+    if(mode==='add'){ payload.id=nextId(); professionals.push(payload); showToast('Professional added','fa-plus-circle'); pushActivity('fa-tools','forest','Professional Added',`${name} · ${specialty}`); }
+    else { Object.assign(item,payload); showToast('Professional updated','fa-check-circle'); }
+    renderProfessionals(); closeModal();
+  });
+}
+
+/* ─── Staff modal ─── */
+function openStaffModal(mode,item){
+  const d=item||{id:'MWK-'+(1000+staffData.length+1),name:'',role:'',dept:'Leasing',status:'Active'};
+  openModal(`
+    <div class="modal-head"><h3><i class="fas fa-user-plus"></i> ${mode==='add'?'Add Staff Member':'Edit Staff Member'}</h3><button class="modal-close" onclick="window.__closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      ${fieldHtml('Staff ID','f_id',d.id)}
+      ${fieldHtml('Full Name','f_name',d.name)}
+      ${fieldHtml('Role','f_role',d.role,'text','e.g. Leasing Agent')}
+      ${selectHtml('Department','f_dept',['Management','Leasing','Facilities','Finance','Marketing'],d.dept)}
+      ${selectHtml('Status','f_status',['Active','On Leave','Suspended'],d.status)}
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="window.__closeModal()">Cancel</button><button class="btn btn-gold" id="saveStaffBtn">${mode==='add'?'Add Staff':'Save changes'}</button></div>
+  `);
+  document.getElementById('saveStaffBtn').addEventListener('click',()=>{
+    const name=document.getElementById('f_name').value.trim();
+    const role=document.getElementById('f_role').value.trim();
+    if(!name||!role){ showToast('Name and role are required','fa-exclamation-circle'); return; }
+    const payload={ id:document.getElementById('f_id').value.trim(), name, role, dept:document.getElementById('f_dept').value, status:document.getElementById('f_status').value };
+    if(mode==='add'){ staffData.push(payload); showToast('Staff member added','fa-user-plus'); pushActivity('fa-user-plus','forest','Staff Added',`${name} joined as ${role}`); }
+    else { Object.assign(item,payload); showToast('Staff record updated','fa-check-circle'); }
+    renderStaff(); closeModal();
+  });
+}
+
+/* ─── Delete confirm ─── */
+function confirmDelete(label, onYes){
+  openModal(`
+    <div class="modal-head"><h3><i class="fas fa-trash-alt" style="color:#f0a89f;"></i> Remove ${label}?</h3><button class="modal-close" onclick="window.__closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body"><p style="font-size:.88rem;color:var(--ink-2);">This action cannot be undone. Are you sure you want to permanently remove this ${label.toLowerCase()}?</p></div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="window.__closeModal()">Cancel</button><button class="btn btn-danger" id="confirmDelBtn"><i class="fas fa-trash-alt"></i> Delete</button></div>
+  `);
+  document.getElementById('confirmDelBtn').addEventListener('click',()=>{ onYes(); closeModal(); });
+}
+
+/* ─── Detail / Tour / Files modals ─── */
+function openDetailModal(item){
+  openModal(`
+    <div class="modal-head"><h3><i class="fas fa-eye"></i> ${item.title}</h3><button class="modal-close" onclick="window.__closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      <img src="${item.img}" style="width:100%;height:180px;object-fit:cover;border-radius:12px;margin-bottom:1rem;border:1px solid var(--gold-line);" />
+      <div class="detail-row"><span>Address</span><span>${item.address}</span></div>
+      <div class="detail-row"><span>Beds / Baths</span><span>${item.beds} bd · ${item.baths} ba</span></div>
+      <div class="detail-row"><span>Size</span><span>${item.sqft} sqft</span></div>
+      <div class="detail-row"><span>Rent</span><span>${item.price} / mo</span></div>
+      <div class="detail-row"><span>Status</span><span style="text-transform:capitalize;">${item.status}</span></div>
+      <div class="detail-row"><span>Files attached</span><span>${item.files||0}</span></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-gold btn-block" onclick="window.__closeModal()">Close</button></div>
+  `);
+}
+function openTourModal(item){
+  openModal(`
+    <div class="modal-head"><h3><i class="fas fa-calendar-alt"></i> Schedule Tour</h3><button class="modal-close" onclick="window.__closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      <p style="font-size:.85rem;color:var(--ink-2);margin-bottom:1rem;">Booking a viewing for <strong style="color:var(--ink-1);">${item.title}</strong></p>
+      ${fieldHtml('Visitor name','f_visitor','','text','Full name')}
+      ${fieldHtml('Date & time','f_when','','datetime-local')}
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="window.__closeModal()">Cancel</button><button class="btn btn-gold" id="confirmTourBtn"><i class="fas fa-check"></i> Confirm Tour</button></div>
+  `);
+  document.getElementById('confirmTourBtn').addEventListener('click',()=>{
+    const visitor=document.getElementById('f_visitor').value.trim()||'A prospective tenant';
+    showToast('Tour scheduled for '+item.title,'fa-calendar-check');
+    pushActivity('fa-calendar-alt','gold','Tour Scheduled',`${visitor} · ${item.title}`);
+    closeModal();
+  });
+}
+function openFilesModal(item){
+  const files=Array.from({length:item.files||0},(_,i)=>`Document_${i+1}.pdf`);
+  openModal(`
+    <div class="modal-head"><h3><i class="fas fa-file-alt"></i> Files · ${item.title}</h3><button class="modal-close" onclick="window.__closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      ${files.length? files.map(f=>`<div class="detail-row"><span><i class="fas fa-file-pdf" style="color:#e0a53c;margin-right:8px;"></i>${f}</span><span><i class="fas fa-download" style="color:var(--gold);"></i></span></div>`).join('') : '<p style="font-size:.85rem;color:var(--ink-3);">No files attached yet.</p>'}
+      <div style="margin-top:1rem;"><label class="field-label">Upload new file</label><input type="file" id="f_upload" /></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-gold btn-block" id="uploadBtn"><i class="fas fa-upload"></i> Upload</button></div>
+  `);
+  document.getElementById('uploadBtn').addEventListener('click',()=>{
+    item.files=(item.files||0)+1;
+    showToast('File uploaded to '+item.title,'fa-file-upload');
+    renderProperties(); renderUnits(); renderVacantGrid();
+    closeModal();
+  });
+}
+function editUnitGeneric(kind,item){ openUnitModal(kind,'edit',item); }
+function maintainUnit(item){
+  item.status='maintenance';
+  showToast(item.title+' flagged for maintenance','fa-wrench');
+  pushActivity('fa-tools','forest','Maintenance Requested',item.title);
+  renderUnits();
+}
+
+/* ─── Professional actions ─── */
+function callPro(p){ showToast('Dialing '+p.name+' ('+p.phone+')…','fa-phone'); pushActivity('fa-phone','forest','Call Placed',`${p.name} · ${p.specialty}`); }
+function messagePro(p){
+  openModal(`
+    <div class="modal-head"><h3><i class="fas fa-envelope"></i> Message ${p.name}</h3><button class="modal-close" onclick="window.__closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">${fieldHtml('Message','f_pm','','text','Type your message...')}</div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="window.__closeModal()">Cancel</button><button class="btn btn-gold" id="sendProMsgBtn"><i class="fas fa-paper-plane"></i> Send</button></div>
+  `);
+  document.getElementById('sendProMsgBtn').addEventListener('click',()=>{
+    const txt=document.getElementById('f_pm').value.trim();
+    if(!txt){ showToast('Type a message first','fa-exclamation-circle'); return; }
+    messages.unshift({name:p.name,text:txt,time:'Just now'});
+    renderMessages(); showToast('Message sent to '+p.name,'fa-paper-plane'); closeModal();
+  });
+}
+function bookPro(p){
+  openModal(`
+    <div class="modal-head"><h3><i class="fas fa-calendar-alt"></i> Book ${p.name}</h3><button class="modal-close" onclick="window.__closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      ${fieldHtml('Job description','f_job','','text','e.g. Fix kitchen sink at Unit 45')}
+      ${fieldHtml('Preferred date & time','f_bwhen','','datetime-local')}
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="window.__closeModal()">Cancel</button><button class="btn btn-gold" id="confirmBookBtn"><i class="fas fa-check"></i> Confirm Booking</button></div>
+  `);
+  document.getElementById('confirmBookBtn').addEventListener('click',()=>{
+    showToast(p.name+' booked successfully','fa-calendar-check');
+    pushActivity('fa-tools','forest','Professional Booked',`${p.name} · ${p.specialty}`);
+    closeModal();
+  });
+}
+
+/* ═══════════════ RENDER FUNCTIONS ═══════════════ */
+function unitCardHtml(h,kind){
+  const statusLabel = h.status==='vacant'?'<i class="fas fa-door-open"></i> Vacant': h.status==='occupied'?'<i class="fas fa-user-check"></i> Occupied':'<i class="fas fa-tools"></i> Maintenance';
+  return `
+    <div class="unit-card" data-kind="${kind}" data-id="${h.id}">
+      <div class="card-img">
+        <img src="${h.img}" alt="${h.title}" loading="lazy" />
+        <span class="badge-status ${h.status}">${statusLabel}</span>
+        <button class="fav" data-act="fav"><i class="far fa-heart"></i></button>
+      </div>
+      <div class="card-body">
+        <div class="title">${h.title}</div>
+        <div class="address"><i class="fas fa-map-marker-alt"></i> ${h.address}</div>
+        <div class="specs"><span><i class="fas fa-bed"></i> ${h.beds} bed</span><span><i class="fas fa-bath"></i> ${h.baths} bath</span><span><i class="fas fa-vector-square"></i> ${h.sqft} sqft</span></div>
+        <div class="price">${h.price} <span>/ mo</span></div>
+      </div>
+      <div class="card-footer">
+        <div class="actions">
+          <button data-act="details"><i class="fas fa-eye"></i> Details</button>
+          ${kind==='vacant'||kind==='property' ? `<button class="primary" data-act="tour"><i class="fas fa-calendar-alt"></i> Tour</button>` : `<button class="primary" data-act="maintain"><i class="fas fa-wrench"></i> Maintain</button>`}
+          ${kind!=='vacant' ? `<button data-act="edit"><i class="fas fa-edit"></i></button><button data-act="delete"><i class="fas fa-trash-alt"></i></button>` : ''}
+        </div>
+        <span class="file-count" data-act="files" style="cursor:pointer;"><i class="fas fa-file"></i> ${h.files||0} files</span>
+      </div>
+    </div>`;
+}
+function bindUnitCardEvents(container, list, kind){
+  container.querySelectorAll('.unit-card').forEach(card=>{
+    const id=+card.dataset.id;
+    const item=list.find(x=>x.id===id);
+    if(!item) return;
+    card.querySelectorAll('[data-act]').forEach(btn=>{
+      btn.addEventListener('click',(e)=>{
+        e.stopPropagation();
+        const act=btn.dataset.act;
+        if(act==='fav'){
+          btn.classList.toggle('active');
+          const icon=btn.querySelector('i');
+          if(btn.classList.contains('active')){ icon.className='fas fa-heart'; showToast('Added to favorites','fa-heart'); }
+          else { icon.className='far fa-heart'; showToast('Removed from favorites','fa-heart-broken'); }
+        }
+        else if(act==='details') openDetailModal(item);
+        else if(act==='tour') openTourModal(item);
+        else if(act==='maintain') maintainUnit(item);
+        else if(act==='files') openFilesModal(item);
+        else if(act==='edit') editUnitGeneric(kind==='units'?'unit':'property', item);
+        else if(act==='delete') confirmDelete(kind==='units'?'Unit':'Property', ()=>{
+          if(kind==='units'){ units=units.filter(u=>u.id!==id); renderUnits(); }
+          else { allProperties=allProperties.filter(p=>p.id!==id); vacantHomes=allProperties.filter(p=>p.status==='vacant'); renderProperties(); renderVacantGrid(); }
+          updateBadges();
+          showToast('Removed successfully','fa-trash-alt');
+        });
+      });
+    });
+  });
+}
+
+function renderVacantGrid(){
+  const grid=document.getElementById('vacantGrid');
+  vacantHomes = allProperties.filter(p=>p.status==='vacant');
+  grid.innerHTML = vacantHomes.map(h=>unitCardHtml(h,'vacant')).join('');
+  bindUnitCardEvents(grid, allProperties, 'vacant');
+}
+function renderProperties(){
+  const grid=document.getElementById('propertiesGrid');
+  grid.innerHTML = allProperties.map(h=>unitCardHtml(h,'properties')).join('');
+  bindUnitCardEvents(grid, allProperties, 'properties');
+}
+function renderUnits(){
+  const grid=document.getElementById('unitsGrid');
+  grid.innerHTML = units.map(u=>unitCardHtml(u,'units')).join('');
+  bindUnitCardEvents(grid, units, 'units');
+}
+function renderAmenities(){
+  const grid=document.getElementById('amenitiesGrid');
+  grid.innerHTML = amenitiesData.map(a=>`
+    <div class="amenity-card" data-id="${a.id}">
+      <div class="icon"><i class="fas ${a.icon}"></i></div>
+      <div class="info"><div class="name">${a.name}</div><div class="desc">${a.desc}</div></div>
+      <div class="toggle ${a.active?'active':''}" data-act="toggle"></div>
+    </div>`).join('');
+  grid.querySelectorAll('.amenity-card').forEach(card=>{
+    const id=+card.dataset.id, item=amenitiesData.find(a=>a.id===id);
+    card.querySelector('[data-act="toggle"]').addEventListener('click',function(){
+      this.classList.toggle('active'); item.active=this.classList.contains('active');
+      showToast(item.name+(item.active?' enabled':' disabled'),'fa-toggle-on');
+    });
+    card.addEventListener('dblclick',()=>openAmenityModal('edit',item));
+  });
+}
+function renderMessages(){
+  const list=document.getElementById('messageList');
+  list.innerHTML = messages.map(m=>`
+    <div class="comm-message"><div class="avatar">${initials(m.name)}</div><div class="body"><div class="name">${m.name}</div><div class="text">${m.text}</div><div class="time">${m.time}</div></div></div>
+  `).join('');
+}
+function renderAnnouncements(){
+  const list=document.getElementById('announcementList');
+  list.innerHTML = announcements.map(a=>`<div class="ann-item"><div class="t">${a.t}</div><div class="d">${a.d}</div><span class="tm">${a.tm}</span></div>`).join('');
+}
+function renderProfessionals(){
+  const grid=document.getElementById('prosGrid');
+  grid.innerHTML = professionals.map(p=>`
+    <div class="pro-card" data-id="${p.id}">
+      <div class="top"><div class="avatar">${p.avatar}</div><div class="info"><div class="name">${p.name}</div><div class="specialty"><i class="fas fa-tag"></i> ${p.specialty}</div></div></div>
+      <div class="rating"><i class="fas fa-star"></i> ${p.rating} <span>· ${p.jobs} jobs completed</span></div>
+      <div class="contact">
+        <button class="primary" data-act="call"><i class="fas fa-phone"></i> Call</button>
+        <button data-act="message"><i class="fas fa-envelope"></i> Message</button>
+        <button data-act="book"><i class="fas fa-calendar-alt"></i> Book</button>
+        <button data-act="edit"><i class="fas fa-edit"></i></button>
+      </div>
+    </div>`).join('');
+  grid.querySelectorAll('.pro-card').forEach(card=>{
+    const id=+card.dataset.id, p=professionals.find(x=>x.id===id);
+    card.querySelectorAll('[data-act]').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const act=btn.dataset.act;
+        if(act==='call') callPro(p);
+        else if(act==='message') messagePro(p);
+        else if(act==='book') bookPro(p);
+        else if(act==='edit') openProModal('edit',p);
+      });
+    });
+  });
+}
+function renderStaff(){
+  const tbody=document.getElementById('staffTableBody');
+  tbody.innerHTML = staffData.map(s=>`
+    <tr data-id="${s.id}">
+      <td><strong>${s.id}</strong></td>
+      <td>${s.name}</td>
+      <td><span class="badge-role ${s.role.toLowerCase().includes('manager')?'manager':s.role.toLowerCase().includes('admin')?'admin':'staff'}">${s.role}</span></td>
+      <td>${s.dept}</td>
+      <td><span style="color:${s.status==='Active'?'var(--good)':'var(--warn)'};">${s.status}</span></td>
+      <td style="text-align:right;">
+        <div class="action-icons" style="justify-content:flex-end;">
+          <button data-act="idcard" class="gold" title="View ID"><i class="fas fa-id-badge"></i></button>
+          <button data-act="edit"><i class="fas fa-edit"></i></button>
+          <button data-act="delete" class="danger"><i class="fas fa-trash-alt"></i></button>
+        </div>
+      </td>
+    </tr>`).join('');
+  tbody.querySelectorAll('tr').forEach(row=>{
+    const id=row.dataset.id, s=staffData.find(x=>x.id===id);
+    row.querySelectorAll('[data-act]').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const act=btn.dataset.act;
+        if(act==='edit') openStaffModal('edit',s);
+        else if(act==='idcard') openIdCardModal(s);
+        else if(act==='delete') confirmDelete('Staff Member', ()=>{
+          staffData=staffData.filter(x=>x.id!==id); renderStaff(); showToast('Staff member removed','fa-trash-alt');
+        });
+      });
+    });
+  });
+}
+function renderActivity(){
+  const feed=document.getElementById('activityFeed');
+  feed.innerHTML = activity.map((a,i)=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:.6rem 0;${i<activity.length-1?'border-bottom:1px solid var(--gold-line);':''}">
+      <div style="width:36px;height:36px;border-radius:50%;background:${a.color==='gold'?'var(--gold-dim)':a.color==='blue'?'rgba(93,173,226,.15)':'rgba(76,175,125,.15)'};display:flex;align-items:center;justify-content:center;color:${a.color==='gold'?'var(--gold)':a.color==='blue'?'#5dade2':'var(--good)'};flex-shrink:0;"><i class="fas ${a.icon}"></i></div>
+      <div style="flex:1;"><strong>${a.t}</strong><div style="font-size:.8rem;color:var(--ink-2);">${a.d}</div></div>
+      <span style="font-size:.68rem;color:var(--ink-3);white-space:nowrap;">${a.tm}</span>
+    </div>`).join('');
+}
+function updateBadges(){
+  document.getElementById('badgeProperties').textContent=allProperties.length;
+  document.getElementById('badgeUnits').textContent=units.length;
+  document.getElementById('statProperties').textContent=allProperties.length + 134;
+  document.getElementById('statVacant').textContent=allProperties.filter(p=>p.status==='vacant').length;
+  document.getElementById('statAgents').textContent=professionals.length + 13;
+}
+
+/* ═══════════════ DIGITAL STAFF ID CARD ═══════════════ */
+function qrSvg(seed){
+  // deterministic pseudo dot-matrix "QR" pattern purely decorative
+  let rnd = seed.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  const rows=7, cols=7, cell=100/cols;
+  let rects='';
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      rnd = (rnd*9301+49297)%233280;
+      const on = (rnd/233280) > 0.52;
+      if(on) rects += `<rect x="${c*cell}" y="${r*cell}" width="${cell}" height="${cell}" fill="#111"/>`;
+    }
+  }
+  // finder squares corners
+  const finder=(x,y)=>`<rect x="${x}" y="${y}" width="${cell*2}" height="${cell*2}" fill="none" stroke="#111" stroke-width="2"/>`;
+  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#fff"/>${rects}${finder(2,2)}${finder(100-cell*2-2,2)}${finder(2,100-cell*2-2)}</svg>`;
+}
+function idCardHtml(staff){
+  return `
+    <div class="idcard-wrap" id="printArea">
+      <div class="idcard" id="idcardEl">
+        <div class="idc-top">
+          <div class="idc-brand"><div class="mini-crest"><i class="fas fa-crown"></i></div><span>MWAROKIN ESTATES</span></div>
+          <div class="idc-tier">STAFF</div>
+        </div>
+        <div class="idc-mid">
+          <div class="idc-photo">${initials(staff.name)}</div>
+          <div class="idc-info">
+            <div class="nm">${staff.name}</div>
+            <div class="rl">${staff.role}</div>
+            <div class="idn">ID · ${staff.id}</div>
+          </div>
+        </div>
+        <div class="idc-bottom">
+          <div class="idc-meta">
+            <p>Department: <b>${staff.dept}</b></p>
+            <p>Issued ${staff.issued||'Jan 2026'} · Expires ${staff.expires||'Jan 2028'}</p>
+          </div>
+          <div class="idc-qr">${qrSvg(staff.id+staff.name)}</div>
+        </div>
+      </div>
+    </div>`;
+}
+function openIdCardModal(staff){
+  const s = staff || currentStaff;
+  openModal(`
+    <div class="modal-head"><h3><i class="fas fa-id-badge"></i> Digital Staff ID</h3><button class="modal-close" onclick="window.__closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      ${idCardHtml(s)}
+      <p class="idcard-note" style="margin-top:1rem;">This ID authenticates ${s.name.split(' ')[0]} as active Mwarokin Estates personnel. Present on request during site visits.</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" id="printIdBtn"><i class="fas fa-print"></i> Print</button>
+      <button class="btn btn-gold" id="downloadIdBtn"><i class="fas fa-download"></i> Download</button>
+    </div>
+  `);
+  document.getElementById('printIdBtn').addEventListener('click',()=>{ window.print(); });
+  document.getElementById('downloadIdBtn').addEventListener('click',()=>{
+    const svgWrap = document.getElementById('idcardEl');
+    const serial = new XMLSerializer();
+    const cardSvg = `
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="428" viewBox="0 0 680 428">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0c2a1e"/><stop offset="45%" stop-color="#123326"/><stop offset="100%" stop-color="#0a1a13"/>
+    </linearGradient>
+  </defs>
+  <rect width="680" height="428" rx="26" fill="url(#bg)" stroke="#cda355" stroke-opacity=".4"/>
+  <text x="60" y="60" fill="#e8c477" font-family="Arial" font-size="15" font-weight="700" letter-spacing="1">MWAROKIN ESTATES</text>
+  <text x="600" y="60" fill="#e8c477" font-family="Arial" font-size="12" font-weight="800" text-anchor="end">STAFF</text>
+  <rect x="60" y="100" width="110" height="110" rx="18" fill="#cda355"/>
+  <text x="115" y="165" fill="#151006" font-family="Arial" font-size="34" font-weight="800" text-anchor="middle">${initials(s.name)}</text>
+  <text x="195" y="140" fill="#f4efe2" font-family="Georgia" font-size="30" font-weight="700">${s.name}</text>
+  <text x="195" y="168" fill="#e8c477" font-family="Arial" font-size="15" font-weight="600">${s.role}</text>
+  <text x="195" y="196" fill="#cfe6da" font-family="Arial" font-size="13" letter-spacing="1">ID · ${s.id}</text>
+  <text x="60" y="370" fill="#b9cdc0" font-family="Arial" font-size="12">Department: ${s.dept}</text>
+  <text x="60" y="392" fill="#b9cdc0" font-family="Arial" font-size="12">Issued ${s.issued||'Jan 2026'} · Expires ${s.expires||'Jan 2028'}</text>
+</svg>`;
+    const blob = new Blob([cardSvg], {type:'image/svg+xml'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url; a.download = 'Mwarokin-Staff-ID-'+s.id+'.svg'; document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+    showToast('ID card downloaded','fa-download');
+  });
+}
+document.getElementById('openIdCardBtn').addEventListener('click',()=>openIdCardModal(currentStaff));
+document.getElementById('openIdCardBtn2').addEventListener('click',()=>openIdCardModal(currentStaff));
+
+/* ═══════════════ VACANT VIEW TOGGLE ═══════════════ */
+document.getElementById('vacantGridBtn').addEventListener('click',function(){
+  document.getElementById('vacantGrid').style.display='grid';
+  document.getElementById('vacantMap').style.display='none';
+  document.querySelectorAll('.view-tabs button').forEach(b=>b.classList.remove('active'));
+  this.classList.add('active');
+});
+document.getElementById('vacantMapBtn').addEventListener('click',function(){
+  document.getElementById('vacantGrid').style.display='none';
+  document.getElementById('vacantMap').style.display='block';
+  document.querySelectorAll('.view-tabs button').forEach(b=>b.classList.remove('active'));
+  this.classList.add('active');
+});
+
+/* ═══════════════ COMMUNICATION ═══════════════ */
+document.getElementById('sendMsgBtn').addEventListener('click',function(){
+  const input=document.getElementById('msgInput'); const text=input.value.trim();
+  if(!text){ showToast('Type a message first','fa-exclamation-circle'); return; }
+  messages.unshift({name:'You',text,time:'Just now'}); renderMessages(); input.value='';
+  showToast('Message sent','fa-paper-plane');
+});
+document.getElementById('msgInput').addEventListener('keydown',(e)=>{ if(e.key==='Enter') document.getElementById('sendMsgBtn').click(); });
+document.getElementById('addAnnBtn').addEventListener('click',()=>{
+  openModal(`
+    <div class="modal-head"><h3><i class="fas fa-bullhorn"></i> New Announcement</h3><button class="modal-close" onclick="window.__closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">${fieldHtml('Title','f_annT','','text','e.g. 🔧 Elevator maintenance')}${fieldHtml('Details','f_annD','','text','Short description')}</div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="window.__closeModal()">Cancel</button><button class="btn btn-gold" id="postAnnBtn"><i class="fas fa-paper-plane"></i> Post</button></div>
+  `);
+  document.getElementById('postAnnBtn').addEventListener('click',()=>{
+    const t=document.getElementById('f_annT').value.trim(), d=document.getElementById('f_annD').value.trim();
+    if(!t){ showToast('Add a title first','fa-exclamation-circle'); return; }
+    announcements.unshift({t,d,tm:'Just now'}); renderAnnouncements(); showToast('Announcement posted','fa-bullhorn'); closeModal();
+  });
+});
+document.getElementById('msgBellBtn').addEventListener('click',()=>switchTab('communication'));
+document.getElementById('notifBtn').addEventListener('click',()=>showToast('You have 3 unread notifications','fa-bell'));
+
+/* ═══════════════ ADD BUTTONS ═══════════════ */
+document.getElementById('addPropertyBtn').addEventListener('click',()=>openUnitModal('property','add'));
+document.getElementById('addUnitBtn').addEventListener('click',()=>openUnitModal('unit','add'));
+document.getElementById('addAmenityBtn').addEventListener('click',()=>openAmenityModal('add'));
+document.getElementById('addProBtn').addEventListener('click',()=>openProModal('add'));
+document.getElementById('addStaffBtn').addEventListener('click',()=>openStaffModal('add'));
+
+/* ═══════════════ SETTINGS ═══════════════ */
+document.querySelectorAll('#tab-settings .toggle').forEach(el=>{
+  el.addEventListener('click',function(){
+    this.classList.toggle('active');
+    const label=this.closest('div').querySelector('span')?.textContent || 'Setting';
+    showToast(label+(this.classList.contains('active')?' enabled':' disabled'),'fa-toggle-on');
+  });
+});
+document.getElementById('savePrefsBtn').addEventListener('click',()=>showToast('Preferences saved','fa-check-circle'));
+
+/* ═══════════════ GLOBAL SEARCH ═══════════════ */
+document.getElementById('globalSearch').addEventListener('input',function(){
+  const q=this.value.toLowerCase().trim();
+  document.querySelectorAll('.unit-card').forEach(el=>{
+    el.style.display = (!q || el.textContent.toLowerCase().includes(q)) ? '' : 'none';
+  });
+});
+
+/* ═══════════════ KEYBOARD SHORTCUTS ═══════════════ */
+document.addEventListener('keydown',(e)=>{
+  if(e.ctrlKey && e.key>='1' && e.key<='7'){
+    const tabs=['dashboard','properties','units','amenities','communication','professionals','staff'];
+    const idx=parseInt(e.key)-1; if(tabs[idx]) switchTab(tabs[idx]);
+  }
+});
+
+window.__closeModal = closeModal;
+
+/* ═══════════════ RENDER ALL ═══════════════ */
+function renderAll(){
+  renderVacantGrid(); renderProperties(); renderUnits(); renderAmenities();
+  renderMessages(); renderAnnouncements(); renderProfessionals(); renderStaff(); renderActivity();
+  updateBadges();
+}
+
+/* demo prefill */
+staffIdInput.value='MWK-1024';
+staffPwInput.value='Demo@2026';
+evalPw(staffPwInput.value);
+
+console.log('🏢 Mwarokin Estates Staff-ID & Staff Portal — upgraded build loaded.');
+});
+</script>
+</body>
+</html>

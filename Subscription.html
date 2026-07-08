@@ -1,0 +1,856 @@
+r<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Mwarokin Estates — Subscription Checkout</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================
+       MWAROKIN ESTATES — PREMIUM CHECKOUT UI
+       Theme: Luxury Real Estate · Dark Elegance
+       Gold Accents · Refined Spacing · Glassmorphism
+       ============================================ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: radial-gradient(circle at 10% 20%, #0b0e17, #030507);
+      font-family: 'DM Sans', sans-serif;
+      color: #e6e9f0;
+      line-height: 1.5;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    :root {
+      --bg-dark: #03070c;
+      --bg-surface: rgba(12, 18, 28, 0.65);
+      --bg-elevated: #0f1622;
+      --border: rgba(200, 151, 42, 0.2);
+      --border-glow: rgba(200, 151, 42, 0.5);
+      --gold: #c8972a;
+      --gold-lt: #e0b354;
+      --gold-dk: #a07a1f;
+      --cream: #fef5e7;
+      --text: #e6e9f0;
+      --text-2: #b9c2d4;
+      --text-3: #7e8aa2;
+      --green-lt: #4ab87a;
+      --green-dk: #2e8b57;
+      --error: #e35f5f;
+      --glass-bg: rgba(15, 22, 34, 0.75);
+      --glass-border: rgba(200, 151, 42, 0.15);
+      --shadow-sm: 0 8px 20px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 12px 28px rgba(0, 0, 0, 0.5);
+      --shadow-gold: 0 10px 25px -5px rgba(200, 151, 42, 0.2);
+      --transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      --font-display: 'Cormorant Garamond', serif;
+      --font-body: 'DM Sans', sans-serif;
+      --radius-md: 8px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg-dark); }
+    ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
+
+    /* Ambient orbs */
+    .ambient {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .ambient__orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(110px);
+      opacity: 0.35;
+      animation: floatOrb 28s infinite alternate ease-in-out;
+    }
+    .ambient__orb--1 {
+      width: 60vw;
+      height: 60vw;
+      background: radial-gradient(circle, rgba(200,151,42,0.4), rgba(120,80,20,0.1));
+      top: -20vh;
+      right: -20vw;
+    }
+    .ambient__orb--2 {
+      width: 50vw;
+      height: 50vw;
+      background: radial-gradient(circle, rgba(74,184,122,0.2), rgba(15,30,20,0));
+      bottom: -30vh;
+      left: -15vw;
+      animation-duration: 36s;
+    }
+    @keyframes floatOrb {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(4%, 6%) scale(1.08); }
+    }
+
+    /* Typography */
+    h1, h2, h3, .nav__name, .os__title {
+      font-family: var(--font-display);
+      letter-spacing: -0.01em;
+      font-weight: 300;
+    }
+
+    /* Premium Navigation */
+    .nav {
+      position: relative;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 48px;
+      background: rgba(3, 7, 12, 0.7);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--glass-border);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .nav__brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav__logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dk));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 20px;
+      color: #0a0c10;
+      box-shadow: 0 4px 10px rgba(200,151,42,0.3);
+    }
+    .nav__name {
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--cream);
+    }
+    .nav__name em {
+      color: var(--gold);
+      font-style: italic;
+    }
+    .currency-switcher {
+      display: flex;
+      gap: 8px;
+      background: var(--bg-surface);
+      padding: 4px;
+      border-radius: 60px;
+      backdrop-filter: blur(4px);
+      border: 1px solid var(--border);
+    }
+    .currency-btn {
+      background: transparent;
+      border: none;
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 40px;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .currency-btn.active {
+      background: var(--gold);
+      color: #0a0c10;
+      box-shadow: 0 2px 8px rgba(200,151,42,0.4);
+    }
+    .btn--ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-2);
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-size: 13px;
+      transition: var(--transition);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn--ghost:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* Checkout Layout (refined spacing) */
+    .checkout-wrap {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 32px;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 40px 40px 80px;
+    }
+
+    /* Steps (premium) */
+    .checkout-steps {
+      display: flex;
+      align-items: center;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-3);
+      transition: var(--transition);
+    }
+    .step.active { color: var(--gold); }
+    .step.done { color: var(--green-lt); }
+    .step__dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: var(--bg-surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .step.active .step__dot {
+      border-color: var(--gold);
+      background: rgba(200,151,42,0.12);
+      color: var(--gold);
+      box-shadow: 0 0 0 2px rgba(200,151,42,0.2);
+    }
+    .step.done .step__dot {
+      border-color: var(--green-lt);
+      background: rgba(74,184,122,0.12);
+      color: var(--green-lt);
+    }
+    .step__line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--border), transparent);
+      margin: 0 12px;
+      min-width: 20px;
+    }
+
+    .checkout-form h1 {
+      font-size: 40px;
+      font-weight: 300;
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+    }
+    .checkout-form h1 em { color: var(--gold); font-style: italic; }
+    .checkout-form > p {
+      font-size: 14px;
+      color: var(--text-2);
+      margin-bottom: 32px;
+    }
+
+    /* Form sections */
+    .form-section {
+      margin-bottom: 32px;
+    }
+    .form-section__title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 16px;
+      border-left: 3px solid var(--gold);
+      padding-left: 12px;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .form-row.full { grid-template-columns: 1fr; }
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-field label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .form-field input,
+    .form-field select {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 14px;
+      outline: none;
+      transition: var(--transition);
+      backdrop-filter: blur(4px);
+    }
+    .form-field input:focus,
+    .form-field select:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(200,151,42,0.2);
+    }
+
+    /* Plan selector premium */
+    .plan-selector {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .plan-opt {
+      background: var(--bg-surface);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px 16px;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+    }
+    .plan-opt:hover {
+      border-color: var(--gold);
+      transform: translateY(-2px);
+      background: rgba(200,151,42,0.05);
+    }
+    .plan-opt.selected {
+      border-color: var(--gold);
+      background: linear-gradient(145deg, rgba(200,151,42,0.08), rgba(0,0,0,0.2));
+      box-shadow: var(--shadow-gold);
+    }
+    .plan-opt__name {
+      font-size: 18px;
+      font-weight: 700;
+      font-family: var(--font-display);
+      color: var(--cream);
+      margin-bottom: 6px;
+    }
+    .plan-opt__price {
+      font-size: 13px;
+      color: var(--gold);
+      font-weight: 500;
+    }
+    .plan-opt__check {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: var(--bg-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: transparent;
+      transition: var(--transition);
+    }
+    .plan-opt.selected .plan-opt__check {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #000;
+      box-shadow: 0 0 8px var(--gold);
+    }
+
+    /* Payment methods */
+    .payment-methods {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .pay-opt {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-2);
+    }
+    .pay-opt.active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(200,151,42,0.08);
+      box-shadow: 0 4px 12px rgba(200,151,42,0.15);
+    }
+    .pay-opt__icon { font-size: 26px; display: block; margin-bottom: 8px; }
+    .card-fields { display: none; margin-top: 12px; animation: fadeSlide 0.3s ease; }
+    .card-fields.visible { display: block; }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(6px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+
+    .promo-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .promo-row input {
+      flex: 1;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px;
+    }
+    .btn--outline {
+      background: transparent;
+      border: 1px solid var(--gold);
+      border-radius: 40px;
+      padding: 0 20px;
+      font-weight: 600;
+      color: var(--gold);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .btn--outline:hover {
+      background: var(--gold);
+      color: #0b0e17;
+    }
+
+    .btn {
+      font-family: var(--font-body);
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn--primary {
+      background: linear-gradient(105deg, var(--gold), var(--gold-dk));
+      color: #0a0c10;
+      border-radius: 60px;
+      padding: 14px 24px;
+      font-size: 15px;
+      font-weight: 700;
+      box-shadow: 0 6px 14px rgba(200,151,42,0.3);
+    }
+    .btn--primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 22px rgba(200,151,42,0.4);
+      background: linear-gradient(105deg, var(--gold-lt), var(--gold));
+    }
+    .btn--full { width: 100%; }
+    .btn--lg { padding: 16px 28px; font-size: 16px; }
+
+    /* Order Summary - Premium card */
+    .order-summary {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      position: sticky;
+      top: 90px;
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+    }
+    .order-summary:hover {
+      border-color: rgba(200,151,42,0.3);
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.5);
+    }
+    .os__title {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--cream);
+      margin-bottom: 20px;
+      border-bottom: 1px dashed var(--border);
+      display: inline-block;
+      padding-bottom: 8px;
+    }
+    .os__plan-badge {
+      background: rgba(200,151,42,0.05);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 24px;
+      border-left: 3px solid var(--gold);
+    }
+    .os__plan-name {
+      font-size: 26px;
+      font-weight: 600;
+      font-family: var(--font-display);
+      color: var(--gold-lt);
+    }
+    .os__plan-tagline { font-size: 12px; color: var(--text-3); }
+    .os__breakdown { border-top: 1px solid var(--border); padding-top: 16px; }
+    .os__row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-2);
+      padding: 8px 0;
+    }
+    .os__row.total {
+      border-top: 1px solid var(--border);
+      margin-top: 8px;
+      padding-top: 16px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--cream);
+    }
+    .os__row.total .os__val { color: var(--gold-lt); font-size: 20px; }
+    .os__features {
+      list-style: none;
+      margin: 20px 0;
+      display: grid;
+      gap: 8px;
+    }
+    .os__features li {
+      font-size: 12px;
+      color: var(--text-2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .os__features li::before {
+      content: "✦";
+      color: var(--gold);
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .os__secure {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 10px;
+      color: var(--text-3);
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .hidden { display: none; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .checkout-wrap { grid-template-columns: 1fr; padding: 32px 24px 60px; gap: 28px; }
+      .order-summary { position: static; }
+      .nav { padding: 14px 24px; }
+    }
+    @media (max-width: 640px) {
+      .form-row { grid-template-columns: 1fr; gap: 12px; }
+      .plan-selector { grid-template-columns: 1fr; }
+      .payment-methods { gap: 8px; }
+      .checkout-steps .step span:not(.step__dot) { display: none; }
+      .step__line { margin: 0 6px; }
+    }
+    @media (max-width: 480px) {
+      .checkout-wrap { padding: 20px 16px 50px; }
+      .order-summary { padding: 20px; }
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+    .btn:active { transform: scale(0.97); }
+    .plan-opt input[type="radio"] { display: none; }
+  </style>
+</head>
+<body>
+<div class="ambient">
+  <div class="ambient__orb ambient__orb--1"></div>
+  <div class="ambient__orb ambient__orb--2"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav__brand">
+    <div class="nav__logo-icon">⬡</div>
+    <span class="nav__name">Mwarokin <em>Estates</em></span>
+  </div>
+  <div class="nav__actions" style="margin-left:auto">
+    <div class="currency-switcher">
+      <button class="currency-btn active" data-currency="KSH">KSH</button>
+      <button class="currency-btn" data-currency="USD">USD</button>
+      <button class="currency-btn" data-currency="EUR">EUR</button>
+    </div>
+    <a href="subscription.html" class="btn btn--ghost">← Plans</a>
+  </div>
+</nav>
+
+<div class="checkout-wrap">
+  <!-- LEFT FORM -->
+  <div class="checkout-form">
+    <div class="checkout-steps">
+      <div class="step done"><div class="step__dot">✓</div> Plan</div>
+      <div class="step__line"></div>
+      <div class="step active"><div class="step__dot">2</div> Details</div>
+      <div class="step__line"></div>
+      <div class="step"><div class="step__dot">3</div> Payment</div>
+      <div class="step__line"></div>
+      <div class="step"><div class="step__dot">4</div> Confirm</div>
+    </div>
+    <h1>Almost There,<br /><em>Let's Set Up</em></h1>
+    <p>Your 14-day free trial starts immediately. Cancel anytime.</p>
+
+    <!-- Plan Selection -->
+    <div class="form-section">
+      <div class="form-section__title">Choose Your Plan</div>
+      <div class="plan-selector" id="planSelector">
+        <label class="plan-opt" data-plan="msingi">
+          <input type="radio" name="plan" value="msingi" />
+          <div class="plan-opt__name">Msingi</div>
+          <div class="plan-opt__price"><span class="price-amount" data-ksh="2500" data-usd="19" data-eur="18">2,500</span> <span class="price-currency">KSH</span>/mo</div>
+          <div class="plan-opt__check">✓</div>
+        </label>
+        <label class="plan-opt selected" data-plan="jengo">
+          <input type="radio" name="plan" value="jengo" checked />
+          <div class="plan-opt__name">Jengo ⭐</div>
+          <div class="plan-opt__price"><span class="price-amount" data-ksh="6500" data-usd="50" data-eur="46">6,500</span> <span class="price-currency">KSH</span>/mo</div>
+          <div class="plan-opt__check">✓</div>
+        </label>
+        <label class="plan-opt" data-plan="milki">
+          <input type="radio" name="plan" value="milki" />
+          <div class="plan-opt__name">Milki</div>
+          <div class="plan-opt__price"><span class="price-amount" data-ksh="15000" data-usd="116" data-eur="108">15,000</span> <span class="price-currency">KSH</span>/mo</div>
+          <div class="plan-opt__check">✓</div>
+        </label>
+        <label class="plan-opt" data-plan="taifa">
+          <input type="radio" name="plan" value="taifa" />
+          <div class="plan-opt__name">Taifa</div>
+          <div class="plan-opt__price"><span class="price-amount" data-ksh="45000" data-usd="348" data-eur="324">45,000</span> <span class="price-currency">KSH</span>/mo</div>
+          <div class="plan-opt__check">✓</div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Billing Cycle -->
+    <div class="form-section">
+      <div class="form-section__title">Billing Cycle</div>
+      <div class="plan-selector">
+        <label class="plan-opt selected" data-billing="monthly">
+          <input type="radio" name="billing" value="monthly" checked />
+          <div class="plan-opt__name">Monthly</div>
+          <div class="plan-opt__price">Pay each month</div>
+          <div class="plan-opt__check">✓</div>
+        </label>
+        <label class="plan-opt" data-billing="annual">
+          <input type="radio" name="billing" value="annual" />
+          <div class="plan-opt__name">Annual</div>
+          <div class="plan-opt__price" style="color:var(--green-lt)">Save 20%</div>
+          <div class="plan-opt__check">✓</div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Account Details condensed but premium -->
+    <div class="form-section">
+      <div class="form-section__title">Account Details</div>
+      <div class="form-row">
+        <div class="form-field"><label>First Name</label><input type="text" placeholder="Amina" /></div>
+        <div class="form-field"><label>Last Name</label><input type="text" placeholder="Wanjiku" /></div>
+      </div>
+      <div class="form-row full"><div class="form-field"><label>Email Address</label><input type="email" placeholder="amina@mwarokin.co.ke" /></div></div>
+      <div class="form-row">
+        <div class="form-field"><label>Phone (M-Pesa)</label><input type="tel" placeholder="+254 700 000 000" /></div>
+        <div class="form-field"><label>Role</label><select><option>Landlord / Landlady</option><option>Property Manager</option><option>Caretaker</option><option>Estate Developer</option></select></div>
+      </div>
+      <div class="form-row full"><div class="form-field"><label>Estate / Company Name</label><input type="text" placeholder="Mwarokin Estates, Nairobi" /></div></div>
+      <div class="form-row">
+        <div class="form-field"><label>County</label><select><option>Nairobi</option><option>Mombasa</option><option>Kisumu</option><option>Nakuru</option><option>Other</option></select></div>
+        <div class="form-field"><label>Preferred Language</label><select><option>English</option><option>Swahili / Kiswahili</option><option>Both (Bilingual)</option></select></div>
+      </div>
+      <div class="form-row full"><div class="form-field"><label>KRA PIN (Optional)</label><input type="text" placeholder="A000000000X" /></div></div>
+    </div>
+
+    <!-- Password -->
+    <div class="form-section">
+      <div class="form-section__title">Create Password</div>
+      <div class="form-row">
+        <div class="form-field"><label>Password</label><input type="password" placeholder="••••••••" /></div>
+        <div class="form-field"><label>Confirm Password</label><input type="password" placeholder="••••••••" /></div>
+      </div>
+    </div>
+
+    <!-- Payment Method -->
+    <div class="form-section">
+      <div class="form-section__title">Payment Method</div>
+      <div class="payment-methods">
+        <div class="pay-opt active" data-payment="mpesa"><span class="pay-opt__icon">📱</span>M-Pesa</div>
+        <div class="pay-opt" data-payment="airtel"><span class="pay-opt__icon">📲</span>Airtel</div>
+        <div class="pay-opt" data-payment="card"><span class="pay-opt__icon">💳</span>Card</div>
+      </div>
+      <div id="mpesaFields" class="card-fields visible"><div class="form-row full"><div class="form-field"><label>M-Pesa Number</label><input type="tel" placeholder="+254 700 000 000" /></div></div><p style="font-size:12px;color:var(--text-3);margin-top:8px">You'll receive an STK push to authorize payment.</p></div>
+      <div id="airtelFields" class="card-fields"><div class="form-row full"><div class="form-field"><label>Airtel Money Number</label><input type="tel" placeholder="+254 730 000 000" /></div></div></div>
+      <div id="cardFields" class="card-fields"><div class="form-row full"><div class="form-field"><label>Card Number</label><input type="text" placeholder="4242 4242 4242 4242" /></div></div><div class="form-row"><div class="form-field"><label>Expiry Date</label><input type="text" placeholder="MM / YY" /></div><div class="form-field"><label>CVV</label><input type="text" placeholder="123" /></div></div></div>
+    </div>
+
+    <!-- Promo -->
+    <div class="form-section">
+      <div class="form-section__title">Promo Code</div>
+      <div class="promo-row"><input type="text" placeholder="MWAROKIN20" /><button class="btn btn--outline">Apply</button></div>
+    </div>
+
+    <button class="btn btn--primary btn--full btn--lg" id="submitCheckoutBtn">🏘️ Start 14-Day Free Trial</button>
+    <p style="text-align:center;font-size:12px;color:var(--text-3);margin-top:12px">No charges for 14 days. Cancel anytime. By proceeding you agree to our Terms & Privacy Policy.</p>
+  </div>
+
+  <!-- RIGHT: ORDER SUMMARY -->
+  <div class="checkout-sidebar">
+    <div class="order-summary">
+      <div class="os__title">Order Summary</div>
+      <div class="os__plan-badge"><div class="os__plan-name" id="osPlanName">Jengo</div><div class="os__plan-tagline" id="osPlanTagline">Building · Jengo Imara · Up to 50 units</div></div>
+      <div class="os__breakdown">
+        <div class="os__row"><span>Base Plan</span><span class="os__val" id="osBase">KSH 6,500/mo</span></div>
+        <div class="os__row"><span>Trial Period</span><span class="os__val" style="color:var(--green-lt)">14 days FREE</span></div>
+        <div class="os__row savings hidden" id="osSavingsRow"><span>Annual Discount (20%)</span><span class="os__val" id="osSavings">-KSH 15,600</span></div>
+        <div class="os__row"><span>Setup Fee</span><span class="os__val" style="color:var(--green-lt)">Waived</span></div>
+        <div class="os__row total"><span>Due After Trial</span><span class="os__val" id="osTotal">KSH 6,500/mo</span></div>
+      </div>
+      <ul class="os__features" id="osFeatures"><li>50 residential units</li><li>Full Lipa Mdogo plans</li><li>Caretaker portal</li><li>Financial dashboard</li><li>KRA tax calculator (full)</li><li>Elderly support mode</li><li>My Neighbourhood map</li><li>Renovation management</li></ul>
+      <div class="os__secure">🔒 Secured by SSL · PCI DSS Compliant · Kenya Data Protection Act</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------- DATA & HELPERS ----------
+  const PLAN_META = {
+    msingi: { name:'Msingi', tag:'Foundation · Up to 10 units', ksh:2500, usd:19, eur:18, features:['10 residential units','Basic Lipa Mdogo','Rent dashboard','Schedule viewings','KRA calculator (basic)','Water & trash billing','My Profile'] },
+    jengo:  { name:'Jengo',  tag:'Building · Up to 50 units', ksh:6500, usd:50, eur:46, features:['50 residential units','Full Lipa Mdogo plans','Caretaker portal','Financial dashboard','KRA tax calculator (full)','Elderly support mode','My Neighbourhood map','Renovation management'] },
+    milki:  { name:'Milki',  tag:'Estate · Up to 250 units', ksh:15000, usd:116, eur:108, features:['250 residential units','Multi-property portfolio','Security management','Communication centre','Properties billing','Design capability','Long-term Lipa Mdogo','KRA reports PDF'] },
+    taifa:  { name:'Taifa',  tag:'Enterprise · Unlimited units', ksh:45000, usd:348, eur:324, features:['Unlimited units','White-label branding','API integrations','Dedicated account manager','24/7 support','SLA guarantee','Custom reports','On-site training'] },
+  };
+  const RATES = { KSH:1, USD:0.0077, EUR:0.0071 };
+  const CURRENCY_SYMBOLS = { KSH:'KSH', USD:'$', EUR:'€' };
+  let currentCurrency = 'KSH';
+  let isAnnual = false;
+  let selectedPlan = 'jengo';
+
+  function updatePrices() {
+    document.querySelectorAll('.price-amount').forEach(el => {
+      let base = parseInt(el.dataset.ksh);
+      if (isNaN(base)) return;
+      let converted = Math.round(base * RATES[currentCurrency]);
+      el.textContent = converted.toLocaleString();
+      el.closest('.plan-opt__price')?.querySelector('.price-currency')?.setAttribute('data-symbol', CURRENCY_SYMBOLS[currentCurrency]);
+      if (el.closest('.plan-opt__price')) {
+        let currSpan = el.closest('.plan-opt__price')?.querySelector('.price-currency');
+        if (currSpan) currSpan.textContent = CURRENCY_SYMBOLS[currentCurrency];
+      }
+    });
+    updateSummary();
+  }
+
+  function updateSummary() {
+    const meta = PLAN_META[selectedPlan];
+    const sym = CURRENCY_SYMBOLS[currentCurrency];
+    const monthly = Math.round(meta.ksh * RATES[currentCurrency]);
+    const annualTotal = Math.round(meta.ksh * 12 * 0.8 * RATES[currentCurrency]);
+    const savings = Math.round(meta.ksh * 12 * 0.2 * RATES[currentCurrency]);
+    document.getElementById('osPlanName').textContent = meta.name;
+    document.getElementById('osPlanTagline').textContent = meta.tag;
+    document.getElementById('osBase').textContent = `${sym} ${monthly.toLocaleString()}/mo`;
+    document.getElementById('osSavings').textContent = `-${sym} ${savings.toLocaleString()}`;
+    if (isAnnual) {
+      document.getElementById('osTotal').textContent = `${sym} ${annualTotal.toLocaleString()}/yr`;
+    } else {
+      document.getElementById('osTotal').textContent = `${sym} ${monthly.toLocaleString()}/mo`;
+    }
+    document.getElementById('osSavingsRow').classList.toggle('hidden', !isAnnual);
+    const featEl = document.getElementById('osFeatures');
+    featEl.innerHTML = meta.features.map(f => `<li>${f}</li>`).join('');
+  }
+
+  function selectPlan(plan, el) {
+    selectedPlan = plan;
+    document.querySelectorAll('#planSelector .plan-opt').forEach(opt => opt.classList.remove('selected'));
+    el.classList.add('selected');
+    updateSummary();
+  }
+
+  function selectBilling(annual, el) {
+    isAnnual = annual;
+    document.querySelectorAll('[data-billing]').forEach(opt => opt.classList.remove('selected'));
+    if(el) el.classList.add('selected');
+    updateSummary();
+  }
+
+  function selectPayment(method, el) {
+    document.querySelectorAll('.pay-opt').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('mpesaFields').classList.toggle('visible', method === 'mpesa');
+    document.getElementById('airtelFields').classList.toggle('visible', method === 'airtel');
+    document.getElementById('cardFields').classList.toggle('visible', method === 'card');
+  }
+
+  // Event binding
+  document.querySelectorAll('#planSelector .plan-opt').forEach(opt => {
+    opt.addEventListener('click', (e) => {
+      const planVal = opt.querySelector('input')?.value;
+      if (planVal) selectPlan(planVal, opt);
+    });
+  });
+  document.querySelectorAll('[data-billing]').forEach(opt => {
+    opt.addEventListener('click', () => {
+      const isAnnualVal = opt.querySelector('input')?.value === 'annual';
+      selectBilling(isAnnualVal, opt);
+    });
+  });
+  document.querySelectorAll('.pay-opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      const method = opt.getAttribute('data-payment') || (opt.innerText.includes('M-Pesa')?'mpesa':opt.innerText.includes('Airtel')?'airtel':'card');
+      selectPayment(method, opt);
+    });
+  });
+  document.querySelectorAll('.currency-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.currency-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentCurrency = btn.dataset.currency;
+      updatePrices();
+    });
+  });
+  document.getElementById('submitCheckoutBtn')?.addEventListener('click', () => {
+    alert('🎉 Welcome to Mwarokin Estates!\n\nYour 14-day free trial is starting. Check your email and phone for confirmation.\n\nRedirecting to dashboard...');
+    window.location.href = 'dashboard.html';
+  });
+
+  // Initial load, read URL plan param
+  document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const planParam = params.get('plan');
+    if (planParam && PLAN_META[planParam]) {
+      selectedPlan = planParam;
+      document.querySelectorAll('#planSelector .plan-opt').forEach(opt => {
+        if (opt.querySelector('input')?.value === planParam) {
+          opt.classList.add('selected');
+        } else opt.classList.remove('selected');
+      });
+    }
+    updatePrices();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Syllogism Technology Africa — LogIN Auth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<style>
+  :root {
+    --ink: #0a0c10;
+    --ink-soft: #1c2033;
+    --ink-muted: #3d4260;
+    --surface: #f5f4f0;
+    --surface-raised: #ffffff;
+    --accent: #1a56db;
+    --accent-light: #e8efff;
+    --accent-mid: #4a7ef7;
+    --gold: #c9a84c;
+    --gold-light: #fdf6e3;
+    --success: #0b6e4f;
+    --success-bg: #e3f5ee;
+    --error: #b91c1c;
+    --error-bg: #fef2f2;
+    --border: rgba(10,12,16,0.1);
+    --border-strong: rgba(10,12,16,0.2);
+    --panel-left: #0c1220;
+    --panel-text: rgba(255,255,255,0.88);
+    --panel-muted: rgba(255,255,255,0.45);
+    --radius: 14px;
+    --radius-lg: 20px;
+    --radius-pill: 100px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--surface);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── LAYOUT ─────────────────────────────── */
+  .auth-wrapper {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── LEFT BRAND PANEL ────────────────────── */
+  .brand-panel {
+    position: relative;
+    width: 44%;
+    min-height: 100vh;
+    background: var(--panel-left);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 3rem;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .brand-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 20% 20%, rgba(26,86,219,0.25) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 60% at 80% 80%, rgba(74,126,247,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse 40% 40% at 60% 10%, rgba(201,168,76,0.08) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  /* Geometric grid decoration */
+  .brand-panel::after {
+    content: '';
+    position: absolute;
+    bottom: -60px;
+    right: -60px;
+    width: 340px;
+    height: 340px;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 60px rgba(255,255,255,0.02),
+      0 0 0 120px rgba(255,255,255,0.015);
+  }
+
+  .brand-logo {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand-logo .logo-mark {
+    width: 38px;
+    height: 38px;
+    background: var(--accent);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .brand-logo .logo-mark span {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -1px;
+  }
+
+  .brand-logo .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--panel-text);
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+  }
+
+  .brand-logo .logo-text small {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 400;
+    color: var(--panel-muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .brand-hero {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem 0;
+  }
+
+  .brand-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .brand-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.7;
+  }
+
+  .brand-headline {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 3.2vw, 3rem);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+  }
+
+  .brand-headline em {
+    font-style: normal;
+    color: var(--accent-mid);
+  }
+
+  .brand-sub {
+    font-size: 0.95rem;
+    font-weight: 300;
+    color: var(--panel-muted);
+    line-height: 1.75;
+    max-width: 320px;
+    margin-bottom: 2.5rem;
+  }
+
+  .brand-stats {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.04em;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--panel-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .brand-footer {
+    position: relative;
+    z-index: 2;
+  }
+
+  .brand-tagline {
+    font-size: 0.78rem;
+    color: var(--panel-muted);
+    line-height: 1.5;
+  }
+
+  /* Africa continent SVG watermark */
+  .africa-mark {
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.04;
+    width: 240px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ── RIGHT FORM PANEL ────────────────────── */
+  .form-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    background: var(--surface-raised);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .form-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-mid) 60%, var(--gold) 100%);
+  }
+
+  /* ── TABS ────────────────────────────────── */
+  .auth-tabs {
+    display: flex;
+    background: var(--surface);
+    border-radius: var(--radius-pill);
+    padding: 4px;
+    margin-bottom: 2.5rem;
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--ink-muted);
+    border-radius: var(--radius-pill);
+    transition: all 0.25s ease;
+    white-space: nowrap;
+  }
+
+  .tab-btn.active {
+    background: var(--surface-raised);
+    color: var(--ink);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.12), 0 0 0 0.5px var(--border);
+  }
+
+  /* ── FORM CARD ───────────────────────────── */
+  .form-card {
+    width: 100%;
+    max-width: 420px;
+    display: none;
+    animation: fadeSlide 0.3s ease;
+  }
+
+  .form-card.active { display: block; }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .form-card h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.03em;
+    margin-bottom: 0.4rem;
+  }
+
+  .form-card .sub {
+    font-size: 0.88rem;
+    color: var(--ink-muted);
+    margin-bottom: 2rem;
+    font-weight: 300;
+  }
+
+  /* ── FIELD ───────────────────────────────── */
+  .field {
+    margin-bottom: 1.1rem;
+  }
+
+  .field label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.01em;
+  }
+
+  .input-wrap {
+    position: relative;
+  }
+
+  .input-wrap i.pre {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.85rem;
+    color: var(--ink-muted);
+    pointer-events: none;
+    transition: color 0.2s;
+  }
+
+  .input-wrap input {
+    width: 100%;
+    padding: 0.75rem 0.9rem 0.75rem 2.4rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    outline: none;
+    transition: all 0.2s ease;
+    appearance: none;
+  }
+
+  .input-wrap input::placeholder { color: rgba(10,12,16,0.3); }
+
+  .input-wrap input:focus {
+    border-color: var(--accent);
+    background: var(--surface-raised);
+    box-shadow: 0 0 0 3px rgba(26,86,219,0.1);
+  }
+
+  .input-wrap input:focus + .focus-label,
+  .input-wrap:focus-within i.pre { color: var(--accent); }
+
+  .toggle-pw {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--ink-muted);
+    font-size: 0.85rem;
+    padding: 4px;
+    transition: color 0.2s;
+  }
+
+  .toggle-pw:hover { color: var(--ink); }
+
+  /* two-col row */
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+  }
+
+  /* Password strength */
+  .pw-strength-bar {
+    height: 3px;
+    border-radius: 99px;
+    background: var(--border);
+    margin-top: 6px;
+    overflow: hidden;
+  }
+
+  .pw-strength-fill {
+    height: 100%;
+    border-radius: 99px;
+    width: 0%;
+    transition: width 0.4s ease, background 0.4s ease;
+  }
+
+  .pw-hint {
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+    margin-top: 4px;
+  }
+
+  /* Forgot */
+  .forgot-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .forgot-link {
+    font-size: 0.8rem;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .forgot-link:hover { text-decoration: underline; }
+
+  /* ── CTA BUTTON ──────────────────────────── */
+  .cta-btn {
+    width: 100%;
+    padding: 0.9rem 1.5rem;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .cta-btn:hover {
+    background: var(--ink-soft);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+  }
+
+  .cta-btn:active { transform: translateY(0); }
+
+  .cta-btn .btn-shimmer {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.12) 50%, transparent 60%);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
+
+  .cta-btn:hover .btn-shimmer { transform: translateX(100%); }
+
+  /* ── DIVIDER ─────────────────────────────── */
+  .or-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 1.4rem 0;
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+    font-weight: 400;
+  }
+
+  .or-divider::before, .or-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── SOCIAL GRID ─────────────────────────── */
+  .social-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+
+  .social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 0.65rem 0.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .social-btn i { font-size: 0.9rem; }
+
+  .social-btn:hover {
+    background: var(--surface-raised);
+    border-color: var(--border-strong);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
+    color: var(--ink);
+  }
+
+  .social-btn.google i   { color: #ea4335; }
+  .social-btn.twitter i  { color: #000; }
+  .social-btn.facebook i { color: #1877f2; }
+  .social-btn.linkedin i { color: #0077b5; }
+  .social-btn.apple i    { color: #000; }
+  .social-btn.tiktok i   { color: #000; }
+
+  /* ── TERMS ───────────────────────────────── */
+  .terms-note {
+    margin-top: 1.5rem;
+    font-size: 0.73rem;
+    color: var(--ink-muted);
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  .terms-note a { color: var(--accent); text-decoration: none; }
+  .terms-note a:hover { text-decoration: underline; }
+
+  /* ── CHECKBOX ────────────────────────────── */
+  .check-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 0.8rem;
+  }
+
+  .check-row input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    accent-color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 2px;
+    cursor: pointer;
+  }
+
+  .check-row label {
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+    cursor: pointer;
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  /* ── ALERTS ──────────────────────────────── */
+  .alert {
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius);
+    font-size: 0.82rem;
+    margin-bottom: 1rem;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    font-weight: 400;
+  }
+
+  .alert.show { display: flex; }
+  .alert.error { background: var(--error-bg); color: var(--error); border: 1px solid rgba(185,28,28,0.2); }
+  .alert.success { background: var(--success-bg); color: var(--success); border: 1px solid rgba(11,110,79,0.2); }
+
+  /* ── MOBILE ──────────────────────────────── */
+  @media (max-width: 860px) {
+    .auth-wrapper { flex-direction: column; }
+
+    .brand-panel {
+      width: 100%;
+      min-height: auto;
+      padding: 2rem;
+    }
+
+    .brand-hero { padding: 1.5rem 0; }
+
+    .brand-headline { font-size: 1.7rem; }
+
+    .africa-mark { display: none; }
+
+    .form-panel { padding: 2.5rem 1.5rem; }
+
+    .social-grid { grid-template-columns: repeat(2, 1fr); }
+
+    .field-row { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 480px) {
+    .brand-panel { padding: 1.5rem; }
+    .form-panel { padding: 2rem 1rem; }
+    .brand-stats { gap: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="auth-wrapper">
+
+  <!-- ── BRAND PANEL ── -->
+  <aside class="brand-panel">
+
+    <div class="brand-logo">
+      <div class="logo-mark"><span>STA</span></div>
+      <div class="logo-text">
+        Syllogism Technology
+        <small>Africa</small>
+      </div>
+    </div>
+
+    <div class="brand-hero">
+      <p class="brand-eyebrow">Eco-System</p>
+      <h1 class="brand-headline">
+        One Platform.<br/>
+        <em>Infinite</em> Potential.
+      </h1>
+      <p class="brand-sub">
+        Syllogism Technology Africa Is Built To Target Clients & Customers For Empowering Them Through Technology. <br> Welcome To The Future Of Innovation!
+      </p>
+      <div class="brand-stats">
+        <div class="stat-item">
+          <span class="stat-num">Global</span>
+          <span class="stat-label">Nations</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">2Billion</span>
+          <span class="stat-label">Targeted Clients</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">∞</span>
+          <span class="stat-label">Potential</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-footer">
+      <p class="brand-tagline"> Syllogism Technology Africa <br/>© 2026 All Rights Reserved. </p>
+    </div>
+
+    <!-- Africa watermark SVG -->
+    <svg class="africa-mark" viewBox="0 0 200 240" fill="white" xmlns="http://www.w3.org/2000/svg">
+      <path d="M100 5 C70 5, 40 20, 30 50 C20 75, 25 90, 15 110 C5 130, 8 150, 18 170 C28 190, 40 205, 55 218 C70 230, 85 238, 100 238 C115 238, 130 230, 145 218 C160 205, 172 190, 182 170 C192 150, 195 130, 185 110 C175 90, 180 75, 170 50 C160 20, 130 5, 100 5 Z"/>
+    </svg>
+
+  </aside>
+
+  <!-- ── FORM PANEL ── -->
+  <main class="form-panel">
+
+    <div class="auth-tabs">
+      <button class="tab-btn active" onclick="switchTab('login')">Sign In</button>
+      <button class="tab-btn" onclick="switchTab('register')">Create Account</button>
+    </div>
+
+    <!-- ── LOGIN FORM ── -->
+    <div class="form-card active" id="form-login">
+      <h2>Welcome back</h2>
+      <p class="sub">Sign in to your STA account to continue.</p>
+
+      <div class="alert error" id="login-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span id="login-error-msg">Invalid credentials. Please try again.</span>
+      </div>
+      <div class="alert success" id="login-success">
+        <i class="fas fa-check-circle"></i>
+        <span>Login successful! Redirecting&hellip;</span>
+      </div>
+
+      <form id="login-form" novalidate>
+        <div class="field">
+          <label for="l-email">Email address</label>
+          <div class="input-wrap">
+            <i class="far fa-envelope pre"></i>
+            <input type="email" id="l-email" placeholder="you@example.com" autocomplete="email" required />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="l-password">Password</label>
+          <div class="input-wrap">
+            <i class="fas fa-lock pre"></i>
+            <input type="password" id="l-password" placeholder="Enter your password" autocomplete="current-password" required />
+            <button type="button" class="toggle-pw" onclick="togglePw('l-password', this)" aria-label="Toggle password">
+              <i class="far fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="forgot-row">
+          <a href="#" class="forgot-link">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="cta-btn" id="login-btn">
+          <span class="btn-shimmer"></span>
+          <i class="fas fa-arrow-right-to-bracket"></i>
+          Sign In
+        </button>
+      </form>
+
+      <div class="or-divider">Or continue with</div>
+
+      <div class="social-grid">
+        <a href="/auth/google" class="social-btn google"><i class="fab fa-google"></i> Google</a>
+        <a href="/auth/facebook" class="social-btn facebook"><i class="fab fa-facebook-f"></i> Facebook</a>
+        <a href="/auth/linkedin" class="social-btn linkedin"><i class="fab fa-linkedin-in"></i> LinkedIn</a>
+        <a href="/auth/twitter" class="social-btn twitter"><i class="fab fa-x-twitter"></i> X</a>
+        <a href="/auth/apple" class="social-btn apple"><i class="fab fa-apple"></i> Apple</a>
+        <a href="/auth/tiktok" class="social-btn tiktok"><i class="fab fa-tiktok"></i> TikTok</a>
+      </div>
+
+      <p class="terms-note">
+        By signing in you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+      </p>
+    </div>
+
+    <!-- ── REGISTER FORM ── -->
+    <div class="form-card" id="form-register">
+      <h2>Create account</h2>
+      <p class="sub">Join millions across Africa on one unified platform.</p>
+
+      <div class="alert error" id="reg-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span id="reg-error-msg">Please check the fields below.</span>
+      </div>
+      <div class="alert success" id="reg-success">
+        <i class="fas fa-check-circle"></i>
+        <span>Account created! Please check your email to verify.</span>
+      </div>
+
+      <form id="reg-form" method="post" action="/auth/register" novalidate>
+        <div class="field-row">
+          <div class="field">
+            <label for="r-first">First name</label>
+            <div class="input-wrap">
+              <i class="far fa-user pre"></i>
+              <input type="text" id="r-first" name="first_name" placeholder="First name" required />
+            </div>
+          </div>
+          <div class="field">
+            <label for="r-last">Last name</label>
+            <div class="input-wrap">
+              <i class="far fa-user pre"></i>
+              <input type="text" id="r-last" name="last_name" placeholder="Last name" required />
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="r-email">Email address</label>
+          <div class="input-wrap">
+            <i class="far fa-envelope pre"></i>
+            <input type="email" id="r-email" name="email" placeholder="you@example.com" required />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="r-password">Password</label>
+          <div class="input-wrap">
+            <i class="fas fa-lock pre"></i>
+            <input type="password" id="r-password" name="password" placeholder="Create a strong password" required autocomplete="new-password" oninput="checkStrength(this.value)" />
+            <button type="button" class="toggle-pw" onclick="togglePw('r-password', this)" aria-label="Toggle password">
+              <i class="far fa-eye"></i>
+            </button>
+          </div>
+          <div class="pw-strength-bar"><div class="pw-strength-fill" id="pw-fill"></div></div>
+          <p class="pw-hint" id="pw-hint">Use 8+ characters with letters, numbers &amp; symbols.</p>
+        </div>
+
+        <div class="field">
+          <label for="r-password2">Confirm password</label>
+          <div class="input-wrap">
+            <i class="fas fa-lock pre"></i>
+            <input type="password" id="r-password2" name="password2" placeholder="Repeat your password" required autocomplete="new-password" />
+            <button type="button" class="toggle-pw" onclick="togglePw('r-password2', this)" aria-label="Toggle password">
+              <i class="far fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="check-row">
+          <input type="checkbox" id="agree-terms" required />
+          <label for="agree-terms">I agree to the <a href="#" style="color:var(--accent);">Terms of Service</a> and <a href="#" style="color:var(--accent);">Privacy Policy</a></label>
+        </div>
+
+        <div class="check-row">
+          <input type="checkbox" id="agree-comms" />
+          <label for="agree-comms">Send me product updates and announcements</label>
+        </div>
+
+        <button type="submit" class="cta-btn" id="reg-btn">
+          <span class="btn-shimmer"></span>
+          <i class="fas fa-user-plus"></i>
+          Create Account
+        </button>
+      </form>
+
+      <div class="or-divider">Or sign up with</div>
+
+      <div class="social-grid">
+        <a href="/auth/google" class="social-btn google"><i class="fab fa-google"></i> Google</a>
+        <a href="/auth/facebook" class="social-btn facebook"><i class="fab fa-facebook-f"></i> Facebook</a>
+        <a href="/auth/linkedin" class="social-btn linkedin"><i class="fab fa-linkedin-in"></i> LinkedIn</a>
+        <a href="/auth/twitter" class="social-btn twitter"><i class="fab fa-x-twitter"></i> X</a>
+        <a href="/auth/apple" class="social-btn apple"><i class="fab fa-apple"></i> Apple</a>
+        <a href="/auth/tiktok" class="social-btn tiktok"><i class="fab fa-tiktok"></i> TikTok</a>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  /* Tab switching */
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach((b, i) => {
+      b.classList.toggle('active', (tab === 'login' && i === 0) || (tab === 'register' && i === 1));
+    });
+    document.getElementById('form-login').classList.toggle('active', tab === 'login');
+    document.getElementById('form-register').classList.toggle('active', tab === 'register');
+  }
+
+  /* Toggle password visibility */
+  function togglePw(id, btn) {
+    const input = document.getElementById(id);
+    const icon = btn.querySelector('i');
+    const isText = input.type === 'text';
+    input.type = isText ? 'password' : 'text';
+    icon.className = isText ? 'far fa-eye' : 'far fa-eye-slash';
+  }
+
+  /* Password strength meter */
+  function checkStrength(val) {
+    const fill = document.getElementById('pw-fill');
+    const hint = document.getElementById('pw-hint');
+    let score = 0;
+    if (val.length >= 8) score++;
+    if (/[A-Z]/.test(val)) score++;
+    if (/[0-9]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+
+    const map = [
+      { pct: '0%',   color: '#e5e7eb', label: '' },
+      { pct: '25%',  color: '#ef4444', label: 'Weak' },
+      { pct: '50%',  color: '#f59e0b', label: 'Fair' },
+      { pct: '75%',  color: '#3b82f6', label: 'Good' },
+      { pct: '100%', color: '#10b981', label: 'Strong' },
+    ];
+
+    fill.style.width = map[score].pct;
+    fill.style.background = map[score].color;
+    hint.textContent = score === 0 ? 'Use 8+ characters with letters, numbers & symbols.' : map[score].label + ' password';
+    hint.style.color = map[score].color || 'var(--ink-muted)';
+  }
+
+  /* Show alert helper */
+  function showAlert(id, msg) {
+    const el = document.getElementById(id);
+    if (msg) document.getElementById(id + '-msg') && (document.getElementById(id + '-msg').textContent = msg);
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 5000);
+  }
+
+  /* Login form */
+  document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const email = document.getElementById('l-email').value.trim();
+    const pw    = document.getElementById('l-password').value;
+    if (!email || !pw) { showAlert('login-error', 'Please fill in all fields.'); return; }
+    const btn = document.getElementById('login-btn');
+    btn.innerHTML = '<span class="btn-shimmer"></span><i class="fas fa-spinner fa-spin"></i> Signing in…';
+    btn.disabled = true;
+    /* Replace this timeout with your actual API call */
+    setTimeout(() => {
+      btn.innerHTML = '<span class="btn-shimmer"></span><i class="fas fa-arrow-right-to-bracket"></i> Sign In';
+      btn.disabled = false;
+      document.getElementById('login-success').classList.add('show');
+    }, 1800);
+  });
+
+  /* Register form */
+  document.getElementById('reg-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const pw  = document.getElementById('r-password').value;
+    const pw2 = document.getElementById('r-password2').value;
+    if (pw !== pw2) { showAlert('reg-error', 'Passwords do not match.'); return; }
+    if (!document.getElementById('agree-terms').checked) { showAlert('reg-error', 'Please accept the Terms of Service.'); return; }
+    const btn = document.getElementById('reg-btn');
+    btn.innerHTML = '<span class="btn-shimmer"></span><i class="fas fa-spinner fa-spin"></i> Creating account…';
+    btn.disabled = true;
+    /* Replace this timeout with your actual API call */
+    setTimeout(() => {
+      btn.innerHTML = '<span class="btn-shimmer"></span><i class="fas fa-user-plus"></i> Create Account';
+      btn.disabled = false;
+      document.getElementById('reg-success').classList.add('show');
+    }, 1800);
+  });
+</script>
+</body>
+</html>

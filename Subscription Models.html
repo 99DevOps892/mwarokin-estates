@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mwarokin Estates · Landlord Onboarding & Smart Contract</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+:root{
+  --navy:#0e1a2b;
+  --navy-light:#16283f;
+  --navy-softer:#1e3352;
+  --gold:#c9a959;
+  --gold-light:#e8d5a3;
+  --gold-glow:rgba(201,169,89,.25);
+  --cream:#f8f5ee;
+  --white:#ffffff;
+  --gray-100:#f3f1ed;
+  --gray-200:#e8e4dc;
+  --gray-300:#d0cbc2;
+  --gray-600:#6b6560;
+  --gray-800:#2d2823;
+  --green:#2f7d5e;
+  --green-bg:#e7f3ed;
+  --red:#b3462c;
+  --shadow-sm:0 4px 20px rgba(14,26,43,.08);
+  --shadow-md:0 12px 48px rgba(14,26,43,.12);
+  --shadow-lg:0 24px 64px rgba(14,26,43,.18);
+  --radius:22px;
+  --radius-sm:14px;
+  --ease:0.4s cubic-bezier(.25,.46,.45,.94);
+}
+
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--cream);
+  color:var(--gray-800);
+  min-height:100vh;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:32px 20px 60px;
+  background-image:
+    radial-gradient(ellipse at 8% 10%, rgba(201,169,89,.07) 0%, transparent 45%),
+    radial-gradient(ellipse at 95% 90%, rgba(14,26,43,.05) 0%, transparent 45%);
+}
+
+.serif{font-family:'Fraunces',serif;}
+.mono{font-family:'JetBrains Mono',monospace;}
+
+/* ============ SHELL ============ */
+.shell{
+  max-width:980px;
+  width:100%;
+  background:var(--white);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-lg);
+  overflow:hidden;
+  position:relative;
+}
+
+/* ============ HEADER ============ */
+.shell-header{
+  background:var(--navy);
+  padding:30px 44px 26px;
+  position:relative;
+  overflow:hidden;
+}
+.shell-header::after{
+  content:'';
+  position:absolute;top:-70%;right:-8%;
+  width:420px;height:420px;
+  background:radial-gradient(circle, rgba(201,169,89,.10) 0%, transparent 70%);
+  border-radius:50%;
+  pointer-events:none;
+}
+.brand-row{display:flex;align-items:center;gap:14px;position:relative;z-index:1;}
+.brand-icon{
+  width:46px;height:46px;background:var(--gold);border-radius:12px;
+  display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--navy);flex-shrink:0;
+}
+.brand-text h1{font-size:21px;font-weight:700;color:var(--white);letter-spacing:-.3px;line-height:1.2;}
+.brand-text h1 span{color:var(--gold);}
+.brand-text .tagline{font-size:12.5px;color:rgba(255,255,255,.6);letter-spacing:.3px;}
+.header-badge{
+  margin-left:auto;background:rgba(201,169,89,.15);border:1px solid rgba(201,169,89,.25);
+  padding:6px 16px;border-radius:100px;font-size:11.5px;font-weight:600;color:var(--gold-light);
+  letter-spacing:.4px;text-transform:uppercase;position:relative;z-index:1;display:flex;align-items:center;gap:7px;
+}
+
+/* ============ STEPPER ============ */
+.stepper{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:22px 44px 20px;
+  position:relative;z-index:1;
+  gap:4px;
+}
+.step-node{display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;position:relative;}
+.step-node .circle{
+  width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.08);
+  border:2px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:rgba(255,255,255,.5);transition:var(--ease);flex-shrink:0;
+}
+.step-node .label{font-size:10.5px;font-weight:600;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.4px;text-align:center;transition:var(--ease);}
+.step-node .track{
+  position:absolute;top:17px;left:calc(50% + 24px);right:calc(-50% + 24px);
+  height:2px;background:rgba(255,255,255,.14);z-index:-1;
+}
+.step-node:last-child .track{display:none;}
+.step-node.done .circle{background:var(--gold);border-color:var(--gold);color:var(--navy);}
+.step-node.done .circle i{font-size:13px;}
+.step-node.done .label{color:var(--gold-light);}
+.step-node.done .track{background:var(--gold);}
+.step-node.active .circle{background:var(--navy);border-color:var(--gold);color:var(--gold);box-shadow:0 0 0 4px rgba(201,169,89,.18);}
+.step-node.active .label{color:var(--white);}
+
+/* ============ BODY ============ */
+.step-body{padding:34px 44px 12px;min-height:420px;}
+.step-panel{display:none;animation:fadeUp .45s ease both;}
+.step-panel.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+.panel-head h2{font-size:25px;font-weight:700;color:var(--navy);letter-spacing:-.5px;}
+.panel-head h2 i{color:var(--gold);margin-right:9px;}
+.panel-head p{font-size:14.5px;color:var(--gray-600);margin-top:6px;max-width:560px;line-height:1.6;}
+.panel-head{margin-bottom:26px;}
+
+/* ---- generic form ---- */
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field.full{grid-column:1/-1;}
+.field label{font-size:12.5px;font-weight:600;color:var(--navy);letter-spacing:.2px;display:flex;align-items:center;gap:6px;}
+.field label i{color:var(--gold);font-size:11px;}
+.field input, .field select{
+  border:1.5px solid var(--gray-200);background:var(--gray-100);border-radius:10px;
+  padding:12px 14px;font-family:'Inter',sans-serif;font-size:14.5px;color:var(--gray-800);
+  transition:var(--ease);outline:none;
+}
+.field input:focus, .field select:focus{border-color:var(--gold);background:var(--white);box-shadow:0 0 0 4px var(--gold-glow);}
+.field .hint{font-size:11.5px;color:var(--gray-600);}
+.field .error{font-size:11.5px;color:var(--red);display:none;}
+.field.invalid input, .field.invalid select{border-color:var(--red);}
+.field.invalid .error{display:block;}
+
+/* ---- comparison cards (step 1) ---- */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;position:relative;}
+.compare-grid::before{content:'';position:absolute;left:50%;top:6%;bottom:6%;width:1px;background:var(--gray-200);transform:translateX(-50%);}
+.opt-card{padding:0 18px;}
+.opt-card:first-child{padding-right:26px;}
+.opt-card:last-child{padding-left:26px;}
+.opt-inner{
+  background:var(--white);border:2px solid var(--gray-200);border-radius:var(--radius-sm);
+  padding:24px 22px 26px;height:100%;display:flex;flex-direction:column;transition:var(--ease);position:relative;cursor:pointer;
+}
+.opt-inner:hover{border-color:var(--gold-light);box-shadow:var(--shadow-sm);}
+.opt-card.selected .opt-inner{border-color:var(--gold);box-shadow:0 0 0 4px var(--gold-glow),var(--shadow-md);}
+.opt-ribbon{position:absolute;top:-1px;right:22px;background:var(--gold);color:var(--navy);font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:4px 14px 5px;border-radius:0 0 8px 8px;opacity:0;transform:translateY(-6px);transition:var(--ease);}
+.opt-card.selected .opt-ribbon{opacity:1;transform:translateY(0);}
+.opt-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:14px;}
+.icon-box{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0;}
+.icon-box.gold{background:rgba(201,169,89,.12);color:var(--gold);}
+.icon-box.navy{background:rgba(14,26,43,.08);color:var(--navy);}
+.opt-header h3{font-size:18px;font-weight:700;color:var(--navy);letter-spacing:-.3px;}
+.opt-header .sub{font-size:13px;color:var(--gray-600);margin-top:2px;}
+.select-check{width:26px;height:26px;border-radius:50%;border:2px solid var(--gray-300);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:var(--ease);background:var(--white);margin-top:2px;}
+.select-check i{font-size:12px;color:var(--white);opacity:0;transform:scale(.6);transition:var(--ease);}
+.opt-card.selected .select-check{background:var(--gold);border-color:var(--gold);box-shadow:0 0 0 4px var(--gold-glow);}
+.opt-card.selected .select-check i{opacity:1;transform:scale(1);}
+
+.rate-display{background:var(--gray-100);border-radius:var(--radius-sm);padding:16px 18px;margin:2px 0 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.rate-big{font-size:30px;font-weight:800;color:var(--navy);letter-spacing:-1px;}
+.rate-big span{font-size:15px;font-weight:600;color:var(--gray-600);}
+.rate-label{font-size:13px;font-weight:500;color:var(--gray-600);}
+.rate-label i{color:var(--gold);margin-right:4px;}
+.calc-box{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-sm);padding:15px 17px 17px;margin:10px 0 14px;}
+.calc-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;font-size:13.5px;color:var(--gray-600);}
+.calc-row .lbl{display:flex;align-items:center;gap:7px;}
+.calc-row .lbl i{color:var(--gold);width:16px;text-align:center;}
+.calc-row .val{font-weight:600;color:var(--navy);}
+.calc-row.total{border-top:2px solid var(--gray-200);margin-top:5px;padding-top:12px;font-weight:700;color:var(--navy);font-size:15px;}
+.calc-row.total .val{color:var(--gold);font-size:17px;}
+.calc-slider{margin-top:10px;}
+.calc-slider input[type=range]{width:100%;height:4px;-webkit-appearance:none;appearance:none;background:var(--gray-200);border-radius:4px;outline:none;}
+.calc-slider input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:17px;height:17px;border-radius:50%;background:var(--gold);cursor:pointer;box-shadow:0 2px 8px rgba(201,169,89,.4);border:2px solid var(--white);}
+.slider-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--gray-600);margin-top:3px;}
+.feature-badges{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px;}
+.pill-badge{background:rgba(201,169,89,.10);color:var(--navy);font-size:11.5px;font-weight:500;padding:4px 12px;border-radius:100px;border:1px solid rgba(201,169,89,.15);display:inline-flex;align-items:center;gap:5px;}
+.pill-badge i{color:var(--gold);font-size:9px;}
+
+.plan-tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px;}
+.plan-tab{background:var(--gray-100);border:2px solid transparent;border-radius:var(--radius-sm);padding:10px 10px 9px;cursor:pointer;transition:var(--ease);text-align:center;position:relative;}
+.plan-tab:hover{background:var(--gray-200);}
+.plan-tab.active{background:var(--white);border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-glow);}
+.plan-tab .pname{font-size:14px;font-weight:700;color:var(--navy);}
+.plan-tab .pprice{font-size:16px;font-weight:800;color:var(--gold);margin-top:1px;}
+.plan-tab .pprice span{font-size:11px;font-weight:500;color:var(--gray-600);}
+.plan-detail{background:var(--gray-100);border-radius:var(--radius-sm);padding:15px 17px 17px;}
+.plan-detail .dhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;flex-wrap:wrap;gap:5px;}
+.plan-detail .dname{font-size:15px;font-weight:700;color:var(--navy);}
+.plan-detail .dprice{font-size:20px;font-weight:800;color:var(--gold);}
+.plan-detail .dprice span{font-size:12px;font-weight:500;color:var(--gray-600);}
+.plan-detail .ddesc{font-size:12.5px;color:var(--gray-600);margin-bottom:9px;line-height:1.5;}
+.plan-detail .dfeatures{display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;list-style:none;max-height:150px;overflow-y:auto;}
+.plan-detail .dfeatures li{font-size:12.5px;color:var(--gray-800);display:flex;align-items:center;gap:6px;padding:2px 0;}
+.plan-detail .dfeatures li i{color:var(--gold);font-size:10px;width:14px;text-align:center;}
+
+/* ---- Step 3: account linking ---- */
+.method-toggle{display:flex;gap:8px;margin-bottom:20px;}
+.method-btn{flex:1;background:var(--gray-100);border:2px solid var(--gray-200);border-radius:var(--radius-sm);padding:14px 16px;cursor:pointer;transition:var(--ease);display:flex;align-items:center;gap:12px;text-align:left;}
+.method-btn:hover{border-color:var(--gold-light);}
+.method-btn.active{background:var(--white);border-color:var(--gold);box-shadow:0 0 0 4px var(--gold-glow);}
+.method-btn .m-icon{width:38px;height:38px;border-radius:10px;background:rgba(201,169,89,.12);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.method-btn .m-text .m-name{font-size:14px;font-weight:700;color:var(--navy);}
+.method-btn .m-text .m-sub{font-size:11.5px;color:var(--gray-600);}
+
+.link-form{background:var(--gray-100);border-radius:var(--radius-sm);padding:22px;margin-bottom:16px;}
+.detect-row{display:flex;gap:10px;align-items:flex-end;}
+.detect-row .field{flex:1;}
+.btn-detect{
+  background:var(--navy);color:var(--white);border:none;border-radius:10px;padding:12px 20px;
+  font-family:'Inter',sans-serif;font-weight:600;font-size:13.5px;cursor:pointer;transition:var(--ease);
+  display:flex;align-items:center;gap:8px;white-space:nowrap;height:44px;
+}
+.btn-detect:hover{background:var(--navy-softer);}
+.btn-detect:disabled{opacity:.5;cursor:not-allowed;}
+.btn-detect.loading i{animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.verify-status{margin-top:16px;display:none;}
+.verify-status.show{display:block;animation:fadeUp .4s ease both;}
+.verify-card{
+  background:var(--green-bg);border:1.5px solid rgba(47,125,94,.25);border-radius:var(--radius-sm);
+  padding:16px 18px;display:flex;align-items:center;gap:14px;
+}
+.verify-card .v-icon{width:40px;height:40px;border-radius:50%;background:var(--green);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.verify-card .v-text .v-title{font-size:13.5px;font-weight:700;color:var(--green);display:flex;align-items:center;gap:6px;}
+.verify-card .v-text .v-name{font-size:16px;font-weight:700;color:var(--navy);margin-top:2px;}
+.verify-card .v-text .v-meta{font-size:12px;color:var(--gray-600);margin-top:2px;}
+.verify-card .v-meta .mono{color:var(--navy);font-weight:600;}
+
+.dual-purpose-note{
+  display:flex;gap:12px;background:rgba(14,26,43,.04);border:1px solid var(--gray-200);border-radius:var(--radius-sm);
+  padding:15px 17px;margin-top:16px;align-items:flex-start;
+}
+.dual-purpose-note i{color:var(--gold);font-size:16px;margin-top:2px;}
+.dual-purpose-note .dp-title{font-size:13px;font-weight:700;color:var(--navy);}
+.dual-purpose-note .dp-body{font-size:12.5px;color:var(--gray-600);margin-top:3px;line-height:1.55;}
+
+/* ---- Step 4: review ---- */
+.review-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:22px;}
+.review-card{background:var(--gray-100);border-radius:var(--radius-sm);padding:20px 22px;}
+.review-card + .review-card{margin-top:16px;}
+.review-card h4{font-size:13px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.4px;margin-bottom:12px;display:flex;align-items:center;gap:8px;justify-content:space-between;}
+.review-card h4 .edit-link{font-size:11.5px;font-weight:600;color:var(--gold);cursor:pointer;text-transform:none;letter-spacing:0;}
+.review-card h4 .edit-link:hover{text-decoration:underline;}
+.review-line{display:flex;justify-content:space-between;padding:6px 0;font-size:13.5px;color:var(--gray-600);border-bottom:1px dashed var(--gray-200);}
+.review-line:last-child{border-bottom:none;}
+.review-line .rv{font-weight:600;color:var(--navy);}
+
+.summary-card{background:var(--navy);border-radius:var(--radius-sm);padding:22px;color:var(--white);position:sticky;top:16px;}
+.summary-card h4{font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gold-light);margin-bottom:14px;}
+.summary-line{display:flex;justify-content:space-between;padding:7px 0;font-size:13.5px;color:rgba(255,255,255,.7);border-bottom:1px solid rgba(255,255,255,.08);}
+.summary-line .sv{color:var(--white);font-weight:600;}
+.summary-line.total{border-top:1px solid rgba(255,255,255,.18);border-bottom:none;margin-top:6px;padding-top:14px;font-weight:700;font-size:15px;color:var(--white);}
+.summary-line.total .sv{color:var(--gold);font-size:19px;}
+
+.terms-row{display:flex;align-items:flex-start;gap:10px;margin-top:18px;padding:14px 16px;background:var(--gray-100);border-radius:12px;}
+.terms-row input[type=checkbox]{width:18px;height:18px;margin-top:1px;accent-color:var(--gold);flex-shrink:0;cursor:pointer;}
+.terms-row label{font-size:12.5px;color:var(--gray-600);line-height:1.55;cursor:pointer;}
+.terms-row label a{color:var(--gold);font-weight:600;text-decoration:none;}
+.terms-row label a:hover{text-decoration:underline;}
+
+.sig-box{margin-top:14px;}
+.sig-box label{font-size:12.5px;font-weight:600;color:var(--navy);display:block;margin-bottom:6px;}
+.sig-box input{width:100%;border:1.5px solid var(--gray-200);background:var(--gray-100);border-radius:10px;padding:14px;font-family:'Fraunces',serif;font-style:italic;font-size:19px;color:var(--navy);outline:none;transition:var(--ease);}
+.sig-box input:focus{border-color:var(--gold);background:var(--white);box-shadow:0 0 0 4px var(--gold-glow);}
+.sig-box .hint{font-size:11px;color:var(--gray-600);margin-top:5px;}
+
+/* ---- Step 5: success ---- */
+.success-wrap{text-align:center;padding:20px 20px 4px;}
+.success-icon{
+  width:84px;height:84px;border-radius:50%;background:var(--green-bg);border:2px solid rgba(47,125,94,.3);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 22px;font-size:38px;color:var(--green);
+  animation:pop .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes pop{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+.success-wrap h2{font-size:26px;font-weight:700;color:var(--navy);letter-spacing:-.5px;}
+.success-wrap p{font-size:14.5px;color:var(--gray-600);margin-top:8px;max-width:460px;margin-left:auto;margin-right:auto;line-height:1.6;}
+.receipt{
+  background:var(--gray-100);border-radius:var(--radius-sm);padding:22px 26px;margin:26px auto 0;max-width:460px;text-align:left;
+}
+.receipt .r-row{display:flex;justify-content:space-between;padding:7px 0;font-size:13px;color:var(--gray-600);border-bottom:1px dashed var(--gray-300);}
+.receipt .r-row:last-child{border-bottom:none;}
+.receipt .r-row .rv{font-weight:700;color:var(--navy);}
+.timeline{display:flex;justify-content:space-between;margin:30px auto 0;max-width:520px;gap:6px;}
+.tl-item{flex:1;text-align:center;position:relative;}
+.tl-item .tl-dot{width:26px;height:26px;border-radius:50%;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin:0 auto 8px;}
+.tl-item .tl-label{font-size:11px;font-weight:600;color:var(--navy);}
+.tl-item .tl-sub{font-size:10.5px;color:var(--gray-600);margin-top:2px;}
+.tl-item::after{content:'';position:absolute;top:13px;left:calc(50% + 18px);right:calc(-50% + 18px);height:2px;background:var(--gray-300);z-index:-1;}
+.tl-item:last-child::after{display:none;}
+
+/* ============ FOOTER NAV ============ */
+.step-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:22px 44px;border-top:1px solid var(--gray-200);background:var(--gray-100);gap:12px;flex-wrap:wrap;
+}
+.footer-left{font-size:12px;color:var(--gray-600);display:flex;align-items:center;gap:8px;}
+.footer-left i{color:var(--gold);}
+.nav-btns{display:flex;gap:10px;margin-left:auto;}
+.btn-back{
+  background:transparent;border:2px solid var(--gray-300);color:var(--gray-600);
+  font-family:'Inter',sans-serif;font-size:14px;font-weight:600;padding:11px 22px;border-radius:100px;
+  cursor:pointer;transition:var(--ease);display:inline-flex;align-items:center;gap:8px;
+}
+.btn-back:hover{border-color:var(--navy);color:var(--navy);}
+.btn-back:disabled{opacity:.35;cursor:not-allowed;}
+.btn-next{
+  background:var(--gold);border:none;color:var(--navy);font-family:'Inter',sans-serif;font-size:14.5px;font-weight:700;
+  padding:12px 26px;border-radius:100px;cursor:pointer;transition:var(--ease);display:inline-flex;align-items:center;gap:9px;
+}
+.btn-next:hover{background:#dbb96a;transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,169,89,.35);}
+.btn-next:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none;}
+.btn-next.navy{background:var(--navy);color:var(--white);}
+.btn-next.navy:hover{background:var(--navy-softer);}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:860px){
+  .compare-grid{grid-template-columns:1fr;gap:26px;}
+  .compare-grid::before{display:none;}
+  .opt-card:first-child,.opt-card:last-child{padding:0;}
+  .review-grid{grid-template-columns:1fr;}
+  .summary-card{position:static;}
+  .field-grid{grid-template-columns:1fr;}
+  .shell-header{padding:24px 24px 18px;}
+  .stepper{padding:18px 20px 16px;}
+  .step-node .label{display:none;}
+  .step-body{padding:26px 22px 8px;}
+  .step-footer{padding:18px 22px;}
+}
+@media (max-width:520px){
+  .method-toggle{flex-direction:column;}
+  .detect-row{flex-direction:column;align-items:stretch;}
+  .btn-detect{justify-content:center;}
+  .timeline{flex-wrap:wrap;}
+  .header-badge{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="shell" id="shell">
+
+  <!-- ===== HEADER ===== -->
+  <header class="shell-header">
+    <div class="brand-row">
+      <div class="brand-icon"><i class="fas fa-building"></i></div>
+      <div class="brand-text">
+        <h1>Mwarokin <span>Estates</span></h1>
+        <div class="tagline">Landlord Onboarding · Digital Smart Contract</div>
+      </div>
+      <div class="header-badge"><i class="fas fa-file-signature"></i> Secure Onboarding</div>
+    </div>
+
+    <!-- ===== STEPPER ===== -->
+    <div class="stepper" id="stepper">
+      <div class="step-node active" data-step="1">
+        <div class="track"></div>
+        <div class="circle">1</div>
+        <div class="label">Model</div>
+      </div>
+      <div class="step-node" data-step="2">
+        <div class="track"></div>
+        <div class="circle">2</div>
+        <div class="label">Property</div>
+      </div>
+      <div class="step-node" data-step="3">
+        <div class="track"></div>
+        <div class="circle">3</div>
+        <div class="label">Payout Account</div>
+      </div>
+      <div class="step-node" data-step="4">
+        <div class="track"></div>
+        <div class="circle">4</div>
+        <div class="label">Review</div>
+      </div>
+      <div class="step-node" data-step="5">
+        <div class="circle">5</div>
+        <div class="label">Done</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== BODY ===== -->
+  <div class="step-body">
+
+    <!-- ---------- STEP 1: MANAGEMENT MODEL ---------- -->
+    <section class="step-panel active" data-panel="1">
+      <div class="panel-head">
+        <h2><i class="fas fa-crown"></i>Choose your management model</h2>
+        <p>Select between performance-based Revenue Sharing or a fixed Subscription Plan. Both include full access to the Mwarokin Estate digital platform.</p>
+      </div>
+
+      <div class="compare-grid">
+        <!-- Revenue Sharing -->
+        <div class="opt-card selected" data-option="revenue" id="optionRevenue">
+          <div class="opt-inner">
+            <div class="opt-ribbon"><i class="fas fa-check-circle"></i> Selected</div>
+            <div class="opt-header">
+              <div class="icon-box gold"><i class="fas fa-hand-holding-usd"></i></div>
+              <div style="flex:1;">
+                <h3>Revenue Sharing</h3>
+                <div class="sub">Performance-based · 5% fee</div>
+              </div>
+              <div class="select-check"><i class="fas fa-check"></i></div>
+            </div>
+
+            <div class="rate-display">
+              <div>
+                <div class="rate-big">5% <span>per unit</span></div>
+                <div class="rate-label"><i class="fas fa-percent"></i>of monthly rent collected</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:12px;color:var(--gray-600);">Auto-deducted</div>
+                <div style="font-size:12.5px;font-weight:600;color:var(--navy);">before disbursement</div>
+              </div>
+            </div>
+
+            <div class="calc-box">
+              <div class="calc-row"><span class="lbl"><i class="fas fa-home"></i>Monthly rent per unit</span><span class="val" id="rentDisplay">KSh 20,000</span></div>
+              <div class="calc-slider">
+                <input type="range" id="rentSlider" min="5000" max="150000" step="1000" value="20000" />
+                <div class="slider-labels"><span>KSh 5k</span><span>KSh 150k</span></div>
+              </div>
+              <div class="calc-row"><span class="lbl"><i class="fas fa-coins"></i>Management fee (5%)</span><span class="val" id="feeDisplay">KSh 1,000</span></div>
+              <div class="calc-row total"><span class="lbl"><i class="fas fa-arrow-right"></i>You receive</span><span class="val" id="landlordReceives">KSh 19,000</span></div>
+            </div>
+
+            <div class="feature-badges">
+              <span class="pill-badge"><i class="fas fa-check-circle"></i>No fixed fee</span>
+              <span class="pill-badge"><i class="fas fa-check-circle"></i>Pay only on occupied units</span>
+              <span class="pill-badge"><i class="fas fa-check-circle"></i>Full platform access</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Subscription -->
+        <div class="opt-card" data-option="subscription" id="optionSubscription">
+          <div class="opt-inner">
+            <div class="opt-ribbon"><i class="fas fa-check-circle"></i> Selected</div>
+            <div class="opt-header">
+              <div class="icon-box navy"><i class="fas fa-layer-group"></i></div>
+              <div style="flex:1;">
+                <h3>Smart Estate Plans</h3>
+                <div class="sub">Fixed monthly subscription</div>
+              </div>
+              <div class="select-check"><i class="fas fa-check"></i></div>
+            </div>
+
+            <div class="plan-tabs" id="planTabs">
+              <div class="plan-tab active" data-plan="msingi"><div class="pname">Msingi</div><div class="pprice">2,500 <span>/mo</span></div></div>
+              <div class="plan-tab" data-plan="jengo"><div class="pname">Jengo</div><div class="pprice">6,500 <span>/mo</span></div></div>
+              <div class="plan-tab" data-plan="milki"><div class="pname">Milki</div><div class="pprice">15,000 <span>/mo</span></div></div>
+              <div class="plan-tab" data-plan="taifa"><div class="pname">Taifa</div><div class="pprice">45,000 <span>/mo</span></div></div>
+            </div>
+
+            <div class="plan-detail" id="planDetail"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- STEP 2: PROPERTY & LANDLORD DETAILS ---------- -->
+    <section class="step-panel" data-panel="2">
+      <div class="panel-head">
+        <h2><i class="fas fa-user-tie"></i>Landlord & property details</h2>
+        <p>Tell us who to pay and which property this contract covers. This name will be matched against your payout account in the next step.</p>
+      </div>
+
+      <div class="field-grid">
+        <div class="field" id="f_fullname">
+          <label><i class="fas fa-id-card"></i>Full name (as on ID)</label>
+          <input type="text" id="fullname" placeholder="e.g. Grace Wanjiku Mwarema" />
+          <span class="error">Please enter your full legal name.</span>
+        </div>
+        <div class="field" id="f_idnumber">
+          <label><i class="fas fa-address-card"></i>National ID / Passport No.</label>
+          <input type="text" id="idnumber" placeholder="e.g. 24681012" />
+          <span class="error">Please enter a valid ID number.</span>
+        </div>
+        <div class="field" id="f_phone">
+          <label><i class="fas fa-phone"></i>Phone number</label>
+          <input type="text" id="phone" placeholder="07XX XXX XXX" />
+          <span class="error">Enter a valid Kenyan phone number.</span>
+        </div>
+        <div class="field" id="f_email">
+          <label><i class="fas fa-envelope"></i>Email address</label>
+          <input type="email" id="email" placeholder="you@email.com" />
+          <span class="error">Enter a valid email address.</span>
+        </div>
+        <div class="field full" id="f_property">
+          <label><i class="fas fa-building"></i>Property / estate name</label>
+          <input type="text" id="property" placeholder="e.g. Kilimani Court Apartments" />
+          <span class="error">Please enter the property name.</span>
+        </div>
+        <div class="field" id="f_units">
+          <label><i class="fas fa-door-open"></i>Number of units</label>
+          <input type="number" id="units" min="1" placeholder="e.g. 12" />
+          <span class="error">Enter the number of units.</span>
+        </div>
+        <div class="field" id="f_county">
+          <label><i class="fas fa-map-marker-alt"></i>County / location</label>
+          <select id="county">
+            <option value="">Select county</option>
+            <option>Nairobi</option><option>Kiambu</option><option>Mombasa</option>
+            <option>Kisumu</option><option>Nakuru</option><option>Machakos</option>
+            <option>Uasin Gishu</option><option>Kajiado</option><option>Other</option>
+          </select>
+          <span class="error">Please select a county.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- STEP 3: PAYOUT ACCOUNT ---------- -->
+    <section class="step-panel" data-panel="3">
+      <div class="panel-head">
+        <h2><i class="fas fa-university"></i>Link your payout account</h2>
+        <p>This is the account funds are channeled to <strong>and</strong> the account direct deductions are made from. We verify it automatically before activation.</p>
+      </div>
+
+      <div class="method-toggle">
+        <button class="method-btn active" data-method="mpesa" type="button">
+          <div class="m-icon"><i class="fas fa-mobile-alt"></i></div>
+          <div class="m-text"><div class="m-name">M-Pesa</div><div class="m-sub">Instant detection via Safaricom</div></div>
+        </button>
+        <button class="method-btn" data-method="bank" type="button">
+          <div class="m-icon"><i class="fas fa-university"></i></div>
+          <div class="m-text"><div class="m-name">Bank Account</div><div class="m-sub">Any major Kenyan bank</div></div>
+        </button>
+      </div>
+
+      <!-- M-Pesa panel -->
+      <div class="link-form" id="mpesaPanel">
+        <div class="detect-row">
+          <div class="field" id="f_mpesaphone">
+            <label><i class="fas fa-mobile-alt"></i>M-Pesa registered number</label>
+            <input type="text" id="mpesaphone" placeholder="07XX XXX XXX" />
+            <span class="error">Enter a valid M-Pesa number.</span>
+          </div>
+          <button class="btn-detect" id="btnDetectMpesa" type="button"><i class="fas fa-satellite-dish"></i> Detect account</button>
+        </div>
+
+        <div class="verify-status" id="mpesaVerify">
+          <div class="verify-card">
+            <div class="v-icon"><i class="fas fa-check"></i></div>
+            <div class="v-text">
+              <div class="v-title"><i class="fas fa-shield-alt"></i> Verified with Safaricom</div>
+              <div class="v-name" id="mpesaName">—</div>
+              <div class="v-meta">M-Pesa number <span class="mono" id="mpesaNumberMasked">—</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bank panel -->
+      <div class="link-form" id="bankPanel" style="display:none;">
+        <div class="field-grid" style="margin-bottom:14px;">
+          <div class="field" id="f_bankname">
+            <label><i class="fas fa-landmark"></i>Bank</label>
+            <select id="bankname">
+              <option value="">Select bank</option>
+              <option>Equity Bank</option><option>KCB Bank</option><option>Co-operative Bank</option>
+              <option>Absa Bank Kenya</option><option>NCBA Bank</option><option>Diamond Trust Bank</option>
+              <option>Stanbic Bank</option><option>I&M Bank</option><option>Family Bank</option>
+              <option>Standard Chartered</option>
+            </select>
+            <span class="error">Please select a bank.</span>
+          </div>
+          <div class="field" id="f_branch">
+            <label><i class="fas fa-map-pin"></i>Branch (optional)</label>
+            <input type="text" id="branch" placeholder="e.g. Westlands" />
+          </div>
+        </div>
+        <div class="detect-row">
+          <div class="field" id="f_accnumber">
+            <label><i class="fas fa-hashtag"></i>Account number</label>
+            <input type="text" id="accnumber" placeholder="Enter bank account number" />
+            <span class="error">Enter a valid account number.</span>
+          </div>
+          <button class="btn-detect" id="btnDetectBank" type="button"><i class="fas fa-satellite-dish"></i> Verify account</button>
+        </div>
+
+        <div class="verify-status" id="bankVerify">
+          <div class="verify-card">
+            <div class="v-icon"><i class="fas fa-check"></i></div>
+            <div class="v-text">
+              <div class="v-title"><i class="fas fa-shield-alt"></i> Account verified</div>
+              <div class="v-name" id="bankAccName">—</div>
+              <div class="v-meta"><span id="bankNameLabel">—</span> · Acc. no. <span class="mono" id="bankNumberMasked">—</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dual-purpose-note">
+        <i class="fas fa-info-circle"></i>
+        <div>
+          <div class="dp-title">One account, two directions</div>
+          <div class="dp-body">Your management fee or subscription is deducted automatically from this account, and all rent collected from your tenants is disbursed here — net of fees — on your chosen payout schedule.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- STEP 4: REVIEW ---------- -->
+    <section class="step-panel" data-panel="4">
+      <div class="panel-head">
+        <h2><i class="fas fa-clipboard-check"></i>Review & confirm</h2>
+        <p>Check everything below, sign digitally, and activate your Mwarokin Estate smart contract.</p>
+      </div>
+
+      <div class="review-grid">
+        <div>
+          <div class="review-card">
+            <h4>Landlord & property <span class="edit-link" data-goto="2">Edit</span></h4>
+            <div class="review-line"><span>Full name</span><span class="rv" id="rvName">—</span></div>
+            <div class="review-line"><span>ID number</span><span class="rv" id="rvId">—</span></div>
+            <div class="review-line"><span>Phone</span><span class="rv" id="rvPhone">—</span></div>
+            <div class="review-line"><span>Property</span><span class="rv" id="rvProperty">—</span></div>
+            <div class="review-line"><span>Units</span><span class="rv" id="rvUnits">—</span></div>
+            <div class="review-line"><span>County</span><span class="rv" id="rvCounty">—</span></div>
+          </div>
+
+          <div class="review-card">
+            <h4>Payout account <span class="edit-link" data-goto="3">Edit</span></h4>
+            <div class="review-line"><span>Method</span><span class="rv" id="rvMethod">—</span></div>
+            <div class="review-line"><span>Account holder</span><span class="rv" id="rvAccName">—</span></div>
+            <div class="review-line"><span>Account</span><span class="rv" id="rvAccNumber">—</span></div>
+          </div>
+
+          <div class="terms-row">
+            <input type="checkbox" id="termsCheck" />
+            <label for="termsCheck">I authorize Mwarokin Estates to make automatic deductions from the account above and to disburse rental income to the same account, and I accept the <a href="#">Smart Contract Terms</a>.</label>
+          </div>
+
+          <div class="sig-box">
+            <label><i class="fas fa-signature" style="color:var(--gold);margin-right:6px;"></i>Digital signature (type your full name)</label>
+            <input type="text" id="signature" placeholder="Sign here" />
+            <div class="hint">By typing your name you are electronically signing this agreement.</div>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <h4><i class="fas fa-receipt"></i> Contract summary</h4>
+          <div class="summary-line"><span>Model</span><span class="sv" id="sumModel">Revenue Sharing</span></div>
+          <div class="summary-line"><span>Rate / plan</span><span class="sv" id="sumRate">5% per unit</span></div>
+          <div class="summary-line"><span>Property</span><span class="sv" id="sumProperty">—</span></div>
+          <div class="summary-line"><span>Units</span><span class="sv" id="sumUnits">—</span></div>
+          <div class="summary-line"><span>Payout account</span><span class="sv" id="sumAccount">—</span></div>
+          <div class="summary-line total"><span>Est. monthly cost</span><span class="sv" id="sumTotal">—</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- STEP 5: SUCCESS ---------- -->
+    <section class="step-panel" data-panel="5">
+      <div class="success-wrap">
+        <div class="success-icon"><i class="fas fa-check"></i></div>
+        <h2 class="serif">Contract activated</h2>
+        <p>Your Mwarokin Estate smart contract is live. Deductions and disbursements will now flow automatically through your linked account.</p>
+
+        <div class="receipt">
+          <div class="r-row"><span>Contract ID</span><span class="rv mono" id="rcContractId">—</span></div>
+          <div class="r-row"><span>Landlord</span><span class="rv" id="rcName">—</span></div>
+          <div class="r-row"><span>Property</span><span class="rv" id="rcProperty">—</span></div>
+          <div class="r-row"><span>Model</span><span class="rv" id="rcModel">—</span></div>
+          <div class="r-row"><span>Payout account</span><span class="rv" id="rcAccount">—</span></div>
+          <div class="r-row"><span>Activated</span><span class="rv" id="rcDate">—</span></div>
+        </div>
+
+        <div class="timeline">
+          <div class="tl-item"><div class="tl-dot"><i class="fas fa-check"></i></div><div class="tl-label">Signed</div><div class="tl-sub">Today</div></div>
+          <div class="tl-item"><div class="tl-dot"><i class="fas fa-shield-alt"></i></div><div class="tl-label">Account linked</div><div class="tl-sub">Verified</div></div>
+          <div class="tl-item"><div class="tl-dot"><i class="fas fa-sync-alt"></i></div><div class="tl-label">First deduction</div><div class="tl-sub">Next rent cycle</div></div>
+          <div class="tl-item"><div class="tl-dot"><i class="fas fa-wallet"></i></div><div class="tl-label">First payout</div><div class="tl-sub">Within 24hrs of collection</div></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ===== FOOTER NAV ===== -->
+  <div class="step-footer">
+    <div class="footer-left"><i class="fas fa-lock"></i> End-to-end encrypted · KRA compliant</div>
+    <div class="nav-btns">
+      <button class="btn-back" id="btnBack" disabled><i class="fas fa-arrow-left"></i> Back</button>
+      <button class="btn-next" id="btnNext">Continue <i class="fas fa-arrow-right"></i></button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   DATA
+   ============================================================ */
+const PLAN_DATA = {
+  msingi:{name:'Msingi',subtitle:'Foundation · Msingi wa Nyumba',price:'2,500',priceNum:2500,
+    desc:'Suitable for individual landlords. Essential tools to manage your rental property with ease.',
+    features:['Rent Dashboard','Tenant Profiles','Schedule Viewing','Water Billing','Trash Billing','Basic KRA Reports','Lipa Mdogo','Mobile App','AI Rent Reminders','Digital Receipts']},
+  jengo:{name:'Jengo',subtitle:'Building · Jengo Imara',price:'6,500',priceNum:6500,
+    desc:'Suitable for property managers. Advanced tools for growing portfolios.',
+    features:['Everything in Msingi','Financial Dashboard','Advanced Lipa Mdogo','Caretaker Portal','Renovation Management','AI Maintenance Scheduling','Advanced KRA Reports','Lease Management','Tenant Screening']},
+  milki:{name:'Milki',subtitle:'Estate · Milki ya Ardhi',price:'15,000',priceNum:15000,
+    desc:'Suitable for estates and property companies. Complete estate management.',
+    features:['Everything in Jengo','Residential Zones','Security Management','Communication Centre','Long-Term Lipa Mdogo','AI Predictive Maintenance','Portfolio Dashboard','Investor Reports']},
+  taifa:{name:'Taifa',subtitle:'Enterprise · Taifa Kamili',price:'45,000',priceNum:45000,
+    desc:'Suitable for enterprise clients. Full white-label and unlimited scale.',
+    features:['Everything in Milki','White Label Platform','API Integration','Multi-Currency','Enterprise Reports','SLA Guarantee','Dedicated Account Manager','AI Business Intelligence']}
+};
+
+const BANK_PREFIXES = {
+  'Equity Bank':'068','KCB Bank':'012','Co-operative Bank':'011','Absa Bank Kenya':'003',
+  'NCBA Bank':'007','Diamond Trust Bank':'049','Stanbic Bank':'031','I&M Bank':'057',
+  'Family Bank':'070','Standard Chartered':'002'
+};
+
+let currentPlan='msingi';
+let selectedOption='revenue';
+let currentMethod='mpesa';
+let currentStep=1;
+const TOTAL_STEPS=5;
+let mpesaVerified=false, bankVerified=false;
+let verifiedAccountHolder='', verifiedAccountLabel='', verifiedMethod='';
+
+/* ============================================================
+   ELEMENT REFS
+   ============================================================ */
+const optionRevenue=document.getElementById('optionRevenue');
+const optionSubscription=document.getElementById('optionSubscription');
+const planTabs=document.getElementById('planTabs');
+const planDetail=document.getElementById('planDetail');
+const rentSlider=document.getElementById('rentSlider');
+const rentDisplay=document.getElementById('rentDisplay');
+const feeDisplay=document.getElementById('feeDisplay');
+const landlordReceives=document.getElementById('landlordReceives');
+const btnBack=document.getElementById('btnBack');
+const btnNext=document.getElementById('btnNext');
+
+/* ============================================================
+   STEP 1 — PLAN RENDER
+   ============================================================ */
+function renderPlan(key){
+  const p=PLAN_DATA[key]; if(!p) return;
+  currentPlan=key;
+  const featuresHtml=p.features.map(f=>`<li><i class="fas fa-check-circle"></i>${f}</li>`).join('');
+  planDetail.innerHTML=`
+    <div class="dhead">
+      <div><div class="dname">${p.name}</div><div style="font-size:12px;color:var(--gray-600);">${p.subtitle}</div></div>
+      <div class="dprice">KSh ${p.price} <span>/mo</span></div>
+    </div>
+    <div class="ddesc">${p.desc}</div>
+    <ul class="dfeatures">${featuresHtml}</ul>`;
+  document.querySelectorAll('.plan-tab').forEach(t=>t.classList.toggle('active',t.dataset.plan===key));
+}
+
+function selectOption(opt){
+  selectedOption=opt;
+  optionRevenue.classList.toggle('selected',opt==='revenue');
+  optionSubscription.classList.toggle('selected',opt==='subscription');
+}
+
+function updateRevenue(){
+  const val=parseInt(rentSlider.value,10);
+  const fee=Math.round(val*0.05);
+  rentDisplay.textContent=`KSh ${val.toLocaleString()}`;
+  feeDisplay.textContent=`KSh ${fee.toLocaleString()}`;
+  landlordReceives.textContent=`KSh ${(val-fee).toLocaleString()}`;
+}
+
+optionRevenue.addEventListener('click',()=>selectOption('revenue'));
+optionSubscription.addEventListener('click',(e)=>{ if(!e.target.closest('.plan-tab')) selectOption('subscription'); });
+planTabs.addEventListener('click',(e)=>{
+  const tab=e.target.closest('.plan-tab'); if(!tab) return;
+  renderPlan(tab.dataset.plan);
+  selectOption('subscription');
+});
+rentSlider.addEventListener('input',updateRevenue);
+
+/* ============================================================
+   STEP 3 — ACCOUNT METHOD TOGGLE
+   ============================================================ */
+document.querySelectorAll('.method-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    currentMethod=btn.dataset.method;
+    document.querySelectorAll('.method-btn').forEach(b=>b.classList.toggle('active',b===btn));
+    document.getElementById('mpesaPanel').style.display=currentMethod==='mpesa'?'block':'none';
+    document.getElementById('bankPanel').style.display=currentMethod==='bank'?'block':'none';
+  });
+});
+
+function maskPhone(num){
+  const digits=num.replace(/\D/g,'');
+  if(digits.length<7) return num;
+  return digits.slice(0,4)+' *** '+digits.slice(-3);
+}
+function maskAccount(num){
+  if(num.length<=4) return num;
+  return '••••'+num.slice(-4);
+}
+
+function getLandlordName(){
+  const n=document.getElementById('fullname').value.trim();
+  return n || 'Account Holder';
+}
+
+document.getElementById('btnDetectMpesa').addEventListener('click',function(){
+  const field=document.getElementById('f_mpesaphone');
+  const input=document.getElementById('mpesaphone');
+  const val=input.value.trim();
+  if(!/^0[71]\d{8}$/.test(val.replace(/\s/g,''))){
+    field.classList.add('invalid'); return;
+  }
+  field.classList.remove('invalid');
+  const btn=this;
+  btn.disabled=true; btn.classList.add('loading');
+  btn.innerHTML='<i class="fas fa-circle-notch"></i> Verifying with Safaricom…';
+  setTimeout(()=>{
+    btn.disabled=false; btn.classList.remove('loading');
+    btn.innerHTML='<i class="fas fa-satellite-dish"></i> Detect account';
+    const name=getLandlordName();
+    document.getElementById('mpesaName').textContent=name;
+    document.getElementById('mpesaNumberMasked').textContent=maskPhone(val);
+    document.getElementById('mpesaVerify').classList.add('show');
+    mpesaVerified=true;
+    verifiedAccountHolder=name;
+    verifiedAccountLabel='M-Pesa · '+maskPhone(val);
+    verifiedMethod='M-Pesa';
+    validateStep();
+  },1400);
+});
+
+document.getElementById('btnDetectBank').addEventListener('click',function(){
+  const bankField=document.getElementById('f_bankname');
+  const accField=document.getElementById('f_accnumber');
+  const bank=document.getElementById('bankname').value;
+  const acc=document.getElementById('accnumber').value.trim();
+  let ok=true;
+  if(!bank){ bankField.classList.add('invalid'); ok=false; } else bankField.classList.remove('invalid');
+  if(acc.length<6){ accField.classList.add('invalid'); ok=false; } else accField.classList.remove('invalid');
+  if(!ok) return;
+  const btn=this;
+  btn.disabled=true; btn.classList.add('loading');
+  btn.innerHTML='<i class="fas fa-circle-notch"></i> Verifying with '+bank+'…';
+  setTimeout(()=>{
+    btn.disabled=false; btn.classList.remove('loading');
+    btn.innerHTML='<i class="fas fa-satellite-dish"></i> Verify account';
+    const name=getLandlordName();
+    document.getElementById('bankAccName').textContent=name;
+    document.getElementById('bankNameLabel').textContent=bank;
+    document.getElementById('bankNumberMasked').textContent=maskAccount(acc);
+    document.getElementById('bankVerify').classList.add('show');
+    bankVerified=true;
+    verifiedAccountHolder=name;
+    verifiedAccountLabel=bank+' · '+maskAccount(acc);
+    verifiedMethod=bank;
+    validateStep();
+  },1500);
+});
+
+/* ============================================================
+   STEP NAVIGATION
+   ============================================================ */
+function showStep(n){
+  document.querySelectorAll('.step-panel').forEach(p=>p.classList.toggle('active',+p.dataset.panel===n));
+  document.querySelectorAll('.step-node').forEach(node=>{
+    const s=+node.dataset.step;
+    node.classList.toggle('active',s===n);
+    node.classList.toggle('done',s<n);
+    node.querySelector('.circle').innerHTML = s<n ? '<i class="fas fa-check"></i>' : s;
+  });
+  btnBack.disabled = n===1;
+  if(n===TOTAL_STEPS){
+    btnNext.style.display='none';
+  } else {
+    btnNext.style.display='inline-flex';
+    btnNext.classList.toggle('navy', n===4);
+    btnNext.innerHTML = n===4
+      ? '<i class="fas fa-file-signature"></i> Activate contract'
+      : 'Continue <i class="fas fa-arrow-right"></i>';
+  }
+  currentStep=n;
+  if(n===4) populateReview();
+  if(n===5) populateReceipt();
+  document.getElementById('shell').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function clearInvalid(ids){ ids.forEach(id=>document.getElementById(id)?.classList.remove('invalid')); }
+
+function validateStep(){
+  // enables/disables next button based on step completeness — used for step 3
+  if(currentStep===3){
+    const ok = currentMethod==='mpesa' ? mpesaVerified : bankVerified;
+    btnNext.disabled = !ok;
+  } else {
+    btnNext.disabled = false;
+  }
+}
+
+function validateStep2(){
+  const required=['fullname','idnumber','phone','email','property','units','county'];
+  let ok=true;
+  required.forEach(id=>{
+    const el=document.getElementById(id);
+    const wrap=document.getElementById('f_'+id);
+    const val=el.value.trim();
+    let fieldOk=val.length>0;
+    if(id==='email') fieldOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+    if(id==='phone') fieldOk = /^0[71]\d{8}$/.test(val.replace(/\s/g,''));
+    if(!fieldOk){ wrap.classList.add('invalid'); ok=false; } else { wrap.classList.remove('invalid'); }
+  });
+  return ok;
+}
+
+function populateReview(){
+  document.getElementById('rvName').textContent=document.getElementById('fullname').value || '—';
+  document.getElementById('rvId').textContent=document.getElementById('idnumber').value || '—';
+  document.getElementById('rvPhone').textContent=document.getElementById('phone').value || '—';
+  document.getElementById('rvProperty').textContent=document.getElementById('property').value || '—';
+  document.getElementById('rvUnits').textContent=document.getElementById('units').value || '—';
+  document.getElementById('rvCounty').textContent=document.getElementById('county').value || '—';
+
+  document.getElementById('rvMethod').textContent=verifiedMethod || '—';
+  document.getElementById('rvAccName').textContent=verifiedAccountHolder || '—';
+  document.getElementById('rvAccNumber').textContent=verifiedAccountLabel || '—';
+
+  const units=parseInt(document.getElementById('units').value,10)||1;
+  let modelLabel, rateLabel, monthlyCost;
+  if(selectedOption==='revenue'){
+    const rentVal=parseInt(rentSlider.value,10);
+    modelLabel='Revenue Sharing';
+    rateLabel='5% per unit';
+    monthlyCost=Math.round(rentVal*0.05*units);
+  } else {
+    const p=PLAN_DATA[currentPlan];
+    modelLabel='Smart Estate Plan — '+p.name;
+    rateLabel='Fixed subscription';
+    monthlyCost=p.priceNum;
+  }
+  document.getElementById('sumModel').textContent=modelLabel;
+  document.getElementById('sumRate').textContent=rateLabel;
+  document.getElementById('sumProperty').textContent=document.getElementById('property').value || '—';
+  document.getElementById('sumUnits').textContent=document.getElementById('units').value || '—';
+  document.getElementById('sumAccount').textContent=verifiedAccountLabel || '—';
+  document.getElementById('sumTotal').textContent='KSh '+monthlyCost.toLocaleString()+' /mo';
+}
+
+function populateReceipt(){
+  document.getElementById('rcContractId').textContent='MWK-'+Math.floor(100000+Math.random()*899999);
+  document.getElementById('rcName').textContent=document.getElementById('fullname').value || '—';
+  document.getElementById('rcProperty').textContent=document.getElementById('property').value || '—';
+  document.getElementById('rcModel').textContent=selectedOption==='revenue' ? 'Revenue Sharing (5%)' : 'Smart Estate Plan — '+PLAN_DATA[currentPlan].name;
+  document.getElementById('rcAccount').textContent=verifiedAccountLabel || '—';
+  document.getElementById('rcDate').textContent=new Date().toLocaleDateString('en-KE',{day:'numeric',month:'long',year:'numeric'});
+}
+
+document.querySelectorAll('.edit-link').forEach(link=>{
+  link.addEventListener('click',()=>showStep(+link.dataset.goto));
+});
+
+btnNext.addEventListener('click',()=>{
+  if(currentStep===2){
+    if(!validateStep2()) return;
+  }
+  if(currentStep===3){
+    const ok = currentMethod==='mpesa' ? mpesaVerified : bankVerified;
+    if(!ok) return;
+  }
+  if(currentStep===4){
+    const terms=document.getElementById('termsCheck');
+    const sig=document.getElementById('signature');
+    let ok=true;
+    if(!terms.checked){ terms.closest('.terms-row').style.boxShadow='0 0 0 2px var(--red)'; ok=false; }
+    else terms.closest('.terms-row').style.boxShadow='none';
+    if(!sig.value.trim()){ sig.style.borderColor='var(--red)'; ok=false; }
+    else sig.style.borderColor='var(--gray-200)';
+    if(!ok) return;
+  }
+  if(currentStep<TOTAL_STEPS) showStep(currentStep+1);
+});
+
+btnBack.addEventListener('click',()=>{
+  if(currentStep>1) showStep(currentStep-1);
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+renderPlan('msingi');
+updateRevenue();
+selectOption('revenue');
+showStep(1);
+console.log('🏠 Mwarokin Estates · Onboarding wizard loaded');
+</script>
+
+</body>
+</html>

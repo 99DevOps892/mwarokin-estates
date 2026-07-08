@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Mwarokin Estates - Smart City Live Traffic </title>
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Chart.js for premium analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Three.js core & addons -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+            }
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #05090f;
+            overflow: hidden;
+            color: #edf2f8;
+        }
+
+        /* Premium Glassmorphic Sidebar */
+        .dashboard {
+            display: flex;
+            height: 100vh;
+            position: relative;
+            z-index: 10;
+        }
+
+        .sidebar {
+            width: 320px;
+            background: rgba(8, 14, 22, 0.75);
+            backdrop-filter: blur(16px);
+            border-right: 1px solid rgba(200, 151, 42, 0.25);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            z-index: 20;
+            overflow-y: auto;
+            padding: 24px 20px;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        /* custom scroll */
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #c8972a; border-radius: 10px; }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            border-bottom: 1px dashed rgba(200,151,42,0.3);
+            padding-bottom: 20px;
+        }
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #c8972a, #9e761f);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 8px 20px rgba(200,151,42,0.25);
+        }
+        .logo-text h2 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            background: linear-gradient(120deg, #fff6e5, #e0b354);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .logo-text p {
+            font-size: 10px;
+            letter-spacing: 1px;
+            color: #c9b17a;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: rgba(12, 20, 28, 0.7);
+            border-radius: 20px;
+            padding: 14px 10px;
+            border: 1px solid rgba(200,151,42,0.2);
+            backdrop-filter: blur(4px);
+            transition: all 0.2s;
+        }
+        .stat-card:hover { border-color: rgba(200,151,42,0.5); background: rgba(18, 28, 38, 0.8);}
+        .stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #94a3b8;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #e2b65c;
+            line-height: 1.2;
+            font-family: monospace;
+        }
+        .trend {
+            font-size: 11px;
+            margin-top: 6px;
+            color: #4ade80;
+        }
+
+        .filter-group {
+            margin: 20px 0 16px;
+        }
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #e2b65c;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .filter-buttons {
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            gap: 10px;
+        }
+        .filter-pill {
+            background: rgba(20, 30, 45, 0.7);
+            border: 1px solid rgba(200,151,42,0.3);
+            border-radius: 40px;
+            padding: 10px 6px;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(4px);
+        }
+        .filter-pill i { margin-right: 6px; font-size: 12px; }
+        .filter-pill.active {
+            background: #c8972a;
+            color: #0a0c12;
+            border-color: #c8972a;
+            box-shadow: 0 4px 12px rgba(200,151,42,0.3);
+        }
+        .feature-list {
+            list-style: none;
+            margin-top: 12px;
+        }
+        .feature-list li {
+            padding: 12px 14px;
+            background: rgba(12, 20, 28, 0.5);
+            border-radius: 16px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 13px;
+        }
+        .feature-list li:hover { background: rgba(200,151,42,0.15); transform: translateX(4px); }
+        .feature-list li i { width: 24px; color: #e2b65c; }
+
+        /* Main 3D View */
+        .viewer {
+            flex: 1;
+            position: relative;
+            background: #03070f;
+        }
+        #cityCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .map-controls {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 15;
+        }
+        .ctrl-btn {
+            width: 44px;
+            height: 44px;
+            background: rgba(12, 20, 28, 0.8);
+            backdrop-filter: blur(8px);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1px solid rgba(200,151,42,0.4);
+            transition: 0.2s;
+            font-size: 18px;
+        }
+        .ctrl-btn:hover { background: #c8972a; color: #0a0c10; border-color: #c8972a; transform: scale(1.05);}
+        .time-panel {
+            position: absolute;
+            bottom: 24px;
+            left: 24px;
+            background: rgba(8,14,22,0.7);
+            backdrop-filter: blur(8px);
+            padding: 10px 18px;
+            border-radius: 40px;
+            font-size: 13px;
+            border-left: 3px solid #c8972a;
+            pointer-events: none;
+            font-weight: 500;
+        }
+        .alert-toast {
+            position: absolute;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(220, 38, 38, 0.9);
+            backdrop-filter: blur(12px);
+            padding: 12px 24px;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 13px;
+            z-index: 25;
+            animation: pulse-glow 1.5s infinite;
+            pointer-events: auto;
+            cursor: pointer;
+            border: 1px solid #ff8a7a;
+        }
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(220,38,38,0.5);}
+            70% { box-shadow: 0 0 0 12px rgba(220,38,38,0);}
+            100% { box-shadow: 0 0 0 0 rgba(220,38,38,0);}
+        }
+        .analytics-card {
+            position: absolute;
+            bottom: 90px;
+            left: 24px;
+            width: 320px;
+            background: rgba(8, 14, 22, 0.85);
+            backdrop-filter: blur(16px);
+            border-radius: 24px;
+            padding: 18px;
+            border: 1px solid rgba(200,151,42,0.3);
+            z-index: 15;
+            transition: 0.2s;
+        }
+        .analytics-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #e2b65c;
+        }
+        canvas#trafficChartCanvas {
+            max-height: 100px;
+            width: 100%;
+        }
+        .incident-panel {
+            position: absolute;
+            top: 80px;
+            right: 24px;
+            width: 300px;
+            background: rgba(8, 14, 22, 0.9);
+            backdrop-filter: blur(16px);
+            border-radius: 24px;
+            padding: 18px;
+            border-left: 4px solid #e74c3c;
+            z-index: 15;
+            display: none;
+        }
+        .mobile-toggle {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 44px;
+            height: 44px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 30px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 30;
+            cursor: pointer;
+            border: 1px solid #c8972a;
+        }
+        @media (max-width: 900px) {
+            .sidebar { position: absolute; height: 100%; z-index: 40; background: rgba(5,10,18,0.95); backdrop-filter: blur(20px);}
+            .mobile-toggle { display: flex; }
+            .analytics-card { width: calc(100% - 40px); bottom: 20px; left: 20px; right: 20px; }
+            .incident-panel { width: calc(100% - 40px); right: 20px; left: 20px; top: auto; bottom: 140px; }
+        }
+        .close-panel {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .badge {
+            background: #1e293b;
+            border-radius: 30px;
+            padding: 4px 10px;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard">
+    <div class="mobile-toggle" id="mobileToggle">
+        <i class="fas fa-bars"></i>
+    </div>
+    <div class="sidebar" id="sidebar">
+        <div class="logo-area">
+            <div class="logo-icon"><i class="fas fa-crown"></i></div>
+            <div class="logo-text">
+                <h2>Mwarokin Estates</h2>
+                <p>smart city · live traffic</p>
+            </div>
+        </div>
+
+        <div class="stat-grid">
+            <div class="stat-card"><div class="stat-label">TRAFFIC FLOW</div><div class="stat-value" id="trafficFlowVal">74<span style="font-size:16px">%</span></div><div class="trend"><i class="fas fa-arrow-up"></i> +2% vs avg</div></div>
+            <div class="stat-card"><div class="stat-label">ACTIVE VEHICLES</div><div class="stat-value" id="activeVehicles">1,247</div><div class="trend"><i class="fas fa-chart-line"></i> real-time</div></div>
+            <div class="stat-card"><div class="stat-label">AVG SPEED</div><div class="stat-value" id="avgSpeed">42<span style="font-size:14px"> km/h</span></div><div class="trend">city corridors</div></div>
+            <div class="stat-card"><div class="stat-label">INCIDENTS</div><div class="stat-value" id="incidentCount">2</div><div class="trend" style="color:#f97316">emergency dispatched</div></div>
+        </div>
+
+        <div class="filter-group">
+            <div class="section-title"><i class="fas fa-sliders-h"></i> live filters</div>
+            <div class="filter-buttons" id="filterContainer">
+                <div class="filter-pill active" data-filter="all"><i class="fas fa-car"></i> All</div>
+                <div class="filter-pill" data-filter="ev"><i class="fas fa-bolt"></i> EV</div>
+                <div class="filter-pill" data-filter="truck"><i class="fas fa-truck"></i> Trucks</div>
+                <div class="filter-pill" data-filter="emergency"><i class="fas fa-ambulance"></i> Emergency</div>
+            </div>
+        </div>
+
+        <div class="section-title"><i class="fas fa-map-marked-alt"></i> city intel</div>
+        <ul class="feature-list">
+            <li data-poi="evstation"><i class="fas fa-charging-station"></i> EV Hubs (24 active)</li>
+            <li data-poi="parking"><i class="fas fa-parking"></i> Smart parking · 342 free</li>
+            <li data-poi="emergency"><i class="fas fa-ambulance"></i> Rapid response zones</li>
+            <li data-poi="fuel"><i class="fas fa-gas-pump"></i> Fuel & hydrogen stations</li>
+            <li data-poi="access"><i class="fas fa-wheelchair"></i> Accessibility routes</li>
+        </ul>
+    </div>
+
+    <div class="viewer">
+        <canvas id="cityCanvas"></canvas>
+        <div class="map-controls">
+            <div class="ctrl-btn" id="zoomIn"><i class="fas fa-plus"></i></div>
+            <div class="ctrl-btn" id="zoomOut"><i class="fas fa-minus"></i></div>
+            <div class="ctrl-btn" id="resetView"><i class="fas fa-crosshairs"></i></div>
+            <div class="ctrl-btn" id="droneBtn"><i class="fas fa-drone"></i></div>
+        </div>
+        <div class="time-panel" id="liveClock"><i class="far fa-clock"></i> <span id="timeString">--:--</span></div>
+        <div class="alert-toast" id="trafficAlert">
+            <i class="fas fa-exclamation-triangle"></i> <span>Accident on Mombasa road · emergency en route</span>
+        </div>
+        <div class="analytics-card" id="analyticsCard">
+            <div class="analytics-header"><span><i class="fas fa-chart-line"></i> Traffic density trend</span><button class="close-panel" id="closeAnalytics"><i class="fas fa-times"></i></button></div>
+            <canvas id="trafficChartCanvas" width="400" height="100" style="height:100px; width:100%"></canvas>
+            <div class="stat-item mt-2" style="display:flex; justify-content:space-between; font-size:12px; margin-top:12px"><span>Peak hour forecast</span><span style="color:#e2b65c">17:30 – 19:00</span></div>
+        </div>
+        <div class="incident-panel" id="incidentPanel">
+            <div class="analytics-header"><span><i class="fas fa-traffic-light"></i> active incident</span><button class="close-panel" id="closeIncident"><i class="fas fa-times"></i></button></div>
+            <div><strong>📍 Main St & 5th Ave</strong><br>Multi-vehicle collision · severity high<br>ETA 4min · lanes affected</div>
+            <div class="flex-btns" style="display:flex; gap:8px; margin-top:14px"><button class="filter-pill" id="focusIncident" style="background:#c8972a; color:#000">focus camera</button><button id="dismissIncident" class="filter-pill">dismiss</button></div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // --- setup scene, camera, renderer ---
+    const canvas = document.getElementById('cityCanvas');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x03070f);
+    scene.fog = new THREE.FogExp2(0x03070f, 0.008);
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.5, 500);
+    camera.position.set(45, 38, 55);
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    // lighting
+    const ambient = new THREE.AmbientLight(0x1a2638, 0.6);
+    scene.add(ambient);
+    const dirLight = new THREE.DirectionalLight(0xfff5e0, 1.2);
+    dirLight.position.set(30, 40, 20);
+    dirLight.castShadow = true;
+    dirLight.receiveShadow = true;
+    dirLight.shadow.mapSize.width = 1024;
+    scene.add(dirLight);
+    const fillLight = new THREE.PointLight(0x4466aa, 0.4);
+    fillLight.position.set(0, 20, 0);
+    scene.add(fillLight);
+    
+    // city grid & ground
+    const groundPlane = new THREE.Mesh(
+        new THREE.PlaneGeometry(280, 280),
+        new THREE.MeshStandardMaterial({ color: 0x142024, roughness: 0.7, metalness: 0.1 })
+    );
+    groundPlane.rotation.x = -Math.PI/2;
+    groundPlane.receiveShadow = true;
+    scene.add(groundPlane);
+
+    // roads
+    const roadMat = new THREE.MeshStandardMaterial({ color: 0x2a2e3c, roughness: 0.4 });
+    for (let i = -5; i <= 5; i++) {
+        const hRoad = new THREE.Mesh(new THREE.BoxGeometry(120, 0.2, 8), roadMat);
+        hRoad.position.set(0, 0.1, i * 18);
+        hRoad.receiveShadow = true;
+        scene.add(hRoad);
+        const vRoad = new THREE.Mesh(new THREE.BoxGeometry(8, 0.2, 120), roadMat);
+        vRoad.position.set(i * 18, 0.1, 0);
+        vRoad.receiveShadow = true;
+        scene.add(vRoad);
+    }
+    // lane markings
+    const lineMat = new THREE.MeshStandardMaterial({ color: 0xe6c87a });
+    for (let i = -4; i <= 4; i++) {
+        for (let j = -5; j <= 5; j++) {
+            if (Math.abs(j) % 2 === 0) {
+                const mark = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.1, 0.3), lineMat);
+                mark.position.set(j * 20, 0.25, i * 18);
+                scene.add(mark);
+                const markV = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.1, 1.2), lineMat);
+                markV.position.set(i * 18, 0.25, j * 20);
+                scene.add(markV);
+            }
+        }
+    }
+
+    // buildings
+    const buildingColors = [0x5c6e82, 0x4a5b6e, 0x3a4a5e, 0x6c7e94];
+    for (let i = -4; i <= 4; i++) {
+        for (let j = -4; j <= 4; j++) {
+            if (Math.abs(i) < 2 && Math.abs(j) < 2) continue;
+            const h = Math.random() * 12 + 3;
+            const building = new THREE.Mesh(new THREE.BoxGeometry(6, h, 6), new THREE.MeshStandardMaterial({ color: buildingColors[Math.floor(Math.random()*buildingColors.length)], roughness: 0.2 }));
+            building.position.set(i * 22, h/2, j * 22);
+            building.castShadow = true;
+            building.receiveShadow = true;
+            scene.add(building);
+            // windows
+            const winMat = new THREE.MeshStandardMaterial({ color: 0xe6b87a, emissive: 0x442200 });
+            for (let w = 1; w < h-1; w+=1.8) {
+                const win = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.1), winMat);
+                win.position.set(i*22 + 2.2, w, j*22 + 3.1);
+                scene.add(win);
+            }
+        }
+    }
+
+    // vehicles with types
+    const vehicleColors = { sedan: 0x89a2c9, suv: 0x6d8f6c, truck: 0xaa8855, emergency: 0xdd4a4a, ev: 0x4ac7e0 };
+    const vehicles = [];
+    function createVehicle(type, x, z, rotY) {
+        let size;
+        if(type === 'truck') size = [2.2, 1.6, 4.8];
+        else if(type === 'emergency') size = [1.8, 1.2, 4.2];
+        else size = [1.6, 0.9, 3.6];
+        const geo = new THREE.BoxGeometry(size[0], size[1], size[2]);
+        const mat = new THREE.MeshStandardMaterial({ color: vehicleColors[type] || 0x8a9bb5, metalness: 0.7, roughness: 0.3 });
+        const car = new THREE.Mesh(geo, mat);
+        car.position.set(x, size[1]/2, z);
+        car.rotation.y = rotY;
+        car.castShadow = true;
+        car.userData = { type, speed: 0.06 + Math.random() * 0.05, rotY, direction: rotY === 0 ? 'x' : 'z', range: 70 };
+        scene.add(car);
+        return car;
+    }
+    // generate 70 vehicles
+    const typesList = ['sedan','suv','ev','truck','sedan','ev','sedan','suv','truck','emergency'];
+    for (let i = 0; i < 80; i++) {
+        let type = typesList[Math.floor(Math.random() * typesList.length)];
+        let isHor = Math.random() > 0.5;
+        let roadIdx = (Math.floor(Math.random() * 11) - 5) * 18;
+        let posX = isHor ? (Math.random() * 100 - 50) : roadIdx;
+        let posZ = isHor ? roadIdx : (Math.random() * 100 - 50);
+        let rot = isHor ? 0 : Math.PI/2;
+        let car = createVehicle(type, posX, posZ, rot);
+        vehicles.push(car);
+    }
+    // add emergency vehicle with lights
+    const emergencyCar = createVehicle('emergency', -28, -12, 0);
+    emergencyCar.userData.speed = 0.12;
+    vehicles.push(emergencyCar);
+
+    // traffic lights (decorative)
+    const lightMatRed = new THREE.MeshStandardMaterial({ color: 0xff4444, emissive: 0x440000 });
+    const lightMatGreen = new THREE.MeshStandardMaterial({ color: 0x44ff44, emissive: 0x004400 });
+    for (let i = -3; i <= 3; i++) {
+        for (let j = -3; j <= 3; j++) {
+            const pole = new THREE.Mesh(new THREE.BoxGeometry(0.6, 5, 0.6), new THREE.MeshStandardMaterial({ color: 0x333333 }));
+            pole.position.set(i*22+7, 2.5, j*22+7);
+            scene.add(pole);
+            const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.5, 8,8), lightMatRed);
+            lamp.position.set(i*22+7, 4.2, j*22+7.6);
+            scene.add(lamp);
+        }
+    }
+    
+    // Trees
+    const trunkMat = new THREE.MeshStandardMaterial({ color: 0x6b4c3b });
+    const leafMat = new THREE.MeshStandardMaterial({ color: 0x4c8c4a });
+    for (let t = 0; t < 180; t++) {
+        let x = (Math.random() - 0.5) * 200;
+        let z = (Math.random() - 0.5) * 200;
+        if (Math.abs(x) < 85 && Math.abs(z) < 85) continue;
+        const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.9, 2.2, 6), trunkMat);
+        trunk.position.set(x, 1.1, z);
+        trunk.castShadow = true;
+        scene.add(trunk);
+        const foliage = new THREE.Mesh(new THREE.ConeGeometry(1.2, 1.8, 6), leafMat);
+        foliage.position.set(x, 2.8, z);
+        scene.add(foliage);
+    }
+    
+    // controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.06;
+    controls.autoRotate = false;
+    controls.maxPolarAngle = Math.PI / 2.4;
+    controls.target.set(0, 8, 0);
+    
+    // animation & movement
+    let trafficFlow = 74;
+    let incidentActive = true;
+    function animateVehicles() {
+        vehicles.forEach(v => {
+            let step = v.userData.speed;
+            if (v.userData.type === 'emergency') step = 0.18;
+            if (v.userData.direction === 'x') {
+                v.position.x += step;
+                if (v.position.x > 70) v.position.x = -70;
+                if (v.position.x < -70) v.position.x = 70;
+            } else {
+                v.position.z += step;
+                if (v.position.z > 70) v.position.z = -70;
+                if (v.position.z < -70) v.position.z = 70;
+            }
+        });
+    }
+    
+    // filter logic
+    let currentFilter = 'all';
+    function applyFilter() {
+        vehicles.forEach(v => {
+            if (currentFilter === 'all') v.visible = true;
+            else if (currentFilter === 'ev') v.visible = v.userData.type === 'ev';
+            else if (currentFilter === 'truck') v.visible = v.userData.type === 'truck';
+            else if (currentFilter === 'emergency') v.visible = v.userData.type === 'emergency';
+            else v.visible = true;
+        });
+    }
+    window.applyFilter = applyFilter;
+    document.querySelectorAll('.filter-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.dataset.filter;
+            applyFilter();
+        });
+    });
+    
+    // realtime stats update
+    function updateStats() {
+        const flowVariation = (Math.random() - 0.5) * 4;
+        trafficFlow = Math.min(96, Math.max(18, trafficFlow + flowVariation));
+        document.getElementById('trafficFlowVal').innerHTML = Math.round(trafficFlow) + '<span style="font-size:16px">%</span>';
+        const activeCount = vehicles.filter(v => v.visible).length;
+        document.getElementById('activeVehicles').innerText = (activeCount * 12 + 300).toLocaleString();
+        const speedBase = 38 + (trafficFlow / 100) * 25;
+        document.getElementById('avgSpeed').innerHTML = Math.floor(speedBase) + '<span style="font-size:14px"> km/h</span>';
+    }
+    setInterval(updateStats, 2800);
+    
+    // Chart.js line chart
+    const ctx = document.getElementById('trafficChartCanvas').getContext('2d');
+    let trafficChart = new Chart(ctx, {
+        type: 'line',
+        data: { labels: ['06','08','10','12','14','16','18','20'], datasets: [{ label: 'volume %', data: [32,68,72,65,70,82,91,78], borderColor: '#e2b65c', backgroundColor: 'rgba(200,151,42,0.1)', tension: 0.3, fill: true, pointBackgroundColor: '#c8972a' }] },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } } }
+    });
+    function updateChart() {
+        let newData = [45,68,74,68,72,85,89,76];
+        trafficChart.data.datasets[0].data = newData;
+        trafficChart.update();
+    }
+    setInterval(updateChart, 9000);
+    
+    // interactive UI events
+    document.getElementById('zoomIn').addEventListener('click', () => { camera.fov = Math.max(35, camera.fov - 3); camera.updateProjectionMatrix(); });
+    document.getElementById('zoomOut').addEventListener('click', () => { camera.fov = Math.min(85, camera.fov + 3); camera.updateProjectionMatrix(); });
+    document.getElementById('resetView').addEventListener('click', () => { camera.position.set(45,38,55); controls.target.set(0,8,0); controls.update(); });
+    document.getElementById('droneBtn').addEventListener('click', () => { camera.position.set(0, 62, 0.1); controls.target.set(0,0,0); controls.update(); });
+    document.getElementById('closeAnalytics').addEventListener('click', () => document.getElementById('analyticsCard').style.display = 'none');
+    document.getElementById('closeIncident').addEventListener('click', () => document.getElementById('incidentPanel').style.display = 'none');
+    document.getElementById('trafficAlert').addEventListener('click', () => document.getElementById('incidentPanel').style.display = 'block');
+    document.getElementById('focusIncident')?.addEventListener('click', () => { camera.position.set(-15, 12, 20); controls.target.set(-8, 0, 12); controls.update(); });
+    document.getElementById('dismissIncident')?.addEventListener('click', () => document.getElementById('incidentPanel').style.display = 'none');
+    
+    // mobile sidebar toggle
+    const sidebar = document.getElementById('sidebar');
+    document.getElementById('mobileToggle').addEventListener('click', () => sidebar.classList.toggle('collapsed'));
+    
+    // clock
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('timeString').innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' · EAT';
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+    
+    // incident random generator
+    setInterval(() => {
+        if (Math.random() < 0.12) {
+            document.getElementById('trafficAlert').style.display = 'flex';
+            setTimeout(() => { if(document.getElementById('trafficAlert')) document.getElementById('trafficAlert').style.display = 'none'; }, 5000);
+        }
+    }, 15000);
+    
+    // animate & render
+    function render() {
+        animateVehicles();
+        controls.update();
+        renderer.render(scene, camera);
+        requestAnimationFrame(render);
+    }
+    render();
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+    applyFilter();
+    console.log('Mwarokin Estates premium traffic intelligence active');
+</script>
+</body>
+</html>
