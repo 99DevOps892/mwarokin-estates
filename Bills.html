@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Mwarokin Estates - Bill Management Suite</title>
+    <!-- Fonts, Icons & Styles -->
+    <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/babel-standalone@7.22.9/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        
+        /* Premium custom utilities */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.08);
+        }
+        
+        .premium-gradient {
+            background: linear-gradient(145deg, #0F172A 0%, #1E293B 100%);
+        }
+        
+        .hero-gradient {
+            background: radial-gradient(circle at 10% 30%, rgba(99,102,241,0.15) 0%, rgba(139,92,246,0.08) 100%),
+                        linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%);
+        }
+        
+        .input-premium {
+            transition: all 0.2s ease;
+            background-color: #f9fafb;
+            border: 1px solid #e2e8f0;
+        }
+        .input-premium:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139,92,246,0.1);
+            background-color: white;
+        }
+        
+        .btn-gradient {
+            background: linear-gradient(95deg, #4F46E5 0%, #7C3AED 100%);
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px -12px rgba(79,70,229,0.4);
+        }
+        
+        .stagger-fade-in {
+            animation: fadeUp 0.5s ease forwards;
+        }
+        
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .notification-premium {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1000;
+            animation: slideInRight 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .card-hover-effect {
+            transition: all 0.25s ease;
+        }
+        .card-hover-effect:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 25px 30px -12px rgba(0,0,0,0.12);
+        }
+        
+        .progress-premium {
+            background: linear-gradient(90deg, #4F46E5, #A855F7);
+        }
+        
+        .sticky-nav {
+            backdrop-filter: blur(16px);
+            background: rgba(255,255,255,0.92);
+            border-bottom: 1px solid rgba(226,232,240,0.6);
+        }
+        
+        /* custom card input styling */
+        .card-input-group input {
+            transition: all 0.2s;
+            background: #f9fafb;
+            border: 1px solid #e2e8f0;
+        }
+        .card-input-group input:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139,92,246,0.1);
+            background: white;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="bg-[#F8FAFC] antialiased">
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useCallback } = React;
+
+        // African countries & currency display (premium reference)
+        const africanCountries = [
+            "Algeria", "Angola", "Benin", "Botswana", "Burkina Faso", "Burundi", "Cabo Verde",
+            "Cameroon", "Central African Republic", "Chad", "Comoros", "Democratic Republic of the Congo",
+            "Djibouti", "Egypt", "Equatorial Guinea", "Eritrea", "Eswatini", "Ethiopia", "Gabon",
+            "Gambia", "Ghana", "Guinea", "Guinea-Bissau", "Ivory Coast", "Kenya",
+            "Lesotho", "Liberia", "Libya", "Madagascar", "Malawi", "Mali", "Mauritania", "Mauritius",
+            "Morocco", "Mozambique", "Namibia", "Niger", "Nigeria", "Republic of the Congo", "Rwanda",
+            "Sao Tome and Principe", "Senegal", "Seychelles", "Sierra Leone", "Somalia", "South Africa",
+            "South Sudan", "Sudan", "Tanzania", "Togo", "Tunisia", "Uganda", "Zambia", "Zimbabwe"
+        ];
+
+        const currencyRates = {
+            "Kenya": { rate: 129.50, currency: "KES" },
+            "Nigeria": { rate: 1512.30, currency: "NGN" },
+            "South Africa": { rate: 18.22, currency: "ZAR" },
+            "Egypt": { rate: 48.25, currency: "EGP" },
+            "Ghana": { rate: 14.80, currency: "GHS" },
+            "Morocco": { rate: 9.95, currency: "MAD" },
+            "Tanzania": { rate: 2610.00, currency: "TZS" },
+            "Uganda": { rate: 3800.50, currency: "UGX" }
+        };
+
+        // Toast notification (premium)
+        const showToast = (message, type = 'success') => {
+            const existing = document.querySelector('.notification-premium');
+            if(existing) existing.remove();
+            const toast = document.createElement('div');
+            toast.className = `notification-premium flex items-center gap-3 px-5 py-3 rounded-xl shadow-2xl backdrop-blur-md text-white font-medium z-50 transition-all ${type === 'success' ? 'bg-emerald-600' : 'bg-rose-600'}`;
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'} text-lg"></i><span>${message}</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast?.remove(), 3800);
+        };
+
+        // Navbar with scroll behavior
+        const Navbar = () => {
+            const [scrolled, setScrolled] = useState(false);
+            const [mobileOpen, setMobileOpen] = useState(false);
+            useEffect(() => {
+                const handleScroll = () => setScrolled(window.scrollY > 20);
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+            return (
+                <nav className={`fixed w-full z-50 transition-all duration-400 ${scrolled ? 'sticky-nav shadow-sm py-3' : 'bg-transparent py-5'}`}>
+                    <div className="max-w-7xl mx-auto px-6 lg:px-8 flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                            <div className="bg-white/20 backdrop-blur-sm p-2 rounded-xl shadow-sm">
+                                <i className="fas fa-building text-indigo-600 text-xl"></i>
+                            </div>
+                            <span className="text-2xl font-bold tracking-tight bg-gradient-to-r from-slate-800 to-indigo-800 bg-clip-text text-transparent">Mwarokin Estates</span>
+                        </div>
+                        <div className="hidden md:flex items-center space-x-1">
+                            {['Home', 'Manage Bills', 'Payments', 'Lipa Mdogo', 'Rent'].map(item => (
+                                <a key={item} href="#" className="px-4 py-2 text-slate-600 hover:text-indigo-700 font-medium transition-all rounded-lg hover:bg-indigo-50/60"> {item} </a>
+                            ))}
+                            <div className="relative group">
+                                <button className="px-4 py-2 text-slate-600 hover:text-indigo-700 font-medium flex items-center gap-1">Property <i className="fas fa-chevron-down text-xs"></i></button>
+                                <div className="absolute hidden group-hover:block bg-white shadow-xl rounded-xl mt-2 w-48 border border-slate-100">
+                                    {['Available Property', 'Selling', 'Buying', 'Rent Property'].map(i => <a key={i} href="#" className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-indigo-50">{i}</a>)}
+                                </div>
+                            </div>
+                            <a href="#" className="px-4 py-2 text-slate-600 hover:text-indigo-700">Communication</a>
+                            <button className="ml-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-5 py-2 rounded-xl text-sm font-semibold shadow-md hover:shadow-xl transition-all">Log Out</button>
+                        </div>
+                        <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden text-slate-700 text-2xl"><i className={`fas ${mobileOpen ? 'fa-times' : 'fa-bars'}`}></i></button>
+                    </div>
+                    {mobileOpen && <div className="md:hidden bg-white/95 backdrop-blur-lg mt-3 mx-6 rounded-2xl shadow-xl p-5 border border-slate-100 animate-fadeIn">
+                        {['Home', 'Manage Bills', 'Payments', 'Lipa Mdogo', 'Rent', 'Property', 'Communication'].map(i => <a key={i} href="#" className="block py-3 text-slate-700 font-medium border-b border-slate-100">{i}</a>)}
+                        <button className="w-full mt-4 bg-indigo-600 text-white py-2.5 rounded-xl font-semibold">Log Out</button>
+                    </div>}
+                </nav>
+            );
+        };
+
+        // Modern hero
+        const HeroSection = () => (
+            <div className="hero-gradient pt-32 pb-20 px-6 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl"></div>
+                <div className="absolute bottom-0 left-0 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl"></div>
+                <div className="max-w-5xl mx-auto text-center relative z-10">
+                    <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-1.5 text-white/90 text-sm mb-6 border border-white/20">
+                        <i className="fas fa-check-circle text-emerald-300"></i> <span>Smart Property Management</span>
+                    </div>
+                    <h1 className="text-5xl md:text-6xl font-bold text-white tracking-tight mb-5">Simplify Your <span className="bg-gradient-to-r from-indigo-300 to-purple-300 bg-clip-text text-transparent">Bill Management</span></h1>
+                    <p className="text-xl text-indigo-100 max-w-2xl mx-auto mb-8">Track, manage and pay all rental bills in one unified dashboard — premium security & real-time insights.</p>
+                    <div className="flex flex-wrap justify-center gap-4">
+                        <button className="bg-white text-indigo-700 px-7 py-3.5 rounded-xl font-semibold shadow-xl hover:shadow-2xl transition-all flex items-center gap-2"><i className="fas fa-plus-circle"></i> Add New Bill</button>
+                        <button className="bg-transparent border border-white/40 text-white px-7 py-3.5 rounded-xl font-medium hover:bg-white/10 transition-all"><i className="fas fa-play-circle"></i> Watch Demo</button>
+                    </div>
+                </div>
+            </div>
+        );
+
+        // Main Bills Component with premium UI & custom card simulation
+        const BillsForm = () => {
+            const [formData, setFormData] = useState({
+                location: '', buildingId: '', tenantId: '', monthlyRent: '', electricity: '', digitalTv: '', internet: '',
+                trash: '', water: '', security: '', parking: '', lipaMdogoMdogo: '', totalBills: ''
+            });
+            const [errors, setErrors] = useState({});
+            const [isLoading, setIsLoading] = useState(false);
+            const [paymentProgress, setPaymentProgress] = useState(0);
+            const [locationResult, setLocationResult] = useState('');
+            const [currencyInfo, setCurrencyInfo] = useState('');
+            
+            // Custom card fields (premium mock payment)
+            const [cardNumber, setCardNumber] = useState('');
+            const [cardExpiry, setCardExpiry] = useState('');
+            const [cardCvc, setCardCvc] = useState('');
+            const [cardErrors, setCardErrors] = useState({});
+            
+            const validateCard = useCallback(() => {
+                const newErrs = {};
+                const cleanedNum = cardNumber.replace(/\s/g, '');
+                if (!/^\d{16}$/.test(cleanedNum)) newErrs.cardNumber = 'Valid 16-digit card required';
+                if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(cardExpiry)) newErrs.cardExpiry = 'MM/YY format';
+                if (!/^\d{3,4}$/.test(cardCvc)) newErrs.cardCvc = '3-4 digits';
+                setCardErrors(newErrs);
+                return Object.keys(newErrs).length === 0;
+            }, [cardNumber, cardExpiry, cardCvc]);
+            
+            const formatCardNumber = (value) => {
+                const v = value.replace(/\s/g, '').replace(/\D/g, '').slice(0,16);
+                return v.match(/.{1,4}/g)?.join(' ') || v;
+            };
+            
+            const handleCardNumber = (e) => {
+                const raw = e.target.value.replace(/\s/g, '');
+                if(raw.length <= 16) setCardNumber(formatCardNumber(raw));
+            };
+            const handleExpiry = (e) => {
+                let val = e.target.value.replace(/\D/g, '');
+                if(val.length >= 2) val = val.slice(0,2) + '/' + val.slice(2,4);
+                setCardExpiry(val.slice(0,5));
+            };
+            
+            // Load saved data & compute total
+            useEffect(() => {
+                const saved = localStorage.getItem('billingData');
+                if(saved) {
+                    try {
+                        const data = JSON.parse(saved);
+                        setFormData(prev => ({ ...prev, ...data }));
+                        calculateTotal(data);
+                    } catch(e) {}
+                }
+            }, []);
+            
+            const calculateTotal = (data) => {
+                const fields = ['monthlyRent', 'electricity', 'digitalTv', 'internet', 'trash', 'water', 'security', 'parking'];
+                const total = fields.reduce((sum, f) => sum + (parseFloat(data[f]) || 0), 0);
+                setFormData(prev => ({ ...prev, totalBills: total.toFixed(2) }));
+                return total.toFixed(2);
+            };
+            
+            const handleInputChange = (e) => {
+                const { id, value } = e.target;
+                const updated = { ...formData, [id]: value };
+                setFormData(updated);
+                calculateTotal(updated);
+                setErrors(prev => ({ ...prev, [id]: '' }));
+            };
+            
+            const validateForm = () => {
+                const newErrors = {};
+                if(!formData.location) newErrors.location = 'Location required';
+                if(!formData.buildingId) newErrors.buildingId = 'Building ID required';
+                if(!formData.tenantId) newErrors.tenantId = 'Tenant ID required';
+                ['monthlyRent', 'electricity', 'digitalTv', 'internet', 'trash', 'water', 'security', 'parking'].forEach(f => {
+                    if(formData[f] && isNaN(formData[f])) newErrors[f] = 'Must be number';
+                    if(formData[f] && parseFloat(formData[f]) < 0) newErrors[f] = 'Positive only';
+                });
+                setErrors(newErrors);
+                return Object.keys(newErrors).length === 0;
+            };
+            
+            const handleSaveBills = (e) => {
+                e.preventDefault();
+                if(!validateForm()) {
+                    showToast('Please fix all errors', 'error');
+                    return;
+                }
+                localStorage.setItem('billingData', JSON.stringify(formData));
+                showToast('✅ Bills saved successfully', 'success');
+            };
+            
+            const handleMockPayment = async () => {
+                const total = parseFloat(formData.totalBills || 0);
+                if(total <= 0) {
+                    showToast('Total amount must be greater than 0', 'error');
+                    return;
+                }
+                if(!validateCard()) {
+                    showToast('Please complete card details correctly', 'error');
+                    return;
+                }
+                setIsLoading(true);
+                setPaymentProgress(0);
+                const interval = setInterval(() => {
+                    setPaymentProgress(prev => prev >= 90 ? 90 : prev + 12);
+                }, 200);
+                setTimeout(() => {
+                    clearInterval(interval);
+                    setPaymentProgress(100);
+                    showToast(`✨ Payment of $${total.toFixed(2)} completed (Demo)`, 'success');
+                    setIsLoading(false);
+                    setTimeout(() => setPaymentProgress(0), 1500);
+                }, 1800);
+            };
+            
+            const getLocationHandler = () => {
+                if(navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        pos => setLocationResult(`📍 Lat: ${pos.coords.latitude.toFixed(4)}, Lng: ${pos.coords.longitude.toFixed(4)}`),
+                        () => setLocationResult('⚠️ Location access denied')
+                    );
+                } else setLocationResult('Geolocation not supported');
+            };
+            
+            const handleCountrySelect = (e) => {
+                const country = e.target.value;
+                if(currencyRates[country]) {
+                    setCurrencyInfo(`${country} • ${currencyRates[country].rate} ${currencyRates[country].currency}`);
+                } else setCurrencyInfo('');
+            };
+            
+            const handleReset = () => {
+                const emptyState = { location: '', buildingId: '', tenantId: '', monthlyRent: '', electricity: '', digitalTv: '', internet: '', trash: '', water: '', security: '', parking: '', lipaMdogoMdogo: '', totalBills: '' };
+                setFormData(emptyState);
+                setErrors({});
+                localStorage.removeItem('billingData');
+                calculateTotal(emptyState);
+                showToast('Form reset complete', 'success');
+            };
+            
+            const billItems = [
+                { id:'monthlyRent', label:'Monthly Rent', icon:'fa-home', color:'text-indigo-500' },
+                { id:'electricity', label:'Electricity', icon:'fa-bolt', color:'text-amber-500' },
+                { id:'digitalTv', label:'Digital TV', icon:'fa-tv', color:'text-purple-500' },
+                { id:'internet', label:'Internet', icon:'fa-wifi', color:'text-sky-500' },
+                { id:'water', label:'Water', icon:'fa-droplet', color:'text-cyan-500' },
+                { id:'security', label:'Security', icon:'fa-shield-haltered', color:'text-emerald-500' },
+                { id:'parking', label:'Parking', icon:'fa-car', color:'text-slate-500' },
+                { id:'trash', label:'Trash', icon:'fa-trash-can', color:'text-rose-400' }
+            ];
+            
+            return (
+                <div className="py-14 px-6 max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-9">
+                        {/* LEFT: Form Section - Premium glass card */}
+                        <div className="lg:col-span-2 stagger-fade-in">
+                            <div className="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden card-hover-effect">
+                                <div className="bg-gradient-to-r from-slate-800 to-indigo-900 px-7 py-5">
+                                    <h2 className="text-2xl font-bold text-white flex items-center gap-2"><i className="fas fa-file-invoice"></i> Bill Details</h2>
+                                    <p className="text-indigo-200 text-sm">Complete tenant & utility information</p>
+                                </div>
+                                <div className="p-7">
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                                        <input type="text" placeholder="Keyword Search" className="input-premium rounded-xl p-3 text-sm" />
+                                        <select className="input-premium rounded-xl p-3 text-sm"><option>Continents</option><option>Africa</option><option>Asia</option></select>
+                                        <select className="input-premium rounded-xl p-3 text-sm" onChange={handleCountrySelect}><option value="">African Countries</option>{africanCountries.map(c => <option key={c}>{c}</option>)}</select>
+                                        <button onClick={getLocationHandler} className="bg-indigo-50 text-indigo-700 rounded-xl p-3 text-sm font-medium hover:bg-indigo-100 transition-all flex items-center justify-center gap-2"><i className="fas fa-map-pin"></i> Pin Location</button>
+                                    </div>
+                                    {(locationResult || currencyInfo) && (
+                                        <div className="flex flex-wrap gap-3 mb-6">
+                                            {locationResult && <div className="bg-blue-50 text-blue-700 px-4 py-2 rounded-xl text-sm flex items-center gap-2"><i className="fas fa-location-dot"></i>{locationResult}</div>}
+                                            {currencyInfo && <div className="bg-emerald-50 text-emerald-700 px-4 py-2 rounded-xl text-sm flex items-center gap-2"><i className="fas fa-coins"></i>{currencyInfo}</div>}
+                                        </div>
+                                    )}
+                                    <form className="grid grid-cols-1 md:grid-cols-2 gap-5" onSubmit={handleSaveBills}>
+                                        {[
+                                            { id:'location', label:'Location', icon:'map-marker-alt' }, { id:'buildingId', label:'Building ID', icon:'building' }, { id:'tenantId', label:'Tenant ID', icon:'user' }, 
+                                            { id:'monthlyRent', label:'Monthly Rent', icon:'home', type:'number' }, { id:'electricity', label:'Electricity', icon:'bolt', type:'number' },
+                                            { id:'digitalTv', label:'Digital TV', icon:'tv', type:'number' }, { id:'internet', label:'Internet', icon:'wifi', type:'number' },
+                                            { id:'trash', label:'Trash', icon:'trash', type:'number' }, { id:'water', label:'Water', icon:'tint', type:'number' },
+                                            { id:'security', label:'Security', icon:'shield-alt', type:'number' }, { id:'parking', label:'Parking', icon:'car', type:'number' },
+                                            { id:'lipaMdogoMdogo', label:'Lipa Mdogo Mdogo', icon:'money-bill-wave' }
+                                        ].map(field => (
+                                            <div key={field.id} className="relative">
+                                                <label className="text-xs font-semibold text-slate-500 mb-1 block">{field.label}</label>
+                                                <div className="relative">
+                                                    <i className={`fas fa-${field.icon} absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm`}></i>
+                                                    <input id={field.id} type={field.type || 'text'} value={formData[field.id] || ''} onChange={handleInputChange}
+                                                        className={`w-full pl-9 pr-3 py-2.5 input-premium rounded-xl ${errors[field.id] ? 'border-red-300 ring-1 ring-red-200' : ''}`} />
+                                                </div>
+                                                {errors[field.id] && <p className="text-rose-500 text-xs mt-1"><i className="fas fa-circle-exclamation mr-1"></i>{errors[field.id]}</p>}
+                                            </div>
+                                        ))}
+                                        <div className="md:col-span-2 bg-slate-50 p-4 rounded-xl flex justify-between items-center">
+                                            <span className="font-bold text-slate-700 flex items-center gap-2"><i className="fas fa-receipt"></i> Total Amount</span>
+                                            <span className="text-2xl font-black bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">${parseFloat(formData.totalBills || 0).toFixed(2)}</span>
+                                        </div>
+                                        <div className="md:col-span-2 flex gap-4 pt-2">
+                                            <button type="submit" disabled={isLoading} className="btn-gradient text-white px-6 py-3 rounded-xl font-semibold flex items-center gap-2 shadow-md"><i className="fas fa-save"></i> {isLoading ? 'Saving...' : 'Save Bills'}</button>
+                                            <button type="button" onClick={handleReset} className="border border-slate-300 text-slate-700 px-6 py-3 rounded-xl font-medium hover:bg-slate-50"><i className="fas fa-undo-alt"></i> Reset</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* RIGHT PANEL: Summary + Premium Custom Payment */}
+                        <div className="space-y-7 stagger-fade-in">
+                            {/* Bill Summary Card */}
+                            <div className="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+                                <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
+                                    <h3 className="text-xl font-bold text-white flex items-center gap-2"><i className="fas fa-chart-pie"></i> Bill Summary</h3>
+                                </div>
+                                <div className="p-6">
+                                    <div className="space-y-3">
+                                        {billItems.map(item => (
+                                            <div key={item.id} className="flex justify-between items-center py-2 border-b border-slate-100">
+                                                <div className="flex items-center gap-2"><i className={`fas ${item.icon} ${item.color} w-5`}></i><span className="text-slate-700">{item.label}</span></div>
+                                                <span className="font-semibold">${parseFloat(formData[item.id] || 0).toFixed(2)}</span>
+                                            </div>
+                                        ))}
+                                        <div className="flex justify-between items-center pt-3 mt-1 border-t-2 border-indigo-100">
+                                            <span className="font-extrabold text-slate-800">Total Due</span>
+                                            <span className="text-2xl font-black text-indigo-700">${parseFloat(formData.totalBills || 0).toFixed(2)}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {/* Premium Custom Card Payment */}
+                            <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
+                                <div className="bg-gradient-to-r from-emerald-700 to-teal-700 px-6 py-4">
+                                    <h3 className="text-xl font-bold text-white flex items-center gap-2"><i className="fas fa-credit-card"></i> Secure Checkout</h3>
+                                    <p className="text-emerald-100 text-xs">256-bit SSL encrypted • Demo simulation</p>
+                                </div>
+                                <div className="p-6">
+                                    <div className="space-y-4">
+                                        <div className="card-input-group">
+                                            <label className="text-xs font-semibold text-slate-500 block mb-1">Card Number</label>
+                                            <div className="relative"><i className="fas fa-credit-card absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i><input type="text" placeholder="4242 4242 4242 4242" value={cardNumber} onChange={handleCardNumber} className="w-full pl-9 pr-3 py-3 rounded-xl input-premium" maxLength="19" /></div>
+                                            {cardErrors.cardNumber && <p className="text-rose-500 text-xs mt-1"><i className="fas fa-exclamation-triangle"></i> {cardErrors.cardNumber}</p>}
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div><label className="text-xs font-semibold text-slate-500">Expiry (MM/YY)</label><input type="text" placeholder="09/28" value={cardExpiry} onChange={handleExpiry} className="w-full p-3 rounded-xl input-premium" maxLength="5" />{cardErrors.cardExpiry && <p className="text-rose-500 text-xs">{cardErrors.cardExpiry}</p>}</div>
+                                            <div><label className="text-xs font-semibold text-slate-500">CVC</label><input type="text" placeholder="123" value={cardCvc} onChange={(e) => setCardCvc(e.target.value.replace(/\D/g,'').slice(0,4))} className="w-full p-3 rounded-xl input-premium" maxLength="4" />{cardErrors.cardCvc && <p className="text-rose-500 text-xs">{cardErrors.cardCvc}</p>}</div>
+                                        </div>
+                                        
+                                        {paymentProgress > 0 && (
+                                            <div className="mt-3">
+                                                <div className="flex justify-between text-xs text-slate-600 mb-1"><span>Processing payment</span><span>{paymentProgress}%</span></div>
+                                                <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div className="progress-premium h-full rounded-full" style={{width:`${paymentProgress}%`}}></div></div>
+                                            </div>
+                                        )}
+                                        
+                                        <button onClick={handleMockPayment} disabled={isLoading} className="w-full bg-gradient-to-r from-slate-900 to-slate-800 text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl transition-all mt-2">
+                                            {isLoading ? <><i className="fas fa-spinner fa-pulse"></i> Processing</> : <><i className="fas fa-lock"></i> Pay ${parseFloat(formData.totalBills || 0).toFixed(2)}</>}
+                                        </button>
+                                        <div className="flex items-center justify-center gap-2 text-slate-400 text-xs mt-2"><i className="fas fa-shield-alt text-emerald-500"></i> Fully secure • demo mode</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        
+        // Premium Footer
+        const Footer = () => (
+            <footer className="bg-slate-900 mt-20 pt-14 pb-8 text-slate-300 border-t border-slate-800">
+                <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-10">
+                    <div><div className="flex items-center gap-2 text-white mb-4"><i className="fas fa-building text-indigo-400 text-xl"></i><span className="font-bold text-xl">Mwarokin Estates</span></div><p className="text-sm">Elite property management & billing ecosystem.</p><div className="flex gap-3 mt-5"><a href="#" className="bg-slate-800 p-2 rounded-full hover:bg-indigo-600 transition"><i className="fab fa-twitter"></i></a><a href="#" className="bg-slate-800 p-2 rounded-full hover:bg-indigo-600"><i className="fab fa-linkedin-in"></i></a></div></div>
+                    <div><h4 className="text-white font-semibold mb-4">Quick Links</h4><ul className="space-y-2 text-sm"><li><a href="#" className="hover:text-indigo-300">About Us</a></li><li><a href="#" className="hover:text-indigo-300">Properties</a></li><li><a href="#" className="hover:text-indigo-300">Tenant Guide</a></li></ul></div>
+                    <div><h4 className="text-white font-semibold mb-4">Legal</h4><ul className="space-y-2 text-sm"><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms of Service</a></li><li><a href="#">Cookie Preferences</a></li></ul></div>
+                    <div><h4 className="text-white font-semibold mb-4">Subscribe</h4><div className="flex"><input type="email" placeholder="Your email" className="bg-slate-800 rounded-l-xl p-3 text-sm w-full outline-none" /><button className="bg-indigo-600 px-4 rounded-r-xl"><i className="fas fa-paper-plane"></i></button></div><p className="text-xs mt-3">Get exclusive property updates.</p></div>
+                </div>
+                <div className="text-center text-slate-500 text-xs pt-10 border-t border-slate-800 mt-8">© 2025 Mwarokin Estates — Premium Suite. Powered by Syllogism Technology</div>
+            </footer>
+        );
+        
+        const App = () => (
+            <div className="min-h-screen bg-[#F8FAFC]">
+                <Navbar />
+                <HeroSection />
+                <BillsForm />
+                <Footer />
+                <a href="#" className="fixed bottom-6 right-6 bg-indigo-700 text-white p-3.5 rounded-full shadow-2xl hover:bg-indigo-800 transition-all z-40"><i className="fas fa-arrow-up"></i></a>
+            </div>
+        );
+        
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

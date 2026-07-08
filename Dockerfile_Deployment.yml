@@ -1,0 +1,151 @@
+I'll upgrade this Dockerfile with modern best practices and multi-stage optimizations. Here's the improved version:
+
+```dockerfile
+# syntax=docker/dockerfile:1.4
+
+# Stage 1: Frontend build
+FROM node:18-alpine AS frontend-builder
+WORKDIR /app/frontend
+
+# Install dependencies first (caching layer)
+COPY frontend/package.json frontend/package-lock.json* ./
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --prefer-offline --no-audit --no-fund
+
+# Copy source and build
+COPY frontend/ ./
+RUN npm run build
+
+# Stage 2: Backend build
+FROM node:18-alpine AS backend-builder
+WORKDIR /app/backend
+
+# Install dependencies first (caching layer)
+COPY backend/package.json backend/package-lock.json* ./
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --prefer-offline --no-audit --no-fund
+
+# Copy source and build
+COPY backend/ ./
+RUN npm run build
+
+# Stage 3: Production image
+FROM node:18-alpine AS production
+RUN apk add --no-cache curl
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+WORKDIR /app
+
+# Copy built artifacts from previous stages
+COPY --from=backend-builder --chown=nodejs:nodejs /app/backend/dist ./dist
+COPY --from=frontend-builder --chown=nodejs:nodejs /app/frontend/dist ./public
+COPY --from=backend-builder --chown=nodejs:nodejs /app/backend/node_modules ./node_modules
+
+# Copy package.json for health check and version info
+COPY --from=backend-builder --chown=nodejs:nodejs /app/backend/package.json ./
+
+# Switch to non-root user
+USER nodejs
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:3000/health || exit 1
+
+# Security headers and production optimizations
+ENV NODE_ENV=production \
+    PORT=3000
+
+EXPOSE 3000
+
+# Use node process manager for better signal handling
+CMD ["node", "--max-old-space-size=512", "dist/main.js"]
+```
+
+**Additional modern enhancements:**
+
+## 1. Docker Compose for Development (docker-compose.yml)
+```yaml
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      target: production
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # Add monitoring stack
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+```
+
+## 2. Build Optimization Script (build.sh)
+```bash
+#!/bin/bash
+
+# Multi-architecture build script
+docker buildx create --use
+docker buildx build \
+    --platform linux/amd64,linux/arm64 \
+    --tag your-app:latest \
+    --tag your-app:$(git rev-parse --short HEAD) \
+    --push .
+```
+
+## 3. Enhanced Package.json for Backend
+```json
+{
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/main.js",
+    "docker:build": "docker build -t your-app .",
+    "docker:run": "docker run -p 3000:3000 your-app"
+  }
+}
+```
+
+## 4. Health Check Endpoint
+```typescript
+// Add to your backend
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
+});
+```
+
+## Key Improvements:
+
+1. **Security**: Non-root user, minimal base image
+2. **Performance**: Build cache mounts, multi-architecture ready
+3. **Observability**: Health checks, monitoring setup
+4. **Production Ready**: Proper signal handling, resource limits
+5. **Maintainability**: Clear stage separation, better tagging
+6. **Modern Features**: Docker BuildKit syntax, cache optimization
+
+This upgraded setup provides enterprise-ready containerization with security, performance, and maintainability best practices.

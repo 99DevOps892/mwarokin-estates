@@ -1,0 +1,1925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mwarokin Estates — Onboarding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,200;0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold-light: #E8C97A;
+  --gold-pale: rgba(201,168,76,0.08);
+  --gold-border: rgba(201,168,76,0.22);
+  --obsidian: #0C0E0F;
+  --ink: #141618;
+  --charcoal: #1E2124;
+  --slate: #272B2F;
+  --slate2: #2F343A;
+  --mist: #6B7280;
+  --silver: #A8B0BC;
+  --white: #FDFCFA;
+  --green: #52B788;
+  --green-bg: rgba(82,183,136,0.12);
+  --red: #F87171;
+  --red-bg: rgba(248,113,113,0.1);
+  --radius: 6px;
+  --radius-lg: 12px;
+  --radius-xl: 20px;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  font-family:'DM Sans',sans-serif;
+  background: var(--obsidian);
+  color: var(--white);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 24px 16px;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* ambient bg */
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(ellipse 70% 60% at 20% 10%, rgba(201,168,76,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 90%, rgba(45,106,79,0.04) 0%, transparent 55%);
+  pointer-events:none;
+}
+
+/* grid lines */
+body::after {
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.025) 1px, transparent 1px);
+  background-size:64px 64px;
+  pointer-events:none;
+  mask-image:radial-gradient(ellipse 70% 80% at 50% 50%, black 20%, transparent 80%);
+}
+
+/* ── WRAPPER ── */
+.onboard-wrapper {
+  width:100%;
+  max-width:780px;
+  position:relative;
+  z-index:1;
+}
+
+/* ── HEADER ── */
+.ob-header {
+  text-align:center;
+  margin-bottom:40px;
+  animation: fadeUp 0.8s ease both;
+}
+
+.ob-logo {
+  display:inline-flex;
+  align-items:center;
+  gap:11px;
+  text-decoration:none;
+  margin-bottom:20px;
+}
+
+.logo-mark {
+  width:40px; height:40px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-light));
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-weight:700;
+  font-size:17px;
+  color:var(--obsidian);
+}
+
+.logo-text {
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;
+  font-weight:600;
+  color:var(--white);
+}
+
+.logo-text span { color:var(--gold); }
+
+.ob-header h1 {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(28px,4vw,40px);
+  font-weight:300;
+  line-height:1.1;
+  letter-spacing:-0.3px;
+  color:var(--white);
+  margin-bottom:8px;
+}
+
+.ob-header h1 em { font-style:italic; color:var(--gold); }
+
+.ob-header p {
+  font-size:14px;
+  color:var(--mist);
+  font-weight:300;
+}
+
+/* ── STEP PROGRESS ── */
+.step-track {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:0;
+  margin-bottom:36px;
+  animation: fadeUp 0.8s 0.1s ease both;
+}
+
+.step-node {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  position:relative;
+  z-index:1;
+}
+
+.step-circle {
+  width:44px; height:44px;
+  border-radius:50%;
+  border:1.5px solid rgba(255,255,255,0.1);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:17px;
+  font-weight:500;
+  color:var(--mist);
+  background:var(--charcoal);
+  transition:all 0.4s ease;
+  position:relative;
+}
+
+.step-circle.active {
+  border-color:var(--gold);
+  color:var(--gold);
+  background:rgba(201,168,76,0.08);
+  box-shadow:0 0 0 4px rgba(201,168,76,0.1);
+}
+
+.step-circle.done {
+  border-color:var(--green);
+  background:var(--green-bg);
+  color:var(--green);
+}
+
+.step-circle.done::after {
+  content:'✓';
+  font-family:'DM Sans',sans-serif;
+  font-size:15px;
+  font-weight:600;
+  position:absolute;
+}
+
+.step-circle.done .step-num { display:none; }
+
+.step-label {
+  font-size:11px;
+  color:var(--mist);
+  text-align:center;
+  transition:color 0.3s;
+  letter-spacing:0.3px;
+  white-space:nowrap;
+}
+
+.step-node.active .step-label { color:var(--gold-light); }
+.step-node.done .step-label { color:var(--green); }
+
+.step-connector {
+  height:1.5px;
+  width:60px;
+  background:rgba(255,255,255,0.07);
+  margin-bottom:28px;
+  transition:background 0.4s;
+  flex-shrink:0;
+}
+
+.step-connector.done { background:var(--green); opacity:0.4; }
+
+@media(max-width:480px) {
+  .step-connector { width:24px; }
+  .step-label { font-size:10px; }
+}
+
+/* ── MAIN CARD ── */
+.ob-card {
+  background:var(--charcoal);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:var(--radius-xl);
+  overflow:hidden;
+  box-shadow:0 40px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,168,76,0.06);
+  animation: fadeUp 0.8s 0.2s ease both;
+}
+
+/* ── CARD HEADER ── */
+.card-head {
+  padding:28px 36px 24px;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  background:rgba(255,255,255,0.015);
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.head-icon {
+  width:40px; height:40px;
+  background:var(--gold-pale);
+  border:1px solid var(--gold-border);
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+
+.head-icon svg {
+  width:18px; height:18px;
+  stroke:var(--gold);
+  fill:none;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.head-info {}
+
+.head-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;
+  font-weight:500;
+  color:var(--white);
+  letter-spacing:0.1px;
+}
+
+.head-sub {
+  font-size:13px;
+  color:var(--mist);
+  margin-top:2px;
+  font-weight:300;
+}
+
+/* ── CARD BODY ── */
+.card-body {
+  padding:32px 36px;
+}
+
+/* ── STEP CONTENT ── */
+.step-pane { display:none; }
+.step-pane.active { display:block; animation:fadeUp 0.45s ease both; }
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(18px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity:0; }
+  to { opacity:1; }
+}
+
+/* ── STEP 1: ROLE SELECTION ── */
+.role-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  margin-bottom:8px;
+}
+
+@media(max-width:560px) {
+  .role-grid { grid-template-columns:1fr; }
+}
+
+.role-card {
+  background:var(--slate);
+  border:1.5px solid rgba(255,255,255,0.07);
+  border-radius:var(--radius-lg);
+  padding:28px 20px 24px;
+  text-align:center;
+  cursor:pointer;
+  transition:all 0.25s ease;
+  position:relative;
+  overflow:hidden;
+}
+
+.role-card::before {
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0;
+  height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  opacity:0;
+  transition:opacity 0.3s;
+}
+
+.role-card:hover {
+  border-color:rgba(201,168,76,0.25);
+  background:var(--slate2);
+  transform:translateY(-2px);
+}
+
+.role-card:hover::before { opacity:0.6; }
+
+.role-card.selected {
+  border-color:var(--gold);
+  background:rgba(201,168,76,0.07);
+}
+
+.role-card.selected::before { opacity:1; }
+
+.role-icon {
+  width:52px; height:52px;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto 16px;
+}
+
+.role-icon svg {
+  width:24px; height:24px;
+  stroke-width:1.5;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  fill:none;
+}
+
+.role-card-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;
+  font-weight:500;
+  color:var(--white);
+  margin-bottom:6px;
+}
+
+.role-card-desc {
+  font-size:12px;
+  color:var(--mist);
+  line-height:1.55;
+  font-weight:300;
+}
+
+.role-card .selected-check {
+  position:absolute;
+  top:12px; right:12px;
+  width:20px; height:20px;
+  border-radius:50%;
+  background:var(--gold);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  transition:opacity 0.2s;
+}
+
+.role-card.selected .selected-check { opacity:1; }
+
+.selected-check svg {
+  width:10px; height:10px;
+  stroke:var(--obsidian);
+  fill:none;
+  stroke-width:2.5;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+/* role pill tags under icon */
+.role-tags {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:5px;
+  margin-top:10px;
+}
+
+.role-tag {
+  font-size:10px;
+  padding:3px 8px;
+  border-radius:100px;
+  font-weight:400;
+  border:1px solid;
+}
+
+/* ── FORM INPUTS ── */
+.field-grid {
+  display:grid;
+  gap:14px;
+}
+
+.field-grid-2 { grid-template-columns:1fr 1fr; }
+
+@media(max-width:540px) {
+  .field-grid-2 { grid-template-columns:1fr; }
+}
+
+.field-group { display:flex; flex-direction:column; gap:6px; }
+
+.field-label {
+  font-size:11.5px;
+  font-weight:500;
+  color:var(--silver);
+  letter-spacing:0.4px;
+  text-transform:uppercase;
+}
+
+.field-label span { color:var(--red); margin-left:2px; }
+
+.field-input {
+  width:100%;
+  padding:12px 16px;
+  background:var(--slate);
+  border:1.5px solid rgba(255,255,255,0.08);
+  border-radius:var(--radius-lg);
+  color:var(--white);
+  font-size:14px;
+  font-family:'DM Sans',sans-serif;
+  font-weight:300;
+  transition:all 0.2s;
+  outline:none;
+  appearance:none;
+  -webkit-appearance:none;
+}
+
+.field-input::placeholder { color:var(--mist); }
+.field-input:hover { border-color:rgba(255,255,255,0.15); }
+.field-input:focus { border-color:var(--gold); background:rgba(201,168,76,0.04); box-shadow:0 0 0 3px rgba(201,168,76,0.1); }
+
+.field-input.error { border-color:var(--red); background:var(--red-bg); }
+.field-input.error:focus { box-shadow:0 0 0 3px rgba(248,113,113,0.15); }
+
+select.field-input {
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 14px center;
+  padding-right:40px;
+  cursor:pointer;
+}
+
+select.field-input option { background:var(--charcoal); color:var(--white); }
+
+.field-error {
+  font-size:11.5px;
+  color:var(--red);
+  display:none;
+  align-items:center;
+  gap:5px;
+}
+
+.field-error.show { display:flex; }
+
+.field-error svg {
+  width:12px; height:12px;
+  stroke:var(--red);
+  fill:none;
+  stroke-width:2;
+  flex-shrink:0;
+}
+
+/* ── SECTION DIVIDER ── */
+.form-section {
+  margin-top:28px;
+  padding-top:24px;
+  border-top:1px solid rgba(255,255,255,0.05);
+}
+
+.form-section-label {
+  font-size:11px;
+  color:var(--gold);
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  font-weight:500;
+  margin-bottom:16px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.form-section-label::before {
+  content:'';
+  width:20px; height:1px;
+  background:var(--gold);
+}
+
+/* ── STEP 3: PLAN CARDS ── */
+.plan-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-bottom:6px;
+}
+
+@media(max-width:580px) {
+  .plan-grid { grid-template-columns:1fr; }
+}
+
+.plan-card {
+  background:var(--slate);
+  border:1.5px solid rgba(255,255,255,0.07);
+  border-radius:var(--radius-lg);
+  padding:22px 18px;
+  cursor:pointer;
+  transition:all 0.25s;
+  position:relative;
+  overflow:hidden;
+}
+
+.plan-card:hover {
+  border-color:rgba(201,168,76,0.22);
+  background:var(--slate2);
+}
+
+.plan-card.selected {
+  border-color:var(--gold);
+  background:rgba(201,168,76,0.06);
+}
+
+.plan-badge {
+  position:absolute;
+  top:10px; right:10px;
+  font-size:9px;
+  font-weight:700;
+  padding:3px 8px;
+  border-radius:100px;
+  text-transform:uppercase;
+  letter-spacing:0.6px;
+}
+
+.plan-name {
+  font-family:'Cormorant Garamond',serif;
+  font-size:19px;
+  font-weight:500;
+  color:var(--white);
+  margin-bottom:4px;
+}
+
+.plan-tagline {
+  font-size:11.5px;
+  color:var(--mist);
+  font-weight:300;
+  line-height:1.5;
+  margin-bottom:14px;
+}
+
+.plan-price {
+  display:flex;
+  align-items:baseline;
+  gap:3px;
+  margin-bottom:14px;
+  padding-bottom:14px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+
+.plan-currency { font-size:14px; color:var(--silver); font-family:'Cormorant Garamond',serif; }
+.plan-amount { font-family:'Cormorant Garamond',serif; font-size:34px; font-weight:500; color:var(--white); line-height:1; }
+.plan-per { font-size:12px; color:var(--mist); }
+
+.plan-features-mini {
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.plan-features-mini li {
+  font-size:12px;
+  color:var(--silver);
+  display:flex;
+  align-items:flex-start;
+  gap:7px;
+  line-height:1.4;
+  font-weight:300;
+}
+
+.plan-features-mini li svg {
+  width:12px; height:12px;
+  stroke:var(--green);
+  fill:none;
+  stroke-width:2.5;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  flex-shrink:0;
+  margin-top:2px;
+}
+
+/* ── ADD-ONS ── */
+.addon-list {
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.addon-row {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:13px 16px;
+  background:var(--slate);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:var(--radius-lg);
+  cursor:pointer;
+  transition:all 0.2s;
+  user-select:none;
+}
+
+.addon-row:hover { border-color:rgba(201,168,76,0.2); background:var(--slate2); }
+
+.addon-row.checked { border-color:rgba(201,168,76,0.25); background:rgba(201,168,76,0.04); }
+
+.addon-left { display:flex; align-items:center; gap:11px; }
+
+.addon-icon {
+  width:32px; height:32px;
+  background:var(--gold-pale);
+  border:1px solid var(--gold-border);
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.addon-icon svg {
+  width:15px; height:15px;
+  stroke:var(--gold);
+  fill:none;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.addon-name { font-size:13px; color:var(--white); font-weight:400; }
+.addon-sub { font-size:11px; color:var(--mist); font-weight:300; }
+
+.addon-right { display:flex; align-items:center; gap:12px; }
+
+.addon-price { font-size:12px; color:var(--gold-light); font-weight:500; }
+
+.custom-checkbox {
+  width:20px; height:20px;
+  border-radius:5px;
+  border:1.5px solid rgba(255,255,255,0.15);
+  background:var(--charcoal);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all 0.2s;
+  flex-shrink:0;
+}
+
+.addon-row.checked .custom-checkbox {
+  background:var(--gold);
+  border-color:var(--gold);
+}
+
+.custom-checkbox svg {
+  width:11px; height:11px;
+  stroke:var(--obsidian);
+  fill:none;
+  stroke-width:2.5;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  opacity:0;
+  transition:opacity 0.15s;
+}
+
+.addon-row.checked .custom-checkbox svg { opacity:1; }
+
+/* tenant portal info card */
+.tenant-portal-card {
+  background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.03));
+  border:1px solid var(--gold-border);
+  border-radius:var(--radius-lg);
+  padding:22px 20px;
+  display:flex;
+  gap:16px;
+  align-items:flex-start;
+  margin-bottom:24px;
+}
+
+.portal-icon {
+  width:44px; height:44px;
+  background:var(--gold-pale);
+  border:1px solid var(--gold-border);
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+
+.portal-icon svg {
+  width:20px; height:20px;
+  stroke:var(--gold);
+  fill:none;
+  stroke-width:1.5;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.portal-info-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;
+  font-weight:500;
+  color:var(--white);
+  margin-bottom:4px;
+}
+
+.portal-badge {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:11px;
+  font-weight:600;
+  padding:4px 12px;
+  border-radius:100px;
+  background:var(--green-bg);
+  color:var(--green);
+  margin-bottom:8px;
+  letter-spacing:0.3px;
+}
+
+.portal-badge::before {
+  content:'';
+  width:6px; height:6px;
+  background:var(--green);
+  border-radius:50%;
+}
+
+.portal-desc { font-size:13px; color:var(--mist); line-height:1.6; font-weight:300; }
+
+/* ── STEP 4: SUMMARY ── */
+.summary-header {
+  text-align:center;
+  margin-bottom:28px;
+}
+
+.summary-success-ring {
+  width:72px; height:72px;
+  border-radius:50%;
+  border:2px solid var(--gold-border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto 16px;
+  background:var(--gold-pale);
+  position:relative;
+}
+
+.summary-success-ring::before {
+  content:'';
+  position:absolute;
+  inset:-6px;
+  border-radius:50%;
+  border:1px solid rgba(201,168,76,0.1);
+}
+
+.summary-success-ring svg {
+  width:28px; height:28px;
+  stroke:var(--gold);
+  fill:none;
+  stroke-width:1.5;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.summary-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:26px;
+  font-weight:400;
+  color:var(--white);
+}
+
+.summary-sub { font-size:13px; color:var(--mist); margin-top:4px; font-weight:300; }
+
+.summary-block {
+  background:var(--slate);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  margin-bottom:12px;
+}
+
+.summary-block-head {
+  padding:12px 18px;
+  background:rgba(255,255,255,0.03);
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:1.2px;
+  color:var(--gold);
+  font-weight:500;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.summary-block-head::before {
+  content:'';
+  width:16px; height:1px;
+  background:var(--gold);
+}
+
+.summary-rows { padding:14px 18px; display:flex; flex-direction:column; gap:10px; }
+
+.summary-row {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+}
+
+.sum-key {
+  font-size:12px;
+  color:var(--mist);
+  font-weight:300;
+  flex-shrink:0;
+  text-transform:uppercase;
+  letter-spacing:0.4px;
+}
+
+.sum-val {
+  font-size:13px;
+  color:var(--white);
+  font-weight:400;
+  text-align:right;
+}
+
+.sum-val.gold { color:var(--gold-light); font-weight:500; }
+.sum-val.green { color:var(--green); }
+
+.summary-total {
+  padding:16px 18px;
+  background:rgba(201,168,76,0.05);
+  border-top:1px solid var(--gold-border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.sum-total-label { font-size:12px; color:var(--mist); text-transform:uppercase; letter-spacing:0.5px; }
+.sum-total-val { font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:500; color:var(--gold); }
+
+/* ── TERMS CHECK ── */
+.terms-row {
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  padding:16px 0 4px;
+}
+
+.terms-check {
+  width:20px; height:20px;
+  border-radius:5px;
+  border:1.5px solid rgba(255,255,255,0.15);
+  background:var(--charcoal);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  cursor:pointer;
+  transition:all 0.2s;
+  margin-top:1px;
+}
+
+.terms-check.checked {
+  background:var(--gold);
+  border-color:var(--gold);
+}
+
+.terms-check svg {
+  width:11px; height:11px;
+  stroke:var(--obsidian);
+  fill:none;
+  stroke-width:2.5;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  opacity:0;
+  transition:opacity 0.15s;
+}
+
+.terms-check.checked svg { opacity:1; }
+
+.terms-text { font-size:12.5px; color:var(--mist); font-weight:300; line-height:1.6; }
+.terms-text a { color:var(--gold-light); text-decoration:none; }
+.terms-text a:hover { text-decoration:underline; }
+
+/* ── SUCCESS STATE ── */
+.success-screen {
+  text-align:center;
+  padding:32px 0 8px;
+  animation:fadeUp 0.6s ease both;
+}
+
+.success-icon {
+  width:80px; height:80px;
+  border-radius:50%;
+  background:var(--green-bg);
+  border:2px solid var(--green);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto 20px;
+}
+
+.success-icon svg {
+  width:32px; height:32px;
+  stroke:var(--green);
+  fill:none;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.success-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:32px;
+  font-weight:400;
+  color:var(--white);
+  margin-bottom:8px;
+}
+
+.success-title em { font-style:italic; color:var(--green); }
+
+.success-sub { font-size:14px; color:var(--mist); font-weight:300; margin-bottom:28px; max-width:400px; margin-left:auto; margin-right:auto; line-height:1.7; }
+
+.success-cards {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-bottom:28px;
+}
+
+@media(max-width:500px) { .success-cards { grid-template-columns:1fr; } }
+
+.success-card {
+  background:var(--slate);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:var(--radius-lg);
+  padding:16px;
+  text-align:center;
+}
+
+.success-card-icon {
+  font-size:22px;
+  margin-bottom:8px;
+}
+
+.success-card-title { font-size:13px; color:var(--white); font-weight:500; margin-bottom:4px; }
+.success-card-sub { font-size:11px; color:var(--mist); font-weight:300; line-height:1.5; }
+
+/* ── NAV FOOTER ── */
+.card-nav {
+  padding:20px 36px;
+  border-top:1px solid rgba(255,255,255,0.05);
+  background:rgba(255,255,255,0.015);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.btn-back {
+  padding:11px 22px;
+  background:none;
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:var(--radius);
+  color:var(--silver);
+  font-size:13.5px;
+  font-weight:400;
+  cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  transition:all 0.2s;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.btn-back svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.btn-back:hover { border-color:rgba(255,255,255,0.2); color:var(--white); background:rgba(255,255,255,0.04); }
+.btn-back:disabled { opacity:0.3; cursor:not-allowed; }
+
+.btn-next {
+  padding:11px 28px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-light));
+  border:none;
+  border-radius:var(--radius);
+  color:var(--obsidian);
+  font-size:13.5px;
+  font-weight:600;
+  cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  transition:all 0.25s;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.btn-next:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(201,168,76,0.3); }
+.btn-next:disabled { opacity:0.5; cursor:not-allowed; transform:none; box-shadow:none; }
+.btn-next:active { transform:scale(0.98); }
+
+.btn-next svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+
+.btn-next.loading { pointer-events:none; }
+
+.spinner {
+  width:16px; height:16px;
+  border:2px solid rgba(0,0,0,0.2);
+  border-top-color:var(--obsidian);
+  border-radius:50%;
+  animation:spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ── TOAST ── */
+.toast {
+  position:fixed;
+  bottom:28px;
+  right:28px;
+  padding:14px 20px;
+  border-radius:100px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:13px;
+  font-weight:500;
+  z-index:9999;
+  transform:translateY(20px);
+  opacity:0;
+  transition:all 0.35s ease;
+  max-width:360px;
+  backdrop-filter:blur(12px);
+  box-shadow:0 16px 32px rgba(0,0,0,0.4);
+}
+
+.toast.show { transform:translateY(0); opacity:1; }
+.toast-success { background:rgba(22,101,62,0.95); color:#86efac; border:1px solid rgba(82,183,136,0.3); }
+.toast-error { background:rgba(127,29,29,0.95); color:#fca5a5; border:1px solid rgba(248,113,113,0.3); }
+.toast-info { background:rgba(30,58,138,0.95); color:#93c5fd; border:1px solid rgba(147,197,253,0.3); }
+
+.toast svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2; flex-shrink:0; }
+
+/* ── HINT TEXT ── */
+.hint-text {
+  font-size:12px;
+  color:var(--mist);
+  font-weight:300;
+  margin-top:16px;
+  padding:12px 14px;
+  background:rgba(255,255,255,0.025);
+  border-radius:var(--radius);
+  border-left:2px solid var(--gold-border);
+  line-height:1.55;
+}
+
+/* ── STEP COUNT ── */
+.step-counter {
+  font-size:12px;
+  color:var(--mist);
+  font-weight:300;
+}
+
+.step-counter strong { color:var(--gold); }
+
+/* ── RESPONSIVE ── */
+@media(max-width:480px) {
+  .card-head { padding:20px 20px 18px; }
+  .card-body { padding:22px 20px; }
+  .card-nav { padding:16px 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="onboard-wrapper">
+
+  <!-- ── HEADER ── -->
+  <div class="ob-header">
+    <a href="#" class="ob-logo">
+      <div class="logo-mark">ME</div>
+      <span class="logo-text">Mwarokin <span>Estates</span></span>
+    </a>
+    <h1>Welcome to <em>Africa's finest</em><br>property platform</h1>
+    <p>Complete your onboarding in 4 simple steps — takes under 3 minutes</p>
+  </div>
+
+  <!-- ── STEP TRACK ── -->
+  <div class="step-track" id="stepTrack">
+    <div class="step-node active" data-step="0">
+      <div class="step-circle active"><span class="step-num">1</span></div>
+      <div class="step-label">Your Role</div>
+    </div>
+    <div class="step-connector" id="conn-0"></div>
+    <div class="step-node" data-step="1">
+      <div class="step-circle"><span class="step-num">2</span></div>
+      <div class="step-label">Profile</div>
+    </div>
+    <div class="step-connector" id="conn-1"></div>
+    <div class="step-node" data-step="2">
+      <div class="step-circle"><span class="step-num">3</span></div>
+      <div class="step-label">Services</div>
+    </div>
+    <div class="step-connector" id="conn-2"></div>
+    <div class="step-node" data-step="3">
+      <div class="step-circle"><span class="step-num">4</span></div>
+      <div class="step-label">Confirm</div>
+    </div>
+  </div>
+
+  <!-- ── MAIN CARD ── -->
+  <div class="ob-card">
+
+    <!-- Card Header (dynamic) -->
+    <div class="card-head" id="cardHead">
+      <div class="head-icon">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div class="head-info">
+        <div class="head-title" id="headTitle">Select Your Role</div>
+        <div class="head-sub" id="headSub">Tell us who you are so we can tailor your experience</div>
+      </div>
+      <div class="step-counter"><strong id="stepCounter">1</strong> / 4</div>
+    </div>
+
+    <!-- Card Body -->
+    <div class="card-body">
+
+      <!-- ═══ STEP 1: ROLE ═══ -->
+      <div class="step-pane active" id="pane-0">
+        <div class="role-grid">
+
+          <div class="role-card" data-role="landlord">
+            <div class="selected-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="role-icon" style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);">
+              <svg viewBox="0 0 24 24" style="stroke:var(--gold)"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <div class="role-card-title">Landlord</div>
+            <div class="role-card-desc">Own and manage residential or commercial properties across Africa</div>
+            <div class="role-tags">
+              <span class="role-tag" style="background:rgba(201,168,76,0.08);color:var(--gold-light);border-color:rgba(201,168,76,0.2);">Lease Management</span>
+              <span class="role-tag" style="background:rgba(201,168,76,0.08);color:var(--gold-light);border-color:rgba(201,168,76,0.2);">Rent Collection</span>
+            </div>
+          </div>
+
+          <div class="role-card" data-role="agency">
+            <div class="selected-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="role-icon" style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);">
+              <svg viewBox="0 0 24 24" style="stroke:#a5b4fc"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+            </div>
+            <div class="role-card-title">Property Agency</div>
+            <div class="role-card-desc">Manage portfolios, client relations, and analytics at scale</div>
+            <div class="role-tags">
+              <span class="role-tag" style="background:rgba(99,102,241,0.08);color:#a5b4fc;border-color:rgba(99,102,241,0.2);">Portfolio Mgmt</span>
+              <span class="role-tag" style="background:rgba(99,102,241,0.08);color:#a5b4fc;border-color:rgba(99,102,241,0.2);">Analytics</span>
+            </div>
+          </div>
+
+          <div class="role-card" data-role="tenant">
+            <div class="selected-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="role-icon" style="background:rgba(82,183,136,0.1);border:1px solid rgba(82,183,136,0.2);">
+              <svg viewBox="0 0 24 24" style="stroke:var(--green)"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            </div>
+            <div class="role-card-title">Tenant</div>
+            <div class="role-card-desc">Digital rent payments, maintenance requests, and seamless living</div>
+            <div class="role-tags">
+              <span class="role-tag" style="background:rgba(82,183,136,0.08);color:var(--green);border-color:rgba(82,183,136,0.2);">Tenant Portal</span>
+              <span class="role-tag" style="background:rgba(82,183,136,0.08);color:var(--green);border-color:rgba(82,183,136,0.2);">M-Pesa Pay</span>
+            </div>
+          </div>
+
+        </div>
+        <p class="hint-text">🔒 Your information is encrypted and only used to personalise your Mwarokin Estates experience.</p>
+      </div>
+
+      <!-- ═══ STEP 2: PROFILE ═══ -->
+      <div class="step-pane" id="pane-1">
+
+        <!-- LANDLORD FIELDS -->
+        <div id="fields-landlord" class="hidden">
+          <div class="field-grid">
+            <div class="field-grid field-grid-2">
+              <div class="field-group">
+                <label class="field-label">Full Name <span>*</span></label>
+                <input class="field-input" id="ll-name" type="text" placeholder="e.g. Amina Kamau" autocomplete="name">
+                <div class="field-error" id="err-ll-name"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Full name required</div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Phone Number <span>*</span></label>
+                <input class="field-input" id="ll-phone" type="tel" placeholder="+254 7XX XXX XXX">
+                <div class="field-error" id="err-ll-phone"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Phone required</div>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Email Address <span>*</span></label>
+              <input class="field-input" id="ll-email" type="email" placeholder="you@example.com" autocomplete="email">
+              <div class="field-error" id="err-ll-email"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Valid email required</div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-label">Property Information</div>
+            <div class="field-grid">
+              <div class="field-group">
+                <label class="field-label">Primary Property Address <span>*</span></label>
+                <input class="field-input" id="ll-address" type="text" placeholder="e.g. 14 Lavington Drive, Nairobi">
+                <div class="field-error" id="err-ll-address"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Property address required</div>
+              </div>
+              <div class="field-grid field-grid-2">
+                <div class="field-group">
+                  <label class="field-label">Number of Properties <span>*</span></label>
+                  <select class="field-input" id="ll-num">
+                    <option value="">Select range</option>
+                    <option>1 – 2</option>
+                    <option>3 – 5</option>
+                    <option>6 – 10</option>
+                    <option>10+</option>
+                  </select>
+                  <div class="field-error" id="err-ll-num"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Please select</div>
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Property Type</label>
+                  <select class="field-input" id="ll-type">
+                    <option value="">Select type</option>
+                    <option>Residential</option>
+                    <option>Commercial</option>
+                    <option>Mixed-Use</option>
+                    <option>Land / Plots</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AGENCY FIELDS -->
+        <div id="fields-agency" class="hidden">
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label">Agency / Company Name <span>*</span></label>
+              <input class="field-input" id="ag-name" type="text" placeholder="e.g. PanAfrica Property Management Ltd">
+              <div class="field-error" id="err-ag-name"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Agency name required</div>
+            </div>
+            <div class="field-grid field-grid-2">
+              <div class="field-group">
+                <label class="field-label">Contact Person <span>*</span></label>
+                <input class="field-input" id="ag-contact" type="text" placeholder="Your full name">
+                <div class="field-error" id="err-ag-contact"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Contact person required</div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Business Phone <span>*</span></label>
+                <input class="field-input" id="ag-phone" type="tel" placeholder="+254 7XX XXX XXX">
+                <div class="field-error" id="err-ag-phone"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Phone required</div>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Business Email <span>*</span></label>
+              <input class="field-input" id="ag-email" type="email" placeholder="agency@example.com">
+              <div class="field-error" id="err-ag-email"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Valid email required</div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-label">Portfolio Details</div>
+            <div class="field-grid field-grid-2">
+              <div class="field-group">
+                <label class="field-label">Properties Under Management <span>*</span></label>
+                <select class="field-input" id="ag-managed">
+                  <option value="">Select range</option>
+                  <option>1 – 20</option>
+                  <option>21 – 50</option>
+                  <option>51 – 150</option>
+                  <option>150+</option>
+                </select>
+                <div class="field-error" id="err-ag-managed"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Please select</div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Registration / License No.</label>
+                <input class="field-input" id="ag-license" type="text" placeholder="Optional — e.g. EST/2024/001">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TENANT FIELDS -->
+        <div id="fields-tenant" class="hidden">
+          <div class="field-grid">
+            <div class="field-grid field-grid-2">
+              <div class="field-group">
+                <label class="field-label">Full Name <span>*</span></label>
+                <input class="field-input" id="tn-name" type="text" placeholder="e.g. James Mwangi" autocomplete="name">
+                <div class="field-error" id="err-tn-name"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Full name required</div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Phone Number <span>*</span></label>
+                <input class="field-input" id="tn-phone" type="tel" placeholder="+254 7XX XXX XXX">
+                <div class="field-error" id="err-tn-phone"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Phone required</div>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Email Address <span>*</span></label>
+              <input class="field-input" id="tn-email" type="email" placeholder="you@example.com">
+              <div class="field-error" id="err-tn-email"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Valid email required</div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-label">Housing Preferences</div>
+            <div class="field-grid">
+              <div class="field-group">
+                <label class="field-label">Current Address <span>*</span></label>
+                <input class="field-input" id="tn-address" type="text" placeholder="e.g. Kilimani, Nairobi">
+                <div class="field-error" id="err-tn-address"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Current address required</div>
+              </div>
+              <div class="field-grid field-grid-2">
+                <div class="field-group">
+                  <label class="field-label">Desired Move-In Date <span>*</span></label>
+                  <input class="field-input" id="tn-movein" type="date">
+                  <div class="field-error" id="err-tn-movein"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Move-in date required</div>
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Monthly Budget</label>
+                  <select class="field-input" id="tn-budget">
+                    <option value="">Select range</option>
+                    <option>Under KES 20,000</option>
+                    <option>KES 20,000 – 50,000</option>
+                    <option>KES 50,000 – 100,000</option>
+                    <option>KES 100,000+</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field-grid field-grid-2">
+                <div class="field-group">
+                  <label class="field-label">Number of Occupants</label>
+                  <input class="field-input" id="tn-occupants" type="number" placeholder="e.g. 2" min="1" max="20">
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Preferred Property Type</label>
+                  <select class="field-input" id="tn-proptype">
+                    <option value="">Any</option>
+                    <option>Studio / Bedsitter</option>
+                    <option>1-Bedroom Apartment</option>
+                    <option>2-Bedroom Apartment</option>
+                    <option>3+ Bedroom Apartment</option>
+                    <option>Townhouse / Maisonette</option>
+                    <option>Commercial Space</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══ STEP 3: SERVICES ═══ -->
+      <div class="step-pane" id="pane-2">
+
+        <!-- LANDLORD / AGENCY PLANS -->
+        <div id="plans-owner">
+          <div class="plan-grid">
+            <div class="plan-card" data-plan="essential">
+              <div class="plan-name">Essential</div>
+              <div class="plan-tagline">Core leasing, rent collection & maintenance</div>
+              <div class="plan-price">
+                <span class="plan-currency">KES</span>
+                <span class="plan-amount">2,500</span>
+                <span class="plan-per">/month</span>
+              </div>
+              <ul class="plan-features-mini">
+                <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Up to 10 units</li>
+                <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>M-Pesa & mobile money</li>
+                <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Tenant portal access</li>
+                <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Basic maintenance tickets</li>
+                <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Monthly reports</li>
+              </ul>
+            </div>
+
+            <div class="plan-card" data-plan="professional">
+              <div class="plan-badge" style="background:rgba(201,168,76,0.15);color:var(--gold-light);">Popular</div>
+              <div class="plan-name">Professional</div>
+              <div class="plan-tagline">Add screening, analytics & lease automation</div>
+              <div class="plan-price">
+                <span class="plan-currency">KES</span>
+                <span class="plan-amount">8,900</span>
+                <span class="plan-per">/month</span>
+              </div>
+              <ul class="plan-features-mini">
+                <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Up to 100 units</li>
+                <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Tenant screening reports</li>
+                <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Digital leases & e-sign</li>
+                <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Advanced analytics</li>
+                <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Vacancy marketing</li>
+              </ul>
+            </div>
+
+            <div class="plan-card" data-plan="enterprise">
+              <div class="plan-badge" style="background:rgba(139,92,246,0.15);color:#c4b5fd;">Enterprise</div>
+              <div class="plan-name">Enterprise</div>
+              <div class="plan-tagline">Unlimited units, investor portal & white-label</div>
+              <div class="plan-price">
+                <span class="plan-currency"></span>
+                <span class="plan-amount" style="font-size:26px;line-height:1.3;">Custom</span>
+                <span class="plan-per"></span>
+              </div>
+              <ul class="plan-features-mini">
+                <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Unlimited properties</li>
+                <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>White-label investor portal</li>
+                <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Custom API & ERP integration</li>
+                <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Dedicated account manager</li>
+                <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>99.9% SLA uptime</li>
+              </ul>
+            </div>
+          </div>
+          <div class="field-error" id="err-plan" style="margin-top:8px;"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Please select a service plan to continue</div>
+
+          <div class="form-section">
+            <div class="form-section-label">Optional Add-Ons</div>
+            <div class="addon-list">
+              <div class="addon-row" data-addon="maintenance">
+                <div class="addon-left">
+                  <div class="addon-icon"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+                  <div>
+                    <div class="addon-name">Maintenance Coordination</div>
+                    <div class="addon-sub">Automated vendor assignment & work order tracking</div>
+                  </div>
+                </div>
+                <div class="addon-right">
+                  <div class="addon-price">+KES 3,900/mo</div>
+                  <div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+                </div>
+              </div>
+
+              <div class="addon-row" data-addon="legal">
+                <div class="addon-left">
+                  <div class="addon-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                  <div>
+                    <div class="addon-name">Legal Document Automation</div>
+                    <div class="addon-sub">AI-drafted leases, notices & compliance docs</div>
+                  </div>
+                </div>
+                <div class="addon-right">
+                  <div class="addon-price">+KES 2,500/mo</div>
+                  <div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+                </div>
+              </div>
+
+              <div class="addon-row" data-addon="marketing">
+                <div class="addon-left">
+                  <div class="addon-icon"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+                  <div>
+                    <div class="addon-name">Premium Listing & Marketing</div>
+                    <div class="addon-sub">Syndicated listings, AI copywriting & virtual tours</div>
+                  </div>
+                </div>
+                <div class="addon-right">
+                  <div class="addon-price">+KES 4,900/mo</div>
+                  <div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TENANT SERVICES -->
+        <div id="plans-tenant" class="hidden">
+          <div class="tenant-portal-card">
+            <div class="portal-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+            <div>
+              <div class="portal-badge">Included Free</div>
+              <div class="portal-info-title">Tenant Digital Portal</div>
+              <div class="portal-desc">Pay rent via M-Pesa, Airtel Money or card. Submit maintenance requests with photos. Download receipts and lease documents. Get real-time notifications — all from your phone or browser.</div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-label">Optional Services</div>
+            <div class="addon-list">
+              <div class="addon-row" data-addon="concierge">
+                <div class="addon-left">
+                  <div class="addon-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+                  <div>
+                    <div class="addon-name">Moving Concierge & Assistance</div>
+                    <div class="addon-sub">Free consultation, moving checklist & landlord matching</div>
+                  </div>
+                </div>
+                <div class="addon-right">
+                  <div class="addon-price" style="color:var(--green);">Free</div>
+                  <div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+                </div>
+              </div>
+              <div class="addon-row" data-addon="rentersinsurance">
+                <div class="addon-left">
+                  <div class="addon-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                  <div>
+                    <div class="addon-name">Renters Insurance</div>
+                    <div class="addon-sub">Contents & liability cover starting from KES 800/month</div>
+                  </div>
+                </div>
+                <div class="addon-right">
+                  <div class="addon-price">From KES 800/mo</div>
+                  <div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══ STEP 4: CONFIRM ═══ -->
+      <div class="step-pane" id="pane-3">
+        <div class="summary-header">
+          <div class="summary-success-ring">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          <div class="summary-title">Review your application</div>
+          <div class="summary-sub">Everything look correct? Confirm below to complete your Mwarokin Estates onboarding.</div>
+        </div>
+
+        <div id="summaryBlocks"></div>
+
+        <div class="terms-row">
+          <div class="terms-check" id="termsCheck">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="terms-text">I agree to the Mwarokin Estates <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. I consent to receive onboarding communications and updates about my account.</div>
+        </div>
+
+      </div>
+
+    </div><!-- /card-body -->
+
+    <!-- ── NAV FOOTER ── -->
+    <div class="card-nav" id="cardNav">
+      <button class="btn-back" id="btnBack" disabled>
+        <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Back
+      </button>
+      <button class="btn-next" id="btnNext">
+        Continue
+        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+
+  </div><!-- /ob-card -->
+
+</div><!-- /onboard-wrapper -->
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" id="toastIcon"></svg>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+(function(){
+  // ── State ──
+  let step = 0;
+  const TOTAL = 4;
+  let role = null;
+  let selectedPlan = null;
+  let addons = {};
+  let termsChecked = false;
+
+  // ── DOM ──
+  const btnNext = document.getElementById('btnNext');
+  const btnBack = document.getElementById('btnBack');
+  const headTitle = document.getElementById('headTitle');
+  const headSub = document.getElementById('headSub');
+  const stepCounter = document.getElementById('stepCounter');
+
+  const stepMeta = [
+    { title:'Select Your Role', sub:'Tell us who you are so we can tailor your experience' },
+    { title:'Your Profile', sub:'Your details are secure and encrypted' },
+    { title:'Services & Plan', sub:'Choose what works best for your needs' },
+    { title:'Final Review', sub:'Confirm your details and complete onboarding' }
+  ];
+
+  // ── Toast ──
+  function toast(msg, type='info', duration=3500){
+    const t = document.getElementById('toast');
+    const icon = document.getElementById('toastIcon');
+    const txt = document.getElementById('toastMsg');
+    t.className = `toast toast-${type}`;
+    const paths = {
+      success: '<polyline points="20 6 9 17 4 12"/>',
+      error: '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>',
+      info: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>'
+    };
+    icon.innerHTML = paths[type] || paths.info;
+    txt.textContent = msg;
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'), duration);
+  }
+
+  // ── Role selection ──
+  document.querySelectorAll('.role-card').forEach(card=>{
+    card.addEventListener('click',()=>{
+      document.querySelectorAll('.role-card').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+      role = card.dataset.role;
+    });
+  });
+
+  // ── Plan selection ──
+  document.querySelectorAll('.plan-card').forEach(card=>{
+    card.addEventListener('click',()=>{
+      document.querySelectorAll('.plan-card').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedPlan = card.dataset.plan;
+      hideError('err-plan');
+    });
+  });
+
+  // ── Addon selection ──
+  document.querySelectorAll('.addon-row').forEach(row=>{
+    row.addEventListener('click',()=>{
+      row.classList.toggle('checked');
+      const key = row.dataset.addon;
+      addons[key] = row.classList.contains('checked');
+    });
+  });
+
+  // ── Terms ──
+  document.getElementById('termsCheck').addEventListener('click',()=>{
+    termsChecked = !termsChecked;
+    document.getElementById('termsCheck').classList.toggle('checked', termsChecked);
+  });
+
+  // ── Validation helpers ──
+  function showError(id){ const el=document.getElementById(id); if(el) el.classList.add('show'); }
+  function hideError(id){ const el=document.getElementById(id); if(el) el.classList.remove('show'); }
+  function setFieldError(inputId, errId, show){
+    const input = document.getElementById(inputId);
+    if(!input) return;
+    if(show){ input.classList.add('error'); showError(errId); }
+    else { input.classList.remove('error'); hideError(errId); }
+  }
+
+  function isEmail(v){ return /^\S+@\S+\.\S+$/.test(v.trim()); }
+  function isPhone(v){ return v.trim().length >= 7; }
+
+  function validateStep1(){ return !!role; }
+
+  function validateStep2(){
+    let ok = true;
+    if(role==='landlord'){
+      const v = { name:g('ll-name'), email:g('ll-email'), phone:g('ll-phone'), address:g('ll-address'), num:g('ll-num') };
+      if(!v.name){ setFieldError('ll-name','err-ll-name',true); ok=false; } else setFieldError('ll-name','err-ll-name',false);
+      if(!isEmail(v.email)){ setFieldError('ll-email','err-ll-email',true); ok=false; } else setFieldError('ll-email','err-ll-email',false);
+      if(!isPhone(v.phone)){ setFieldError('ll-phone','err-ll-phone',true); ok=false; } else setFieldError('ll-phone','err-ll-phone',false);
+      if(!v.address){ setFieldError('ll-address','err-ll-address',true); ok=false; } else setFieldError('ll-address','err-ll-address',false);
+      if(!v.num){ setFieldError('ll-num','err-ll-num',true); ok=false; } else setFieldError('ll-num','err-ll-num',false);
+    } else if(role==='agency'){
+      const v = { name:g('ag-name'), contact:g('ag-contact'), email:g('ag-email'), phone:g('ag-phone'), managed:g('ag-managed') };
+      if(!v.name){ setFieldError('ag-name','err-ag-name',true); ok=false; } else setFieldError('ag-name','err-ag-name',false);
+      if(!v.contact){ setFieldError('ag-contact','err-ag-contact',true); ok=false; } else setFieldError('ag-contact','err-ag-contact',false);
+      if(!isEmail(v.email)){ setFieldError('ag-email','err-ag-email',true); ok=false; } else setFieldError('ag-email','err-ag-email',false);
+      if(!isPhone(v.phone)){ setFieldError('ag-phone','err-ag-phone',true); ok=false; } else setFieldError('ag-phone','err-ag-phone',false);
+      if(!v.managed){ setFieldError('ag-managed','err-ag-managed',true); ok=false; } else setFieldError('ag-managed','err-ag-managed',false);
+    } else if(role==='tenant'){
+      const v = { name:g('tn-name'), email:g('tn-email'), phone:g('tn-phone'), address:g('tn-address'), movein:g('tn-movein') };
+      if(!v.name){ setFieldError('tn-name','err-tn-name',true); ok=false; } else setFieldError('tn-name','err-tn-name',false);
+      if(!isEmail(v.email)){ setFieldError('tn-email','err-tn-email',true); ok=false; } else setFieldError('tn-email','err-tn-email',false);
+      if(!isPhone(v.phone)){ setFieldError('tn-phone','err-tn-phone',true); ok=false; } else setFieldError('tn-phone','err-tn-phone',false);
+      if(!v.address){ setFieldError('tn-address','err-tn-address',true); ok=false; } else setFieldError('tn-address','err-tn-address',false);
+      if(!v.movein){ setFieldError('tn-movein','err-tn-movein',true); ok=false; } else setFieldError('tn-movein','err-tn-movein',false);
+    }
+    return ok;
+  }
+
+  function validateStep3(){
+    if(role==='tenant') return true;
+    if(!selectedPlan){ showError('err-plan'); return false; }
+    hideError('err-plan');
+    return true;
+  }
+
+  function g(id){ const el=document.getElementById(id); return el?el.value.trim():''; }
+
+  // ── Profile fields display ──
+  function showProfileFields(){
+    ['landlord','agency','tenant'].forEach(r=>{
+      const el = document.getElementById(`fields-${r}`);
+      if(el) el.classList.toggle('hidden', r!==role);
+    });
+  }
+
+  // ── Plan section display ──
+  function showPlanSection(){
+    const owner = document.getElementById('plans-owner');
+    const tenant = document.getElementById('plans-tenant');
+    if(role==='tenant'){
+      owner.classList.add('hidden');
+      tenant.classList.remove('hidden');
+    } else {
+      owner.classList.remove('hidden');
+      tenant.classList.add('hidden');
+    }
+  }
+
+  // ── Build Summary ──
+  function buildSummary(){
+    const container = document.getElementById('summaryBlocks');
+    container.innerHTML = '';
+
+    // Profile block
+    let profileRows = [];
+    const roleLabel = { landlord:'Landlord / Landlady', agency:'Property Agency', tenant:'Tenant' }[role];
+    profileRows.push({ k:'Role', v:roleLabel });
+
+    if(role==='landlord'){
+      profileRows.push({ k:'Name', v:g('ll-name') }, { k:'Email', v:g('ll-email') }, { k:'Phone', v:g('ll-phone') },
+        { k:'Property Address', v:g('ll-address') }, { k:'Properties Owned', v:g('ll-num') },
+        { k:'Property Type', v:g('ll-type')||'—' });
+    } else if(role==='agency'){
+      profileRows.push({ k:'Agency', v:g('ag-name') }, { k:'Contact', v:g('ag-contact') }, { k:'Email', v:g('ag-email') },
+        { k:'Phone', v:g('ag-phone') }, { k:'Properties Managed', v:g('ag-managed') },
+        { k:'License', v:g('ag-license')||'—' });
+    } else {
+      profileRows.push({ k:'Name', v:g('tn-name') }, { k:'Email', v:g('tn-email') }, { k:'Phone', v:g('tn-phone') },
+        { k:'Current Address', v:g('tn-address') }, { k:'Move-In Date', v:g('tn-movein') },
+        { k:'Budget', v:g('tn-budget')||'—' }, { k:'Occupants', v:g('tn-occupants')||'1' });
+    }
+
+    container.innerHTML += buildBlock('Profile Details', profileRows);
+
+    // Services block
+    let serviceRows = [];
+    const planNames = { essential:'Essential — KES 2,500/mo', professional:'Professional — KES 8,900/mo', enterprise:'Enterprise — Custom Pricing' };
+    if(role==='tenant'){
+      serviceRows.push({ k:'Portal', v:'Free Tenant Digital Portal', cls:'green' });
+      if(addons.concierge) serviceRows.push({ k:'Add-On', v:'Moving Concierge & Assistance' });
+      if(addons.rentersinsurance) serviceRows.push({ k:'Add-On', v:'Renters Insurance' });
+    } else {
+      serviceRows.push({ k:'Plan', v:selectedPlan ? planNames[selectedPlan] : '—', cls:'gold' });
+      const addonNames = { maintenance:'Maintenance Coordination (+KES 3,900/mo)', legal:'Legal Doc Automation (+KES 2,500/mo)', marketing:'Premium Listing & Marketing (+KES 4,900/mo)' };
+      Object.entries(addons).forEach(([k,v])=>{ if(v && addonNames[k]) serviceRows.push({ k:'Add-On', v:addonNames[k] }); });
+    }
+
+    container.innerHTML += buildBlock('Services & Plan', serviceRows);
+
+    // Total (non-tenant)
+    if(role !== 'tenant' && selectedPlan && selectedPlan !== 'enterprise'){
+      const base = { essential:2500, professional:8900 }[selectedPlan] || 0;
+      const addonCosts = { maintenance:3900, legal:2500, marketing:4900 };
+      let total = base;
+      Object.entries(addons).forEach(([k,v])=>{ if(v && addonCosts[k]) total += addonCosts[k]; });
+      const totalBlock = `
+        <div class="summary-block" style="margin-bottom:12px;">
+          <div class="summary-total">
+            <span class="sum-total-label">Estimated Monthly Total</span>
+            <span class="sum-total-val">KES ${total.toLocaleString()}</span>
+          </div>
+        </div>`;
+      container.innerHTML += totalBlock;
+    }
+  }
+
+  function buildBlock(title, rows){
+    const rowsHtml = rows.map(r=>`
+      <div class="summary-row">
+        <span class="sum-key">${r.k}</span>
+        <span class="sum-val ${r.cls||''}">${r.v}</span>
+      </div>`).join('');
+    return `<div class="summary-block">
+      <div class="summary-block-head">${title}</div>
+      <div class="summary-rows">${rowsHtml}</div>
+    </div>`;
+  }
+
+  // ── Update nav ──
+  function updateNav(){
+    btnBack.disabled = step === 0;
+    const isLast = step === TOTAL-1;
+    if(isLast){
+      btnNext.innerHTML = `<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg> Complete Onboarding`;
+    } else {
+      btnNext.innerHTML = `Continue <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`;
+    }
+    stepCounter.textContent = step + 1;
+    headTitle.textContent = stepMeta[step].title;
+    headSub.textContent = stepMeta[step].sub;
+  }
+
+  // ── Update track ──
+  function updateTrack(){
+    document.querySelectorAll('.step-node').forEach((node,i)=>{
+      node.classList.remove('active','done');
+      const circle = node.querySelector('.step-circle');
+      circle.classList.remove('active','done');
+      if(i < step){ node.classList.add('done'); circle.classList.add('done'); }
+      else if(i === step){ node.classList.add('active'); circle.classList.add('active'); }
+    });
+    for(let i=0;i<3;i++){
+      const conn = document.getElementById(`conn-${i}`);
+      if(conn) conn.classList.toggle('done', i < step);
+    }
+  }
+
+  // ── Navigate ──
+  function goTo(target){
+    const from = document.getElementById(`pane-${step}`);
+    const to = document.getElementById(`pane-${target}`);
+    if(!from||!to) return;
+    from.classList.remove('active');
+    step = target;
+    to.classList.add('active');
+    to.style.animation = 'none';
+    to.offsetHeight;
+    to.style.animation = '';
+    updateNav();
+    updateTrack();
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+
+  // ── Next ──
+  btnNext.addEventListener('click', async ()=>{
+    if(step===0){
+      if(!validateStep1()){ toast('Please select your role to continue','error'); return; }
+      goTo(1);
+      showProfileFields();
+    } else if(step===1){
+      if(!validateStep2()){ toast('Please fill in all required fields','error'); return; }
+      goTo(2);
+      showPlanSection();
+    } else if(step===2){
+      if(!validateStep3()){ toast('Please select a service plan','error'); return; }
+      goTo(3);
+      buildSummary();
+    } else if(step===3){
+      if(!termsChecked){ toast('Please accept the terms to complete onboarding','error'); return; }
+      await submitForm();
+    }
+  });
+
+  // ── Back ──
+  btnBack.addEventListener('click',()=>{ if(step>0) goTo(step-1); });
+
+  // ── Submit ──
+  async function submitForm(){
+    btnNext.disabled = true;
+    btnNext.innerHTML = `<div class="spinner"></div> Processing...`;
+    await new Promise(r=>setTimeout(r,2000));
+    // Show success
+    const pane = document.getElementById('pane-3');
+    pane.innerHTML = `
+      <div class="success-screen">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="success-title">Welcome to Mwarokin <em>Estates!</em></div>
+        <p class="success-sub">Your account has been created successfully. Our onboarding team will reach out within 24 hours with your welcome kit and platform access details.</p>
+        <div class="success-cards">
+          <div class="success-card">
+            <div class="success-card-icon">📧</div>
+            <div class="success-card-title">Check Your Email</div>
+            <div class="success-card-sub">Verification & welcome kit sent to your inbox</div>
+          </div>
+          <div class="success-card">
+            <div class="success-card-icon">🏠</div>
+            <div class="success-card-title">Dashboard Ready</div>
+            <div class="success-card-sub">Your property portal will be active within 24h</div>
+          </div>
+          <div class="success-card">
+            <div class="success-card-icon">📞</div>
+            <div class="success-card-title">Onboarding Call</div>
+            <div class="success-card-sub">Our team will contact you to guide your setup</div>
+          </div>
+        </div>
+      </div>`;
+    document.getElementById('cardNav').innerHTML = `
+      <div style="flex:1;text-align:center;">
+        <a href="#" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:6px;color:var(--obsidian);font-weight:600;font-size:14px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 8px 24px rgba(201,168,76,0.3)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          Go to My Dashboard
+        </a>
+      </div>`;
+    updateTrack();
+    toast('🎉 Welcome to Mwarokin Estates! Account successfully created.','success',5000);
+    localStorage.setItem('mwarokin_onboarding',JSON.stringify({ role, step:'complete', ts:new Date() }));
+  }
+
+  // ── Init ──
+  updateNav();
+  updateTrack();
+})();
+</script>
+</body>
+</html>

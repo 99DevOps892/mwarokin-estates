@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mwarokin Estates — Milki Command Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+/* ============================================
+   MWAROKIN ESTATES — MILKI COMMAND CENTER
+   Full-feature dashboard · Dark luxury · Gold
+   ============================================ */
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+:root{
+  --bg-dark:#03070c; --bg-surface:rgba(12,18,28,.65); --bg-elevated:#0f1622;
+  --border:rgba(200,151,42,.2); --border-glow:rgba(200,151,42,.5);
+  --gold:#c8972a; --gold-lt:#e0b354; --gold-dk:#a07a1f; --cream:#fef5e7;
+  --text:#e6e9f0; --text-2:#b9c2d4; --text-3:#7e8aa2;
+  --green-lt:#4ab87a; --green-dk:#2e8b57; --red:#e07070; --amber:#e0a343;
+  --blue-lt:#7ab0e8; --violet:#a684d6;
+  --shadow-sm:0 8px 20px rgba(0,0,0,.4); --shadow-md:0 12px 28px rgba(0,0,0,.5);
+  --shadow-gold:0 10px 25px -5px rgba(200,151,42,.25);
+  --transition:all .25s cubic-bezier(.2,.9,.4,1.1);
+  --font-display:'Cormorant Garamond',serif; --font-body:'DM Sans',sans-serif;
+  --radius:8px; --radius-lg:16px; --radius-xl:24px;
+  --sidebar-w:250px;
+}
+body{
+  background:radial-gradient(circle at 10% 20%,#0b0e17,#030507);
+  font-family:var(--font-body); color:var(--text); line-height:1.5;
+  min-height:100vh; overflow-x:hidden;
+}
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg-dark);}
+::-webkit-scrollbar-thumb{background:var(--gold);border-radius:8px;}
+::-webkit-scrollbar-thumb:hover{background:var(--gold-lt);}
+
+.ambient{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0;}
+.ambient__orb{position:absolute;border-radius:50%;filter:blur(110px);opacity:.28;animation:floatOrb 28s infinite alternate ease-in-out;}
+.ambient__orb--1{width:60vw;height:60vw;background:radial-gradient(circle,rgba(200,151,42,.4),rgba(120,80,20,.1));top:-20vh;right:-20vw;}
+.ambient__orb--2{width:50vw;height:50vw;background:radial-gradient(circle,rgba(74,184,122,.18),rgba(15,30,20,0));bottom:-30vh;left:-15vw;animation-duration:36s;}
+@keyframes floatOrb{0%{transform:translate(0,0) scale(1);}100%{transform:translate(4%,6%) scale(1.08);}}
+
+h1,h2,h3,.nav__name,.db-card__title,.side__brandtext em{font-family:var(--font-display);letter-spacing:-.01em;font-weight:300;}
+
+/* ---------- LAYOUT SHELL ---------- */
+.app{display:flex;position:relative;z-index:2;min-height:100vh;}
+
+/* ---------- SIDEBAR ---------- */
+.side{
+  width:var(--sidebar-w); flex-shrink:0; min-height:100vh;
+  background:rgba(3,7,12,.75); backdrop-filter:blur(14px);
+  border-right:1px solid var(--border); padding:24px 18px;
+  position:sticky; top:0; align-self:flex-start; height:100vh; overflow-y:auto;
+}
+.side__brand{display:flex;align-items:center;gap:10px;padding:4px 6px 26px;border-bottom:1px solid var(--border);margin-bottom:20px;}
+.side__logo{font-size:26px;color:var(--gold);text-shadow:0 0 6px rgba(200,151,42,.4);}
+.side__brandtext{font-size:17px;font-weight:500;color:var(--cream);}
+.side__brandtext em{color:var(--gold);font-style:italic;font-weight:400;font-size:17px;}
+.side__tier{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  background:linear-gradient(105deg,rgba(200,151,42,.18),rgba(160,122,31,.06));
+  border:1px solid rgba(200,151,42,.35); border-radius:var(--radius-lg);
+  padding:12px 14px; margin-bottom:24px;
+}
+.side__tier-label{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;}
+.side__tier-name{font-family:var(--font-display);font-size:20px;color:var(--gold-lt);font-weight:600;}
+.side__tier-badge{font-size:10px;background:var(--gold);color:#0a0c10;padding:3px 8px;border-radius:40px;font-weight:700;}
+
+.side__section-label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-3);font-weight:700;margin:18px 8px 10px;}
+.side__nav{list-style:none;display:flex;flex-direction:column;gap:2px;}
+.side__link{
+  display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius);
+  color:var(--text-2);text-decoration:none;font-size:13.5px;font-weight:500;transition:var(--transition);
+  cursor:pointer;
+}
+.side__link .ic{font-size:16px;width:20px;text-align:center;}
+.side__link:hover{background:rgba(200,151,42,.08);color:var(--gold-lt);}
+.side__link.active{background:rgba(200,151,42,.14);color:var(--gold-lt);border:1px solid rgba(200,151,42,.25);}
+.side__link .tag{margin-left:auto;font-size:9px;background:rgba(74,184,122,.18);color:var(--green-lt);padding:2px 7px;border-radius:40px;font-weight:700;letter-spacing:.02em;}
+
+/* ---------- MAIN COLUMN ---------- */
+.main{flex:1;min-width:0;}
+
+/* Topbar */
+.topbar{
+  position:sticky;top:0;z-index:15;display:flex;align-items:center;gap:18px;
+  padding:16px 36px;background:rgba(3,7,12,.68);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.topbar__search{
+  flex:1;max-width:420px;display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:40px;
+  padding:9px 16px;color:var(--text-3);font-size:13px;
+}
+.topbar__search input{background:none;border:none;outline:none;color:var(--text);font-family:var(--font-body);font-size:13px;width:100%;}
+.topbar__spacer{flex:1;}
+.topbar__icon-btn{
+  position:relative;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);cursor:pointer;transition:var(--transition);color:var(--text-2);
+}
+.topbar__icon-btn:hover{border-color:var(--gold);color:var(--gold-lt);}
+.topbar__dot{position:absolute;top:6px;right:7px;width:7px;height:7px;background:var(--red);border-radius:50%;border:1.5px solid var(--bg-dark);}
+.topbar__profile{display:flex;align-items:center;gap:10px;padding-left:14px;border-left:1px solid var(--border);}
+.topbar__avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dk));display:flex;align-items:center;justify-content:center;font-weight:700;color:#0a0c10;font-size:14px;}
+.topbar__who{font-size:12.5px;line-height:1.3;}
+.topbar__who strong{color:var(--cream);display:block;font-weight:600;}
+.topbar__who span{color:var(--text-3);font-size:11px;}
+
+.btn{font-family:var(--font-body);border:none;font-weight:600;cursor:pointer;transition:var(--transition);display:inline-flex;align-items:center;gap:8px;}
+.btn--primary{background:linear-gradient(105deg,var(--gold),var(--gold-dk));color:#0a0c10;border-radius:60px;padding:10px 20px;font-size:13px;font-weight:700;box-shadow:0 6px 14px rgba(200,151,42,.3);text-decoration:none;}
+.btn--primary:hover{transform:translateY(-2px);box-shadow:0 12px 22px rgba(200,151,42,.4);background:linear-gradient(105deg,var(--gold-lt),var(--gold));}
+.btn--outline{background:transparent;border:1px solid var(--gold);border-radius:40px;padding:0 20px;font-weight:600;color:var(--gold);cursor:pointer;display:inline-flex;justify-content:center;align-items:center;text-decoration:none;transition:var(--transition);}
+.btn--outline:hover{background:var(--gold);color:#0b0e17;}
+
+/* ---------- DASHBOARD SHELL ---------- */
+.db-shell{max-width:1500px;margin:0 auto;padding:28px 36px 80px;}
+
+.db-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:16px;}
+.db-header h1{font-size:34px;font-weight:300;color:var(--cream);letter-spacing:-.02em;}
+.db-header h1 em{color:var(--gold);font-style:italic;}
+.db-header p{color:var(--text-3);font-size:13px;margin-top:4px;}
+.db-plan-badge{
+  background:linear-gradient(105deg,rgba(200,151,42,.2),rgba(200,151,42,.05));
+  border:1px solid var(--gold); border-radius:60px; padding:9px 20px;
+  font-size:13px; font-weight:700; color:var(--gold-lt); display:flex; align-items:center; gap:8px;
+}
+
+/* Status strip — replaces old "upgrade" banner: all-features-unlocked confirmation */
+.status-strip{
+  background:linear-gradient(135deg,rgba(74,184,122,.1),rgba(200,151,42,.06));
+  border:1px solid rgba(74,184,122,.3); border-radius:var(--radius-lg);
+  padding:16px 26px; display:flex; align-items:center; gap:16px; margin-bottom:26px;
+}
+.status-strip__icon{font-size:20px;color:var(--green-lt);}
+.status-strip__text{flex:1;font-size:13.5px;color:var(--text);}
+.status-strip__text strong{color:var(--green-lt);}
+
+/* Stats Grid */
+.db-stats{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-bottom:26px;}
+.db-stat{background:var(--bg-surface);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 16px;transition:var(--transition);animation:fadeUp .5s ease backwards;}
+.db-stat:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:var(--shadow-sm);}
+.db-stat__label{font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--text-3);margin-bottom:9px;font-weight:600;}
+.db-stat__val{font-family:var(--font-display);font-size:28px;font-weight:600;color:var(--cream);line-height:1.1;margin-bottom:6px;}
+.db-stat__trend{font-size:10.5px;font-weight:500;}
+.trend-up{color:var(--green-lt);} .trend-dn{color:var(--red);}
+
+/* Main grids */
+.db-main{display:grid;grid-template-columns:2fr 1fr;gap:22px;margin-bottom:22px;}
+.db-main3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px;margin-bottom:22px;}
+
+.db-card{background:var(--bg-surface);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;transition:var(--transition);}
+.db-card:hover{border-color:rgba(200,151,42,.3);box-shadow:var(--shadow-sm);}
+.db-card__title{font-size:16px;font-weight:600;color:var(--cream);margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;letter-spacing:-.2px;}
+.db-card__badge{font-size:10px;background:rgba(200,151,42,.12);color:var(--gold);border:1px solid rgba(200,151,42,.2);border-radius:40px;padding:4px 10px;font-weight:600;white-space:nowrap;}
+.db-card__badge.live{background:rgba(74,184,122,.14);color:var(--green-lt);border-color:rgba(74,184,122,.25);}
+
+/* Bar chart */
+.bar-chart{display:flex;align-items:flex-end;gap:12px;height:140px;margin:8px 0;}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.bar{width:100%;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--gold) 0%,var(--gold-dk) 100%);min-height:4px;transition:height .6s cubic-bezier(.2,.9,.4,1.1);}
+.bar.low{background:linear-gradient(180deg,var(--green-lt) 0%,var(--green-dk) 100%);opacity:.85;}
+.bar-lbl{font-size:11px;color:var(--text-3);font-weight:500;}
+.bar-val{font-size:10px;color:var(--text-2);font-weight:600;}
+.bar-col:hover .bar{filter:brightness(1.1);transform:scaleX(1.02);}
+
+/* KRA quick */
+.kra-quick{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px;}
+.kra-q-item{background:rgba(0,0,0,.2);border-radius:var(--radius);padding:14px;border:1px solid var(--border);}
+.kra-q-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:6px;}
+.kra-q-val{font-size:20px;font-weight:600;color:var(--cream);font-family:var(--font-display);}
+.kra-q-val.tax{color:var(--gold-lt);}
+
+/* Tenant rows */
+.tenant-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.tenant-row:last-child{border-bottom:none;}
+.tenant-row:hover{background:rgba(200,151,42,.03);border-radius:var(--radius);}
+.tenant-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:rgba(255,255,255,.05);border:1px solid var(--border);}
+.tenant-name{color:var(--text);font-weight:600;flex:1;}
+.tenant-unit{color:var(--text-3);font-size:12px;}
+.tenant-status{font-size:10px;padding:4px 10px;border-radius:40px;font-weight:700;letter-spacing:.3px;}
+.ts-paid{background:rgba(74,184,122,.15);color:var(--green-lt);}
+.ts-due{background:rgba(200,151,42,.15);color:var(--gold-lt);}
+.ts-late{background:rgba(192,64,64,.15);color:#e07070;}
+.ts-lipa{background:rgba(90,130,200,.15);color:#7ab0e8;}
+
+/* Lipa mini tracker */
+.lipa-mini-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.lipa-mini-row:last-child{border-bottom:none;}
+.lipa-mini-name{flex:1;color:var(--text);font-weight:500;}
+.lipa-mini-bar{width:80px;height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;}
+.lipa-mini-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--amber));border-radius:3px;transition:width .4s ease;}
+.lipa-mini-pct{font-size:11px;color:var(--text-3);width:36px;text-align:right;font-weight:600;}
+
+/* Security panel */
+.sec-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.sec-item{background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:var(--radius);padding:13px;display:flex;flex-direction:column;gap:6px;}
+.sec-item__top{display:flex;align-items:center;justify-content:space-between;}
+.sec-item__label{font-size:11.5px;color:var(--text-2);font-weight:600;}
+.sec-dot{width:8px;height:8px;border-radius:50%;background:var(--green-lt);box-shadow:0 0 6px var(--green-lt);}
+.sec-dot.warn{background:var(--amber);box-shadow:0 0 6px var(--amber);}
+.sec-item__sub{font-size:10.5px;color:var(--text-3);}
+
+/* Map / unmapped areas */
+.map-shell{position:relative;height:190px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);
+  background:
+    linear-gradient(rgba(200,151,42,.06) 1px,transparent 1px) 0 0/28px 28px,
+    linear-gradient(90deg,rgba(200,151,42,.06) 1px,transparent 1px) 0 0/28px 28px,
+    radial-gradient(circle at 30% 40%,rgba(200,151,42,.12),transparent 60%),
+    #0a0f18;
+}
+.map-pin{position:absolute;width:11px;height:11px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 5px rgba(200,151,42,.18);}
+.map-pin.new{background:var(--green-lt);box-shadow:0 0 0 5px rgba(74,184,122,.2);}
+.map-legend{display:flex;gap:16px;margin-top:12px;font-size:11px;color:var(--text-3);}
+.map-legend span{display:flex;align-items:center;gap:6px;}
+.legend-dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+
+/* White-label panel */
+.wl-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border);font-size:12.5px;}
+.wl-row:last-child{border-bottom:none;}
+.wl-row__label{color:var(--text-2);}
+.wl-row__val{color:var(--cream);font-weight:600;display:flex;align-items:center;gap:8px;}
+.swatch{width:16px;height:16px;border-radius:4px;border:1px solid rgba(255,255,255,.2);}
+
+/* Activity feed */
+.feed-row{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);}
+.feed-row:last-child{border-bottom:none;}
+.feed-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);margin-top:5px;flex-shrink:0;}
+.feed-dot.green{background:var(--green-lt);}
+.feed-dot.red{background:var(--red);}
+.feed-dot.blue{background:var(--blue-lt);}
+.feed-text{font-size:12.5px;color:var(--text-2);line-height:1.4;}
+.feed-text strong{color:var(--cream);font-weight:600;}
+.feed-time{font-size:10.5px;color:var(--text-3);margin-top:2px;}
+
+/* Modules grid — all unlocked now */
+.db-modules{display:grid;grid-template-columns:repeat(7,1fr);gap:16px;margin-top:8px;}
+.db-mod{
+  background:rgba(12,18,28,.5);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:20px 10px;text-align:center;cursor:pointer;transition:var(--transition);text-decoration:none;color:inherit;
+  display:flex;flex-direction:column;align-items:center;gap:10px;position:relative;
+}
+.db-mod:hover{border-color:var(--gold);transform:translateY(-4px);background:rgba(200,151,42,.05);box-shadow:var(--shadow-gold);}
+.db-mod__icon{font-size:28px;transition:var(--transition);}
+.db-mod:hover .db-mod__icon{transform:scale(1.05);}
+.db-mod__name{font-size:11.5px;color:var(--text-2);font-weight:500;line-height:1.3;}
+.db-mod__unlock{position:absolute;top:8px;right:8px;font-size:9px;background:rgba(74,184,122,.16);color:var(--green-lt);padding:2px 6px;border-radius:40px;font-weight:700;}
+
+/* Responsive */
+@media (max-width:1300px){.db-stats{grid-template-columns:repeat(3,1fr);}.db-modules{grid-template-columns:repeat(4,1fr);}.db-main3{grid-template-columns:1fr 1fr;}}
+@media (max-width:1050px){.side{position:fixed;left:-260px;z-index:40;transition:left .25s ease;box-shadow:var(--shadow-md);}
+  .side.open{left:0;} .topbar__menu{display:flex !important;}}
+@media (min-width:1051px){.topbar__menu{display:none;}}
+@media (max-width:900px){.db-main{grid-template-columns:1fr;}.db-main3{grid-template-columns:1fr;}.topbar{padding:14px 20px;}.topbar__search{display:none;}.db-shell{padding:22px 20px 60px;}.db-header h1{font-size:26px;}}
+@media (max-width:640px){.db-stats{grid-template-columns:repeat(2,1fr);}.db-modules{grid-template-columns:repeat(3,1fr);}.sec-grid{grid-template-columns:1fr;}.status-strip{flex-direction:column;text-align:center;}}
+@media (max-width:460px){.db-modules{grid-template-columns:repeat(2,1fr);}.db-stat__val{font-size:22px;}}
+
+.db-stat:nth-child(1){animation-delay:.03s;} .db-stat:nth-child(2){animation-delay:.06s;} .db-stat:nth-child(3){animation-delay:.09s;}
+.db-stat:nth-child(4){animation-delay:.12s;} .db-stat:nth-child(5){animation-delay:.15s;} .db-stat:nth-child(6){animation-delay:.18s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px;}
+.topbar__menu{width:38px;height:38px;border-radius:50%;align-items:center;justify-content:center;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text-2);cursor:pointer;font-size:16px;}
+</style>
+</head>
+<body>
+
+<div class="ambient">
+  <div class="ambient__orb ambient__orb--1" style="opacity:.1"></div>
+  <div class="ambient__orb ambient__orb--2" style="opacity:.08"></div>
+</div>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="side" id="side">
+    <div class="side__brand">
+      <span class="side__logo">⬡</span>
+      <span class="side__brandtext">Mwarokin <em>Estates</em></span>
+    </div>
+
+    <div class="side__tier">
+      <div>
+        <div class="side__tier-label">Current Plan</div>
+        <div class="side__tier-name">Milki</div>
+      </div>
+      <span class="side__tier-badge">ALL UNLOCKED</span>
+    </div>
+
+    <div class="side__section-label">Overview</div>
+    <ul class="side__nav">
+      <li><a class="side__link" href="TrackRent.html"><span class="ic">🏠</span>Rent Tracking</a></li>
+      <li><a class="side__link" href="Tenant Management Dashboard.html"><span class="ic">👥</span>Tenant Management Dashboard</a></li>
+      <li><a class="side__link" href="Staff-ID.html"><span class="ic">🧑‍🔧</span>Staff-ID</a></li>
+      <li><a class="side__link" href="Keys & Locks.html"><span class="ic">🔑</span>Keys</a></li> 
+      <li><a class="side__link" href="CareTakers.html"><span class="ic">🧑‍🔧</span>Caretaker</a></li>
+      
+       <li><a class="side__link" href="Construction.html"><span class="ic">🏠</span>Construction</a></li>
+      <li><a class="side__link" href="Tenant Management oviewview.html"><span class="ic">👥</span>Tenant Management oviewview</a></li>
+    </ul>
+
+    <div class="side__section-label">Money</div>
+    <ul class="side__nav">
+      <li><a class="side__link" href="LipaMdogo.html"><span class="ic">💰</span>Lipa Mdogo</a></li>
+      <li><a class="side__link" href="Kra eTIMS.html"><span class="ic">🧾</span>Kra e-TIMS</a></li>
+      <li><a class="side__link" href="KRA Tax Calculator.html"><span class="ic">🧾</span>KRA Tax Calculator</a></li>
+      <li><a class="side__link" href="Financial Dashboard.html"><span class="ic">📊</span>Financial Dashboard</a></li>
+      <li><a class="side__link" href="Water Management.html"><span class="ic">💧</span>Water Management</a></li>
+    </ul>
+
+    <div class="side__section-label">Milki Exclusive</div>
+    <ul class="side__nav">
+      <li><a class="side__link" href="Gate Security QR Code For Guest Prompt.html"><span class="ic">🔒</span>Security Management<span class="tag">NEW</span></a></li>
+      <li><a class="side__link" href="White-Labeling.html"><span class="ic">🏷️</span>White-Label Branding<span class="tag">NEW</span></a></li>
+      <li><a class="side__link" href="Unmapped.html"><span class="ic">🗺️</span>Unmapped Areas<span class="tag">NEW</span></a></li>
+      <li><a class="side__link" href="Service Professionals.html"><span class="ic">🧑‍🔧</span>Service Professionals</a></li>
+      <li><a class="side__link" href="Affiliated Programs.html"><span class="ic">🤝</span>Affiliated Programs</a></li>
+      <li><a class="side__link" href="Upgrade&DowngradeRelocation.html"><span class="ic">📦</span>Relocation Desk</a></li>
+    </ul>
+
+    <div class="side__section-label">Account</div>
+    <ul class="side__nav">
+      <li><a class="side__link" href="subscription.html"><span class="ic">📦</span>Plan & Billing</a></li>
+      <li><a class="side__link" href="Settings.html"><span class="ic">⚙️</span>Settings</a></li>
+    </ul>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <div class="topbar">
+      <div class="topbar__menu" id="menuBtn">☰</div>
+      <div class="topbar__search">🔍 <input type="text" placeholder="Search units, tenants, invoices…" /></div>
+      <div class="topbar__spacer"></div>
+      <div class="topbar__icon-btn">🔔<span class="topbar__dot"></span></div>
+      <div class="topbar__icon-btn">✉️</div>
+      <div class="topbar__profile">
+        <div class="topbar__avatar">RM</div>
+        <div class="topbar__who"><strong>Mwarokin</strong><span>Milki Plan Owner</span></div>
+      </div>
+    </div>
+
+    <div class="db-shell">
+
+      <div class="db-header">
+        <div>
+          <h1>Good morning, <em>Mwarokin 👋</em></h1>
+          <p>Here's what's happening across your portfolio today.</p>
+        </div>
+        <div class="db-plan-badge">👑 Milki Plan · 250 Unit Capacity</div>
+      </div>
+
+      <div class="status-strip">
+        <span class="status-strip__icon">✅</span>
+        <div class="status-strip__text"><strong>All features unlocked.</strong> Security management, white-label branding, unmapped-area mapping and every module below are now fully active on your account — no further upgrade needed.</div>
+        <a href="subscription.html" class="btn btn--outline" style="font-size:12px;padding:8px 18px">Manage Plan</a>
+      </div>
+
+      <!-- STATS -->
+      <div class="db-stats">
+        <div class="db-stat">
+          <div class="db-stat__label">Total Units</div>
+          <div class="db-stat__val">86</div>
+          <div class="db-stat__trend trend-up">↑ 9 this month</div>
+        </div>
+        <div class="db-stat">
+          <div class="db-stat__label">Rent Collected</div>
+          <div class="db-stat__val">KSH 612K</div>
+          <div class="db-stat__trend trend-up">↑ 14% vs last month</div>
+        </div>
+        <div class="db-stat">
+          <div class="db-stat__label">Arrears</div>
+          <div class="db-stat__val">KSH 41K</div>
+          <div class="db-stat__trend trend-dn">3 tenants late</div>
+        </div>
+        <div class="db-stat">
+          <div class="db-stat__label">Lipa Mdogo Active</div>
+          <div class="db-stat__val">19</div>
+          <div class="db-stat__trend trend-up">KSH 318K tracked</div>
+        </div>
+        <div class="db-stat">
+          <div class="db-stat__label">Vacant Units</div>
+          <div class="db-stat__val">6</div>
+          <div class="db-stat__trend">4 viewings scheduled</div>
+        </div>
+        <div class="db-stat">
+          <div class="db-stat__label">Security Alerts</div>
+          <div class="db-stat__val">0</div>
+          <div class="db-stat__trend trend-up">All zones clear</div>
+        </div>
+      </div>
+
+      <!-- MAIN GRID -->
+      <div class="db-main">
+        <div class="db-card">
+          <div class="db-card__title">Monthly Rent Collection <span class="db-card__badge">Last 6 Months</span></div>
+          <div class="bar-chart">
+            <div class="bar-col"><div class="bar" style="height:58%"></div><div class="bar-lbl">Jan</div><div class="bar-val">184K</div></div>
+            <div class="bar-col"><div class="bar" style="height:50%"></div><div class="bar-lbl">Feb</div><div class="bar-val">162K</div></div>
+            <div class="bar-col"><div class="bar" style="height:62%"></div><div class="bar-lbl">Mar</div><div class="bar-val">198K</div></div>
+            <div class="bar-col"><div class="bar low" style="height:44%"></div><div class="bar-lbl">Apr</div><div class="bar-val">142K</div></div>
+            <div class="bar-col"><div class="bar" style="height:78%"></div><div class="bar-lbl">May</div><div class="bar-val">245K</div></div>
+            <div class="bar-col"><div class="bar" style="height:100%"></div><div class="bar-lbl">Jun</div><div class="bar-val">612K</div></div>
+          </div>
+          <div style="margin-top:16px;display:flex;gap:16px;font-size:11px;color:var(--text-3)">
+            <span>● Collected</span><span style="color:var(--green-lt)">● Low months</span>
+          </div>
+        </div>
+
+        <div class="db-card">
+          <div class="db-card__title">KRA Tax Summary <span class="db-card__badge">2026 FY</span></div>
+          <div class="kra-quick">
+            <div class="kra-q-item"><div class="kra-q-label">Annual Rent</div><div class="kra-q-val">3.6M</div></div>
+            <div class="kra-q-item"><div class="kra-q-label">Expenses</div><div class="kra-q-val">360K</div></div>
+            <div class="kra-q-item"><div class="kra-q-label">Net Taxable</div><div class="kra-q-val">3.24M</div></div>
+            <div class="kra-q-item"><div class="kra-q-label">Tax Due (15%)</div><div class="kra-q-val tax">486K</div></div>
+          </div>
+          <a href="#" class="btn btn--outline" style="width:100%;text-align:center;margin-top:14px;font-size:12px;padding:8px">Download PDF Report</a>
+        </div>
+      </div>
+
+      <!-- ROW 2: tenants + lipa mdogo -->
+      <div class="db-main">
+        <div class="db-card">
+          <div class="db-card__title">Recent Tenants <span class="db-card__badge">86 Active</span></div>
+          <div class="tenant-row"><div class="tenant-avatar">👩</div><div class="tenant-name">Amina Wanjiku</div><div class="tenant-unit">Unit 4B</div><span class="tenant-status ts-lipa">Lipa Mdogo</span></div>
+          <div class="tenant-row"><div class="tenant-avatar">👨</div><div class="tenant-name">James Otieno</div><div class="tenant-unit">Unit 1A</div><span class="tenant-status ts-paid">Paid</span></div>
+          <div class="tenant-row"><div class="tenant-avatar">👩</div><div class="tenant-name">Grace Muthoni</div><div class="tenant-unit">Unit 7C</div><span class="tenant-status ts-late">Overdue</span></div>
+          <div class="tenant-row"><div class="tenant-avatar">👨</div><div class="tenant-name">Peter Kamau</div><div class="tenant-unit">Unit 2F</div><span class="tenant-status ts-paid">Paid</span></div>
+          <div class="tenant-row"><div class="tenant-avatar">👩</div><div class="tenant-name">Fatuma Hassan</div><div class="tenant-unit">Unit 9A</div><span class="tenant-status ts-due">Due Soon</span></div>
+        </div>
+
+        <div class="db-card">
+          <div class="db-card__title">Lipa Mdogo Tracker <span class="db-card__badge">19 Active</span></div>
+          <div class="lipa-mini-row"><div class="lipa-mini-name">Amina W. · 4B</div><div class="lipa-mini-bar"><div class="lipa-mini-fill" style="width:40%"></div></div><div class="lipa-mini-pct">40%</div></div>
+          <div class="lipa-mini-row"><div class="lipa-mini-name">John M. · 3C</div><div class="lipa-mini-bar"><div class="lipa-mini-fill" style="width:75%"></div></div><div class="lipa-mini-pct">75%</div></div>
+          <div class="lipa-mini-row"><div class="lipa-mini-name">Mary K. · 6D</div><div class="lipa-mini-bar"><div class="lipa-mini-fill" style="width:20%"></div></div><div class="lipa-mini-pct">20%</div></div>
+          <div class="lipa-mini-row"><div class="lipa-mini-name">Ali H. · 8B</div><div class="lipa-mini-bar"><div class="lipa-mini-fill" style="width:90%"></div></div><div class="lipa-mini-pct">90%</div></div>
+          <div class="lipa-mini-row"><div class="lipa-mini-name">Rose O. · 2A</div><div class="lipa-mini-bar"><div class="lipa-mini-fill" style="width:55%"></div></div><div class="lipa-mini-pct">55%</div></div>
+          <a href="plans.html" class="btn btn--outline" style="width:100%;text-align:center;margin-top:14px;font-size:12px;padding:8px">View All Plans</a>
+        </div>
+      </div>
+
+      <!-- ROW 3: Milki-exclusive: Security, White-label, Unmapped areas -->
+      <div class="db-main3">
+        <div class="db-card">
+          <div class="db-card__title">Security Management <span class="db-card__badge live">● Live · Milki</span></div>
+          <div class="sec-grid">
+            <div class="sec-item"><div class="sec-item__top"><span class="sec-item__label">Main Gate</span><span class="sec-dot"></span></div><div class="sec-item__sub">Access log synced 2m ago</div></div>
+            <div class="sec-item"><div class="sec-item__top"><span class="sec-item__label">CCTV Block A</span><span class="sec-dot"></span></div><div class="sec-item__sub">12 cameras online</div></div>
+            <div class="sec-item"><div class="sec-item__top"><span class="sec-item__label">CCTV Block B</span><span class="sec-dot warn"></span></div><div class="sec-item__sub">1 camera offline — Unit 6</div></div>
+            <div class="sec-item"><div class="sec-item__top"><span class="sec-item__label">Night Patrol</span><span class="sec-dot"></span></div><div class="sec-item__sub">On duty · Wanyama K.</div></div>
+          </div>
+          <a href="#" class="btn btn--outline" style="width:100%;text-align:center;margin-top:14px;font-size:12px;padding:8px">Open Security Console</a>
+        </div>
+
+        <div class="db-card">
+          <div class="db-card__title">White-Label Branding <span class="db-card__badge live">● Active · Milki</span></div>
+          <div class="wl-row"><span class="wl-row__label">Tenant portal domain</span><span class="wl-row__val">app.mwarokinestates.co.ke</span></div>
+          <div class="wl-row"><span class="wl-row__label">Primary brand colour</span><span class="wl-row__val"><span class="swatch" style="background:#c8972a"></span>#C8972A</span></div>
+          <div class="wl-row"><span class="wl-row__label">Logo on receipts</span><span class="wl-row__val">Enabled</span></div>
+          <div class="wl-row"><span class="wl-row__label">SMS sender ID</span><span class="wl-row__val">MWAROKIN</span></div>
+          <a href="#" class="btn btn--outline" style="width:100%;text-align:center;margin-top:14px;font-size:12px;padding:8px">Edit Branding</a>
+        </div>
+
+        <div class="db-card">
+          <div class="db-card__title">Unmapped Areas <span class="db-card__badge live">● Milki</span></div>
+          <div class="map-shell">
+            <div class="map-pin" style="top:38%;left:28%"></div>
+            <div class="map-pin" style="top:60%;left:52%"></div>
+            <div class="map-pin new" style="top:24%;left:68%"></div>
+            <div class="map-pin new" style="top:74%;left:20%"></div>
+          </div>
+          <div class="map-legend">
+            <span><span class="legend-dot" style="background:var(--gold)"></span>Mapped block</span>
+            <span><span class="legend-dot" style="background:var(--green-lt)"></span>Newly surveyed</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity feed + module launch -->
+      <div class="db-main" style="grid-template-columns:1fr 2fr;">
+        <div class="db-card">
+          <div class="db-card__title">Activity Feed</div>
+          <div class="feed-row"><span class="feed-dot green"></span><div><div class="feed-text"><strong>James Otieno</strong> paid rent for Unit 1A</div><div class="feed-time">12 minutes ago</div></div></div>
+          <div class="feed-row"><span class="feed-dot"></span><div><div class="feed-text">New Lipa Mdogo plan started by <strong>Rose O.</strong></div><div class="feed-time">1 hour ago</div></div></div>
+          <div class="feed-row"><span class="feed-dot blue"></span><div><div class="feed-text">White-label domain verified for <strong>app.mwarokinestates.co.ke</strong></div><div class="feed-time">3 hours ago</div></div></div>
+          <div class="feed-row"><span class="feed-dot red"></span><div><div class="feed-text">CCTV camera offline in <strong>Block B, Unit 6</strong></div><div class="feed-time">5 hours ago</div></div></div>
+          <div class="feed-row"><span class="feed-dot"></span><div><div class="feed-text">Waste collection scheduled for <strong>Thursday</strong></div><div class="feed-time">Yesterday</div></div></div>
+        </div>
+
+        <div class="db-card">
+          <div class="db-card__title">Quick Launch <span class="db-card__badge live">All modules unlocked</span></div>
+          <div class="db-modules">
+            <a class="db-mod" href="#"><div class="db-mod__icon">🏠</div><div class="db-mod__name">Rent Dashboard</div></a>
+            <a class="db-mod" href="#"><div class="db-mod__icon">👥</div><div class="db-mod__name">Tenant Mgmt</div></a>
+            <a class="db-mod" href="plans.html"><div class="db-mod__icon">💰</div><div class="db-mod__name">Lipa Mdogo</div></a>
+            <a class="db-mod" href="#"><div class="db-mod__icon">🔑</div><div class="db-mod__name">Caretaker</div></a>
+            <a class="db-mod" href="#"><div class="db-mod__icon">🏗️</div><div class="db-mod__name">Vacancies</div></a>
+            <a class="db-mod" href="#"><div class="db-mod__icon">🅿️</div><div class="db-mod__name">Parking</div></a>
+            <a class="db-mod" href="#"><div class="db-mod__icon">🔧</div><div class="db-mod__name">Renovations</div></a>
+            <a class="db-mod" href="#"><div class="db-mod__icon">📅</div><div class="db-mod__name">Schedule View</div></a>
+            <a class="db-mod" href="#"><div class="db-mod__icon">💧</div><div class="db-mod__name">Water/Trash</div></a>
+            <a class="db-mod" href="#"><div class="db-mod__icon">🧾</div><div class="db-mod__name">KRA Tax</div></a>
+            <a class="db-mod" href="#"><div class="db-mod__icon">🔒</div><div class="db-mod__name">Security<span class="db-mod__unlock">✓</span></div></a>
+            <a class="db-mod" href="#"><div class="db-mod__icon">🏷️</div><div class="db-mod__name">White-Label<span class="db-mod__unlock">✓</span></div></a>
+            <a class="db-mod" href="#"><div class="db-mod__icon">🗺️</div><div class="db-mod__name">Unmapped Areas<span class="db-mod__unlock">✓</span></div></a>
+            <a class="db-mod" href="#"><div class="db-mod__icon">🧑‍🔧</div><div class="db-mod__name">Service Pros</div></a>
+            <a class="db-mod" href="#"><div class="db-mod__icon">🤝</div><div class="db-mod__name">Affiliated Programs</div></a>
+            <a class="db-mod" href="#"><div class="db-mod__icon">📦</div><div class="db-mod__name">Relocation Desk</div></a>
+            <a class="db-mod" href="#"><div class="db-mod__icon">📊</div><div class="db-mod__name">Full Reports</div></a>
+            <a class="db-mod" href="subscription.html"><div class="db-mod__icon">⚙️</div><div class="db-mod__name">Plan Settings</div></a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const menuBtn = document.getElementById('menuBtn');
+  const side = document.getElementById('side');
+  if (menuBtn) {
+    menuBtn.addEventListener('click', () => side.classList.toggle('open'));
+  }
+</script>
+</body>
+</html>

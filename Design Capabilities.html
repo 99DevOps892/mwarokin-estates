@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mwarokin Estates — Architectural Design Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+  :root{
+    --ink:#14120F;
+    --ink-2:#1C1814;
+    --panel:#211D18;
+    --panel-raised:#2A241D;
+    --line: rgba(241,234,224,0.09);
+    --line-strong: rgba(241,234,224,0.16);
+    --terracotta:#C1622B;
+    --terracotta-bright:#D97A42;
+    --brass:#C9A15A;
+    --brass-dim:#8E7742;
+    --paper:#F1EAE0;
+    --paper-dim:#A99C8E;
+    --paper-faint:#756A5D;
+    --radius-s:4px;
+    --radius-m:10px;
+    --ease: cubic-bezier(.2,.7,.2,1);
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:
+      radial-gradient(1200px 600px at 85% -10%, rgba(193,98,43,0.10), transparent 60%),
+      var(--ink);
+    color:var(--paper);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  a{color:inherit;}
+
+  ::selection{background:var(--terracotta); color:var(--ink);}
+
+  .mono{
+    font-family:'JetBrains Mono', monospace;
+    letter-spacing:0.04em;
+  }
+
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--brass);
+    display:flex;
+    align-items:center;
+    gap:0.6rem;
+  }
+  .eyebrow::before{
+    content:'';
+    width:22px;
+    height:1px;
+    background:var(--brass-dim);
+    display:inline-block;
+  }
+
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    color:var(--paper);
+    line-height:1.08;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:1000;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:1.1rem 2.4rem;
+    background:rgba(20,18,15,0.86);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+
+  .logo{
+    display:flex;
+    align-items:center;
+    gap:0.75rem;
+    text-decoration:none;
+  }
+  .logo-mark{
+    width:34px; height:34px;
+    border:1.5px solid var(--brass);
+    border-radius:2px;
+    position:relative;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .logo-mark svg{width:18px;height:18px;display:block;}
+  .logo-word{
+    font-family:'Fraunces', serif;
+    font-size:1.08rem;
+    font-weight:600;
+    letter-spacing:0.01em;
+    color:var(--paper);
+  }
+  .logo-word span{color:var(--terracotta-bright);}
+
+  nav ul{
+    display:flex;
+    list-style:none;
+    gap:2.4rem;
+  }
+  nav a{
+    text-decoration:none;
+    font-size:0.88rem;
+    font-weight:500;
+    color:var(--paper-dim);
+    transition:color 0.25s var(--ease);
+    position:relative;
+  }
+  nav a:hover{color:var(--paper);}
+  nav a::after{
+    content:'';
+    position:absolute;
+    bottom:-8px; left:0;
+    width:0; height:1px;
+    background:var(--terracotta-bright);
+    transition:width 0.25s var(--ease);
+  }
+  nav a:hover::after{width:100%;}
+
+  .btn{
+    font-family:'Inter',sans-serif;
+    font-size:0.85rem;
+    font-weight:600;
+    border-radius:2px;
+    padding:0.75rem 1.5rem;
+    cursor:pointer;
+    border:1px solid transparent;
+    transition:all 0.25s var(--ease);
+    letter-spacing:0.01em;
+  }
+  .btn-primary{
+    background:var(--terracotta);
+    color:#180C05;
+  }
+  .btn-primary:hover{
+    background:var(--terracotta-bright);
+    transform:translateY(-2px);
+    box-shadow:0 10px 24px rgba(193,98,43,0.28);
+  }
+  .btn-ghost{
+    background:transparent;
+    border-color:var(--line-strong);
+    color:var(--paper);
+  }
+  .btn-ghost:hover{
+    border-color:var(--brass);
+    color:var(--brass);
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    min-height:100vh;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    align-items:center;
+    gap:3rem;
+    padding:8rem 2.4rem 4rem;
+    max-width:1440px;
+    margin:0 auto;
+  }
+
+  .hero-copy{max-width:560px;}
+
+  .hero h1{
+    font-size:3.4rem;
+    margin:1.1rem 0 1.4rem;
+  }
+  .hero h1 em{
+    font-style:italic;
+    color:var(--terracotta-bright);
+  }
+
+  .hero p{
+    font-size:1.06rem;
+    line-height:1.7;
+    color:var(--paper-dim);
+    margin-bottom:2.2rem;
+    max-width:480px;
+  }
+
+  .hero-buttons{
+    display:flex;
+    gap:1rem;
+    margin-bottom:2.6rem;
+  }
+
+  .hero-stats{
+    display:flex;
+    gap:2.2rem;
+    padding-top:1.6rem;
+    border-top:1px solid var(--line);
+  }
+  .hero-stats div span{
+    display:block;
+    font-family:'Fraunces',serif;
+    font-size:1.5rem;
+    color:var(--paper);
+  }
+  .hero-stats div small{
+    font-size:0.72rem;
+    color:var(--paper-faint);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+  }
+
+  .hero-visual{
+    position:relative;
+    aspect-ratio:1/1;
+    border:1px solid var(--line-strong);
+    border-radius:var(--radius-m);
+    background:
+      linear-gradient(var(--line) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0/28px 28px,
+      var(--ink-2);
+    overflow:hidden;
+  }
+  .frame-corner{
+    position:absolute;
+    width:22px; height:22px;
+    border:1.5px solid var(--brass);
+    z-index:5;
+    pointer-events:none;
+  }
+  .frame-corner.tl{top:14px; left:14px; border-right:none; border-bottom:none;}
+  .frame-corner.tr{top:14px; right:14px; border-left:none; border-bottom:none;}
+  .frame-corner.bl{bottom:14px; left:14px; border-right:none; border-top:none;}
+  .frame-corner.br{bottom:14px; right:14px; border-left:none; border-top:none;}
+
+  .frame-tag{
+    position:absolute;
+    top:16px; left:44px;
+    font-size:0.68rem;
+    color:var(--paper-faint);
+    z-index:5;
+  }
+  .frame-tag.coords{
+    left:auto; right:44px; top:16px; text-align:right;
+  }
+
+  #hero-canvas{width:100%; height:100%;}
+
+  /* ---------- Section shell ---------- */
+  section{padding:6.5rem 2.4rem;}
+  .shell{max-width:1200px; margin:0 auto;}
+
+  .section-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:2rem;
+    margin-bottom:3.4rem;
+    flex-wrap:wrap;
+  }
+  .section-head h2{font-size:2.2rem; margin-top:0.7rem; max-width:520px;}
+  .section-head p{color:var(--paper-dim); max-width:380px; line-height:1.6; font-size:0.95rem;}
+
+  /* ---------- Capabilities ---------- */
+  .capabilities{background:var(--ink-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .cap-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  .cap-card{
+    background:var(--ink-2);
+    padding:2.4rem 2rem;
+    transition:background 0.25s var(--ease);
+  }
+  .cap-card:hover{background:var(--panel);}
+  .cap-index{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.72rem;
+    color:var(--terracotta-bright);
+    margin-bottom:1.4rem;
+    display:block;
+  }
+  .cap-icon{
+    width:38px; height:38px;
+    margin-bottom:1.2rem;
+    color:var(--brass);
+  }
+  .cap-icon svg{width:100%;height:100%;}
+  .cap-card h3{
+    font-size:1.15rem;
+    margin-bottom:0.7rem;
+    font-weight:600;
+  }
+  .cap-card p{
+    color:var(--paper-dim);
+    font-size:0.9rem;
+    line-height:1.6;
+  }
+
+  /* ---------- Studio (interactive) ---------- */
+  .studio-head{margin-bottom:2.6rem;}
+
+  .studio-grid{
+    display:grid;
+    grid-template-columns:280px 1fr;
+    gap:1.6rem;
+  }
+
+  .tools-panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius-m);
+    padding:1.6rem;
+    height:fit-content;
+  }
+  .tools-panel h4.panel-title{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.7rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--paper-faint);
+    margin-bottom:1.4rem;
+  }
+  .tool-category{margin-bottom:1.8rem;}
+  .tool-category:last-of-type{margin-bottom:1.4rem;}
+  .tool-category h5{
+    font-size:0.82rem;
+    font-weight:600;
+    color:var(--paper);
+    margin-bottom:0.8rem;
+  }
+  .tool-options{display:flex; flex-wrap:wrap; gap:0.5rem;}
+  .tool-option{
+    background:var(--ink-2);
+    border:1px solid var(--line-strong);
+    border-radius:var(--radius-s);
+    padding:0.5rem 0.85rem;
+    font-size:0.8rem;
+    cursor:pointer;
+    color:var(--paper-dim);
+    transition:all 0.2s var(--ease);
+  }
+  .tool-option:hover{border-color:var(--brass); color:var(--paper);}
+  .tool-option.active{
+    background:var(--terracotta);
+    border-color:var(--terracotta);
+    color:#180C05;
+    font-weight:600;
+  }
+  .swatch{
+    width:15px; height:15px;
+    border-radius:50%;
+    display:inline-block;
+    margin-right:0.4rem;
+    vertical-align:-2px;
+    border:1px solid rgba(0,0,0,0.2);
+  }
+
+  .canvas-wrap{
+    background:var(--ink-2);
+    border:1px solid var(--line);
+    border-radius:var(--radius-m);
+    overflow:hidden;
+  }
+  .design-canvas-container{
+    position:relative;
+    height:620px;
+    background:
+      linear-gradient(var(--line) 1px, transparent 1px) 0 0/32px 32px,
+      linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0/32px 32px,
+      var(--ink-2);
+  }
+  #design-canvas{width:100%; height:100%;}
+
+  .view-controls{
+    position:absolute;
+    bottom:18px; left:18px;
+    display:flex;
+    gap:0.5rem;
+    z-index:10;
+  }
+  .view-btn{
+    background:rgba(20,18,15,0.82);
+    backdrop-filter:blur(6px);
+    color:var(--paper-dim);
+    border:1px solid var(--line-strong);
+    padding:0.6rem 1rem;
+    border-radius:var(--radius-s);
+    font-size:0.78rem;
+    cursor:pointer;
+    transition:all 0.2s var(--ease);
+  }
+  .view-btn:hover{color:var(--paper); border-color:var(--brass);}
+  .view-btn.active{background:var(--brass); color:#180C05; border-color:var(--brass); font-weight:600;}
+
+  .controls-info{
+    position:absolute;
+    top:18px; right:18px;
+    background:rgba(20,18,15,0.82);
+    backdrop-filter:blur(6px);
+    padding:0.85rem 1rem;
+    border-radius:var(--radius-s);
+    font-size:0.74rem;
+    color:var(--paper-faint);
+    border:1px solid var(--line-strong);
+    line-height:1.6;
+  }
+  .controls-info strong{color:var(--brass); font-weight:600;}
+
+  .spec-strip{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0.9rem 1.4rem;
+    border-top:1px solid var(--line);
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.75rem;
+    color:var(--paper-faint);
+    flex-wrap:wrap;
+    gap:0.6rem;
+  }
+  .spec-strip span b{color:var(--brass); font-weight:500;}
+  .reset-link{
+    background:none; border:none;
+    color:var(--paper-faint);
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.75rem;
+    cursor:pointer;
+    text-decoration:underline;
+    text-underline-offset:3px;
+  }
+  .reset-link:hover{color:var(--terracotta-bright);}
+
+  /* ---------- Footer ---------- */
+  footer{
+    background:var(--ink-2);
+    border-top:1px solid var(--line);
+    padding:4.5rem 2.4rem 2rem;
+  }
+  .footer-grid{
+    max-width:1200px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:1.4fr 1fr 1fr 1fr;
+    gap:3rem;
+  }
+  .footer-col h3{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.72rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--brass);
+    margin-bottom:1.3rem;
+    font-weight:500;
+  }
+  .footer-col p{color:var(--paper-dim); font-size:0.88rem; line-height:1.65; max-width:280px;}
+  .footer-col ul{list-style:none;}
+  .footer-col li{margin-bottom:0.7rem;}
+  .footer-col a{
+    color:var(--paper-dim);
+    text-decoration:none;
+    font-size:0.88rem;
+    transition:color 0.2s var(--ease);
+  }
+  .footer-col a:hover{color:var(--paper);}
+  .copyright{
+    max-width:1200px;
+    margin:3.5rem auto 0;
+    padding-top:1.8rem;
+    border-top:1px solid var(--line);
+    color:var(--paper-faint);
+    font-size:0.8rem;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+  }
+
+  @media (max-width:1024px){
+    .hero{grid-template-columns:1fr; padding-top:7.5rem;}
+    .hero-visual{aspect-ratio:4/3;}
+    .studio-grid{grid-template-columns:1fr;}
+    .cap-grid{grid-template-columns:1fr 1fr;}
+    .footer-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media (max-width:768px){
+    nav{display:none;}
+    header{padding:1rem 1.4rem;}
+    .hero{padding:6.5rem 1.4rem 3rem;}
+    .hero h1{font-size:2.3rem;}
+    section{padding:4rem 1.4rem;}
+    .cap-grid{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:1fr;}
+    .design-canvas-container{height:440px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="#home" class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#C9A15A" stroke-width="1.4">
+        <path d="M3 12 L12 4 L21 12" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M6 11 V20 H18 V11" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <span class="logo-word">Mwarokin <span>Estates</span></span>
+  </a>
+  <nav>
+    <ul>
+      <li><a href="#home">Home</a></li>
+      <li><a href="#capabilities">Capabilities</a></li>
+      <li><a href="#studio">Studio</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+  <button class="btn btn-primary">Book a design session</button>
+</header>
+
+<section class="hero" id="home">
+  <div class="hero-copy">
+    <div class="eyebrow">NAIROBI, KENYA — 1°17'S 36°49'E</div>
+    <h1>Draft the home<br>Nairobi hasn't<br>built <em>yet.</em></h1>
+    <p>Mwarokin Estates gives architects, contractors and homeowners a shared drafting table — real-time 3D massing, true-to-material rendering, and light studies, built for the way East African homes are actually designed and signed off.</p>
+    <div class="hero-buttons">
+      <button class="btn btn-primary">Start free trial</button>
+      <button class="btn btn-ghost" id="watchBtn">See the studio</button>
+    </div>
+    <div class="hero-stats">
+      <div><span>2,400+</span><small>Plots drafted</small></div>
+      <div><span>18</span><small>Material presets</small></div>
+      <div><span>4.9/5</span><small>Studio rating</small></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="frame-corner tl"></div>
+    <div class="frame-corner tr"></div>
+    <div class="frame-corner bl"></div>
+    <div class="frame-corner br"></div>
+    <div class="frame-tag mono">MSINGI-01 / MASSING</div>
+    <div class="frame-tag coords mono">SCALE 1:120</div>
+    <div id="hero-canvas"></div>
+  </div>
+</section>
+
+<section class="capabilities" id="capabilities">
+  <div class="shell">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">The studio toolkit</div>
+        <h2>Everything a drafting table does — without the tracing paper.</h2>
+      </div>
+      <p>Each tool is built around a real step in getting a plot approved and built, from first massing to the final material spec sheet.</p>
+    </div>
+    <div class="cap-grid">
+      <div class="cap-card">
+        <span class="cap-index mono">01</span>
+        <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 9 L12 3 L21 9 M5 9 V20 H19 V9 M9 20 V13 H15 V20"/></svg></div>
+        <h3>Immersive massing</h3>
+        <p>Rotate, zoom and walk a plot in real 3D with photoreal shadow falloff, so a client sees the house before the first block is laid.</p>
+      </div>
+      <div class="cap-card">
+        <span class="cap-index mono">02</span>
+        <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 20 L20 4 M4 4 L8 4 L4 8 Z M16 20 L20 20 L20 16 Z M4 20 L4 16 M20 4 L20 8"/></svg></div>
+        <h3>Precision drafting</h3>
+        <p>Every wall, opening and roof pitch is dimensioned to spec, so what you approve on screen matches what the contractor builds on site.</p>
+      </div>
+      <div class="cap-card">
+        <span class="cap-index mono">03</span>
+        <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="12" r="4"/><path d="M12 2 V5 M12 19 V22 M2 12 H5 M19 12 H22 M4.9 4.9 L7 7 M17 17 L19.1 19.1 M19.1 4.9 L17 7 M7 17 L4.9 19.1"/></svg></div>
+        <h3>Light studies</h3>
+        <p>Preview a plot at 7am and 5pm equatorial sun to check glare, shading and where the veranda actually stays cool.</p>
+      </div>
+      <div class="cap-card">
+        <span class="cap-index mono">04</span>
+        <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 4 H20 V20 H4 Z M4 10 H20 M10 10 V20"/></svg></div>
+        <h3>Material library</h3>
+        <p>Swap between murram brick, coral stone, cedar and glass presets calibrated against real Kenyan suppliers, not generic renders.</p>
+      </div>
+      <div class="cap-card">
+        <span class="cap-index mono">05</span>
+        <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M13 2 L4 14 H11 L10 22 L20 9 H13 Z"/></svg></div>
+        <h3>Live iteration</h3>
+        <p>Change a material or footprint and the whole massing updates in the same frame — no re-export, no waiting on a render queue.</p>
+      </div>
+      <div class="cap-card">
+        <span class="cap-index mono">06</span>
+        <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="7" cy="7" r="3"/><circle cx="17" cy="7" r="3"/><circle cx="12" cy="18" r="3"/><path d="M7 10 V13 M17 10 V13 M9.5 16 L10.5 15 M14.5 16 L13.5 15"/></svg></div>
+        <h3>Shared review</h3>
+        <p>Architect, contractor and homeowner mark up the same model live — comments stay pinned to the wall or window they're about.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="studio">
+  <div class="shell">
+    <div class="section-head studio-head">
+      <div>
+        <div class="eyebrow">Try it now</div>
+        <h2>The drafting table, in your browser.</h2>
+      </div>
+      <p>Pick a structure, change the material, and see it settle into the model below — this is the same canvas the full studio runs on.</p>
+    </div>
+
+    <div class="studio-grid">
+      <div class="tools-panel">
+        <h4 class="panel-title">Design tools</h4>
+        <div class="tool-category">
+          <h5>Structure</h5>
+          <div class="tool-options">
+            <div class="tool-option active" data-type="house">House</div>
+            <div class="tool-option" data-type="room">Room</div>
+            <div class="tool-option" data-type="floor">Floor plate</div>
+          </div>
+        </div>
+        <div class="tool-category">
+          <h5>Material</h5>
+          <div class="tool-options">
+            <div class="tool-option active" data-material="wood">Cedar</div>
+            <div class="tool-option" data-material="concrete">Concrete</div>
+            <div class="tool-option" data-material="glass">Glass</div>
+            <div class="tool-option" data-material="metal">Steel</div>
+            <div class="tool-option" data-material="brick">Murram brick</div>
+          </div>
+        </div>
+        <div class="tool-category">
+          <h5>Finish tone</h5>
+          <div class="tool-options">
+            <div class="tool-option" data-color="#EDE6DA"><span class="swatch" style="background:#EDE6DA"></span>Chalk</div>
+            <div class="tool-option" data-color="#8B5A34"><span class="swatch" style="background:#8B5A34"></span>Cedar</div>
+            <div class="tool-option" data-color="#6E6459"><span class="swatch" style="background:#6E6459"></span>Slate</div>
+            <div class="tool-option" data-color="#A23E1E"><span class="swatch" style="background:#A23E1E"></span>Murram</div>
+          </div>
+        </div>
+        <button class="btn btn-ghost reset-link" id="resetBtn" style="width:100%; text-decoration:none; text-align:center;">Reset scene</button>
+      </div>
+
+      <div class="canvas-wrap">
+        <div class="design-canvas-container">
+          <div id="design-canvas"></div>
+          <div class="view-controls">
+            <button class="view-btn active" data-view="perspective">3D view</button>
+            <button class="view-btn" data-view="top">Top view</button>
+            <button class="view-btn" data-view="front">Front view</button>
+          </div>
+          <div class="controls-info">
+            <strong>Controls</strong><br>
+            Drag to rotate · Scroll to zoom
+          </div>
+        </div>
+        <div class="spec-strip mono">
+          <span>STRUCTURE: <b id="specType">House</b></span>
+          <span>MATERIAL: <b id="specMaterial">Cedar</b></span>
+          <span>FOOTPRINT: <b id="specFootprint">36 m²</b></span>
+          <span>STATUS: <b id="specStatus">Rotating</b></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h3>Mwarokin Estates</h3>
+      <p>A drafting studio for East African homes — from first massing to the material spec sheet a contractor can build from.</p>
+    </div>
+    <div class="footer-col">
+      <h3>Studio</h3>
+      <ul>
+        <li><a href="#">Home design</a></li>
+        <li><a href="#">Commercial design</a></li>
+        <li><a href="#">Rendering</a></li>
+        <li><a href="#">Floor plans</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Resources</h3>
+      <ul>
+        <li><a href="#">Documentation</a></li>
+        <li><a href="#">Tutorials</a></li>
+        <li><a href="#">Journal</a></li>
+        <li><a href="#">Support</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Company</h3>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">Partners</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="copyright mono">MWAROKIN ESTATES — DESIGN STUDIO · © 2026 · POWERED BY SYLLOGISM TECHNOLOGY AFRICA</div>
+</footer>
+
+<script>
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function initHeroScene(){
+  const container = document.getElementById('hero-canvas');
+  const scene = new THREE.Scene();
+  scene.background = null;
+  const camera = new THREE.PerspectiveCamera(45, container.clientWidth/container.clientHeight, 0.1, 1000);
+  camera.position.set(6,5,8);
+  camera.lookAt(0,1,0);
+
+  const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.shadowMap.enabled = true;
+  container.appendChild(renderer.domElement);
+
+  scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+  const sun = new THREE.DirectionalLight(0xffd9a8, 1.0);
+  sun.position.set(6,10,4);
+  sun.castShadow = true;
+  scene.add(sun);
+  const fill = new THREE.PointLight(0xc1622b, 0.5);
+  fill.position.set(-6,3,-4);
+  scene.add(fill);
+
+  const group = new THREE.Group();
+  const baseMat = new THREE.MeshStandardMaterial({color:0xEDE6DA, roughness:0.75, metalness:0.05});
+  const base = new THREE.Mesh(new THREE.BoxGeometry(4,3,4), baseMat);
+  base.position.y = 1.5; base.castShadow = true;
+  group.add(base);
+
+  const roofMat = new THREE.MeshStandardMaterial({color:0xA23E1E, roughness:0.8});
+  const roof = new THREE.Mesh(new THREE.ConeGeometry(3.4,2,4), roofMat);
+  roof.position.y = 4; roof.rotation.y = Math.PI/4; roof.castShadow = true;
+  group.add(roof);
+
+  const door = new THREE.Mesh(new THREE.BoxGeometry(0.8,1.5,0.1), new THREE.MeshStandardMaterial({color:0x3E2B1E}));
+  door.position.set(0,0.75,2.05);
+  group.add(door);
+
+  const winMat = new THREE.MeshStandardMaterial({color:0x9fc2c9, transparent:true, opacity:0.65, emissive:0x2c4448, emissiveIntensity:0.25});
+  [-1.2,1.2].forEach(x=>{
+    const w = new THREE.Mesh(new THREE.BoxGeometry(0.8,0.8,0.1), winMat);
+    w.position.set(x,1.8,2.05);
+    group.add(w);
+  });
+  scene.add(group);
+
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(20,20), new THREE.MeshStandardMaterial({color:0x14120F, roughness:0.95}));
+  ground.rotation.x = -Math.PI/2;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  function animate(){
+    requestAnimationFrame(animate);
+    if(!reduceMotion) group.rotation.y += 0.0035;
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize', ()=>{
+    if(container.clientWidth>0){
+      camera.aspect = container.clientWidth/container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    }
+  });
+}
+
+function initDesignCanvas(){
+  const container = document.getElementById('design-canvas');
+  const scene = new THREE.Scene();
+  scene.background = null;
+
+  const camera = new THREE.PerspectiveCamera(52, container.clientWidth/container.clientHeight, 0.1, 1000);
+  camera.position.set(9,7,9);
+  camera.lookAt(0,2,0);
+
+  const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.shadowMap.enabled = true;
+  container.appendChild(renderer.domElement);
+
+  scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+  const sun = new THREE.DirectionalLight(0xffe6c2, 0.9);
+  sun.position.set(9,14,5);
+  sun.castShadow = true;
+  sun.shadow.camera.left=-20; sun.shadow.camera.right=20;
+  sun.shadow.camera.top=20; sun.shadow.camera.bottom=-20;
+  scene.add(sun);
+
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(30,30), new THREE.MeshStandardMaterial({color:0x14120F, roughness:0.9}));
+  ground.rotation.x = -Math.PI/2;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  const gridHelper = new THREE.GridHelper(30,30, 0xC9A15A, 0x2A241D);
+  scene.add(gridHelper);
+
+  let buildingGroup = new THREE.Group();
+  scene.add(buildingGroup);
+
+  function createHouse(color=0xEDE6DA){
+    buildingGroup.clear();
+    const walls = new THREE.Mesh(new THREE.BoxGeometry(6,4,6), new THREE.MeshStandardMaterial({color, roughness:0.75, metalness:0.05}));
+    walls.position.y = 2; walls.castShadow = true; walls.receiveShadow = true;
+    buildingGroup.add(walls);
+
+    const roof = new THREE.Mesh(new THREE.ConeGeometry(5,2.5,4), new THREE.MeshStandardMaterial({color:0xA23E1E, roughness:0.8}));
+    roof.position.y = 5.25; roof.rotation.y = Math.PI/4; roof.castShadow = true;
+    buildingGroup.add(roof);
+
+    for(let i=0;i<4;i++){
+      const w = new THREE.Mesh(new THREE.BoxGeometry(1,1.2,0.1), new THREE.MeshStandardMaterial({color:0x9fc2c9, transparent:true, opacity:0.6, emissive:0x2c4448, emissiveIntensity:0.2}));
+      const angle = i*Math.PI/2, r = 3.05;
+      w.position.set(Math.sin(angle)*r, 2.5, Math.cos(angle)*r);
+      w.rotation.y = -angle;
+      buildingGroup.add(w);
+    }
+    const door = new THREE.Mesh(new THREE.BoxGeometry(1.2,2,0.1), new THREE.MeshStandardMaterial({color:0x3E2B1E}));
+    door.position.set(0,1,3.05);
+    buildingGroup.add(door);
+
+    document.getElementById('specFootprint').textContent = '36 m²';
+  }
+
+  function createRoom(){
+    const wallHeight=3, roomSize=5;
+    const floor = new THREE.Mesh(new THREE.BoxGeometry(roomSize,0.2,roomSize), new THREE.MeshStandardMaterial({color:0xEDE6DA, roughness:0.8}));
+    floor.position.y=0.1; floor.castShadow=true; floor.receiveShadow=true;
+    buildingGroup.add(floor);
+
+    const wallMat = new THREE.MeshStandardMaterial({color:0xe4dccf, roughness:0.7});
+    const back = new THREE.Mesh(new THREE.BoxGeometry(roomSize,wallHeight,0.2), wallMat);
+    back.position.set(0,wallHeight/2,-roomSize/2); back.castShadow=true;
+    buildingGroup.add(back);
+
+    const sideGeo = new THREE.BoxGeometry(0.2,wallHeight,roomSize);
+    const left = new THREE.Mesh(sideGeo, wallMat);
+    left.position.set(-roomSize/2,wallHeight/2,0); left.castShadow=true;
+    buildingGroup.add(left);
+    const right = new THREE.Mesh(sideGeo, wallMat);
+    right.position.set(roomSize/2,wallHeight/2,0); right.castShadow=true;
+    buildingGroup.add(right);
+
+    const win = new THREE.Mesh(new THREE.BoxGeometry(1.5,1.5,0.1), new THREE.MeshStandardMaterial({color:0x9fc2c9, transparent:true, opacity:0.5, emissive:0x2c4448, emissiveIntensity:0.25}));
+    win.position.set(0,1.5,-roomSize/2+0.05);
+    buildingGroup.add(win);
+
+    document.getElementById('specFootprint').textContent = '25 m²';
+  }
+
+  function createFloor(){
+    const floorSize=8, h=0.3;
+    const floor = new THREE.Mesh(new THREE.BoxGeometry(floorSize,h,floorSize), new THREE.MeshStandardMaterial({color:0xEDE6DA, roughness:0.8}));
+    floor.position.y = h/2; floor.castShadow=true; floor.receiveShadow=true;
+    buildingGroup.add(floor);
+
+    const dividerMat = new THREE.MeshStandardMaterial({color:0x6E6459});
+    const d1 = new THREE.Mesh(new THREE.BoxGeometry(floorSize/2,0.2,0.1), dividerMat);
+    d1.position.set(0,h+0.1,0);
+    buildingGroup.add(d1);
+    const d2 = new THREE.Mesh(new THREE.BoxGeometry(floorSize/2,0.2,0.1), dividerMat);
+    d2.position.set(0,h+0.1,0); d2.rotation.y = Math.PI/2;
+    buildingGroup.add(d2);
+
+    document.getElementById('specFootprint').textContent = '64 m²';
+  }
+
+  createHouse();
+
+  let isDragging=false, prev={x:0,y:0};
+  renderer.domElement.addEventListener('mousedown', e=>{isDragging=true; prev={x:e.clientX,y:e.clientY}; document.getElementById('specStatus').textContent='Orbiting';});
+  window.addEventListener('mousemove', e=>{
+    if(isDragging){
+      const dx = e.clientX - prev.x;
+      buildingGroup.rotation.y += dx*0.01;
+      prev = {x:e.clientX, y:e.clientY};
+    }
+  });
+  window.addEventListener('mouseup', ()=>{isDragging=false; document.getElementById('specStatus').textContent = reduceMotion ? 'Idle' : 'Rotating';});
+
+  renderer.domElement.addEventListener('wheel', e=>{
+    e.preventDefault();
+    const delta = e.deltaY>0?1:-1, speed=0.1;
+    camera.position.x += camera.position.x*delta*speed;
+    camera.position.y += camera.position.y*delta*speed;
+    camera.position.z += camera.position.z*delta*speed;
+    const dist = Math.sqrt(camera.position.x**2+camera.position.y**2+camera.position.z**2);
+    if(dist<5 || dist>30){
+      camera.position.x -= camera.position.x*delta*speed;
+      camera.position.y -= camera.position.y*delta*speed;
+      camera.position.z -= camera.position.z*delta*speed;
+    }
+  }, {passive:false});
+
+  const viewButtons = document.querySelectorAll('.view-btn');
+  viewButtons.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      viewButtons.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const view = btn.getAttribute('data-view');
+      if(view==='perspective') camera.position.set(9,7,9);
+      else if(view==='top') camera.position.set(0,20,0);
+      else if(view==='front') camera.position.set(0,5,15);
+      camera.lookAt(0,2,0);
+    });
+  });
+
+  const structureOptions = document.querySelectorAll('.tool-option[data-type]');
+  structureOptions.forEach(option=>{
+    option.addEventListener('click', ()=>{
+      structureOptions.forEach(o=>o.classList.remove('active'));
+      option.classList.add('active');
+      const type = option.getAttribute('data-type');
+      if(type==='house') createHouse();
+      else if(type==='room') createRoom();
+      else if(type==='floor') createFloor();
+      document.getElementById('specType').textContent = option.textContent;
+    });
+  });
+
+  const materialOptions = document.querySelectorAll('.tool-option[data-material]');
+  materialOptions.forEach(option=>{
+    option.addEventListener('click', ()=>{
+      materialOptions.forEach(o=>o.classList.remove('active'));
+      option.classList.add('active');
+      const material = option.getAttribute('data-material');
+      let color;
+      switch(material){
+        case 'wood': color=0x8B5A34; break;
+        case 'concrete': color=0x8a8a86; break;
+        case 'glass': color=0x9fc2c9; break;
+        case 'metal': color=0x8c8f92; break;
+        case 'brick': color=0xA23E1E; break;
+        default: color=0xEDE6DA;
+      }
+      buildingGroup.children.forEach(child=>{
+        if(child.isMesh && child.material) child.material.color.setHex(color);
+      });
+      document.getElementById('specMaterial').textContent = option.textContent;
+    });
+  });
+
+  const colorOptions = document.querySelectorAll('.tool-option[data-color]');
+  colorOptions.forEach(option=>{
+    option.addEventListener('click', ()=>{
+      const color = option.getAttribute('data-color');
+      if(buildingGroup.children[0]) buildingGroup.children[0].material.color.setStyle(color);
+    });
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', ()=>{
+    buildingGroup.clear();
+    createHouse();
+    camera.position.set(9,7,9);
+    camera.lookAt(0,2,0);
+    structureOptions.forEach((b,i)=>b.classList.toggle('active', i===0));
+    materialOptions.forEach((b,i)=>b.classList.toggle('active', i===0));
+    viewButtons.forEach((b,i)=>b.classList.toggle('active', i===0));
+    document.getElementById('specType').textContent = 'House';
+    document.getElementById('specMaterial').textContent = 'Cedar';
+  });
+
+  function animate(){
+    requestAnimationFrame(animate);
+    if(!isDragging && !reduceMotion) buildingGroup.rotation.y += 0.0018;
+    renderer.render(scene, camera);
+  }
+  animate();
+  document.getElementById('specStatus').textContent = reduceMotion ? 'Idle' : 'Rotating';
+
+  window.addEventListener('resize', ()=>{
+    if(container.clientWidth>0){
+      camera.aspect = container.clientWidth/container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  initHeroScene();
+  initDesignCanvas();
+
+  document.querySelectorAll('nav a').forEach(anchor=>{
+    anchor.addEventListener('click', function(e){
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+
+  document.getElementById('watchBtn').addEventListener('click', ()=>{
+    document.getElementById('studio').scrollIntoView({behavior:'smooth'});
+  });
+
+  document.querySelectorAll('.btn-primary').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      alert('Welcome to Mwarokin Estates. In the full studio, this opens account setup and your first plot.');
+    });
+  });
+});
+</script>
+</body>
+</html>

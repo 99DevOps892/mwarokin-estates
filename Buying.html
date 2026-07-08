@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates -Buy Properties</title>
+    <link rel="icon" href="img/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" rel="stylesheet">
+    <link href="lib/animate/animate.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a56db;
+            --secondary-color: #0e2a47;
+            --accent-color: #10b981;
+            --text-color: #1f2937;
+            --light-bg: #f8fafc;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --hover-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: 'Heebo', sans-serif;
+            color: var(--text-color);
+            background-color: var(--light-bg);
+        }
+        
+        .navbar-brand h1 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+        }
+        
+        .buy-hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 4rem 0;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .buy-hero-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="%23ffffff" opacity="0.05"><polygon points="1000,0 1000,100 0,100"></polygon></svg>');
+            background-size: cover;
+        }
+        
+        .property-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            border-radius: 0.75rem;
+        }
+        
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .property-image {
+            height: 220px;
+            object-fit: cover;
+            width: 100%;
+        }
+        
+        .price-tag {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0 0 0.5rem 0;
+            font-weight: 600;
+        }
+        
+        .status-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+        }
+        
+        .filter-section {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .advanced-filter {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .map-container {
+            height: 300px;
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(26, 86, 219, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-icon i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .property-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .feature-tag {
+            background-color: #e5e7eb;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+        }
+        
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .buying-feature-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+        
+        .buying-feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .buying-feature-icon {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(26, 86, 219, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .buying-feature-icon i {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+        
+        .mortgage-calculator {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .calculator-result {
+            background-color: var(--light-bg);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .comparison-table {
+            background: white;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .comparison-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background-color: var(--light-bg);
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .step-indicator::before {
+            content: "";
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #e5e7eb;
+            z-index: 1;
+        }
+        
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e5e7eb;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .step.active .step-number {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .step.completed .step-number {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .step-label {
+            font-size: 0.875rem;
+            text-align: center;
+        }
+        
+        .property-compare-card {
+            border: 2px solid transparent;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .property-compare-card.selected {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.2);
+        }
+        
+        .compare-checkbox {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+        }
+        
+        @media (max-width: 768px) {
+            .property-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .step-indicator {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            
+            .step-indicator::before {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <a href="index.html" class="navbar-brand d-flex align-items-center">
+                <img class="img-fluid me-2" src="Mwarokin Lg.png" alt="Icon" style="width: 30px; height: 30px;">
+                <h2 class="m-0 text-primary">Mwarokin Estates</h2>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a href="property-agent.html" class="nav-link">Agents</a></li>
+                    <li class="nav-item"><a href="Title Deeds.html" class="nav-link">Mother Title</a></li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
+                        <div class="dropdown-menu">
+                            <a href="Selling.html" class="dropdown-item">Sell Property</a>
+                            <a href="Communication.html" class="dropdown-item">Communication</a>
+                            <a href="VacancyLocator.html" class="dropdown-item">Vacancy Locator</a>
+                            <a href="Renovations.html" class="dropdown-item">Renovations</a>
+                            <a href="CalculatePendingRent.html" class="dropdown-item">Calculate Pending Rent</a>
+                            <a href="LanguageSupport.html" class="dropdown-item">Language Support</a>
+                            <a href="Accessibility.html" class="dropdown-item">People With Disabilitiies</a>
+                        </div>
+                    </li>
+                    <li class="nav-item"><a href="Payments.html" class="nav-link">Payments</a></li>
+                     <li class="nav-item"><a href="Titles Deeds.html" class="nav-link">Mortgage Calculations</a></li>
+                </ul>
+                <a href="Schedual Viewing.html" class="btn btn-primary px-3 ms-2">Schedual Viewing</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="buy-hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-5 fw-bold mb-3">Find Your Dream Home</h1>
+                    <p class="lead mb-4">Browse thousands of properties for sale across Africa with our AI-powered search and personalized recommendations.</p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="#property-listings" class="btn btn-light btn-lg">Browse Properties</a>
+                        <a href="#mortgage-calculator" class="btn btn-outline-light btn-lg">Calculate Mortgage</a>
+                        <a href="#buying-process" class="btn btn-outline-light btn-lg">Buying Process</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="map-container mt-4 mt-lg-0" id="hero-map"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advanced Search Section -->
+    <div class="container mb-5">
+        <div class="filter-section">
+            <h3 class="mb-4">Find Your Perfect Property</h3>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" class="form-control" id="searchKeyword" placeholder="Search by keyword, location...">
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" id="propertyType">
+                        <option value="">All Types</option>
+                        <option value="apartment">Apartment</option>
+                        <option value="house">House</option>
+                        <option value="villa">Villa</option>
+                        <option value="commercial">Commercial</option>
+                        <option value="land">Land</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" id="priceRange">
+                        <option value="">Any Price</option>
+                        <option value="0-100000">Under $100K</option>
+                        <option value="100000-250000">$100K - $250K</option>
+                        <option value="250000-500000">$250K - $500K</option>
+                        <option value="500000-1000000">$500K - $1M</option>
+                        <option value="1000000-999999999">Over $1M</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" id="bedrooms">
+                        <option value="">Any Beds</option>
+                        <option value="1">1+ Bed</option>
+                        <option value="2">2+ Beds</option>
+                        <option value="3">3+ Beds</option>
+                        <option value="4">4+ Beds</option>
+                        <option value="5">5+ Beds</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" id="bathrooms">
+                        <option value="">Any Baths</option>
+                        <option value="1">1+ Bath</option>
+                        <option value="2">2+ Baths</option>
+                        <option value="3">3+ Baths</option>
+                        <option value="4">4+ Baths</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-primary w-100" id="searchBtn">Search</button>
+                </div>
+            </div>
+            
+            <!-- Advanced Filters Toggle -->
+            <div class="mt-3">
+                <a class="text-primary" data-bs-toggle="collapse" href="#advancedFilters" role="button">
+                    <i class="fas fa-sliders-h me-1"></i> Advanced Filters
+                </a>
+            </div>
+            
+            <!-- Advanced Filters -->
+            <div class="collapse mt-3" id="advancedFilters">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Area (sq ft)</label>
+                        <input type="number" class="form-control" id="minArea" placeholder="Min Area">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">&nbsp;</label>
+                        <input type="number" class="form-control" id="maxArea" placeholder="Max Area">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Year Built</label>
+                        <input type="number" class="form-control" id="yearBuilt" placeholder="After Year">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Property Age</label>
+                        <select class="form-select" id="propertyAge">
+                            <option value="">Any Age</option>
+                            <option value="0-5">0-5 Years</option>
+                            <option value="5-10">5-10 Years</option>
+                            <option value="10-20">10-20 Years</option>
+                            <option value="20-999">20+ Years</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="parking">
+                            <label class="form-check-label" for="parking">Parking</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="garden">
+                            <label class="form-check-label" for="garden">Garden</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="pool">
+                            <label class="form-check-label" for="pool">Swimming Pool</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="security">
+                            <label class="form-check-label" for="security">Security</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="furnished">
+                            <label class="form-check-label" for="furnished">Furnished</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="petFriendly">
+                            <label class="form-check-label" for="petFriendly">Pet Friendly</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Location Pinning -->
+        <div class="advanced-filter">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h5 class="mb-3">Pin Your Preferred Location</h5>
+                    <p class="text-muted">Get property recommendations based on your preferred area or current location</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-outline-primary" onclick="getLocation()">
+                        <i class="fas fa-map-marker-alt me-2"></i>Use My Location
+                    </button>
+                </div>
+            </div>
+            <div id="locationResult" class="mt-3"></div>
+            <div class="map-container mt-3" id="locationMap"></div>
+        </div>
+    </div>
+
+    <!-- Property Listings -->
+    <div class="container mb-5" id="property-listings">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Properties For Sale</h2>
+            <div class="d-flex gap-2">
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        Sort By: <span id="sortText">Newest</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item sort-option" data-sort="newest">Newest</a></li>
+                        <li><a class="dropdown-item sort-option" data-sort="price-low">Price: Low to High</a></li>
+                        <li><a class="dropdown-item sort-option" data-sort="price-high">Price: High to Low</a></li>
+                        <li><a class="dropdown-item sort-option" data-sort="area">Area</a></li>
+                        <li><a class="dropdown-item sort-option" data-sort="beds">Bedrooms</a></li>
+                    </ul>
+                </div>
+                <div class="btn-group" role="group">
+                    <input type="radio" class="btn-check" name="viewMode" id="gridView" autocomplete="off" checked>
+                    <label class="btn btn-outline-primary" for="gridView"><i class="fas fa-th"></i></label>
+                    
+                    <input type="radio" class="btn-check" name="viewMode" id="listView" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="listView"><i class="fas fa-list"></i></label>
+                </div>
+                <button class="btn btn-outline-primary" id="compareBtn" data-bs-toggle="modal" data-bs-target="#compareModal">
+                    <i class="fas fa-balance-scale me-1"></i>Compare
+                </button>
+            </div>
+        </div>
+        
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading properties...</p>
+        </div>
+        
+        <div class="property-grid" id="propertyContainer">
+            <!-- Properties will be dynamically loaded here -->
+        </div>
+        
+        <div class="text-center mt-5">
+            <button class="btn btn-primary" id="loadMoreBtn">Load More Properties</button>
+        </div>
+    </div>
+
+    <!-- Buying Features Section -->
+    <div class="container-fluid bg-light py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2>Why Buy With Mwarokin Estates?</h2>
+                <p class="lead">We make the home buying process simple, secure, and transparent</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="buying-feature-card">
+                        <div class="buying-feature-icon">
+                            <i class="fas fa-search-dollar"></i>
+                        </div>
+                        <h4>AI Property Matching</h4>
+                        <p class="text-muted">Our AI analyzes your preferences to recommend properties that truly match your needs.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="buying-feature-card">
+                        <div class="buying-feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4>Secure Transactions</h4>
+                        <p class="text-muted">Blockchain-verified transactions with escrow services for complete peace of mind.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="buying-feature-card">
+                        <div class="buying-feature-icon">
+                            <i class="fas fa-hand-holding-usd"></i>
+                        </div>
+                        <h4>Mortgage Assistance</h4>
+                        <p class="text-muted">Connect with trusted lenders and get pre-approved quickly with our partner network.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="buying-feature-card">
+                        <div class="buying-feature-icon">
+                            <i class="fas fa-file-contract"></i>
+                        </div>
+                        <h4>Legal Support</h4>
+                        <p class="text-muted">Access to vetted real estate lawyers to handle contracts and title transfers.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="buying-feature-card">
+                        <div class="buying-feature-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <h4>Virtual Tours</h4>
+                        <p class="text-muted">Explore properties from anywhere with immersive 3D virtual tours and video walkthroughs.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="buying-feature-card">
+                        <div class="buying-feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4>Market Insights</h4>
+                        <p class="text-muted">Make informed decisions with real-time market data and neighborhood analytics.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mortgage Calculator -->
+    <div class="container py-5" id="mortgage-calculator">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="mortgage-calculator">
+                    <h3 class="mb-4">Mortgage Calculator</h3>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Home Price ($)</label>
+                            <input type="number" class="form-control" id="homePrice" value="300000">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Down Payment ($)</label>
+                            <input type="number" class="form-control" id="downPayment" value="60000">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Loan Term (Years)</label>
+                            <select class="form-select" id="loanTerm">
+                                <option value="15">15 Years</option>
+                                <option value="20">20 Years</option>
+                                <option value="25">25 Years</option>
+                                <option value="30" selected>30 Years</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Interest Rate (%)</label>
+                            <input type="number" class="form-control" id="interestRate" value="4.5" step="0.1">
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-primary w-100" onclick="calculateMortgage()">Calculate</button>
+                        </div>
+                    </div>
+                    
+                    <div class="calculator-result" id="calculatorResult">
+                        <h5>Monthly Payment Estimate</h5>
+                        <div class="d-flex justify-content-between mt-3">
+                            <div>
+                                <p class="mb-1 text-muted">Principal & Interest</p>
+                                <h4 id="monthlyPayment">$1,216</h4>
+                            </div>
+                            <div>
+                                <p class="mb-1 text-muted">Total Loan Amount</p>
+                                <h4 id="totalLoan">$240,000</h4>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <p class="mb-1 text-muted">Total Interest Paid</p>
+                            <h5 id="totalInterest">$197,778</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <h3 class="mb-4">Buying Process</h3>
+                <div class="step-indicator">
+                    <div class="step active">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Get Pre-Approved</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Find Your Home</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-label">Make an Offer</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-label">Home Inspection</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-label">Closing</div>
+                    </div>
+                </div>
+                
+                <div id="buying-process">
+                    <h4 class="mb-3">Step 1: Get Pre-Approved</h4>
+                    <p>Before you start house hunting, it's important to know how much you can afford. Getting pre-approved for a mortgage gives you:</p>
+                    <ul>
+                        <li>A clear budget for your home search</li>
+                        <li>Stronger negotiating position with sellers</li>
+                        <li>Faster closing process once you find a home</li>
+                    </ul>
+                    <p>Our platform connects you with trusted lenders who can provide pre-approval letters quickly.</p>
+                    <button class="btn btn-primary mt-2">Get Pre-Approved</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recently Viewed Properties -->
+    <div class="container py-5">
+        <h2 class="mb-4">Recently Viewed Properties</h2>
+        <div class="property-grid" id="recentlyViewedContainer">
+            <!-- Recently viewed properties will be dynamically loaded here -->
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="container-fluid bg-dark text-white-50 pt-5">
+        <div class="container py-5">
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="text-white mb-4">Mwarokin Estates Property</h5>
+                    <p><i class="fa fa-map-marker-alt me-3"></i>Kenya, Africa</p>
+                    <p><i class="fa fa-phone-alt me-3"></i> +254-704-919-388</p>
+                    <p><i class="fa fa-envelope me-3"></i> info@Mwarokin Estates.com</p>
+                    <div class="d-flex pt-2">
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-youtube"></i></a>
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="text-white mb-4">Quick Links</h5>
+                    <a class="btn btn-link text-white-50" href="Contact.html">Contact</a>
+                    <a class="btn btn-link text-white-50" href="LeaseDraft.html">Lease Draft</a>
+                    <a class="btn btn-link text-white-50" href="Term.html">Terms</a>
+                    <a class="btn btn-link text-white-50" href="Neighborhoods.html">Neighborhoods</a>
+                    <a class="btn btn-link text-white-50" href="Settings.html">Settings</a>
+                    <a class="btn btn-link text-white-50" href="Privacy.html">Privacy</a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="text-white mb-4">Property Types</h5>
+                    <a class="btn btn-link text-white-50" href="Construction.html">Construction</a>
+                    <a class="btn btn-link text-white-50" href="Testimonial.html">Testimonial</a>
+                    <a class="btn btn-link text-white-50" href="Cookies.html">Land</a>
+                    <a class="btn btn-link text-white-50" href="Payments.html">Payments</a>
+                    <a class="btn btn-link text-white-50" href="Wearables.html">Wearbales</a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="text-white mb-4">Newsletter</h5>
+                    <p>Subscribe to get updates on new properties</p>
+                    <div class="position-relative mx-auto">
+                        <input class="form-control bg-transparent border-secondary w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
+                        <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="copyright text-center py-4">
+                <p>Mwarokin Estates -Buying Property- &copy; 2026. All Rights Reserved. Powered by <a href="https://www.syllogismtechnologyafrica.co.ke" class="text-white">Syllogism Technology Africa. </a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Property Details Modal -->
+    <div class="modal fade" id="propertyDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="propertyModalTitle">Property Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body property-details-modal">
+                    <div id="propertyCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+                        <div class="carousel-inner" id="propertyCarouselInner">
+                            <!-- Carousel items will be added dynamically -->
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </button>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h4 id="propertyDetailTitle"></h4>
+                            <p class="text-muted" id="propertyDetailLocation"></p>
+                            <p id="propertyDetailDescription"></p>
+                            
+                            <div class="property-features" id="propertyDetailFeatures">
+                                <!-- Features will be added dynamically -->
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h5>Property Details</h5>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <p><strong>Property Type:</strong> <span id="propertyDetailType"></span></p>
+                                        <p><strong>Bedrooms:</strong> <span id="propertyDetailBedrooms"></span></p>
+                                        <p><strong>Bathrooms:</strong> <span id="propertyDetailBathrooms"></span></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Area:</strong> <span id="propertyDetailArea"></span> sq ft</p>
+                                        <p><strong>Year Built:</strong> <span id="propertyDetailYear"></span></p>
+                                        <p><strong>Parking:</strong> <span id="propertyDetailParking"></span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title text-primary" id="propertyDetailPrice"></h5>
+                                    <p class="card-text" id="propertyDetailStatus"></p>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-primary">Contact Agent</button>
+                                        <button class="btn btn-outline-primary">Schedule Viewing</button>
+                                        <button class="btn btn-outline-secondary" id="addToCompareBtn">Add to Compare</button>
+                                        <button class="btn btn-link text-primary p-0 mt-2">Calculate Mortgage</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card mt-3">
+                                <div class="card-body">
+                                    <h6 class="card-title">Estimated Monthly Payment</h6>
+                                    <p class="card-text fs-5 text-primary" id="estimatedPayment">$1,216</p>
+                                    <small class="text-muted">Based on 20% down payment and 4.5% interest rate</small>
+                                    <button class="btn btn-sm btn-outline-primary w-100 mt-2">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Compare Properties Modal -->
+    <div class="modal fade" id="compareModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Compare Properties</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" id="comparePropertiesContainer">
+                        <!-- Compare properties will be added here -->
+                    </div>
+                    
+                    <div class="comparison-table mt-4">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Feature</th>
+                                    <th id="compareProperty1Name">Property 1</th>
+                                    <th id="compareProperty2Name">Property 2</th>
+                                    <th id="compareProperty3Name">Property 3</th>
+                                </tr>
+                            </thead>
+                            <tbody id="compareTableBody">
+                                <!-- Comparison data will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="clearComparison()">Clear All</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    
+    <script>
+        // Property data structure
+        const properties = [
+            {
+                id: 1,
+                title: "Modern Apartment in Westlands",
+                type: "apartment",
+                status: "for sale",
+                location: "Westlands, Nairobi, Kenya",
+                price: 185000,
+                currency: "USD",
+                bedrooms: 3,
+                bathrooms: 2,
+                area: 1200,
+                yearBuilt: 2018,
+                parking: 2,
+                description: "Beautiful modern apartment with stunning city views. Features include a spacious living area, modern kitchen, and a balcony.",
+                features: ["Parking", "Security", "Gym", "Swimming Pool", "Balcony", "Concierge"],
+                images: [
+                    "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1484154218962-a197022b5858?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+                ],
+                coordinates: [-1.265590, 36.806389],
+                dateAdded: "2024-01-15",
+                available: true
+            },
+            {
+                id: 2,
+                title: "Luxury Villa in Karen",
+                type: "villa",
+                status: "for sale",
+                location: "Karen, Nairobi, Kenya",
+                price: 850000,
+                currency: "USD",
+                bedrooms: 5,
+                bathrooms: 4,
+                area: 3500,
+                yearBuilt: 2015,
+                parking: 4,
+                description: "Stunning luxury villa with expansive gardens, swimming pool, and modern amenities. Perfect for family living.",
+                features: ["Parking", "Security", "Garden", "Swimming Pool", "Maid's Quarters", "Fireplace"],
+                images: [
+                    "https://images.unsplash.com/photo-1613977257363-707ba9348227?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+                ],
+                coordinates: [-1.3192, 36.7081],
+                dateAdded: "2024-01-10",
+                available: true
+            },
+            {
+                id: 3,
+                title: "Commercial Space in CBD",
+                type: "commercial",
+                status: "for sale",
+                location: "Nairobi CBD, Kenya",
+                price: 750000,
+                currency: "USD",
+                bedrooms: 0,
+                bathrooms: 2,
+                area: 2500,
+                yearBuilt: 2010,
+                parking: 10,
+                description: "Prime commercial space in the heart of Nairobi CBD. Ideal for offices, retail, or mixed-use development.",
+                features: ["Parking", "Security", "Elevator", "AC", "High-Speed Internet"],
+                images: [
+                    "https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+                ],
+                coordinates: [-1.286389, 36.817223],
+                dateAdded: "2024-01-05",
+                available: true
+            },
+            {
+                id: 4,
+                title: "4-Bedroom Family Home in Runda",
+                type: "house",
+                status: "for sale",
+                location: "Runda, Nairobi, Kenya",
+                price: 650000,
+                currency: "USD",
+                bedrooms: 4,
+                bathrooms: 3,
+                area: 2800,
+                yearBuilt: 2012,
+                parking: 3,
+                description: "Spacious family home in the exclusive Runda neighborhood. Features include a large garden and ample parking.",
+                features: ["Parking", "Security", "Garden", "Maid's Quarters", "Fireplace", "Patio"],
+                images: [
+                    "https://images.unsplash.com/photo-1518780664697-55e3ad937233?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com-1493809842364-78817add7ffb?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+                ],
+                coordinates: [-1.2333, 36.8167],
+                dateAdded: "2024-01-03",
+                available: true
+            },
+            {
+                id: 5,
+                title: "Vacant Land in Ruaka",
+                type: "land",
+                status: "for sale",
+                location: "Ruaka, Kiambu, Kenya",
+                price: 150000,
+                currency: "USD",
+                bedrooms: 0,
+                bathrooms: 0,
+                area: 10000,
+                yearBuilt: null,
+                parking: 0,
+                description: "Prime vacant land in the growing Ruaka area. Suitable for residential or commercial development.",
+                features: ["Title Deed", "Road Access", "Water Connection", "Electricity"],
+                images: [
+                    "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+                ],
+                coordinates: [-1.1833, 36.8500],
+                dateAdded: "2024-01-08",
+                available: true
+            },
+            {
+                id: 6,
+                title: "Penthouse in Kilimani",
+                type: "apartment",
+                status: "for sale",
+                location: "Kilimani, Nairobi, Kenya",
+                price: 420000,
+                currency: "USD",
+                bedrooms: 3,
+                bathrooms: 3,
+                area: 1800,
+                yearBuilt: 2020,
+                parking: 2,
+                description: "Luxurious penthouse with panoramic city views. Features high-end finishes and a private rooftop terrace.",
+                features: ["Parking", "Security", "Gym", "Swimming Pool", "Rooftop Terrace", "Smart Home"],
+                images: [
+                    "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1540518614846-7eded1027f3b?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+                ],
+                coordinates: [-1.3000, 36.7900],
+                dateAdded: "2024-01-12",
+                available: true
+            }
+        ];
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMaps();
+            displayProperties(properties);
+            setupEventListeners();
+            calculateMortgage(); // Initialize mortgage calculator
+        });
+
+        // Initialize maps
+        function initializeMaps() {
+            // Hero map
+            const heroMap = L.map('hero-map').setView([-1.2921, 36.8219], 10);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(heroMap);
+            
+            // Add property markers to hero map
+            properties.forEach(property => {
+                L.marker(property.coordinates)
+                    .addTo(heroMap)
+                    .bindPopup(`<b>${property.title}</b><br>${property.location}<br>$${property.price.toLocaleString()}`);
+            });
+            
+            // Location map
+            const locationMap = L.map('locationMap').setView([-1.2921, 36.8219], 10);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(locationMap);
+            
+            window.heroMap = heroMap;
+            window.locationMap = locationMap;
+        }
+
+        // Display properties in the grid
+        function displayProperties(propertiesToDisplay) {
+            const propertyContainer = document.getElementById('propertyContainer');
+            propertyContainer.innerHTML = '';
+            
+            if (propertiesToDisplay.length === 0) {
+                propertyContainer.innerHTML = '<div class="col-12 text-center py-5"><h4>No properties found matching your criteria</h4></div>';
+                return;
+            }
+            
+            propertiesToDisplay.forEach(property => {
+                const propertyCard = createPropertyCard(property);
+                propertyContainer.innerHTML += propertyCard;
+            });
+        }
+
+        // Create property card HTML
+        function createPropertyCard(property) {
+            const statusClass = 'bg-success'; // All properties are for sale in buying page
+            const statusText = 'For Sale';
+            
+            return `
+                <div class="property-card card h-100" data-id="${property.id}">
+                    <div class="position-relative">
+                        <img src="${property.images[0]}" class="property-image card-img-top" alt="${property.title}">
+                        <span class="status-badge badge ${statusClass}">${statusText}</span>
+                        <div class="price-tag">$${property.price.toLocaleString()}</div>
+                        <div class="compare-checkbox">
+                            <input type="checkbox" class="form-check-input compare-check" data-id="${property.id}">
+                        </div>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">${property.title}</h5>
+                        <p class="card-text text-muted">
+                            <i class="fas fa-map-marker-alt text-primary me-1"></i>${property.location}
+                        </p>
+                        <div class="property-features mb-3">
+                            ${property.features.slice(0, 3).map(feature => 
+                                `<span class="feature-tag">${feature}</span>`
+                            ).join('')}
+                        </div>
+                        <div class="mt-auto">
+                            <div class="d-flex justify-content-between text-muted small mb-2">
+                                <span><i class="fas fa-bed text-primary me-1"></i> ${property.bedrooms} Bed</span>
+                                <span><i class="fas fa-bath text-primary me-1"></i> ${property.bathrooms} Bath</span>
+                                <span><i class="fas fa-ruler-combined text-primary me-1"></i> ${property.area} sq ft</span>
+                            </div>
+                            <button class="btn btn-primary w-100 view-details" data-id="${property.id}">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search button
+            document.getElementById('searchBtn').addEventListener('click', filterProperties);
+            
+            // Enter key in search field
+            document.getElementById('searchKeyword').addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    filterProperties();
+                }
+            });
+            
+            // Sort options
+            document.querySelectorAll('.sort-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const sortType = this.getAttribute('data-sort');
+                    document.getElementById('sortText').textContent = this.textContent;
+                    sortProperties(sortType);
+                });
+            });
+            
+            // View mode toggle
+            document.getElementById('listView').addEventListener('change', function() {
+                if (this.checked) {
+                    document.getElementById('propertyContainer').classList.remove('property-grid');
+                    document.getElementById('propertyContainer').classList.add('row');
+                    document.querySelectorAll('.property-card').forEach(card => {
+                        card.classList.remove('col-lg-4', 'col-md-6');
+                        card.classList.add('col-12', 'mb-4');
+                    });
+                }
+            });
+            
+            document.getElementById('gridView').addEventListener('change', function() {
+                if (this.checked) {
+                    document.getElementById('propertyContainer').classList.add('property-grid');
+                    document.getElementById('propertyContainer').classList.remove('row');
+                }
+            });
+            
+            // Load more button
+            document.getElementById('loadMoreBtn').addEventListener('click', function() {
+                // In a real app, this would load more properties from an API
+                const loadingSpinner = document.getElementById('loadingSpinner');
+                loadingSpinner.style.display = 'block';
+                
+                setTimeout(() => {
+                    // Simulate loading more properties
+                    const moreProperties = [...properties]; // In reality, this would be an API call
+                    displayProperties([...properties, ...moreProperties]);
+                    loadingSpinner.style.display = 'none';
+                    this.style.display = 'none'; // Hide load more after "loading" all properties
+                }, 1500);
+            });
+            
+            // View details buttons (delegated event listener)
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('view-details')) {
+                    const propertyId = parseInt(e.target.getAttribute('data-id'));
+                    showPropertyDetails(propertyId);
+                }
+            });
+            
+            // Compare checkbox change
+            document.addEventListener('change', function(e) {
+                if (e.target.classList.contains('compare-check')) {
+                    updateCompareButton();
+                }
+            });
+        }
+
+        // Filter properties based on search criteria
+        function filterProperties() {
+            const keyword = document.getElementById('searchKeyword').value.toLowerCase();
+            const propertyType = document.getElementById('propertyType').value;
+            const priceRange = document.getElementById('priceRange').value;
+            const bedrooms = document.getElementById('bedrooms').value;
+            const bathrooms = document.getElementById('bathrooms').value;
+            const minArea = document.getElementById('minArea').value;
+            const maxArea = document.getElementById('maxArea').value;
+            const yearBuilt = document.getElementById('yearBuilt').value;
+            const propertyAge = document.getElementById('propertyAge').value;
+            
+            const parking = document.getElementById('parking').checked;
+            const garden = document.getElementById('garden').checked;
+            const pool = document.getElementById('pool').checked;
+            const security = document.getElementById('security').checked;
+            const furnished = document.getElementById('furnished').checked;
+            const petFriendly = document.getElementById('petFriendly').checked;
+            
+            const filteredProperties = properties.filter(property => {
+                // Keyword search
+                if (keyword && !property.title.toLowerCase().includes(keyword) && 
+                    !property.location.toLowerCase().includes(keyword) && 
+                    !property.description.toLowerCase().includes(keyword)) {
+                    return false;
+                }
+                
+                // Property type filter
+                if (propertyType && property.type !== propertyType) {
+                    return false;
+                }
+                
+                // Price range filter
+                if (priceRange) {
+                    const [min, max] = priceRange.split('-').map(Number);
+                    if (property.price < min || property.price > max) return false;
+                }
+                
+                // Bedrooms filter
+                if (bedrooms && property.bedrooms < parseInt(bedrooms)) return false;
+                
+                // Bathrooms filter
+                if (bathrooms && property.bathrooms < parseInt(bathrooms)) return false;
+                
+                // Area filter
+                if (minArea && property.area < parseInt(minArea)) return false;
+                if (maxArea && property.area > parseInt(maxArea)) return false;
+                
+                // Year built filter
+                if (yearBuilt && property.yearBuilt && property.yearBuilt < parseInt(yearBuilt)) return false;
+                
+                // Property age filter
+                if (propertyAge && property.yearBuilt) {
+                    const currentYear = new Date().getFullYear();
+                    const age = currentYear - property.yearBuilt;
+                    const [minAge, maxAge] = propertyAge.split('-').map(Number);
+                    
+                    if (age < minAge || age > maxAge) return false;
+                }
+                
+                // Feature filters
+                if (parking && !property.features.includes('Parking')) return false;
+                if (garden && !property.features.includes('Garden')) return false;
+                if (pool && !property.features.includes('Swimming Pool')) return false;
+                if (security && !property.features.includes('Security')) return false;
+                if (furnished && !property.features.includes('Furnished')) return false;
+                if (petFriendly && !property.features.includes('Pet Friendly')) return false;
+                
+                return true;
+            });
+            
+            displayProperties(filteredProperties);
+        }
+
+        // Sort properties
+        function sortProperties(sortType) {
+            let sortedProperties = [...properties];
+            
+            switch(sortType) {
+                case 'price-low':
+                    sortedProperties.sort((a, b) => a.price - b.price);
+                    break;
+                case 'price-high':
+                    sortedProperties.sort((a, b) => b.price - a.price);
+                    break;
+                case 'area':
+                    sortedProperties.sort((a, b) => b.area - a.area);
+                    break;
+                case 'beds':
+                    sortedProperties.sort((a, b) => b.bedrooms - a.bedrooms);
+                    break;
+                case 'newest':
+                default:
+                    // Already sorted by date added in the data
+                    break;
+            }
+            
+            displayProperties(sortedProperties);
+        }
+
+        // Show property details in modal
+        function showPropertyDetails(propertyId) {
+            const property = properties.find(p => p.id === propertyId);
+            if (!property) return;
+            
+            // Set modal title
+            document.getElementById('propertyModalTitle').textContent = property.title;
+            document.getElementById('propertyDetailTitle').textContent = property.title;
+            document.getElementById('propertyDetailLocation').textContent = property.location;
+            document.getElementById('propertyDetailDescription').textContent = property.description;
+            document.getElementById('propertyDetailPrice').textContent = `$${property.price.toLocaleString()}`;
+            document.getElementById('propertyDetailStatus').textContent = 'For Sale';
+            document.getElementById('propertyDetailType').textContent = property.type.charAt(0).toUpperCase() + property.type.slice(1);
+            document.getElementById('propertyDetailBedrooms').textContent = property.bedrooms;
+            document.getElementById('propertyDetailBathrooms').textContent = property.bathrooms;
+            document.getElementById('propertyDetailArea').textContent = property.area.toLocaleString();
+            document.getElementById('propertyDetailYear').textContent = property.yearBuilt || 'N/A';
+            document.getElementById('propertyDetailParking').textContent = property.parking > 0 ? `${property.parking} spaces` : 'None';
+            
+            // Calculate estimated monthly payment
+            const loanAmount = property.price * 0.8; // 20% down payment
+            const monthlyPayment = calculateMonthlyPayment(loanAmount, 4.5, 30);
+            document.getElementById('estimatedPayment').textContent = `$${monthlyPayment.toLocaleString()}`;
+            
+            // Set features
+            const featuresContainer = document.getElementById('propertyDetailFeatures');
+            featuresContainer.innerHTML = '';
+            property.features.forEach(feature => {
+                featuresContainer.innerHTML += `<span class="feature-tag">${feature}</span>`;
+            });
+            
+            // Set carousel images
+            const carouselInner = document.getElementById('propertyCarouselInner');
+            carouselInner.innerHTML = '';
+            property.images.forEach((image, index) => {
+                const activeClass = index === 0 ? 'active' : '';
+                carouselInner.innerHTML += `
+                    <div class="carousel-item ${activeClass}">
+                        <img src="${image}" class="d-block w-100" alt="${property.title}">
+                    </div>
+                `;
+            });
+            
+            // Set compare button
+            document.getElementById('addToCompareBtn').setAttribute('data-id', property.id);
+            
+            // Show the modal
+            const propertyModal = new bootstrap.Modal(document.getElementById('propertyDetailsModal'));
+            propertyModal.show();
+            
+            // Add to recently viewed
+            addToRecentlyViewed(property);
+        }
+
+        // Calculate monthly mortgage payment
+        function calculateMonthlyPayment(principal, annualRate, years) {
+            const monthlyRate = annualRate / 100 / 12;
+            const numberOfPayments = years * 12;
+            
+            if (monthlyRate === 0) {
+                return principal / numberOfPayments;
+            }
+            
+            return principal * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments) / 
+                   (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+        }
+
+        // Mortgage calculator
+        function calculateMortgage() {
+            const homePrice = parseFloat(document.getElementById('homePrice').value) || 0;
+            const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+            const loanTerm = parseInt(document.getElementById('loanTerm').value) || 30;
+            const interestRate = parseFloat(document.getElementById('interestRate').value) || 0;
+            
+            const loanAmount = homePrice - downPayment;
+            const monthlyPayment = calculateMonthlyPayment(loanAmount, interestRate, loanTerm);
+            const totalPayment = monthlyPayment * loanTerm * 12;
+            const totalInterest = totalPayment - loanAmount;
+            
+            document.getElementById('monthlyPayment').textContent = `$${Math.round(monthlyPayment).toLocaleString()}`;
+            document.getElementById('totalLoan').textContent = `$${Math.round(loanAmount).toLocaleString()}`;
+            document.getElementById('totalInterest').textContent = `$${Math.round(totalInterest).toLocaleString()}`;
+        }
+
+        // Get user location
+        function getLocation() {
+            if (navigator.geolocation) {
+                document.getElementById('locationResult').innerHTML = '<div class="alert alert-info">Getting your location...</div>';
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                document.getElementById('locationResult').innerHTML = '<div class="alert alert-danger">Geolocation is not supported by this browser.</div>';
+            }
+        }
+
+        function showPosition(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            
+            document.getElementById('locationResult').innerHTML = `
+                <div class="alert alert-success">
+                    Location found: Latitude ${lat.toFixed(6)}, Longitude ${lng.toFixed(6)}
+                </div>
+            `;
+            
+            // Update location map
+            window.locationMap.setView([lat, lng], 13);
+            L.marker([lat, lng]).addTo(window.locationMap)
+                .bindPopup('Your Location')
+                .openPopup();
+            
+            // In a real app, you would use these coordinates to find nearby properties
+            findNearbyProperties(lat, lng);
+        }
+
+        function showError(error) {
+            let message = 'An unknown error occurred.';
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    message = 'User denied the request for Geolocation.';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message = 'Location information is unavailable.';
+                    break;
+                case error.TIMEOUT:
+                    message = 'The request to get user location timed out.';
+                    break;
+            }
+            document.getElementById('locationResult').innerHTML = `<div class="alert alert-danger">${message}</div>`;
+        }
+
+        // Find properties near a location (simulated)
+        function findNearbyProperties(lat, lng) {
+            // In a real app, this would be an API call to find properties near the coordinates
+            // For now, we'll just show a message
+            document.getElementById('locationResult').innerHTML += `
+                <div class="alert alert-info mt-2">
+                    Searching for properties near your location...
+                </div>
+            `;
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                // This would normally filter properties based on proximity
+                // For demo, we'll just show all properties
+                displayProperties(properties);
+                document.getElementById('locationResult').innerHTML += `
+                    <div class="alert alert-success mt-2">
+                        Found ${properties.length} properties in your area.
+                    </div>
+                `;
+            }, 1500);
+        }
+
+        // Recently viewed properties
+        function addToRecentlyViewed(property) {
+            let recentlyViewed = JSON.parse(localStorage.getItem('recentlyViewed')) || [];
+            
+            // Remove if already exists
+            recentlyViewed = recentlyViewed.filter(p => p.id !== property.id);
+            
+            // Add to beginning
+            recentlyViewed.unshift(property);
+            
+            // Keep only last 4
+            if (recentlyViewed.length > 4) {
+                recentlyViewed = recentlyViewed.slice(0, 4);
+            }
+            
+            localStorage.setItem('recentlyViewed', JSON.stringify(recentlyViewed));
+            displayRecentlyViewed();
+        }
+
+        function displayRecentlyViewed() {
+            const recentlyViewed = JSON.parse(localStorage.getItem('recentlyViewed')) || [];
+            const container = document.getElementById('recentlyViewedContainer');
+            
+            if (recentlyViewed.length === 0) {
+                container.innerHTML = '<p class="text-muted">No recently viewed properties.</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            recentlyViewed.forEach(property => {
+                const propertyCard = createPropertyCard(property);
+                container.innerHTML += propertyCard;
+            });
+        }
+
+        // Property comparison functionality
+        let comparedProperties = [];
+        
+        function updateCompareButton() {
+            const checkboxes = document.querySelectorAll('.compare-check:checked');
+            comparedProperties = Array.from(checkboxes).map(cb => parseInt(cb.getAttribute('data-id')));
+            
+            const compareBtn = document.getElementById('compareBtn');
+            if (comparedProperties.length > 0) {
+                compareBtn.textContent = `Compare (${comparedProperties.length})`;
+                compareBtn.disabled = false;
+            } else {
+                compareBtn.textContent = 'Compare';
+                compareBtn.disabled = true;
+            }
+            
+            // Update compare modal if it's open
+            if (comparedProperties.length > 0) {
+                updateCompareModal();
+            }
+        }
+
+        function updateCompareModal() {
+            const container = document.getElementById('comparePropertiesContainer');
+            const tableBody = document.getElementById('compareTableBody');
+            
+            container.innerHTML = '';
+            tableBody.innerHTML = '';
+            
+            // Add property cards to compare container
+            comparedProperties.forEach((propertyId, index) => {
+                const property = properties.find(p => p.id === propertyId);
+                if (!property) return;
+                
+                const colSize = comparedProperties.length <= 3 ? 12 / comparedProperties.length : 4;
+                container.innerHTML += `
+                    <div class="col-md-${colSize}">
+                        <div class="property-compare-card card h-100">
+                            <div class="card-body">
+                                <div class="form-check">
+                                    <input class="form-check-input compare-check" type="checkbox" data-id="${property.id}" checked>
+                                    <label class="form-check-label">Compare</label>
+                                </div>
+                                <img src="${property.images[0]}" class="img-fluid rounded mb-3" alt="${property.title}">
+                                <h5>${property.title}</h5>
+                                <p class="text-primary fw-bold">$${property.price.toLocaleString()}</p>
+                                <p class="text-muted small">${property.location}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Update table header
+                document.getElementById(`compareProperty${index+1}Name`).textContent = property.title;
+            });
+            
+            // Hide unused columns
+            for (let i = comparedProperties.length + 1; i <= 3; i++) {
+                document.getElementById(`compareProperty${i}Name`).parentElement.style.display = 'none';
+                document.querySelectorAll(`#compareTableBody tr td:nth-child(${i+1})`).forEach(td => {
+                    td.style.display = 'none';
+                });
+            }
+            
+            // Show used columns
+            for (let i = 1; i <= comparedProperties.length; i++) {
+                document.getElementById(`compareProperty${i}Name`).parentElement.style.display = '';
+                document.querySelectorAll(`#compareTableBody tr td:nth-child(${i+1})`).forEach(td => {
+                    td.style.display = '';
+                });
+            }
+            
+            // Add comparison data to table
+            const features = [
+                { name: 'Price', getValue: p => `$${p.price.toLocaleString()}` },
+                { name: 'Type', getValue: p => p.type.charAt(0).toUpperCase() + p.type.slice(1) },
+                { name: 'Bedrooms', getValue: p => p.bedrooms },
+                { name: 'Bathrooms', getValue: p => p.bathrooms },
+                { name: 'Area', getValue: p => `${p.area.toLocaleString()} sq ft` },
+                { name: 'Year Built', getValue: p => p.yearBuilt || 'N/A' },
+                { name: 'Parking', getValue: p => p.parking > 0 ? `${p.parking} spaces` : 'None' },
+                { name: 'Features', getValue: p => p.features.join(', ') }
+            ];
+            
+            features.forEach(feature => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${feature.name}</td>`;
+                
+                comparedProperties.forEach(propertyId => {
+                    const property = properties.find(p => p.id === propertyId);
+                    row.innerHTML += `<td>${feature.getValue(property)}</td>`;
+                });
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        function clearComparison() {
+            document.querySelectorAll('.compare-check').forEach(cb => {
+                cb.checked = false;
+            });
+            comparedProperties = [];
+            updateCompareButton();
+            
+            const compareModal = bootstrap.Modal.getInstance(document.getElementById('compareModal'));
+            compareModal.hide();
+        }
+
+        // Initialize recently viewed on page load
+        displayRecentlyViewed();
+    </script>
+</body>
+</html>

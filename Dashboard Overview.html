@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Tenant Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <style>
+        :root {
+            --primary: #1abc9c;
+            --primary-dark: #16a085;
+            --primary-light: #d1f2eb;
+            --secondary: #2c3e50;
+            --secondary-light: #34495e;
+            --accent: #e74c3c;
+            --accent-light: #fadbd8;
+            --success: #27ae60;
+            --success-light: #d5f4e6;
+            --warning: #f39c12;
+            --warning-light: #fdebd0;
+            --info: #3498db;
+            --info-light: #d6eaf8;
+            --light: #f8f9fa;
+            --dark: #2c3e50;
+            --gray: #95a5a6;
+            --gray-light: #ecf0f1;
+            --border-radius: 12px;
+            --border-radius-sm: 8px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.12);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        [data-theme="dark"] {
+            --light: #1a1a1a;
+            --dark: #f5f5f5;
+            --gray: #aaaaaa;
+            --gray-light: #2a2a2a;
+            --secondary: #f5f5f5;
+            --secondary-light: #e0e0e0;
+            --primary-light: #0d2a23;
+            --accent-light: #3a1a17;
+            --success-light: #0d2a1a;
+            --warning-light: #33250d;
+            --info-light: #0d2433;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--light) 0%, var(--gray-light) 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: var(--transition);
+        }
+
+        .app-container { display: flex; min-height: 100vh; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
+            color: var(--dark);
+            padding: 20px 0;
+            box-shadow: var(--shadow);
+            z-index: 100;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+        [data-theme="dark"] .sidebar { background: rgba(40, 40, 40, 0.85); border-right: 1px solid rgba(255, 255, 255, 0.1); }
+
+        .logo-container { padding: 0 25px 25px; border-bottom: 1px solid rgba(0, 0, 0, 0.05); text-align: center; }
+        [data-theme="dark"] .logo-container { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .logo { display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 1.6em; font-weight: 700; color: var(--secondary); }
+        .logo i { color: var(--primary); font-size: 1.8em; }
+
+        .nav-menu { list-style: none; margin-top: 25px; flex: 1; }
+        .nav-section-label { padding: 14px 25px 6px; font-size: 0.72em; text-transform: uppercase; letter-spacing: .09em; color: var(--gray); font-weight: 700; }
+        .nav-item { margin-bottom: 8px; position: relative; }
+        .nav-link {
+            display: flex; align-items: center; gap: 15px; padding: 15px 25px; color: var(--dark);
+            text-decoration: none; transition: var(--transition); border-left: 4px solid transparent;
+            font-weight: 500; position: relative; overflow: hidden;
+        }
+        .nav-link::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(26, 188, 156, 0.1), transparent);
+            transition: left 0.7s;
+        }
+        .nav-link:hover::before { left: 100%; }
+        .nav-link:hover, .nav-link.active { background-color: rgba(26, 188, 156, 0.08); color: var(--primary-dark); border-left-color: var(--primary); }
+        [data-theme="dark"] .nav-link:hover, [data-theme="dark"] .nav-link.active { background-color: rgba(26, 188, 156, 0.15); }
+        .nav-link i { width: 22px; text-align: center; font-size: 1.2em; }
+        .nav-badge { background-color: var(--primary); color: white; font-size: 0.7em; padding: 2px 8px; border-radius: 12px; margin-left: auto; }
+        .nav-badge.accent { background-color: var(--accent); }
+
+        .sidebar-footer { padding: 16px 25px 4px; border-top: 1px solid rgba(0,0,0,0.05); font-size: 0.78em; color: var(--gray); }
+        [data-theme="dark"] .sidebar-footer { border-top: 1px solid rgba(255,255,255,0.1); }
+
+        /* Main content */
+        .main-content { flex: 1; display: flex; flex-direction: column; padding: 0 10px; min-width: 0; }
+
+        .top-bar {
+            background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            padding: 15px 30px; margin: 10px; border-radius: var(--border-radius); box-shadow: var(--shadow);
+            display: flex; justify-content: space-between; align-items: center; z-index: 99; transition: var(--transition);
+            gap: 20px; flex-wrap: wrap;
+        }
+        [data-theme="dark"] .top-bar { background: rgba(40, 40, 40, 0.8); }
+
+        .search-container { position: relative; width: 300px; }
+        .search-container input {
+            width: 100%; padding: 12px 20px 12px 45px; border: 1px solid var(--gray-light); border-radius: 30px;
+            background: rgba(255, 255, 255, 0.7); font-size: 0.95em; transition: var(--transition); color: var(--dark);
+        }
+        [data-theme="dark"] .search-container input { background: rgba(60, 60, 60, 0.7); border-color: #444; color: var(--dark); }
+        .search-container input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.2); background: white; }
+        [data-theme="dark"] .search-container input:focus { background: rgba(80, 80, 80, 0.9); }
+        .search-container i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--gray); }
+        .search-results {
+            position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: white; border-radius: var(--border-radius-sm);
+            box-shadow: var(--shadow-lg); max-height: 260px; overflow-y: auto; display: none; z-index: 200;
+        }
+        [data-theme="dark"] .search-results { background: #2f2f2f; }
+        .search-results.show { display: block; }
+        .search-result-item { padding: 12px 18px; cursor: pointer; font-size: 0.9em; border-bottom: 1px solid var(--gray-light); }
+        [data-theme="dark"] .search-result-item { border-bottom: 1px solid #444; }
+        .search-result-item:hover { background: var(--primary-light); }
+        .search-result-item:last-child { border-bottom: none; }
+        .search-result-empty { padding: 14px 18px; color: var(--gray); font-size: 0.88em; }
+
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .user-avatar {
+            width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;
+            box-shadow: 0 4px 10px rgba(26, 188, 156, 0.3); cursor: pointer; transition: var(--transition);
+        }
+        .user-avatar:hover { transform: scale(1.05); }
+        .user-details .user-name { font-weight: 600; color: var(--dark); }
+        .user-details .user-role { font-size: 0.85em; color: var(--gray); }
+
+        .content-area { flex: 1; padding: 10px 20px 30px; overflow-y: auto; }
+        .page-header { margin-bottom: 30px; padding: 0 10px; display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; }
+        .page-header h1 { color: var(--secondary); font-size: 2.4em; margin-bottom: 10px; font-weight: 700; }
+        .page-header p { color: var(--gray); font-size: 1.1em; max-width: 600px; }
+
+        /* Overview cards */
+        .dashboard-overview { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; margin-bottom: 30px; }
+        .overview-card {
+            background: white; border-radius: var(--border-radius); padding: 25px; box-shadow: var(--shadow);
+            display: flex; align-items: center; gap: 20px; transition: var(--transition); position: relative; overflow: hidden;
+        }
+        [data-theme="dark"] .overview-card { background: rgba(50, 50, 50, 0.9); }
+        .overview-card::before { content: ''; position: absolute; top: 0; left: 0; width: 5px; height: 100%; background: var(--primary); }
+        .overview-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+        .overview-icon { width: 70px; height: 70px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.8em; color: white; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); flex-shrink:0; }
+        .overview-content { flex: 1; min-width:0; }
+        .overview-content h3 { font-size: 2em; margin-bottom: 5px; color: var(--secondary); font-weight: 700; }
+        .overview-content p { color: var(--gray); font-size: 0.95em; margin-bottom: 8px; }
+        .overview-trend { display: flex; align-items: center; gap: 5px; font-size: 0.85em; font-weight: 500; }
+        .trend-up { color: var(--success); } .trend-down { color: var(--accent); }
+
+        /* Content sections */
+        .content-section { background-color: white; border-radius: var(--border-radius); box-shadow: var(--shadow); margin-bottom: 30px; overflow: hidden; transition: var(--transition); }
+        [data-theme="dark"] .content-section { background-color: rgba(50, 50, 50, 0.9); }
+        .content-section:hover { box-shadow: var(--shadow-lg); }
+        .section-header { padding: 20px 25px; border-bottom: 1px solid var(--gray-light); display: flex; justify-content: space-between; align-items: center; flex-wrap:wrap; gap:10px; }
+        [data-theme="dark"] .section-header { border-bottom: 1px solid #444; }
+        .section-header h2 { color: var(--secondary); font-size: 1.5em; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+        .section-content { padding: 25px; }
+
+        .btn {
+            background-color: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: var(--border-radius-sm);
+            font-size: 0.95em; font-weight: 600; cursor: pointer; transition: var(--transition); display: inline-flex;
+            align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(26, 188, 156, 0.3);
+        }
+        .btn:hover { background-color: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(26, 188, 156, 0.4); }
+        .btn-outline { background-color: transparent; border: 2px solid var(--primary); color: var(--primary); box-shadow: none; }
+        .btn-outline:hover { background-color: var(--primary); color: white; }
+        .btn-sm { padding: 8px 16px; font-size: 0.85em; }
+        .btn-accent { background: var(--accent); box-shadow: 0 4px 10px rgba(231,76,60,.3); }
+        .btn-accent:hover { background: #c0392b; }
+
+        .card { background-color: white; border-radius: var(--border-radius); box-shadow: var(--shadow); padding: 20px; transition: var(--transition); }
+        [data-theme="dark"] .card { background-color: rgba(60, 60, 60, 0.9); }
+        .card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--dark); }
+        input, select, textarea {
+            width: 100%; padding: 14px 16px; border: 1px solid #ddd; border-radius: var(--border-radius-sm);
+            font-size: 1em; transition: var(--transition); font-family: inherit; background: white; color: var(--dark);
+        }
+        [data-theme="dark"] input, [data-theme="dark"] select, [data-theme="dark"] textarea { background: rgba(70, 70, 70, 0.9); border-color: #555; color: var(--dark); }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.2); }
+
+        .theme-toggle {
+            background: none; border: none; color: var(--dark); font-size: 1.2em; cursor: pointer; transition: var(--transition);
+            padding: 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        }
+        .theme-toggle:hover { background: rgba(0, 0, 0, 0.05); }
+        [data-theme="dark"] .theme-toggle:hover { background: rgba(255, 255, 255, 0.1); }
+
+        .notification-container { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; max-width: 350px; }
+        .notification {
+            padding: 16px 20px; background-color: white; color: var(--dark); border-radius: var(--border-radius); box-shadow: var(--shadow-lg);
+            display: flex; align-items: center; gap: 15px; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            position: relative; overflow: hidden;
+        }
+        [data-theme="dark"] .notification { background-color: rgba(60, 60, 60, 0.95); }
+        .notification::before { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 5px; }
+        .notification.success::before { background-color: var(--success); }
+        .notification.error::before { background-color: var(--accent); }
+        .notification.warning::before { background-color: var(--warning); }
+        .notification.info::before { background-color: var(--info); }
+        .notification.show { transform: translateX(0); }
+        .notification-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2em; color: white; }
+        .notification.success .notification-icon { background-color: var(--success); }
+        .notification.error .notification-icon { background-color: var(--accent); }
+        .notification.warning .notification-icon { background-color: var(--warning); }
+        .notification.info .notification-icon { background-color: var(--info); }
+        .notification-content { flex: 1; }
+        .notification-title { font-weight: 600; margin-bottom: 4px; }
+        .notification-message { font-size: 0.9em; color: var(--gray); }
+        .notification-close { background: none; border: none; color: var(--gray); cursor: pointer; font-size: 1.1em; transition: var(--transition); }
+        .notification-close:hover { color: var(--dark); }
+
+        .chart-container { position: relative; height: 300px; width: 100%; }
+
+        /* Tabs (used in statement / community) */
+        .tabs { display: flex; gap: 6px; background: var(--gray-light); padding: 5px; border-radius: 30px; width: fit-content; margin-bottom: 22px; }
+        .tab-btn { border: none; background: none; padding: 9px 18px; border-radius: 26px; font-weight: 600; font-size: 0.88em; color: var(--gray); cursor: pointer; transition: var(--transition); }
+        .tab-btn.active { background: white; color: var(--primary-dark); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        [data-theme="dark"] .tab-btn.active { background: #3a3a3a; }
+
+        /* Statement table */
+        .statement-table { width: 100%; border-collapse: collapse; font-size: 0.92em; }
+        .statement-table th { text-align: left; padding: 12px 14px; color: var(--gray); font-size: 0.78em; text-transform: uppercase; letter-spacing: .05em; border-bottom: 2px solid var(--gray-light); }
+        .statement-table td { padding: 13px 14px; border-bottom: 1px solid var(--gray-light); }
+        [data-theme="dark"] .statement-table td, [data-theme="dark"] .statement-table th { border-bottom: 1px solid #444; }
+        .amt-debit { color: var(--accent); font-weight: 600; }
+        .amt-credit { color: var(--success); font-weight: 600; }
+        .bal-cell { font-weight: 700; }
+
+        /* Profile page */
+        .profile-hero { display: flex; align-items: center; gap: 22px; padding: 26px; }
+        .profile-avatar-lg { width: 92px; height: 92px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 2em; box-shadow: 0 8px 20px rgba(26,188,156,.3); flex-shrink:0; }
+        .profile-hero h2 { font-size: 1.6em; color: var(--secondary); margin-bottom: 4px; }
+        .profile-hero p { color: var(--gray); }
+        .status-pill { display:inline-flex; align-items:center; gap:6px; font-size:0.78em; font-weight:700; padding:4px 12px; border-radius:20px; background: var(--success-light); color: var(--success); margin-top:8px; }
+
+        /* Community */
+        .community-post { display:flex; gap:16px; padding: 18px 0; border-bottom: 1px solid var(--gray-light); }
+        [data-theme="dark"] .community-post { border-bottom: 1px solid #444; }
+        .community-post:last-child { border-bottom: none; }
+        .post-avatar { width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:700; flex-shrink:0; }
+        .post-body { flex:1; }
+        .post-meta { font-size: 0.82em; color: var(--gray); margin-bottom: 4px; }
+        .post-meta strong { color: var(--dark); }
+        .post-text { font-size: 0.94em; color: var(--dark); }
+        .event-item { display:flex; align-items:center; gap:14px; padding: 12px 0; border-bottom: 1px solid var(--gray-light); }
+        [data-theme="dark"] .event-item { border-bottom: 1px solid #444; }
+        .event-item:last-child { border-bottom:none; }
+        .event-date { width:52px; text-align:center; background: var(--primary-light); border-radius:10px; padding:6px 4px; flex-shrink:0; }
+        .event-date .d { font-size:1.2em; font-weight:800; color: var(--primary-dark); line-height:1; }
+        .event-date .m { font-size:0.68em; text-transform:uppercase; color: var(--primary-dark); font-weight:700; }
+
+        /* Staff login */
+        .staff-login-shell { display:flex; align-items:center; justify-content:center; min-height:60vh; }
+        .staff-login-card { width: 100%; max-width: 420px; padding: 40px; text-align:center; }
+        .staff-login-card i.fa-shield-halved { font-size: 2.4em; color: var(--secondary); margin-bottom: 14px; }
+        .staff-login-card h2 { margin-bottom: 6px; color: var(--secondary); }
+        .staff-login-card p { color: var(--gray); margin-bottom: 24px; font-size: 0.92em; }
+
+        /* Property Gallery (used on Community as "Building highlights") */
+        .property-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 18px; margin-top: 20px; }
+        .property-card { border-radius: var(--border-radius); overflow: hidden; box-shadow: var(--shadow); transition: var(--transition); background: white; }
+        [data-theme="dark"] .property-card { background: rgba(60, 60, 60, 0.9); }
+        .property-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+        .property-image { height: 140px; display:flex; align-items:center; justify-content:center; font-size:2.4em; color:white; position: relative; }
+        .property-badge { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,.35); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.75em; font-weight: 600; }
+        .property-content { padding: 16px; }
+        .property-title { font-weight: 600; margin-bottom: 6px; color: var(--dark); font-size:0.94em; }
+        .property-details { color: var(--gray); font-size: 0.85em; }
+
+        @media (max-width: 1024px) {
+            .sidebar { width: 240px; }
+            .dashboard-overview { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+        }
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: sticky; top: 0; }
+            .nav-menu { display: flex; overflow-x: auto; padding-bottom: 10px; }
+            .nav-section-label { display:none; }
+            .nav-item { margin-bottom: 0; flex-shrink: 0; }
+            .nav-link { border-left: none; border-bottom: 3px solid transparent; padding: 12px 20px; }
+            .nav-link.active { border-left: none; border-bottom-color: var(--primary); }
+            .sidebar-footer { display:none; }
+            .dashboard-overview { grid-template-columns: 1fr; }
+            .top-bar { flex-direction: column; gap: 15px; align-items: stretch; }
+            .search-container { width: 100%; }
+            .profile-hero { flex-direction:column; text-align:center; }
+        }
+
+        .page { display: none; animation: fadeIn 0.5s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo-container">
+                <div class="logo"><i class="fas fa-home"></i><span>Mwarokin Estates</span></div>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-section-label">Overview</li>
+                <li class="nav-item"><a href="#" class="nav-link active" data-page="dashboard"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="rent-payment"><i class="fas fa-money-bill-wave"></i><span>Rent Payment</span><span class="nav-badge">2</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="tenant-statement"><i class="fas fa-file-invoice-dollar"></i><span>Tenant Statement</span></a></li>
+
+                <li class="nav-section-label">Living Here</li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="maintenance"><i class="fas fa-tools"></i><span>Maintenance</span><span class="nav-badge">3</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="community"><i class="fas fa-users"></i><span>Community</span><span class="nav-badge">4</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="documents"><i class="fas fa-file-contract"></i><span>Documents</span></a></li>
+
+                <li class="nav-section-label">Account</li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="tenant-profile"><i class="fas fa-user-circle"></i><span>Tenant Profile</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="staff-login"><i class="fas fa-shield-alt"></i><span>Staff Portal</span></a></li>
+            </ul>
+            <div class="sidebar-footer">Mwarokin Estates · Tenant Portal v2.0</div>
+        </div>
+
+        <!-- Main -->
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="global-search" placeholder="Search properties, payments, documents..." autocomplete="off">
+                    <div class="search-results" id="search-results"></div>
+                </div>
+                <div class="user-info">
+                    <button class="theme-toggle" id="theme-toggle"><i class="fas fa-moon"></i></button>
+                    <div class="user-avatar" onclick="navigateTo('tenant-profile')">JD</div>
+                    <div class="user-details">
+                        <div class="user-name">John Doe</div>
+                        <div class="user-role">Tenant</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-area">
+
+                <!-- DASHBOARD -->
+                <div class="page active" id="dashboard">
+                    <div class="page-header">
+                        <div>
+                            <h1>Dashboard Overview</h1>
+                            <p>Welcome back, John! Here's your property management summary.</p>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-overview">
+                        <div class="overview-card">
+                            <div class="overview-icon" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark));"><i class="fas fa-home"></i></div>
+                            <div class="overview-content"><h3>PROP001</h3><p>Current Property</p><div class="overview-trend trend-up"><i class="fas fa-arrow-up"></i><span>Active</span></div></div>
+                        </div>
+                        <div class="overview-card">
+                            <div class="overview-icon" style="background: linear-gradient(135deg, var(--info), #2980b9);"><i class="fas fa-money-bill-wave"></i></div>
+                            <div class="overview-content"><h3>$1,500</h3><p>Monthly Rent</p><div class="overview-trend trend-down"><i class="fas fa-calendar-day"></i><span>Due in 15 days</span></div></div>
+                        </div>
+                        <div class="overview-card">
+                            <div class="overview-icon" style="background: linear-gradient(135deg, var(--warning), #e67e22);"><i class="fas fa-tools"></i></div>
+                            <div class="overview-content"><h3>2</h3><p>Active Requests</p><div class="overview-trend"><i class="fas fa-circle" style="color: var(--warning);"></i><span>1 in progress</span></div></div>
+                        </div>
+                        <div class="overview-card">
+                            <div class="overview-icon" style="background: linear-gradient(135deg, var(--success), #27ae60);"><i class="fas fa-file-invoice"></i></div>
+                            <div class="overview-content"><h3>7</h3><p>Payments This Year</p><div class="overview-trend trend-up"><i class="fas fa-check-circle"></i><span>All on time</span></div></div>
+                        </div>
+                        <div class="overview-card">
+                            <div class="overview-icon" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);"><i class="fas fa-star"></i></div>
+                            <div class="overview-content"><h3>720</h3><p>Tenant Score</p><div class="overview-trend trend-up"><i class="fas fa-arrow-up"></i><span>Great standing</span></div></div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+                        <div class="content-section">
+                            <div class="section-header">
+                                <h2><i class="fas fa-chart-line"></i> Payment History</h2>
+                                <div>
+                                    <button class="btn btn-outline btn-sm">Monthly</button>
+                                    <button class="btn btn-sm">Yearly</button>
+                                </div>
+                            </div>
+                            <div class="section-content">
+                                <div class="chart-container"><canvas id="paymentChart"></canvas></div>
+                            </div>
+                        </div>
+                        <div class="content-section">
+                            <div class="section-header">
+                                <h2><i class="fas fa-bell"></i> Notifications</h2>
+                                <button class="btn btn-outline btn-sm" onclick="showNotification('All caught up', 'info', 'No further notifications right now.')">View All</button>
+                            </div>
+                            <div class="section-content">
+                                <div class="notification-list">
+                                    <div style="display: flex; align-items: flex-start; gap: 15px; padding: 15px; border-bottom: 1px solid var(--gray-light);">
+                                        <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(52, 152, 219, 0.2); display: flex; align-items: center; justify-content: center; color: var(--info);"><i class="fas fa-info-circle"></i></div>
+                                        <div><h4 style="margin-bottom: 5px; font-weight: 600;">Rent Due Reminder</h4><p style="color: var(--gray); font-size: 0.9em;">Your rent payment of $1,500 is due on August 15, 2024.</p><span style="font-size: 0.8em; color: var(--gray);">2 days ago</span></div>
+                                    </div>
+                                    <div style="display: flex; align-items: flex-start; gap: 15px; padding: 15px; border-bottom: 1px solid var(--gray-light);">
+                                        <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(39, 174, 96, 0.2); display: flex; align-items: center; justify-content: center; color: var(--success);"><i class="fas fa-check-circle"></i></div>
+                                        <div><h4 style="margin-bottom: 5px; font-weight: 600;">Service Request Updated</h4><p style="color: var(--gray); font-size: 0.9em;">Your plumbing request is now in progress.</p><span style="font-size: 0.8em; color: var(--gray);">5 hours ago</span></div>
+                                    </div>
+                                    <div style="display: flex; align-items: flex-start; gap: 15px; padding: 15px;">
+                                        <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(155,89,182,.2); display: flex; align-items: center; justify-content: center; color: #9b59b6;"><i class="fas fa-users"></i></div>
+                                        <div><h4 style="margin-bottom: 5px; font-weight: 600;">Community Update</h4><p style="color: var(--gray); font-size: 0.9em;">Pool maintenance scheduled for this weekend.</p><span style="font-size: 0.8em; color: var(--gray);">1 day ago</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px;">
+                        <div class="content-section">
+                            <div class="section-header"><h2><i class="fas fa-chart-pie"></i> Where Your Rent Goes</h2></div>
+                            <div class="section-content"><div id="expenseDonut"></div></div>
+                        </div>
+                        <div class="content-section">
+                            <div class="section-header"><h2><i class="fas fa-tasks"></i> Quick Actions</h2></div>
+                            <div class="section-content">
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px;">
+                                    <button class="btn" onclick="navigateTo('rent-payment')"><i class="fas fa-money-bill-wave"></i> Pay Rent</button>
+                                    <button class="btn btn-outline" onclick="navigateTo('maintenance')"><i class="fas fa-tools"></i> Request Maintenance</button>
+                                    <button class="btn btn-outline" onclick="navigateTo('tenant-profile')"><i class="fas fa-user-edit"></i> Update Profile</button>
+                                    <button class="btn btn-outline" onclick="navigateTo('documents')"><i class="fas fa-file-download"></i> Download Documents</button>
+                                    <button class="btn btn-outline" onclick="navigateTo('tenant-statement')"><i class="fas fa-receipt"></i> View Statement</button>
+                                    <button class="btn btn-outline" onclick="navigateTo('community')"><i class="fas fa-bullhorn"></i> Community Board</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RENT PAYMENT -->
+                <div class="page" id="rent-payment">
+                    <div class="page-header"><div><h1>Rent Payment</h1><p>Submit your rent payment securely through our integrated payment system.</p></div></div>
+                    <div class="content-section">
+                        <div class="section-content">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                                <div>
+                                    <h3 style="margin-bottom: 20px; color: var(--secondary);">Payment Details</h3>
+                                    <div class="form-group"><label for="payment-amount">Amount</label><input type="text" id="payment-amount" value="$1,500.00" readonly></div>
+                                    <div class="form-group"><label for="payment-method">Payment Method</label>
+                                        <select id="payment-method">
+                                            <option value="credit">Credit Card</option>
+                                            <option value="debit">Debit Card</option>
+                                            <option value="bank">Bank Transfer</option>
+                                            <option value="mpesa">M-Pesa</option>
+                                            <option value="digital">Digital Wallet</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group"><label for="card-number">Card Number</label><input type="text" id="card-number" placeholder="1234 5678 9012 3456"></div>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                        <div class="form-group"><label for="expiry-date">Expiry Date</label><input type="text" id="expiry-date" placeholder="MM/YY"></div>
+                                        <div class="form-group"><label for="cvv">CVV</label><input type="text" id="cvv" placeholder="123"></div>
+                                    </div>
+                                    <button class="btn" style="width: 100%; margin-top: 10px;" onclick="processPayment()"><i class="fas fa-lock"></i> Pay $1,500.00</button>
+                                </div>
+                                <div>
+                                    <h3 style="margin-bottom: 20px; color: var(--secondary);">Payment Summary</h3>
+                                    <div class="card" style="padding: 25px;">
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;"><span>Monthly Rent</span><span>$1,500.00</span></div>
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;"><span>Late Fee</span><span>$0.00</span></div>
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;"><span>Utilities</span><span>$120.00</span></div>
+                                        <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--gray-light);">
+                                        <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.2em;"><span>Total</span><span>$1,620.00</span></div>
+                                    </div>
+                                    <div class="card" style="margin-top: 20px; padding: 20px; background: var(--primary-light);">
+                                        <h4 style="margin-bottom: 10px; color: var(--primary-dark);">Payment History</h4>
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;"><span>July 2024</span><span style="color: var(--success); font-weight: 600;">Paid</span></div>
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;"><span>June 2024</span><span style="color: var(--success); font-weight: 600;">Paid</span></div>
+                                        <div style="display: flex; justify-content: space-between;"><span>May 2024</span><span style="color: var(--success); font-weight: 600;">Paid</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TENANT STATEMENT (NEW) -->
+                <div class="page" id="tenant-statement">
+                    <div class="page-header">
+                        <div><h1>Tenant Statement</h1><p>Full running ledger of charges and payments on your account.</p></div>
+                        <button class="btn btn-outline btn-sm" onclick="showNotification('Statement Exported', 'success', 'A PDF copy has been generated.')"><i class="fas fa-download"></i> Export PDF</button>
+                    </div>
+                    <div class="content-section">
+                        <div class="section-content">
+                            <div class="tabs">
+                                <button class="tab-btn active" data-range="6m">Last 6 Months</button>
+                                <button class="tab-btn" data-range="ytd">Year to Date</button>
+                                <button class="tab-btn" data-range="all">All Time</button>
+                            </div>
+                            <div style="overflow-x:auto;">
+                            <table class="statement-table">
+                                <thead><tr><th>Date</th><th>Description</th><th>Debit</th><th>Credit</th><th>Balance</th></tr></thead>
+                                <tbody>
+                                    <tr><td>Aug 01, 2024</td><td>Monthly Rent Charge</td><td class="amt-debit">$1,500.00</td><td>—</td><td class="bal-cell">$1,500.00</td></tr>
+                                    <tr><td>Aug 01, 2024</td><td>Utilities Charge</td><td class="amt-debit">$120.00</td><td>—</td><td class="bal-cell">$1,620.00</td></tr>
+                                    <tr><td>Jul 05, 2024</td><td>Rent Payment Received</td><td>—</td><td class="amt-credit">$1,500.00</td><td class="bal-cell">$0.00</td></tr>
+                                    <tr><td>Jul 01, 2024</td><td>Monthly Rent Charge</td><td class="amt-debit">$1,500.00</td><td>—</td><td class="bal-cell">$1,500.00</td></tr>
+                                    <tr><td>Jun 03, 2024</td><td>Rent Payment Received</td><td>—</td><td class="amt-credit">$1,500.00</td><td class="bal-cell">$0.00</td></tr>
+                                    <tr><td>Jun 01, 2024</td><td>Monthly Rent Charge</td><td class="amt-debit">$1,500.00</td><td>—</td><td class="bal-cell">$1,500.00</td></tr>
+                                    <tr><td>May 28, 2024</td><td>Maintenance Fee — Plumbing</td><td class="amt-debit">$45.00</td><td>—</td><td class="bal-cell">$45.00</td></tr>
+                                    <tr><td>May 02, 2024</td><td>Rent Payment Received</td><td>—</td><td class="amt-credit">$1,500.00</td><td class="bal-cell">$0.00</td></tr>
+                                </tbody>
+                            </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MAINTENANCE -->
+                <div class="page" id="maintenance">
+                    <div class="page-header"><div><h1>Maintenance Requests</h1><p>Submit and track maintenance requests for your property.</p></div></div>
+                    <div class="content-section">
+                        <div class="section-header"><h2><i class="fas fa-plus-circle"></i> New Request</h2></div>
+                        <div class="section-content">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                <div class="form-group"><label for="request-type">Request Type</label>
+                                    <select id="request-type">
+                                        <option value="plumbing">Plumbing</option><option value="electrical">Electrical</option>
+                                        <option value="appliance">Appliance</option><option value="heating">Heating/Cooling</option>
+                                        <option value="structural">Structural</option><option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group"><label for="priority">Priority</label>
+                                    <select id="priority"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="emergency">Emergency</option></select>
+                                </div>
+                            </div>
+                            <div class="form-group"><label for="description">Description</label><textarea id="description" rows="4" placeholder="Please describe the issue in detail..."></textarea></div>
+                            <div class="form-group"><label for="photos">Upload Photos (Optional)</label><input type="file" id="photos" multiple accept="image/*"></div>
+                            <button class="btn" onclick="submitMaintenanceRequest()"><i class="fas fa-paper-plane"></i> Submit Request</button>
+                        </div>
+                    </div>
+                    <div class="content-section">
+                        <div class="section-header"><h2><i class="fas fa-list"></i> Active Requests</h2></div>
+                        <div class="section-content">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid var(--gray-light);">
+                                <div><h4 style="margin-bottom: 5px; font-weight: 600;">Plumbing - Kitchen Sink Leak</h4><p style="color: var(--gray); font-size: 0.9em;">Submitted: August 10, 2024</p></div>
+                                <span class="nav-badge" style="background: var(--warning);">In Progress</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid var(--gray-light);">
+                                <div><h4 style="margin-bottom: 5px; font-weight: 600;">Electrical - Bedroom Light</h4><p style="color: var(--gray); font-size: 0.9em;">Submitted: August 5, 2024</p></div>
+                                <span class="nav-badge" style="background: var(--info);">Open</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px;">
+                                <div><h4 style="margin-bottom: 5px; font-weight: 600;">Appliance - Fridge Noise</h4><p style="color: var(--gray); font-size: 0.9em;">Submitted: July 28, 2024</p></div>
+                                <span class="nav-badge" style="background: var(--success);">Resolved</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COMMUNITY (NEW) -->
+                <div class="page" id="community">
+                    <div class="page-header"><div><h1>Community</h1><p>Announcements, neighbours, and what's happening around Mwarokin Estates.</p></div></div>
+
+                    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:30px;">
+                        <div class="content-section">
+                            <div class="section-header"><h2><i class="fas fa-bullhorn"></i> Announcements & Posts</h2><button class="btn btn-sm" onclick="showNotification('Post box opened','info','Compose a note to the community.')"><i class="fas fa-plus"></i> New Post</button></div>
+                            <div class="section-content">
+                                <div class="community-post">
+                                    <div class="post-avatar" style="background:var(--primary);">MG</div>
+                                    <div class="post-body"><div class="post-meta"><strong>Management</strong> · 2 hours ago</div><div class="post-text">Reminder: the pool will be closed for maintenance this Saturday from 8am–2pm.</div></div>
+                                </div>
+                                <div class="community-post">
+                                    <div class="post-avatar" style="background:#9b59b6;">RW</div>
+                                    <div class="post-body"><div class="post-meta"><strong>Rose Wanjiru</strong> · Unit 2A · yesterday</div><div class="post-text">Lost a set of keys near the parking bay — please contact the front desk if found.</div></div>
+                                </div>
+                                <div class="community-post">
+                                    <div class="post-avatar" style="background:var(--info);">MG</div>
+                                    <div class="post-body"><div class="post-meta"><strong>Management</strong> · 3 days ago</div><div class="post-text">New recycling bins have been installed on every floor — please sort waste accordingly.</div></div>
+                                </div>
+                                <div class="community-post">
+                                    <div class="post-avatar" style="background:var(--warning);">PK</div>
+                                    <div class="post-body"><div class="post-meta"><strong>Peter Kamau</strong> · Unit 2F · 5 days ago</div><div class="post-text">Anyone interested in a weekend football group? Meeting at the courtyard, Saturdays 4pm.</div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="content-section">
+                            <div class="section-header"><h2><i class="fas fa-calendar-alt"></i> Upcoming Events</h2></div>
+                            <div class="section-content">
+                                <div class="event-item"><div class="event-date"><div class="d">17</div><div class="m">Aug</div></div><div><h4 style="font-weight:600;">Pool Maintenance</h4><p style="color:var(--gray);font-size:0.85em;">8:00 AM – 2:00 PM</p></div></div>
+                                <div class="event-item"><div class="event-date"><div class="d">22</div><div class="m">Aug</div></div><div><h4 style="font-weight:600;">Community BBQ</h4><p style="color:var(--gray);font-size:0.85em;">Courtyard, 5:00 PM</p></div></div>
+                                <div class="event-item"><div class="event-date"><div class="d">29</div><div class="m">Aug</div></div><div><h4 style="font-weight:600;">Fire Drill</h4><p style="color:var(--gray);font-size:0.85em;">All blocks, 10:00 AM</p></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-header"><h2><i class="fas fa-building"></i> Building Highlights</h2></div>
+                        <div class="section-content">
+                            <div class="property-gallery">
+                                <div class="property-card">
+                                    <div class="property-image" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));"><i class="fas fa-swimming-pool"></i><span class="property-badge">Amenity</span></div>
+                                    <div class="property-content"><div class="property-title">Rooftop Pool</div><div class="property-details">Open daily · 6am–9pm</div></div>
+                                </div>
+                                <div class="property-card">
+                                    <div class="property-image" style="background:linear-gradient(135deg,var(--info),#2980b9);"><i class="fas fa-dumbbell"></i><span class="property-badge">Amenity</span></div>
+                                    <div class="property-content"><div class="property-title">Fitness Centre</div><div class="property-details">24/7 keycard access</div></div>
+                                </div>
+                                <div class="property-card">
+                                    <div class="property-image" style="background:linear-gradient(135deg,#9b59b6,#8e44ad);"><i class="fas fa-tree"></i><span class="property-badge">Amenity</span></div>
+                                    <div class="property-content"><div class="property-title">Courtyard Garden</div><div class="property-details">Shared green space</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DOCUMENTS -->
+                <div class="page" id="documents">
+                    <div class="page-header"><div><h1>Documents</h1><p>Access your lease agreements, payment receipts, and other important documents.</p></div></div>
+                    <div class="content-section">
+                        <div class="section-header"><h2><i class="fas fa-file-contract"></i> Lease Documents</h2></div>
+                        <div class="section-content">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid var(--gray-light);">
+                                <div style="display: flex; align-items: center; gap: 15px;"><div style="width: 40px; height: 40px; border-radius: 8px; background: var(--primary-light); display: flex; align-items: center; justify-content: center; color: var(--primary);"><i class="fas fa-file-pdf"></i></div><div><h4 style="margin-bottom: 5px; font-weight: 600;">Lease Agreement</h4><p style="color: var(--gray); font-size: 0.9em;">Signed: January 1, 2024</p></div></div>
+                                <button class="btn btn-outline btn-sm"><i class="fas fa-download"></i> Download</button>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px;">
+                                <div style="display: flex; align-items: center; gap: 15px;"><div style="width: 40px; height: 40px; border-radius: 8px; background: var(--info-light); display: flex; align-items: center; justify-content: center; color: var(--info);"><i class="fas fa-file-alt"></i></div><div><h4 style="margin-bottom: 5px; font-weight: 600;">Property Rules & Regulations</h4><p style="color: var(--gray); font-size: 0.9em;">Updated: March 15, 2024</p></div></div>
+                                <button class="btn btn-outline btn-sm"><i class="fas fa-download"></i> Download</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-section">
+                        <div class="section-header"><h2><i class="fas fa-receipt"></i> Payment Receipts</h2></div>
+                        <div class="section-content">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid var(--gray-light);">
+                                <div style="display: flex; align-items: center; gap: 15px;"><div style="width: 40px; height: 40px; border-radius: 8px; background: var(--success-light); display: flex; align-items: center; justify-content: center; color: var(--success);"><i class="fas fa-file-invoice-dollar"></i></div><div><h4 style="margin-bottom: 5px; font-weight: 600;">July 2024 Rent Receipt</h4><p style="color: var(--gray); font-size: 0.9em;">Paid: July 5, 2024</p></div></div>
+                                <button class="btn btn-outline btn-sm"><i class="fas fa-download"></i> Download</button>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px;">
+                                <div style="display: flex; align-items: center; gap: 15px;"><div style="width: 40px; height: 40px; border-radius: 8px; background: var(--success-light); display: flex; align-items: center; justify-content: center; color: var(--success);"><i class="fas fa-file-invoice-dollar"></i></div><div><h4 style="margin-bottom: 5px; font-weight: 600;">June 2024 Rent Receipt</h4><p style="color: var(--gray); font-size: 0.9em;">Paid: June 3, 2024</p></div></div>
+                                <button class="btn btn-outline btn-sm"><i class="fas fa-download"></i> Download</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TENANT PROFILE (NEW) -->
+                <div class="page" id="tenant-profile">
+                    <div class="page-header"><div><h1>Tenant Profile</h1><p>Keep your contact and lease details up to date.</p></div></div>
+                    <div class="content-section">
+                        <div class="profile-hero">
+                            <div class="profile-avatar-lg">JD</div>
+                            <div>
+                                <h2>John Doe</h2>
+                                <p>Unit PROP001 · Tenant since January 1, 2024</p>
+                                <span class="status-pill"><i class="fas fa-check-circle"></i> Lease in good standing</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px;">
+                        <div class="content-section">
+                            <div class="section-header"><h2><i class="fas fa-id-card"></i> Personal Details</h2></div>
+                            <div class="section-content">
+                                <div class="form-group"><label>Full Name</label><input type="text" value="John Doe"></div>
+                                <div class="form-group"><label>Email Address</label><input type="email" value="john.doe@email.com"></div>
+                                <div class="form-group"><label>Phone Number</label><input type="text" value="+254 712 345 678"></div>
+                                <div class="form-group"><label>Emergency Contact</label><input type="text" value="Jane Doe · +254 733 998 211"></div>
+                                <button class="btn" onclick="showNotification('Profile Updated', 'success', 'Your details have been saved.')"><i class="fas fa-save"></i> Save Changes</button>
+                            </div>
+                        </div>
+                        <div class="content-section">
+                            <div class="section-header"><h2><i class="fas fa-key"></i> Lease Details</h2></div>
+                            <div class="section-content">
+                                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--gray-light);"><span>Property</span><strong>PROP001, Unit 4B</strong></div>
+                                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--gray-light);"><span>Lease Start</span><strong>Jan 1, 2024</strong></div>
+                                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--gray-light);"><span>Lease End</span><strong>Dec 31, 2024</strong></div>
+                                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--gray-light);"><span>Monthly Rent</span><strong>$1,500.00</strong></div>
+                                <div style="display:flex; justify-content:space-between; padding:10px 0;"><span>Security Deposit</span><strong>$1,500.00 (held)</strong></div>
+                                <button class="btn btn-outline" style="margin-top:16px;" onclick="showNotification('Renewal Requested','info','Management will contact you about renewal terms.')"><i class="fas fa-file-signature"></i> Request Renewal</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STAFF LOGIN (NEW) -->
+                <div class="page" id="staff-login">
+                    <div class="staff-login-shell">
+                        <div class="content-section staff-login-card">
+                            <i class="fas fa-shield-halved"></i>
+                            <h2>Staff Portal</h2>
+                            <p>This area is restricted to Mwarokin Estates staff and property managers.</p>
+                            <div class="form-group" style="text-align:left;"><label>Staff Email</label><input type="email" placeholder="you@mwarokinestates.co.ke"></div>
+                            <div class="form-group" style="text-align:left;"><label>Password</label><input type="password" placeholder="••••••••"></div>
+                            <button class="btn" style="width:100%;" onclick="showNotification('Staff Sign-In', 'info', 'Redirecting to the staff dashboard...')"><i class="fas fa-right-to-bracket"></i> Sign In</button>
+                            <p style="margin-top:18px; font-size:0.82em;">Not staff? <a href="#" onclick="navigateTo('dashboard'); return false;" style="color:var(--primary-dark); font-weight:600;">Return to tenant dashboard</a></p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="notification-container" id="notification-container"></div>
+
+    <script>
+        const searchIndex = [
+            { label: 'Pay Rent', page: 'rent-payment', icon: 'fa-money-bill-wave' },
+            { label: 'Tenant Statement', page: 'tenant-statement', icon: 'fa-file-invoice-dollar' },
+            { label: 'Maintenance Requests', page: 'maintenance', icon: 'fa-tools' },
+            { label: 'Community Board', page: 'community', icon: 'fa-users' },
+            { label: 'Lease Agreement (Document)', page: 'documents', icon: 'fa-file-contract' },
+            { label: 'Payment Receipts', page: 'documents', icon: 'fa-receipt' },
+            { label: 'Tenant Profile', page: 'tenant-profile', icon: 'fa-user-circle' },
+            { label: 'Staff Portal', page: 'staff-login', icon: 'fa-shield-alt' },
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setupNavigation();
+            initializeDashboardChart();
+            initializeExpenseDonut();
+            setupThemeToggle();
+            setupSearch();
+            setupTabs();
+            setTimeout(() => { showNotification('Welcome to Mwarokin Estates Property Management!', 'success', 'Your dashboard is ready.'); }, 1000);
+        });
+
+        function setupNavigation() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pages = document.querySelectorAll('.page');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    const targetPage = this.getAttribute('data-page');
+                    pages.forEach(page => page.classList.remove('active'));
+                    document.getElementById(targetPage).classList.add('active');
+                });
+            });
+        }
+
+        function navigateTo(pageId) {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pages = document.querySelectorAll('.page');
+            navLinks.forEach(l => l.classList.remove('active'));
+            const target = document.querySelector(`[data-page="${pageId}"]`);
+            if (target) target.classList.add('active');
+            pages.forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        function setupThemeToggle() {
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIcon = themeToggle.querySelector('i');
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', currentTheme);
+            if (currentTheme === 'dark') { themeIcon.classList.remove('fa-moon'); themeIcon.classList.add('fa-sun'); }
+            themeToggle.addEventListener('click', function() {
+                const cur = document.body.getAttribute('data-theme');
+                const next = cur === 'dark' ? 'light' : 'dark';
+                document.body.setAttribute('data-theme', next);
+                localStorage.setItem('theme', next);
+                if (next === 'dark') { themeIcon.classList.remove('fa-moon'); themeIcon.classList.add('fa-sun'); }
+                else { themeIcon.classList.remove('fa-sun'); themeIcon.classList.add('fa-moon'); }
+                showNotification('Theme Changed', 'info', `Switched to ${next} mode`);
+            });
+        }
+
+        function setupSearch() {
+            const input = document.getElementById('global-search');
+            const results = document.getElementById('search-results');
+            input.addEventListener('input', function() {
+                const q = this.value.trim().toLowerCase();
+                if (!q) { results.classList.remove('show'); results.innerHTML=''; return; }
+                const matches = searchIndex.filter(i => i.label.toLowerCase().includes(q));
+                results.innerHTML = matches.length
+                    ? matches.map(m => `<div class="search-result-item" data-page="${m.page}"><i class="fas ${m.icon}" style="margin-right:10px;color:var(--primary);"></i>${m.label}</div>`).join('')
+                    : `<div class="search-result-empty">No results for "${this.value}"</div>`;
+                results.classList.add('show');
+            });
+            results.addEventListener('click', function(e) {
+                const item = e.target.closest('.search-result-item');
+                if (item) { navigateTo(item.getAttribute('data-page')); results.classList.remove('show'); input.value=''; }
+            });
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.search-container')) results.classList.remove('show');
+            });
+        }
+
+        function setupTabs() {
+            document.querySelectorAll('.tabs').forEach(group => {
+                group.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        group.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                    });
+                });
+            });
+        }
+
+        function initializeDashboardChart() {
+            const ctx = document.getElementById('paymentChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+                    datasets: [{
+                        label: 'Monthly Payments ($)',
+                        data: [1500, 1500, 1500, 1500, 1500, 1500, 1500, 0],
+                        borderColor: '#1abc9c', backgroundColor: 'rgba(26, 188, 156, 0.1)',
+                        fill: true, tension: 0.3, pointBackgroundColor: '#1abc9c',
+                        pointBorderColor: '#fff', pointBorderWidth: 2, pointRadius: 5, pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        title: { display: true, text: 'Payment History 2024', font: { size: 16, weight: '600' }, color: '#2c3e50' },
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'Amount ($)', font: { weight: '600' } }, grid: { color: 'rgba(0, 0, 0, 0.05)' } },
+                        x: { grid: { color: 'rgba(0, 0, 0, 0.05)' } }
+                    }
+                }
+            });
+        }
+
+        function initializeExpenseDonut() {
+            const options = {
+                chart: { type: 'donut', height: 260, fontFamily: 'Inter, sans-serif' },
+                series: [1500, 120, 45],
+                labels: ['Base Rent', 'Utilities', 'Maintenance Fees'],
+                colors: ['#1abc9c', '#3498db', '#f39c12'],
+                legend: { position: 'bottom' },
+                dataLabels: { enabled: true, formatter: (val) => val.toFixed(0) + '%' }
+            };
+            const chart = new ApexCharts(document.querySelector("#expenseDonut"), options);
+            chart.render();
+        }
+
+        function showNotification(title, type = 'info', message = '') {
+            const notificationContainer = document.getElementById('notification-container');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-icon"><i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : type === 'warning' ? 'exclamation-circle' : 'info-circle'}"></i></div>
+                <div class="notification-content"><div class="notification-title">${title}</div><div class="notification-message">${message}</div></div>
+                <button class="notification-close"><i class="fas fa-times"></i></button>`;
+            notificationContainer.appendChild(notification);
+            setTimeout(() => notification.classList.add('show'), 10);
+            notification.querySelector('.notification-close').addEventListener('click', () => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 400);
+            });
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.classList.remove('show');
+                    setTimeout(() => { if (notification.parentNode) notification.remove(); }, 400);
+                }
+            }, 5000);
+        }
+
+        function processPayment() {
+            showNotification('Processing Payment', 'info', 'Your payment is being processed...');
+            setTimeout(() => {
+                showNotification('Payment Successful', 'success', 'Your rent payment of $1,500 has been processed.');
+                const paymentChart = Chart.getChart("paymentChart");
+                paymentChart.data.datasets[0].data[7] = 1500;
+                paymentChart.update();
+            }, 2000);
+        }
+
+        function submitMaintenanceRequest() {
+            const requestType = document.getElementById('request-type').value;
+            const description = document.getElementById('description').value;
+            if (!description) { showNotification('Missing Information', 'error', 'Please provide a description of the issue.'); return; }
+            showNotification('Request Submitted', 'success', `Your ${requestType} request has been submitted.`);
+            document.getElementById('description').value = '';
+        }
+    </script>
+</body>
+</html>

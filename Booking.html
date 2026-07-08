@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Booking</title>
+    <meta name="keywords" content="Real Estate, Property Listings, Valuation, Booking, Rentals">
+    <meta name="description" content="Mwarokin Estates: Your trusted platform for real estate listings, valuations, and matchmaking.">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --accent: #f59e0b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+        }
+        
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .property-card {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .booking-modal {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+        
+        .tab-active {
+            background-color: rgb(219 234 254);
+            color: rgb(37 99 235);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="sticky-nav bg-white shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold flex items-center">
+                <span style="color: #2563eb">Mwarokin Estates </span>
+            </a>
+            
+            <div class="flex space-x-6 items-center">
+                <button id="browseTab" class="px-3 py-2 rounded-md tab-active">Browse Properties</button>
+                <button id="bookingsTab" class="px-3 py-2 rounded-md text-gray-600 hover:text-blue-600">My Bookings</button>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-700">Hi, John Doe</span>
+                    <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                        J
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="gradient-bg text-white py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Book Your Perfect Property</h1>
+            <p class="text-xl mb-8">Discover, book, and manage properties with ease</p>
+            
+            <div class="max-w-2xl mx-auto">
+                <div class="bg-white rounded-lg shadow-lg p-2 flex">
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Search by location, property type, or features..."
+                        class="flex-grow p-3 text-gray-800 rounded-l-lg focus:outline-none"
+                    />
+                    <button 
+                        class="bg-blue-600 text-white px-6 py-3 rounded-r-lg hover:bg-blue-700 transition"
+                        style="background-color: #2563eb"
+                        onclick="handleSearch()"
+                    >
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <!-- Browse Properties Tab -->
+        <div id="browseContent">
+            <!-- Filters -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h2 class="text-xl font-bold mb-4">Refine Your Search</h2>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-medium mb-2">Location</label>
+                        <input
+                            type="text"
+                            id="locationFilter"
+                            class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Any location"
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-medium mb-2">Property Type</label>
+                        <select
+                            id="typeFilter"
+                            class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="all">All Types</option>
+                            <option value="apartment">Apartment</option>
+                            <option value="house">House</option>
+                            <option value="studio">Studio</option>
+                            <option value="commercial">Commercial</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-medium mb-2">Bedrooms</label>
+                        <select
+                            id="bedroomsFilter"
+                            class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="any">Any</option>
+                            <option value="1">1+</option>
+                            <option value="2">2+</option>
+                            <option value="3">3+</option>
+                            <option value="4">4+</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-medium mb-2">Min Price</label>
+                        <input
+                            type="number"
+                            id="minPriceFilter"
+                            class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            min="0"
+                            value="0"
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-medium mb-2">Max Price</label>
+                        <input
+                            type="number"
+                            id="maxPriceFilter"
+                            class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            value="1000000"
+                        />
+                    </div>
+                </div>
+                <div class="mt-4 flex justify-end">
+                    <button 
+                        onclick="applyFilters()"
+                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+                        style="background-color: #2563eb"
+                    >
+                        Apply Filters
+                    </button>
+                </div>
+            </div>
+
+            <!-- Property Listings -->
+            <div>
+                <h2 class="text-2xl font-bold mb-6">
+                    Available Properties (<span id="propertyCount">4</span>)
+                </h2>
+                
+                <div id="propertiesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Properties will be loaded here by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- My Bookings Tab -->
+        <div id="bookingsContent" class="hidden">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold mb-6">My Bookings</h2>
+                
+                <div id="bookingsList">
+                    <!-- Bookings will be loaded here by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="booking-modal bg-white rounded-lg shadow-xl max-w-md w-full max-h-screen overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold">Book Property</h3>
+                    <button 
+                        onclick="closeBookingModal()"
+                        class="text-gray-500 hover:text-gray-700"
+                    >
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="mb-6">
+                    <h4 id="modalPropertyTitle" class="font-semibold"></h4>
+                    <p id="modalPropertyLocation" class="text-gray-600"></p>
+                    <p id="modalPropertyPrice" class="text-blue-600 font-bold mt-1"></p>
+                </div>
+                
+                <form id="bookingForm">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-medium mb-2">
+                            Start Date
+                        </label>
+                        <input
+                            type="date"
+                            id="startDate"
+                            class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            min=""
+                            required
+                        />
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-medium mb-2">
+                            Duration
+                        </label>
+                        <select
+                            id="duration"
+                            class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="2weeks">2 Weeks</option>
+                            <option value="1month">1 Month</option>
+                            <option value="3months">3 Months</option>
+                            <option value="6months">6 Months</option>
+                        </select>
+                    </div>
+                    
+                    <div id="bookingSummary" class="mb-4 p-3 bg-blue-50 rounded-md hidden">
+                        <p class="text-sm">
+                            <span class="font-medium">End Date:</span> <span id="endDateDisplay"></span>
+                        </p>
+                        <p class="text-sm mt-1">
+                            <span class="font-medium">Total Amount:</span> <span id="totalAmountDisplay"></span>
+                        </p>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-medium mb-2">
+                            Additional Notes (Optional)
+                        </label>
+                        <textarea
+                            id="bookingNotes"
+                            class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            rows="3"
+                            placeholder="Any special requests or requirements..."
+                        ></textarea>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3">
+                        <button
+                            type="button"
+                            onclick="closeBookingModal()"
+                            class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                            style="background-color: #2563eb"
+                        >
+                            Confirm Booking
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12 mt-12">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <a href="/" class="text-2xl font-bold">
+                    <span style="color: #2563eb">Mwarokin Estates </span>
+                </a>
+                <p class="mt-4 text-gray-400">
+                    Crafting unforgettable real estate experiences tailored to your unique needs.
+                </p>
+                <div class="flex space-x-4 mt-4">
+                    <a href="#" class="text-blue-400 hover:text-blue-300"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-blue-400 hover:text-blue-300"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="text-blue-400 hover:text-blue-300"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="text-blue-400 hover:text-blue-300"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div>
+                <h5 class="text-lg font-bold text-white mb-4">Quick Links</h5>
+                <div class="flex flex-col space-y-2">
+                    <a href="Contact.html" class="text-gray-400 hover:text-blue-300"><i class="fas fa-angle-right mr-2"></i>Contact</a>
+                    <a href="AutomateGPRSPinLocator.html" class="text-gray-400 hover:text-blue-300"><i class="fas fa-angle-right mr-2"></i>Locator</a>
+                    <a href="Neighborhoods.html" class="text-gray-400 hover:text-blue-300"><i class="fas fa-angle-right mr-2"></i>Neighbourhoods</a>
+                    <a href="LanguageSupport.html" class="text-gray-400 hover:text-blue-300"><i class="fas fa-angle-right mr-2"></i>Language Support</a>
+                </div>
+            </div>
+            <div>
+                <h5 class="text-lg font-bold text-white mb-4">Services</h5>
+                <div class="flex flex-col space-y-2">
+                    <a href="LeaseAgent.html" class="text-gray-400 hover:text-blue-300"><i class="fas fa-angle-right mr-2"></i>Lease Agent</a>
+                    <a href="Renovations.html" class="text-gray-400 hover:text-blue-300"><i class="fas fa-angle-right mr-2"></i>Renovations</a>
+                    <a href="Wearables.html" class="text-gray-400 hover:text-blue-300"><i class="fas fa-angle-right mr-2"></i>Wearables</a>
+                    <a href="Upgrade&DowngradeRelocation.html" class="text-gray-400 hover:text-blue-300"><i class="fas fa-angle-right mr-2"></i>Upgrade & Downgrade Relocation</a>
+                </div>
+            </div>
+            <div>
+                <h5 class="text-lg font-bold text-white mb-4">Contact Us</h5>
+                <p class="text-gray-400"><i class="fas fa-map-marker-alt mr-2"></i>Africa, Global</p>
+                <p class="text-gray-400"><i class="fas fa-phone-alt mr-2"></i>+254-704-919-388</p>
+                <p class="text-gray-400"><i class="fas fa-envelope mr-2"></i>info@Mwarokin Estates.com</p>
+            </div>
+        </div>
+        <div class="border-t border-gray-700 mt-8 pt-4">
+            <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between text-gray-400">
+                <p>Mwarokin Estates -Booking Property- 2026 &copy; <a href="#" class="hover:text-blue-300">All Rights Reserved. </a>  </p>
+                <p>Powered By: <a href="https://www.syllogismtechnologyafrica.com" class="hover:text-blue-300">Syllogism Technology Africa.</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample property data
+        const sampleProperties = [
+            {
+                id: 1,
+                title: "Luxury Apartment in Westlands",
+                location: "Westlands, Nairobi",
+                price: 250000,
+                type: "apartment",
+                bedrooms: 3,
+                bathrooms: 2,
+                size: "1200 sq ft",
+                description: "Beautiful modern apartment with stunning city views, premium finishes, and excellent amenities.",
+                images: ["https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"],
+                features: ["Parking", "Swimming Pool", "Gym", "Security", "Balcony"],
+                available: true,
+                landlord: "John Properties Ltd",
+                rating: 4.8,
+                reviews: 42
+            },
+            {
+                id: 2,
+                title: "Cozy Studio in Kilimani",
+                location: "Kilimani, Nairobi",
+                price: 80000,
+                type: "studio",
+                bedrooms: 1,
+                bathrooms: 1,
+                size: "550 sq ft",
+                description: "Perfect for singles or couples, this studio offers modern living in a prime location.",
+                images: ["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"],
+                features: ["Parking", "Security", "WiFi"],
+                available: true,
+                landlord: "Kilimani Homes",
+                rating: 4.5,
+                reviews: 28
+            },
+            {
+                id: 3,
+                title: "Spacious Family House in Karen",
+                location: "Karen, Nairobi",
+                price: 450000,
+                type: "house",
+                bedrooms: 4,
+                bathrooms: 3,
+                size: "2400 sq ft",
+                description: "Beautiful family home with a large garden, perfect for those who value space and privacy.",
+                images: ["https://images.unsplash.com/photo-1518780664697-55e3ad937233?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"],
+                features: ["Parking", "Garden", "Security", "Pet Friendly", "Garage"],
+                available: true,
+                landlord: "Karen Estates",
+                rating: 4.9,
+                reviews: 56
+            },
+            {
+                id: 4,
+                title: "Modern Office Space in CBD",
+                location: "Nairobi CBD",
+                price: 150000,
+                type: "commercial",
+                bedrooms: 0,
+                bathrooms: 2,
+                size: "900 sq ft",
+                description: "Prime office space in the heart of Nairobi's business district with excellent amenities.",
+                images: ["https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"],
+                features: ["Parking", "Reception", "Meeting Rooms", "Security", "High-Speed Internet"],
+                available: true,
+                landlord: "CBD Offices Ltd",
+                rating: 4.7,
+                reviews: 31
+            }
+        ];
+
+        // User bookings
+        let userBookings = [
+            {
+                id: 101,
+                propertyId: 1,
+                propertyTitle: "Luxury Apartment in Westlands",
+                startDate: "2023-11-01",
+                endDate: "2023-11-15",
+                status: "confirmed",
+                totalAmount: 125000
+            }
+        ];
+
+        // Current selected property for booking
+        let selectedProperty = null;
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('startDate').min = today;
+            
+            // Load properties
+            renderProperties(sampleProperties);
+            
+            // Load bookings
+            renderBookings();
+            
+            // Set up event listeners
+            document.getElementById('browseTab').addEventListener('click', function() {
+                switchTab('browse');
+            });
+            
+            document.getElementById('bookingsTab').addEventListener('click', function() {
+                switchTab('bookings');
+            });
+            
+            document.getElementById('bookingForm').addEventListener('submit', handleBookingSubmit);
+            
+            document.getElementById('startDate').addEventListener('change', updateBookingSummary);
+            document.getElementById('duration').addEventListener('change', updateBookingSummary);
+            
+            // Set up search input
+            document.getElementById('searchInput').addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    handleSearch();
+                }
+            });
+        });
+
+        // Switch between tabs
+        function switchTab(tab) {
+            if (tab === 'browse') {
+                document.getElementById('browseContent').classList.remove('hidden');
+                document.getElementById('bookingsContent').classList.add('hidden');
+                document.getElementById('browseTab').classList.add('tab-active');
+                document.getElementById('bookingsTab').classList.remove('tab-active');
+            } else {
+                document.getElementById('browseContent').classList.add('hidden');
+                document.getElementById('bookingsContent').classList.remove('hidden');
+                document.getElementById('browseTab').classList.remove('tab-active');
+                document.getElementById('bookingsTab').classList.add('tab-active');
+                renderBookings();
+            }
+        }
+
+        // Render properties
+        function renderProperties(properties) {
+            const container = document.getElementById('propertiesList');
+            const countElement = document.getElementById('propertyCount');
+            
+            countElement.textContent = properties.length;
+            
+            if (properties.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-3 text-center py-12">
+                        <i class="fas fa-home text-4xl text-gray-300 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-600">No properties match your criteria</h3>
+                        <p class="text-gray-500 mt-2">Try adjusting your filters or search terms</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = properties.map(property => `
+                <div class="property-card bg-white rounded-lg overflow-hidden">
+                    <div class="relative">
+                        <img 
+                            src="${property.images[0]}" 
+                            alt="${property.title}" 
+                            class="w-full h-48 object-cover"
+                        />
+                        <div class="absolute top-3 right-3 bg-blue-600 text-white px-2 py-1 rounded-md text-sm font-medium">
+                            ${formatCurrency(property.price)}/month
+                        </div>
+                        ${!property.available ? `
+                            <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                                <span class="bg-red-500 text-white px-3 py-1 rounded-md">Not Available</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-lg font-semibold">${property.title}</h3>
+                            <div class="flex items-center">
+                                ${renderRating(property.rating)}
+                                <span class="text-sm text-gray-500 ml-1">(${property.reviews})</span>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-600 mb-3 flex items-center">
+                            <i class="fas fa-map-marker-alt text-red-500 mr-1"></i>
+                            ${property.location}
+                        </p>
+                        
+                        <div class="flex text-sm text-gray-500 mb-3">
+                            <span class="mr-4 flex items-center">
+                                <i class="fas fa-bed text-blue-500 mr-1"></i>
+                                ${property.bedrooms} ${property.bedrooms === 1 ? 'Bed' : 'Beds'}
+                            </span>
+                            <span class="mr-4 flex items-center">
+                                <i class="fas fa-bath text-blue-500 mr-1"></i>
+                                ${property.bathrooms} ${property.bathrooms === 1 ? 'Bath' : 'Baths'}
+                            </span>
+                            <span class="flex items-center">
+                                <i class="fas fa-ruler-combined text-blue-500 mr-1"></i>
+                                ${property.size}
+                            </span>
+                        </div>
+                        
+                        <div class="flex flex-wrap mb-4">
+                            ${renderFeatures(property.features.slice(0, 3))}
+                            ${property.features.length > 3 ? `
+                                <div class="text-sm text-gray-500">
+                                    +${property.features.length - 3} more
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <button
+                                onclick="openBookingModal(${property.id})"
+                                class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition flex items-center"
+                                style="background-color: #2563eb"
+                                ${!property.available ? 'disabled' : ''}
+                            >
+                                <i class="fas fa-calendar-plus mr-2"></i>
+                                Book Now
+                            </button>
+                            <button
+                                onclick="viewPropertyDetails(${property.id})"
+                                class="text-blue-600 hover:text-blue-800 flex items-center"
+                            >
+                                View Details
+                                <i class="fas fa-chevron-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render bookings
+        function renderBookings() {
+            const container = document.getElementById('bookingsList');
+            
+            if (userBookings.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-calendar-times text-4xl text-gray-300 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-600">No bookings yet</h3>
+                        <p class="text-gray-500 mt-2">Browse properties and make your first booking!</p>
+                        <button 
+                            class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+                            style="background-color: #2563eb"
+                            onclick="switchTab('browse')"
+                        >
+                            Browse Properties
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = userBookings.map(booking => `
+                <div class="border rounded-lg p-4 flex flex-col md:flex-row justify-between mb-4">
+                    <div>
+                        <h3 class="text-lg font-semibold">${booking.propertyTitle}</h3>
+                        <div class="flex flex-wrap mt-2">
+                            <div class="mr-6 mb-2">
+                                <span class="text-gray-600">From:</span>
+                                <span class="ml-2 font-medium">${booking.startDate}</span>
+                            </div>
+                            <div class="mr-6 mb-2">
+                                <span class="text-gray-600">To:</span>
+                                <span class="ml-2 font-medium">${booking.endDate}</span>
+                            </div>
+                            <div class="mr-6 mb-2">
+                                <span class="text-gray-600">Status:</span>
+                                <span class="ml-2 font-medium ${getStatusColor(booking.status)}">
+                                    ${booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                                </span>
+                            </div>
+                            <div class="mb-2">
+                                <span class="text-gray-600">Total:</span>
+                                <span class="ml-2 font-medium">${formatCurrency(booking.totalAmount)}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center mt-4 md:mt-0">
+                        <button class="text-blue-600 hover:text-blue-800 mr-4">
+                            <i class="fas fa-edit mr-1"></i> Modify
+                        </button>
+                        <button class="text-red-600 hover:text-red-800" onclick="cancelBooking(${booking.id})">
+                            <i class="fas fa-times mr-1"></i> Cancel
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Open booking modal
+        function openBookingModal(propertyId) {
+            selectedProperty = sampleProperties.find(p => p.id === propertyId);
+            
+            if (!selectedProperty) return;
+            
+            document.getElementById('modalPropertyTitle').textContent = selectedProperty.title;
+            document.getElementById('modalPropertyLocation').textContent = selectedProperty.location;
+            document.getElementById('modalPropertyPrice').textContent = `${formatCurrency(selectedProperty.price)}/month`;
+            
+            // Reset form
+            document.getElementById('startDate').value = '';
+            document.getElementById('duration').value = '2weeks';
+            document.getElementById('bookingNotes').value = '';
+            document.getElementById('bookingSummary').classList.add('hidden');
+            
+            document.getElementById('bookingModal').classList.remove('hidden');
+        }
+
+        // Close booking modal
+        function closeBookingModal() {
+            document.getElementById('bookingModal').classList.add('hidden');
+            selectedProperty = null;
+        }
+
+        // Update booking summary
+        function updateBookingSummary() {
+            const startDate = document.getElementById('startDate').value;
+            const duration = document.getElementById('duration').value;
+            
+            if (!startDate || !selectedProperty) {
+                document.getElementById('bookingSummary').classList.add('hidden');
+                return;
+            }
+            
+            const endDate = calculateEndDate(startDate, duration);
+            const totalAmount = calculateBookingAmount(selectedProperty.price, duration);
+            
+            document.getElementById('endDateDisplay').textContent = endDate;
+            document.getElementById('totalAmountDisplay').textContent = formatCurrency(totalAmount);
+            document.getElementById('bookingSummary').classList.remove('hidden');
+        }
+
+        // Handle booking submission
+        function handleBookingSubmit(e) {
+            e.preventDefault();
+            
+            const startDate = document.getElementById('startDate').value;
+            const duration = document.getElementById('duration').value;
+            const notes = document.getElementById('bookingNotes').value;
+            
+            if (!startDate) {
+                alert("Please select a start date");
+                return;
+            }
+            
+            const endDate = calculateEndDate(startDate, duration);
+            const totalAmount = calculateBookingAmount(selectedProperty.price, duration);
+            
+            // Create new booking
+            const newBooking = {
+                id: Date.now(),
+                propertyId: selectedProperty.id,
+                propertyTitle: selectedProperty.title,
+                startDate: startDate,
+                endDate: endDate,
+                duration: duration,
+                status: "pending",
+                totalAmount: totalAmount,
+                notes: notes
+            };
+            
+            // Add to user bookings
+            userBookings.push(newBooking);
+            
+            // Show confirmation
+            alert(`Booking submitted for ${selectedProperty.title} from ${startDate} to ${endDate}. Total: ${formatCurrency(totalAmount)}`);
+            
+            // Reset and close modal
+            closeBookingModal();
+            
+            // Update bookings tab if active
+            if (!document.getElementById('bookingsContent').classList.contains('hidden')) {
+                renderBookings();
+            }
+        }
+
+        // Cancel booking
+        function cancelBooking(bookingId) {
+            if (confirm("Are you sure you want to cancel this booking?")) {
+                userBookings = userBookings.filter(booking => booking.id !== bookingId);
+                renderBookings();
+                alert("Booking cancelled successfully");
+            }
+        }
+
+        // View property details
+        function viewPropertyDetails(propertyId) {
+            const property = sampleProperties.find(p => p.id === propertyId);
+            if (property) {
+                alert(`${property.title}\n\n${property.description}\n\nFeatures: ${property.features.join(', ')}`);
+            }
+        }
+
+        // Handle search
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            applyFilters(query);
+        }
+
+        // Apply filters
+        function applyFilters(searchQuery = '') {
+            const location = document.getElementById('locationFilter').value.toLowerCase();
+            const type = document.getElementById('typeFilter').value;
+            const bedrooms = document.getElementById('bedroomsFilter').value;
+            const minPrice = parseInt(document.getElementById('minPriceFilter').value) || 0;
+            const maxPrice = parseInt(document.getElementById('maxPriceFilter').value) || 1000000;
+            
+            let results = sampleProperties.filter(property => {
+                // Search query filter
+                if (searchQuery && 
+                    !property.title.toLowerCase().includes(searchQuery) &&
+                    !property.location.toLowerCase().includes(searchQuery) &&
+                    !property.description.toLowerCase().includes(searchQuery)) {
+                    return false;
+                }
+                
+                // Location filter
+                if (location && !property.location.toLowerCase().includes(location)) {
+                    return false;
+                }
+                
+                // Type filter
+                if (type !== 'all' && property.type !== type) {
+                    return false;
+                }
+                
+                // Bedrooms filter
+                if (bedrooms !== 'any' && property.bedrooms < parseInt(bedrooms)) {
+                    return false;
+                }
+                
+                // Price filter
+                if (property.price < minPrice || property.price > maxPrice) {
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            renderProperties(results);
+        }
+
+        // Utility functions
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(amount);
+        }
+
+        function renderRating(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="fas fa-star text-yellow-400"></i>';
+            }
+            
+            if (hasHalfStar) {
+                stars += '<i class="fas fa-star-half-alt text-yellow-400"></i>';
+            }
+            
+            const emptyStars = 5 - Math.ceil(rating);
+            for (let i = 0; i < emptyStars; i++) {
+                stars += '<i class="far fa-star text-yellow-400"></i>';
+            }
+            
+            return stars;
+        }
+
+        function renderFeatures(features) {
+            const featureIcons = {
+                "Parking": "fa-parking",
+                "Swimming Pool": "fa-swimming-pool",
+                "Gym": "fa-dumbbell",
+                "Security": "fa-shield-alt",
+                "Balcony": "fa-vector-square",
+                "WiFi": "fa-wifi",
+                "Garden": "fa-tree",
+                "Pet Friendly": "fa-paw",
+                "Garage": "fa-warehouse",
+                "Reception": "fa-concierge-bell",
+                "Meeting Rooms": "fa-users",
+                "High-Speed Internet": "fa-bolt"
+            };
+            
+            return features.map(feature => `
+                <div class="flex items-center mr-4 mb-2">
+                    <i class="fas ${featureIcons[feature] || 'fa-check'} text-blue-500 mr-1"></i>
+                    <span class="text-sm">${feature}</span>
+                </div>
+            `).join('');
+        }
+
+        function calculateEndDate(startDate, duration) {
+            const start = new Date(startDate);
+            let end = new Date(start);
+            
+            if (duration === "2weeks") {
+                end.setDate(start.getDate() + 14);
+            } else if (duration === "1month") {
+                end.setMonth(start.getMonth() + 1);
+            } else if (duration === "3months") {
+                end.setMonth(start.getMonth() + 3);
+            } else if (duration === "6months") {
+                end.setMonth(start.getMonth() + 6);
+            }
+            
+            return end.toISOString().split('T')[0];
+        }
+
+        function calculateBookingAmount(price, duration) {
+            let multiplier = 1;
+            
+            if (duration === "2weeks") {
+                multiplier = 0.5;
+            } else if (duration === "1month") {
+                multiplier = 1;
+            } else if (duration === "3months") {
+                multiplier = 2.7;
+            } else if (duration === "6months") {
+                multiplier = 5;
+            }
+            
+            return price * multiplier;
+        }
+
+        function getStatusColor(status) {
+            switch(status) {
+                case 'confirmed': return 'text-green-600';
+                case 'pending': return 'text-yellow-600';
+                case 'cancelled': return 'text-red-600';
+                default: return 'text-gray-600';
+            }
+        }
+    </script>
+</body>
+</html>

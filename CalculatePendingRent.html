@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Calculate Pending Rent</title>
+    <link rel="icon" href="img/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --success: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gradient: linear-gradient(135deg, #4361ee, #7209b7);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+        }
+        
+        body {
+            font-family: 'Heebo', sans-serif;
+            background-color: #f5f7fb;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .navbar-brand h1 {
+            font-weight: 800;
+            font-size: 1.8rem;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary) !important;
+        }
+        
+        .btn-primary {
+            background: var(--gradient);
+            border: none;
+            border-radius: var(--radius);
+            padding: 10px 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .hero-section {
+            background: var(--gradient);
+            color: white;
+            padding: 60px 0;
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            border: none;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background: var(--gradient);
+            color: white;
+            border-radius: var(--radius) var(--radius) 0 0 !important;
+            padding: 15px 20px;
+            font-weight: 600;
+        }
+        
+        .form-control, .form-select {
+            border-radius: var(--radius);
+            padding: 12px 15px;
+            border: 1px solid #e1e5ee;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+        }
+        
+        .payment-method-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            color: var(--primary);
+        }
+        
+        .progress {
+            height: 8px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        .payment-summary {
+            background: #f8f9ff;
+            border-radius: var(--radius);
+            padding: 20px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .chat-container {
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        .chat-box {
+            background: #f8f9ff;
+            padding: 20px;
+            height: 300px;
+            overflow-y: auto;
+        }
+        
+        .message {
+            padding: 12px 15px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            max-width: 80%;
+        }
+        
+        .user-message {
+            background: var(--primary);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .bot-message {
+            background: white;
+            border: 1px solid #e1e5ee;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .payment-history-item {
+            border-bottom: 1px solid #e1e5ee;
+            padding: 15px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .payment-history-item:hover {
+            background: #f8f9ff;
+            padding-left: 10px;
+        }
+        
+        .payment-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-completed {
+            background: rgba(76, 201, 240, 0.2);
+            color: #4cc9f0;
+        }
+        
+        .status-pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+        
+        .status-failed {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+        }
+        
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 60px 0 20px;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .back-to-top.show {
+            opacity: 1;
+        }
+        
+        .security-badge {
+            background: rgba(76, 201, 240, 0.1);
+            border: 1px solid rgba(76, 201, 240, 0.3);
+            border-radius: var(--radius);
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .payment-visualization {
+            height: 200px;
+            background: #f8f9ff;
+            border-radius: var(--radius);
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 40px 0;
+                border-radius: 0 0 20px 20px;
+            }
+            
+            .card {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
+        <div class="container">
+            <a href="index.html" class="navbar-brand d-flex align-items-center">
+                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px;">
+                    <span class="text-white fw-bold">M</span>
+                </div>
+                <h1 class="m-0 text-primary fs-3">Mwarokin Estates</h1>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a href="ManageBills.html" class="nav-link">Manage Bills</a></li>
+                    <li class="nav-item"><a href="Payments.html" class="nav-link">Payments</a></li>
+                    <li class="nav-item"><a href="LipaMdogo.html" class="nav-link">Lipa Mdogo</a></li>
+                    <li class="nav-item"><a href="Rent.html" class="nav-link">Rent</a></li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
+                        <div class="dropdown-menu">
+                            <a href="Renovation.html" class="dropdown-item">Renovation</a>
+                            <a href="Selling.html" class="dropdown-item">Selling Property</a>
+                            <a href="Buying.html" class="dropdown-item">Buying Property</a>
+                            <a href="LanguageSupport.html" class="dropdown-item">Language Support</a>
+                            <a href="Neighborhoods.html" class="dropdown-item">Neighborhoods</a>
+                        </div>
+                    </li>
+                    <li class="nav-item"><a href="Contact.html" class="nav-link">Contact</a></li>
+                </ul>
+                <a href="Communication.html" class="btn btn-primary px-3 ms-3">Communication</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-5 fw-bold mb-3">Calculate Pending Rent.</h1>
+                    <p class="lead mb-4">Secure, fast, and convenient payment processing with real-time calculations and AI-powered assistance.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#payment-calculator" class="btn btn-light">Calculate Payments</a>
+                        <a href="#payment-history" class="btn btn-outline-light">View History</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="payment-visualization">
+                        <i class="fas fa-money-bill-wave display-1 mb-3"></i>
+                        <p>Secure Payment Processing</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Payment Calculator Section -->
+    <section id="payment-calculator" class="container mb-5">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Payment Calculator</span>
+                        <span class="badge bg-light text-primary">Advanced</span>
+                    </div>
+                    <div class="card-body">
+                        <form id="paymentForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="pendingAmount" class="form-label">Pending Amount</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
+                                        <input type="number" class="form-control" id="pendingAmount" name="pendingAmount" required min="0" step="0.01" placeholder="0.00">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="paymentAmount" class="form-label">Payment Amount</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-hand-holding-usd"></i></span>
+                                        <input type="number" class="form-control" id="paymentAmount" name="paymentAmount" required min="0" step="0.01" placeholder="0.00">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="paymentDate" class="form-label">Payment Date</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                        <input type="date" class="form-control" id="paymentDate" name="paymentDate" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="currency" class="form-label">Currency</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                        <select class="form-select" id="currency" name="currency" required>
+                                            <option value="USD" selected>USD - US Dollar</option>
+                                            <option value="KSH">KSH - Kenyan Shilling</option>
+                                            <option value="EUR">EUR - Euro</option>
+                                            <option value="GBP">GBP - British Pound</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="paymentMethod" class="form-label">Payment Method</label>
+                                <div class="row g-2">
+                                    <div class="col-md-4">
+                                        <div class="form-check card p-3 h-100">
+                                            <input class="form-check-input" type="radio" name="paymentMethod" id="mobileMoney" value="mobilemoney" checked>
+                                            <label class="form-check-label d-flex align-items-center" for="mobileMoney">
+                                                <i class="fas fa-mobile-alt payment-method-icon"></i>
+                                                <div>
+                                                    <div class="fw-bold">Mobile Money</div>
+                                                    <small class="text-muted">Fast & Secure</small>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check card p-3 h-100">
+                                            <input class="form-check-input" type="radio" name="paymentMethod" id="bankTransfer" value="bankTransfer">
+                                            <label class="form-check-label d-flex align-items-center" for="bankTransfer">
+                                                <i class="fas fa-university payment-method-icon"></i>
+                                                <div>
+                                                    <div class="fw-bold">Bank Transfer</div>
+                                                    <small class="text-muted">Direct Transfer</small>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check card p-3 h-100">
+                                            <input class="form-check-input" type="radio" name="paymentMethod" id="creditCard" value="creditCard">
+                                            <label class="form-check-label d-flex align-items-center" for="creditCard">
+                                                <i class="fas fa-credit-card payment-method-icon"></i>
+                                                <div>
+                                                    <div class="fw-bold">Credit Card</div>
+                                                    <small class="text-muted">Visa, Mastercard</small>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="schedulePayments" class="form-label">Payment Schedule</label>
+                                <select class="form-select" id="schedulePayments" name="schedulePayments">
+                                    <option value="oneTime" selected>One-Time Payment</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                    <option value="quarterly">Quarterly</option>
+                                </select>
+                            </div>
+                            
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                                <button type="button" class="btn btn-outline-primary me-md-2" onclick="resetForm()">Reset</button>
+                                <button type="button" class="btn btn-primary" onclick="calculatePayment()">Calculate Payment</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Payment History -->
+                <div class="card mt-4" id="payment-history">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Payment History</span>
+                        <button type="button" class="btn btn-sm btn-outline-light" onclick="refreshHistory()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Description</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyTableBody">
+                                    <!-- Payment history will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button class="btn btn-outline-primary" onclick="loadMoreHistory()">Load More</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <!-- Payment Summary -->
+                <div class="card sticky-top" style="top: 100px;">
+                    <div class="card-header">Payment Summary</div>
+                    <div class="card-body">
+                        <div id="paymentSummary" class="payment-summary">
+                            <p class="text-center text-muted">Complete the form to see payment summary</p>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h6>Payment Progress</h6>
+                            <div class="progress">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="d-flex justify-content-between small text-muted">
+                                <span>Paid: $650</span>
+                                <span>Remaining: $350</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h6>Security Features</h6>
+                            <div class="security-badge">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-shield-alt text-success me-2"></i>
+                                    <span class="fw-bold">Advanced Encryption</span>
+                                </div>
+                                <small class="text-muted">All transactions are secured with 256-bit encryption</small>
+                            </div>
+                            <div class="security-badge">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-user-check text-primary me-2"></i>
+                                    <span class="fw-bold">Two-Factor Authentication</span>
+                                </div>
+                                <small class="text-muted">Extra layer of security for your account</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Assistant Section -->
+    <section class="container mb-5">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>AI Payment Assistant</span>
+                <span class="badge bg-success">Online</span>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="chat-container">
+                            <div id="chatDisplay" class="chat-box">
+                                <div class="message bot-message">
+                                    <strong>Mwarokin Estates AI:</strong> Hello! I'm your payment assistant. How can I help you with your payments today?
+                                </div>
+                            </div>
+                            <div class="p-3 border-top">
+                                <div class="input-group">
+                                    <input type="text" id="userInput" class="form-control" placeholder="Ask about payments, fees, or schedules...">
+                                    <button class="btn btn-outline-primary" type="button" onclick="sendMessage()">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                    <button class="btn btn-outline-secondary" type="button" onclick="startVoiceInput()">
+                                        <i class="fas fa-microphone"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text mt-2">
+                                    <small>Try asking: "What are the fees for mobile money payments?" or "How do I schedule recurring payments?"</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>Quick Actions</h6>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-primary text-start" onclick="quickAction('fee inquiry')">
+                                <i class="fas fa-percentage me-2"></i> Fee Inquiry
+                            </button>
+                            <button class="btn btn-outline-primary text-start" onclick="quickAction('payment schedule')">
+                                <i class="fas fa-calendar me-2"></i> Payment Schedule
+                            </button>
+                            <button class="btn btn-outline-primary text-start" onclick="quickAction('currency conversion')">
+                                <i class="fas fa-exchange-alt me-2"></i> Currency Conversion
+                            </button>
+                            <button class="btn btn-outline-primary text-start" onclick="quickAction('transaction history')">
+                                <i class="fas fa-history me-2"></i> Transaction History
+                            </button>
+                        </div>
+                        
+                        <h6 class="mt-4">Payment Statistics</h6>
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                                <span>Total Payments</span>
+                                <span class="badge bg-primary rounded-pill">24</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                                <span>This Month</span>
+                                <span class="badge bg-success rounded-pill">5</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                                <span>Pending</span>
+                                <span class="badge bg-warning rounded-pill">2</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="container mb-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Calculate Pending Rent</h2>
+            <p class="lead text-muted">Experience next-generation payment processing with our advanced tools</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <div class="feature-icon mx-auto">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h5 class="card-title">Instant Processing</h5>
+                        <p class="card-text">Real-time payment processing with immediate confirmation and receipt generation.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <div class="feature-icon mx-auto">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h5 class="card-title">Advanced Security</h5>
+                        <p class="card-text">Bank-level encryption, fraud detection, and multi-factor authentication for all transactions.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <div class="feature-icon mx-auto">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h5 class="card-title">AI-Powered Insights</h5>
+                        <p class="card-text">Smart analytics and predictive payment scheduling to optimize your financial management.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white-50 pt-5">
+        <div class="container py-5">
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="text-white mb-4">Mwarokin Estates Payments</h5>
+                    <p class="mb-4">Secure, fast, and convenient payment solutions for property management and beyond.</p>
+                    <div class="d-flex pt-2">
+                        <a class="btn btn-outline-light btn-social me-2" href="#"><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-outline-light btn-social me-2" href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-outline-light btn-social me-2" href="#"><i class="fab fa-youtube"></i></a>
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="text-white mb-4">Quick Links</h5>
+                    <div class="footer-links d-flex flex-column">
+                        <a href="Contact.html" class="mb-2">Contact Us</a>
+                        <a href="Community.html" class="mb-2">Community</a>
+                        <a href="Accessibility.html" class="mb-2">People With Disability</a>
+                        <a href="Upgrade&DowngradeRelocation.html" class="mb-2">Upgrade & Downgrade Relocation</a>
+                        <a href="Wearables.html" class="mb-2">Wearabless</a> 
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="text-white mb-4">Payment Methods</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-light text-dark p-2">Mobile Money</span>
+                        <span class="badge bg-light text-dark p-2">Credit Card</span>
+                        <span class="badge bg-light text-dark p-2">Bank Transfer</span>
+                        <span class="badge bg-light text-dark p-2">PayPal</span>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="text-white mb-4">Newsletter</h5>
+                    <p>Subscribe to get updates on new features and offers.</p>
+                    <div class="position-relative">
+                        <input class="form-control bg-transparent w-100 py-3 ps-4 pe-5 mb-2" type="text" placeholder="Your email">
+                        <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container text-center py-4">
+            <div class="border-top pt-4">
+                <p class="mb-0">Mwarokin Estates - Calculate Pending Rent - © 2026. All Rights Reserved. Powered by Syllogism Technology Africa</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <a href="#" class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Back to top button
+        window.addEventListener('scroll', function() {
+            const backToTop = document.getElementById('backToTop');
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        });
+        
+        document.getElementById('backToTop').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        });
+        
+        // Payment calculation function
+        function calculatePayment() {
+            const pendingAmount = parseFloat(document.getElementById('pendingAmount').value) || 0;
+            const paymentAmount = parseFloat(document.getElementById('paymentAmount').value) || 0;
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+            const currency = document.getElementById('currency').value;
+            
+            if (paymentAmount <= 0) {
+                alert('Please enter a valid payment amount');
+                return;
+            }
+            
+            // Calculate fees based on payment method
+            let feePercentage = 0;
+            switch(paymentMethod) {
+                case 'mobilemoney':
+                    feePercentage = 1.5;
+                    break;
+                case 'bankTransfer':
+                    feePercentage = 1.0;
+                    break;
+                case 'creditCard':
+                    feePercentage = 2.5;
+                    break;
+            }
+            
+            const feeAmount = (paymentAmount * feePercentage) / 100;
+            const totalAmount = paymentAmount + feeAmount;
+            const remainingAmount = pendingAmount - paymentAmount;
+            
+            // Format currency
+            const currencySymbols = {
+                'USD': '$',
+                'KSH': 'KSh ',
+                'EUR': '€',
+                'GBP': '£'
+            };
+            
+            const symbol = currencySymbols[currency] || '';
+            
+            // Update payment summary
+            document.getElementById('paymentSummary').innerHTML = `
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Payment Amount:</span>
+                    <span class="fw-bold">${symbol}${paymentAmount.toFixed(2)}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Transaction Fee (${feePercentage}%):</span>
+                    <span class="fw-bold">${symbol}${feeAmount.toFixed(2)}</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Total Amount:</span>
+                    <span class="fw-bold text-primary">${symbol}${totalAmount.toFixed(2)}</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span>Remaining Balance:</span>
+                    <span class="fw-bold ${remainingAmount > 0 ? 'text-warning' : 'text-success'}">
+                        ${symbol}${Math.max(0, remainingAmount).toFixed(2)}
+                    </span>
+                </div>
+                <div class="mt-3">
+                    <button class="btn btn-success w-100" onclick="processPayment()">
+                        <i class="fas fa-lock me-2"></i> Process Payment
+                    </button>
+                </div>
+            `;
+            
+            // Add to payment history
+            addToHistory({
+                date: new Date().toISOString().split('T')[0],
+                description: `Payment via ${getPaymentMethodName(paymentMethod)}`,
+                amount: paymentAmount,
+                currency: currency,
+                status: 'pending'
+            });
+        }
+        
+        function getPaymentMethodName(method) {
+            const methods = {
+                'mobilemoney': 'Mobile Money',
+                'bankTransfer': 'Bank Transfer',
+                'creditCard': 'Credit Card'
+            };
+            return methods[method] || method;
+        }
+        
+        function resetForm() {
+            document.getElementById('paymentForm').reset();
+            document.getElementById('paymentSummary').innerHTML = `
+                <p class="text-center text-muted">Complete the form to see payment summary</p>
+            `;
+        }
+        
+        function processPayment() {
+            // In a real application, this would connect to a payment gateway
+            alert('Payment processing would be initiated here. This is a demo.');
+            
+            // Update the latest payment status to completed
+            const rows = document.querySelectorAll('#historyTableBody tr');
+            if (rows.length > 0) {
+                const statusCell = rows[0].querySelector('.payment-status');
+                statusCell.className = 'payment-status status-completed';
+                statusCell.textContent = 'Completed';
+            }
+        }
+        
+        // Payment history management
+        let historyData = [
+            { id: 1, date: '2024-06-15', description: 'Rent Payment - June', amount: 500, currency: 'USD', status: 'completed' },
+            { id: 2, date: '2024-06-10', description: 'Utility Bill - May', amount: 120, currency: 'USD', status: 'completed' },
+            { id: 3, date: '2024-06-05', description: 'Maintenance Fee', amount: 75, currency: 'USD', status: 'completed' },
+            { id: 4, date: '2024-05-28', description: 'Rent Payment - May', amount: 500, currency: 'USD', status: 'completed' },
+            { id: 5, date: '2024-05-15', description: 'Internet Bill', amount: 60, currency: 'USD', status: 'completed' }
+        ];
+        
+        function addToHistory(payment) {
+            payment.id = historyData.length > 0 ? Math.max(...historyData.map(p => p.id)) + 1 : 1;
+            historyData.unshift(payment);
+            renderHistory();
+        }
+        
+        function renderHistory() {
+            const tbody = document.getElementById('historyTableBody');
+            tbody.innerHTML = '';
+            
+            historyData.slice(0, 5).forEach(payment => {
+                const statusClass = `status-${payment.status}`;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${payment.date}</td>
+                    <td>${payment.description}</td>
+                    <td>${getCurrencySymbol(payment.currency)}${payment.amount.toFixed(2)}</td>
+                    <td><span class="payment-status ${statusClass}">${payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewDetails(${payment.id})">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function getCurrencySymbol(currency) {
+            const symbols = {
+                'USD': '$',
+                'KSH': 'KSh ',
+                'EUR': '€',
+                'GBP': '£'
+            };
+            return symbols[currency] || '';
+        }
+        
+        function viewDetails(id) {
+            const payment = historyData.find(p => p.id === id);
+            if (payment) {
+                alert(`Payment Details:\n\nDate: ${payment.date}\nDescription: ${payment.description}\nAmount: ${getCurrencySymbol(payment.currency)}${payment.amount.toFixed(2)}\nStatus: ${payment.status}`);
+            }
+        }
+        
+        function refreshHistory() {
+            // In a real app, this would fetch updated data from a server
+            renderHistory();
+            alert('Payment history refreshed');
+        }
+        
+        function loadMoreHistory() {
+            // In a real app, this would load more records from a server
+            alert('Loading more payment history...');
+        }
+        
+        // Chat functionality
+        function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const message = userInput.value.trim();
+            
+            if (message === '') return;
+            
+            // Add user message to chat
+            addMessageToChat(message, 'user');
+            
+            // Clear input
+            userInput.value = '';
+            
+            // Simulate AI response after a short delay
+            setTimeout(() => {
+                const response = generateAIResponse(message);
+                addMessageToChat(response, 'bot');
+            }, 1000);
+        }
+        
+        function addMessageToChat(message, sender) {
+            const chatDisplay = document.getElementById('chatDisplay');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender === 'user' ? 'user-message' : 'bot-message'}`;
+            
+            if (sender === 'user') {
+                messageDiv.innerHTML = `<strong>You:</strong> ${message}`;
+            } else {
+                messageDiv.innerHTML = `<strong>Mwarokin Estates AI:</strong> ${message}`;
+            }
+            
+            chatDisplay.appendChild(messageDiv);
+            chatDisplay.scrollTop = chatDisplay.scrollHeight;
+        }
+        
+        function generateAIResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            if (lowerMessage.includes('fee') || lowerMessage.includes('charge')) {
+                return "Our transaction fees are: Mobile Money - 1.5%, Bank Transfer - 1%, Credit Card - 2.5%. There are no hidden charges.";
+            } else if (lowerMessage.includes('schedule') || lowerMessage.includes('recurring')) {
+                return "You can schedule recurring payments weekly, monthly, or quarterly. Go to the Payment Schedule section to set this up.";
+            } else if (lowerMessage.includes('currency') || lowerMessage.includes('convert')) {
+                return "We support USD, KSH, EUR, and GBP. Currency conversion happens at real-time exchange rates with a 0.5% conversion fee.";
+            } else if (lowerMessage.includes('history') || lowerMessage.includes('transaction')) {
+                return "You can view your complete payment history in the Payment History section. Would you like me to show you how to filter by date or amount?";
+            } else if (lowerMessage.includes('secure') || lowerMessage.includes('safe')) {
+                return "All payments are secured with 256-bit encryption, two-factor authentication, and real-time fraud monitoring. Your financial data is always protected.";
+            } else {
+                return "I'm here to help with payment-related questions. You can ask me about fees, scheduling, currency conversion, or security.";
+            }
+        }
+        
+        function quickAction(action) {
+            let message = '';
+            switch(action) {
+                case 'fee inquiry':
+                    message = "What are the fees for different payment methods?";
+                    break;
+                case 'payment schedule':
+                    message = "How do I set up a payment schedule?";
+                    break;
+                case 'currency conversion':
+                    message = "What currencies do you support and what are the conversion rates?";
+                    break;
+                case 'transaction history':
+                    message = "How can I view my transaction history?";
+                    break;
+            }
+            
+            document.getElementById('userInput').value = message;
+            sendMessage();
+        }
+        
+        function startVoiceInput() {
+            alert("Voice input would be activated here. This is a demo feature.");
+            // In a real app, this would use the Web Speech API
+        }
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderHistory();
+            
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('paymentDate').value = today;
+        });
+    </script>
+</body>
+</html>

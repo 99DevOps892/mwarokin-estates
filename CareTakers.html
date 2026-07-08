@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Care Takers</title>
+    <link rel="icon" href="img/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
+    <link href="lib/animate/animate.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6c63ff;
+            --primary-dark: #5a52d5;
+            --secondary: #ff6584;
+            --dark: #1a1a2e;
+            --darker: #0f0f1a;
+            --light: #f8f9fa;
+            --accent: #00d4ff;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --gradient: linear-gradient(135deg, var(--primary), var(--accent));
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            --inner-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: var(--light);
+            font-family: 'Heebo', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-glass {
+            background: rgba(26, 26, 46, 0.8) !important;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .hero-gradient {
+            background: var(--gradient);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,255,255,0.05)" points="0,1000 1000,0 1000,1000"/></svg>');
+            background-size: cover;
+        }
+
+        .btn-neon {
+            background: var(--gradient);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.4);
+        }
+
+        .btn-neon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 99, 255, 0.6);
+            color: white;
+        }
+
+        .btn-neon::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-neon:hover::after {
+            left: 100%;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 30px;
+        }
+
+        .dashboard-card {
+            padding: 24px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .dashboard-card i {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-card {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            background: var(--gradient);
+        }
+
+        .stat-icon i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-content h3 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .stat-content p {
+            margin: 0;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-container input, .search-container select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+        }
+
+        .search-container input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-container input:focus, .search-container select:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+        }
+
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .floating-element {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            33% {
+                transform: translate(30px, -50px) rotate(120deg);
+            }
+            66% {
+                transform: translate(-20px, 20px) rotate(240deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(108, 99, 255, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(108, 99, 255, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(108, 99, 255, 0);
+            }
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .chart-container {
+            height: 250px;
+            position: relative;
+        }
+
+        .footer {
+            background: var(--darker);
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .footer a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer a:hover {
+            color: var(--accent);
+        }
+
+        /* Dark mode table */
+        .table-dark-custom {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table-dark-custom thead th {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 15px;
+            font-weight: 600;
+        }
+
+        .table-dark-custom tbody td {
+            border: none;
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .table-dark-custom tbody tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .stat-icon {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-xxl p-0">
+        <!-- Navigation Bar -->
+        <nav class="navbar navbar-expand-lg nav-glass sticky-top py-3">
+            <div class="container">
+                <a href="index.html" class="navbar-brand d-flex align-items-center">
+                    <div class="position-relative">
+                        <img class="img-fluid" src="Mwarokin Lg.png" alt="Icon" style="width: 40px; height: 40px;">
+                        <span class="pulse position-absolute top-0 start-100 translate-middle p-1 bg-primary border border-light rounded-circle"></span>
+                    </div>
+                    <h2 class="m-0 text-white ms-2">Mwarokin Estates</h2>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon text-white"><i class="fas fa-bars"></i></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a href="Rent.html" class="nav-link text-white">Rent</a></li>
+                        <li class="nav-item"><a href="LipaMdogo.html" class="nav-link text-white">Lipa Mdogo</a></li>
+                        <li class="nav-item"><a href="ManageBills.html" class="nav-link text-white">Manage Bills</a></li>
+                        <li class="nav-item"><a href="Payments.html" class="nav-link text-white">Payments</a></li>
+                        <li class="nav-item"><a href="Contact.html" class="nav-link text-white">Contact</a></li>
+                        </li>
+                            <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle text-white" data-bs-toggle="dropdown">Services</a>
+                            <div class="dropdown-menu glass-card border-0">
+                                <a href="Parking.html" class="dropdown-item text-white">Parking</a>
+                                <a href="Construction.html" class="dropdown-item text-white">Construction</a>
+                                <a href="Caretakers Dashboards.html" class="dropdown-item text-white">Caretakers View</a>
+                                <a href="Caretakers Dashboard.html" class="dropdown-item text-white">Caretakers Dashboards</a>
+                            </div>
+                    </ul>
+                    <a href="Communication.html" class="btn btn-neon ms-3 position-relative">
+                        <i class="fas fa-sign-out-alt me-2"></i>Communication
+                        <span class="notification-badge">3</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <div class="container-fluid hero-gradient py-5 mb-5 position-relative">
+            <div class="floating-elements">
+                <div class="floating-element" style="top: 20%; left: 10%; animation-delay: 0s;"></div>
+                <div class="floating-element" style="top: 60%; left: 80%; animation-delay: 5s;"></div>
+                <div class="floating-element" style="top: 80%; left: 40%; animation-delay: 10s;"></div>
+            </div>
+            <div class="container position-relative z-1">
+                <div class="row g-4 align-items-center">
+                    <div class="col-lg-6">
+                        <h1 class="display-5 text-white mb-3">Welcome, <span class="text-warning">Mr. Joseph</span></h1>
+                        <p class="text-white-50 mb-4">Manage your properties efficiently with our advanced caretaker dashboard. Monitor all activities in real-time.</p>
+                        
+                        <!-- Quick Stats -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <div class="glass-card stat-card">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-home"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <h3>12</h3>
+                                        <p>Properties</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="glass-card stat-card">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <h3>24</h3>
+                                        <p>Tenants</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="glass-card stat-card">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <h3>85%</h3>
+                                        <p>Rent Collected</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="glass-card p-4">
+                            <h4 class="text-white mb-3">Property Search</h4>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="search-container">
+                                        <input type="text" class="form-control" id="searchKeyword" placeholder="Search Keyword">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="search-container">
+                                        <select class="form-select" id="continentSelect">
+                                            <option selected>Continents</option>
+                                            <option value="1">Africa</option>
+                                            <option value="2">Asia</option>
+                                            <option value="3">Europe</option>
+                                            <option value="4">Antarctica</option>
+                                            <option value="5">North America</option>
+                                            <option value="6">Australia</option>
+                                            <option value="7">South America</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="search-container">
+                                        <select class="form-select" id="countrySelect">
+                                            <option selected>African Countries</option>
+                                            <option value="Kenya">Kenya</option>
+                                            <option value="Nigeria">Nigeria</option>
+                                            <option value="South Africa">South Africa</option>
+                                            <option value="Egypt">Egypt</option>
+                                            <option value="Ghana">Ghana</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <button class="btn-neon w-100" onclick="getLocation()">
+                                        <i class="fas fa-map-marker-alt me-2"></i>Pin Location
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="locationResult" class="mt-3 text-white"></div>
+                            <div id="currencyResult" class="mt-3 text-white"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div class="container mb-5">
+            <div class="row">
+                <div class="col-lg-8">
+                    <h2 class="text-white mb-4">Quick Actions</h2>
+                    <div class="dashboard-grid">
+                        <div class="glass-card dashboard-card">
+                            <div>
+                                <i class="fas fa-home"></i>
+                                <h4 class="text-white">View Homes</h4>
+                                <p class="text-white-50">Browse all properties under your management with detailed information.</p>
+                            </div>
+                            <a href="viewhomes.html" class="btn btn-neon mt-3">Access</a>
+                        </div>
+                        
+                        <div class="glass-card dashboard-card">
+                            <div>
+                                <i class="fas fa-users"></i>
+                                <h4 class="text-white">Manage Tenants</h4>
+                                <p class="text-white-50">Handle tenant information, leases, and communication.</p>
+                            </div>
+                            <a href="Managetenants.html" class="btn btn-neon mt-3">Access</a>
+                        </div>
+                        
+                        <div class="glass-card dashboard-card">
+                            <div>
+                                <i class="fas fa-chart-line"></i>
+                                <h4 class="text-white">Track Rent</h4>
+                                <p class="text-white-50">Monitor rent payments, generate reports, and send reminders.</p>
+                            </div>
+                            <a href="Trackrent.html" class="btn btn-neon mt-3">Access</a>
+                        </div>
+                        
+                        <div class="glass-card dashboard-card">
+                            <div>
+                                <i class="fas fa-tint"></i>
+                                <h4 class="text-white">Water Management</h4>
+                                <p class="text-white-50">Monitor water usage and manage billing for all properties.</p>
+                            </div>
+                            <a href="Water Management.html" class="btn btn-neon mt-3">Access</a>
+                        </div>
+                        
+                        <div class="glass-card dashboard-card">
+                            <div>
+                                <i class="fas fa-trash-alt"></i>
+                                <h4 class="text-white">Manage Trash</h4>
+                                <p class="text-white-50">Schedule and track waste collection for all properties.</p>
+                            </div>
+                            <a href="Manage Trash.html" class="btn btn-neon mt-3">Access</a>
+                        </div>
+                        
+                        <div class="glass-card dashboard-card">
+                            <div>
+                                <i class="fas fa-shield-alt"></i>
+                                <h4 class="text-white">Manage Security</h4>
+                                <p class="text-white-50">Monitor security systems and manage access controls.</p>
+                            </div>
+                            <a href="Manage Security.html" class="btn btn-neon mt-3">Access</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <h2 class="text-white mb-4">Recent Activity</h2>
+                    <div class="glass-card p-4 mb-4">
+                        <h5 class="text-white mb-3">Notifications</h5>
+                        <div class="activity-list">
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="flex-shrink-0">
+                                    <div class="bg-primary rounded-circle p-2">
+                                        <i class="fas fa-bell text-white"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <p class="mb-1 text-white">New maintenance request for Property #12</p>
+                                    <small class="text-white-50">2 hours ago</small>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="flex-shrink-0">
+                                    <div class="bg-success rounded-circle p-2">
+                                        <i class="fas fa-check text-white"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <p class="mb-1 text-white">Rent payment received from Tenant #7</p>
+                                    <small class="text-white-50">5 hours ago</small>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start">
+                                <div class="flex-shrink-0">
+                                    <div class="bg-warning rounded-circle p-2">
+                                        <i class="fas fa-exclamation text-white"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <p class="mb-1 text-white">Water bill overdue for Property #5</p>
+                                    <small class="text-white-50">1 day ago</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card p-4">
+                        <h5 class="text-white mb-3">Rent Collection Status</h5>
+                        <div class="chart-container">
+                            <canvas id="rentChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="container-fluid footer pt-5 mt-5">
+            <div class="container py-5">
+                <div class="row g-5">
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="text-white mb-4">Mwarokin Estates Will Assist.</h5>
+                        <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>Property App</p>
+                        <p class="mb-2"><i class="fa fa-phone-alt me-3"></i> +254-704-919-388</p>
+                        <p class="mb-2"><i class="fa fa-envelope me-3"></i> Property@Mwarokin Estates.com</p>
+                        <div class="d-flex pt-2">
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="text-white mb-4">Quick Links</h5>
+                        <a class="btn btn-link text-white-50" href="Accessibility.html">People With Disabilities</a>
+                        <a class="btn btn-link text-white-50" href="AutomateGPRSPinLocator.html">My Locator</a>
+                        <a class="btn btn-link text-white-50" href="LanguageSupport.html">Language Support</a>
+                        <a class="btn btn-link text-white-50" href="Lipa Mdogo Payment Plan.html">Lipa Mdogo Payment Plan</a>
+                        <a class="btn btn-link text-white-50" href="Neighborhoods.html">Neiborhoods</a>
+                         <a class="btn btn-link text-white-50" href="Renovations.html">Renovations</a>
+                        <a class="btn btn-link text-white-50" href="Upgrade&DowngradeRelocation.html">Upgrade&Downgrade Relocation</a>
+                        <a class="btn btn-link text-white-50" href="Wearables.html">Wearables</a>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="text-white mb-4">Home Gallery</h5>
+                        <div class="row g-2 pt-2">
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="img/property-1.jpg" alt="">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="img/property-2.jpg" alt="">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="img/property-3.jpg" alt="">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="img/property-4.jpg" alt="">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="img/property-5.jpg" alt="">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="img/property-6.jpg" alt="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="text-white mb-4">Home Updates</h5>
+                        <p>Mwarokin Estates ensures we secure you a great home when availability.</p>
+                        <div class="position-relative mx-auto" style="max-width: 400px;">
+                            <input class="form-control bg-transparent w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
+                            <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">Welcome</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="copyright">
+                    <div class="row">
+                        <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">Mwarokin Estates -Care Taker- 2026. All Right Reserved. <br>
+                            Powered By: <a class="border-bottom" href="www.syllogismtechnologyafrica.com">Syllogism Technology Africa</a>
+                        </div>
+                        <div class="col-md-6 text-center text-md-end">
+                            <div class="footer-menu">
+                                <a href="cookies.html">Cookies</a>
+                                <a href="Term.html">Terms and Conditions</a>
+                                <a href="Privacy.html">Privacy Policies</a>
+                                <a href="Faqs.html">FAQs</a> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top position-fixed" style="bottom: 30px; right: 30px; z-index: 1000;">
+            <i class="fas fa-arrow-up"></i>
+        </a>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="js/main.js"></script>
+
+    <script>
+        // Initialize Chart.js
+        document.addEventListener('DOMContentLoaded', function() {
+            // Rent Collection Chart
+            const rentCtx = document.getElementById('rentChart').getContext('2d');
+            const rentChart = new Chart(rentCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Collected', 'Pending', 'Overdue'],
+                    datasets: [{
+                        data: [85, 10, 5],
+                        backgroundColor: [
+                            'rgba(46, 204, 113, 0.8)',
+                            'rgba(243, 156, 18, 0.8)',
+                            'rgba(231, 76, 60, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(46, 204, 113, 1)',
+                            'rgba(243, 156, 18, 1)',
+                            'rgba(231, 76, 60, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: 'white',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Location and Currency Functions
+            function getLocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(showPosition, showError);
+                } else {
+                    document.getElementById("locationResult").innerHTML = "Geolocation is not supported by this browser.";
+                }
+            }
+
+            function showPosition(position) {
+                const lat = position.coords.latitude;
+                const long = position.coords.longitude;
+                document.getElementById("locationResult").innerHTML = `<i class="fas fa-map-marker-alt me-2"></i>Latitude: ${lat}, Longitude: ${long}`;
+            }
+
+            function showError(error) {
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        document.getElementById("locationResult").innerHTML = "User denied the request for Geolocation.";
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        document.getElementById("locationResult").innerHTML = "Location information is unavailable.";
+                        break;
+                    case error.TIMEOUT:
+                        document.getElementById("locationResult").innerHTML = "The request to get user location timed out.";
+                        break;
+                    case error.UNKNOWN_ERROR:
+                        document.getElementById("locationResult").innerHTML = "An unknown error occurred.";
+                        break;
+                }
+            }
+
+            // Currency rates
+            const currencyRates = {
+                "Kenya": 1,
+                "Nigeria": 42.5,
+                "South Africa": 0.062,
+                "Egypt": 0.17,
+                "Ghana": 0.084
+            };
+
+            document.getElementById("countrySelect").addEventListener("change", function () {
+                const selectedCountry = this.value;
+                const rate = currencyRates[selectedCountry];
+
+                if (rate) {
+                    document.getElementById("currencyResult").innerHTML = `<i class="fas fa-money-bill-wave me-2"></i>Currency Rate for ${selectedCountry}: ${rate} XAF`;
+                } else {
+                    document.getElementById("currencyResult").innerHTML = "Currency rate not available.";
+                }
+            });
+
+            // Back to top button
+            const backToTopButton = document.querySelector('.back-to-top');
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopButton.style.display = 'block';
+                } else {
+                    backToTopButton.style.display = 'none';
+                }
+            });
+
+            backToTopButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // Add floating elements dynamically
+            function createFloatingElements() {
+                const container = document.querySelector('.floating-elements');
+                for (let i = 0; i < 8; i++) {
+                    const element = document.createElement('div');
+                    element.classList.add('floating-element');
+                    element.style.top = `${Math.random() * 100}%`;
+                    element.style.left = `${Math.random() * 100}%`;
+                    element.style.animationDelay = `${Math.random() * 15}s`;
+                    element.style.width = `${20 + Math.random() * 40}px`;
+                    element.style.height = element.style.width;
+                    container.appendChild(element);
+                }
+            }
+
+            createFloatingElements();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Data Collector</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #dbeafe;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --gray-light: #e2e8f0;
+            --gray-lighter: #f1f5f9;
+            --border-radius: 12px;
+            --border-radius-sm: 8px;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 25px 30px;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 1;
+        }
+
+        .logo i {
+            font-size: 2.8rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 15px;
+        }
+
+        .logo-text h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .logo-text span {
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        .logo-text p {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .tenant-selector {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 12px 20px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(10px);
+            z-index: 1;
+        }
+
+        .tenant-selector select {
+            background: transparent;
+            border: none;
+            color: white;
+            font-weight: 500;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .tenant-selector option {
+            color: var(--dark);
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-title i {
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .source-badges {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .badge {
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .badge:hover {
+            transform: translateY(-2px);
+        }
+
+        .badge-mls {
+            background-color: #dbeafe;
+            color: var(--primary);
+        }
+
+        .badge-portal {
+            background-color: #ede9fe;
+            color: var(--secondary);
+        }
+
+        .badge-direct {
+            background-color: #dcfce7;
+            color: var(--success);
+        }
+
+        .badge-api {
+            background-color: #fef3c7;
+            color: #f59e0b;
+        }
+
+        .badge-scrape {
+            background-color: #fee2e2;
+            color: var(--danger);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius-sm);
+            font-size: 1rem;
+            transition: var(--transition);
+            background: var(--gray-lighter);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            background: white;
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+            font-family: monospace;
+            line-height: 1.5;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        .results-container {
+            margin-top: 30px;
+        }
+
+        .result-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--gray-light);
+            margin-bottom: 20px;
+        }
+
+        .result-tab {
+            padding: 14px 24px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--gray);
+            border-bottom: 3px solid transparent;
+            transition: var(--transition);
+        }
+
+        .result-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .confidence-meter {
+            height: 12px;
+            background-color: var(--gray-light);
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .confidence-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .confidence-low {
+            background: linear-gradient(90deg, var(--danger), #f87171);
+        }
+
+        .confidence-medium {
+            background: linear-gradient(90deg, var(--warning), #fbbf24);
+        }
+
+        .confidence-high {
+            background: linear-gradient(90deg, var(--success), #34d399);
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .data-item {
+            background-color: var(--gray-lighter);
+            padding: 18px;
+            border-radius: var(--border-radius-sm);
+            transition: var(--transition);
+        }
+
+        .data-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        .data-label {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .data-value {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1.1rem;
+        }
+
+        .validation-errors {
+            background-color: #fef2f2;
+            border-left: 4px solid var(--danger);
+            padding: 18px;
+            border-radius: var(--border-radius-sm);
+            margin-top: 20px;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .error-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .error-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .error-item i {
+            color: var(--danger);
+        }
+
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .media-item {
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .media-item:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .media-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .media-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            color: white;
+            padding: 12px;
+            font-size: 0.85rem;
+        }
+
+        .media-quality {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .quality-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .quality-good {
+            background-color: var(--success);
+        }
+
+        .quality-warning {
+            background-color: var(--warning);
+        }
+
+        .quality-bad {
+            background-color: var(--danger);
+        }
+
+        .map-container {
+            height: 300px;
+            background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            position: relative;
+        }
+
+        .map-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23e2e8f0"/><path d="M0 0L100 100M100 0L0 100" stroke="%23cbd5e1" stroke-width="1"/></svg>');
+            opacity: 0.3;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 22px;
+            border-radius: var(--border-radius-sm);
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 10px 0;
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .chart-placeholder {
+            height: 200px;
+            background: var(--gray-lighter);
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-placeholder::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(37, 99, 235, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.1) 0%, transparent 50%);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 25px;
+            color: var(--gray);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--gray-light);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 16px 20px;
+            border-radius: var(--border-radius-sm);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            border-left: 4px solid var(--success);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification i {
+            color: var(--success);
+            font-size: 1.2rem;
+        }
+
+        .notification.error {
+            border-left-color: var(--danger);
+        }
+
+        .notification.error i {
+            color: var(--danger);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-home"></i>
+                <div class="logo-text">
+                    <h1>Mwarokin <span>Estates</span></h1>
+                    <p>Premium Data Collector & Analytics Platform</p>
+                </div>
+            </div>
+            <div class="tenant-selector">
+                <i class="fas fa-building"></i>
+                <select id="tenantSelect">
+                    <option value="tenant_123">Tenant 123</option>
+                    <option value="tenant_456">Tenant 456</option>
+                    <option value="tenant_789">Tenant 789</option>
+                    <option value="tenant_123">Tenant 123</option>
+                    <option value="tenant_456">Tenant 456</option>
+                    <option value="tenant_789">Tenant 789</option>
+                    <option value="tenant_123">Tenant 123</option>
+                    <option value="tenant_456">Tenant 456</option>
+                    <option value="tenant_789">Tenant 789</option>
+                </select>
+            </div>
+        </header>
+
+        <div class="dashboard">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-database"></i> Data Intake</h2>
+                </div>
+                
+                <div class="source-badges">
+                    <div class="badge badge-mls"><i class="fas fa-database"></i> MLS</div>
+                    <div class="badge badge-portal"><i class="fas fa-globe"></i> Portal</div>
+                    <div class="badge badge-direct"><i class="fas fa-user"></i> Direct</div>
+                    <div class="badge badge-api"><i class="fas fa-code"></i> API</div>
+                    <div class="badge badge-scrape"><i class="fas fa-cloud-download-alt"></i> Scrape</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="sourceType">Data Source</label>
+                    <select id="sourceType" class="form-control">
+                        <option value="mls">MLS</option>
+                        <option value="portal">Portal (Zillow, Realtor.com, etc.)</option>
+                        <option value="direct">Direct Input</option>
+                        <option value="api">API</option>
+                        <option value="scrape">Web Scrape</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="jsonData">Listing Data (JSON)</label>
+                    <textarea id="jsonData" class="form-control" placeholder="Paste your JSON data here">{
+  "PropertyType": "Single Family",
+  "Bedrooms": 3,
+  "Bathrooms": 2.5,
+  "SquareFeet": 1800,
+  "LotSize": 0.25,
+  "YearBuilt": 1995,
+  "PublicRemarks": "Beautiful home in a quiet neighborhood with updated kitchen and bathrooms.",
+  "ListingTitle": "Charming 3-Bedroom Home",
+  "ListPrice": 450000,
+  "Status": "Active",
+  "ListingContractDate": "2023-10-15T00:00:00",
+  "Address": {
+    "AddressLine1": "123 Main St",
+    "City": "Anytown",
+    "StateOrProvince": "CA",
+    "PostalCode": "12345",
+    "Country": "USA"
+  },
+  "Media": [
+    {"URL": "https://example.com/photo1.jpg", "Caption": "Front view"},
+    {"URL": "https://example.com/photo2.jpg", "Caption": "Kitchen"}
+  ],
+  "Amenities": ["Pool", "Garage", "Garden"]
+}</textarea>
+                </div>
+
+                <button id="processBtn" class="btn btn-primary btn-block">
+                    <i class="fas fa-cogs"></i> Process Listing Data
+                </button>
+
+                <div class="results-container">
+                    <div class="result-tabs">
+                        <div class="result-tab active" data-tab="overview">Overview</div>
+                        <div class="result-tab" data-tab="details">Details</div>
+                        <div class="result-tab" data-tab="media">Media</div>
+                        <div class="result-tab" data-tab="location">Location</div>
+                    </div>
+
+                    <div id="overviewTab" class="tab-content active">
+                        <div class="data-item">
+                            <div class="data-label">Confidence Score</div>
+                            <div class="confidence-meter">
+                                <div id="confidenceFill" class="confidence-fill confidence-high" style="width: 85%;"></div>
+                            </div>
+                            <div class="data-value">85%</div>
+                        </div>
+
+                        <div class="data-grid">
+                            <div class="data-item">
+                                <div class="data-label">Property Type</div>
+                                <div class="data-value">Single Family</div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-label">Bedrooms</div>
+                                <div class="data-value">3</div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-label">Bathrooms</div>
+                                <div class="data-value">2.5</div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-label">Square Feet</div>
+                                <div class="data-value">1,800</div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-label">Price</div>
+                                <div class="data-value">$450,000</div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-label">Status</div>
+                                <div class="data-value">Active</div>
+                            </div>
+                        </div>
+
+                        <div id="validationErrors" class="validation-errors" style="display: none;">
+                            <h3><i class="fas fa-exclamation-triangle"></i> Validation Errors</h3>
+                            <div class="error-item">
+                                <i class="fas fa-times-circle"></i>
+                                <span>Incomplete geographic coordinates</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="detailsTab" class="tab-content">
+                        <div class="data-grid">
+                            <div class="data-item">
+                                <div class="data-label">Source ID</div>
+                                <div class="data-value">MLS_123456</div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-label">Source Type</div>
+                                <div class="data-value">MLS</div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-label">Tenant ID</div>
+                                <div class="data-value">tenant_123</div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-label">Year Built</div>
+                                <div class="data-value">1995</div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-label">Lot Size</div>
+                                <div class="data-value">0.25 acres</div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-label">Listing Date</div>
+                                <div class="data-value">Oct 15, 2023</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description</label>
+                            <div class="data-value">Beautiful home in a quiet neighborhood with updated kitchen and bathrooms.</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Amenities</label>
+                            <div class="data-value">Pool, Garage, Garden</div>
+                        </div>
+                    </div>
+
+                    <div id="mediaTab" class="tab-content">
+                        <div class="media-grid">
+                            <div class="media-item">
+                                <img src="https://via.placeholder.com/400x300/2563eb/ffffff?text=Property+Image" alt="Property image">
+                                <div class="media-overlay">
+                                    <div>Front view</div>
+                                    <div class="media-quality">
+                                        <div class="quality-indicator quality-good"></div>
+                                        <div class="quality-indicator quality-good"></div>
+                                        <div class="quality-indicator quality-warning"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="media-item">
+                                <img src="https://via.placeholder.com/400x300/4f46e5/ffffff?text=Property+Image" alt="Property image">
+                                <div class="media-overlay">
+                                    <div>Kitchen</div>
+                                    <div class="media-quality">
+                                        <div class="quality-indicator quality-good"></div>
+                                        <div class="quality-indicator quality-good"></div>
+                                        <div class="quality-indicator quality-good"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-label">Total Images</div>
+                                <div class="stat-value">2</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">High Quality</div>
+                                <div class="stat-value">1</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Needs Review</div>
+                                <div class="stat-value">1</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="locationTab" class="tab-content">
+                        <div class="data-grid">
+                            <div class="data-item">
+                                <div class="data-label">Address</div>
+                                <div class="data-value">123 Main St, Anytown, CA 12345</div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-label">Coordinates</div>
+                                <div class="data-value">37.7749° N, 122.4194° W</div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-label">Walk Score</div>
+                                <div class="data-value">78</div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-label">Transit Score</div>
+                                <div class="data-value">65</div>
+                            </div>
+                        </div>
+
+                        <div class="map-container">
+                            <i class="fas fa-map-marked-alt fa-3x"></i>
+                            <p>Interactive map would appear here</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-chart-line"></i> Analytics & Metrics</h2>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Listings Processed</div>
+                        <div class="stat-value">142</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Avg. Confidence</div>
+                        <div class="stat-value">82%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Validation Errors</div>
+                        <div class="stat-value">18</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Data Source Distribution</label>
+                    <div class="chart-placeholder">
+                        <p>Chart: Data source distribution would appear here</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Processing Timeline</label>
+                    <div class="chart-placeholder">
+                        <p>Chart: Processing timeline would appear here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Mwarokin Estates- Data Collector - © 2026 | Powered By: Syllogism Technology Africa.</p>
+        </footer>
+    </div>
+
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <div>
+            <strong>Success!</strong>
+            <div id="notificationMessage">Listing processed successfully!</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching functionality
+            const tabs = document.querySelectorAll('.result-tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    
+                    // Update active tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Show active content
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === tabId + 'Tab') {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+            
+            // Process button functionality
+            const processBtn = document.getElementById('processBtn');
+            const notification = document.getElementById('notification');
+            const notificationMessage = document.getElementById('notificationMessage');
+            
+            processBtn.addEventListener('click', () => {
+                // Simulate processing
+                processBtn.innerHTML = '<div class="loading"></div> Processing...';
+                processBtn.disabled = true;
+                
+                // Simulate API call delay
+                setTimeout(() => {
+                    // Show validation errors randomly
+                    const validationErrors = document.getElementById('validationErrors');
+                    const hasErrors = Math.random() > 0.5;
+                    
+                    if (hasErrors) {
+                        validationErrors.style.display = 'block';
+                    } else {
+                        validationErrors.style.display = 'none';
+                    }
+                    
+                    // Update confidence score randomly
+                    const confidence = Math.floor(Math.random() * 40) + 60;
+                    const confidenceFill = document.getElementById('confidenceFill');
+                    confidenceFill.style.width = confidence + '%';
+                    
+                    // Update confidence color class
+                    confidenceFill.classList.remove('confidence-low', 'confidence-medium', 'confidence-high');
+                    if (confidence < 70) {
+                        confidenceFill.classList.add('confidence-low');
+                    } else if (confidence < 85) {
+                        confidenceFill.classList.add('confidence-medium');
+                    } else {
+                        confidenceFill.classList.add('confidence-high');
+                    }
+                    
+                    // Reset button
+                    processBtn.innerHTML = '<i class="fas fa-cogs"></i> Process Listing Data';
+                    processBtn.disabled = false;
+                    
+                    // Show notification
+                    notificationMessage.textContent = `Listing processed successfully with ${confidence}% confidence score!`;
+                    if (hasErrors) {
+                        notification.classList.add('error');
+                        notification.querySelector('i').className = 'fas fa-exclamation-triangle';
+                        notificationMessage.textContent = `Listing processed with ${confidence}% confidence score but has validation errors.`;
+                    } else {
+                        notification.classList.remove('error');
+                        notification.querySelector('i').className = 'fas fa-check-circle';
+                    }
+                    
+                    notification.classList.add('show');
+                    
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 4000);
+                }, 2000);
+            });
+            
+            // Tenant selector change
+            const tenantSelect = document.getElementById('tenantSelect');
+            tenantSelect.addEventListener('change', () => {
+                console.log('Tenant changed to:', tenantSelect.value);
+                // In a real app, this would reload data for the selected tenant
+            });
+        });
+    </script>
+</body>
+</html>

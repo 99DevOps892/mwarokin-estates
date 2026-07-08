@@ -1,0 +1,3229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Faraja Sky - Travel & Luxury Accommodations</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Real-time flight booking, luxury accommodations, vacation packages, live travel data" name="keywords">
+    <meta content="Book flights and luxury stays in real-time with Faraja Sky - powered by Trawex and Amadeus global data" name="description">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #3b82f6;
+            --secondary: #7c3aed;
+            --secondary-dark: #6d28d9;
+            --accent: #f59e0b;
+            --accent-dark: #d97706;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            --gradient-accent: linear-gradient(135deg, var(--accent) 0%, #ec4899 100%);
+            --gradient-dark: linear-gradient(135deg, var(--gray-800) 0%, var(--gray-900) 100%);
+            --gradient-hero: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(124, 58, 237, 0.9) 100%);
+            --border-radius: 12px;
+            --border-radius-lg: 16px;
+            --border-radius-xl: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--gray-800);
+            background-color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .section {
+            padding: 5rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: var(--gray-600);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            outline: none;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: var(--transition);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .navbar.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: var(--shadow-md);
+            padding: 0.75rem 0;
+        }
+
+        .navbar-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            text-decoration: none;
+        }
+
+        .navbar-logo {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .navbar-nav {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: var(--gray-700);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+        }
+
+        .navbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(124, 58, 237, 0.05) 100%);
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200') center/cover no-repeat;
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        .hero-content {
+            max-width: 600px;
+            margin-bottom: 4rem;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            color: var(--gray-900);
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .highlight {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Booking Widget */
+        .booking-widget {
+            position: relative;
+            z-index: 10;
+            margin-top: 2rem;
+        }
+
+        .booking-card {
+            background: white;
+            border-radius: var(--border-radius-xl);
+            box-shadow: var(--shadow-2xl);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .booking-tabs {
+            display: flex;
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 1.5rem 2rem;
+            background: transparent;
+            border: none;
+            font-weight: 600;
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            position: relative;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            background: white;
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+        }
+
+        .booking-form {
+            padding: 2.5rem;
+            display: none;
+        }
+
+        .booking-form.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        .radio-label input {
+            accent-color: var(--primary);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .form-control {
+            padding: 0.875rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-500);
+        }
+
+        .form-control.has-icon {
+            padding-left: 3rem;
+        }
+
+        .autocomplete-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-xl);
+            margin-top: 0.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 20;
+            display: none;
+        }
+
+        .autocomplete-results.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        .autocomplete-item {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--gray-100);
+            transition: var(--transition);
+        }
+
+        .autocomplete-item:hover {
+            background: var(--gray-50);
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-item strong {
+            display: block;
+            color: var(--gray-800);
+            margin-bottom: 0.25rem;
+        }
+
+        .autocomplete-item small {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+
+        .passenger-selector {
+            position: relative;
+        }
+
+        .passenger-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-xl);
+            padding: 1.5rem;
+            z-index: 20;
+            display: none;
+            margin-top: 0.5rem;
+        }
+
+        .passenger-dropdown.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        .passenger-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .passenger-label {
+            flex: 1;
+        }
+
+        .passenger-label strong {
+            display: block;
+            color: var(--gray-800);
+        }
+
+        .passenger-label span {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .passenger-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .passenger-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid var(--gray-300);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .passenger-btn:hover {
+            background: var(--gray-50);
+        }
+
+        .passenger-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .passenger-count {
+            font-weight: 600;
+            min-width: 2rem;
+            text-align: center;
+        }
+
+        .class-selection {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .class-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .class-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .class-option input {
+            accent-color: var(--primary);
+        }
+
+        .apply-passenger {
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+
+        /* Features Section */
+        .features {
+            background: var(--gray-50);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2.5rem 2rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            text-align: center;
+            border: 1px solid var(--gray-100);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: var(--gradient-primary);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--gray-900);
+        }
+
+        .feature-description {
+            color: var(--gray-600);
+            line-height: 1.6;
+        }
+
+        /* Destinations Section */
+        .destinations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .destination-card {
+            position: relative;
+            height: 400px;
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .destination-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .destination-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition-slow);
+        }
+
+        .destination-card:hover img {
+            transform: scale(1.1);
+        }
+
+        .destination-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2rem;
+            color: white;
+        }
+
+        .destination-name {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .destination-country {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .destination-price {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        /* Properties Section */
+        .properties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .property-card {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .property-image {
+            height: 240px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .property-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition-slow);
+        }
+
+        .property-card:hover .property-image img {
+            transform: scale(1.05);
+        }
+
+        .property-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--accent);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .property-content {
+            padding: 1.5rem;
+        }
+
+        .property-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .property-title {
+            font-size: 1.25rem;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .property-location {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+
+        .property-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .property-features {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .property-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .property-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .property-period {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar-nav, .navbar-actions {
+                display: none;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .booking-tabs {
+                flex-direction: column;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid, .destinations-grid, .properties-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+            }
+
+            .btn-large {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Real-time Flight Results */
+        .flight-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-xl);
+            margin-top: 1rem;
+            max-height: 500px;
+            overflow-y: auto;
+            z-index: 30;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+        
+        .flight-results.show {
+            display: block;
+        }
+        
+        .flight-result {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .flight-result:hover {
+            background: var(--gray-50);
+        }
+        
+        .flight-result:last-child {
+            border-bottom: none;
+        }
+        
+        .flight-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .flight-airline {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .flight-logo {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .flight-route {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .flight-times {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .flight-time {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+        
+        .flight-date {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+        
+        .flight-stops {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+        
+        .flight-duration {
+            font-weight: 500;
+        }
+        
+        .flight-price {
+            text-align: right;
+        }
+        
+        .price-main {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .price-per {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+        
+        /* Real-time Property Results */
+        .property-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-xl);
+            margin-top: 1rem;
+            max-height: 500px;
+            overflow-y: auto;
+            z-index: 30;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+        
+        .property-results.show {
+            display: block;
+        }
+        
+        .property-result {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .property-result:hover {
+            background: var(--gray-50);
+        }
+        
+        .property-result:last-child {
+            border-bottom: none;
+        }
+        
+        .property-result-image {
+            width: 120px;
+            height: 100px;
+            border-radius: 12px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .property-result-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .property-result-content {
+            flex: 1;
+        }
+        
+        .property-result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+        
+        .property-result-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+        
+        .property-result-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .property-result-location {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray-600);
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .property-result-features {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+        
+        .property-result-price {
+            text-align: right;
+        }
+        
+        .property-price-main {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .property-price-per {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+        
+        /* Live Data Indicators */
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--accent);
+            color: white;
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        /* Enhanced Popular Destinations */
+        .destinations-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--gray-300);
+            background: white;
+            border-radius: 50px;
+            font-weight: 500;
+            color: var(--gray-700);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .filter-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+        
+        .filter-btn:hover:not(.active) {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .destination-card-enhanced {
+            position: relative;
+            height: 400px;
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .destination-card-enhanced:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .destination-card-enhanced img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition-slow);
+        }
+        
+        .destination-card-enhanced:hover img {
+            transform: scale(1.1);
+        }
+        
+        .destination-overlay-enhanced {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2rem;
+            color: white;
+        }
+        
+        .destination-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--accent);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .destination-stats {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            flex-wrap: wrap;
+        }
+        
+        .destination-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .destination-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        
+        /* Loading States */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: var(--gray-600);
+        }
+        
+        .loading-spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--gray-300);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.75rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container navbar-container">
+            <a href="#" class="navbar-brand">
+                <div class="navbar-logo">FS</div>
+                Faraja Sky
+            </a>
+            
+            <div class="navbar-nav">
+                <a href="#" class="nav-link">Home</a>
+                <a href="#" class="nav-link">Flights</a>
+                <a href="#" class="nav-link">Stays</a>
+                <a href="#" class="nav-link">Packages</a>
+                <a href="#" class="nav-link">Destinations</a>
+                <a href="#" class="nav-link">Deals</a>
+            </div>
+            
+            <div class="navbar-actions">
+                <button class="btn btn-outline">Sign In</button>
+                <button class="btn btn-primary">Create Account</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Discover Your Next <span class="highlight">Adventure</span></h1>
+                <p class="hero-subtitle">Book flights and luxury stays in real-time with Faraja Sky. Powered by Trawex and Amadeus global data for the most accurate pricing and availability.</p>
+                <div class="hero-actions">
+                    <button class="btn btn-primary btn-large">
+                        <i class="fas fa-plane"></i>
+                        Book Flights
+                    </button>
+                    <button class="btn btn-outline btn-large">
+                        <i class="fas fa-home"></i>
+                        Find Stays
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Enhanced Booking Widget -->
+        <div class="booking-widget">
+            <div class="container">
+                <div class="booking-card">
+                    <div class="booking-tabs">
+                        <button class="tab-btn active" data-tab="flights">
+                            <i class="fas fa-plane"></i>
+                            Flights
+                            <span class="live-indicator">
+                                <i class="fas fa-circle"></i>
+                                LIVE
+                            </span>
+                        </button>
+                        <button class="tab-btn" data-tab="stays">
+                            <i class="fas fa-home"></i>
+                            Stays
+                            <span class="live-indicator">
+                                <i class="fas fa-circle"></i>
+                                LIVE
+                            </span>
+                        </button>
+                        <button class="tab-btn" data-tab="packages">
+                            <i class="fas fa-suitcase"></i>
+                            Packages
+                        </button>
+                    </div>
+                    
+                    <!-- Enhanced Flight Booking Form -->
+                    <div class="booking-form active" id="flights-form">
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="tripType" value="oneway" checked>
+                                One Way
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="tripType" value="roundtrip">
+                                Round Trip
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="tripType" value="multicity">
+                                Multi-City
+                            </label>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">From</label>
+                                <div class="input-wrapper">
+                                    <input type="text" class="form-control has-icon" id="flightFrom" placeholder="City or Airport" autocomplete="off">
+                                    <i class="fas fa-plane-departure form-icon"></i>
+                                    <div class="autocomplete-results" id="fromResults"></div>
+                                    <div class="flight-results" id="flightFromResults"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">To</label>
+                                <div class="input-wrapper">
+                                    <input type="text" class="form-control has-icon" id="flightTo" placeholder="City or Airport" autocomplete="off">
+                                    <i class="fas fa-plane-arrival form-icon"></i>
+                                    <div class="autocomplete-results" id="toResults"></div>
+                                    <div class="flight-results" id="flightToResults"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Departure</label>
+                                <input type="date" class="form-control" id="departDate">
+                            </div>
+                            
+                            <div class="form-group" id="returnDateGroup">
+                                <label class="form-label">Return</label>
+                                <input type="date" class="form-control" id="returnDate">
+                            </div>
+                            
+                            <div class="form-group passenger-selector">
+                                <label class="form-label">Passengers & Class</label>
+                                <button type="button" class="form-control" id="passengerBtn" style="text-align: left; cursor: pointer;">
+                                    1 Passenger, Economy
+                                    <i class="fas fa-chevron-down" style="float: right; margin-top: 4px;"></i>
+                                </button>
+                                <div class="passenger-dropdown" id="passengerDropdown">
+                                    <div class="passenger-row">
+                                        <div class="passenger-label">
+                                            <strong>Adults</strong>
+                                            <span>12+ years</span>
+                                        </div>
+                                        <div class="passenger-controls">
+                                            <button class="passenger-btn" data-type="adults" data-action="minus" disabled>
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <span class="passenger-count" id="adultsCount">1</span>
+                                            <button class="passenger-btn" data-type="adults" data-action="plus">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="passenger-row">
+                                        <div class="passenger-label">
+                                            <strong>Children</strong>
+                                            <span>2-11 years</span>
+                                        </div>
+                                        <div class="passenger-controls">
+                                            <button class="passenger-btn" data-type="children" data-action="minus" disabled>
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <span class="passenger-count" id="childrenCount">0</span>
+                                            <button class="passenger-btn" data-type="children" data-action="plus">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="passenger-row">
+                                        <div class="passenger-label">
+                                            <strong>Infants</strong>
+                                            <span>Under 2 years</span>
+                                        </div>
+                                        <div class="passenger-controls">
+                                            <button class="passenger-btn" data-type="infants" data-action="minus" disabled>
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <span class="passenger-count" id="infantsCount">0</span>
+                                            <button class="passenger-btn" data-type="infants" data-action="plus">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="class-selection">
+                                        <strong style="display: block; margin-bottom: 1rem;">Travel Class</strong>
+                                        <div class="class-options">
+                                            <label class="class-option">
+                                                <input type="radio" name="travelClass" value="economy" checked>
+                                                Economy
+                                            </label>
+                                            <label class="class-option">
+                                                <input type="radio" name="travelClass" value="premium">
+                                                Premium Economy
+                                            </label>
+                                            <label class="class-option">
+                                                <input type="radio" name="travelClass" value="business">
+                                                Business
+                                            </label>
+                                            <label class="class-option">
+                                                <input type="radio" name="travelClass" value="first">
+                                                First Class
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <button class="btn btn-primary apply-passenger" id="applyPassenger">Apply</button>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" style="visibility: hidden;">Search</label>
+                                <button type="button" class="btn btn-primary" id="searchFlights" style="width: 100%; height: 52px;">
+                                    <i class="fas fa-search"></i>
+                                    Search Flights
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Real-time Flight Results Container -->
+                        <div class="flight-results" id="flightSearchResults"></div>
+                    </div>
+                    
+                    <!-- Enhanced Stay Booking Form -->
+                    <div class="booking-form" id="stays-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Destination</label>
+                                <div class="input-wrapper">
+                                    <input type="text" class="form-control has-icon" id="stayDestination" placeholder="Where are you going?" autocomplete="off">
+                                    <i class="fas fa-map-marker-alt form-icon"></i>
+                                    <div class="autocomplete-results" id="destinationResults"></div>
+                                    <div class="property-results" id="propertyDestinationResults"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Check-in</label>
+                                <input type="date" class="form-control" id="checkinDate">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Check-out</label>
+                                <input type="date" class="form-control" id="checkoutDate">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Guests</label>
+                                <select class="form-control" id="guestCount">
+                                    <option value="1">1 Guest</option>
+                                    <option value="2" selected>2 Guests</option>
+                                    <option value="3">3 Guests</option>
+                                    <option value="4">4 Guests</option>
+                                    <option value="5">5+ Guests</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" style="visibility: hidden;">Search</label>
+                                <button type="button" class="btn btn-primary" id="searchStays" style="width: 100%; height: 52px;">
+                                    <i class="fas fa-search"></i>
+                                    Search Properties
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Real-time Property Results Container -->
+                        <div class="property-results" id="propertySearchResults"></div>
+                    </div>
+                    
+                    <!-- Package Form -->
+                    <div class="booking-form" id="packages-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Destination</label>
+                                <input type="text" class="form-control" placeholder="Where do you want to go?">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Departure</label>
+                                <input type="date" class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Duration</label>
+                                <select class="form-control">
+                                    <option>3-5 days</option>
+                                    <option>6-8 days</option>
+                                    <option>9-12 days</option>
+                                    <option>13+ days</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Travelers</label>
+                                <select class="form-control">
+                                    <option>1 Traveler</option>
+                                    <option>2 Travelers</option>
+                                    <option>3 Travelers</option>
+                                    <option>4 Travelers</option>
+                                    <option>5+ Travelers</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" style="visibility: hidden;">Search</label>
+                                <button type="button" class="btn btn-primary" style="width: 100%; height: 52px;">
+                                    <i class="fas fa-search"></i>
+                                    Find Packages
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Why Choose Faraja Sky</h2>
+                <p class="section-subtitle">Experience seamless travel planning with our premium features and global partnerships.</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="feature-title">Real-Time Data</h3>
+                    <p class="feature-description">Powered by Trawex and Amadeus for live flight and accommodation availability with instant confirmation.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Secure Booking</h3>
+                    <p class="feature-description">Bank-level encryption and secure payment processing to protect your personal and financial information.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3 class="feature-title">24/7 Support</h3>
+                    <p class="feature-description">Round-the-clock customer service to assist with any travel emergencies or itinerary changes.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <h3 class="feature-title">Best Price Guarantee</h3>
+                    <p class="feature-description">We guarantee the best prices for flights and accommodations or we'll match the difference.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3 class="feature-title">Global Coverage</h3>
+                    <p class="feature-description">Access to over 500 airlines and 1 million properties worldwide for comprehensive travel options.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Mobile Experience</h3>
+                    <p class="feature-description">Seamless booking and management on any device with our responsive design and mobile app.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enhanced Popular Destinations Section -->
+    <section class="section" style="background: var(--gray-50);">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Popular Destinations</h2>
+                <p class="section-subtitle">Explore trending destinations with real-time pricing and availability for both flights and accommodations.</p>
+            </div>
+            
+            <div class="destinations-filters">
+                <button class="filter-btn active" data-filter="all">All Destinations</button>
+                <button class="filter-btn" data-filter="beach">Beach</button>
+                <button class="filter-btn" data-filter="mountain">Mountain</button>
+                <button class="filter-btn" data-filter="city">City</button>
+                <button class="filter-btn" data-filter="safari">Safari</button>
+            </div>
+            
+            <div class="destinations-grid" id="destinationsGrid">
+                <!-- Enhanced destinations will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Properties Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Featured Properties</h2>
+                <p class="section-subtitle">Handpicked luxury accommodations with verified reviews and premium amenities.</p>
+            </div>
+            
+            <div class="properties-grid" id="propertiesGrid">
+                <!-- Properties will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Enhanced data with real-time information
+ const airports = [
+    // Afghanistan
+    { code: "KBL", name: "Hamid Karzai Intl", city: "Kabul", country: "Afghanistan" },
+    { code: "KDH", name: "Kandahar Intl", city: "Kandahar", country: "Afghanistan" },
+    { code: "HEA", name: "Herat Airport", city: "Herat", country: "Afghanistan" },
+
+    // Albania
+    { code: "TIA", name: "Tirana Mother Teresa Intl", city: "Tirana", country: "Albania" },
+    { code: "BOJ", name: "Berat Private Airfield", city: "Berat", country: "Albania" },
+
+    // Algeria
+    { code: "ALG", name: "Houari Boumediene Intl", city: "Algiers", country: "Algeria" },
+    { code: "ORN", name: "Oran Ahmed Ben Bella Airport", city: "Oran", country: "Algeria" },
+    { code: "AAE", name: "Annaba Rabah Bitat", city: "Annaba", country: "Algeria" },
+
+    // Andorra (no major airport – uses Spain)
+    { code: "LEU", name: "La Seu d’Urgell Airport", city: "Pyrenees", country: "Andorra" },
+
+    // Angola
+    { code: "LAD", name: "Quatro de Fevereiro Intl", city: "Luanda", country: "Angola" },
+    { code: "SDD", name: "Lubango Airport", city: "Lubango", country: "Angola" },
+    { code: "CAB", name: "Cabinda Airport", city: "Cabinda", country: "Angola" },
+
+    // Antigua & Barbuda
+    { code: "ANU", name: "VC Bird Intl", city: "St. John’s", country: "Antigua & Barbuda" },
+    { code: "BBQ", name: "Barbuda Codrington Airport", city: "Barbuda", country: "Antigua & Barbuda" },
+
+    // Argentina
+    { code: "EZE", name: "Ezeiza Ministro Pistarini Intl", city: "Buenos Aires", country: "Argentina" },
+    { code: "AEP", name: "Aeroparque Jorge Newbery", city: "Buenos Aires", country: "Argentina" },
+    { code: "COR", name: "Córdoba Pajas Blancas", city: "Córdoba", country: "Argentina" },
+
+    // Armenia
+    { code: "EVN", name: "Zvartnots Intl", city: "Yerevan", country: "Armenia" },
+    { code: "LWN", name: "Shirak Airport", city: "Gyumri", country: "Armenia" },
+
+    // Australia
+    { code: "SYD", name: "Sydney Kingsford Smith", city: "Sydney", country: "Australia" },
+    { code: "MEL", name: "Melbourne Tullamarine", city: "Melbourne", country: "Australia" },
+    { code: "BNE", name: "Brisbane Airport", city: "Brisbane", country: "Australia" },
+    { code: "PER", name: "Perth Airport", city: "Perth", country: "Australia" },
+
+    // Austria
+    { code: "VIE", name: "Vienna Intl", city: "Vienna", country: "Austria" },
+    { code: "SZG", name: "Salzburg Airport", city: "Salzburg", country: "Austria" },
+    { code: "GRZ", name: "Graz Airport", city: "Graz", country: "Austria" },
+
+    // Azerbaijan
+    { code: "GYD", name: "Baku Heydar Aliyev Intl", city: "Baku", country: "Azerbaijan" },
+    { code: "GBB", name: "Qabala Intl", city: "Gabala", country: "Azerbaijan" },
+    { code: "NAJ", name: "Nakhchivan Airport", city: "Nakhchivan", country: "Azerbaijan" },
+
+    // Bahamas
+    { code: "NAS", name: "Nassau Lynden Pindling Intl", city: "Nassau", country: "Bahamas" },
+    { code: "GGT", name: "Exuma Intl", city: "George Town", country: "Bahamas" },
+
+    // Bahrain
+    { code: "BAH", name: "Bahrain Intl", city: "Manama", country: "Bahrain" },
+
+    // Bangladesh
+    { code: "DAC", name: "Dhaka Hazrat Shahjalal Intl", city: "Dhaka", country: "Bangladesh" },
+    { code: "CGP", name: "Chittagong Shah Amanat", city: "Chittagong", country: "Bangladesh" },
+
+    // Barbados
+    { code: "BGI", name: "Grantley Adams Intl", city: "Bridgetown", country: "Barbados" },
+
+    // Belarus
+    { code: "MSQ", name: "Minsk National Airport", city: "Minsk", country: "Belarus" },
+
+    // Belgium
+    { code: "BRU", name: "Brussels Intl", city: "Brussels", country: "Belgium" },
+    { code: "CRL", name: "Brussels South Charleroi", city: "Charleroi", country: "Belgium" },
+
+    // Belize
+    { code: "BZE", name: "Philip Goldson Intl", city: "Belize City", country: "Belize" },
+
+    // Benin
+    { code: "COO", name: "Cotonou Cadjehoun Airport", city: "Cotonou", country: "Benin" },
+
+    // Bhutan
+    { code: "PBH", name: "Paro Intl", city: "Paro", country: "Bhutan" },
+
+    // Bolivia
+    { code: "LPB", name: "El Alto Intl", city: "La Paz", country: "Bolivia" },
+    { code: "VVI", name: "Viru Viru Intl", city: "Santa Cruz", country: "Bolivia" },
+
+    // Bosnia & Herzegovina
+    { code: "SJJ", name: "Sarajevo Intl", city: "Sarajevo", country: "Bosnia & Herzegovina" },
+
+    // Botswana
+    { code: "GBE", name: "Gaborone Sir Seretse Khama Intl", city: "Gaborone", country: "Botswana" },
+    { code: "MUB", name: "Maun Airport", city: "Maun", country: "Botswana" },
+
+    // Brazil
+    { code: "GRU", name: "São Paulo Guarulhos Intl", city: "São Paulo", country: "Brazil" },
+    { code: "GIG", name: "Rio Galeão Intl", city: "Rio de Janeiro", country: "Brazil" },
+    { code: "BSB", name: "Brasília Intl", city: "Brasília", country: "Brazil" },
+
+    // Brunei
+    { code: "BWN", name: "Brunei Intl", city: "Bandar Seri Begawan", country: "Brunei" },
+
+    // Bulgaria
+    { code: "SOF", name: "Sofia Airport", city: "Sofia", country: "Bulgaria" },
+    { code: "VAR", name: "Varna Airport", city: "Varna", country: "Bulgaria" },
+
+    // Burkina Faso
+    { code: "OUA", name: "Ouagadougou Intl", city: "Ouagadougou", country: "Burkina Faso" },
+
+    // Burundi
+    { code: "BJM", name: "Bujumbura Intl", city: "Bujumbura", country: "Burundi" },
+
+    // Cabo Verde
+    { code: "RAI", name: "Nelson Mandela Intl", city: "Praia", country: "Cape Verde" },
+    { code: "SID", name: "Amílcar Cabral Intl", city: "Sal", country: "Cape Verde" },
+
+    // Cambodia
+    { code: "PNH", name: "Phnom Penh Intl", city: "Phnom Penh", country: "Cambodia" },
+    { code: "REP", name: "Siem Reap Intl", city: "Siem Reap", country: "Cambodia" },
+
+    // Cameroon
+    { code: "NSI", name: "Yaoundé Nsimalen Intl", city: "Yaoundé", country: "Cameroon" },
+    { code: "DLA", name: "Douala Intl", city: "Douala", country: "Cameroon" },
+
+    // Canada
+    { code: "YYZ", name: "Toronto Pearson Intl", city: "Toronto", country: "Canada" },
+    { code: "YVR", name: "Vancouver Intl", city: "Vancouver", country: "Canada" },
+    { code: "YUL", name: "Montreal Trudeau Intl", city: "Montreal", country: "Canada" },
+    { code: "YYC", name: "Calgary Intl", city: "Calgary", country: "Canada" },
+
+    // Central African Republic
+    { code: "BGF", name: "Bangui M’Poko Intl", city: "Bangui", country: "Central African Republic" },
+
+    // Chad
+    { code: "NDJ", name: "N’Djamena Intl", city: "N’Djamena", country: "Chad" },
+
+    // Chile
+    { code: "SCL", name: "Santiago Arturo Merino Benítez", city: "Santiago", country: "Chile" },
+    { code: "ANF", name: "Antofagasta Cerro Moreno", city: "Antofagasta", country: "Chile" },
+
+    // China
+    { code: "PEK", name: "Beijing Capital Intl", city: "Beijing", country: "China" },
+    { code: "PKX", name: "Beijing Daxing Intl", city: "Beijing", country: "China" },
+    { code: "PVG", name: "Shanghai Pudong Intl", city: "Shanghai", country: "China" },
+    { code: "CAN", name: "Guangzhou Baiyun Intl", city: "Guangzhou", country: "China" },
+    { code: "SZX", name: "Shenzhen Bao’an Intl", city: "Shenzhen", country: "China" },
+
+    // Colombia
+    { code: "BOG", name: "Bogotá El Dorado Intl", city: "Bogotá", country: "Colombia" },
+    { code: "MDE", name: "Medellin José María Córdova", city: "Medellín", country: "Colombia" },
+
+    // Comoros
+    { code: "HAH", name: "Prince Said Ibrahim Intl", city: "Moroni", country: "Comoros" },
+
+    // Congo (Republic)
+    { code: "BZV", name: "Brazzaville Maya-Maya", city: "Brazzaville", country: "Republic of the Congo" },
+
+    // Congo (DRC)
+    { code: "FIH", name: "Kinshasa Ndjili Intl", city: "Kinshasa", country: "DR Congo" },
+    { code: "FBM", name: "Lubumbashi Airport", city: "Lubumbashi", country: "DR Congo" },
+
+    // Costa Rica
+    { code: "SJO", name: "San José Juan Santamaría Intl", city: "San José", country: "Costa Rica" },
+    { code: "LIR", name: "Liberia Daniel Oduber Intl", city: "Liberia", country: "Costa Rica" },
+
+    // Croatia
+    { code: "ZAG", name: "Zagreb Franjo Tuđman", city: "Zagreb", country: "Croatia" },
+    { code: "DBV", name: "Dubrovnik Airport", city: "Dubrovnik", country: "Croatia" },
+
+    // Cuba
+    { code: "HAV", name: "Havana José Martí Intl", city: "Havana", country: "Cuba" },
+
+    // Cyprus
+    { code: "LCA", name: "Larnaca Intl", city: "Larnaca", country: "Cyprus" },
+    { code: "PFO", name: "Paphos Intl", city: "Paphos", country: "Cyprus" },
+
+    // Denmark
+    { code: "CPH", name: "Copenhagen Kastrup", city: "Copenhagen", country: "Denmark" },
+    { code: "BLL", name: "Billund Airport", city: "Billund", country: "Denmark" },
+
+    // Djibouti
+    { code: "JIB", name: "Djibouti-Ambouli Intl", city: "Djibouti", country: "Djibouti" },
+
+    // Dominica
+    { code: "DOM", name: "Douglas–Charles Airport", city: "Marigot", country: "Dominica" },
+
+    // Dominican Republic
+    { code: "PUJ", name: "Punta Cana Intl", city: "Punta Cana", country: "Dominican Republic" },
+    { code: "SDQ", name: "Las Américas Intl", city: "Santo Domingo", country: "Dominican Republic" },
+
+    // DR Congo (already in C but adding here for D group consistency)
+    { code: "FIH", name: "Kinshasa Ndjili Intl", city: "Kinshasa", country: "DR Congo" },
+
+// Ecuador
+{ code: "UIO", name: "Quito Mariscal Sucre Intl", city: "Quito", country: "Ecuador" },
+{ code: "GYE", name: "Guayaquil José Joaquín de Olmedo", city: "Guayaquil", country: "Ecuador" },
+
+// Egypt
+{ code: "CAI", name: "Cairo Intl", city: "Cairo", country: "Egypt" },
+{ code: "HRG", name: "Hurghada Intl", city: "Hurghada", country: "Egypt" },
+{ code: "SSH", name: "Sharm El Sheikh Intl", city: "Sharm El Sheikh", country: "Egypt" },
+
+// El Salvador
+{ code: "SAL", name: "San Salvador Intl", city: "San Salvador", country: "El Salvador" },
+
+// Equatorial Guinea
+{ code: "SSG", name: "Malabo Intl", city: "Malabo", country: "Equatorial Guinea" },
+
+// Eritrea
+{ code: "ASM", name: "Asmara Intl", city: "Asmara", country: "Eritrea" },
+
+// Estonia
+{ code: "TLL", name: "Tallinn Lennart Meri", city: "Tallinn", country: "Estonia" },
+
+// Eswatini (Swaziland)
+{ code: "SHO", name: "King Mswati III Intl", city: "Manzini", country: "Eswatini" },
+
+// Ethiopia
+{ code: "ADD", name: "Addis Ababa Bole Intl", city: "Addis Ababa", country: "Ethiopia" },
+{ code: "DIR", name: "Dire Dawa Intl", city: "Dire Dawa", country: "Ethiopia" },
+
+// Fiji
+{ code: "NAN", name: "Nadi Intl", city: "Nadi", country: "Fiji" },
+{ code: "SUV", name: "Suva Nausori", city: "Suva", country: "Fiji" },
+
+// Finland
+{ code: "HEL", name: "Helsinki Vantaa", city: "Helsinki", country: "Finland" },
+
+// France
+{ code: "CDG", name: "Charles de Gaulle", city: "Paris", country: "France" },
+{ code: "ORY", name: "Paris Orly", city: "Paris", country: "France" },
+{ code: "NCE", name: "Nice Côte d'Azur", city: "Nice", country: "France" },
+
+// Gambia
+{ code: "BJL", name: "Banjul Intl", city: "Banjul", country: "Gambia" },
+
+// Georgia
+{ code: "TBS", name: "Tbilisi Intl", city: "Tbilisi", country: "Georgia" },
+{ code: "BUS", name: "Batumi Intl", city: "Batumi", country: "Georgia" },
+
+// Germany
+{ code: "FRA", name: "Frankfurt Intl", city: "Frankfurt", country: "Germany" },
+{ code: "MUC", name: "Munich Intl", city: "Munich", country: "Germany" },
+{ code: "BER", name: "Berlin Brandenburg", city: "Berlin", country: "Germany" },
+
+// Ghana
+{ code: "ACC", name: "Kotoka Intl", city: "Accra", country: "Ghana" },
+
+// Greece
+{ code: "ATH", name: "Athens Eleftherios Venizelos", city: "Athens", country: "Greece" },
+{ code: "HER", name: "Heraklion Airport", city: "Crete", country: "Greece" },
+{ code: "SKG", name: "Thessaloniki Airport", city: "Thessaloniki", country: "Greece" },
+
+// Grenada
+{ code: "GND", name: "Maurice Bishop Intl", city: "St. George's", country: "Grenada" },
+
+// Guatemala
+{ code: "GUA", name: "La Aurora Intl", city: "Guatemala City", country: "Guatemala" },
+
+// Guinea
+{ code: "CKY", name: "Conakry Gbessia Intl", city: "Conakry", country: "Guinea" },
+
+// Guinea-Bissau
+{ code: "OXB", name: "Bissau Osvaldo Vieira Intl", city: "Bissau", country: "Guinea-Bissau" },
+
+// Guyana
+{ code: "GEO", name: "Cheddi Jagan Intl", city: "Georgetown", country: "Guyana" },
+
+// Haiti
+{ code: "PAP", name: "Toussaint Louverture Intl", city: "Port-au-Prince", country: "Haiti" },
+
+// Honduras
+{ code: "SAP", name: "San Pedro Sula Intl", city: "San Pedro Sula", country: "Honduras" },
+{ code: "TGU", name: "Tegucigalpa Toncontín", city: "Tegucigalpa", country: "Honduras" },
+
+// Hungary
+{ code: "BUD", name: "Budapest Ferenc Liszt Intl", city: "Budapest", country: "Hungary" },
+
+// Iceland
+{ code: "KEF", name: "Keflavik Intl", city: "Reykjavik", country: "Iceland" },
+
+// India
+{ code: "DEL", name: "Delhi Indira Gandhi Intl", city: "Delhi", country: "India" },
+{ code: "BOM", name: "Mumbai Chhatrapati Shivaji", city: "Mumbai", country: "India" },
+{ code: "BLR", name: "Bengaluru Kempegowda", city: "Bangalore", country: "India" },
+
+// Indonesia
+{ code: "CGK", name: "Jakarta Soekarno-Hatta", city: "Jakarta", country: "Indonesia" },
+{ code: "DPS", name: "Bali Ngurah Rai", city: "Bali", country: "Indonesia" },
+
+// Iran
+{ code: "IKA", name: "Tehran Imam Khomeini Intl", city: "Tehran", country: "Iran" },
+
+// Iraq
+{ code: "BGW", name: "Baghdad Intl", city: "Baghdad", country: "Iraq" },
+
+// Ireland
+{ code: "DUB", name: "Dublin Intl", city: "Dublin", country: "Ireland" },
+
+// Israel
+{ code: "TLV", name: "Tel Aviv Ben Gurion Intl", city: "Tel Aviv", country: "Israel" },
+
+// Italy
+{ code: "FCO", name: "Rome Fiumicino", city: "Rome", country: "Italy" },
+{ code: "MXP", name: "Milan Malpensa", city: "Milan", country: "Italy" },
+{ code: "VCE", name: "Venice Marco Polo", city: "Venice", country: "Italy" },
+
+// Ivory Coast
+{ code: "ABJ", name: "Abidjan Félix-Houphouët-Boigny", city: "Abidjan", country: "Ivory Coast" },
+
+// Jamaica
+{ code: "KIN", name: "Norman Manley Intl", city: "Kingston", country: "Jamaica" },
+{ code: "MBJ", name: "Sangster Intl", city: "Montego Bay", country: "Jamaica" },
+
+// Japan
+{ code: "HND", name: "Tokyo Haneda", city: "Tokyo", country: "Japan" },
+{ code: "NRT", name: "Tokyo Narita", city: "Tokyo", country: "Japan" },
+{ code: "KIX", name: "Kansai Intl", city: "Osaka", country: "Japan" },
+
+// Jordan
+{ code: "AMM", name: "Queen Alia Intl", city: "Amman", country: "Jordan" },
+
+// Kazakhstan
+{ code: "ALA", name: "Almaty Intl", city: "Almaty", country: "Kazakhstan" },
+{ code: "NQZ", name: "Astana Intl", city: "Astana", country: "Kazakhstan" },
+
+// Kenya
+{ code: "NBO", name: "Jomo Kenyatta Intl", city: "Nairobi", country: "Kenya" },
+{ code: "WIL", name: "Wilson Airport", city: "Nairobi", country: "Kenya" },
+{ code: "MBA", name: "Mombasa Moi Intl", city: "Mombasa", country: "Kenya" },
+
+// Kiribati
+{ code: "TRW", name: "Bonriki Intl", city: "Tarawa", country: "Kiribati" },
+
+// Kuwait
+{ code: "KWI", name: "Kuwait Intl", city: "Kuwait City", country: "Kuwait" },
+
+// Kyrgyzstan
+{ code: "FRU", name: "Bishkek Manas Intl", city: "Bishkek", country: "Kyrgyzstan" },
+
+// Laos
+{ code: "VTE", name: "Wattay Intl", city: "Vientiane", country: "Laos" },
+{ code: "LPQ", name: "Luang Prabang Intl", city: "Luang Prabang", country: "Laos" },
+
+// Latvia
+{ code: "RIX", name: "Riga Intl", city: "Riga", country: "Latvia" },
+
+// Lebanon
+{ code: "BEY", name: "Beirut Rafic Hariri Intl", city: "Beirut", country: "Lebanon" },
+
+// Lesotho
+{ code: "MSU", name: "Moshoeshoe I Intl", city: "Maseru", country: "Lesotho" },
+
+// Liberia
+{ code: "ROB", name: "Roberts Intl", city: "Monrovia", country: "Liberia" },
+
+// Libya
+{ code: "TIP", name: "Tripoli Intl", city: "Tripoli", country: "Libya" },
+
+// Liechtenstein
+// (No major airports — uses Swiss airports)
+
+// Lithuania
+{ code: "VNO", name: "Vilnius Intl", city: "Vilnius", country: "Lithuania" },
+
+// Luxembourg
+{ code: "LUX", name: "Luxembourg Findel", city: "Luxembourg", country: "Luxembourg" },
+
+// Madagascar
+{ code: "TNR", name: "Ivato Intl", city: "Antananarivo", country: "Madagascar" },
+
+// Malawi
+{ code: "LLW", name: "Lilongwe Intl", city: "Lilongwe", country: "Malawi" },
+
+// Malaysia
+{ code: "KUL", name: "Kuala Lumpur Intl", city: "Kuala Lumpur", country: "Malaysia" },
+{ code: "PEN", name: "Penang Intl", city: "Penang", country: "Malaysia" },
+
+// Maldives
+{ code: "MLE", name: "Velana Intl", city: "Malé", country: "Maldives" },
+
+// Mali
+{ code: "BKO", name: "Bamako-Sénou Intl", city: "Bamako", country: "Mali" },
+
+// Malta
+{ code: "MLA", name: "Malta Intl", city: "Valletta", country: "Malta" },
+
+// Mauritania
+{ code: "NKC", name: "Nouakchott Oumtounsy", city: "Nouakchott", country: "Mauritania" },
+
+// Mauritius
+{ code: "MRU", name: "Sir Seewoosagur Ramgoolam Intl", city: "Port Louis", country: "Mauritius" },
+
+// Mexico
+{ code: "MEX", name: "Mexico City Intl", city: "Mexico City", country: "Mexico" },
+{ code: "CUN", name: "Cancún Intl", city: "Cancún", country: "Mexico" },
+{ code: "GDL", name: "Guadalajara Intl", city: "Guadalajara", country: "Mexico" },
+
+// Moldova
+{ code: "KIV", name: "Chișinău Intl", city: "Chisinau", country: "Moldova" },
+
+// Mongolia
+{ code: "UBN", name: "Ulaanbaatar Chinggis Khaan Intl", city: "Ulaanbaatar", country: "Mongolia" },
+
+// Montenegro
+{ code: "TGD", name: "Podgorica Airport", city: "Podgorica", country: "Montenegro" },
+
+// Morocco
+{ code: "CMN", name: "Casablanca Mohammed V", city: "Casablanca", country: "Morocco" },
+{ code: "RAK", name: "Marrakesh Menara", city: "Marrakesh", country: "Morocco" },
+
+// Mozambique
+{ code: "MPM", name: "Maputo Intl", city: "Maputo", country: "Mozambique" },
+
+// Myanmar
+{ code: "RGN", name: "Yangon Intl", city: "Yangon", country: "Myanmar" },
+
+// Namibia
+{ code: "WDH", name: "Windhoek Hosea Kutako Intl", city: "Windhoek", country: "Namibia" },
+
+// Nauru
+{ code: "INU", name: "Nauru Intl", city: "Yaren", country: "Nauru" },
+
+// Nepal
+{ code: "KTM", name: "Kathmandu Tribhuvan Intl", city: "Kathmandu", country: "Nepal" },
+
+// Netherlands
+{ code: "AMS", name: "Amsterdam Schiphol", city: "Amsterdam", country: "Netherlands" },
+
+// New Zealand
+{ code: "AKL", name: "Auckland Intl", city: "Auckland", country: "New Zealand" },
+{ code: "CHC", name: "Christchurch Intl", city: "Christchurch", country: "New Zealand" },
+
+// Nicaragua
+{ code: "MGA", name: "Managua Intl", city: "Managua", country: "Nicaragua" },
+
+// Niger
+{ code: "NIM", name: "Niamey Diori Hamani Intl", city: "Niamey", country: "Niger" },
+
+// Nigeria
+{ code: "LOS", name: "Lagos Murtala Muhammed", city: "Lagos", country: "Nigeria" },
+{ code: "ABV", name: "Abuja Nnamdi Azikiwe", city: "Abuja", country: "Nigeria" },
+{ code: "PHC", name: "Port Harcourt Intl", city: "Port Harcourt", country: "Nigeria" },
+
+// North Korea
+{ code: "FNJ", name: "Pyongyang Sunan Intl", city: "Pyongyang", country: "North Korea" },
+
+// North Macedonia
+{ code: "SKP", name: "Skopje Intl", city: "Skopje", country: "North Macedonia" },
+
+// Norway
+{ code: "OSL", name: "Oslo Gardermoen", city: "Oslo", country: "Norway" },
+
+// Oman
+{ code: "MCT", name: "Muscat Intl", city: "Muscat", country: "Oman" },
+// Pakistan
+{ code: "ISB", name: "Islamabad Intl", city: "Islamabad", country: "Pakistan" },
+{ code: "KHI", name: "Karachi Jinnah Intl", city: "Karachi", country: "Pakistan" },
+{ code: "LHE", name: "Lahore Allama Iqbal Intl", city: "Lahore", country: "Pakistan" },
+
+// Palau
+{ code: "ROR", name: "Roman Tmetuchl Intl", city: "Koror", country: "Palau" },
+
+// Panama
+{ code: "PTY", name: "Panama Tocumen Intl", city: "Panama City", country: "Panama" },
+
+// Papua New Guinea
+{ code: "POM", name: "Port Moresby Jacksons Intl", city: "Port Moresby", country: "Papua New Guinea" },
+
+// Paraguay
+{ code: "ASU", name: "Asunción Silvio Pettirossi", city: "Asunción", country: "Paraguay" },
+
+// Peru
+{ code: "LIM", name: "Lima Jorge Chávez Intl", city: "Lima", country: "Peru" },
+
+// Philippines
+{ code: "MNL", name: "Manila Ninoy Aquino Intl", city: "Manila", country: "Philippines" },
+{ code: "CEB", name: "Cebu Mactan Intl", city: "Cebu", country: "Philippines" },
+
+// Poland
+{ code: "WAW", name: "Warsaw Chopin", city: "Warsaw", country: "Poland" },
+
+// Portugal
+{ code: "LIS", name: "Lisbon Humberto Delgado", city: "Lisbon", country: "Portugal" },
+{ code: "OPO", name: "Porto Airport", city: "Porto", country: "Portugal" },
+
+// Qatar
+{ code: "DOH", name: "Hamad Intl", city: "Doha", country: "Qatar" },
+
+// Romania
+{ code: "OTP", name: "Bucharest Henri Coandă", city: "Bucharest", country: "Romania" },
+
+// Russia
+{ code: "SVO", name: "Moscow Sheremetyevo", city: "Moscow", country: "Russia" },
+{ code: "DME", name: "Moscow Domodedovo", city: "Moscow", country: "Russia" },
+{ code: "LED", name: "St. Petersburg Pulkovo", city: "St. Petersburg", country: "Russia" },
+
+// Rwanda
+{ code: "KGL", name: "Kigali Intl", city: "Kigali", country: "Rwanda" },
+
+// Saint Kitts & Nevis
+{ code: "SKB", name: "Robert L. Bradshaw Intl", city: "Basseterre", country: "Saint Kitts and Nevis" },
+
+// Saint Lucia
+{ code: "UVF", name: "Hewanorra Intl", city: "Vieux Fort", country: "Saint Lucia" },
+
+// Saint Vincent
+{ code: "SVD", name: "Argyle Intl", city: "Kingstown", country: "Saint Vincent & Grenadines" },
+
+// Samoa
+{ code: "APW", name: "Faleolo Intl", city: "Apia", country: "Samoa" },
+
+// San Marino
+// (No airports)
+
+// Saudi Arabia
+{ code: "RUH", name: "Riyadh King Khalid", city: "Riyadh", country: "Saudi Arabia" },
+{ code: "JED", name: "Jeddah King Abdulaziz", city: "Jeddah", country: "Saudi Arabia" },
+{ code: "DMM", name: "Dammam King Fahd", city: "Dammam", country: "Saudi Arabia" },
+
+// Senegal
+{ code: "DSS", name: "Dakar Blaise Diagne Intl", city: "Dakar", country: "Senegal" },
+
+// Serbia
+{ code: "BEG", name: "Belgrade Nikola Tesla", city: "Belgrade", country: "Serbia" },
+
+// Seychelles
+{ code: "SEZ", name: "Mahé Intl", city: "Victoria", country: "Seychelles" },
+
+// Sierra Leone
+{ code: "FNA", name: "Freetown Lungi Intl", city: "Freetown", country: "Sierra Leone" },
+
+// Singapore
+{ code: "SIN", name: "Changi Intl", city: "Singapore", country: "Singapore" },
+
+// Slovakia
+{ code: "BTS", name: "Bratislava Airport", city: "Bratislava", country: "Slovakia" },
+
+// Slovenia
+{ code: "LJU", name: "Ljubljana Jože Pučnik", city: "Ljubljana", country: "Slovenia" },
+
+// Solomon Islands
+{ code: "HIR", name: "Honiara Intl", city: "Honiara", country: "Solomon Islands" },
+
+// Somalia
+{ code: "MGQ", name: "Mogadishu Aden Adde Intl", city: "Mogadishu", country: "Somalia" },
+
+// South Africa
+{ code: "JNB", name: "Johannesburg OR Tambo", city: "Johannesburg", country: "South Africa" },
+{ code: "CPT", name: "Cape Town Intl", city: "Cape Town", country: "South Africa" },
+{ code: "DUR", name: "Durban King Shaka", city: "Durban", country: "South Africa" },
+
+// South Korea
+{ code: "ICN", name: "Seoul Incheon Intl", city: "Seoul", country: "South Korea" },
+{ code: "GMP", name: "Seoul Gimpo", city: "Seoul", country: "South Korea" },
+
+// South Sudan
+{ code: "JUB", name: "Juba Intl", city: "Juba", country: "South Sudan" },
+
+// Spain
+{ code: "MAD", name: "Madrid Barajas", city: "Madrid", country: "Spain" },
+{ code: "BCN", name: "Barcelona-El Prat", city: "Barcelona", country: "Spain" },
+
+// Sri Lanka
+{ code: "CMB", name: "Colombo Bandaranaike Intl", city: "Colombo", country: "Sri Lanka" },
+
+// Sudan
+{ code: "KRT", name: "Khartoum Intl", city: "Khartoum", country: "Sudan" },
+
+// Suriname
+{ code: "PBM", name: "Paramaribo Intl", city: "Paramaribo", country: "Suriname" },
+
+// Sweden
+{ code: "ARN", name: "Stockholm Arlanda", city: "Stockholm", country: "Sweden" },
+{ code: "GOT", name: "Gothenburg Landvetter", city: "Gothenburg", country: "Sweden" },
+
+// Switzerland
+{ code: "ZRH", name: "Zurich Airport", city: "Zurich", country: "Switzerland" },
+{ code: "GVA", name: "Geneva Airport", city: "Geneva", country: "Switzerland" },
+
+// Syria
+{ code: "DAM", name: "Damascus Intl", city: "Damascus", country: "Syria" },
+
+// Taiwan
+{ code: "TPE", name: "Taipei Taoyuan Intl", city: "Taipei", country: "Taiwan" },
+
+// Tajikistan
+{ code: "DYU", name: "Dushanbe Intl", city: "Dushanbe", country: "Tajikistan" },
+
+// Tanzania
+{ code: "DAR", name: "Dar es Salaam Intl", city: "Dar es Salaam", country: "Tanzania" },
+{ code: "JRO", name: "Kilimanjaro Intl", city: "Arusha/Moshi", country: "Tanzania" },
+{ code: "ZNZ", name: "Zanzibar Intl", city: "Zanzibar", country: "Tanzania" },
+
+// Thailand
+{ code: "BKK", name: "Bangkok Suvarnabhumi", city: "Bangkok", country: "Thailand" },
+{ code: "DMK", name: "Bangkok Don Mueang", city: "Bangkok", country: "Thailand" },
+{ code: "HKT", name: "Phuket Intl", city: "Phuket", country: "Thailand" },
+
+// Togo
+{ code: "LFW", name: "Lomé Gnassingbé Eyadéma Intl", city: "Lomé", country: "Togo" },
+
+// Tonga
+{ code: "TBU", name: "Fuaʻamotu Intl", city: "Nukuʻalofa", country: "Tonga" },
+
+// Trinidad & Tobago
+{ code: "POS", name: "Piarco Intl", city: "Port of Spain", country: "Trinidad and Tobago" },
+
+// Tunisia
+{ code: "TUN", name: "Tunis Carthage Intl", city: "Tunis", country: "Tunisia" },
+
+// Turkey
+{ code: "IST", name: "Istanbul Airport", city: "Istanbul", country: "Turkey" },
+{ code: "SAW", name: "Sabiha Gokcen", city: "Istanbul", country: "Turkey" },
+{ code: "AYT", name: "Antalya Intl", city: "Antalya", country: "Turkey" },
+
+// Turkmenistan
+{ code: "ASB", name: "Ashgabat Intl", city: "Ashgabat", country: "Turkmenistan" },
+
+// Tuvalu
+{ code: "FUN", name: "Funafuti Intl", city: "Funafuti", country: "Tuvalu" },
+
+// Uganda
+{ code: "EBB", name: "Entebbe Intl", city: "Entebbe", country: "Uganda" },
+
+// Ukraine
+{ code: "KBP", name: "Kyiv Boryspil Intl", city: "Kyiv", country: "Ukraine" },
+
+// United Arab Emirates
+{ code: "DXB", name: "Dubai Intl", city: "Dubai", country: "UAE" },
+{ code: "AUH", name: "Abu Dhabi Intl", city: "Abu Dhabi", country: "UAE" },
+{ code: "SHJ", name: "Sharjah Intl", city: "Sharjah", country: "UAE" },
+
+// United Kingdom
+{ code: "LHR", name: "London Heathrow", city: "London", country: "UK" },
+{ code: "LGW", name: "London Gatwick", city: "London", country: "UK" },
+{ code: "MAN", name: "Manchester Airport", city: "Manchester", country: "UK" },
+
+// United States
+{ code: "JFK", name: "John F. Kennedy Intl", city: "New York", country: "USA" },
+{ code: "LAX", name: "Los Angeles Intl", city: "Los Angeles", country: "USA" },
+{ code: "ORD", name: "Chicago O'Hare Intl", city: "Chicago", country: "USA" },
+{ code: "ATL", name: "Hartsfield-Jackson Atlanta", city: "Atlanta", country: "USA" },
+{ code: "DFW", name: "Dallas/Fort Worth Intl", city: "Dallas", country: "USA" },
+
+// Uruguay
+{ code: "MVD", name: "Montevideo Carrasco", city: "Montevideo", country: "Uruguay" },
+
+// Uzbekistan
+{ code: "TAS", name: "Tashkent Intl", city: "Tashkent", country: "Uzbekistan" },
+
+// Vanuatu
+{ code: "VLI", name: "Port Vila Intl", city: "Port Vila", country: "Vanuatu" },
+
+// Vatican City
+// (No airports)
+
+// Venezuela
+{ code: "CCS", name: "Caracas Simón Bolívar Intl", city: "Caracas", country: "Venezuela" },
+
+// Vietnam
+{ code: "SGN", name: "Ho Chi Minh Tan Son Nhat", city: "Ho Chi Minh City", country: "Vietnam" },
+{ code: "HAN", name: "Hanoi Noi Bai", city: "Hanoi", country: "Vietnam" },
+
+// Yemen
+{ code: "SAH", name: "Sanaa Intl", city: "Sanaa", country: "Yemen" },
+
+// Zambia
+{ code: "LUN", name: "Lusaka Intl", city: "Lusaka", country: "Zambia" },
+{ code: "LVI", name: "Livingstone Intl", city: "Livingstone", country: "Zambia" },
+
+// Zimbabwe
+{ code: "HRE", name: "Harare Robert Gabriel Mugabe Intl", city: "Harare", country: "Zimbabwe" },
+{ code: "VFA", name: "Victoria Falls Intl", city: "Victoria Falls", country: "Zimbabwe" },
+];
+
+        
+        // Enhanced destinations with real-time data
+        const destinations = [
+            { 
+                id: 1, 
+                name: "Bali", 
+                country: "Indonesia", 
+                image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800", 
+                type: "beach",
+                flightPrice: "$850",
+                propertyPrice: "$120",
+                rating: 4.9,
+                properties: 2450,
+                flightDeals: 12,
+                description: "Tropical paradise with stunning beaches and vibrant culture"
+            },
+            { 
+                id: 2, 
+                name: "Santorini", 
+                country: "Greece", 
+                image: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800", 
+                type: "beach",
+                flightPrice: "$1,200",
+                propertyPrice: "$280",
+                rating: 4.8,
+                properties: 890,
+                flightDeals: 8,
+                description: "Iconic white-washed buildings with breathtaking sea views"
+            },
+            { 
+                id: 3, 
+                name: "Dubai", 
+                country: "UAE", 
+                image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800", 
+                type: "city",
+                flightPrice: "$950",
+                propertyPrice: "$180",
+                rating: 4.7,
+                properties: 3200,
+                flightDeals: 15,
+                description: "Ultra-modern city with luxury shopping and futuristic architecture"
+            },
+            { 
+                id: 4, 
+                name: "Paris", 
+                country: "France", 
+                image: "https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=800", 
+                type: "city",
+                flightPrice: "$900",
+                propertyPrice: "$150",
+                rating: 4.8,
+                properties: 5600,
+                flightDeals: 20,
+                description: "Romantic city of lights with world-class art and cuisine"
+            },
+            { 
+                id: 5, 
+                name: "Maasai Mara", 
+                country: "Kenya", 
+                image: "https://images.unsplash.com/photo-1516426122078-c23e76319801?w=800", 
+                type: "safari",
+                flightPrice: "$1,100",
+                propertyPrice: "$200",
+                rating: 4.9,
+                properties: 120,
+                flightDeals: 5,
+                description: "World-famous safari destination with incredible wildlife"
+            },
+            { 
+                id: 6, 
+                name: "Tokyo", 
+                country: "Japan", 
+                image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800", 
+                type: "city",
+                flightPrice: "$1,400",
+                propertyPrice: "$130",
+                rating: 4.8,
+                properties: 3800,
+                flightDeals: 18,
+                description: "Vibrant metropolis blending tradition and cutting-edge technology"
+            },
+            { 
+                id: 7, 
+                name: "Barcelona", 
+                country: "Spain", 
+                image: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800", 
+                type: "city",
+                flightPrice: "$800",
+                propertyPrice: "$95",
+                rating: 4.7,
+                properties: 2900,
+                flightDeals: 14,
+                description: "Cosmopolitan city with unique architecture and Mediterranean beaches"
+            },
+            { 
+                id: 8, 
+                name: "Maldives", 
+                country: "Maldives", 
+                image: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800", 
+                type: "beach",
+                flightPrice: "$1,800",
+                propertyPrice: "$350",
+                rating: 5.0,
+                properties: 450,
+                flightDeals: 6,
+                description: "Pristine overwater bungalows and crystal-clear turquoise waters"
+            }
+        ];
+        
+        // Properties data
+        const properties = [
+            {
+                id: 1,
+                name: "Oceanview Luxury Villa",
+                location: "Bali, Indonesia",
+                type: "Villa",
+                price: 120,
+                currency: "USD",
+                rating: 4.9,
+                reviews: 142,
+                image: "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800",
+                bedrooms: 3,
+                bathrooms: 2,
+                guests: 6,
+                amenities: ["Pool", "WiFi", "Kitchen", "AC"]
+            },
+            {
+                id: 2,
+                name: "Beachfront Resort Suite",
+                location: "Bali, Indonesia",
+                type: "Resort",
+                price: 180,
+                currency: "USD",
+                rating: 4.7,
+                reviews: 89,
+                image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800",
+                bedrooms: 1,
+                bathrooms: 1,
+                guests: 2,
+                amenities: ["Beach Access", "Spa", "Restaurant", "WiFi"]
+            },
+            {
+                id: 3,
+                name: "Traditional Balinese House",
+                location: "Bali, Indonesia",
+                type: "Guesthouse",
+                price: 65,
+                currency: "USD",
+                rating: 4.8,
+                reviews: 203,
+                image: "https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=800",
+                bedrooms: 2,
+                bathrooms: 1,
+                guests: 4,
+                amenities: ["Garden", "WiFi", "Kitchen", "Free Parking"]
+            },
+            {
+                id: 4,
+                name: "Luxury Safari Lodge",
+                location: "Maasai Mara, Kenya",
+                type: "Lodge",
+                price: 320,
+                currency: "USD",
+                rating: 4.9,
+                reviews: 76,
+                image: "https://images.unsplash.com/photo-1591261730799-ee4e6c2d16d7?w=800",
+                bedrooms: 1,
+                bathrooms: 1,
+                guests: 2,
+                amenities: ["Game Drives", "Pool", "Restaurant", "WiFi"]
+            },
+            {
+                id: 5,
+                name: "Parisian Apartment",
+                location: "Paris, France",
+                type: "Apartment",
+                price: 150,
+                currency: "USD",
+                rating: 4.6,
+                reviews: 312,
+                image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800",
+                bedrooms: 1,
+                bathrooms: 1,
+                guests: 2,
+                amenities: ["City View", "WiFi", "Kitchen", "Elevator"]
+            },
+            {
+                id: 6,
+                name: "Dubai Penthouse",
+                location: "Dubai, UAE",
+                type: "Penthouse",
+                price: 450,
+                currency: "USD",
+                rating: 4.8,
+                reviews: 54,
+                image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800",
+                bedrooms: 3,
+                bathrooms: 3,
+                guests: 6,
+                amenities: ["City View", "Pool", "Gym", "Concierge"]
+            }
+        ];
+        
+        // Mock real-time flight data
+        const mockFlights = [
+            { 
+                id: 1, 
+                airline: "Kenya Airways", 
+                airlineCode: "KQ", 
+                flightNumber: "KQ 100",
+                departure: { time: "08:00", airport: "NBO" }, 
+                arrival: { time: "15:30", airport: "DXB" }, 
+                duration: "4h 30m", 
+                stops: 0, 
+                price: 450,
+                currency: "USD",
+                aircraft: "Boeing 787",
+                class: "Economy"
+            },
+            { 
+                id: 2, 
+                airline: "Emirates", 
+                airlineCode: "EK", 
+                flightNumber: "EK 722",
+                departure: { time: "14:20", airport: "NBO" }, 
+                arrival: { time: "21:45", airport: "DXB" }, 
+                duration: "5h 25m", 
+                stops: 0, 
+                price: 520,
+                currency: "USD",
+                aircraft: "Airbus A380",
+                class: "Economy"
+            },
+            { 
+                id: 3, 
+                airline: "Qatar Airways", 
+                airlineCode: "QR", 
+                flightNumber: "QR 1342",
+                departure: { time: "22:10", airport: "NBO" }, 
+                arrival: { time: "06:15", airport: "DXB" }, 
+                duration: "4h 05m", 
+                stops: 1, 
+                price: 380,
+                currency: "USD",
+                aircraft: "Boeing 777",
+                class: "Economy"
+            }
+        ];
+        
+        // Mock real-time property data
+        const mockProperties = [
+            {
+                id: 1,
+                name: "Oceanview Luxury Villa",
+                location: "Bali, Indonesia",
+                type: "Villa",
+                price: 120,
+                currency: "USD",
+                rating: 4.9,
+                reviews: 142,
+                image: "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800",
+                bedrooms: 3,
+                bathrooms: 2,
+                guests: 6,
+                amenities: ["Pool", "WiFi", "Kitchen", "AC"]
+            },
+            {
+                id: 2,
+                name: "Beachfront Resort Suite",
+                location: "Bali, Indonesia",
+                type: "Resort",
+                price: 180,
+                currency: "USD",
+                rating: 4.7,
+                reviews: 89,
+                image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800",
+                bedrooms: 1,
+                bathrooms: 1,
+                guests: 2,
+                amenities: ["Beach Access", "Spa", "Restaurant", "WiFi"]
+            },
+            {
+                id: 3,
+                name: "Traditional Balinese House",
+                location: "Bali, Indonesia",
+                type: "Guesthouse",
+                price: 65,
+                currency: "USD",
+                rating: 4.8,
+                reviews: 203,
+                image: "https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=800",
+                bedrooms: 2,
+                bathrooms: 1,
+                guests: 4,
+                amenities: ["Garden", "WiFi", "Kitchen", "Free Parking"]
+            }
+        ];
+        
+        // State
+        let passengers = { adults: 1, children: 0, infants: 0 };
+        let travelClass = 'economy';
+        let currentFilter = 'all';
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            loadEnhancedDestinations();
+            loadProperties();
+            setupEventListeners();
+            setMinDates();
+        });
+        
+        function initializeApp() {
+            // Navbar scroll effect
+            window.addEventListener('scroll', function() {
+                const navbar = document.getElementById('navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+        }
+        
+        function setMinDates() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('departDate').min = today;
+            document.getElementById('returnDate').min = today;
+            document.getElementById('checkinDate').min = today;
+            document.getElementById('checkoutDate').min = today;
+        }
+        
+        function setupEventListeners() {
+            // Tab switching
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tab = this.dataset.tab;
+                    switchTab(tab);
+                });
+            });
+            
+            // Trip type radio
+            document.querySelectorAll('input[name="tripType"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const returnGroup = document.getElementById('returnDateGroup');
+                    if (this.value === 'oneway') {
+                        returnGroup.style.opacity = '0.5';
+                        document.getElementById('returnDate').disabled = true;
+                    } else {
+                        returnGroup.style.opacity = '1';
+                        document.getElementById('returnDate').disabled = false;
+                    }
+                });
+            });
+            
+            // Passenger dropdown
+            document.getElementById('passengerBtn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                document.getElementById('passengerDropdown').classList.toggle('show');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.passenger-selector')) {
+                    document.getElementById('passengerDropdown').classList.remove('show');
+                }
+                if (!e.target.closest('.input-wrapper')) {
+                    document.querySelectorAll('.autocomplete-results').forEach(el => el.classList.remove('show'));
+                    document.querySelectorAll('.flight-results').forEach(el => el.classList.remove('show'));
+                    document.querySelectorAll('.property-results').forEach(el => el.classList.remove('show'));
+                }
+            });
+            
+            // Passenger controls
+            document.querySelectorAll('.passenger-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const type = this.dataset.type;
+                    const action = this.dataset.action;
+                    updatePassengerCount(type, action);
+                });
+            });
+            
+            // Apply passenger selection
+            document.getElementById('applyPassenger').addEventListener('click', function() {
+                updatePassengerDisplay();
+                document.getElementById('passengerDropdown').classList.remove('show');
+            });
+            
+            // Travel class selection
+            document.querySelectorAll('input[name="travelClass"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    travelClass = this.value;
+                });
+            });
+            
+            // Airport autocomplete with real-time results
+            document.getElementById('flightFrom').addEventListener('input', function() {
+                showAutocomplete(this.value, 'fromResults');
+                if (this.value.length >= 2) {
+                    showRealTimeFlights(this.value, 'flightFromResults');
+                }
+            });
+            
+            document.getElementById('flightTo').addEventListener('input', function() {
+                showAutocomplete(this.value, 'toResults');
+                if (this.value.length >= 2) {
+                    showRealTimeFlights(this.value, 'flightToResults');
+                }
+            });
+            
+            // Destination autocomplete with real-time property results
+            document.getElementById('stayDestination').addEventListener('input', function() {
+                showDestinationAutocomplete(this.value, 'destinationResults');
+                if (this.value.length >= 2) {
+                    showRealTimeProperties(this.value, 'propertyDestinationResults');
+                }
+            });
+            
+            // Search buttons
+            document.getElementById('searchFlights').addEventListener('click', searchFlights);
+            document.getElementById('searchStays').addEventListener('click', searchStays);
+            
+            // Date validation
+            document.getElementById('departDate').addEventListener('change', function() {
+                document.getElementById('returnDate').min = this.value;
+            });
+            
+            document.getElementById('checkinDate').addEventListener('change', function() {
+                document.getElementById('checkoutDate').min = this.value;
+            });
+            
+            // Destination filters
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.filter;
+                    filterDestinations(currentFilter);
+                });
+            });
+        }
+        
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.booking-form').forEach(form => form.classList.remove('active'));
+            
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            document.getElementById(`${tab}-form`).classList.add('active');
+        }
+        
+        function updatePassengerCount(type, action) {
+            if (action === 'plus') {
+                if (type === 'adults' && passengers.adults < 9) passengers.adults++;
+                if (type === 'children' && passengers.children < 9) passengers.children++;
+                if (type === 'infants' && passengers.infants < passengers.adults) passengers.infants++;
+            } else {
+                if (type === 'adults' && passengers.adults > 1) {
+                    passengers.adults--;
+                    if (passengers.infants > passengers.adults) passengers.infants = passengers.adults;
+                }
+                if (type === 'children' && passengers.children > 0) passengers.children--;
+                if (type === 'infants' && passengers.infants > 0) passengers.infants--;
+            }
+            
+            document.getElementById('adultsCount').textContent = passengers.adults;
+            document.getElementById('childrenCount').textContent = passengers.children;
+            document.getElementById('infantsCount').textContent = passengers.infants;
+            
+            // Update button states
+            document.querySelectorAll('.passenger-btn[data-action="minus"]').forEach(btn => {
+                const type = btn.dataset.type;
+                btn.disabled = passengers[type] <= (type === 'adults' ? 1 : 0);
+            });
+            
+            document.querySelectorAll('.passenger-btn[data-action="plus"]').forEach(btn => {
+                const type = btn.dataset.type;
+                if (type === 'infants') {
+                    btn.disabled = passengers.infants >= passengers.adults;
+                } else {
+                    btn.disabled = passengers[type] >= 9;
+                }
+            });
+        }
+        
+        function updatePassengerDisplay() {
+            const total = passengers.adults + passengers.children + passengers.infants;
+            const classNames = {
+                economy: 'Economy',
+                premium: 'Premium Economy',
+                business: 'Business',
+                first: 'First Class'
+            };
+            document.getElementById('passengerBtn').innerHTML = `
+                ${total} Passenger${total !== 1 ? 's' : ''}, ${classNames[travelClass]}
+                <i class="fas fa-chevron-down" style="float: right; margin-top: 4px;"></i>
+            `;
+        }
+        
+        function showAutocomplete(query, resultsId) {
+            const results = document.getElementById(resultsId);
+            
+            if (query.length < 2) {
+                results.classList.remove('show');
+                return;
+            }
+            
+            const filtered = airports.filter(airport => 
+                airport.city.toLowerCase().includes(query.toLowerCase()) ||
+                airport.code.toLowerCase().includes(query.toLowerCase()) ||
+                airport.name.toLowerCase().includes(query.toLowerCase())
+            );
+            
+            if (filtered.length === 0) {
+                results.innerHTML = '<div class="autocomplete-item">No airports found</div>';
+            } else {
+                results.innerHTML = filtered.map(airport => `
+                    <div class="autocomplete-item" onclick="selectAirport('${airport.city}', '${airport.code}', '${resultsId}')">
+                        <strong>${airport.city} (${airport.code})</strong>
+                        <small>${airport.name}, ${airport.country}</small>
+                    </div>
+                `).join('');
+            }
+            
+            results.classList.add('show');
+        }
+        
+        function showDestinationAutocomplete(query, resultsId) {
+            const results = document.getElementById(resultsId);
+            
+            if (query.length < 2) {
+                results.classList.remove('show');
+                return;
+            }
+            
+            const filtered = destinations.filter(dest => 
+                dest.name.toLowerCase().includes(query.toLowerCase()) ||
+                dest.country.toLowerCase().includes(query.toLowerCase())
+            );
+            
+            if (filtered.length === 0) {
+                results.innerHTML = '<div class="autocomplete-item">No destinations found</div>';
+            } else {
+                results.innerHTML = filtered.map(dest => `
+                    <div class="autocomplete-item" onclick="selectDestination('${dest.name}', '${resultsId}')">
+                        <strong>${dest.name}</strong>
+                        <small>${dest.country}</small>
+                    </div>
+                `).join('');
+            }
+            
+            results.classList.add('show');
+        }
+        
+        function showRealTimeFlights(query, resultsId) {
+            const results = document.getElementById(resultsId);
+            
+            // Show loading state
+            results.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    Searching real-time flights...
+                </div>
+            `;
+            results.classList.add('show');
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                // In a real implementation, this would be an actual API call to Trawex/Amadeus
+                const filteredFlights = mockFlights.filter(flight => 
+                    flight.departure.airport.toLowerCase().includes(query.toLowerCase()) ||
+                    flight.arrival.airport.toLowerCase().includes(query.toLowerCase()) ||
+                    flight.airline.toLowerCase().includes(query.toLowerCase())
+                );
+                
+                if (filteredFlights.length === 0) {
+                    results.innerHTML = '<div class="loading">No flights found</div>';
+                } else {
+                    results.innerHTML = filteredFlights.map(flight => `
+                        <div class="flight-result" onclick="selectFlight('${flight.departure.airport}', '${flight.arrival.airport}', '${resultsId}')">
+                            <div class="flight-header">
+                                <div class="flight-airline">
+                                    <div class="flight-logo">${flight.airlineCode}</div>
+                                    <div>
+                                        <strong>${flight.airline}</strong>
+                                        <div style="font-size: 0.875rem; color: var(--gray-600);">${flight.flightNumber}</div>
+                                    </div>
+                                </div>
+                                <div class="flight-price">
+                                    <div class="price-main">$${flight.price}</div>
+                                    <div class="price-per">per person</div>
+                                </div>
+                            </div>
+                            <div class="flight-route">
+                                <div class="flight-times">
+                                    <div class="flight-time">${flight.departure.time}</div>
+                                    <div class="flight-date">${flight.departure.airport}</div>
+                                </div>
+                                <div class="flight-stops">
+                                    <div class="flight-duration">${flight.duration}</div>
+                                    <div class="flight-stops-info">${flight.stops === 0 ? 'Nonstop' : `${flight.stops} stop${flight.stops > 1 ? 's' : ''}`}</div>
+                                </div>
+                                <div class="flight-times">
+                                    <div class="flight-time">${flight.arrival.time}</div>
+                                    <div class="flight-date">${flight.arrival.airport}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }, 1000); // Simulate network delay
+        }
+        
+        function showRealTimeProperties(query, resultsId) {
+            const results = document.getElementById(resultsId);
+            
+            // Show loading state
+            results.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    Searching real-time properties...
+                </div>
+            `;
+            results.classList.add('show');
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                // In a real implementation, this would be an actual API call to property databases
+                const filteredProperties = mockProperties.filter(property => 
+                    property.name.toLowerCase().includes(query.toLowerCase()) ||
+                    property.location.toLowerCase().includes(query.toLowerCase())
+                );
+                
+                if (filteredProperties.length === 0) {
+                    results.innerHTML = '<div class="loading">No properties found</div>';
+                } else {
+                    results.innerHTML = filteredProperties.map(property => `
+                        <div class="property-result" onclick="selectProperty('${property.name}', '${resultsId}')">
+                            <div class="property-result-image">
+                                <img src="${property.image}" alt="${property.name}">
+                            </div>
+                            <div class="property-result-content">
+                                <div class="property-result-header">
+                                    <h3 class="property-result-title">${property.name}</h3>
+                                    <div class="property-result-rating">
+                                        <i class="fas fa-star"></i>
+                                        ${property.rating}
+                                    </div>
+                                </div>
+                                <div class="property-result-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    ${property.location}
+                                </div>
+                                <div class="property-result-features">
+                                    <span>${property.bedrooms} bed${property.bedrooms > 1 ? 's' : ''}</span>
+                                    <span>${property.bathrooms} bath${property.bathrooms > 1 ? 's' : ''}</span>
+                                    <span>${property.guests} guest${property.guests > 1 ? 's' : ''}</span>
+                                </div>
+                                <div class="property-result-price">
+                                    <div class="property-price-main">$${property.price}</div>
+                                    <div class="property-price-per">per night</div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }, 1000); // Simulate network delay
+        }
+        
+        function selectAirport(city, code, resultsId) {
+            const inputId = resultsId === 'fromResults' ? 'flightFrom' : 'flightTo';
+            document.getElementById(inputId).value = `${city} (${code})`;
+            document.getElementById(resultsId).classList.remove('show');
+            document.querySelectorAll('.flight-results').forEach(el => el.classList.remove('show'));
+        }
+        
+        function selectDestination(name, resultsId) {
+            document.getElementById('stayDestination').value = name;
+            document.getElementById(resultsId).classList.remove('show');
+            document.querySelectorAll('.property-results').forEach(el => el.classList.remove('show'));
+        }
+        
+        function selectFlight(from, to, resultsId) {
+            if (resultsId === 'flightFromResults') {
+                document.getElementById('flightFrom').value = from;
+            } else {
+                document.getElementById('flightTo').value = to;
+            }
+            document.querySelectorAll('.flight-results').forEach(el => el.classList.remove('show'));
+        }
+        
+        function selectProperty(name, resultsId) {
+            document.getElementById('stayDestination').value = name;
+            document.querySelectorAll('.property-results').forEach(el => el.classList.remove('show'));
+        }
+        
+        function searchFlights() {
+            const from = document.getElementById('flightFrom').value;
+            const to = document.getElementById('flightTo').value;
+            const depart = document.getElementById('departDate').value;
+            const tripType = document.querySelector('input[name="tripType"]:checked').value;
+            
+            if (!from || !to || !depart) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            const resultsContainer = document.getElementById('flightSearchResults');
+            
+            // Show loading state
+            resultsContainer.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    Searching real-time flights with Trawex & Amadeus...
+                </div>
+            `;
+            resultsContainer.classList.add('show');
+            
+            // Simulate API call to Trawex/Amadeus
+            setTimeout(() => {
+                // In a real implementation, this would be an actual API call
+                resultsContainer.innerHTML = mockFlights.map(flight => `
+                    <div class="flight-result" onclick="bookFlight(${flight.id})">
+                        <div class="flight-header">
+                            <div class="flight-airline">
+                                <div class="flight-logo">${flight.airlineCode}</div>
+                                <div>
+                                    <strong>${flight.airline}</strong>
+                                    <div style="font-size: 0.875rem; color: var(--gray-600);">${flight.flightNumber} • ${flight.aircraft}</div>
+                                </div>
+                            </div>
+                            <div class="flight-price">
+                                <div class="price-main">$${flight.price}</div>
+                                <div class="price-per">per person</div>
+                            </div>
+                        </div>
+                        <div class="flight-route">
+                            <div class="flight-times">
+                                <div class="flight-time">${flight.departure.time}</div>
+                                <div class="flight-date">${flight.departure.airport}</div>
+                            </div>
+                            <div class="flight-stops">
+                                <div class="flight-duration">${flight.duration}</div>
+                                <div class="flight-stops-info">${flight.stops === 0 ? 'Nonstop' : `${flight.stops} stop${flight.stops > 1 ? 's' : ''}`}</div>
+                            </div>
+                            <div class="flight-times">
+                                <div class="flight-time">${flight.arrival.time}</div>
+                                <div class="flight-date">${flight.arrival.airport}</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1rem; text-align: center;">
+                            <button class="btn btn-primary" style="width: 100%;">
+                                <i class="fas fa-shopping-cart"></i>
+                                Book Now
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }, 1500);
+        }
+        
+        function searchStays() {
+            const destination = document.getElementById('stayDestination').value;
+            const checkin = document.getElementById('checkinDate').value;
+            const checkout = document.getElementById('checkoutDate').value;
+            const guests = document.getElementById('guestCount').value;
+            
+            if (!destination || !checkin || !checkout) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            const resultsContainer = document.getElementById('propertySearchResults');
+            
+            // Show loading state
+            resultsContainer.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    Searching real-time properties...
+                </div>
+            `;
+            resultsContainer.classList.add('show');
+            
+            // Simulate API call to property databases
+            setTimeout(() => {
+                // In a real implementation, this would be an actual API call
+                resultsContainer.innerHTML = mockProperties.map(property => `
+                    <div class="property-result" onclick="viewProperty(${property.id})">
+                        <div class="property-result-image">
+                            <img src="${property.image}" alt="${property.name}">
+                        </div>
+                        <div class="property-result-content">
+                            <div class="property-result-header">
+                                <h3 class="property-result-title">${property.name}</h3>
+                                <div class="property-result-rating">
+                                    <i class="fas fa-star"></i>
+                                    ${property.rating} <span style="color: var(--gray-600); font-weight: normal;">(${property.reviews})</span>
+                                </div>
+                            </div>
+                            <div class="property-result-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                ${property.location}
+                            </div>
+                            <div class="property-result-features">
+                                <span>${property.bedrooms} bed${property.bedrooms > 1 ? 's' : ''}</span>
+                                <span>${property.bathrooms} bath${property.bathrooms > 1 ? 's' : ''}</span>
+                                <span>${property.guests} guest${property.guests > 1 ? 's' : ''}</span>
+                            </div>
+                            <div class="property-result-price">
+                                <div class="property-price-main">$${property.price}</div>
+                                <div class="property-price-per">per night</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }, 1500);
+        }
+        
+        function loadEnhancedDestinations() {
+            const grid = document.getElementById('destinationsGrid');
+            grid.innerHTML = destinations.map(dest => `
+                <div class="destination-card-enhanced" data-type="${dest.type}">
+                    <img src="${dest.image}" alt="${dest.name}, ${dest.country}" loading="lazy">
+                    <div class="destination-badge">${dest.type.charAt(0).toUpperCase() + dest.type.slice(1)}</div>
+                    <div class="destination-overlay-enhanced">
+                        <h3>${dest.name}</h3>
+                        <p>${dest.country}</p>
+                        <p style="margin-bottom: 1rem; font-size: 0.875rem; opacity: 0.9;">${dest.description}</p>
+                        <div class="destination-stats">
+                            <div class="destination-stat">
+                                <i class="fas fa-plane"></i>
+                                Flights from ${dest.flightPrice}
+                            </div>
+                            <div class="destination-stat">
+                                <i class="fas fa-home"></i>
+                                Stays from ${dest.propertyPrice}/night
+                            </div>
+                            <div class="destination-stat">
+                                <i class="fas fa-star"></i>
+                                ${dest.rating} Rating
+                            </div>
+                        </div>
+                        <div class="destination-stats">
+                            <div class="destination-stat">
+                                <i class="fas fa-building"></i>
+                                ${dest.properties.toLocaleString()} properties
+                            </div>
+                            <div class="destination-stat">
+                                <i class="fas fa-tag"></i>
+                                ${dest.flightDeals} flight deals
+                            </div>
+                        </div>
+                        <div class="destination-actions">
+                            <button class="btn btn-primary" onclick="viewDestination(${dest.id})">
+                                <i class="fas fa-eye"></i>
+                                View Details
+                            </button>
+                            <button class="btn btn-outline" style="background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.5); color: white;" onclick="bookDestination(${dest.id})">
+                                <i class="fas fa-suitcase"></i>
+                                Book Package
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function filterDestinations(filter) {
+            const destinationCards = document.querySelectorAll('.destination-card-enhanced');
+            
+            destinationCards.forEach(card => {
+                if (filter === 'all' || card.dataset.type === filter) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        function loadProperties() {
+            const grid = document.getElementById('propertiesGrid');
+            grid.innerHTML = properties.map(property => `
+                <div class="property-card">
+                    <div class="property-image">
+                        <img src="${property.image}" alt="${property.name}" loading="lazy">
+                        <div class="property-badge">${property.type}</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-header">
+                            <div>
+                                <h3 class="property-title">${property.name}</h3>
+                                <div class="property-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    ${property.location}
+                                </div>
+                            </div>
+                            <div class="property-rating">
+                                <i class="fas fa-star"></i>
+                                ${property.rating}
+                            </div>
+                        </div>
+                        <div class="property-features">
+                            <span>${property.bedrooms} bed${property.bedrooms > 1 ? 's' : ''}</span>
+                            <span>${property.bathrooms} bath${property.bathrooms > 1 ? 's' : ''}</span>
+                            <span>${property.guests} guest${property.guests > 1 ? 's' : ''}</span>
+                        </div>
+                        <div class="property-footer">
+                            <div>
+                                <div class="property-price">$${property.price}</div>
+                                <div class="property-period">per night</div>
+                            </div>
+                            <button class="btn btn-primary" onclick="viewProperty(${property.id})">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Mock functions for booking and viewing
+        function bookFlight(flightId) {
+            alert(`Booking flight ${flightId}...\n\nIn production, this would integrate with Trawex/Amadeus booking systems.`);
+        }
+        
+        function viewProperty(propertyId) {
+            alert(`Viewing property ${propertyId} details...\n\nIn production, this would show a detailed property page.`);
+        }
+        
+        function viewDestination(destinationId) {
+            alert(`Viewing destination ${destinationId} details...\n\nIn production, this would show a comprehensive destination guide.`);
+        }
+        
+        function bookDestination(destinationId) {
+            alert(`Booking package for destination ${destinationId}...\n\nIn production, this would create a combined flight + stay package.`);
+        }
+    </script>
+</body>
+</html>

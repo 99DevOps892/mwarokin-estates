@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Caretaker Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2a5bd7;
+            --primary-light: #e8edff;
+            --secondary: #00c9a7;
+            --dark: #1a1d29;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --success: #2ecc71;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --radius: 12px;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, var(--primary) 0%, #1a47b5 100%);
+            color: white;
+            padding: 24px 0;
+            box-shadow: var(--shadow);
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 24px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 24px;
+        }
+
+        .logo i {
+            font-size: 28px;
+            margin-right: 12px;
+        }
+
+        .logo h1 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            list-style: none;
+            padding: 0 16px;
+        }
+
+        .nav-links li {
+            margin-bottom: 8px;
+        }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            border-radius: var(--radius);
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .nav-links i {
+            margin-right: 12px;
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .water-icon {
+            background: rgba(42, 91, 215, 0.1);
+            color: var(--primary);
+        }
+
+        .trash-icon {
+            background: rgba(0, 201, 167, 0.1);
+            color: var(--secondary);
+        }
+
+        .security-icon {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--danger);
+        }
+
+        .community-icon {
+            background: rgba(243, 156, 18, 0.1);
+            color: var(--warning);
+        }
+
+        .parking-icon {
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--success);
+        }
+
+        .card-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .card-description {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        /* Properties Section */
+        .section-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        .properties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .property-card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .property-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .property-image {
+            height: 160px;
+            background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+            position: relative;
+        }
+
+        .property-status {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: var(--success);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .property-details {
+            padding: 20px;
+        }
+
+        .property-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .property-address {
+            color: var(--gray);
+            font-size: 14px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .property-address i {
+            margin-right: 8px;
+        }
+
+        .property-stats {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #eee;
+            padding-top: 16px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding: 16px;
+            }
+            
+            .nav-links {
+                display: flex;
+                overflow-x: auto;
+                padding-bottom: 8px;
+            }
+            
+            .nav-links li {
+                margin-bottom: 0;
+                margin-right: 8px;
+            }
+            
+            .nav-links a {
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .properties-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-home"></i>
+                <h1>Mwarokin Estates</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="CareTakers.html"><i class="fas fa-users"></i> Care Takers</a></li>
+                <li><a href="Neighborhoods.html"><i class="fas fa-home"></i> Neibourhoods</a></li>
+                <li><a href="Water Management.html"><i class="fas fa-tint"></i> Water Management</a></li>
+                <li><a href="Manage Trash.html"><i class="fas fa-trash-alt"></i> Manage Trash</a></li>
+                <li><a href="Manage Security.html"><i class="fas fa-shield-alt"></i> Manage Security</a></li>
+                <li><a href="Community.html"><i class="fas fa-users"></i> Community</a></li>
+                <li><a href="Parking.html"><i class="fas fa-parking"></i> Parking</a></li>
+                <li><a href="AutomateGPRSPinLocator.html"><i class="fas fa-location"></i> My Locator</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h2> Care Taker's - Dashboard</h2>
+                <div class="user-info">
+                    <div class="user-avatar">JD</div>
+                    <div>
+                        <div style="font-weight: 600;">John Doe</div>
+                        <div style="font-size: 14px; color: var(--gray);">Caretaker</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Cards -->
+            <div class="dashboard-cards">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Water Management</div>
+                        <div class="card-icon water-icon">
+                            <i class="fas fa-tint"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">82%</div>
+                    <div class="card-description">All properties have optimal water levels</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Manage Trash</div>
+                        <div class="card-icon trash-icon">
+                            <i class="fas fa-trash-alt"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">3/5</div>
+                    <div class="card-description">Collections scheduled for today</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Manage Security</div>
+                        <div class="card-icon security-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">100%</div>
+                    <div class="card-description">All security systems active</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Community Suggestions</div>
+                        <div class="card-icon community-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">12</div>
+                    <div class="card-description">New suggestions this week</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">My Parking</div>
+                        <div class="card-icon parking-icon">
+                            <i class="fas fa-parking"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">8/10</div>
+                    <div class="card-description">Available parking spots</div>
+                </div>
+            </div>
+
+            <!-- Properties Section -->
+            <h3 class="section-title">Managed Properties</h3>
+            <div class="properties-grid">
+                <div class="property-card">
+                    <div class="property-image">
+                        <div class="property-status">Occupied</div>
+                    </div>
+                    <div class="property-details">
+                        <div class="property-name">Sunset Villa</div>
+                        <div class="property-address">
+                            <i class="fas fa-map-marker-alt"></i>
+                            123 Palm Street, Nairobi
+                        </div>
+                        <div class="property-stats">
+                            <div class="stat">
+                                <div class="stat-value">4</div>
+                                <div class="stat-label">Residents</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">3</div>
+                                <div class="stat-label">Rooms</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">2</div>
+                                <div class="stat-label">Parking</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-card">
+                    <div class="property-image">
+                        <div class="property-status">Vacant</div>
+                    </div>
+                    <div class="property-details">
+                        <div class="property-name">Green Valley Apartments</div>
+                        <div class="property-address">
+                            <i class="fas fa-map-marker-alt"></i>
+                            456 Valley Road, Nairobi
+                        </div>
+                        <div class="property-stats">
+                            <div class="stat">
+                                <div class="stat-value">0</div>
+                                <div class="stat-label">Residents</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">8</div>
+                                <div class="stat-label">Rooms</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">4</div>
+                                <div class="stat-label">Parking</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-card">
+                    <div class="property-image">
+                        <div class="property-status">Occupied</div>
+                    </div>
+                    <div class="property-details">
+                        <div class="property-name">Lakeview Mansion</div>
+                        <div class="property-address">
+                            <i class="fas fa-map-marker-alt"></i>
+                            789 Lake Drive, Nairobi
+                        </div>
+                        <div class="property-stats">
+                            <div class="stat">
+                                <div class="stat-value">6</div>
+                                <div class="stat-label">Residents</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">5</div>
+                                <div class="stat-label">Rooms</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">3</div>
+                                <div class="stat-label">Parking</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple interactivity for the dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click events to cards
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const title = this.querySelector('.card-title').textContent;
+                    alert(`Navigating to ${title} page`);
+                });
+            });
+
+            // Add click events to property cards
+            const propertyCards = document.querySelectorAll('.property-card');
+            propertyCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const name = this.querySelector('.property-name').textContent;
+                    alert(`Opening details for ${name}`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

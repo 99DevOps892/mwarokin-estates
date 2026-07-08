@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Secure login for Mwarokin Estates Real Estate Agentic OS">
+    <meta name="keywords" content="real estate, login, Mwarokin Estates, secure authentication">
+    <meta name="author" content="Syllogism Technology">
+    <title>Mwarokin Estates - Secure Login</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-dark: #3730a3;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --dark-bg: #111827;
+            --dark-card: #1f2937;
+            --dark-border: #374151;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .input-focus:focus {
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(79, 70, 229, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
+            }
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translate(0, 0px); }
+            50% { transform: translate(0, 10px); }
+            100% { transform: translate(0, -0px); }
+        }
+        
+        .logo-glow {
+            filter: drop-shadow(0 0 10px rgba(79, 70, 229, 0.5));
+        }
+        
+        .security-indicator {
+            transition: all 0.3s ease;
+        }
+        
+        .security-indicator.active {
+            background-color: var(--secondary);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+        
+        .dark-mode {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="glass-effect sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex items-center">
+                        <div class="logo-glow">
+                            <img class="h-10 w-10 floating" src="Mwarokin Lg.png" alt="Mwarokin Estates Logo">
+                        </div>
+                        <h2 class="ml-2 text-2xl font-bold text-white">Mwarokin Estates</h2>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="LogIn.html" class="text-white hover:text-blue-200 px-3 py-2 text-sm font-medium transition duration-300">Log In</a>
+                    <a href="LogOut.html" class="text-white hover:text-blue-200 px-3 py-2 text-sm font-medium transition duration-300">Log Out</a>
+                    <button id="themeToggle" class="text-white hover:text-blue-200 p-2 rounded-full transition duration-300">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full">
+            <!-- Login Card -->
+            <div class="glass-effect rounded-2xl shadow-xl overflow-hidden card-hover">
+                <div class="p-8">
+                    <!-- Header -->
+                    <div class="text-center mb-8">
+                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-white/20 mb-4">
+                            <i class="fas fa-lock text-white text-2xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-extrabold text-white">Secure Login Digital Key</h2>
+                        <p class="mt-2 text-blue-100">Access your Mwarokin Estates dashboard</p>
+                    </div>
+                    
+                    <!-- Login Form -->
+                    <form id="loginForm" class="space-y-6">
+                        <!-- User ID Field -->
+                        <div>
+                            <label for="userId" class="block text-sm font-medium text-white mb-1">User ID</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-user text-blue-300"></i>
+                                </div>
+                                <input id="userId" name="userId" type="text" required
+                                       class="input-focus appearance-none relative block w-full pl-10 pr-3 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-white/50 transition duration-300"
+                                       placeholder="Enter your user ID">
+                            </div>
+                        </div>
+                        
+                        <!-- Digital Key Field -->
+                        <div>
+                            <label for="digitalKey" class="block text-sm font-medium text-white mb-1">Digital Key</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-key text-blue-300"></i>
+                                </div>
+                                <input id="digitalKey" name="digitalKey" type="password" required
+                                       class="input-focus appearance-none relative block w-full pl-10 pr-10 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-white/50 transition duration-300"
+                                       placeholder="Enter your digital key">
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                    <button type="button" id="togglePassword" class="text-blue-300 hover:text-white focus:outline-none">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Security Indicator -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="flex space-x-1">
+                                    <div class="security-indicator h-2 w-6 bg-white/20 rounded-full"></div>
+                                    <div class="security-indicator h-2 w-6 bg-white/20 rounded-full"></div>
+                                    <div class="security-indicator h-2 w-6 bg-white/20 rounded-full"></div>
+                                    <div class="security-indicator h-2 w-6 bg-white/20 rounded-full"></div>
+                                </div>
+                                <span class="ml-2 text-xs text-blue-200">Password strength</span>
+                            </div>
+                            <a href="#" class="text-sm text-blue-300 hover:text-white transition duration-300">Forgot key?</a>
+                        </div>
+                        
+                        <!-- Role Selection -->
+                        <div>
+                            <label for="role" class="block text-sm font-medium text-white mb-1">Select Role</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-user-tag text-blue-300"></i>
+                                </div>
+                                <select id="role" name="role" class="input-focus appearance-none relative block w-full pl-10 pr-10 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white/50 transition duration-300">
+                                    <option value="client" class="text-gray-800">Client</option>
+                                    <option value="broker" class="text-gray-800">Broker</option>
+                                    <option value="system" class="text-gray-800">System Administrator</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-chevron-down text-blue-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div>
+                            <button type="submit" id="loginButton"
+                                    class="btn-primary group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 pulse-animation">
+                                <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                                    <i class="fas fa-sign-in-alt text-blue-200 group-hover:text-white"></i>
+                                </span>
+                                Sign In to Dashboard
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Error Message -->
+                    <div id="errorMessage" class="mt-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-center text-red-200 hidden">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        <span id="errorText">Invalid credentials. Please try again.</span>
+                    </div>
+                    
+                    <!-- Additional Options -->
+                    <div class="mt-6 text-center">
+                        <p class="text-blue-200 text-sm">
+                            Don't have an account? 
+                            <a href="#" class="font-medium text-white hover:text-blue-100 transition duration-300">Contact administrator</a>
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Security Footer -->
+                <div class="bg-black/20 px-8 py-4">
+                    <div class="flex items-center justify-center text-blue-200 text-sm">
+                        <i class="fas fa-shield-alt mr-2"></i>
+                        <span>Your login is secured with end-to-end encryption</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Features Section -->
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="glass-effect rounded-xl p-4 text-center">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-white/20 mb-2">
+                        <i class="fas fa-home text-white"></i>
+                    </div>
+                    <h3 class="text-white font-medium">Property Management</h3>
+                    <p class="text-blue-200 text-sm mt-1">Manage all your properties in one place</p>
+                </div>
+                
+                <div class="glass-effect rounded-xl p-4 text-center">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-white/20 mb-2">
+                        <i class="fas fa-chart-line text-white"></i>
+                    </div>
+                    <h3 class="text-white font-medium">Analytics</h3>
+                    <p class="text-blue-200 text-sm mt-1">Track performance with detailed insights</p>
+                </div>
+                
+                <div class="glass-effect rounded-xl p-4 text-center">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-white/20 mb-2">
+                        <i class="fas fa-user-shield text-white"></i>
+                    </div>
+                    <h3 class="text-white font-medium">Secure Access</h3>
+                    <p class="text-blue-200 text-sm mt-1">Bank-level security for your data</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black/30 mt-12 py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0 text-center md:text-left">
+                    <p class="text-sm text-white">Mwarokin Estates - Secure Login Digital Key - 2026. All Rights Reserved.</p>
+                    <p class="text-sm text-blue-200">Powered By: <a href="#" class="underline hover:text-white transition duration-300">Syllogism Technology Africa</a></p>
+                </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Theme Toggle
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = themeToggle.querySelector('i');
+            
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                
+                if (document.body.classList.contains('dark-mode')) {
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                } else {
+                    themeIcon.classList.remove('fa-sun');
+                    themeIcon.classList.add('fa-moon');
+                }
+            });
+            
+            // Password Visibility Toggle
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('digitalKey');
+            const passwordIcon = togglePassword.querySelector('i');
+            
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                
+                passwordIcon.classList.toggle('fa-eye');
+                passwordIcon.classList.toggle('fa-eye-slash');
+            });
+            
+            // Password Strength Indicator
+            const passwordIndicators = document.querySelectorAll('.security-indicator');
+            const passwordField = document.getElementById('digitalKey');
+            
+            passwordField.addEventListener('input', function() {
+                const password = passwordField.value;
+                let strength = 0;
+                
+                if (password.length > 0) strength++;
+                if (password.length > 5) strength++;
+                if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+                if (password.match(/\d/)) strength++;
+                if (password.match(/[^a-zA-Z\d]/)) strength++;
+                
+                // Reset indicators
+                passwordIndicators.forEach(indicator => {
+                    indicator.classList.remove('active');
+                });
+                
+                // Activate indicators based on strength
+                for (let i = 0; i < strength && i < passwordIndicators.length; i++) {
+                    passwordIndicators[i].classList.add('active');
+                }
+            });
+            
+            // Form Submission
+            const loginForm = document.getElementById('loginForm');
+            const errorMessage = document.getElementById('errorMessage');
+            const loginButton = document.getElementById('loginButton');
+            
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const userId = document.getElementById('userId').value;
+                const digitalKey = document.getElementById('digitalKey').value;
+                const role = document.getElementById('role').value;
+                
+                // Simple validation
+                if (!userId || !digitalKey) {
+                    showError('Please fill in all fields');
+                    return;
+                }
+                
+                // Simulate login process
+                loginButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Authenticating...';
+                loginButton.disabled = true;
+                
+                // Simulate API call
+                setTimeout(function() {
+                    // This is a demo - in a real app, you would validate against a server
+                    if (userId.length >= 3 && digitalKey.length >= 6) {
+                        // Successful login
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        showError('Invalid credentials. Please try again.');
+                        loginButton.innerHTML = '<span class="absolute left-0 inset-y-0 flex items-center pl-3"><i class="fas fa-sign-in-alt text-blue-200 group-hover:text-white"></i></span>Sign In to Dashboard';
+                        loginButton.disabled = false;
+                    }
+                }, 2000);
+            });
+            
+            function showError(message) {
+                errorMessage.querySelector('#errorText').textContent = message;
+                errorMessage.classList.remove('hidden');
+                
+                // Hide error after 5 seconds
+                setTimeout(function() {
+                    errorMessage.classList.add('hidden');
+                }, 5000);
+            }
+            
+            // Add floating animation to decorative elements
+            const floatingElements = document.querySelectorAll('.floating');
+            floatingElements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.5}s`;
+            });
+        });
+    </script>
+</body>
+</html>
