@@ -1,938 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mwarokin Estates — Rent Payment</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-:root {
-  --gold: #C9A84C;
-  --gold-light: #F5EDD6;
-  --gold-dark: #8A6A1F;
-  --ink: #1A1A2E;
-  --ink-mid: #2D2D4E;
-  --ink-soft: #4A4A6A;
-  --cream: #FAF8F3;
-  --surface: #FFFFFF;
-  --surface-alt: #F4F2ED;
-  --border: rgba(201,168,76,0.2);
-  --border-soft: rgba(26,26,46,0.08);
-  --success: #1A7A4A;
-  --success-bg: #EBF7F1;
-  --danger: #C53030;
-  --danger-bg: #FEF0F0;
-  --warning: #9A6800;
-  --warning-bg: #FFF8E6;
-  --info: #1565C0;
-  --info-bg: #EBF3FE;
-  --radius: 14px;
-  --radius-sm: 8px;
-  --shadow: 0 2px 16px rgba(26,26,46,0.07);
-  --shadow-lg: 0 8px 40px rgba(26,26,46,0.12);
-}
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--cream);
-  color: var(--ink);
-  font-size: 15px;
-  line-height: 1.6;
-}
-
-/* ── NAV ── */
-.site-nav {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border-soft);
-  position: sticky; top: 0; z-index: 100;
-  padding: 0 2rem;
-}
-.nav-inner {
-  max-width: 1280px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 64px;
-}
-.brand {
-  display: flex; align-items: center; gap: 10px;
-  text-decoration: none;
-}
-.brand-logo {
-  width: 36px; height: 36px;
-  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  color: white; font-size: 18px;
-}
-.brand-name {
-  font-family: 'DM Serif Display', serif;
-  font-size: 1.2rem;
-  color: var(--ink);
-  letter-spacing: -0.01em;
-}
-.brand-name span { color: var(--gold); }
-.nav-links {
-  display: flex; align-items: center; gap: 0.25rem;
-  list-style: none;
-}
-.nav-links a {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--ink-soft);
-  text-decoration: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  transition: all 0.2s;
-}
-.nav-links a:hover { color: var(--ink); background: var(--surface-alt); }
-.dropdown { position: relative; }
-.dropdown-menu-custom {
-  position: absolute; top: calc(100% + 8px); left: 0;
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-lg);
-  min-width: 200px;
-  padding: 6px;
-  display: none;
-  z-index: 200;
-}
-.dropdown:hover .dropdown-menu-custom { display: block; }
-.dropdown-menu-custom a {
-  display: block;
-  padding: 8px 12px;
-  font-size: 0.875rem;
-  color: var(--ink-soft);
-  text-decoration: none;
-  border-radius: 6px;
-}
-.dropdown-menu-custom a:hover { background: var(--surface-alt); color: var(--ink); }
-.nav-caret { font-size: 10px; margin-left: 2px; }
-.nav-toggler { display: none; background: none; border: none; font-size: 1.25rem; color: var(--ink); cursor: pointer; }
-@media (max-width: 900px) {
-  .nav-links { display: none; }
-  .nav-toggler { display: block; }
-}
-
-/* ── HERO ── */
-.hero {
-  background: var(--ink);
-  color: white;
-  padding: 3rem 2rem 2rem;
-  position: relative;
-  overflow: hidden;
-}
-.hero::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 80% 50%, rgba(201,168,76,0.15) 0%, transparent 70%),
-              radial-gradient(ellipse at 20% 80%, rgba(201,168,76,0.08) 0%, transparent 60%);
-  pointer-events: none;
-}
-.hero-inner {
-  max-width: 1280px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 2rem;
-  align-items: center;
-  position: relative;
-}
-.hero-tag {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em;
-  color: var(--gold);
-  text-transform: uppercase;
-  margin-bottom: 0.75rem;
-}
-.hero-tag::before {
-  content: '';
-  width: 20px; height: 2px;
-  background: var(--gold);
-  border-radius: 1px;
-}
-.hero h1 {
-  font-family: 'DM Serif Display', serif;
-  font-size: clamp(1.8rem, 3vw, 2.6rem);
-  line-height: 1.15;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.02em;
-}
-.hero-meta {
-  display: flex; gap: 2rem;
-  margin-top: 1.25rem;
-}
-.hero-meta-item small {
-  display: block;
-  font-size: 0.7rem; font-weight: 600;
-  letter-spacing: 0.08em; text-transform: uppercase;
-  color: rgba(255,255,255,0.4);
-  margin-bottom: 3px;
-}
-.hero-meta-item p {
-  font-weight: 500; font-size: 0.925rem;
-  color: rgba(255,255,255,0.9);
-}
-.hero-balance-card {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(201,168,76,0.3);
-  border-radius: var(--radius);
-  padding: 1.5rem 1.75rem;
-  text-align: right;
-  backdrop-filter: blur(10px);
-  min-width: 220px;
-}
-.hero-balance-card .label {
-  font-size: 0.7rem; font-weight: 600;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  color: rgba(255,255,255,0.4);
-  margin-bottom: 6px;
-}
-.hero-balance-card .amount {
-  font-family: 'DM Serif Display', serif;
-  font-size: 2rem;
-  color: var(--gold);
-  line-height: 1;
-  margin-bottom: 6px;
-}
-.hero-balance-card .currency-badge {
-  display: inline-block;
-  background: rgba(201,168,76,0.15);
-  border: 1px solid rgba(201,168,76,0.3);
-  color: var(--gold);
-  font-size: 0.75rem; font-weight: 600;
-  padding: 3px 10px;
-  border-radius: 20px;
-  cursor: pointer;
-}
-
-/* ── FLOW STEPS ── */
-.flow-bar {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border-soft);
-  padding: 1rem 2rem;
-}
-.flow-inner {
-  max-width: 1280px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 0;
-}
-.flow-step {
-  display: flex; align-items: center; gap: 10px;
-  flex: 1;
-  position: relative;
-}
-.flow-step:not(:last-child)::after {
-  content: '';
-  position: absolute; right: 0; top: 50%;
-  transform: translateY(-50%);
-  width: 40px; height: 1px;
-  background: var(--border-soft);
-}
-.step-num {
-  width: 32px; height: 32px;
-  border-radius: 50%;
-  background: var(--surface-alt);
-  border: 2px solid var(--border-soft);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.8rem; font-weight: 700;
-  color: var(--ink-soft);
-  flex-shrink: 0;
-  transition: all 0.3s;
-}
-.step-num.active {
-  background: var(--gold);
-  border-color: var(--gold);
-  color: white;
-  box-shadow: 0 0 0 4px rgba(201,168,76,0.15);
-}
-.step-num.done {
-  background: var(--success);
-  border-color: var(--success);
-  color: white;
-}
-.step-label {
-  font-size: 0.8rem; font-weight: 500;
-  color: var(--ink-soft);
-  white-space: nowrap;
-}
-.flow-step.active .step-label { color: var(--ink); font-weight: 600; }
-@media (max-width: 700px) {
-  .step-label { display: none; }
-  .flow-step:not(:last-child)::after { width: 20px; }
-}
-
-/* ── LAYOUT ── */
-.page-body {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem;
-  display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 1.5rem;
-}
-@media (max-width: 1024px) {
-  .page-body { grid-template-columns: 1fr; }
-}
-
-/* ── CARDS ── */
-.card-panel {
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  overflow: hidden;
-  margin-bottom: 1.5rem;
-}
-.card-panel-header {
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--border-soft);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.card-panel-header h3 {
-  font-family: 'DM Serif Display', serif;
-  font-size: 1.1rem;
-  color: var(--ink);
-  font-weight: normal;
-}
-.card-panel-body { padding: 1.5rem; }
-
-/* ── ANALYTICS STRIP ── */
-.analytics-strip {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-.stat-card {
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius);
-  padding: 1.25rem;
-  display: flex; gap: 1rem; align-items: center;
-  box-shadow: var(--shadow);
-}
-.stat-icon {
-  width: 44px; height: 44px;
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.1rem;
-  flex-shrink: 0;
-}
-.stat-icon.gold { background: var(--gold-light); color: var(--gold-dark); }
-.stat-icon.green { background: var(--success-bg); color: var(--success); }
-.stat-icon.blue { background: var(--info-bg); color: var(--info); }
-.stat-value { font-family: 'DM Serif Display', serif; font-size: 1.5rem; line-height: 1; }
-.stat-label { font-size: 0.75rem; color: var(--ink-soft); margin-top: 2px; }
-
-/* ── MINI STATEMENT ── */
-.statement-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.85rem 0;
-  border-bottom: 1px solid var(--border-soft);
-}
-.statement-row:last-child { border-bottom: none; }
-.stmt-icon {
-  width: 36px; height: 36px;
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.95rem;
-  flex-shrink: 0;
-  margin-right: 0.75rem;
-}
-.stmt-meta { flex: 1; }
-.stmt-meta strong { display: block; font-size: 0.875rem; font-weight: 600; color: var(--ink); }
-.stmt-meta span { font-size: 0.775rem; color: var(--ink-soft); }
-.stmt-amount { text-align: right; }
-.stmt-amount strong { display: block; font-size: 0.925rem; font-weight: 600; }
-.stmt-amount span { font-size: 0.75rem; }
-
-/* ── BADGES ── */
-.badge-pill {
-  display: inline-block;
-  font-size: 0.7rem; font-weight: 600;
-  padding: 3px 9px;
-  border-radius: 20px;
-}
-.badge-paid { background: var(--success-bg); color: var(--success); }
-.badge-due { background: var(--warning-bg); color: var(--warning); }
-.badge-overdue { background: var(--danger-bg); color: var(--danger); }
-.badge-pending { background: var(--info-bg); color: var(--info); }
-
-/* ── FORM ── */
-.form-group { margin-bottom: 1.1rem; }
-.form-label {
-  display: block;
-  font-size: 0.8rem; font-weight: 600;
-  color: var(--ink-soft);
-  letter-spacing: 0.02em;
-  margin-bottom: 6px;
-}
-.form-input, .form-select-custom {
-  width: 100%;
-  padding: 0.7rem 1rem;
-  border: 1.5px solid var(--border-soft);
-  border-radius: var(--radius-sm);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.9rem;
-  color: var(--ink);
-  background: var(--surface);
-  transition: border-color 0.2s, box-shadow 0.2s;
-  outline: none;
-  appearance: none;
-}
-.form-input:focus, .form-select-custom:focus {
-  border-color: var(--gold);
-  box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
-}
-.form-input.is-invalid { border-color: var(--danger); }
-.input-group-wrap {
-  position: relative; display: flex; align-items: center;
-}
-.input-prefix {
-  position: absolute; left: 12px;
-  font-size: 0.875rem; font-weight: 600;
-  color: var(--ink-soft);
-  pointer-events: none;
-}
-.input-group-wrap .form-input { padding-left: 2rem; }
-.form-select-wrap { position: relative; }
-.form-select-wrap::after {
-  content: '\f107';
-  font-family: 'Font Awesome 6 Free';
-  font-weight: 900;
-  position: absolute; right: 12px; top: 50%;
-  transform: translateY(-50%);
-  color: var(--ink-soft);
-  pointer-events: none;
-  font-size: 0.875rem;
-}
-.form-row { display: grid; gap: 1rem; }
-.form-row-2 { grid-template-columns: 1fr 1fr; }
-.form-row-3 { grid-template-columns: 1fr 1fr 1fr; }
-@media (max-width: 600px) {
-  .form-row-2, .form-row-3 { grid-template-columns: 1fr; }
-}
-
-/* ── PAYMENT METHOD SELECTOR ── */
-.pm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.75rem; }
-.pm-card {
-  border: 1.5px solid var(--border-soft);
-  border-radius: var(--radius-sm);
-  padding: 1rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-align: center;
-  background: var(--surface);
-}
-.pm-card:hover { border-color: var(--gold); background: var(--gold-light); }
-.pm-card.active {
-  border-color: var(--gold);
-  background: var(--gold-light);
-  box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
-}
-.pm-icon {
-  font-size: 1.6rem;
-  margin-bottom: 0.4rem;
-  display: block;
-}
-.pm-name { font-size: 0.8rem; font-weight: 600; color: var(--ink); }
-.pm-sub { font-size: 0.7rem; color: var(--ink-soft); }
-
-/* ── PAYMENT METHOD DETAIL PANELS ── */
-.pm-detail-panel {
-  display: none;
-  background: var(--surface-alt);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-sm);
-  padding: 1.25rem;
-  margin-top: 1rem;
-}
-.pm-detail-panel.show { display: block; }
-.pm-section-title {
-  font-size: 0.75rem; font-weight: 700;
-  letter-spacing: 0.06em; text-transform: uppercase;
-  color: var(--ink-soft);
-  margin-bottom: 1rem;
-  display: flex; align-items: center; gap: 8px;
-}
-.pm-section-title::after {
-  content: ''; flex: 1; height: 1px; background: var(--border-soft);
-}
-
-/* ── BUTTONS ── */
-.btn-gold {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--gold);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--radius-sm);
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 600; font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-decoration: none;
-}
-.btn-gold:hover { background: var(--gold-dark); transform: translateY(-1px); box-shadow: var(--shadow); color: white; }
-.btn-outline {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: transparent;
-  color: var(--ink);
-  border: 1.5px solid var(--border-soft);
-  padding: 0.7rem 1.25rem;
-  border-radius: var(--radius-sm);
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 600; font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.btn-outline:hover { border-color: var(--gold); color: var(--gold-dark); background: var(--gold-light); }
-.btn-sm { padding: 0.4rem 0.9rem; font-size: 0.8rem; }
-.btn-success { background: var(--success); color: white; border: none; }
-.btn-success:hover { background: #145D38; color: white; }
-.form-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.25rem; }
-
-/* ── PAYMENT HISTORY TIMELINE ── */
-.timeline { position: relative; padding-left: 28px; }
-.timeline::before {
-  content: '';
-  position: absolute; left: 8px; top: 8px; bottom: 0;
-  width: 1px; background: var(--border-soft);
-}
-.timeline-item { position: relative; margin-bottom: 1.25rem; }
-.timeline-dot {
-  position: absolute; left: -24px; top: 4px;
-  width: 14px; height: 14px;
-  border-radius: 50%;
-  border: 2px solid var(--surface);
-  box-shadow: 0 0 0 2px currentColor;
-}
-.timeline-dot.paid { color: var(--success); background: var(--success); }
-.timeline-dot.pending { color: var(--warning); background: var(--warning); }
-.timeline-dot.overdue { color: var(--danger); background: var(--danger); }
-.tl-body {
-  background: var(--surface-alt);
-  border-radius: var(--radius-sm);
-  padding: 0.85rem 1rem;
-  display: flex; justify-content: space-between; align-items: center;
-}
-.tl-title { font-weight: 600; font-size: 0.875rem; color: var(--ink); }
-.tl-sub { font-size: 0.75rem; color: var(--ink-soft); margin-top: 2px; }
-.tl-amount { font-weight: 700; font-size: 0.925rem; text-align: right; }
-
-/* ── QR WIDGET ── */
-.qr-box {
-  background: linear-gradient(135deg, var(--ink) 0%, var(--ink-mid) 100%);
-  border-radius: var(--radius);
-  padding: 1.5rem;
-  text-align: center;
-  color: white;
-}
-.qr-placeholder {
-  width: 140px; height: 140px;
-  background: white;
-  border-radius: 8px;
-  margin: 0 auto 1rem;
-  display: flex; align-items: center; justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-.qr-placeholder canvas { width: 130px; height: 130px; }
-.qr-label { font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-bottom: 0.75rem; }
-.qr-amount { font-family: 'DM Serif Display', serif; font-size: 1.6rem; color: var(--gold); margin-bottom: 0.5rem; }
-
-/* ── NOTIFICATIONS ── */
-.notif-item {
-  display: flex; gap: 0.75rem; align-items: flex-start;
-  padding: 0.875rem 0;
-  border-bottom: 1px solid var(--border-soft);
-}
-.notif-item:last-child { border-bottom: none; }
-.notif-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  margin-top: 6px; flex-shrink: 0;
-}
-.notif-msg { font-size: 0.85rem; color: var(--ink); line-height: 1.45; }
-.notif-time { font-size: 0.72rem; color: var(--ink-soft); margin-top: 2px; }
-
-/* ── CHART ── */
-.chart-wrap {
-  display: flex; align-items: flex-end; gap: 8px;
-  height: 120px;
-  padding: 0 4px;
-}
-.chart-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.chart-bar {
-  width: 100%;
-  border-radius: 4px 4px 0 0;
-  background: linear-gradient(180deg, var(--gold) 0%, var(--gold-dark) 100%);
-  min-height: 8px;
-  position: relative;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-.chart-bar:hover { opacity: 0.8; }
-.chart-bar.current { background: var(--ink); }
-.chart-bar-label { font-size: 0.7rem; color: var(--ink-soft); }
-
-/* ── PROGRESS ── */
-.progress-bar-wrap {
-  background: var(--surface-alt);
-  border-radius: 10px;
-  height: 8px;
-  overflow: hidden;
-}
-.progress-bar-fill {
-  height: 100%;
-  border-radius: 10px;
-  background: linear-gradient(90deg, var(--gold), var(--gold-dark));
-  transition: width 0.8s ease;
-}
-
-/* ── SUCCESS SCREEN ── */
-.success-screen {
-  display: none;
-  text-align: center;
-  padding: 3rem 2rem;
-}
-.success-circle {
-  width: 90px; height: 90px;
-  border-radius: 50%;
-  background: var(--success-bg);
-  border: 3px solid var(--success);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 2.5rem;
-  color: var(--success);
-  margin: 0 auto 1.5rem;
-  animation: successPop 0.5s ease;
-}
-@keyframes successPop {
-  0% { transform: scale(0.5); opacity: 0; }
-  70% { transform: scale(1.1); }
-  100% { transform: scale(1); opacity: 1; }
-}
-.receipt-card {
-  background: var(--surface);
-  border: 1px dashed rgba(26,26,46,0.2);
-  border-radius: var(--radius);
-  padding: 1.75rem;
-  margin: 1.5rem 0;
-  text-align: left;
-}
-.receipt-header-row {
-  display: flex; align-items: center; justify-content: space-between;
-  padding-bottom: 1rem;
-  border-bottom: 1px dashed rgba(26,26,46,0.15);
-  margin-bottom: 1rem;
-}
-.receipt-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem 1.5rem;
-  margin-bottom: 1rem;
-}
-.receipt-grid .field-label {
-  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em;
-  text-transform: uppercase; color: var(--ink-soft);
-}
-.receipt-grid .field-val { font-size: 0.875rem; color: var(--ink); font-weight: 500; margin-top: 2px; }
-.breakdown-row {
-  display: flex; justify-content: space-between;
-  padding: 0.6rem 0;
-  border-bottom: 1px solid var(--border-soft);
-  font-size: 0.875rem;
-}
-.breakdown-row:last-child { border-bottom: none; font-weight: 700; font-size: 1rem; color: var(--success); }
-.breakdown-bg {
-  background: var(--surface-alt);
-  border-radius: var(--radius-sm);
-  padding: 1rem;
-  margin-bottom: 1rem;
-}
-
-/* ── CHATBOT ── */
-.chat-section {
-  background: var(--ink);
-  padding: 3rem 2rem;
-  margin-top: 2rem;
-}
-.chat-inner { max-width: 800px; margin: 0 auto; }
-.chat-title {
-  font-family: 'DM Serif Display', serif;
-  font-size: 1.8rem;
-  color: white;
-  text-align: center;
-  margin-bottom: 0.5rem;
-}
-.chat-subtitle { text-align: center; color: rgba(255,255,255,0.5); margin-bottom: 1.5rem; font-size: 0.875rem; }
-.chat-box {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: var(--radius);
-  padding: 1.25rem;
-  height: 280px;
-  overflow-y: auto;
-  margin-bottom: 1rem;
-}
-.bot-msg, .user-msg {
-  max-width: 75%;
-  padding: 0.7rem 1rem;
-  border-radius: 14px;
-  font-size: 0.875rem;
-  margin-bottom: 0.75rem;
-  line-height: 1.5;
-}
-.bot-msg {
-  background: rgba(255,255,255,0.08);
-  color: rgba(255,255,255,0.85);
-  border-bottom-left-radius: 4px;
-}
-.user-msg {
-  background: var(--gold);
-  color: white;
-  margin-left: auto;
-  border-bottom-right-radius: 4px;
-  font-weight: 500;
-}
-.chat-input-row {
-  display: flex; gap: 0.5rem;
-}
-.chat-input {
-  flex: 1;
-  padding: 0.75rem 1rem;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: var(--radius-sm);
-  color: white;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.9rem;
-  outline: none;
-}
-.chat-input::placeholder { color: rgba(255,255,255,0.3); }
-.chat-input:focus { border-color: var(--gold); }
-.chat-send-btn {
-  background: var(--gold);
-  color: white; border: none;
-  padding: 0.75rem 1.1rem;
-  border-radius: var(--radius-sm);
-  cursor: pointer; font-size: 1rem;
-  transition: background 0.2s;
-}
-.chat-send-btn:hover { background: var(--gold-dark); }
-
-/* ── MODAL (no fixed!) ── */
-.modal-overlay {
-  display: none;
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.55);
-  z-index: 500;
-  align-items: center; justify-content: center;
-  padding: 1rem;
-}
-.modal-overlay.open { display: flex; }
-.modal-box {
-  background: var(--surface);
-  border-radius: var(--radius);
-  width: 100%; max-width: 480px;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: var(--shadow-lg);
-  animation: slideUp 0.3s ease;
-}
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-.modal-header {
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--border-soft);
-  display: flex; justify-content: space-between; align-items: center;
-}
-.modal-header h4 { font-family: 'DM Serif Display', serif; font-size: 1.1rem; }
-.modal-close { background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--ink-soft); padding: 4px; }
-.modal-body { padding: 1.5rem; }
-.modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border-soft); display: flex; gap: 0.75rem; justify-content: flex-end; }
-
-/* ── QUICKPAY MODAL ── */
-.quickpay-amount { font-family: 'DM Serif Display', serif; font-size: 2.5rem; color: var(--gold); margin: 0.75rem 0; }
-
-/* ── FOOTER ── */
-.site-footer {
-  background: var(--ink-mid);
-  color: rgba(255,255,255,0.55);
-  padding: 3rem 2rem 1.5rem;
-}
-.footer-inner {
-  max-width: 1280px; margin: 0 auto;
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 2rem;
-}
-.footer-brand-name { font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: white; margin-bottom: 0.5rem; }
-.footer-h { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 0.75rem; }
-.footer-links { display: flex; flex-direction: column; gap: 6px; }
-.footer-links a { color: rgba(255,255,255,0.55); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
-.footer-links a:hover { color: var(--gold); }
-.footer-bottom {
-  max-width: 1280px; margin: 2rem auto 0;
-  padding-top: 1.25rem;
-  border-top: 1px solid rgba(255,255,255,0.08);
-  font-size: 0.8rem; text-align: center;
-}
-.footer-bottom a { color: var(--gold); text-decoration: none; }
-.social-row { display: flex; gap: 8px; margin-top: 0.75rem; }
-.social-btn {
-  width: 34px; height: 34px;
-  border-radius: 8px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
-  display: flex; align-items: center; justify-content: center;
-  color: rgba(255,255,255,0.5);
-  font-size: 0.85rem;
-  text-decoration: none;
-  transition: all 0.2s;
-}
-.social-btn:hover { background: var(--gold); border-color: var(--gold); color: white; }
-
-/* ── FAB ── */
-.fab {
-  position: fixed; bottom: 28px; right: 28px;
-  width: 56px; height: 56px;
-  border-radius: 50%;
-  background: var(--gold);
-  color: white;
-  border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.2rem;
-  box-shadow: 0 4px 20px rgba(201,168,76,0.45);
-  z-index: 400;
-  transition: all 0.2s;
-}
-.fab:hover { background: var(--gold-dark); transform: scale(1.08); }
-
-/* ── TOAST ── */
-.toast-wrap {
-  position: fixed; top: 20px; right: 20px;
-  z-index: 600;
-  display: flex; flex-direction: column; gap: 8px;
-}
-.toast-item {
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
-  border-left: 3px solid var(--gold);
-  border-radius: var(--radius-sm);
-  padding: 0.875rem 1rem;
-  min-width: 280px;
-  box-shadow: var(--shadow-lg);
-  display: flex; align-items: flex-start; gap: 10px;
-  animation: toastIn 0.3s ease;
-  font-size: 0.85rem;
-}
-@keyframes toastIn {
-  from { transform: translateX(40px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-.toast-icon { color: var(--gold); margin-top: 1px; }
-.toast-title { font-weight: 600; margin-bottom: 2px; }
-.toast-msg { color: var(--ink-soft); }
-
-/* ── CURRENCY SWITCHER ── */
-.currency-switcher {
-  position: relative;
-}
-.currency-btn {
-  background: rgba(201,168,76,0.15);
-  border: 1px solid rgba(201,168,76,0.35);
-  color: var(--gold);
-  font-size: 0.8rem; font-weight: 600;
-  padding: 5px 12px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
-}
-.currency-dropdown {
-  position: absolute; top: calc(100%+6px); right: 0;
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-lg);
-  padding: 6px;
-  min-width: 160px;
-  display: none; z-index: 300;
-}
-.currency-dropdown.open { display: block; }
-.currency-opt {
-  display: flex; align-items: center; gap: 8px;
-  padding: 7px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  transition: background 0.15s;
-}
-.currency-opt:hover { background: var(--surface-alt); }
-.currency-opt.active { background: var(--gold-light); color: var(--gold-dark); font-weight: 600; }
-.currency-opt .cf { font-size: 1.1rem; }
-
-/* ── RECURRING TOGGLE ── */
-.toggle-wrap { display: flex; align-items: center; gap: 8px; }
-.toggle-input { display: none; }
-.toggle-label {
-  width: 40px; height: 22px;
-  background: var(--border-soft);
-  border-radius: 11px;
-  position: relative;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.toggle-label::after {
-  content: '';
-  position: absolute; left: 3px; top: 3px;
-  width: 16px; height: 16px;
-  border-radius: 50%;
-  background: white;
-  transition: left 0.2s;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-}
-.toggle-input:checked + .toggle-label { background: var(--gold); }
-.toggle-input:checked + .toggle-label::after { left: 21px; }
-
-/* ── BACK TO TOP ── */
-.back-top {
-  position: fixed; bottom: 28px; left: 28px;
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.9rem;
-  color: var(--ink-soft);
-  cursor: pointer;
-  box-shadow: var(--shadow);
-  text-decoration: none;
-  z-index: 400;
-  transition: all 0.2s;
-  opacity: 0;
-}
-.back-top.visible { opacity: 1; }
-.back-top:hover { border-color: var(--gold); color: var(--gold); }
-
-/* ── SWITCH SECTION ── */
-.switch-row { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-soft); }
-</style>
-</head>
 <body>
 
 <!-- NAV -->
@@ -1000,7 +66,8 @@ body {
           <div class="currency-opt active" data-cur="KES" data-sym="KSh " data-rate="1" onclick="selectCurrency(this)"><span class="cf">🇰🇪</span> Kenyan Shilling (KES)</div>
           <div class="currency-opt" data-cur="USD" data-sym="$" data-rate="0.0077" onclick="selectCurrency(this)"><span class="cf">🇺🇸</span> US Dollar (USD)</div>
           <div class="currency-opt" data-cur="EUR" data-sym="€" data-rate="0.0071" onclick="selectCurrency(this)"><span class="cf">🇪🇺</span> Euro (EUR)</div>
-          <div class="currency-opt" data-cur="GBP" data-sym="£" data-rate="0.0061" onclick="selectCurrency(this)"><span class="cf">🇬🇧</span> Pound (GBP)</div>
+          <div class="currency-opt" data-cur="GBP" data-sym="£" data-rate="0.0061" onclick="selectCurrency(this)"><span class="cf">🇬🇧</span> British Pound (GBP)</div>
+          <div class="currency-opt" data-cur="CNY" data-sym="¥" data-rate="0.056" onclick="selectCurrency(this)"><span class="cf">🇨🇳</span> Chinese Yuan (CNY)</div>
           <div class="currency-opt" data-cur="ZAR" data-sym="R " data-rate="0.143" onclick="selectCurrency(this)"><span class="cf">🇿🇦</span> Rand (ZAR)</div>
           <div class="currency-opt" data-cur="TZS" data-sym="TSh " data-rate="20.5" onclick="selectCurrency(this)"><span class="cf">🇹🇿</span> Tanz. Shilling (TZS)</div>
           <div class="currency-opt" data-cur="NGN" data-sym="₦" data-rate="11.8" onclick="selectCurrency(this)"><span class="cf">🇳🇬</span> Naira (NGN)</div>
@@ -1060,6 +127,7 @@ body {
       <div><div class="field-label">Property</div><div class="field-val" id="rcProperty">—</div></div>
       <div><div class="field-label">Period</div><div class="field-val" id="rcPeriod">—</div></div>
       <div><div class="field-label">Tenant ID</div><div class="field-val">T-789456</div></div>
+      <div><div class="field-label">Currency Paid In</div><div class="field-val" id="rcCurrency">—</div></div>
       <div><div class="field-label">Status</div><div class="field-val"><span class="badge-pill badge-paid">Confirmed</span></div></div>
     </div>
     <div style="text-align:center; color:var(--ink-soft); font-size:0.8rem; border-top:1px dashed rgba(26,26,46,0.15); padding-top:1rem;">
@@ -1127,6 +195,10 @@ body {
         </div>
       </div>
       <div class="card-panel-body">
+        <div class="demo-banner">
+          <i class="fas fa-shield-alt" style="margin-top:2px;"></i>
+          <span>This portal records every payment you submit — with its own transaction ID, timestamp and receipt — to the Payment History log below. Live card/bank settlement requires connecting a licensed processor (M-Pesa Daraja, Flutterwave, SylloPay) on the server side.</span>
+        </div>
         <div class="form-row form-row-2">
           <div class="form-group">
             <label class="form-label">Payment Month</label>
@@ -1472,6 +544,7 @@ body {
           <button class="btn-outline btn-sm" onclick="filterHistory('3m')">3M</button>
           <button class="btn-outline btn-sm" onclick="filterHistory('6m')">6M</button>
           <button class="btn-outline btn-sm" onclick="filterHistory('1y')">1Y</button>
+          <button class="btn-outline btn-sm" onclick="clearMyPayments()" title="Clear only your logged payments"><i class="fas fa-trash-alt"></i></button>
         </div>
       </div>
       <div class="card-panel-body">
@@ -1664,16 +737,35 @@ body {
   </div>
 </div>
 
+<!-- VIEW RECEIPT MODAL (per logged payment) -->
+<div class="modal-overlay" id="viewReceiptModal">
+  <div class="modal-box" style="max-width:520px;">
+    <div class="modal-header">
+      <h4>Payment Receipt</h4>
+      <button class="modal-close" onclick="closeModal('viewReceiptModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="viewReceiptBody">
+      <!-- filled by JS -->
+    </div>
+    <div class="modal-footer">
+      <button class="btn-outline btn-sm" onclick="window.print()"><i class="fas fa-print"></i> Print</button>
+      <button class="btn-gold btn-sm" onclick="closeModal('viewReceiptModal')">Close</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 // ── STATE ──
 let currSym = 'KSh ';
 let currRate = 1;
+let currCode = 'KES';
 let currentStep = 1;
 let activePM = 'mpesa';
 
 const baseRent = 18000;
 const baseCharges = 2500;
+const STORAGE_KEY = 'mwarokin_rent_payments_v1';
 
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', function() {
@@ -1719,8 +811,8 @@ function selectCurrency(el) {
   el.classList.add('active');
   currSym = el.dataset.sym;
   currRate = parseFloat(el.dataset.rate);
-  const cur = el.dataset.cur;
-  document.getElementById('currBtnLabel').innerHTML = '<i class="fas fa-money-bill-wave" style="margin-right:4px;"></i> ' + cur + ' ▾';
+  currCode = el.dataset.cur;
+  document.getElementById('currBtnLabel').innerHTML = '<i class="fas fa-money-bill-wave" style="margin-right:4px;"></i> ' + currCode + ' ▾';
   document.getElementById('currencyDrop').classList.remove('open');
   
   // Update symbols
@@ -1745,6 +837,10 @@ function selectCurrency(el) {
 
 function fmt(n) {
   return parseFloat(n).toLocaleString('en-KE', {maximumFractionDigits: currRate < 1 ? 2 : 0, minimumFractionDigits: 0});
+}
+
+function fmtWith(n, rate) {
+  return parseFloat(n).toLocaleString('en-KE', {maximumFractionDigits: rate < 1 ? 2 : 0, minimumFractionDigits: 0});
 }
 
 // ── TOTAL CALC ──
@@ -1833,24 +929,50 @@ function completePayment() {
   const now = new Date();
   const txn = 'TXN-' + Math.floor(Math.random() * 900000000 + 100000000);
   
+  const pmNames = { mpesa:'M-Pesa', mobile_money:'Mobile Money', bank_kenya:'Kenya Bank Transfer', bank_africa:'African Bank Transfer', card:'Credit/Debit Card', syllopay:'SylloPay Wallet' };
+  const property = document.getElementById('propAddress').value || 'Sunrise Apartments, Unit 4B';
+  const month = document.getElementById('payMonth').value;
+  const periodLabel = month ? new Date(month + '-01').toLocaleDateString('en-KE',{year:'numeric',month:'long'}) : 'Current Month';
+
+  // ── Record this payment permanently (locks in the currency it was paid in) ──
+  const record = {
+    txnId: txn,
+    dateISO: now.toISOString(),
+    dateDisplay: now.toLocaleDateString('en-KE', {year:'numeric', month:'short', day:'numeric'}),
+    timeDisplay: now.toLocaleTimeString('en-KE', {hour:'2-digit', minute:'2-digit'}),
+    month: periodLabel,
+    property: property,
+    unit: document.getElementById('propUnit').value,
+    method: pmNames[activePM] || activePM,
+    currCode: currCode,
+    currSym: currSym,
+    rent: rent,
+    charges: charges,
+    total: total,
+    status: 'paid'
+  };
+  savePaymentRecord(record);
+
   document.getElementById('rcRent').textContent = currSym + fmt(rent);
   document.getElementById('rcCharges').textContent = currSym + fmt(charges);
   document.getElementById('rcTotal').textContent = currSym + fmt(total);
   document.getElementById('rcTxnId').textContent = txn;
-  document.getElementById('rcDate').textContent = now.toLocaleDateString('en-KE', {year:'numeric', month:'short', day:'numeric'});
-  
-  const pmNames = { mpesa:'M-Pesa', mobile_money:'Mobile Money', bank_kenya:'Kenya Bank Transfer', bank_africa:'African Bank Transfer', card:'Credit/Debit Card', syllopay:'SylloPay Wallet' };
-  document.getElementById('rcMethod').textContent = pmNames[activePM] || activePM;
-  document.getElementById('rcProperty').textContent = document.getElementById('propAddress').value || 'Sunrise Apartments, Unit 4B';
-  
-  const month = document.getElementById('payMonth').value;
-  document.getElementById('rcPeriod').textContent = month ? new Date(month + '-01').toLocaleDateString('en-KE',{year:'numeric',month:'long'}) : 'Current Month';
+  document.getElementById('rcDate').textContent = record.dateDisplay;
+  document.getElementById('rcMethod').textContent = record.method;
+  document.getElementById('rcProperty').textContent = property;
+  document.getElementById('rcPeriod').textContent = periodLabel;
+  document.getElementById('rcCurrency').innerHTML = currCode + '<span class="receipt-currency-badge">Paid in ' + currCode + '</span>';
   
   document.getElementById('mainContent').style.display = 'none';
   document.getElementById('successScreen').style.display = 'block';
   document.getElementById('successScreen').scrollIntoView({behavior:'smooth'});
   
-  showToast('Payment Successful!', 'Your rent of ' + currSym + fmt(total) + ' has been received.', 'success');
+  showToast('Payment Successful!', 'Your rent of ' + currSym + fmt(total) + ' (' + currCode + ') has been received and logged. Receipt ' + txn + ' saved.', 'success');
+
+  // Refresh history/statement/chart so the new real record shows up immediately
+  renderHistory();
+  renderStatement();
+  renderChart();
 }
 
 function returnToDashboard() {
@@ -1877,6 +999,7 @@ function doQuickPay() {
 
 // ── STATEMENT ──
 function renderStatement() {
+  const paid = getPaymentRecords();
   const data = [
     { month:'October 2024', date:'Due: Oct 15, 2024', amount:20500, status:'due' },
     { month:'September 2024', date:'Sep 12, 2024', amount:20500, status:'paid' },
@@ -1884,7 +1007,7 @@ function renderStatement() {
     { month:'July 2024', date:'Jul 14, 2024', amount:19800, status:'paid' },
   ];
   const c = document.getElementById('stmtContainer');
-  c.innerHTML = data.map(d => {
+  let rows = data.map(d => {
     const a = d.amount * currRate;
     const icons = { paid:'✅', due:'⏰', pending:'🔄', overdue:'❌' };
     const colors = { paid:'var(--success)', due:'var(--warning)', pending:'var(--info)', overdue:'var(--danger)' };
@@ -1902,6 +1025,24 @@ function renderStatement() {
       </div>
     </div>`;
   }).join('');
+
+  if(paid.length){
+    rows = paid.slice(0,3).map(r => `<div class="statement-row">
+      <div style="display:flex; align-items:center;">
+        <div class="stmt-icon" style="background:var(--success-bg); color:var(--success);">✅</div>
+        <div class="stmt-meta">
+          <strong>${r.month}</strong>
+          <span>${r.dateDisplay} · ${r.method}</span>
+        </div>
+      </div>
+      <div class="stmt-amount">
+        <strong style="color:var(--success);">${r.currSym}${fmtWith(r.total, r.currCode==='KES'?1:0.5)}</strong>
+        <span class="badge-pill badge-paid">Paid · ${r.currCode}</span>
+      </div>
+    </div>`).join('') + rows;
+  }
+
+  c.innerHTML = rows;
 }
 
 function refreshStatement() {
@@ -1916,29 +1057,53 @@ function refreshStatement() {
 
 // ── HISTORY ──
 function renderHistory(filter) {
-  const data = [
-    { month:'September 2024', type:'Rent + Utilities', date:'Sep 12, 2024', amount:20500, status:'paid' },
-    { month:'August 2024', type:'Rent + Utilities', date:'Aug 10, 2024', amount:20500, status:'paid' },
-    { month:'July 2024', type:'Rent + Utilities', date:'Jul 14, 2024', amount:19800, status:'paid' },
-    { month:'June 2024', type:'Rent', date:'Jun 11, 2024', amount:18000, status:'paid' },
-    { month:'May 2024', type:'Rent', date:'May 17, 2024', amount:18000, status:'paid' },
+  const seed = [
+    { month:'September 2024', type:'Rent + Utilities', date:'Sep 12, 2024', amount:20500, status:'paid', currCode:'KES', currSym:'KSh ' },
+    { month:'August 2024', type:'Rent + Utilities', date:'Aug 10, 2024', amount:20500, status:'paid', currCode:'KES', currSym:'KSh ' },
+    { month:'July 2024', type:'Rent + Utilities', date:'Jul 14, 2024', amount:19800, status:'paid', currCode:'KES', currSym:'KSh ' },
+    { month:'June 2024', type:'Rent', date:'Jun 11, 2024', amount:18000, status:'paid', currCode:'KES', currSym:'KSh ' },
+    { month:'May 2024', type:'Rent', date:'May 17, 2024', amount:18000, status:'paid', currCode:'KES', currSym:'KSh ' },
   ];
-  let items = data;
-  if(filter === '3m') items = data.slice(0,3);
-  else if(filter === '6m') items = data;
-  
+
+  // Real logged payments come first, each keeping the currency it was actually paid in
+  const realRecords = getPaymentRecords().map(r => ({
+    txnId: r.txnId,
+    month: r.month,
+    type: r.method,
+    date: r.dateDisplay + ' · ' + r.timeDisplay,
+    amount: r.total,
+    status: 'paid',
+    currCode: r.currCode,
+    currSym: r.currSym,
+    isReal: true
+  }));
+
+  let items = realRecords.concat(seed);
+  if(filter === '3m') items = items.slice(0,3);
+  else if(filter === '6m') items = items.slice(0,6);
+
   const c = document.getElementById('historyContainer');
+
+  if(!items.length){
+    c.innerHTML = '<div class="history-empty">No payments logged yet. Submit a payment above to see it appear here with a receipt.</div>';
+    return;
+  }
+
   c.innerHTML = items.map(d => {
-    const a = d.amount * currRate;
+    const displayAmount = d.isReal ? (d.currSym + fmt(d.amount)) : (currSym + fmt(d.amount * currRate));
+    const receiptBtn = d.isReal
+      ? `<button class="btn-outline btn-sm" style="margin-top:6px;" onclick="viewReceipt('${d.txnId}')"><i class="fas fa-receipt"></i> View Receipt</button>`
+      : '';
     return `<div class="timeline-item">
       <div class="timeline-dot ${d.status}"></div>
       <div class="tl-body">
         <div>
-          <div class="tl-title">${d.month}</div>
+          <div class="tl-title">${d.month}${d.isReal ? ' <span class="receipt-currency-badge">'+d.currCode+'</span>' : ''}</div>
           <div class="tl-sub">${d.type} · ${d.date}</div>
+          ${receiptBtn}
         </div>
         <div>
-          <div class="tl-amount" style="color:var(--success);">${currSym}${fmt(a)}</div>
+          <div class="tl-amount" style="color:var(--success);">${displayAmount}</div>
           <span class="badge-pill badge-${d.status}" style="float:right;">${d.status.charAt(0).toUpperCase()+d.status.slice(1)}</span>
         </div>
       </div>
@@ -1947,6 +1112,69 @@ function renderHistory(filter) {
 }
 
 function filterHistory(f) { renderHistory(f); }
+
+// ── PAYMENT RECORDS (persisted receipts) ──
+function getPaymentRecords() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr : [];
+  } catch(e) { return []; }
+}
+
+function savePaymentRecord(record) {
+  try {
+    const arr = getPaymentRecords();
+    arr.unshift(record);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+  } catch(e) {}
+}
+
+function clearMyPayments() {
+  if(!confirm('Clear all payments you have logged in this browser? This cannot be undone.')) return;
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
+  renderHistory();
+  renderStatement();
+  showToast('History Cleared', 'Your logged payments have been removed from this device.', 'info');
+}
+
+function viewReceipt(txnId) {
+  const rec = getPaymentRecords().find(r => r.txnId === txnId);
+  if(!rec) return;
+  const body = document.getElementById('viewReceiptBody');
+  body.innerHTML = `
+    <div class="receipt-card" style="margin:0;">
+      <div class="receipt-header-row">
+        <div>
+          <div style="font-family:'DM Serif Display',serif; font-size:1.2rem;">Payment Receipt</div>
+          <div style="font-size:0.8rem; color:var(--ink-soft);">Mwarokin Rent Payment</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:0.8rem; color:var(--ink-soft);">Transaction</div>
+          <div style="font-weight:700; color:var(--gold);">${rec.txnId}</div>
+        </div>
+      </div>
+      <div class="receipt-grid">
+        <div><div class="field-label">Date</div><div class="field-val">${rec.dateDisplay} · ${rec.timeDisplay}</div></div>
+        <div><div class="field-label">Method</div><div class="field-val">${rec.method}</div></div>
+        <div><div class="field-label">Property</div><div class="field-val">${rec.property}</div></div>
+        <div><div class="field-label">Period</div><div class="field-val">${rec.month}</div></div>
+        <div><div class="field-label">Unit</div><div class="field-val">${rec.unit || '—'}</div></div>
+        <div><div class="field-label">Currency Paid In</div><div class="field-val">${rec.currCode}</div></div>
+        <div><div class="field-label">Status</div><div class="field-val"><span class="badge-pill badge-paid">Confirmed</span></div></div>
+      </div>
+      <div class="breakdown-bg">
+        <div class="breakdown-row"><span>Monthly Rent</span><span>${rec.currSym}${fmt(rec.rent)}</span></div>
+        <div class="breakdown-row"><span>Other Charges</span><span>${rec.currSym}${fmt(rec.charges)}</span></div>
+        <div class="breakdown-row"><span>Total Paid</span><span>${rec.currSym}${fmt(rec.total)} ${rec.currCode}</span></div>
+      </div>
+      <div style="text-align:center; color:var(--ink-soft); font-size:0.8rem; border-top:1px dashed rgba(26,26,46,0.15); padding-top:1rem;">
+        Thank you for your payment · Electronic receipt — no signature required
+      </div>
+    </div>
+  `;
+  openModal('viewReceiptModal');
+}
 
 // ── NOTIFICATIONS ──
 function renderNotifications() {
@@ -2107,16 +1335,16 @@ function sendChat() {
 function getBotReply(m) {
   if(m.includes('balance') || m.includes('wallet')) return 'Your wallet balance is ' + currSym + '156,000. Your current rent due is ' + currSym + '20,500 for October 2024.';
   if(m.includes('mpesa') || m.includes('m-pesa')) return 'For M-Pesa payments, use Paybill 522533 with your unit number as the account reference. You\'ll receive an STK push to approve.';
-  if(m.includes('receipt') || m.includes('confirm')) return 'After successful payment, a receipt is generated with your transaction ID. You can download or print it from the confirmation screen.';
+  if(m.includes('receipt') || m.includes('confirm')) return 'Every payment you submit is logged with its own transaction ID and receipt — open Payment History and click "View Receipt" on any entry to see or print it.';
   if(m.includes('bank') || m.includes('transfer')) return 'We support 26 Kenyan banks and major African banks including Ecobank, UBA, Standard Bank, and more. Select your bank under the Kenya Bank or African Bank payment options.';
   if(m.includes('due') || m.includes('when')) return 'Your October 2024 rent of ' + currSym + '20,500 is due on October 15th. You have 5 days remaining.';
-  if(m.includes('history') || m.includes('past')) return 'You\'ve made 9 on-time payments with a 92% payment rate. View your full history in the Payment History section below.';
-  if(m.includes('currency')) return 'You can switch currencies using the selector on the balance card. We support KES, USD, EUR, GBP, ZAR, TZS, and NGN.';
+  if(m.includes('history') || m.includes('past')) return 'You\'ve made 9 on-time payments with a 92% payment rate. View your full history — including any payment you\'ve logged — in the Payment History section below.';
+  if(m.includes('currency') || m.includes('yuan') || m.includes('pound') || m.includes('dollar')) return 'You can switch currencies using the selector on the balance card. We support KES, USD, EUR, GBP, CNY (Yuan), ZAR, TZS, and NGN — whatever currency you pay in gets locked onto that payment\'s receipt.';
   if(m.includes('sylloPay') || m.includes('syllopay')) return 'SylloPay is Syllogism Technology Africa\'s instant payment wallet. Your balance is ' + currSym + '24,500 — enough to cover your current rent.';
   return 'I can help with rent payments, payment methods, balances, receipts, and your account. What would you like to know?';
 }
 
-// ── STORAGE ──
+// ── STORAGE (form draft only — payment records use their own key above) ──
 function saveToStorage() {
   const data = {
     propAddress: document.getElementById('propAddress').value,
