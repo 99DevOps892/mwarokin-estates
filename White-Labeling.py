@@ -1,1017 +1,885 @@
-I'll create a complete Python Flask application with the white-labeling functionality. Here's the full implementation:
+"""
+Mwarokin Estates – White Label Studio
+Modern agentic Python implementation (Streamlit)
+Fully functional upgrade of the provided UI
+"""
 
-## Project Structure
-```
-mwarokin_whitelabel/
-├── app.py
-├── templates/
-│   └── dashboard.html
-├── static/
-│   ├── css/
-│   ├── js/
-│   └── images/
-├── models.py
-├── config.py
-└── requirements.txt
-```
-
-## 1. requirements.txt
-```txt
-Flask==2.3.3
-Flask-SQLAlchemy==3.0.5
-Flask-Migrate==4.0.4
-python-dotenv==1.0.0
-Pillow==10.0.0
-Werkzeug==2.3.6
-```
-
-## 2. config.py
-```python
-import os
-from datetime import timedelta
-
-basedir = os.path.abspath(os.path.dirname(__file__))
-
-class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-2024'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'mwarokin.db')
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    
-    # File upload configuration
-    UPLOAD_FOLDER = os.path.join(basedir, 'static/uploads')
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
-    
-    # API configuration
-    API_VERSION = 'v1'
-    DEFAULT_LOCALE = 'en-US'
-    DEFAULT_CURRENCY = 'USD'
-    
-    # Theme defaults
-    DEFAULT_THEME = {
-        'primary': '#4361ee',
-        'secondary': '#7209b7',
-        'accent': '#4cc9f0',
-        'success': '#4bb543',
-        'warning': '#ffc107',
-        'danger': '#dc3545'
-    }
-```
-
-## 3. models.py
-```python
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+import streamlit as st
 import json
-
-db = SQLAlchemy()
-
-class Tenant(db.Model):
-    __tablename__ = 'tenants'
-    
-    id = db.Column(db.String(50), primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    api_key = db.Column(db.String(100), unique=True, nullable=False)
-    role = db.Column(db.String(50), default='standard')
-    locale = db.Column(db.String(10), default='en-US')
-    currency = db.Column(db.String(10), default='USD')
-    is_active = db.Column(db.Boolean, default=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
-    # Relationships
-    theme = db.relationship('Theme', backref='tenant', uselist=False, cascade='all, delete-orphan')
-    listings = db.relationship('Listing', backref='tenant', lazy='dynamic')
-    
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'role': self.role,
-            'locale': self.locale,
-            'currency': self.currency,
-            'is_active': self.is_active,
-            'created_at': self.created_at.isoformat(),
-            'theme': self.theme.to_dict() if self.theme else None
-        }
-
-class Theme(db.Model):
-    __tablename__ = 'themes'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    tenant_id = db.Column(db.String(50), db.ForeignKey('tenants.id'), nullable=False)
-    primary_color = db.Column(db.String(7), default='#4361ee')
-    secondary_color = db.Column(db.String(7), default='#7209b7')
-    accent_color = db.Column(db.String(7), default='#4cc9f0')
-    logo_url = db.Column(db.String(500))
-    custom_css = db.Column(db.Text)
-    custom_js = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
-    def to_dict(self):
-        return {
-            'primary_color': self.primary_color,
-            'secondary_color': self.secondary_color,
-            'accent_color': self.accent_color,
-            'logo_url': self.logo_url,
-            'custom_css': self.custom_css,
-            'custom_js': self.custom_js
-        }
-
-class Listing(db.Model):
-    __tablename__ = 'listings'
-    
-    id = db.Column(db.String(50), primary_key=True)
-    tenant_id = db.Column(db.String(50), db.ForeignKey('tenants.id'), nullable=False)
-    title = db.Column(db.String(200), nullable=False)
-    description = db.Column(db.Text)
-    price = db.Column(db.Float, nullable=False)
-    currency = db.Column(db.String(10), default='USD')
-    property_type = db.Column(db.String(50))
-    bedrooms = db.Column(db.Integer)
-    bathrooms = db.Column(db.Integer)
-    location = db.Column(db.String(200))
-    status = db.Column(db.String(20), default='available')  # available, pending, sold
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'tenant_id': self.tenant_id,
-            'title': self.title,
-            'description': self.description,
-            'price': self.price,
-            'currency': self.currency,
-            'property_type': self.property_type,
-            'bedrooms': self.bedrooms,
-            'bathrooms': self.bathrooms,
-            'location': self.location,
-            'status': self.status,
-            'created_at': self.created_at.isoformat()
-        }
-
-class BuyerProfile(db.Model):
-    __tablename__ = 'buyer_profiles'
-    
-    id = db.Column(db.String(50), primary_key=True)
-    preferences = db.Column(db.Text)  # JSON string
-    budget_min = db.Column(db.Float)
-    budget_max = db.Column(db.Float)
-    preferred_locations = db.Column(db.Text)  # JSON string
-    property_types = db.Column(db.Text)  # JSON string
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'preferences': json.loads(self.preferences) if self.preferences else {},
-            'budget_min': self.budget_min,
-            'budget_max': self.budget_max,
-            'preferred_locations': json.loads(self.preferred_locations) if self.preferred_locations else [],
-            'property_types': json.loads(self.property_types) if self.property_types else [],
-            'created_at': self.created_at.isoformat()
-        }
-
-class LeaseDraft(db.Model):
-    __tablename__ = 'lease_drafts'
-    
-    id = db.Column(db.String(50), primary_key=True)
-    tenant_id = db.Column(db.String(50), db.ForeignKey('tenants.id'), nullable=False)
-    listing_id = db.Column(db.String(50), db.ForeignKey('listings.id'), nullable=False)
-    applicant_id = db.Column(db.String(50), nullable=False)
-    terms = db.Column(db.Text)  # JSON string
-    clauses = db.Column(db.Text)  # JSON string
-    schedule = db.Column(db.Text)  # JSON string
-    risks = db.Column(db.Text)  # JSON string
-    status = db.Column(db.String(20), default='draft')
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'tenant_id': self.tenant_id,
-            'listing_id': self.listing_id,
-            'applicant_id': self.applicant_id,
-            'terms': json.loads(self.terms) if self.terms else {},
-            'clauses': json.loads(self.clauses) if self.clauses else [],
-            'schedule': json.loads(self.schedule) if self.schedule else {},
-            'risks': json.loads(self.risks) if self.risks else [],
-            'status': self.status,
-            'created_at': self.created_at.isoformat()
-        }
-```
-
-## 4. app.py
-```python
-from flask import Flask, request, jsonify, render_template, send_file
-from flask_cors import CORS
-import json
-import os
-from datetime import datetime, timedelta
-from werkzeug.utils import secure_filename
+import time
 import uuid
+from dataclasses import dataclass, field, asdict
+from typing import List, Dict, Optional, Any
+from datetime import datetime
+import copy
 
-from config import Config
-from models import db, Tenant, Theme, Listing, BuyerProfile, LeaseDraft
+# ============================================================
+# CONFIG & CONSTANTS
+# ============================================================
 
-def create_app():
-    app = Flask(__name__)
-    app.config.from_object(Config)
-    
-    # Initialize extensions
-    db.init_app(app)
-    CORS(app)
-    
-    # Create upload directory
-    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-    
-    # Helper functions
-    def get_tenant_from_api_key():
-        api_key = request.headers.get('X-API-Key')
-        if not api_key:
-            return None
-        return Tenant.query.filter_by(api_key=api_key, is_active=True).first()
-    
-    def generate_theme_css(theme):
-        primary = theme.primary_color
-        secondary = theme.secondary_color
-        accent = theme.accent_color
-        
-        return f"""
-        :root {{
-            --primary: {primary};
-            --primary-dark: {darken_color(primary, 20)};
-            --primary-light: {lighten_color(primary, 40)};
-            --secondary: {secondary};
-            --accent: {accent};
-        }}
-        """
-    
-    def darken_color(hex_color, percent):
-        # Simplified color manipulation - in production use a proper color library
-        return hex_color  # Implementation would go here
-    
-    def lighten_color(hex_color, percent):
-        # Simplified color manipulation - in production use a proper color library
-        return hex_color  # Implementation would go here
-    
-    # Authentication middleware
-    @app.before_request
-    def require_api_key():
-        # Skip authentication for static files and theme endpoint
-        if request.endpoint in ['static', 'serve_theme']:
-            return
-        
-        if request.method == 'OPTIONS':
-            return
-        
-        tenant = get_tenant_from_api_key()
-        if not tenant:
-            return jsonify({'error': 'Invalid or missing API key'}), 401
-        
-        request.tenant = tenant
-    
-    # Routes
-    @app.route('/')
-    def index():
-        return render_template('dashboard.html')
-    
-    # Theme endpoints
-    @app.route('/whitelabel/theme', methods=['GET'])
-    def serve_theme():
-        api_key = request.headers.get('X-API-Key')
-        tenant = Tenant.query.filter_by(api_key=api_key, is_active=True).first() if api_key else None
-        
-        if not tenant:
-            # Return default theme
-            return jsonify({
-                'metadata': {
-                    'tenant_name': 'Mwarokin Real Estate',
-                    'role': 'demo',
-                    'locale': 'en-US',
-                    'currency': 'USD'
-                },
-                'css': '',
-                'logo_url': '/static/images/default-logo.png',
-                'js': ''
-            })
-        
-        theme_css = generate_theme_css(tenant.theme) if tenant.theme else ''
-        
-        return jsonify({
-            'metadata': {
-                'tenant_name': tenant.name,
-                'role': tenant.role,
-                'locale': tenant.locale,
-                'currency': tenant.currency
-            },
-            'css': theme_css + (tenant.theme.custom_css if tenant.theme and tenant.theme.custom_css else ''),
-            'logo_url': tenant.theme.logo_url if tenant.theme and tenant.theme.logo_url else '/static/images/default-logo.png',
-            'js': tenant.theme.custom_js if tenant.theme and tenant.theme.custom_js else ''
-        })
-    
-    @app.route('/api/theme', methods=['PUT'])
-    def update_theme():
-        tenant = request.tenant
-        data = request.get_json()
-        
-        if not tenant.theme:
-            tenant.theme = Theme(tenant_id=tenant.id)
-        
-        if 'primary_color' in data:
-            tenant.theme.primary_color = data['primary_color']
-        if 'secondary_color' in data:
-            tenant.theme.secondary_color = data['secondary_color']
-        if 'accent_color' in data:
-            tenant.theme.accent_color = data['accent_color']
-        if 'custom_css' in data:
-            tenant.theme.custom_css = data['custom_css']
-        if 'custom_js' in data:
-            tenant.theme.custom_js = data['custom_js']
-        
-        db.session.commit()
-        
-        return jsonify({
-            'message': 'Theme updated successfully',
-            'theme': tenant.theme.to_dict()
-        })
-    
-    # Listings endpoints
-    @app.route('/api/listings', methods=['GET'])
-    def get_listings():
-        tenant = request.tenant
-        listings = Listing.query.filter_by(tenant_id=tenant.id).all()
-        
-        return jsonify([listing.to_dict() for listing in listings])
-    
-    @app.route('/api/listings', methods=['POST'])
-    def create_listing():
-        tenant = request.tenant
-        data = request.get_json()
-        
-        listing = Listing(
-            id=str(uuid.uuid4())[:8],
-            tenant_id=tenant.id,
-            title=data.get('title'),
-            description=data.get('description'),
-            price=data.get('price'),
-            property_type=data.get('property_type'),
-            bedrooms=data.get('bedrooms'),
-            bathrooms=data.get('bathrooms'),
-            location=data.get('location'),
-            status=data.get('status', 'available')
-        )
-        
-        db.session.add(listing)
-        db.session.commit()
-        
-        return jsonify({
-            'message': 'Listing created successfully',
-            'listing': listing.to_dict()
-        }), 201
-    
-    # Buyer Profile endpoints
-    @app.route('/api/buyer-profile/<profile_id>', methods=['GET'])
-    def get_buyer_profile(profile_id):
-        profile = BuyerProfile.query.get(profile_id)
-        
-        if not profile:
-            return jsonify({'error': 'Profile not found'}), 404
-        
-        return jsonify(profile.to_dict())
-    
-    @app.route('/api/buyer-profile', methods=['POST'])
-    def create_buyer_profile():
-        data = request.get_json()
-        
-        profile = BuyerProfile(
-            id=str(uuid.uuid4())[:8],
-            preferences=json.dumps(data.get('preferences', {})),
-            budget_min=data.get('budget_min'),
-            budget_max=data.get('budget_max'),
-            preferred_locations=json.dumps(data.get('preferred_locations', [])),
-            property_types=json.dumps(data.get('property_types', []))
-        )
-        
-        db.session.add(profile)
-        db.session.commit()
-        
-        return jsonify({
-            'message': 'Buyer profile created successfully',
-            'profile': profile.to_dict()
-        }), 201
-    
-    # Lease Draft endpoints
-    @app.route('/lease/draft', methods=['POST'])
-    def create_lease_draft():
-        tenant = request.tenant
-        data = request.get_json()
-        
-        # Validate listing exists
-        listing = Listing.query.get(data.get('listing_id'))
-        if not listing or listing.tenant_id != tenant.id:
-            return jsonify({'error': 'Invalid listing ID'}), 400
-        
-        lease_draft = LeaseDraft(
-            id=str(uuid.uuid4())[:8],
-            tenant_id=tenant.id,
-            listing_id=data.get('listing_id'),
-            applicant_id=data.get('applicant_id'),
-            terms=json.dumps(data.get('terms', {})),
-            clauses=json.dumps([
-                'Standard Lease Agreement',
-                'Maintenance Responsibilities', 
-                'Payment Terms',
-                'Security Deposit',
-                'Utilities Arrangements'
-            ]),
-            schedule=json.dumps({
-                'start_date': (datetime.now() + timedelta(days=7)).strftime('%Y-%m-%d'),
-                'end_date': (datetime.now() + timedelta(days=367)).strftime('%Y-%m-%d'),
-                'rent': listing.price,
-                'payment_due_day': 1
-            }),
-            risks=json.dumps([
-                'Credit Risk - Moderate',
-                'Market Volatility - Low',
-                'Compliance Risk - Low'
-            ])
-        )
-        
-        db.session.add(lease_draft)
-        db.session.commit()
-        
-        return jsonify(lease_draft.to_dict())
-    
-    # Matchmaking endpoint
-    @app.route('/matchmaking', methods=['POST'])
-    def matchmaking():
-        tenant = request.tenant
-        data = request.get_json()
-        profile_id = data.get('profile_id')
-        
-        # Get buyer profile
-        profile = BuyerProfile.query.get(profile_id)
-        if not profile:
-            return jsonify({'error': 'Profile not found'}), 404
-        
-        # Get tenant listings
-        listings = Listing.query.filter_by(tenant_id=tenant.id, status='available').all()
-        
-        # Simple matching algorithm (in production this would be more sophisticated)
-        matches = []
-        for listing in listings:
-            score = calculate_match_score(profile, listing)
-            if score > 50:  # Only return matches with score > 50%
-                matches.append({
-                    'listing_id': listing.id,
-                    'score': score,
-                    'listing': listing.to_dict()
-                })
-        
-        # Sort by score descending
-        matches.sort(key=lambda x: x['score'], reverse=True)
-        
-        return jsonify(matches)
-    
-    def calculate_match_score(profile, listing):
-        score = 0
-        factors = 0
-        
-        # Budget match
-        if profile.budget_min and profile.budget_max:
-            factors += 1
-            if profile.budget_min <= listing.price <= profile.budget_max:
-                score += 30
-            elif listing.price <= profile.budget_max * 1.2:
-                score += 15
-        
-        # Property type match
-        if profile.property_types:
-            factors += 1
-            profile_types = json.loads(profile.property_types)
-            if listing.property_type in profile_types:
-                score += 25
-        
-        # Location match (simplified)
-        if profile.preferred_locations:
-            factors += 1
-            preferred_locations = json.loads(profile.preferred_locations)
-            if any(loc.lower() in listing.location.lower() for loc in preferred_locations):
-                score += 25
-        
-        # Bedrooms match
-        if profile.preferences:
-            preferences = json.loads(profile.preferences)
-            preferred_bedrooms = preferences.get('bedrooms')
-            if preferred_bedrooms and listing.bedrooms:
-                factors += 1
-                if listing.bedrooms >= preferred_bedrooms:
-                    score += 20
-        
-        return min(100, int(score))
-    
-    # Admin endpoints for tenant management
-    @app.route('/admin/tenants', methods=['POST'])
-    def create_tenant():
-        data = request.get_json()
-        
-        tenant = Tenant(
-            id=str(uuid.uuid4())[:8],
-            name=data.get('name'),
-            api_key=str(uuid.uuid4()),
-            role=data.get('role', 'standard'),
-            locale=data.get('locale', 'en-US'),
-            currency=data.get('currency', 'USD')
-        )
-        
-        # Create default theme
-        theme = Theme(tenant_id=tenant.id)
-        
-        db.session.add(tenant)
-        db.session.add(theme)
-        db.session.commit()
-        
-        return jsonify({
-            'message': 'Tenant created successfully',
-            'tenant': tenant.to_dict(),
-            'api_key': tenant.api_key  # Only returned once
-        }), 201
-    
-    # Initialize database with sample data
-    @app.before_first_request
-    def create_tables():
-        db.create_all()
-        
-        # Create sample tenant if none exists
-        if not Tenant.query.first():
-            sample_tenant = Tenant(
-                id='TENANT_001',
-                name='Mwarokin Real Estate',
-                api_key='DEMO_API_KEY_12345',
-                role='premium',
-                locale='en-US',
-                currency='USD'
-            )
-            
-            sample_theme = Theme(
-                tenant_id='TENANT_001',
-                primary_color='#4361ee',
-                secondary_color='#7209b7',
-                accent_color='#4cc9f0',
-                logo_url='/static/images/default-logo.png'
-            )
-            
-            # Sample listings
-            sample_listings = [
-                Listing(
-                    id='LST001',
-                    tenant_id='TENANT_001',
-                    title='Modern Downtown Apartment',
-                    description='Beautiful modern apartment in the heart of downtown with stunning city views.',
-                    price=250000,
-                    property_type='Apartment',
-                    bedrooms=2,
-                    bathrooms=2,
-                    location='Downtown',
-                    status='available'
-                ),
-                Listing(
-                    id='LST002',
-                    tenant_id='TENANT_001',
-                    title='Luxury Villa with Pool',
-                    description='Spacious luxury villa with private pool and garden in exclusive neighborhood.',
-                    price=750000,
-                    property_type='Villa',
-                    bedrooms=4,
-                    bathrooms=3,
-                    location='Uptown',
-                    status='available'
-                )
-            ]
-            
-            # Sample buyer profile
-            sample_profile = BuyerProfile(
-                id='BP001',
-                preferences=json.dumps({
-                    'min_price': 200000,
-                    'max_price': 350000,
-                    'location': 'Downtown',
-                    'property_type': 'Apartment',
-                    'bedrooms': 2
-                }),
-                budget_min=200000,
-                budget_max=350000,
-                preferred_locations=json.dumps(['Downtown', 'City Center']),
-                property_types=json.dumps(['Apartment', 'Condominium'])
-            )
-            
-            db.session.add(sample_tenant)
-            db.session.add(sample_theme)
-            for listing in sample_listings:
-                db.session.add(listing)
-            db.session.add(sample_profile)
-            db.session.commit()
-    
-    return app
+THEME_PRESETS = [
+    {"id": 1, "name": "Obsidian Gold", "primary": "#0e1a2b", "secondary": "#c9a959", "accent": "#2f7d5e",
+     "grad": "linear-gradient(135deg,#0e1a2b,#1e3352)"},
+    {"id": 2, "name": "Ocean Blue", "primary": "#4361ee", "secondary": "#3a0ca3", "accent": "#4cc9f0",
+     "grad": "linear-gradient(135deg,#4361ee,#3a0ca3)"},
+    {"id": 3, "name": "Purple Pink", "primary": "#7209b7", "secondary": "#f72585", "accent": "#b5179e",
+     "grad": "linear-gradient(135deg,#7209b7,#f72585)"},
+    {"id": 4, "name": "Savanna Green", "primary": "#2a9d8f", "secondary": "#264653", "accent": "#e9c46a",
+     "grad": "linear-gradient(135deg,#2a9d8f,#264653)"},
+    {"id": 5, "name": "Coral Sunset", "primary": "#e76f51", "secondary": "#9c2c1d", "accent": "#f4a261",
+     "grad": "linear-gradient(135deg,#e76f51,#9c2c1d)"},
+    {"id": 6, "name": "Sky Teal", "primary": "#2f5f8a", "secondary": "#14314a", "accent": "#4cc9f0",
+     "grad": "linear-gradient(135deg,#2f5f8a,#14314a)"},
+]
 
-if __name__ == '__main__':
-    app = create_app()
-    app.run(debug=True, host='0.0.0.0', port=5000)
-```
+FONT_PAIRS = [
+    {"id": "fraunces-inter", "label": "Fraunces + Inter (Editorial)"},
+    {"id": "poppins-inter", "label": "Poppins + Inter (Modern)"},
+    {"id": "playfair-lato", "label": "Playfair + Lato (Classic)"},
+    {"id": "space-dm", "label": "Space Grotesk + DM Sans (Tech)"},
+]
 
-## 5. templates/dashboard.html
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Mwarokin - White Labelling Dashboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style id="dynamic-theme">
-        /* CSS will be dynamically loaded here by the theme API */
-    </style>
-    <style>
-        /* Base styles that won't be overridden by theme */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+PLAN_TIERS = [
+    {
+        "id": "msingi", "name": "Msingi", "price": "KSh 2,500/mo",
+        "listings": 15, "api_calls": "2,000", "storage": "1 GB",
+        "features": [
+            "Up to 15 active listings",
+            "Basic branding (logo + 1 color)",
+            "Email support",
+            "Standard subdomain",
+        ],
+    },
+    {
+        "id": "jengo", "name": "Jengo", "price": "KSh 6,900/mo",
+        "listings": 60, "api_calls": "15,000", "storage": "10 GB",
+        "features": [
+            "Up to 60 active listings",
+            "Full theme customization",
+            "Priority support",
+            "Custom domain (1)",
+            "Lease drafting tools",
+        ],
+    },
+    {
+        "id": "milki", "name": "Milki", "price": "KSh 15,900/mo",
+        "listings": 250, "api_calls": "75,000", "storage": "50 GB",
+        "features": [
+            "Up to 250 active listings",
+            "White-label mobile web app",
+            "Dedicated success manager",
+            "Custom domain (3) + SSL",
+            "Matchmaking AI engine",
+            "Webhook automations",
+        ],
+    },
+    {
+        "id": "taifa", "name": "Taifa", "price": "Custom pricing",
+        "listings": "Unlimited", "api_calls": "Unlimited", "storage": "500 GB+",
+        "features": [
+            "Unlimited listings & domains",
+            "Full API + webhook access",
+            "SLA-backed uptime",
+            "Dedicated infrastructure",
+            "On-boarding & migration support",
+        ],
+    },
+]
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
-            color: #212529;
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Other base styles... */
-        /* Note: The complete CSS from the previous HTML example would go here */
-        /* For brevity, I'm including the structure but not all CSS */
-    </style>
-</head>
-<body>
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo-container">
-                    <img src="" alt="Logo" class="logo" id="tenant-logo">
-                    <h1 class="tenant-name" id="tenant-name">Mwarokin Real Estate</h1>
-                </div>
-                <div class="theme-controls">
-                    <button class="theme-btn" id="theme-customize-btn">
-                        <i class="fas fa-palette"></i> Customize Theme
-                    </button>
-                    <button class="theme-btn" id="theme-reset-btn">
-                        <i class="fas fa-undo"></i> Reset
-                    </button>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <main class="container">
-        <!-- Dashboard content from previous example -->
-        <div class="dashboard">
-            <div class="card">
-                <h2 class="section-title">Tenant Info</h2>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <span class="info-label">Role</span>
-                        <span class="info-value" id="tenant-role">Loading...</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Locale</span>
-                        <span class="info-value" id="tenant-locale">Loading...</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Currency</span>
-                        <span class="info-value currency" id="tenant-currency">Loading...</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Theme</span>
-                        <span class="info-value" id="tenant-theme">Default</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Other dashboard sections -->
-        </div>
-    </main>
-
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <p>Powered By: Syllogism Technology Africa © 2026. All Rights Reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Theme Customization Modal -->
-    <div class="theme-modal" id="theme-modal">
-        <div class="theme-modal-content">
-            <!-- Modal content from previous example -->
-        </div>
-    </div>
-
-    <script>
-        const API_KEY = "DEMO_API_KEY_12345"; // This would be set per tenant
-        
-        // JavaScript from previous example with API integration
-        // This would make actual API calls to the Flask backend
-    </script>
-</body>
-</html>
-```
-
-## 6. Run the Application
-
-Create a `run.py` file:
-
-```python
-from app import create_app
-
-app = create_app()
-
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
-```
-
-## Installation and Setup
-
-1. **Create virtual environment**:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-2. **Install dependencies**:
-```bash
-pip install -r requirements.txt
-```
-
-3. **Run the application**:
-```bash
-python run.py
-```
-
-4. **Access the dashboard**:
-   - Main dashboard: http://localhost:5000
-   - API documentation: http://localhost:5000/api/docs
-
-## Key Features of the Python Implementation:
-
-1. **Database Models**: Complete ORM models for tenants, themes, listings, profiles, and leases
-2. **RESTful API**: Full CRUD operations for all entities
-3. **Authentication**: API key-based authentication middleware
-4. **Theme Management**: Dynamic CSS generation and theme persistence
-5. **Matchmaking Algorithm**: Intelligent property matching based on buyer preferences
-6. **Admin Functions**: Tenant management and sample data generation
-7. **Error Handling**: Comprehensive error handling and validation
-8. **Scalable Architecture**: Modular design for easy extension
-
-The application provides a complete white-labeling solution with real-time theme customization, property management, and matchmaking capabilities.
+STORAGE_KEY = "mwarokin_whitelabel_config_v1"
 
 
-from fastapi import FastAPI, Depends, HTTPException, Header
-from pydantic import BaseModel
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
-from sqlalchemy.orm import declarative_base, mapped_column, Mapped
-from sqlalchemy import String, JSON, select
-from typing import Dict, List, Optional
+def rid() -> str:
+    return uuid.uuid4().hex[:8].upper()
 
-DATABASE_URL = "postgresql+asyncpg://user:password@localhost/mwarokin"
-engine = create_async_engine(DATABASE_URL, echo=True)
-async_session = async_sessionmaker(engine, expire_on_commit=False)
-Base = declarative_base()
 
-# Database Models
-class TenantConfigDB(Base):
-    __tablename__ = "tenant_config"
-    tenant_id: Mapped[str] = mapped_column(String, primary_key=True)
-    role: Mapped[str] = mapped_column(String)
-    white_label: Mapped[Dict] = mapped_column(JSON)
-    locale: Mapped[str] = mapped_column(String)
-    currency: Mapped[str] = mapped_column(String)
+# ============================================================
+# DATA MODELS
+# ============================================================
 
-class ListingDB(Base):
-    __tablename__ = "listing"
-    id: Mapped[str] = mapped_column(String, primary_key=True)
-    tenant_id: Mapped[str] = mapped_column(String)
+@dataclass
+class Theme:
+    id: int = 1
+    name: str = "Obsidian Gold"
+    primary: str = "#0e1a2b"
+    secondary: str = "#c9a959"
+    accent: str = "#2f7d5e"
+    grad: str = "linear-gradient(135deg,#0e1a2b,#1e3352)"
 
-class BuyerProfileDB(Base):
-    __tablename__ = "buyer_profile"
-    id: Mapped[str] = mapped_column(String, primary_key=True)
-    tenant_id: Mapped[str] = mapped_column(String)
-    preferences: Mapped[Dict] = mapped_column(JSON)
 
-class LeaseDB(Base):
-    __tablename__ = "lease"
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    tenant_id: Mapped[str] = mapped_column(String)
-    listing_id: Mapped[str] = mapped_column(String)
-    applicant_id: Mapped[str] = mapped_column(String)
-    clauses: Mapped[Dict] = mapped_column(JSON)
-    payment_schedule: Mapped[Dict] = mapped_column(JSON)
-    risks: Mapped[List] = mapped_column(JSON)
+@dataclass
+class Config:
+    client_name: str = "Zawadi Properties Ltd"
+    tenant_id: str = "TENANT-A17"
+    role: str = "Premium Partner"
+    locale: str = "en-KE"
+    currency: str = "KES"
+    theme: Theme = field(default_factory=Theme)
+    font_pair: str = "fraunces-inter"
+    subdomain: str = "zawadi"
+    custom_domain: str = ""
+    domain_verified: bool = False
+    plan_id: str = "jengo"
+    api_key: str = field(default_factory=lambda: f"mwk_live_{rid()}{rid()}".lower())
+    webhook_url: str = ""
 
-class AuditLog(Base):
-    __tablename__ = "audit_log"
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    tenant_id: Mapped[str] = mapped_column(String)
-    action: Mapped[str] = mapped_column(String)
-    details: Mapped[Dict] = mapped_column(JSON)
 
-# Pydantic Models
-class TenantConfig(BaseModel):
+@dataclass
+class Listing:
+    id: str
     tenant_id: str
-    role: str
-    white_label: Dict
-    locale: str
-    currency: str
+    price: int
+    status: str
 
-class Theme(BaseModel):
-    css: str
-    js: str
-    logo_url: str
-    metadata: Dict
 
-class LeaseDraftPayload(BaseModel):
-    tenant_id: str
-    listing_id: str
-    applicant_id: str
-    terms: Dict
-
-class LeaseDraft(BaseModel):
-    clauses: Dict
-    schedule: Dict
+@dataclass
+class LeaseDraft:
+    clauses: List[str]
+    schedule: Dict[str, Any]
     risks: List[str]
 
-class Match(BaseModel):
+
+@dataclass
+class MatchResult:
     listing_id: str
-    score: float
+    score: int
 
-# Dependency
-async def get_db():
-    async with async_session() as session:
-        yield session
 
-async def api_key_header(x_api_key: str = Header(...)):
-    return x_api_key
+@dataclass
+class BuyerProfile:
+    id: str
+    preferences: Dict[str, Any]
 
-# Get Tenant Config
-async def get_tenant_config(api_key: str = Depends(api_key_header)) -> TenantConfig:
-    async with async_session() as db:
-        result = await db.execute(select(TenantConfigDB).where(TenantConfigDB.tenant_id == api_key))
-        tenant = result.scalars().first()
-        if not tenant:
-            raise HTTPException(status_code=403, detail="Invalid tenant")
-        return TenantConfig(
-            tenant_id=tenant.tenant_id,
-            role=tenant.role,
-            white_label=tenant.white_label,
-            locale=tenant.locale,
-            currency=tenant.currency
+
+# ============================================================
+# MOCK API (Agentic backend simulation)
+# ============================================================
+
+class MockAPI:
+    @staticmethod
+    def delay(ms: float = 0.65):
+        time.sleep(ms)
+
+    @classmethod
+    def get_listings(cls) -> List[Listing]:
+        cls.delay()
+        return [
+            Listing("LST001", "TENANT_A", 250000, "available"),
+            Listing("LST002", "TENANT_B", 320000, "available"),
+            Listing("LST003", "TENANT_C", 180000, "pending"),
+            Listing("LST004", "TENANT_A", 275000, "available"),
+            Listing("LST005", "TENANT_D", 410000, "available"),
+        ]
+
+    @classmethod
+    def create_lease_draft(cls, listing_id: str, applicant_id: str) -> LeaseDraft:
+        cls.delay()
+        return LeaseDraft(
+            clauses=["Standard Lease Agreement", "Maintenance Responsibilities", "Payment Terms"],
+            schedule={"start_date": "2026-08-01", "end_date": "2027-07-31", "rent": 2500},
+            risks=["Credit Risk", "Market Volatility"],
         )
 
-# WhiteLabelAgent
+    @classmethod
+    def matchmaking(cls) -> List[MatchResult]:
+        cls.delay()
+        return [
+            MatchResult("LST001", 92),
+            MatchResult("LST002", 87),
+            MatchResult("LST004", 78),
+        ]
+
+    @classmethod
+    def get_buyer_profile(cls) -> BuyerProfile:
+        cls.delay()
+        return BuyerProfile(
+            id="BP001",
+            preferences={
+                "min_price": 200000,
+                "max_price": 350000,
+                "location": "Downtown",
+                "property_type": "Apartment",
+                "bedrooms": 2,
+            },
+        )
+
+
+# ============================================================
+# PERSISTENCE
+# ============================================================
+
+def load_config() -> Config:
+    if "cfg" in st.session_state:
+        return st.session_state.cfg
+    cfg = Config()
+    st.session_state.cfg = cfg
+    return cfg
+
+
+def save_config(cfg: Config):
+    st.session_state.cfg = cfg
+
+
+# ============================================================
+# AGENTIC STATE MANAGER
+# ============================================================
+
 class WhiteLabelAgent:
-    async def get_theme(self, tenant_config: TenantConfig, db: AsyncSession) -> Theme:
-        result = await db.execute(select(TenantConfigDB).where(TenantConfigDB.tenant_id == tenant_config.tenant_id))
-        tenant = result.scalars().first()
-        if not tenant:
-            raise HTTPException(status_code=404, detail="Tenant config not found")
+    """Agentic controller that owns state, side-effects and orchestration."""
 
-        palette = tenant.white_label.get("palette", {"primary": "#3182ce", "secondary": "#2c5282"})
-        css = f"""
+    def __init__(self):
+        self.cfg = load_config()
+        if "active_tab" not in st.session_state:
+            st.session_state.active_tab = "branding"
+        if "listings" not in st.session_state:
+            st.session_state.listings = []
+            st.session_state.listings_loading = True
+        if "lease_result" not in st.session_state:
+            st.session_state.lease_result = None
+        if "match_result" not in st.session_state:
+            st.session_state.match_result = None
+        if "profile_result" not in st.session_state:
+            st.session_state.profile_result = None
+        if "key_visible" not in st.session_state:
+            st.session_state.key_visible = False
+        if "saving" not in st.session_state:
+            st.session_state.saving = False
+
+    @property
+    def active_tab(self) -> str:
+        return st.session_state.active_tab
+
+    def set_tab(self, tab: str):
+        st.session_state.active_tab = tab
+
+    def notify(self, message: str, type_: str = "info", title: str = ""):
+        icons = {"info": "ℹ️", "success": "✅", "error": "❌"}
+        prefix = f"**{title}** — " if title else ""
+        if type_ == "success":
+            st.success(f"{icons.get(type_, '')} {prefix}{message}")
+        elif type_ == "error":
+            st.error(f"{icons.get(type_, '')} {prefix}{message}")
+        else:
+            st.info(f"{icons.get(type_, '')} {prefix}{message}")
+
+    def fetch_listings(self):
+        st.session_state.listings_loading = True
+        try:
+            listings = MockAPI.get_listings()
+            st.session_state.listings = listings
+            st.session_state.listings_loading = False
+        except Exception:
+            st.session_state.listings_loading = False
+            self.notify("Failed to load listings.", "error")
+
+    def publish(self):
+        st.session_state.saving = True
+        time.sleep(1.1)
+        save_config(self.cfg)
+        st.session_state.saving = False
+        subdomain = self.cfg.subdomain or "yourbrand"
+        self.notify(
+            f"Your branding is now live at {subdomain}.mwarokinestates.africa",
+            "success",
+            "Published",
+        )
+
+    def regenerate_api_key(self):
+        self.cfg.api_key = f"mwk_live_{rid()}{rid()}".lower()
+        save_config(self.cfg)
+        st.session_state.key_visible = True
+        self.notify("New API key generated. Update your integrations.", "success")
+
+    def switch_plan(self, plan_id: str):
+        self.cfg.plan_id = plan_id
+        save_config(self.cfg)
+        name = next(t["name"] for t in PLAN_TIERS if t["id"] == plan_id)
+        self.notify(f"Switched to the {name} plan.", "success")
+
+    def apply_preset(self, preset_id: int):
+        preset = next(p for p in THEME_PRESETS if p["id"] == preset_id)
+        self.cfg.theme = Theme(**preset)
+        save_config(self.cfg)
+
+
+# ============================================================
+# UI COMPONENTS
+# ============================================================
+
+def inject_css(theme: Theme):
+    st.markdown(
+        f"""
+        <style>
         :root {{
-            --primary-color: {palette.get("primary", "#3182ce")};
-            --secondary-color: {palette.get("secondary", "#2c5282")};
+            --primary: {theme.primary};
+            --secondary: {theme.secondary};
+            --accent: {theme.accent};
+            --gold: #c9a959;
+            --navy: #0e1a2b;
+            --gray-100: #f8f7f4;
+            --gray-600: #6b6560;
         }}
-        header {{
-            background: linear-gradient(120deg, {palette.get("primary", "#3182ce")}, {palette.get("secondary", "#2c5282")});
+        .stApp {{ background: linear-gradient(160deg, #f8f7f4 0%, #f0ede6 100%); }}
+        .main-header {{
+            font-family: 'Georgia', serif;
+            color: var(--navy);
+            font-size: 1.75rem;
+            margin-bottom: 0.25rem;
         }}
-        .search-btn, .view-btn, .control-btn, .region-btn.active {{
-            background: {palette.get("primary", "#3182ce")};
+        .sub-header {{ color: var(--gray-600); font-size: 0.9rem; margin-bottom: 1.5rem; }}
+        .card {{
+            background: white;
+            border-radius: 14px;
+            padding: 1.25rem 1.4rem;
+            box-shadow: 0 2px 12px rgba(14,26,43,0.06);
+            border: 1px solid #ece8e0;
+            margin-bottom: 1rem;
         }}
-        .search-btn:hover, .view-btn:hover, .control-btn:hover, .region-btn.active:hover {{
-            background: {palette.get("secondary", "#2c5282")};
+        .pill {{
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 600;
         }}
-        """
-        js = """
-        // Dynamic tenant-specific JS (e.g., custom animations)
-        console.log('Tenant-specific theme loaded');
-        """
-        return Theme(
-            css=css,
-            js=js,
-            logo_url=tenant.white_label.get("logo", "default_logo.png"),
-            metadata={"locale": tenant.locale, "currency": tenant.currency}
+        .pill-available {{ background: #e6f4ea; color: #1e7e34; }}
+        .pill-pending {{ background: #fff3cd; color: #856404; }}
+        .pill-active {{ background: #e6f4ea; color: #1e7e34; }}
+        .meter {{
+            height: 6px;
+            background: #ece8e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 4px;
+        }}
+        .meter-fill {{ height: 100%; background: var(--accent); border-radius: 3px; }}
+        .preview-frame {{
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+        }}
+        .preview-browserbar {{
+            background: #f0f0f0;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+        }}
+        .preview-dot {{
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #ccc;
+        }}
+        .pv-header {{
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }}
+        .pv-logo {{ display: flex; align-items: center; gap: 10px; }}
+        .pv-logo-badge {{
+            width: 32px; height: 32px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.8rem;
+        }}
+        .pv-hero {{ padding: 24px 18px; text-align: center; }}
+        .pv-cards {{ display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 18px 18px; }}
+        .pv-card {{
+            border: 1.5px solid;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 0.8rem;
+        }}
+        div[data-testid="stSidebar"] {{
+            background: linear-gradient(180deg, #0e1a2b 0%, #1a2a40 100%);
+        }}
+        div[data-testid="stSidebar"] * {{ color: #e8e4dc !important; }}
+        .sidebar-brand {{
+            display: flex; align-items: center; gap: 12px;
+            padding: 8px 0 20px 0; border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 16px;
+        }}
+        .nav-item {{
+            padding: 8px 12px; border-radius: 8px; cursor: pointer;
+            margin-bottom: 2px; font-size: 0.9rem;
+        }}
+        .nav-item:hover {{ background: rgba(255,255,255,0.08); }}
+        .nav-item.active {{ background: rgba(201,169,89,0.25); color: #c9a959 !important; }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def render_sidebar(agent: WhiteLabelAgent):
+    cfg = agent.cfg
+    tier = next((t for t in PLAN_TIERS if t["id"] == cfg.plan_id), PLAN_TIERS[0])
+
+    with st.sidebar:
+        st.markdown(
+            """
+            <div class="sidebar-brand">
+                <div style="width:40px;height:40px;background:#c9a959;border-radius:10px;
+                            display:flex;align-items:center;justify-content:center;font-size:1.2rem;">
+                    🛡️
+                </div>
+                <div>
+                    <div style="font-weight:700;font-size:1.05rem;color:#fff;">Mwarokin Estates</div>
+                    <div style="font-size:0.75rem;opacity:0.7;">White Label Studio</div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
 
-# LeaseAgent
-class LeaseAgent:
-    async def execute(self, payload: Dict, tenant_config: TenantConfig, db: AsyncSession) -> LeaseDraft:
-        payload = LeaseDraftPayload(**payload)
-        if payload.tenant_id != tenant_config.tenant_id:
-            raise HTTPException(status_code=403, detail="Tenant ID mismatch")
+        groups = [
+            ("Brand Studio", [
+                ("branding", "🎨 Branding & Theme"),
+                ("domain", "🌐 Domain & SSL"),
+            ]),
+            ("Operations", [
+                ("listings", "🏢 Property Listings"),
+                ("leases", "📝 Lease Drafting"),
+                ("matchmaking", "🤝 Matchmaking"),
+            ]),
+            ("Developer", [
+                ("api", "🔌 API & Webhooks"),
+            ]),
+            ("Account", [
+                ("plan", "📊 Plan & Usage"),
+            ]),
+        ]
 
-        listing_result = await db.execute(select(ListingDB).where(ListingDB.id == payload.listing_id, ListingDB.tenant_id == tenant_config.tenant_id))
-        listing = listing_result.scalars().first()
-        if not listing:
-            raise HTTPException(status_code=404, detail="Listing not found")
+        for group_name, tabs in groups:
+            st.caption(group_name.upper())
+            for tab_id, label in tabs:
+                if st.button(label, key=f"nav_{tab_id}", use_container_width=True):
+                    agent.set_tab(tab_id)
+                    st.rerun()
 
-        profile_result = await db.execute(select(BuyerProfileDB).where(BuyerProfileDB.id == payload.applicant_id, BuyerProfileDB.tenant_id == tenant_config.tenant_id))
-        profile = profile_result.scalars().first()
-        if not profile:
-            raise HTTPException(status_code=404, detail="Applicant not found")
-
-        clauses = {"duration": payload.terms.get("duration_months", 12), "rent": payload.terms.get("monthly_rent", 2000)}
-        schedule = {"start_date": "2025-10-01", "payments": [{"date": "2025-11-01", "amount": clauses["rent"]}]}
-        risks = ["Credit check pending"] if "credit_score" not in profile.preferences else []
-
-        lease = LeaseDB(
-            tenant_id=tenant_config.tenant_id,
-            listing_id=payload.listing_id,
-            applicant_id=payload.applicant_id,
-            clauses=clauses,
-            payment_schedule=schedule,
-            risks=risks
+        st.markdown("---")
+        st.markdown(
+            f"""
+            <div style="background:rgba(255,255,255,0.07);border-radius:12px;padding:14px;">
+                <div style="font-size:0.7rem;opacity:0.7;margin-bottom:4px;">{tier['name']} plan</div>
+                <div style="font-weight:700;font-size:0.95rem;">{cfg.client_name}</div>
+                <div style="font-size:0.75rem;opacity:0.65;">{cfg.tenant_id} · {cfg.role}</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
-        db.add(lease)
-        await db.commit()
 
-        await self.log_action(db, tenant_config.tenant_id, "lease_draft_created", {"lease_id": lease.id})
 
-        return LeaseDraft(clauses=clauses, schedule=schedule, risks=risks)
+def render_topbar(agent: WhiteLabelAgent):
+    titles = {
+        "branding": ("Branding & Theme", "Shape how your clients experience the Mwarokin platform under your own identity."),
+        "domain": ("Domain & SSL", "Serve your white-labeled portal from your own web address."),
+        "listings": ("Property Listings", "All active and pending listings synced across your portfolio."),
+        "leases": ("Lease Drafting", "Generate a lease draft instantly for any listing and applicant."),
+        "matchmaking": ("Matchmaking", "Surface the best-fit listings for a given buyer profile."),
+        "api": ("API & Webhooks", "Connect your own systems to the Mwarokin platform."),
+        "plan": ("Plan & Usage", "Review your subscription tier and current usage."),
+    }
+    title, sub = titles[agent.active_tab]
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        st.markdown(f'<div class="main-header">{title}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="sub-header">{sub}</div>', unsafe_allow_html=True)
+    with col2:
+        c1, c2 = st.columns(2)
+        if c1.button("🔄 Refresh", use_container_width=True):
+            agent.fetch_listings()
+            agent.notify("Data refreshed.", "success")
+            st.rerun()
+        if c2.button("🚀 Publish", use_container_width=True, type="primary",
+                     disabled=st.session_state.saving):
+            agent.publish()
+            st.rerun()
 
-    async def log_action(self, db: AsyncSession, tenant_id: str, action: str, details: Dict):
-        redacted_details = {k: "REDACTED" if k in ["name", "address", "dob"] else v for k, v in details.items()}
-        audit_log = AuditLog(tenant_id=tenant_id, action=action, details=redacted_details)
-        db.add(audit_log)
-        await db.commit()
 
-# MatchmakingAgent
-class MatchmakingAgent:
-    async def execute(self, payload: Dict, tenant_config: TenantConfig, db: AsyncSession) -> List[Match]:
-        profile_id = payload.get("profile_id")
-        if not profile_id:
-            raise HTTPException(status_code=400, detail="Profile ID required")
+def render_preview(cfg: Config):
+    t = cfg.theme
+    url = f"{cfg.subdomain or 'yourbrand'}.mwarokinestates.africa"
+    initials = "".join(w[0] for w in (cfg.client_name or "M E").split()[:2]).upper()
+    currency = cfg.currency or "KES"
 
-        profile_result = await db.execute(select(BuyerProfileDB).where(BuyerProfileDB.id == profile_id, BuyerProfileDB.tenant_id == tenant_config.tenant_id))
-        profile = profile_result.scalars().first()
-        if not profile:
-            raise HTTPException(status_code=404, detail="Profile not found")
+    st.markdown(
+        f"""
+        <div class="preview-frame">
+            <div class="preview-browserbar">
+                <span class="preview-dot"></span><span class="preview-dot"></span><span class="preview-dot"></span>
+                <span style="margin-left:8px;color:#555;">🔒 {url}</span>
+            </div>
+            <div class="pv-header" style="background:{t.primary};">
+                <div class="pv-logo">
+                    <div class="pv-logo-badge" style="background:{t.accent};color:{t.primary};">{initials}</div>
+                    <div style="color:#fff;font-weight:600;">{cfg.client_name or 'Your Brand'}</div>
+                </div>
+                <div style="background:{t.secondary};color:#fff;padding:4px 12px;border-radius:999px;font-size:0.75rem;">
+                    Tenant Portal
+                </div>
+            </div>
+            <div class="pv-hero">
+                <span style="background:{t.accent}22;color:{t.secondary};padding:3px 10px;border-radius:999px;font-size:0.7rem;">
+                    Powered by Mwarokin Estates
+                </span>
+                <div style="font-size:1.15rem;font-weight:700;margin:10px 0 4px;color:#1a1a1a;">
+                    Find your next home with {cfg.client_name or 'us'}
+                </div>
+                <div style="font-size:0.8rem;color:#666;margin-bottom:12px;">
+                    Verified listings · Secure payments · Real-time support
+                </div>
+                <span style="background:{t.primary};color:#fff;padding:8px 18px;border-radius:8px;font-size:0.85rem;">
+                    Browse listings
+                </span>
+            </div>
+            <div class="pv-cards">
+                <div class="pv-card" style="border-color:{t.primary};">
+                    <div style="font-weight:600;">2-Bed Apartment</div>
+                    <div style="color:#666;">{currency} 45,000 / mo</div>
+                </div>
+                <div class="pv-card" style="border-color:{t.accent};">
+                    <div style="font-weight:600;">Studio Unit</div>
+                    <div style="color:#666;">{currency} 22,000 / mo</div>
+                </div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
-        listings_result = await db.execute(select(ListingDB).where(ListingDB.tenant_id == tenant_config.tenant_id))
-        listings = listings_result.scalars().all()
 
-        matches = []
-        for listing in listings:
-            score = 1.0  # Placeholder for actual matching logic
-            matches.append(Match(listing_id=listing.id, score=score))
-        return matches
+def render_branding(agent: WhiteLabelAgent):
+    cfg = agent.cfg
+    col_left, col_right = st.columns([1.4, 1])
 
-# FastAPI app
-app = FastAPI()
+    with col_left:
+        with st.container():
+            st.markdown("#### ✍️ Client identity")
+            st.caption("Shown across the portal header, receipts, and notifications.")
+            cfg.client_name = st.text_input("Client / company name", value=cfg.client_name)
+            c1, c2 = st.columns(2)
+            with c1:
+                cfg.locale = st.selectbox(
+                    "Locale",
+                    ["en-KE", "en-NG", "en-GH", "en-ZA", "en-US", "fr-CI"],
+                    index=["en-KE", "en-NG", "en-GH", "en-ZA", "en-US", "fr-CI"].index(cfg.locale),
+                )
+            with c2:
+                cfg.currency = st.selectbox(
+                    "Currency",
+                    ["KES", "NGN", "GHS", "ZAR", "USD"],
+                    index=["KES", "NGN", "GHS", "ZAR", "USD"].index(cfg.currency),
+                )
+            cfg.font_pair = st.selectbox(
+                "Typography pairing",
+                options=[f["id"] for f in FONT_PAIRS],
+                format_func=lambda x: next(f["label"] for f in FONT_PAIRS if f["id"] == x),
+                index=[f["id"] for f in FONT_PAIRS].index(cfg.font_pair),
+            )
 
-@app.get("/whitelabel/theme", response_model=Theme)
-async def get_theme(
-    tenant_config: TenantConfig = Depends(get_tenant_config),
-    db: AsyncSession = Depends(get_db)
-):
+        with st.container():
+            st.markdown("#### 🎨 Colors")
+            st.caption("Pick colors — the preview updates instantly.")
+            c1, c2, c3 = st.columns(3)
+            with c1:
+                cfg.theme.primary = st.color_picker("Primary", cfg.theme.primary)
+            with c2:
+                cfg.theme.secondary = st.color_picker("Secondary", cfg.theme.secondary)
+            with c3:
+                cfg.theme.accent = st.color_picker("Accent", cfg.theme.accent)
+
+        with st.container():
+            st.markdown("#### 📚 Theme presets")
+            st.caption("Start from a curated palette, then fine-tune above.")
+            cols = st.columns(3)
+            for i, p in enumerate(THEME_PRESETS):
+                with cols[i % 3]:
+                    active = (
+                        cfg.theme.primary == p["primary"]
+                        and cfg.theme.secondary == p["secondary"]
+                    )
+                    label = f"{'✓ ' if active else ''}{p['name']}"
+                    if st.button(label, key=f"preset_{p['id']}", use_container_width=True):
+                        agent.apply_preset(p["id"])
+                        st.rerun()
+
+        save_config(cfg)
+
+    with col_right:
+        st.markdown("#### 👁️ Live preview")
+        st.caption(f"This is what {cfg.client_name or 'your'} tenants will see.")
+        render_preview(cfg)
+
+
+def render_domain(agent: WhiteLabelAgent):
+    cfg = agent.cfg
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("#### 🌐 Subdomain")
+        st.caption("Free and instant — included with every plan.")
+        sub = st.text_input(
+            "Choose your subdomain",
+            value=cfg.subdomain,
+            help="Only lowercase letters, numbers and hyphens",
+        )
+        cfg.subdomain = "".join(c for c in sub.lower() if c.isalnum() or c == "-")
+        st.markdown(
+            f'<span class="pill pill-active">✓ Active</span> &nbsp;Live at '
+            f'<code>{cfg.subdomain or "yourbrand"}.mwarokinestates.africa</code>',
+            unsafe_allow_html=True,
+        )
+
+    with col2:
+        st.markdown("#### 🔗 Custom domain")
+        st.caption("Point your own domain at your white-labeled portal.")
+        cfg.custom_domain = st.text_input(
+            "Custom domain",
+            value=cfg.custom_domain,
+            placeholder="e.g. portal.zawadiproperties.co.ke",
+        )
+        st.markdown("Add these DNS records with your domain registrar:")
+        st.code("Type   CNAME\nHost   portal\nValue  cname.mwarokinestates.africa", language=None)
+
+        status = (
+            '<span class="pill pill-active">🛡️ SSL active & verified</span>'
+            if cfg.domain_verified
+            else '<span class="pill" style="background:#fff3cd;color:#856404;">⏳ Awaiting DNS verification</span>'
+        )
+        st.markdown(status, unsafe_allow_html=True)
+        if st.button("Check now"):
+            with st.spinner("Checking DNS records…"):
+                time.sleep(1.6)
+            cfg.domain_verified = True
+            save_config(cfg)
+            agent.notify("Domain verified and SSL issued.", "success")
+            st.rerun()
+
+    save_config(cfg)
+
+
+def render_listings(agent: WhiteLabelAgent):
+    if st.session_state.listings_loading and not st.session_state.listings:
+        agent.fetch_listings()
+
+    st.markdown("#### 🏢 Property listings")
+    st.caption("Synced from your portfolio in real time.")
+
+    if st.session_state.listings_loading:
+        st.info("⏳ Loading listings…")
+    else:
+        listings = st.session_state.listings
+        cols = st.columns(3)
+        for i, l in enumerate(listings):
+            with cols[i % 3]:
+                status_class = "pill-available" if l.status == "available" else "pill-pending"
+                status_label = "Available" if l.status == "available" else "Pending"
+                st.markdown(
+                    f"""
+                    <div class="card" style="position:relative;">
+                        <span class="pill {status_class}" style="position:absolute;top:12px;right:12px;">
+                            {status_label}
+                        </span>
+                        <div style="font-weight:700;color:var(--navy);margin-bottom:4px;">{l.id}</div>
+                        <div style="font-size:0.8rem;color:#666;">Tenant: {l.tenant_id}</div>
+                        <div style="font-weight:600;margin-top:8px;color:var(--navy);">
+                            {agent.cfg.currency} {l.price:,}
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+
+def render_leases(agent: WhiteLabelAgent):
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("#### 📝 Lease draft")
+        st.caption("Generate a lease instantly from a listing and applicant.")
+        with st.form("lease_form"):
+            listing_id = st.text_input("Listing ID", placeholder="e.g. LST001")
+            applicant_id = st.text_input("Applicant ID", placeholder="e.g. APP-2201")
+            submitted = st.form_submit_button("Create lease draft", type="primary", use_container_width=True)
+            if submitted:
+                if not listing_id or not applicant_id:
+                    agent.notify("Both fields are required.", "error")
+                else:
+                    with st.spinner("Creating…"):
+                        result = MockAPI.create_lease_draft(listing_id, applicant_id)
+                    st.session_state.lease_result = result
+                    agent.notify("Lease draft created.", "success")
+                    st.rerun()
+
+    with col2:
+        st.markdown("#### 📜 Draft result")
+        r = st.session_state.lease_result
+        if r:
+            st.markdown(f"**Clauses:** {', '.join(r.clauses)}")
+            st.markdown(f"**Term:** {r.schedule['start_date']} → {r.schedule['end_date']}")
+            st.markdown(f"**Monthly rent:** {agent.cfg.currency} {r.schedule['rent']:,}")
+            st.markdown(f"**Flagged risks:** {', '.join(r.risks)}")
+        else:
+            st.info("Submit the form to generate a lease draft.")
+
+
+def render_matchmaking(agent: WhiteLabelAgent):
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("#### 🤝 Find matches")
+        st.caption("Match a buyer profile against your active listings.")
+        with st.form("match_form"):
+            profile_id = st.text_input("Buyer profile ID", placeholder="e.g. BP001")
+            submitted = st.form_submit_button("Find matches", type="primary", use_container_width=True)
+            if submitted:
+                with st.spinner("Searching…"):
+                    matches = MockAPI.matchmaking()
+                    profile = MockAPI.get_buyer_profile()
+                st.session_state.match_result = matches
+                st.session_state.profile_result = profile
+                agent.notify(f"{len(matches)} matches found.", "success")
+                st.rerun()
+
+        p = st.session_state.profile_result
+        if p:
+            st.markdown("---")
+            prefs = p.preferences
+            st.markdown(
+                f"**Budget:** {agent.cfg.currency} {prefs['min_price']:,}–{prefs['max_price']:,}  \n"
+                f"**Location:** {prefs['location']}  \n"
+                f"**Type:** {prefs['property_type']}  \n"
+                f"**Bedrooms:** {prefs['bedrooms']}"
+            )
+
+    with col2:
+        st.markdown("#### ⭐ Best-fit listings")
+        m = st.session_state.match_result
+        if m:
+            for x in m:
+                st.markdown(
+                    f"""
+                    <div style="display:flex;justify-content:space-between;align-items:center;
+                                padding:11px 14px;background:#f8f7f4;border-radius:10px;margin-bottom:8px;">
+                        <span style="font-weight:700;color:#0e1a2b;">{x.listing_id}</span>
+                        <span class="pill pill-available">{x.score}% match</span>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+        else:
+            st.info("Run a match to see recommended listings.")
+
+
+def render_api(agent: WhiteLabelAgent):
+    cfg = agent.cfg
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("#### 🔑 API key")
+        st.caption("Use this key to authenticate requests from your systems.")
+        masked = cfg.api_key if st.session_state.key_visible else cfg.api_key[:9] + "••••••••••••••••••"
+        st.code(masked, language=None)
+        c1, c2, c3 = st.columns(3)
+        if c1.button("👁️ Toggle"):
+            st.session_state.key_visible = not st.session_state.key_visible
+            st.rerun()
+        if c2.button("📋 Copy"):
+            st.session_state["_copy_key"] = cfg.api_key
+            agent.notify("API key ready (use clipboard in real deployment).", "success")
+        if c3.button("🔄 Regenerate"):
+            agent.regenerate_api_key()
+            st.rerun()
+
+        st.markdown("#### 📡 Webhook URL")
+        st.caption("We'll POST payment and listing events here.")
+        cfg.webhook_url = st.text_input(
+            "Webhook URL",
+            value=cfg.webhook_url,
+            placeholder="https://yourapp.co.ke/webhooks/mwarokin",
+            label_visibility="collapsed",
+        )
+        save_config(cfg)
+
+    with col2:
+        st.markdown("#### 💻 Example request")
+        st.caption("Fetch your active listings from the API.")
+        st.code(
+            f'curl https://api.mwarokinestates.africa/v1/listings \\\n'
+            f'  -H "Authorization: Bearer {cfg.api_key[:9]}••••••••"',
+            language="bash",
+        )
+        st.markdown("#### ⚡ Event types")
+        for evt in ["payment.completed", "lease.created", "listing.updated", "tenant.matched"]:
+            st.markdown(f"✅ `{evt}`")
+
+
+def render_plan(agent: WhiteLabelAgent):
+    cfg = agent.cfg
+    used = {"listings": 5, "api_calls": 1240, "storage": 0.4}
+    tier = next(t for t in PLAN_TIERS if t["id"] == cfg.plan_id)
+
+    st.markdown(f"#### 📈 Current usage — {tier['name']} plan")
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        st.metric("Listings used", f"{used['listings']} / {tier['listings']}")
+        pct = min(100, used["listings"] / tier["listings"] * 100) if isinstance(tier["listings"], int) else 20
+        st.progress(pct / 100)
+    with c2:
+        st.metric("API calls this month", f"{used['api_calls']:,} / {tier['api_calls']}")
+        st.progress(0.35)
+    with c3:
+        st.metric("Storage used", f"{used['storage']} GB / {tier['storage']}")
+        st.progress(0.15)
+
+    st.markdown("---")
+    cols = st.columns(4)
+    for i, t in enumerate(PLAN_TIERS):
+        with cols[i]:
+            is_current = t["id"] == cfg.plan_id
+            st.markdown(f"**{t['name']}**")
+            st.markdown(f"<div style='font-size:1.1rem;font-weight:700;color:#c9a959;'>{t['price']}</div>",
+                        unsafe_allow_html=True)
+            for f in t["features"]:
+                st.markdown(f"• {f}")
+            if is_current:
+                st.button("Active plan", key=f"plan_{t['id']}", disabled=True, use_container_width=True)
+            else:
+                if st.button(f"Switch to {t['name']}", key=f"plan_{t['id']}", use_container_width=True):
+                    agent.switch_plan(t["id"])
+                    st.rerun()
+
+
+# ============================================================
+# MAIN
+# ============================================================
+
+def main():
+    st.set_page_config(
+        page_title="Mwarokin White Label Studio",
+        page_icon="🛡️",
+        layout="wide",
+        initial_sidebar_state="expanded",
+    )
+
     agent = WhiteLabelAgent()
-    return await agent.get_theme(tenant_config, db)
+    inject_css(agent.cfg.theme)
+    render_sidebar(agent)
+    render_topbar(agent)
 
-@app.post("/lease/draft", response_model=LeaseDraft)
-async def create_lease_draft(
-    payload: Dict,
-    tenant_config: TenantConfig = Depends(get_tenant_config),
-    db: AsyncSession = Depends(get_db)
-):
-    agent = LeaseAgent()
-    return await agent.execute(payload, tenant_config, db)
+    tab_map = {
+        "branding": render_branding,
+        "domain": render_domain,
+        "listings": render_listings,
+        "leases": render_leases,
+        "matchmaking": render_matchmaking,
+        "api": render_api,
+        "plan": render_plan,
+    }
+    tab_map[agent.active_tab](agent)
 
-@app.post("/matchmaking", response_model=List[Match])
-async def matchmaking(
-    payload: Dict,
-    tenant_config: TenantConfig = Depends(get_tenant_config),
-    db: AsyncSession = Depends(get_db)
-):
-    agent = MatchmakingAgent()
-    return await agent.execute(payload, tenant_config, db)
-pip install fastapi pydantic sqlalchemy asyncpg
+
+if __name__ == "__main__":
+    main()

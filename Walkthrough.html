@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Mwarokin Estates · Premium Walkthrough</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Syne:wght@500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    :root {
+      --forest: #0d2818;
+      --forest-mid: #1a3d28;
+      --forest-pale: #2e6040;
+      --gold: #c9a84c;
+      --gold-light: #e2c27a;
+      --gold-dim: rgba(201, 168, 76, 0.15);
+      --obsidian: #080f0b;
+      --ivory: #f5f0e8;
+      --ivory-dim: rgba(245, 240, 232, 0.7);
+      --ivory-muted: rgba(245, 240, 232, 0.45);
+      --yt-bg: #0f0f0f;
+      --yt-panel: #181818;
+      --yt-line: #2c2c2c;
+      --yt-text: #f1f1f1;
+      --yt-sub: #aaaaaa;
+      --success: #4caf7d;
+      --warning: #e8a838;
+      --info: #4a9ebb;
+      --shadow-soft: 0 20px 60px rgba(0, 0, 0, 0.6);
+    }
+    body {
+      background: var(--yt-bg);
+      color: var(--yt-text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      padding: 20px 16px 40px;
+      overflow-x: hidden;
+    }
+    #ytPage {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .top-bar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--yt-line);
+    }
+    .top-bar .brand {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.04em;
+      color: var(--gold-light);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .top-bar .brand i {
+      color: var(--gold);
+      font-size: 1.2rem;
+    }
+    .top-bar .spacer {
+      flex: 1;
+    }
+    .lang-selector {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--yt-panel);
+      border: 1px solid var(--yt-line);
+      border-radius: 50px;
+      padding: 4px 8px 4px 14px;
+      font-size: 0.72rem;
+      color: var(--yt-sub);
+      cursor: pointer;
+      transition: border 0.2s ease;
+      position: relative;
+    }
+    .lang-selector:hover {
+      border-color: var(--gold-dim);
+    }
+    .lang-selector .flag {
+      font-size: 1rem;
+      line-height: 1;
+    }
+    .lang-selector .arrow {
+      font-size: 0.6rem;
+      margin-left: 4px;
+      color: var(--yt-sub);
+    }
+    .lang-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: var(--yt-panel);
+      border: 1px solid var(--yt-line);
+      border-radius: 12px;
+      padding: 8px 0;
+      min-width: 160px;
+      display: none;
+      z-index: 20;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7);
+    }
+    .lang-dropdown.open {
+      display: block;
+    }
+    .lang-dropdown .l-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 18px;
+      font-size: 0.78rem;
+      color: var(--yt-text);
+      cursor: pointer;
+      transition: background 0.12s ease;
+    }
+    .lang-dropdown .l-item:hover {
+      background: var(--gold-dim);
+      color: var(--gold-light);
+    }
+    .lang-dropdown .l-item.active {
+      background: var(--gold-dim);
+      color: var(--gold-light);
+    }
+    .badge-premium {
+      background: var(--gold-dim);
+      border: 1px solid rgba(201, 168, 76, 0.3);
+      border-radius: 50px;
+      padding: 4px 14px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+    }
+    .yt-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width:1024px) {
+      .yt-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    .player-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #000;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--yt-line);
+    }
+    .scene {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      background: radial-gradient(circle at 30% 20%, var(--forest-mid), var(--forest) 55%, var(--obsidian) 100%);
+      padding: 4% 6%;
+      will-change: opacity;
+    }
+    .scene.active {
+      opacity: 1;
+      z-index: 2;
+    }
+    .chip {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: var(--gold-dim);
+      border: 1px solid rgba(201, 168, 76, 0.25);
+      padding: 5px 16px;
+      border-radius: 50px;
+      margin-bottom: 12px;
+    }
+    .scene-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      color: var(--ivory);
+      font-size: clamp(1.2rem, 3.2vw, 2.5rem);
+      line-height: 1.15;
+      margin-bottom: 6px;
+    }
+    .scene-title em {
+      color: var(--gold-light);
+      font-style: italic;
+    }
+    .scene-sub {
+      color: var(--ivory-muted);
+      font-size: clamp(0.7rem, 1.3vw, 0.95rem);
+      max-width: 540px;
+    }
+    .logo-badge {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--forest);
+      font-size: 1.6rem;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 30px rgba(201, 168, 76, 0.35);
+    }
+    .mini-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 16px;
+    }
+    .mini-stat {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(201, 168, 76, 0.2);
+      border-radius: 10px;
+      padding: 10px 16px;
+      min-width: 72px;
+    }
+    .mini-stat b {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--gold-light);
+      font-size: 1.3rem;
+    }
+    .mini-stat span {
+      font-size: 0.55rem;
+      color: var(--ivory-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .mini-card {
+      background: var(--forest-mid);
+      border: 1px solid rgba(201, 168, 76, 0.15);
+      border-radius: 10px;
+      padding: 12px 14px;
+      min-width: 110px;
+      text-align: left;
+      position: relative;
+    }
+    .mini-card .type {
+      color: var(--gold);
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .mini-card .amt {
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--ivory);
+      font-size: 1.1rem;
+    }
+    .mini-card .badge {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 0.5rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .b-paid {
+      background: rgba(76, 175, 125, 0.18);
+      color: var(--success);
+    }
+    .b-pending {
+      background: rgba(232, 168, 56, 0.18);
+      color: var(--warning);
+    }
+    .method-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .method {
+      width: 48px;
+      height: 42px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(201, 168, 76, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ivory-muted);
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+    }
+    .method.on {
+      background: var(--gold-dim);
+      border-color: var(--gold);
+      color: var(--gold-light);
+      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.12);
+    }
+    .confirm-pill {
+      margin-top: 14px;
+      background: linear-gradient(135deg, var(--gold), #b8924a);
+      color: var(--forest);
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 8px 22px;
+      border-radius: 50px;
+      animation: pulseBtn 1.6s ease infinite;
+    }
+    @keyframes pulseBtn {
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(201, 168, 76, 0.35);
+      }
+      50% {
+        box-shadow: 0 0 0 8px rgba(201, 168, 76, 0);
+      }
+    }
+    .doc-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(201, 168, 76, 0.1);
+      border-radius: 8px;
+      padding: 8px 14px;
+      min-width: 200px;
+      text-align: left;
+      margin-bottom: 6px;
+    }
+    .doc-row i {
+      color: var(--info);
+      width: 18px;
+      text-align: center;
+    }
+    .doc-row .n {
+      font-size: 0.78rem;
+      color: var(--ivory);
+      font-weight: 600;
+    }
+    .doc-row .m {
+      font-size: 0.6rem;
+      color: var(--ivory-muted);
+    }
+    .chat-mock {
+      display: flex;
+      flex-direction: column;
+      width: 260px;
+      margin: 12px auto 0;
+    }
+    .bubble {
+      max-width: 230px;
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      text-align: left;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+    .bubble.a {
+      background: var(--forest-mid);
+      border: 1px solid rgba(201, 168, 76, 0.12);
+      color: var(--ivory-dim);
+      align-self: flex-start;
+      border-bottom-left-radius: 3px;
+    }
+    .bubble.b {
+      background: linear-gradient(135deg, var(--forest-pale), var(--forest-mid));
+      border: 1px solid rgba(201, 168, 76, 0.2);
+      color: var(--ivory);
+      align-self: flex-end;
+      border-bottom-right-radius: 3px;
+      margin-left: auto;
+    }
+    .sb-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-top: 14px;
+      width: 200px;
+    }
+    .sb-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.2);
+      border-left: 2px solid transparent;
+      border-radius: 6px;
+      padding: 7px 12px;
+      font-size: 0.72rem;
+      color: var(--ivory-muted);
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+    .sb-item i {
+      color: var(--gold);
+      width: 16px;
+      text-align: center;
+      font-size: 0.8rem;
+    }
+    .sb-item.on {
+      border-left-color: var(--gold);
+      background: var(--gold-dim);
+      color: var(--gold-light);
+    }
+    .cta-pill {
+      margin-top: 16px;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold-light);
+      font-weight: 600;
+      font-size: 0.75rem;
+      padding: 8px 22px;
+      border-radius: 50px;
+      cursor: default;
+    }
+    .sign-avatar {
+      position: absolute;
+      bottom: 80px;
+      left: 16px;
+      z-index: 7;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #2a1f1a, #1a1210);
+      border: 2px solid rgba(201, 168, 76, 0.4);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      cursor: default;
+      animation: floatSign 3s ease-in-out infinite;
+      overflow: hidden;
+    }
+    .sign-avatar .sign-emoji {
+      font-size: 2rem;
+      line-height: 1;
+      filter: drop-shadow(0 2px 8px rgba(201, 168, 76, 0.2));
+      animation: signMove 1.8s ease-in-out infinite alternate;
+    }
+    @keyframes floatSign {
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-4px);
+      }
+    }
+    @keyframes signMove {
+      0% {
+        transform: rotate(-6deg) scale(1);
+      }
+      100% {
+        transform: rotate(6deg) scale(1.06);
+      }
+    }
+    .sign-avatar .pulse-ring {
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(201, 168, 76, 0.15);
+      animation: ringPulse 2.4s ease-out infinite;
+    }
+    @keyframes ringPulse {
+      0% {
+        transform: scale(1);
+        opacity: 0.8;
+      }
+      100% {
+        transform: scale(1.5);
+        opacity: 0;
+      }
+    }
+    .cc-box {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 72px;
+      z-index: 4;
+      display: flex;
+      justify-content: center;
+      padding: 0 5%;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .cc-box span {
+      background: rgba(0, 0, 0, 0.72);
+      color: #fff;
+      font-size: clamp(0.7rem, 1.4vw, 0.95rem);
+      font-weight: 500;
+      padding: 6px 16px;
+      border-radius: 4px;
+      line-height: 1.5;
+      max-width: 80%;
+      text-align: center;
+      backdrop-filter: blur(2px);
+    }
+    .cc-box.off {
+      opacity: 0;
+    }
+    .big-play {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      transition: opacity 0.25s ease;
+    }
+    .big-play.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .big-play .circle {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(201, 168, 76, 0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--forest);
+      font-size: 1.5rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      transition: transform 0.2s ease;
+    }
+    .big-play:hover .circle {
+      transform: scale(1.08);
+    }
+    .controls-bar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 6;
+      padding: 10px 14px 12px;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0));
+    }
+    .progress-track {
+      position: relative;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+    .progress-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 0%;
+      background: var(--gold);
+      border-radius: 2px;
+    }
+    .progress-dot {
+      position: absolute;
+      top: 50%;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--gold);
+      transform: translate(-50%, -50%);
+      left: 0%;
+      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.2);
+    }
+    .chapter-tick {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: rgba(0, 0, 0, 0.5);
+    }
+    .ctrl-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .ctrl-btn {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 0.95rem;
+      cursor: pointer;
+      opacity: 0.9;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      display: flex;
+      align-items: center;
+      padding: 4px;
+    }
+    .ctrl-btn:hover {
+      opacity: 1;
+      transform: scale(1.08);
+    }
+    .time-text {
+      font-size: 0.7rem;
+      color: #ddd;
+      font-variant-numeric: tabular-nums;
+    }
+    .spacer {
+      flex: 1;
+    }
+    .cc-btn.on {
+      color: var(--gold-light);
+    }
+    .vid-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin: 14px 0 4px;
+      letter-spacing: 0.01em;
+    }
+    .vid-meta {
+      color: var(--yt-sub);
+      font-size: 0.78rem;
+      margin-bottom: 12px;
+    }
+    .actions-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--yt-line);
+    }
+    .pill-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--yt-panel);
+      border: 1px solid var(--yt-line);
+      color: var(--yt-text);
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .pill-btn:hover {
+      background: #242424;
+    }
+    .pill-btn.gold {
+      background: var(--gold-dim);
+      border-color: rgba(201, 168, 76, 0.35);
+      color: var(--gold-light);
+    }
+    .pill-btn i.fa-heart.liked {
+      color: var(--gold-light);
+    }
+    .channel-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .ch-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--forest-pale));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--forest);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    .ch-name {
+      font-weight: 600;
+      font-size: 0.88rem;
+    }
+    .ch-sub {
+      font-size: 0.7rem;
+      color: var(--yt-sub);
+    }
+    .sub-pill {
+      margin-left: auto;
+      background: var(--gold);
+      color: var(--forest);
+      font-weight: 700;
+      font-size: 0.72rem;
+      padding: 6px 16px;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .sub-pill:hover {
+      transform: scale(1.04);
+    }
+    .desc-box {
+      background: var(--yt-panel);
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 0.8rem;
+      color: var(--ivory-dim);
+      line-height: 1.6;
+    }
+    .desc-box strong {
+      color: var(--yt-text);
+    }
+    .desc-box ul {
+      margin: 6px 0 0 18px;
+    }
+    .desc-box li {
+      margin-bottom: 3px;
+    }
+    .up-next-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--yt-sub);
+      margin-bottom: 12px;
+    }
+    .up-item {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      border-radius: 8px;
+      padding: 6px;
+      transition: background 0.15s ease;
+    }
+    .up-item:hover {
+      background: var(--yt-panel);
+    }
+    .up-thumb {
+      width: 112px;
+      height: 66px;
+      border-radius: 8px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: var(--gold);
+      background: linear-gradient(135deg, var(--forest-mid), var(--obsidian));
+      border: 1px solid var(--yt-line);
+      position: relative;
+    }
+    .up-thumb span {
+      position: absolute;
+      bottom: 3px;
+      right: 4px;
+      background: rgba(0, 0, 0, 0.8);
+      font-size: 0.55rem;
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+    .up-info .t {
+      font-size: 0.8rem;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 2px;
+    }
+    .up-info .m {
+      font-size: 0.7rem;
+      color: var(--yt-sub);
+    }
+    .up-item.playing .up-thumb {
+      border-color: var(--gold);
+    }
+    .up-item.playing .t {
+      color: var(--gold-light);
+    }
+    .app-mirror {
+      background: var(--yt-panel);
+      border-radius: 14px;
+      border: 1px solid var(--yt-line);
+      padding: 16px;
+      margin-top: 16px;
+    }
+    .app-mirror .mirror-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--yt-sub);
+      margin-bottom: 10px;
+    }
+    .app-mirror .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 10px;
+    }
+    .app-mirror .f-item {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--yt-line);
+      border-radius: 8px;
+      padding: 12px 10px;
+      text-align: center;
+      transition: border 0.2s ease;
+    }
+    .app-mirror .f-item i {
+      color: var(--gold);
+      font-size: 1.2rem;
+      margin-bottom: 4px;
+      display: block;
+    }
+    .app-mirror .f-item span {
+      font-size: 0.62rem;
+      color: var(--ivory-muted);
+    }
+    .app-mirror .f-item.active {
+      border-color: var(--gold);
+      background: var(--gold-dim);
+    }
+    .ad-card {
+      margin-top: 18px;
+      background: var(--yt-panel);
+      border-radius: 12px;
+      border: 1px solid var(--yt-line);
+      padding: 14px;
+      text-align: center;
+    }
+    .ad-card .sponsor {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--yt-sub);
+      margin-bottom: 6px;
+    }
+    .ad-card .ad-inner {
+      background: linear-gradient(135deg, var(--forest-mid), var(--forest));
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .ad-card .ad-inner i {
+      color: var(--gold);
+      font-size: 1.4rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .ad-card .ad-inner .title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      color: var(--gold-light);
+    }
+    .ad-card .ad-inner .sub {
+      font-size: 0.6rem;
+      color: var(--ivory-muted);
+    }
+    .ad-card .ad-inner .meta {
+      margin-top: 8px;
+      font-size: 0.55rem;
+      color: var(--gold-dim);
+      border-top: 1px solid rgba(201, 168, 76, 0.1);
+      padding-top: 6px;
+    }
+    @media (max-width:600px) {
+      .top-bar .brand {
+        font-size: 0.95rem;
+      }
+      .top-bar .badge-premium {
+        display: none;
+      }
+      .actions-row {
+        font-size: 0.7rem;
+      }
+      .sign-avatar {
+        width: 48px;
+        height: 48px;
+        bottom: 68px;
+        left: 8px;
+        font-size: 1.3rem;
+      }
+      .sign-avatar .sign-emoji {
+        font-size: 1.5rem;
+      }
+      .up-thumb {
+        width: 80px;
+        height: 50px;
+      }
+      .cc-box span {
+        font-size: 0.65rem;
+        padding: 4px 10px;
+        max-width: 92%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="ytPage">
+    <div class="top-bar">
+      <div class="brand"><i class="fas fa-city"></i>Mwarokin <span style="font-weight:400;color:var(--gold);">Estates</span></div>
+      <span class="badge-premium"><i class="fas fa-crown" style="margin-right:4px;"></i>Premium Walkthrough</span>
+      <div class="spacer"></div>
+      <div class="lang-selector" id="langSelector">
+        <span class="flag" id="currentFlag">🇬🇧</span>
+        <span id="currentLangLabel">English</span>
+        <span class="arrow"><i class="fas fa-chevron-down"></i></span>
+        <div class="lang-dropdown" id="langDropdown">
+          <div class="l-item active" data-lang="en" data-flag="🇬🇧"><span class="flag">🇬🇧</span> English</div>
+          <div class="l-item" data-lang="sw" data-flag="🇰🇪"><span class="flag">🇰🇪</span> Kiswahili</div>
+          <div class="l-item" data-lang="es" data-flag="🇪🇸"><span class="flag">🇪🇸</span> Español</div>
+          <div class="l-item" data-lang="fr" data-flag="🇫🇷"><span class="flag">🇫🇷</span> Français</div>
+          <div class="l-item" data-lang="it" data-flag="🇮🇹"><span class="flag">🇮🇹</span> Italiano</div>
+          <div class="l-item" data-lang="pt" data-flag="🇵🇹"><span class="flag">🇵🇹</span> Português</div>
+          <div class="l-item" data-lang="de" data-flag="🇩🇪"><span class="flag">🇩🇪</span> Deutsch</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="yt-layout">
+      <div>
+        <div class="player-wrap" id="playerWrap">
+          <!-- scenes -->
+          <div class="scene active" data-scene="0"><div class="logo-badge"><i class="fas fa-city"></i></div><div class="chip">Tenant Onboarding</div><h2 class="scene-title">Welcome to <em>Mwarokin Estates</em></h2><p class="scene-sub">Your entire home, in one app. A complete walkthrough for new tenants.</p></div>
+          <div class="scene" data-scene="1"><div class="chip">Your Dashboard</div><h2 class="scene-title">Karibu, <em>Tenant</em></h2><p class="scene-sub">Unit A-304 · Mwarokin Estates, Nairobi</p><div class="mini-row"><div class="mini-stat"><b>KES</b><span>Currency</span></div><div class="mini-stat"><b>15</b><span>Days to Due</span></div><div class="mini-stat"><b>2</b><span>Open Requests</span></div><div class="mini-stat"><b>A-304</b><span>Your Unit</span></div></div></div>
+          <div class="scene" data-scene="2"><div class="chip">Bill Management</div><h2 class="scene-title">All your bills, <em>at a glance</em></h2><div class="mini-row"><div class="mini-card"><span class="badge b-paid">Paid</span><i class="fas fa-home type"></i><div class="amt">KSh 1,250</div><div style="font-size:0.58rem;color:var(--ivory-muted);">Rent</div></div><div class="mini-card"><span class="badge b-pending">Pending</span><i class="fas fa-bolt type"></i><div class="amt">KSh 85</div><div style="font-size:0.58rem;color:var(--ivory-muted);">Electricity</div></div><div class="mini-card"><span class="badge b-pending">Pending</span><i class="fas fa-tint type"></i><div class="amt">KSh 45</div><div style="font-size:0.58rem;color:var(--ivory-muted);">Water</div></div><div class="mini-card"><span class="badge b-paid">Paid</span><i class="fas fa-wifi type"></i><div class="amt">KSh 32</div><div style="font-size:0.58rem;color:var(--ivory-muted);">Internet</div></div></div></div>
+          <div class="scene" data-scene="3"><div class="chip">Secure Checkout</div><h2 class="scene-title">Pay in <em>one tap</em></h2><p class="scene-sub">M-Pesa, Airtel Money, bank transfer, or card — powered by SylloPay.</p><div class="method-row"><div class="method on"><i class="fas fa-mobile-alt"></i></div><div class="method"><i class="fas fa-sim-card"></i></div><div class="method"><i class="fas fa-university"></i></div><div class="method"><i class="fas fa-credit-card"></i></div></div><div class="confirm-pill">Confirm & Pay Securely</div></div>
+          <div class="scene" data-scene="4"><div class="chip">Maintenance</div><h2 class="scene-title">Report an issue <em>in seconds</em></h2><p class="scene-sub">Pick the issue type, the room, and how urgent it is — our team takes it from there.</p><div class="mini-row" style="margin-top:12px;"><div class="doc-row" style="min-width:230px;"><i class="fas fa-faucet"></i><div><div class="n">Kitchen Sink Leak</div><div class="m">In progress · submitted Sep 12</div></div></div></div></div>
+          <div class="scene" data-scene="5"><div class="chip">My Documents</div><h2 class="scene-title">Every document, <em>on hand</em></h2><div style="margin-top:8px;"><div class="doc-row"><i class="fas fa-file-pdf"></i><div><div class="n">Lease Agreement</div><div class="m">PDF · Jan 15, 2024</div></div></div><div class="doc-row"><i class="fas fa-file-alt"></i><div><div class="n">Community Guidelines</div><div class="m">PDF · Mar 10, 2024</div></div></div><div class="doc-row"><i class="fas fa-shield-alt"></i><div><div class="n">Security & Access Rules</div><div class="m">PDF · Apr 2, 2024</div></div></div></div></div>
+          <div class="scene" data-scene="6"><div class="chip">Direct Communication</div><h2 class="scene-title">Message management <em>directly</em></h2><div class="chat-mock"><div class="bubble a">Your kitchen sink repair is confirmed for tomorrow at 10 AM.</div><div class="bubble b">Asante sana! Will they need unit access?</div><div class="bubble a">Yes — please be home, or leave a spare key at reception.</div></div></div>
+          <div class="scene" data-scene="7"><div class="chip">Sidebar Menu</div><h2 class="scene-title">Everything else, <em>one tap away</em></h2><div class="sb-list"><div class="sb-item on"><i class="fas fa-user"></i>My Profile</div><div class="sb-item"><i class="fas fa-parking"></i>Smart Parking</div><div class="sb-item"><i class="fas fa-lock"></i>Gate Security</div><div class="sb-item"><i class="fas fa-sliders-h"></i>Settings</div></div></div>
+          <div class="scene" data-scene="8"><div class="logo-badge"><i class="fas fa-leaf"></i></div><h2 class="scene-title">That's <em>Mwarokin Estates</em></h2><p class="scene-sub">Karibu — welcome home. Start exploring your app today.</p><div class="cta-pill">Open the Tenant App</div></div>
+
+          <div class="sign-avatar" id="signAvatar"><div class="pulse-ring"></div><span class="sign-emoji" id="signEmoji">🤟</span><span class="label">Sign Language</span></div>
+          <div class="cc-box" id="ccBox"><span id="ccText">Welcome to Mwarokin Estates.</span></div>
+          <div class="big-play" id="bigPlay"><div class="circle"><i class="fas fa-play"></i></div></div>
+          <div class="controls-bar">
+            <div class="progress-track" id="progressTrack"><div class="progress-fill" id="progressFill"></div><div class="progress-dot" id="progressDot"></div></div>
+            <div class="ctrl-row">
+              <button class="ctrl-btn" id="playBtn"><i class="fas fa-play"></i></button>
+              <button class="ctrl-btn" id="muteBtn"><i class="fas fa-volume-up"></i></button>
+              <span class="time-text"><span id="curTime">0:00</span> / <span id="durTime">0:00</span></span>
+              <div class="spacer"></div>
+              <button class="ctrl-btn cc-btn on" id="ccBtn"><i class="fas fa-closed-captioning"></i></button>
+              <button class="ctrl-btn" id="fsBtn"><i class="fas fa-expand"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <h1 class="vid-title">How to Use Mwarokin Estates — Tenant App Walkthrough</h1>
+        <p class="vid-meta">Onboarding guide · New tenant essentials · 5 min cinematic tour</p>
+
+        <div class="actions-row">
+          <button class="pill-btn gold" id="likeBtn"><i class="fas fa-heart"></i> Helpful</button>
+          <button class="pill-btn"><i class="fas fa-share"></i> Share</button>
+          <button class="pill-btn"><i class="fas fa-bookmark"></i> Save</button>
+          <button class="pill-btn" id="replayBtn"><i class="fas fa-redo"></i> Replay</button>
+        </div>
+
+        <div class="channel-row">
+          <div class="ch-avatar">ME</div>
+          <div><div class="ch-name">Mwarokin Estates</div><div class="ch-sub">Official Tenant Support · Premium Real Estate</div></div>
+          <button class="sub-pill">Get Support</button>
+        </div>
+
+        <div class="desc-box">
+          <strong>What this guide covers — end to end:</strong>
+          <ul>
+            <li><strong>Dashboard:</strong> Your unit, days to rent due, open requests at a glance</li>
+            <li><strong>Bill Management:</strong> Rent, electricity, water & internet — paid or pending</li>
+            <li><strong>Secure Checkout:</strong> M-Pesa, Airtel Money, bank transfer, or card via SylloPay</li>
+            <li><strong>Maintenance:</strong> Submit and track repair requests in seconds</li>
+            <li><strong>My Documents:</strong> Lease, community guidelines, security rules — always accessible</li>
+            <li><strong>Direct Communication:</strong> Real chat with management — fast responses</li>
+            <li><strong>Sidebar Menu:</strong> Profile, Smart Parking, Gate Security, Settings & more</li>
+          </ul>
+          <div style="margin-top:8px;font-size:0.7rem;color:var(--yt-sub);">
+            <i class="fas fa-language" style="margin-right:6px;"></i> Available in English, Kiswahili, Español, Français, Italiano, Português, Deutsch
+          </div>
+        </div>
+
+        <!-- App UI Mirror -->
+        <div class="app-mirror" id="appMirror">
+          <div class="mirror-title"><i class="fas fa-mobile-alt" style="margin-right:6px;"></i> Mwarokin Estates — All Features</div>
+          <div class="feature-grid">
+            <div class="f-item active"><i class="fas fa-chart-pie"></i><span>Dashboard</span></div>
+            <div class="f-item"><i class="fas fa-file-invoice-dollar"></i><span>Bills</span></div>
+            <div class="f-item"><i class="fas fa-credit-card"></i><span>Payments</span></div>
+            <div class="f-item"><i class="fas fa-tools"></i><span>Maintenance</span></div>
+            <div class="f-item"><i class="fas fa-folder-open"></i><span>Documents</span></div>
+            <div class="f-item"><i class="fas fa-comment-dots"></i><span>Messages</span></div>
+            <div class="f-item"><i class="fas fa-user"></i><span>Profile</span></div>
+            <div class="f-item"><i class="fas fa-parking"></i><span>Parking</span></div>
+            <div class="f-item"><i class="fas fa-lock"></i><span>Security</span></div>
+            <div class="f-item"><i class="fas fa-sliders-h"></i><span>Settings</span></div>
+            <div class="f-item"><i class="fas fa-bullhorn"></i><span>Ads & Offers</span></div>
+            <div class="f-item"><i class="fas fa-chart-line"></i><span>Analytics</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar / Up Next -->
+      <div>
+        <div class="up-next-title"><i class="fas fa-list-ul" style="margin-right:8px;"></i>Chapters</div>
+        <div class="up-item" data-jump="1"><div class="up-thumb"><i class="fas fa-chart-pie"></i><span>0:08</span></div><div class="up-info"><div class="t">Your Dashboard</div><div class="m">Unit, days due, requests</div></div></div>
+        <div class="up-item" data-jump="2"><div class="up-thumb"><i class="fas fa-file-invoice-dollar"></i><span>0:16</span></div><div class="up-info"><div class="t">Paying Your Bills</div><div class="m">Rent, utilities & more</div></div></div>
+        <div class="up-item" data-jump="3"><div class="up-thumb"><i class="fas fa-mobile-alt"></i><span>0:22</span></div><div class="up-info"><div class="t">Secure Checkout</div><div class="m">M-Pesa, Airtel, Card</div></div></div>
+        <div class="up-item" data-jump="4"><div class="up-thumb"><i class="fas fa-tools"></i><span>0:28</span></div><div class="up-info"><div class="t">Maintenance Requests</div><div class="m">Get help fast</div></div></div>
+        <div class="up-item" data-jump="5"><div class="up-thumb"><i class="fas fa-folder-open"></i><span>0:34</span></div><div class="up-info"><div class="t">My Documents</div><div class="m">Lease, guidelines, security</div></div></div>
+        <div class="up-item" data-jump="6"><div class="up-thumb"><i class="fas fa-comment-dots"></i><span>0:40</span></div><div class="up-info"><div class="t">Direct Communication</div><div class="m">Chat with management</div></div></div>
+        <div class="up-item" data-jump="7"><div class="up-thumb"><i class="fas fa-bars"></i><span>0:46</span></div><div class="up-info"><div class="t">Sidebar Menu</div><div class="m">Profile, parking, security</div></div></div>
+        <div class="up-item" data-jump="8"><div class="up-thumb"><i class="fas fa-leaf"></i><span>0:53</span></div><div class="up-info"><div class="t">Welcome Home</div><div class="m">Start exploring</div></div></div>
+
+        <!-- Ad / Marketing -->
+        <div class="ad-card">
+          <div class="sponsor">Sponsored</div>
+          <div class="ad-inner">
+            <i class="fas fa-home"></i>
+            <div class="title">Mwarokin Estates</div>
+            <div class="sub">Premium living in Nairobi</div>
+            <div class="meta"><i class="fas fa-check-circle" style="color:var(--success);"></i> 24/7 Security · <i class="fas fa-wifi" style="color:var(--info);"></i> Fiber Internet</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const scenes = [
+        { caption: "Welcome to Mwarokin Estates — your entire home, in one app. A complete walkthrough for new tenants." },
+        { caption: "Your dashboard shows your unit, days until rent is due, and any open requests at a glance." },
+        { caption: "Scroll to Bill Management to see rent, electricity, water, and internet — each with its status." },
+        { caption: "Tap Pay Now to open secure checkout. Choose M-Pesa, Airtel Money, bank transfer, or card, then confirm." },
+        { caption: "Need a repair? Submit a maintenance request in seconds — pick the issue, room, and urgency." },
+        { caption: "Your Documents card keeps your lease, community guidelines, and policies always within reach." },
+        { caption: "Message management directly from Direct Communication — real people, real replies, usually within two hours." },
+        { caption: "Everything else — your profile, parking, and security — lives in the sidebar menu, one tap away." },
+        { caption: "That's Mwarokin Estates. Karibu — welcome home. Start exploring your app today." }
+      ];
+
+      const translations = {
+        en: scenes.map(s => s.caption),
+        sw: ["Karibu Mwarokin Estates — nyumba yako yote, katika programu moja. Maelezo kamili kwa wapangaji wapya.", "Dashibodi yako inaonyesha kitengo chako, siku zilizobaki kwa kodi, na maombi yaliyofunguliwa kwa mtazamo.", "Tembeza hadi Usimamizi wa Bili kuona kodi, umeme, maji, na mtandao — kila moja ikiwa na hali yake.", "Bonyeza Lipa Sasa kufungua malipo salama. Chagua M-Pesa, Airtel Money, uhamisho wa benki, au kadi, kisha thibitisha.", "Unahitaji ukarabati? Tuma ombi la matengenezo kwa sekunde — chagua tatizo, chumba, na uharaka.", "Kadi ya Nyaraka zako huweka makubaliano yako ya kukodisha, miongozo ya jamii, na sheria za usalama karibu nawe.", "Tuma ujumbe kwa usimamizi moja kwa moja kupitia Mawasiliano ya Moja kwa Moja — watu halisi, majibu halisi, ndani ya saa mbili.", "Kila kitu kingine — wasifu wako, maegesho, na usalama — kiko kwenye menyu ya kando, kwa kugusa moja.", "Hiyo ndiyo Mwarokin Estates. Karibu — nyumbani. Anza kuchunguza programu yako leo."],
+        es: ["Bienvenido a Mwarokin Estates — tu hogar completo, en una sola aplicación. Un recorrido completo para nuevos inquilinos.", "Tu tablero muestra tu unidad, los días hasta que venza el alquiler y las solicitudes abiertas de un vistazo.", "Desplázate hasta Gestión de Facturas para ver alquiler, electricidad, agua e internet — cada uno con su estado.", "Toca Pagar Ahora para abrir el pago seguro. Elige M-Pesa, Airtel Money, transferencia bancaria o tarjeta, luego confirma.", "¿Necesitas una reparación? Envía una solicitud de mantenimiento en segundos — elige el problema, la habitación y la urgencia.", "Tu tarjeta de Documentos mantiene tu contrato de arrendamiento, pautas comunitarias y reglas de seguridad siempre a mano.", "Envía mensajes a la administración directamente desde Comunicación Directa — personas reales, respuestas reales, en dos horas.", "Todo lo demás — tu perfil, estacionamiento y seguridad — está en el menú lateral, con un toque.", "Eso es Mwarokin Estates. Bienvenido a casa. Comienza a explorar tu aplicación hoy."],
+        fr: ["Bienvenue à Mwarokin Estates — votre maison entière, dans une seule application. Une visite complète pour les nouveaux locataires.", "Votre tableau de bord affiche votre unité, les jours avant l'échéance du loyer et les demandes ouvertes en un coup d'œil.", "Faites défiler vers Gestion des factures pour voir le loyer, l'électricité, l'eau et internet — chacun avec son statut.", "Appuyez sur Payer maintenant pour ouvrir le paiement sécurisé. Choisissez M-Pesa, Airtel Money, virement bancaire ou carte, puis confirmez.", "Besoin d'une réparation ? Soumettez une demande de maintenance en quelques secondes — choisissez le problème, la pièce et l'urgence.", "Votre carte Documents garde votre bail, les directives communautaires et les règles de sécurité toujours à portée de main.", "Envoyez un message à la direction directement depuis Communication Directe — de vraies personnes, de vraies réponses, en deux heures.", "Tout le reste — votre profil, stationnement et sécurité — se trouve dans le menu latéral, en un seul clic.", "Voilà Mwarokin Estates. Bienvenue chez vous. Commencez à explorer votre application dès aujourd'hui."],
+        it: ["Benvenuto a Mwarokin Estates — tutta la tua casa, in un'unica app. Una guida completa per i nuovi inquilini.", "La tua dashboard mostra la tua unità, i giorni fino alla scadenza dell'affitto e le richieste aperte a colpo d'occhio.", "Scorri fino a Gestione Bollette per vedere affitto, elettricità, acqua e internet — ciascuno con il suo stato.", "Tocca Paga Ora per aprire il pagamento sicuro. Scegli M-Pesa, Airtel Money, bonifico bancario o carta, poi conferma.", "Hai bisogno di una riparazione? Invia una richiesta di manutenzione in secondi — scegli il problema, la stanza e l'urgenza.", "La tua scheda Documenti tiene sempre a portata di mano il contratto di locazione, le linee guida della comunità e le regole di sicurezza.", "Invia un messaggio alla direzione direttamente da Comunicazione Diretta — persone reali, risposte reali, in due ore.", "Tutto il resto — il tuo profilo, parcheggio e sicurezza — si trova nel menu laterale, con un tocco.", "Questo è Mwarokin Estates. Benvenuto a casa. Inizia a esplorare la tua app oggi."],
+        pt: ["Bem-vindo ao Mwarokin Estates — toda a sua casa, em um único aplicativo. Um tour completo para novos inquilinos.", "Seu painel mostra sua unidade, dias até o vencimento do aluguel e solicitações abertas de relance.", "Role até Gerenciamento de Contas para ver aluguel, eletricidade, água e internet — cada um com seu status.", "Toque em Pagar Agora para abrir o pagamento seguro. Escolha M-Pesa, Airtel Money, transferência bancária ou cartão, depois confirme.", "Precisa de um reparo? Envie uma solicitação de manutenção em segundos — escolha o problema, o cômodo e a urgência.", "Seu cartão de Documentos mantém seu contrato de aluguel, diretrizes comunitárias e regras de segurança sempre à mão.", "Envie uma mensagem para a administração diretamente do Comunicação Direta — pessoas reais, respostas reais, em duas horas.", "Todo o resto — seu perfil, estacionamento e segurança — está no menu lateral, com um toque.", "Isso é Mwarokin Estates. Bem-vindo ao lar. Comece a explorar seu aplicativo hoje."],
+        de: ["Willkommen bei Mwarokin Estates — Ihr ganzes Zuhause in einer App. Eine vollständige Einführung für neue Mieter.", "Ihr Dashboard zeigt Ihre Einheit, die Tage bis zur Mietfälligkeit und offene Anfragen auf einen Blick.", "Scrollen Sie zu Rechnungsverwaltung, um Miete, Strom, Wasser und Internet zu sehen — jeweils mit Status.", "Tippen Sie auf Jetzt bezahlen, um die sichere Zahlung zu öffnen. Wählen Sie M-Pesa, Airtel Money, Banküberweisung oder Karte, dann bestätigen Sie.", "Brauchen Sie eine Reparatur? Senden Sie in Sekunden einen Wartungsantrag — wählen Sie das Problem, den Raum und die Dringlichkeit.", "Ihre Dokumentenkarte hält Ihren Mietvertrag, Community-Richtlinien und Sicherheitsregeln immer griffbereit.", "Senden Sie eine Nachricht an die Verwaltung direkt über Direkte Kommunikation — echte Menschen, echte Antworten, innerhalb von zwei Stunden.", "Alles andere — Ihr Profil, Parken und Sicherheit — befindet sich im Seitenmenü, mit einem Fingertipp.", "Das ist Mwarokin Estates. Willkommen zu Hause. Beginnen Sie noch heute, Ihre App zu erkunden."]
+      };
+
+      let currentLang = 'en';
+      let currentIndex = 0;
+      let playing = false;
+      let muted = false;
+      let ccOn = true;
+      let sceneStart = 0;
+      let elapsedBeforeCurrent = 0;
+      let remainingAtPause = null;
+      let sceneTimer = null;
+      let rafId = null;
+
+      const sceneEls = document.querySelectorAll('.scene');
+      const ccText = document.getElementById('ccText');
+      const ccBox = document.getElementById('ccBox');
+      const bigPlay = document.getElementById('bigPlay');
+      const playBtn = document.getElementById('playBtn');
+      const muteBtn = document.getElementById('muteBtn');
+      const ccBtn = document.getElementById('ccBtn');
+      const fsBtn = document.getElementById('fsBtn');
+      const progressFill = document.getElementById('progressFill');
+      const progressDot = document.getElementById('progressDot');
+      const progressTrack = document.getElementById('progressTrack');
+      const curTimeEl = document.getElementById('curTime');
+      const durTimeEl = document.getElementById('durTime');
+      const likeBtn = document.getElementById('likeBtn');
+      const replayBtn = document.getElementById('replayBtn');
+      const signEmoji = document.getElementById('signEmoji');
+      const langSelector = document.getElementById('langSelector');
+      const langDropdown = document.getElementById('langDropdown');
+      const currentFlag = document.getElementById('currentFlag');
+      const currentLangLabel = document.getElementById('currentLangLabel');
+
+      scenes.forEach(s => { const w = s.caption.split(/\s+/).length; s.duration = Math.max(2600, Math.round(w * 420)); });
+      const totalDuration = scenes.reduce((a, s) => a + s.duration, 0);
+
+      let acc = 0;
+      scenes.forEach((s, i) => {
+        acc += s.duration;
+        if (i < scenes.length - 1) {
+          const tick = document.createElement('div');
+          tick.className = 'chapter-tick';
+          tick.style.left = ((acc / totalDuration) * 100) + '%';
+          progressTrack.appendChild(tick);
+        }
+      });
+
+      function fmt(ms) {
+        const s = Math.max(0, Math.round(ms / 1000));
+        const m = Math.floor(s / 60),
+          r = s % 60;
+        return m + ':' + (r < 10 ? '0' : '') + r;
+      }
+      durTimeEl.textContent = fmt(totalDuration);
+
+      const canSpeak = ('speechSynthesis' in window);
+      let chosenVoice = null;
+      if (canSpeak) {
+        function pickVoice() {
+          const voices = window.speechSynthesis.getVoices();
+          const female = voices.find(v => /female/i.test(v.name) || /samantha/i.test(v.name) || /zira/i.test(v.name));
+          chosenVoice = female || voices[0] || null;
+        }
+        pickVoice();
+        window.speechSynthesis.onvoiceschanged = pickVoice;
+      }
+
+      function getCurrentCaption() {
+        const captions = translations[currentLang] || translations.en;
+        return captions[currentIndex] || scenes[currentIndex].caption;
+      }
+
+      function showScene(i) {
+        sceneEls.forEach(el => el.classList.toggle('active', +el.dataset.scene === i));
+        const caption = getCurrentCaption();
+        ccText.textContent = caption;
+        document.querySelectorAll('.app-mirror .f-item').forEach((el, idx) => el.classList.toggle('active', idx === i % 12));
+        const emojis = ['🤟', '👋', '💳', '🤝', '🔧', '📄', '💬', '📋', '🏠'];
+        signEmoji.textContent = emojis[i % emojis.length];
+      }
+
+      function speak(text) {
+        if (!canSpeak || muted) return;
+        try {
+          window.speechSynthesis.cancel();
+          const u = new SpeechSynthesisUtterance(text);
+          u.rate = 0.95;
+          u.pitch = 1.0;
+          u.volume = 1.0;
+          if (chosenVoice) u.voice = chosenVoice;
+          window.speechSynthesis.speak(u);
+        } catch (e) {}
+      }
+
+      function tickProgress() {
+        if (!playing) return;
+        const now = performance.now();
+        const withinScene = Math.min(scenes[currentIndex].duration, now - sceneStart);
+        const elapsed = elapsedBeforeCurrent + withinScene;
+        const pct = Math.min(100, (elapsed / totalDuration) * 100);
+        progressFill.style.width = pct + '%';
+        progressDot.style.left = pct + '%';
+        curTimeEl.textContent = fmt(elapsed);
+        if (elapsed < totalDuration) rafId = requestAnimationFrame(tickProgress);
+      }
+
+      function goToScene(i, resumeRemaining) {
+        clearTimeout(sceneTimer);
+        currentIndex = i;
+        showScene(i);
+        const caption = getCurrentCaption();
+        speak(caption);
+        const dur = (typeof resumeRemaining === 'number') ? resumeRemaining : scenes[i].duration;
+        sceneStart = performance.now() - (scenes[i].duration - dur);
+        sceneTimer = setTimeout(() => {
+          elapsedBeforeCurrent += scenes[currentIndex].duration;
+          if (currentIndex < scenes.length - 1) goToScene(currentIndex + 1);
+          else finish();
+        }, dur);
+      }
+
+      function finish() {
+        playing = false;
+        playBtn.innerHTML = '<i class="fas fa-play"></i>';
+        bigPlay.classList.remove('hidden');
+        bigPlay.querySelector('i').className = 'fas fa-redo';
+        progressFill.style.width = '100%';
+        progressDot.style.left = '100%';
+        curTimeEl.textContent = fmt(totalDuration);
+      }
+
+      function play() {
+        if (playing) return;
+        playing = true;
+        bigPlay.classList.add('hidden');
+        playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        if (canSpeak && window.speechSynthesis.paused) window.speechSynthesis.resume();
+        if (remainingAtPause !== null) {
+          goToScene(currentIndex, remainingAtPause);
+          remainingAtPause = null;
+        } else if (curTimeEl.textContent === fmt(totalDuration) || (currentIndex === 0 && elapsedBeforeCurrent === 0 && !sceneStart)) {
+          elapsedBeforeCurrent = 0;
+          goToScene(0);
+        } else {
+          goToScene(currentIndex);
+        }
+        rafId = requestAnimationFrame(tickProgress);
+      }
+
+      function pause() {
+        if (!playing) return;
+        playing = false;
+        playBtn.innerHTML = '<i class="fas fa-play"></i>';
+        bigPlay.classList.remove('hidden');
+        bigPlay.querySelector('i').className = 'fas fa-play';
+        clearTimeout(sceneTimer);
+        cancelAnimationFrame(rafId);
+        if (canSpeak) window.speechSynthesis.pause();
+        const now = performance.now();
+        remainingAtPause = Math.max(0, scenes[currentIndex].duration - (now - sceneStart));
+      }
+
+      function restart() {
+        clearTimeout(sceneTimer);
+        cancelAnimationFrame(rafId);
+        if (canSpeak) window.speechSynthesis.cancel();
+        elapsedBeforeCurrent = 0;
+        remainingAtPause = null;
+        playing = false;
+        curTimeEl.textContent = '0:00';
+        progressFill.style.width = '0%';
+        progressDot.style.left = '0%';
+        play();
+      }
+
+      playBtn.addEventListener('click', () => playing ? pause() : play());
+      bigPlay.addEventListener('click', () => playing ? pause() : play());
+      replayBtn.addEventListener('click', restart);
+      muteBtn.addEventListener('click', () => {
+        muted = !muted;
+        muteBtn.innerHTML = muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+        if (muted && canSpeak) window.speechSynthesis.cancel();
+      });
+      ccBtn.addEventListener('click', () => {
+        ccOn = !ccOn;
+        ccBtn.classList.toggle('on', ccOn);
+        ccBox.classList.toggle('off', !ccOn);
+      });
+      fsBtn.addEventListener('click', () => { if (document.fullscreenElement) document.exitFullscreen();
+        else playerWrap.requestFullscreen && playerWrap.requestFullscreen(); });
+      likeBtn.addEventListener('click', () => { likeBtn.querySelector('i').classList.toggle('liked');
+        likeBtn.classList.toggle('gold'); });
+
+      progressTrack.addEventListener('click', (e) => {
+        const rect = progressTrack.getBoundingClientRect();
+        const pct = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+        const targetElapsed = pct * totalDuration;
+        let acc2 = 0,
+          idx = 0,
+          offset = 0;
+        for (let i = 0; i < scenes.length; i++) {
+          if (targetElapsed <= acc2 + scenes[i].duration) { idx = i;
+            offset = targetElapsed - acc2; break; }
+          acc2 += scenes[i].duration;
+        }
+        elapsedBeforeCurrent = acc2;
+        clearTimeout(sceneTimer);
+        cancelAnimationFrame(rafId);
+        if (canSpeak) window.speechSynthesis.cancel();
+        if (!playing) { play(); return; }
+        goToScene(idx, scenes[idx].duration - offset);
+      });
+
+      document.querySelectorAll('.up-item').forEach(item => {
+        item.addEventListener('click', () => {
+          document.querySelectorAll('.up-item').forEach(i => i.classList.remove('playing'));
+          item.classList.add('playing');
+          const idx = +item.dataset.jump;
+          let acc3 = 0;
+          for (let i = 0; i < idx; i++) acc3 += scenes[i].duration;
+          elapsedBeforeCurrent = acc3;
+          clearTimeout(sceneTimer);
+          cancelAnimationFrame(rafId);
+          if (canSpeak) window.speechSynthesis.cancel();
+          playing = true;
+          bigPlay.classList.add('hidden');
+          playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+          goToScene(idx);
+          rafId = requestAnimationFrame(tickProgress);
+        });
+      });
+
+      langSelector.addEventListener('click', (e) => { e.stopPropagation();
+        langDropdown.classList.toggle('open'); });
+      document.addEventListener('click', () => langDropdown.classList.remove('open'));
+      document.querySelectorAll('.lang-dropdown .l-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const lang = item.dataset.lang;
+          if (lang === currentLang) { langDropdown.classList.remove('open'); return; }
+          currentLang = lang;
+          currentFlag.textContent = item.dataset.flag;
+          currentLangLabel.textContent = item.textContent.trim();
+          document.querySelectorAll('.lang-dropdown .l-item').forEach(el => el.classList.remove('active'));
+          item.classList.add('active');
+          langDropdown.classList.remove('open');
+          const caption = getCurrentCaption();
+          ccText.textContent = caption;
+          if (playing) { if (canSpeak) window.speechSynthesis.cancel();
+            speak(caption); }
+        });
+      });
+
+      showScene(0);
+      setTimeout(() => { if (!playing) play(); }, 800);
+
+      setInterval(() => {
+        const emojis = ['🤟', '👋', '🤝', '👍', '👐', '🤲'];
+        if (!playing) return;
+        let n = emojis[Math.floor(Math.random() * emojis.length)];
+        while (n === signEmoji.textContent && emojis.length > 1) n = emojis[Math.floor(Math.random() * emojis.length)];
+        signEmoji.textContent = n;
+      }, 2400);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') { e.preventDefault();
+          playing ? pause() : play(); }
+        if (e.code === 'KeyM') muteBtn.click();
+        if (e.code === 'KeyC') ccBtn.click();
+      });
+    })();
+  </script>
+</body>
+</html>

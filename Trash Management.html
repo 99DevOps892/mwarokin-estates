@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mwarokin Estates – Waste Management Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{
+  --forest:#07090a; --forest-mid:#0F1C15; --forest-rim:#16281F; --forest-soft:#1E3629;
+  --gold:#C9A84C; --gold-light:#E2C47A; --gold-pale:#F3E7C4;
+  --cream:#FAF6EE; --text-main:#FAF6EE; --text-dim:rgba(250,246,238,.55); --text-faint:rgba(250,246,238,.34);
+  --danger:#B0453F; --danger-light:#E38079; --danger-bg:rgba(176,69,63,.14);
+  --success:#3E8F63; --success-light:#6FCB9B; --success-bg:rgba(62,143,99,.14);
+  --warn:#B4863A; --warn-light:#E0B15C; --warn-bg:rgba(180,134,58,.14);
+  --radius-sm:8px; --radius-md:14px; --radius-lg:22px;
+  --shadow-card:0 4px 24px rgba(0,0,0,.35);
+  --tr:all .25s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--forest);color:var(--text-main);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+   radial-gradient(ellipse 55% 40% at 82% 8%, rgba(201,168,76,.07) 0%, transparent 60%),
+   radial-gradient(ellipse 45% 55% at 6% 90%, rgba(30,54,41,.55) 0%, transparent 60%);}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:rgba(201,168,76,.25);border-radius:8px}
+.wrap{max-width:1440px;margin:0 auto;padding:0 24px 70px;position:relative;z-index:1}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:22px 0 26px;border-bottom:1px solid rgba(201,168,76,.14);margin-bottom:26px;flex-wrap:wrap;gap:16px}
+.brand{display:flex;align-items:center;gap:15px}
+.brand-icon{width:48px;height:48px;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--forest-rim),var(--forest-soft));border:1px solid rgba(201,168,76,.3);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:1.25em}
+.brand-text h1{font-family:'Cormorant Garamond',serif;font-size:1.5em;font-weight:600;color:var(--gold-light);letter-spacing:.02em;line-height:1.1}
+.brand-text p{font-size:.72em;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-top:3px;font-family:'Syne',sans-serif}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.clock-pill{display:flex;flex-direction:column;align-items:flex-end;padding-right:16px;border-right:1px solid rgba(201,168,76,.15)}
+.clock-time{font-family:'JetBrains Mono',monospace;font-size:.92em;color:var(--gold-light);font-weight:600}
+.clock-date{font-size:.68em;color:var(--text-dim);margin-top:1px}
+.icon-btn{width:40px;height:40px;border-radius:var(--radius-sm);background:var(--forest-mid);border:1px solid rgba(201,168,76,.18);display:flex;align-items:center;justify-content:center;color:var(--gold);cursor:pointer;transition:var(--tr);position:relative;font-size:.88em}
+.icon-btn:hover{border-color:var(--gold);background:var(--forest-rim)}
+.notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--gold);border:2px solid var(--forest)}
+.user-pill{display:flex;align-items:center;gap:11px;background:var(--forest-mid);border:1px solid rgba(201,168,76,.18);border-radius:50px;padding:7px 15px 7px 7px}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--forest-rim),var(--forest-soft));border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.76em;color:var(--gold-light)}
+.user-name{font-size:.85em;font-weight:500}
+.user-role{font-size:.7em;color:var(--gold);letter-spacing:.04em}
+
+/* PROPERTY TABS */
+.prop-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+.prop-tab{display:flex;align-items:center;gap:9px;padding:11px 20px;border-radius:50px;font-size:.85em;font-weight:600;cursor:pointer;transition:var(--tr);background:var(--forest-mid);border:1px solid rgba(201,168,76,.15);color:var(--text-dim);font-family:'Syne',sans-serif}
+.prop-tab:hover{border-color:rgba(201,168,76,.4);color:var(--text-main)}
+.prop-tab.active{background:linear-gradient(135deg,rgba(201,168,76,.2),rgba(201,168,76,.08));border-color:var(--gold);color:var(--gold-light)}
+.prop-tab .count{background:rgba(0,0,0,.25);border-radius:20px;padding:1px 8px;font-size:.85em;font-family:'DM Sans',sans-serif;font-weight:600}
+.prop-tab.active .count{background:rgba(201,168,76,.25)}
+
+/* SUMMARY STAT ROW */
+.stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px}
+.stat-box{background:var(--forest-mid);border:1px solid rgba(201,168,76,.12);border-radius:var(--radius-md);padding:19px 20px;transition:var(--tr)}
+.stat-box:hover{border-color:rgba(201,168,76,.3);transform:translateY(-2px)}
+.stat-box-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.stat-icon{width:30px;height:30px;border-radius:8px;background:rgba(201,168,76,.1);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:.82em}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:1.95em;font-weight:600;color:var(--gold-light);line-height:1}
+.stat-unit{font-size:.68em;color:var(--text-dim);letter-spacing:.05em;text-transform:uppercase;margin-top:5px;font-family:'Syne',sans-serif}
+
+/* CARD BASE */
+.card{background:var(--forest-mid);border:1px solid rgba(201,168,76,.12);border-radius:var(--radius-lg);padding:26px;transition:var(--tr);margin-bottom:22px}
+.card:hover{border-color:rgba(201,168,76,.22)}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.card-title-eyebrow{font-size:.66em;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px;font-family:'Syne',sans-serif}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:1.4em;font-weight:600;color:var(--gold-light);letter-spacing:.01em}
+.card-actions{display:flex;gap:8px;align-items:center}
+
+.row-2{display:grid;grid-template-columns:1.3fr 1fr;gap:22px}
+.row-3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+
+/* SEARCH / FILTER BAR */
+.filter-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.search-box{position:relative;flex:1;min-width:200px}
+.search-box i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:.85em}
+.search-box input{width:100%;padding:10px 14px 10px 36px;background:rgba(7,9,10,.5);border:1px solid rgba(201,168,76,.15);border-radius:var(--radius-sm);color:var(--text-main);font-family:'DM Sans',sans-serif;font-size:.85em;outline:none;transition:var(--tr)}
+.search-box input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.1)}
+.filter-select{padding:10px 14px;background:rgba(7,9,10,.5);border:1px solid rgba(201,168,76,.15);border-radius:var(--radius-sm);color:var(--text-main);font-size:.83em;font-family:'DM Sans',sans-serif;outline:none;cursor:pointer}
+.filter-select option{background:var(--forest-mid)}
+
+/* TENANT LEDGER TABLE */
+.ledger-table-wrap{overflow-x:auto;margin-top:18px;border-radius:var(--radius-md);border:1px solid rgba(201,168,76,.1)}
+table.ledger{width:100%;border-collapse:collapse;min-width:920px}
+table.ledger thead th{text-align:left;font-family:'Syne',sans-serif;font-size:.66em;letter-spacing:.09em;text-transform:uppercase;color:var(--text-dim);padding:13px 16px;background:rgba(7,9,10,.55);border-bottom:1px solid rgba(201,168,76,.14);position:sticky;top:0}
+table.ledger tbody td{padding:13px 16px;font-size:.85em;border-bottom:1px solid rgba(201,168,76,.06);vertical-align:middle}
+table.ledger tbody tr{transition:var(--tr)}
+table.ledger tbody tr:hover{background:rgba(201,168,76,.045)}
+table.ledger tbody tr:last-child td{border-bottom:none}
+.house-tag{font-family:'JetBrains Mono',monospace;font-size:.88em;color:var(--gold-light);font-weight:600;background:rgba(201,168,76,.08);padding:3px 9px;border-radius:6px;letter-spacing:.02em}
+.tenant-cell{display:flex;align-items:center;gap:10px}
+.tenant-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--forest-rim),var(--forest-soft));border:1px solid rgba(201,168,76,.3);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.68em;color:var(--gold-light);flex-shrink:0}
+.tenant-name{font-weight:500;font-size:.95em}
+.tenant-phone{font-size:.76em;color:var(--text-dim);font-family:'JetBrains Mono',monospace;margin-top:1px}
+.landlord-name{color:var(--text-dim);font-size:.87em}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:.71em;font-weight:600;letter-spacing:.03em;white-space:nowrap}
+.pill-paid{background:var(--success-bg);color:var(--success-light);border:1px solid rgba(62,143,99,.3)}
+.pill-pending{background:var(--warn-bg);color:var(--warn-light);border:1px solid rgba(180,134,58,.3)}
+.pill-overdue{background:var(--danger-bg);color:var(--danger-light);border:1px solid rgba(176,69,63,.3)}
+.mini-fill{width:60px;height:5px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;display:inline-block;vertical-align:middle;margin-right:6px}
+.mini-fill-inner{height:100%;border-radius:99px}
+.row-actions{display:flex;gap:6px}
+.chip-btn{padding:6px 10px;border-radius:7px;border:1px solid rgba(201,168,76,.2);background:rgba(201,168,76,.06);color:var(--gold);font-size:.75em;cursor:pointer;transition:var(--tr);white-space:nowrap}
+.chip-btn:hover{background:rgba(201,168,76,.16);border-color:var(--gold)}
+.chip-btn.on{background:rgba(201,168,76,.22);border-color:var(--gold);color:var(--gold-light)}
+.chip-btn i{margin-right:4px}
+
+/* TOGGLE SWITCH */
+.toggle{position:relative;width:38px;height:21px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-track{position:absolute;inset:0;background:rgba(255,255,255,.12);border-radius:20px;cursor:pointer;transition:var(--tr);border:1px solid rgba(201,168,76,.15)}
+.toggle-track::before{content:'';position:absolute;width:15px;height:15px;left:2px;top:2px;background:var(--text-dim);border-radius:50%;transition:var(--tr)}
+.toggle input:checked + .toggle-track{background:rgba(201,168,76,.35);border-color:var(--gold)}
+.toggle input:checked + .toggle-track::before{transform:translateX(17px);background:var(--gold-light)}
+
+/* REMINDER CENTER */
+.reminder-hero{display:flex;align-items:center;gap:18px;background:linear-gradient(135deg,rgba(201,168,76,.1),rgba(201,168,76,.02));border:1px solid rgba(201,168,76,.22);border-radius:var(--radius-md);padding:18px 22px;margin-bottom:18px}
+.reminder-hero-icon{width:52px;height:52px;border-radius:var(--radius-sm);background:rgba(201,168,76,.14);border:1px solid rgba(201,168,76,.3);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:1.3em;flex-shrink:0}
+.reminder-hero-text .rh-title{font-family:'Cormorant Garamond',serif;font-size:1.2em;color:var(--gold-light);font-weight:600}
+.reminder-hero-text .rh-sub{font-size:.8em;color:var(--text-dim);margin-top:3px}
+.reminder-hero-countdown{margin-left:auto;text-align:right;font-family:'JetBrains Mono',monospace}
+.rh-cd-num{font-size:1.5em;color:var(--gold-light);font-weight:600}
+.rh-cd-label{font-size:.65em;color:var(--text-dim);letter-spacing:.06em;text-transform:uppercase}
+
+.reminder-list{display:flex;flex-direction:column;gap:8px;max-height:430px;overflow-y:auto;padding-right:4px}
+.reminder-item{display:flex;align-items:center;gap:13px;padding:12px 15px;border-radius:var(--radius-sm);background:rgba(7,9,10,.4);border:1px solid rgba(201,168,76,.08);transition:var(--tr)}
+.reminder-item:hover{border-color:rgba(201,168,76,.22);background:rgba(30,54,41,.3)}
+.reminder-item.sent{opacity:.55}
+.ri-icon{width:34px;height:34px;border-radius:8px;background:rgba(201,168,76,.1);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:.85em;flex-shrink:0}
+.ri-body{flex:1;min-width:0}
+.ri-title{font-size:.87em;font-weight:500;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ri-sub{font-size:.74em;color:var(--text-dim);margin-top:2px}
+.ri-channel{font-size:.68em;padding:2px 8px;border-radius:20px;background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.2)}
+.ri-status{font-size:.7em;font-weight:600;white-space:nowrap}
+.ri-status.pending{color:var(--warn-light)}
+.ri-status.sent{color:var(--success-light)}
+
+/* PAYMENTS */
+.pay-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.pay-box{background:rgba(7,9,10,.4);border:1px solid rgba(201,168,76,.1);border-radius:var(--radius-md);padding:17px}
+.pay-box .pb-label{font-size:.68em;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);font-family:'Syne',sans-serif;margin-bottom:8px}
+.pay-box .pb-val{font-family:'Cormorant Garamond',serif;font-size:1.7em;font-weight:600;color:var(--gold-light)}
+.pay-box .pb-sub{font-size:.72em;color:var(--text-dim);margin-top:4px}
+.pay-box.hl{border-color:rgba(180,134,58,.3);background:rgba(180,134,58,.06)}
+.pay-box.hl .pb-val{color:var(--warn-light)}
+.pay-box.danger{border-color:rgba(176,69,63,.3);background:rgba(176,69,63,.06)}
+.pay-box.danger .pb-val{color:var(--danger-light)}
+.progress-bar{height:8px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin:14px 0 6px}
+.progress-inner{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:99px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.progress-label{display:flex;justify-content:space-between;font-size:.76em;color:var(--text-dim)}
+
+/* SCHEDULE STRIP */
+.sched-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.sched-card{background:rgba(7,9,10,.4);border:1px solid rgba(201,168,76,.1);border-radius:var(--radius-md);padding:17px;text-align:center;transition:var(--tr)}
+.sched-card:hover{border-color:rgba(201,168,76,.25)}
+.sched-card .sc-icon{width:40px;height:40px;border-radius:10px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:1.1em}
+.sc-general{background:rgba(201,168,76,.12);color:var(--gold)}
+.sc-recycle{background:rgba(62,143,99,.18);color:var(--success-light)}
+.sc-organic{background:rgba(139,196,106,.16);color:#8BC46A}
+.sched-card .sc-label{font-size:.9em;font-weight:600;font-family:'Syne',sans-serif}
+.sched-card .sc-day{font-size:.75em;color:var(--text-dim);margin-top:4px}
+.sched-card .sc-next{font-size:.7em;color:var(--gold-light);margin-top:8px;font-family:'JetBrains Mono',monospace}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:var(--radius-sm);font-size:.85em;font-weight:600;cursor:pointer;transition:var(--tr);border:none;letter-spacing:.02em;font-family:'DM Sans',sans-serif}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#151a13}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(201,168,76,.3)}
+.btn-outline{background:transparent;border:1px solid rgba(201,168,76,.3);color:var(--gold-light)}
+.btn-outline:hover{background:rgba(201,168,76,.08);border-color:var(--gold)}
+.btn-sm{padding:8px 14px;font-size:.78em}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);z-index:1000;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--forest-mid);border:1px solid rgba(201,168,76,.22);border-radius:var(--radius-lg);padding:30px;width:100%;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,.5);animation:modalIn .28s cubic-bezier(.4,0,.2,1);max-height:88vh;overflow-y:auto}
+@keyframes modalIn{from{opacity:0;transform:translateY(-16px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.4em;color:var(--gold-light)}
+.close-btn{width:30px;height:30px;border-radius:8px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.15);color:var(--gold);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--tr)}
+.close-btn:hover{background:rgba(201,168,76,.18)}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:.75em;letter-spacing:.07em;text-transform:uppercase;color:var(--text-dim);margin-bottom:7px;font-family:'Syne',sans-serif}
+.form-control{width:100%;padding:10px 14px;background:rgba(7,9,10,.6);border:1px solid rgba(201,168,76,.15);border-radius:var(--radius-sm);color:var(--text-main);font-family:'DM Sans',sans-serif;font-size:.87em;outline:none;transition:var(--tr)}
+.form-control:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.12)}
+.form-control option{background:var(--forest-mid)}
+.modal-summary{background:rgba(7,9,10,.5);border:1px solid rgba(201,168,76,.12);border-radius:var(--radius-sm);padding:13px 16px;margin-bottom:16px;font-size:.83em;color:var(--text-dim)}
+.modal-summary b{color:var(--gold-light)}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:22px}
+.channel-row{display:flex;gap:8px}
+.channel-opt{flex:1;padding:10px;border-radius:var(--radius-sm);border:1px solid rgba(201,168,76,.15);background:rgba(7,9,10,.4);text-align:center;font-size:.78em;cursor:pointer;transition:var(--tr);color:var(--text-dim)}
+.channel-opt.sel{border-color:var(--gold);background:rgba(201,168,76,.14);color:var(--gold-light)}
+.channel-opt i{display:block;margin-bottom:5px;font-size:1.05em}
+
+/* TOAST */
+.toast{position:fixed;bottom:26px;right:26px;background:var(--forest-rim);border:1px solid rgba(201,168,76,.28);border-radius:var(--radius-md);padding:14px 20px;color:var(--text-main);font-size:.86em;z-index:2000;display:flex;align-items:center;gap:10px;transform:translateY(20px);opacity:0;transition:all .35s cubic-bezier(.4,0,.2,1);pointer-events:none;box-shadow:0 8px 34px rgba(0,0,0,.4);max-width:320px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast i{color:var(--gold)}
+
+.empty-state{text-align:center;padding:40px 20px;color:var(--text-dim)}
+.empty-state i{font-size:2em;color:var(--gold);opacity:.5;margin-bottom:12px;display:block}
+
+@media (max-width:1100px){
+  .stat-row{grid-template-columns:repeat(3,1fr)}
+  .row-2,.row-3{grid-template-columns:1fr}
+  .pay-summary{grid-template-columns:repeat(2,1fr)}
+  .sched-strip{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .stat-row{grid-template-columns:repeat(2,1fr)}
+  .clock-pill{display:none}
+  table.ledger{min-width:760px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-icon"><i class="fas fa-recycle"></i></div>
+      <div class="brand-text">
+        <h1>Mwarokin Estates</h1>
+        <p>Waste Management Command Center</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="clock-pill">
+        <div class="clock-time" id="clockTime">--:--</div>
+        <div class="clock-date" id="clockDate">-- --- ----</div>
+      </div>
+      <div class="icon-btn" title="Notifications" id="notifBtn"><i class="fas fa-bell"></i><span class="notif-dot" id="notifDot" style="display:none"></span></div>
+      <div class="user-pill">
+        <div class="user-avatar">RM</div>
+        <div>
+          <div class="user-name">Robin Mwarema</div>
+          <div class="user-role">Estate Admin</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROPERTY TABS -->
+  <div class="prop-tabs" id="propTabs"></div>
+
+  <!-- SUMMARY STATS -->
+  <div class="stat-row" id="statRow"></div>
+
+  <!-- REMINDER ENGINE -->
+  <div class="card">
+    <div class="card-head">
+      <div>
+        <div class="card-title-eyebrow">Automated · Runs Daily at 6:00 PM</div>
+        <div class="card-title">Next-Day Collection Reminders</div>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-outline btn-sm" id="sendAllBtn"><i class="fas fa-paper-plane"></i> Send All Pending</button>
+        <button class="btn btn-gold btn-sm" id="refreshReminders"><i class="fas fa-sync-alt"></i> Refresh</button>
+      </div>
+    </div>
+
+    <div class="reminder-hero">
+      <div class="reminder-hero-icon"><i class="fas fa-truck-loading"></i></div>
+      <div class="reminder-hero-text">
+        <div class="rh-title" id="nextCollectionTitle">Loading next collection…</div>
+        <div class="rh-sub" id="nextCollectionSub">Calculating schedule for the selected property</div>
+      </div>
+      <div class="reminder-hero-countdown">
+        <div class="rh-cd-num" id="cdNum">--</div>
+        <div class="rh-cd-label">Hours to go</div>
+      </div>
+    </div>
+
+    <div class="reminder-list" id="reminderList"></div>
+  </div>
+
+  <!-- TENANT / HOUSE WASTE LEDGER -->
+  <div class="card">
+    <div class="card-head">
+      <div>
+        <div class="card-title-eyebrow">Per Tenant · Per House Number</div>
+        <div class="card-title">Waste & Payment Ledger</div>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-gold btn-sm" id="exportBtn"><i class="fas fa-file-export"></i> Export</button>
+      </div>
+    </div>
+    <div class="filter-bar">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Search tenant, house number or landlord…">
+      </div>
+      <select class="filter-select" id="paymentFilter">
+        <option value="all">All Payment Status</option>
+        <option value="Paid">Paid</option>
+        <option value="Pending">Pending</option>
+        <option value="Overdue">Overdue</option>
+      </select>
+      <select class="filter-select" id="reminderFilter">
+        <option value="all">All Reminders</option>
+        <option value="on">Reminder On</option>
+        <option value="off">Reminder Off</option>
+      </select>
+    </div>
+    <div class="ledger-table-wrap">
+      <table class="ledger">
+        <thead>
+          <tr>
+            <th>House No.</th>
+            <th>Tenant</th>
+            <th>Landlord</th>
+            <th>Bin Fill</th>
+            <th>Payment</th>
+            <th>Reminder</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="ledgerBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row-2">
+    <!-- PAYMENTS -->
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title-eyebrow">This Cycle · KSh</div>
+          <div class="card-title">Waste Management Payments</div>
+        </div>
+        <div class="icon-btn" title="Refresh"><i class="fas fa-redo"></i></div>
+      </div>
+      <div class="pay-summary" id="paySummary"></div>
+      <div class="progress-bar"><div class="progress-inner" id="collectionProgress" style="width:0%"></div></div>
+      <div class="progress-label">
+        <span>Collected <b id="progressPct" style="color:var(--gold-light)">0%</b></span>
+        <span id="progressAmt">KSh 0 of KSh 0</span>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
+        <button class="btn btn-gold btn-sm" id="stkAllBtn"><i class="fas fa-mobile-alt"></i> STK Push All Pending</button>
+        <button class="btn btn-outline btn-sm" id="statementBtn"><i class="fas fa-file-invoice"></i> Landlord Statement</button>
+      </div>
+    </div>
+
+    <!-- COLLECTION SCHEDULE -->
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title-eyebrow">Weekly · Auto-Rotating</div>
+          <div class="card-title">Collection Schedule</div>
+        </div>
+      </div>
+      <div class="sched-strip" id="schedStrip"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Reminder Settings Modal -->
+<div class="modal-overlay" id="reminderModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Configure Reminder</div>
+      <button class="close-btn" id="closeReminderModal"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-summary" id="reminderModalSummary"></div>
+    <div class="form-group">
+      <label class="form-label">Notify Via</label>
+      <div class="channel-row" id="channelRow">
+        <div class="channel-opt" data-c="SMS"><i class="fas fa-comment-sms"></i>SMS</div>
+        <div class="channel-opt" data-c="WhatsApp"><i class="fab fa-whatsapp"></i>WhatsApp</div>
+        <div class="channel-opt" data-c="App Push"><i class="fas fa-bell"></i>App Push</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Send Time (day before collection)</label>
+      <select class="form-control" id="reminderTimeSel">
+        <option value="18:00">6:00 PM</option>
+        <option value="19:00">7:00 PM</option>
+        <option value="20:00">8:00 PM</option>
+        <option value="06:00">6:00 AM (morning of)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Message Preview</label>
+      <textarea class="form-control" id="reminderPreview" readonly style="min-height:80px"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="cancelReminderModal">Cancel</button>
+      <button class="btn btn-gold" id="saveReminderBtn"><i class="fas fa-check"></i> Save Reminder</button>
+    </div>
+  </div>
+</div>
+
+<!-- Payment Modal -->
+<div class="modal-overlay" id="paymentModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Record / Request Payment</div>
+      <button class="close-btn" id="closePaymentModal"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-summary" id="paymentModalSummary"></div>
+    <div class="form-group">
+      <label class="form-label">Amount (KSh)</label>
+      <input type="number" class="form-control" id="paymentAmount">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Method</label>
+      <select class="form-control" id="paymentMethod">
+        <option>M-Pesa STK Push</option>
+        <option>M-Pesa Paybill 400200</option>
+        <option>Bank Transfer</option>
+        <option>Cash</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="cancelPaymentModal">Cancel</button>
+      <button class="btn btn-gold" id="markPaidBtn"><i class="fas fa-check-circle"></i> Mark as Paid</button>
+      <button class="btn btn-gold" id="sendStkBtn"><i class="fas fa-mobile-alt"></i> Send STK Push</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastMsg">Done!</span></div>
+
+<script>
+/* ============ DATA MODEL ============ */
+const PROPERTIES = [
+  { id:'va', name:'Villa A', icon:'fa-building', landlord:'Mr. James Kariuki',
+    schedule:{ general:[1,4], recycle:[3], organic:[6] }, /* 0=Sun..6=Sat */
+    units:[
+      {house:'VA-01',tenant:'Peter Otieno',phone:'+254 712 334 501',fee:1200,fill:42,status:'Paid'},
+      {house:'VA-02',tenant:'Mary Wambui',phone:'+254 722 118 902',fee:1200,fill:78,status:'Pending'},
+      {house:'VA-03',tenant:'Samuel Kiptoo',phone:'+254 701 552 214',fee:1200,fill:55,status:'Paid'},
+      {house:'VA-04',tenant:'Faith Achieng',phone:'+254 733 887 641',fee:1200,fill:91,status:'Overdue'},
+      {house:'VA-05',tenant:'Brian Mutiso',phone:'+254 710 224 998',fee:1200,fill:30,status:'Paid'},
+      {house:'VA-06',tenant:'Lucy Nekesa',phone:'+254 745 663 217',fee:1200,fill:66,status:'Pending'},
+    ]},
+  { id:'vb', name:'Villa B', icon:'fa-building', landlord:'Mrs. Grace Wanjiru',
+    schedule:{ general:[2,5], recycle:[4], organic:[0] },
+    units:[
+      {house:'VB-01',tenant:'Daniel Mwangi',phone:'+254 700 445 112',fee:1300,fill:20,status:'Paid'},
+      {house:'VB-02',tenant:'Esther Chebet',phone:'+254 727 998 331',fee:1300,fill:64,status:'Overdue'},
+      {house:'VB-03',tenant:'Kevin Omondi',phone:'+254 715 661 778',fee:1300,fill:48,status:'Paid'},
+      {house:'VB-04',tenant:'Nancy Wairimu',phone:'+254 733 209 456',fee:1300,fill:85,status:'Pending'},
+      {house:'VB-05',tenant:'Collins Barasa',phone:'+254 706 552 903',fee:1300,fill:12,status:'Paid'},
+      {house:'VB-06',tenant:'Sharon Adhiambo',phone:'+254 741 887 220',fee:1300,fill:57,status:'Paid'},
+    ]},
+  { id:'ap', name:'Apartment', icon:'fa-layer-group', landlord:'Nyumba Holdings Ltd',
+    schedule:{ general:[1,3,5], recycle:[2], organic:[6] },
+    units:[
+      {house:'AP-101',tenant:'Alex Kimani',phone:'+254 712 004 552',fee:900,fill:35,status:'Paid'},
+      {house:'AP-102',tenant:'Josephine Njeri',phone:'+254 722 660 981',fee:900,fill:70,status:'Pending'},
+      {house:'AP-201',tenant:'Moses Kariithi',phone:'+254 701 334 220',fee:900,fill:88,status:'Overdue'},
+      {house:'AP-202',tenant:'Rita Auma',phone:'+254 733 118 774',fee:900,fill:22,status:'Paid'},
+      {house:'AP-301',tenant:'Victor Njoroge',phone:'+254 710 887 665',fee:900,fill:60,status:'Paid'},
+      {house:'AP-302',tenant:'Purity Wanjiku',phone:'+254 745 220 118',fee:900,fill:95,status:'Overdue'},
+      {house:'AP-401',tenant:'Dennis Otieno',phone:'+254 706 441 998',fee:900,fill:15,status:'Paid'},
+      {house:'AP-402',tenant:'Caroline Nyambura',phone:'+254 727 553 662',fee:900,fill:49,status:'Pending'},
+    ]},
+  { id:'fl', name:'Flat Management', icon:'fa-home', landlord:'Otieno Family Trust',
+    schedule:{ general:[0,3], recycle:[5], organic:[2] },
+    units:[
+      {house:'FL-01',tenant:'George Mburu',phone:'+254 700 118 224',fee:800,fill:40,status:'Paid'},
+      {house:'FL-02',tenant:'Beatrice Akinyi',phone:'+254 722 887 331',fee:800,fill:73,status:'Pending'},
+      {house:'FL-03',tenant:'Isaac Mutua',phone:'+254 715 220 998',fee:800,fill:28,status:'Paid'},
+      {house:'FL-04',tenant:'Ann Wangui',phone:'+254 733 552 117',fee:800,fill:82,status:'Overdue'},
+      {house:'FL-05',tenant:'Patrick Odhiambo',phone:'+254 710 663 445',fee:800,fill:51,status:'Paid'},
+      {house:'FL-06',tenant:'Diana Chepkoech',phone:'+254 741 998 220',fee:800,fill:37,status:'Paid'},
+      {house:'FL-07',tenant:'Elvis Karanja',phone:'+254 706 224 553',fee:800,fill:66,status:'Pending'},
+      {house:'FL-08',tenant:'Winnie Moraa',phone:'+254 727 118 990',fee:800,fill:19,status:'Paid'},
+    ]},
+];
+
+const WASTE_TYPE_META = {
+  general:{label:'General Waste', icon:'fa-trash', cls:'sc-general'},
+  recycle:{label:'Recyclables',   icon:'fa-recycle', cls:'sc-recycle'},
+  organic:{label:'Organic Waste', icon:'fa-leaf',    cls:'sc-organic'},
+};
+const DAY_NAMES=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+/* persisted reminder + payment state (per house, survives reloads in this session) */
+const STORE_KEY='mwarokin_waste_reminders_v1';
+let reminderState = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
+function persist(){ localStorage.setItem(STORE_KEY, JSON.stringify(reminderState)); }
+
+function getUnitState(house){
+  if(!reminderState[house]) reminderState[house] = { enabled:true, channel:'SMS', time:'18:00', lastSent:null };
+  return reminderState[house];
+}
+
+let activeProp = 'all';
+let searchTerm='';
+let paymentFilterVal='all';
+let reminderFilterVal='all';
+let modalTargetHouse=null;
+
+/* ============ SCHEDULE MATH ============ */
+function nextDateForWeekday(targetDow, from){
+  const d = new Date(from);
+  let diff = (targetDow - d.getDay() + 7) % 7;
+  if(diff===0) diff=0; // today counts if same day and time hasn't passed — we treat as today
+  d.setDate(d.getDate()+diff);
+  d.setHours(0,0,0,0);
+  return d;
+}
+function nextCollectionForSchedule(schedule, from){
+  let best=null,bestType=null;
+  for(const type of Object.keys(schedule)){
+    for(const dow of schedule[type]){
+      const d = nextDateForWeekday(dow, from);
+      if(!best || d < best){ best=d; bestType=type; }
+    }
+  }
+  return { date:best, type:bestType };
+}
+function allPropertiesForActive(){
+  return activeProp==='all' ? PROPERTIES : PROPERTIES.filter(p=>p.id===activeProp);
+}
+function unionSchedule(props){
+  const merged={general:new Set(),recycle:new Set(),organic:new Set()};
+  props.forEach(p=>{ Object.keys(p.schedule).forEach(t=>p.schedule[t].forEach(d=>merged[t].add(d))); });
+  return { general:[...merged.general], recycle:[...merged.recycle], organic:[...merged.organic] };
+}
+
+/* ============ RENDER: PROPERTY TABS ============ */
+function renderPropTabs(){
+  const el = document.getElementById('propTabs');
+  const totalUnits = PROPERTIES.reduce((s,p)=>s+p.units.length,0);
+  let html = `<div class="prop-tab ${activeProp==='all'?'active':''}" data-p="all"><i class="fas fa-th"></i> All Properties <span class="count">${totalUnits}</span></div>`;
+  PROPERTIES.forEach(p=>{
+    html += `<div class="prop-tab ${activeProp===p.id?'active':''}" data-p="${p.id}"><i class="fas ${p.icon}"></i> ${p.name} <span class="count">${p.units.length}</span></div>`;
+  });
+  el.innerHTML = html;
+  el.querySelectorAll('.prop-tab').forEach(t=>t.addEventListener('click',()=>{
+    activeProp = t.dataset.p;
+    renderAll();
+  }));
+}
+
+/* ============ RENDER: STATS ============ */
+function currentUnits(){
+  return allPropertiesForActive().flatMap(p=>p.units.map(u=>({...u, property:p.name, landlord:p.landlord, propId:p.id})));
+}
+function renderStats(){
+  const units = currentUnits();
+  const totalFee = units.reduce((s,u)=>s+u.fee,0);
+  const paid = units.filter(u=>u.status==='Paid');
+  const collected = paid.reduce((s,u)=>s+u.fee,0);
+  const overdue = units.filter(u=>u.status==='Overdue').length;
+  const avgFill = Math.round(units.reduce((s,u)=>s+u.fill,0)/units.length);
+  const remindersOn = units.filter(u=>getUnitState(u.house).enabled).length;
+
+  const stats=[
+    {icon:'fa-house-user',num:units.length,unit:'Units Tracked'},
+    {icon:'fa-dumpster',num:avgFill+'%',unit:'Avg Bin Fill'},
+    {icon:'fa-bell',num:remindersOn,unit:'Reminders Active'},
+    {icon:'fa-coins',num:'KSh '+collected.toLocaleString(),unit:'Collected This Cycle'},
+    {icon:'fa-triangle-exclamation',num:overdue,unit:'Overdue Accounts'},
+  ];
+  document.getElementById('statRow').innerHTML = stats.map(s=>`
+    <div class="stat-box">
+      <div class="stat-box-head"><div class="stat-icon"><i class="fas ${s.icon}"></i></div></div>
+      <div class="stat-num">${s.num}</div>
+      <div class="stat-unit">${s.unit}</div>
+    </div>`).join('');
+}
+
+/* ============ RENDER: REMINDER CENTER ============ */
+function renderReminderHero(){
+  const props = allPropertiesForActive();
+  const sched = unionSchedule(props);
+  const { date, type } = nextCollectionForSchedule(sched, new Date());
+  const meta = WASTE_TYPE_META[type];
+  const now = new Date();
+  const hoursTo = Math.max(0, Math.round((date - now)/36e5));
+  const isToday = date.toDateString() === now.toDateString();
+  const isTomorrow = date.toDateString() === new Date(now.getTime()+864e5).toDateString();
+  const label = isToday ? 'Today' : isTomorrow ? 'Tomorrow' : DAY_NAMES[date.getDay()];
+
+  document.getElementById('nextCollectionTitle').innerHTML =
+    `Next up: <b style="color:var(--gold-light)">${meta.label}</b> · ${label}, ${date.toLocaleDateString('en-KE',{day:'numeric',month:'long'})}`;
+  document.getElementById('nextCollectionSub').textContent =
+    `${activeProp==='all' ? 'Across all properties' : PROPERTIES.find(p=>p.id===activeProp).name} · Reminders auto-fire the evening before collection`;
+  document.getElementById('cdNum').textContent = hoursTo;
+}
+
+function reminderMessage(u, type, dateLabel){
+  const meta = WASTE_TYPE_META[type];
+  return `Mwarokin Estates: Hi ${u.tenant}, kind reminder that ${meta.label.toLowerCase()} collection at ${u.house} is scheduled for ${dateLabel}. Please place your bin out by 6:30 AM. — Estate Management`;
+}
+
+function renderReminderList(){
+  const props = allPropertiesForActive();
+  const now = new Date();
+  const list = document.getElementById('reminderList');
+  let rows = [];
+
+  props.forEach(p=>{
+    const { date, type } = nextCollectionForSchedule(p.schedule, now);
+    const isTomorrow = date.toDateString() === new Date(now.getTime()+864e5).toDateString();
+    const isToday = date.toDateString() === now.toDateString();
+    const dateLabel = isToday?'today':isTomorrow?'tomorrow':DAY_NAMES[date.getDay()];
+    p.units.forEach(u=>{
+      const st = getUnitState(u.house);
+      if(!st.enabled) return;
+      rows.push({house:u.house, tenant:u.tenant, landlord:p.landlord, type, date, dateLabel, channel:st.channel, sent: st.lastSent === date.toDateString()});
+    });
+  });
+
+  rows.sort((a,b)=> a.date-b.date || (a.sent - b.sent));
+
+  if(rows.length===0){
+    list.innerHTML = `<div class="empty-state"><i class="fas fa-bell-slash"></i>No active reminders for this selection. Enable reminders from the ledger below.</div>`;
+    return;
+  }
+
+  list.innerHTML = rows.map(r=>{
+    const meta = WASTE_TYPE_META[r.type];
+    return `<div class="reminder-item ${r.sent?'sent':''}">
+      <div class="ri-icon"><i class="fas ${meta.icon}"></i></div>
+      <div class="ri-body">
+        <div class="ri-title">${r.tenant} <span class="house-tag">${r.house}</span> <span class="ri-channel">${r.channel}</span></div>
+        <div class="ri-sub">${meta.label} collection ${r.dateLabel} · Landlord: ${r.landlord}</div>
+      </div>
+      <div class="ri-status ${r.sent?'sent':'pending'}">${r.sent?'<i class="fas fa-check"></i> Sent':'<i class="fas fa-clock"></i> Pending'}</div>
+      ${!r.sent?`<button class="chip-btn" data-send="${r.house}" data-date="${r.date.toDateString()}"><i class="fas fa-paper-plane"></i>Send</button>`:''}
+    </div>`;
+  }).join('');
+
+  list.querySelectorAll('[data-send]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const house = btn.dataset.send;
+      const dateStr = btn.dataset.date;
+      const st = getUnitState(house);
+      st.lastSent = dateStr;
+      persist();
+      const unit = currentUnits().find(u=>u.house===house);
+      showToast(`Reminder sent to ${unit?unit.tenant:house} via ${st.channel}.`);
+      renderReminderList();
+    });
+  });
+}
+
+/* ============ RENDER: LEDGER TABLE ============ */
+function statusPillClass(status){
+  return status==='Paid'?'pill-paid':status==='Pending'?'pill-pending':'pill-overdue';
+}
+function fillColor(fill){
+  return fill>=80?'linear-gradient(90deg,#B0453F,#E38079)':fill>=55?'linear-gradient(90deg,#B4863A,#C9A84C)':'linear-gradient(90deg,#3E8F63,#6FCB9B)';
+}
+function renderLedger(){
+  let units = currentUnits();
+  if(searchTerm){
+    const s = searchTerm.toLowerCase();
+    units = units.filter(u=> u.tenant.toLowerCase().includes(s) || u.house.toLowerCase().includes(s) || u.landlord.toLowerCase().includes(s));
+  }
+  if(paymentFilterVal!=='all') units = units.filter(u=>u.status===paymentFilterVal);
+  if(reminderFilterVal!=='all'){
+    units = units.filter(u=>{
+      const on = getUnitState(u.house).enabled;
+      return reminderFilterVal==='on' ? on : !on;
+    });
+  }
+
+  const body = document.getElementById('ledgerBody');
+  if(units.length===0){
+    body.innerHTML = `<tr><td colspan="7"><div class="empty-state"><i class="fas fa-inbox"></i>No units match your filters.</div></td></tr>`;
+    return;
+  }
+
+  body.innerHTML = units.map(u=>{
+    const st = getUnitState(u.house);
+    const initials = u.tenant.split(' ').map(x=>x[0]).slice(0,2).join('');
+    return `<tr>
+      <td><span class="house-tag">${u.house}</span></td>
+      <td>
+        <div class="tenant-cell">
+          <div class="tenant-avatar">${initials}</div>
+          <div>
+            <div class="tenant-name">${u.tenant}</div>
+            <div class="tenant-phone">${u.phone}</div>
+          </div>
+        </div>
+      </td>
+      <td class="landlord-name">${u.landlord}</td>
+      <td>
+        <span class="mini-fill"><span class="mini-fill-inner" style="width:${u.fill}%;background:${fillColor(u.fill)}"></span></span>
+        <span style="font-size:.78em;color:var(--text-dim)">${u.fill}%</span>
+      </td>
+      <td><span class="pill ${statusPillClass(u.status)}">${u.status}</span> <span style="font-size:.72em;color:var(--text-faint);display:block;margin-top:3px">KSh ${u.fee.toLocaleString()}</span></td>
+      <td>
+        <label class="toggle">
+          <input type="checkbox" data-toggle="${u.house}" ${st.enabled?'checked':''}>
+          <span class="toggle-track"></span>
+        </label>
+      </td>
+      <td>
+        <div class="row-actions">
+          <button class="chip-btn" data-config="${u.house}"><i class="fas fa-sliders"></i>Reminder</button>
+          <button class="chip-btn" data-pay="${u.house}"><i class="fas fa-money-bill-wave"></i>Pay</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  body.querySelectorAll('[data-toggle]').forEach(inp=>{
+    inp.addEventListener('change', ()=>{
+      const house = inp.dataset.toggle;
+      getUnitState(house).enabled = inp.checked;
+      persist();
+      showToast(`Reminder ${inp.checked?'enabled':'disabled'} for ${house}.`);
+      renderReminderHero(); renderReminderList(); renderStats();
+    });
+  });
+  body.querySelectorAll('[data-config]').forEach(btn=>{
+    btn.addEventListener('click', ()=> openReminderModal(btn.dataset.config));
+  });
+  body.querySelectorAll('[data-pay]').forEach(btn=>{
+    btn.addEventListener('click', ()=> openPaymentModal(btn.dataset.pay));
+  });
+}
+
+/* ============ RENDER: PAYMENTS ============ */
+function renderPayments(){
+  const units = currentUnits();
+  const total = units.reduce((s,u)=>s+u.fee,0);
+  const paid = units.filter(u=>u.status==='Paid');
+  const pending = units.filter(u=>u.status==='Pending');
+  const overdue = units.filter(u=>u.status==='Overdue');
+  const collected = paid.reduce((s,u)=>s+u.fee,0);
+  const pendingAmt = pending.reduce((s,u)=>s+u.fee,0);
+  const overdueAmt = overdue.reduce((s,u)=>s+u.fee,0);
+  const pct = total ? Math.round(collected/total*100) : 0;
+
+  document.getElementById('paySummary').innerHTML = `
+    <div class="pay-box"><div class="pb-label">Collected</div><div class="pb-val">${collected.toLocaleString()}</div><div class="pb-sub">${paid.length} units paid</div></div>
+    <div class="pay-box hl"><div class="pb-label">Pending</div><div class="pb-val">${pendingAmt.toLocaleString()}</div><div class="pb-sub">${pending.length} units pending</div></div>
+    <div class="pay-box danger"><div class="pb-label">Overdue</div><div class="pb-val">${overdueAmt.toLocaleString()}</div><div class="pb-sub">${overdue.length} units overdue</div></div>
+    <div class="pay-box"><div class="pb-label">Target</div><div class="pb-val">${total.toLocaleString()}</div><div class="pb-sub">${units.length} total units</div></div>
+  `;
+  document.getElementById('collectionProgress').style.width = pct+'%';
+  document.getElementById('progressPct').textContent = pct+'%';
+  document.getElementById('progressAmt').textContent = `KSh ${collected.toLocaleString()} of KSh ${total.toLocaleString()}`;
+}
+
+/* ============ RENDER: SCHEDULE STRIP ============ */
+function renderSchedule(){
+  const props = allPropertiesForActive();
+  const sched = unionSchedule(props);
+  const now = new Date();
+  const strip = document.getElementById('schedStrip');
+  strip.innerHTML = Object.keys(WASTE_TYPE_META).map(type=>{
+    const meta = WASTE_TYPE_META[type];
+    const days = sched[type];
+    if(days.length===0) return '';
+    const { date } = nextCollectionForSchedule({[type]:days}, now);
+    const isToday = date.toDateString()===now.toDateString();
+    const isTomorrow = date.toDateString()===new Date(now.getTime()+864e5).toDateString();
+    const label = isToday?'Today':isTomorrow?'Tomorrow':DAY_NAMES[date.getDay()];
+    return `<div class="sched-card">
+      <div class="sc-icon ${meta.cls}"><i class="fas ${meta.icon}"></i></div>
+      <div class="sc-label">${meta.label}</div>
+      <div class="sc-day">${days.map(d=>DAY_NAMES[d].slice(0,3)).join(' & ')}</div>
+      <div class="sc-next">Next: ${label}, ${date.toLocaleDateString('en-KE',{day:'numeric',month:'short'})}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ============ MODALS ============ */
+let selectedChannel='SMS';
+function openReminderModal(house){
+  modalTargetHouse = house;
+  const u = currentUnits().find(x=>x.house===house);
+  const st = getUnitState(house);
+  selectedChannel = st.channel;
+  document.getElementById('reminderModalSummary').innerHTML =
+    `Configuring reminder for <b>${u.tenant}</b> · <b>${house}</b> · Landlord: ${u.landlord}`;
+  document.querySelectorAll('.channel-opt').forEach(c=>c.classList.toggle('sel', c.dataset.c===selectedChannel));
+  document.getElementById('reminderTimeSel').value = st.time;
+  updatePreview(u);
+  document.getElementById('reminderModal').classList.add('open');
+}
+function updatePreview(u){
+  const props = allPropertiesForActive();
+  const prop = PROPERTIES.find(p=>p.units.some(x=>x.house===u.house)) || props[0];
+  const { date, type } = nextCollectionForSchedule(prop.schedule, new Date());
+  const isTomorrow = date.toDateString() === new Date(Date.now()+864e5).toDateString();
+  const isToday = date.toDateString() === new Date().toDateString();
+  const dateLabel = isToday?'today':isTomorrow?'tomorrow':DAY_NAMES[date.getDay()];
+  document.getElementById('reminderPreview').value = reminderMessage(u, type, dateLabel);
+}
+document.querySelectorAll('.channel-opt').forEach(c=>{
+  c.addEventListener('click', ()=>{
+    selectedChannel = c.dataset.c;
+    document.querySelectorAll('.channel-opt').forEach(x=>x.classList.toggle('sel', x===c));
+  });
+});
+document.getElementById('closeReminderModal').addEventListener('click', ()=>document.getElementById('reminderModal').classList.remove('open'));
+document.getElementById('cancelReminderModal').addEventListener('click', ()=>document.getElementById('reminderModal').classList.remove('open'));
+document.getElementById('saveReminderBtn').addEventListener('click', ()=>{
+  const st = getUnitState(modalTargetHouse);
+  st.channel = selectedChannel;
+  st.time = document.getElementById('reminderTimeSel').value;
+  st.enabled = true;
+  persist();
+  document.getElementById('reminderModal').classList.remove('open');
+  showToast(`Reminder configured for ${modalTargetHouse} — will send via ${selectedChannel} at ${st.time}.`);
+  renderAll();
+});
+
+function openPaymentModal(house){
+  modalTargetHouse = house;
+  const u = currentUnits().find(x=>x.house===house);
+  document.getElementById('paymentModalSummary').innerHTML =
+    `<b>${u.tenant}</b> · ${house} · Current status: <span class="pill ${statusPillClass(u.status)}">${u.status}</span>`;
+  document.getElementById('paymentAmount').value = u.fee;
+  document.getElementById('paymentModal').classList.add('open');
+}
+document.getElementById('closePaymentModal').addEventListener('click', ()=>document.getElementById('paymentModal').classList.remove('open'));
+document.getElementById('cancelPaymentModal').addEventListener('click', ()=>document.getElementById('paymentModal').classList.remove('open'));
+document.getElementById('markPaidBtn').addEventListener('click', ()=>{
+  const u = PROPERTIES.flatMap(p=>p.units).find(x=>x.house===modalTargetHouse);
+  if(u) u.status='Paid';
+  document.getElementById('paymentModal').classList.remove('open');
+  showToast(`Payment recorded for ${modalTargetHouse}.`);
+  renderAll();
+});
+document.getElementById('sendStkBtn').addEventListener('click', ()=>{
+  const u = currentUnits().find(x=>x.house===modalTargetHouse);
+  document.getElementById('paymentModal').classList.remove('open');
+  showToast(`STK push sent to ${u.phone} for KSh ${document.getElementById('paymentAmount').value}.`);
+});
+
+/* ============ TOP LEVEL ACTIONS ============ */
+document.getElementById('sendAllBtn').addEventListener('click', ()=>{
+  const rows = document.querySelectorAll('#reminderList [data-send]');
+  let count=0;
+  rows.forEach(btn=>{ btn.click(); count++; });
+  showToast(count>0?`Sent ${count} pending reminders.`:'No pending reminders to send.');
+});
+document.getElementById('refreshReminders').addEventListener('click', ()=>{ renderAll(); showToast('Schedule refreshed.'); });
+document.getElementById('stkAllBtn').addEventListener('click', ()=>{
+  const pendingUnits = currentUnits().filter(u=>u.status!=='Paid');
+  showToast(pendingUnits.length? `STK push sent to ${pendingUnits.length} tenants with outstanding balances.` : 'No outstanding balances to collect.');
+});
+document.getElementById('statementBtn').addEventListener('click', ()=> showToast('Landlord statement generated and queued for email.'));
+document.getElementById('exportBtn').addEventListener('click', ()=> showToast('Ledger export ready — CSV downloading.'));
+document.getElementById('searchInput').addEventListener('input', e=>{ searchTerm=e.target.value; renderLedger(); });
+document.getElementById('paymentFilter').addEventListener('change', e=>{ paymentFilterVal=e.target.value; renderLedger(); });
+document.getElementById('reminderFilter').addEventListener('change', e=>{ reminderFilterVal=e.target.value; renderLedger(); });
+document.getElementById('notifBtn').addEventListener('click', ()=>{ document.getElementById('notifDot').style.display='none'; showToast('Notifications cleared.'); });
+
+/* ============ TOAST ============ */
+function showToast(msg){
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(()=>t.classList.remove('show'), 3400);
+}
+
+/* ============ CLOCK ============ */
+function tickClock(){
+  const now = new Date();
+  document.getElementById('clockTime').textContent = now.toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('clockDate').textContent = now.toLocaleDateString('en-KE',{weekday:'short',day:'numeric',month:'short'});
+}
+setInterval(tickClock, 1000*30);
+tickClock();
+
+/* Notification dot: show if any pending reminder due within 3 hours */
+function checkUrgentReminders(){
+  const now = new Date();
+  let urgent=false;
+  PROPERTIES.forEach(p=>{
+    const { date } = nextCollectionForSchedule(p.schedule, now);
+    const hoursTo = (date-now)/36e5;
+    if(hoursTo<=24) urgent=true;
+  });
+  document.getElementById('notifDot').style.display = urgent?'block':'none';
+}
+
+/* ============ MASTER RENDER ============ */
+function renderAll(){
+  renderPropTabs();
+  renderStats();
+  renderReminderHero();
+  renderReminderList();
+  renderLedger();
+  renderPayments();
+  renderSchedule();
+  checkUrgentReminders();
+}
+renderAll();
+</script>
+</body>
+</html>

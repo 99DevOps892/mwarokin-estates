@@ -1,0 +1,1783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mwarokin Estates — Rent Payment</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --gold:#C9A84C; --gold-light:#F5EDD6; --gold-dark:#8A6A1F; --gold-soft:rgba(201,168,76,.14);
+  --ink:#100E1C; --ink-mid:#241F3B; --ink-soft:#4A4761; --ink-line:rgba(16,14,28,.09);
+  --cream:#FAF8F3; --surface:#FFFFFF; --surface-alt:#F5F3EC;
+  --success:#136B41; --success-bg:#E8F6EE; --danger:#B32E2E; --danger-bg:#FCEDEC;
+  --warning:#8E6200; --warning-bg:#FFF6E2; --info:#124F91; --info-bg:#E9F1FC;
+  --crypto:#7C4DFF; --crypto-bg:#F1ECFF;
+  --radius:16px; --radius-sm:10px; --radius-lg:22px;
+  --shadow:0 2px 18px rgba(16,14,28,.06); --shadow-lg:0 14px 48px rgba(16,14,28,.14);
+  --serif:'DM Serif Display',serif; --sans:'DM Sans',sans-serif; --mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--cream);color:var(--ink);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+::selection{background:var(--gold-light);color:var(--ink);}
+
+/* NAV */
+.site-nav{background:rgba(255,255,255,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--ink-line);position:sticky;top:0;z-index:100;padding:0 2rem;}
+.nav-inner{max-width:1320px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px;}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.brand-logo{width:36px;height:36px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;box-shadow:0 4px 12px rgba(201,168,76,.35);}
+.brand-name{font-family:var(--serif);font-size:1.2rem;color:var(--ink);letter-spacing:-.01em;}
+.brand-name span{color:var(--gold-dark);}
+.nav-links{display:flex;align-items:center;gap:.25rem;list-style:none;}
+.nav-links a{font-size:.85rem;font-weight:500;color:var(--ink-soft);text-decoration:none;padding:6px 12px;border-radius:7px;transition:all .2s;}
+.nav-links a:hover{color:var(--ink);background:var(--surface-alt);}
+.nav-toggler{display:none;background:none;border:none;font-size:1.25rem;color:var(--ink);cursor:pointer;}
+@media(max-width:900px){.nav-links{display:none;}.nav-toggler{display:block;}}
+.trust-strip{background:var(--ink);color:rgba(255,255,255,.55);font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;padding:7px 2rem;text-align:center;}
+.trust-strip i{color:var(--gold);margin-right:5px;}
+.trust-strip span{margin:0 12px;}
+
+/* HERO */
+.hero{background:radial-gradient(140% 100% at 100% 0%,#241F3B 0%,#100E1C 55%);color:#fff;padding:2.75rem 2rem 1.5rem;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 85% 20%,rgba(201,168,76,.18) 0%,transparent 60%);pointer-events:none;}
+.hero-inner{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:center;position:relative;}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:600;letter-spacing:.1em;color:var(--gold);text-transform:uppercase;margin-bottom:.75rem;}
+.hero-tag::before{content:'';width:20px;height:2px;background:var(--gold);border-radius:1px;}
+.hero h1{font-family:var(--serif);font-size:clamp(1.7rem,3vw,2.5rem);line-height:1.15;margin-bottom:.5rem;letter-spacing:-.02em;}
+.hero-meta{display:flex;gap:2rem;margin-top:1.25rem;flex-wrap:wrap;}
+.hero-meta-item small{display:block;font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.38);margin-bottom:3px;}
+.hero-meta-item p{font-weight:500;font-size:.9rem;color:rgba(255,255,255,.92);font-family:var(--mono);}
+.hero-balance-card{background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.32);border-radius:var(--radius-lg);padding:1.1rem 1.4rem;text-align:right;backdrop-filter:blur(10px);min-width:210px;}
+.currency-switcher{position:relative;}
+.currency-btn{background:rgba(201,168,76,.16);border:1px solid rgba(201,168,76,.4);color:var(--gold);font-size:.8rem;font-weight:600;padding:7px 14px;border-radius:22px;cursor:pointer;font-family:var(--sans);display:inline-flex;align-items:center;gap:6px;}
+.currency-btn:hover{background:rgba(201,168,76,.24);}
+.currency-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:var(--surface);border:1px solid var(--ink-line);border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);padding:6px;min-width:190px;display:none;z-index:300;max-height:320px;overflow-y:auto;}
+.currency-dropdown.open{display:block;}
+.currency-opt{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;cursor:pointer;font-size:.85rem;color:var(--ink);}
+.currency-opt:hover{background:var(--surface-alt);}
+.currency-opt.active{background:var(--gold-light);color:var(--gold-dark);font-weight:600;}
+.hero-fee-note{margin-top:10px;font-size:.68rem;color:rgba(255,255,255,.4);}
+
+/* TICKER */
+.ticker-wrap{background:var(--ink-mid);border-bottom:1px solid rgba(201,168,76,.18);overflow:hidden;}
+.ticker-head{display:flex;align-items:center;justify-content:space-between;max-width:1320px;margin:0 auto;padding:8px 2rem 0;}
+.ticker-title{display:flex;align-items:center;gap:8px;font-size:.68rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.55);}
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:#39D98A;box-shadow:0 0 0 0 rgba(57,217,138,.6);animation:pulseDot 1.8s infinite;}
+@keyframes pulseDot{0%{box-shadow:0 0 0 0 rgba(57,217,138,.55);}70%{box-shadow:0 0 0 8px rgba(57,217,138,0);}100%{box-shadow:0 0 0 0 rgba(57,217,138,0);}}
+.ticker-updated{font-size:.68rem;color:rgba(255,255,255,.4);font-family:var(--mono);}
+.ticker-refresh{background:none;border:none;color:var(--gold);font-size:.72rem;cursor:pointer;margin-left:8px;}
+.ticker-track-outer{overflow:hidden;padding:10px 0 14px;}
+.ticker-track{display:flex;gap:14px;padding:0 2rem;max-width:1320px;margin:0 auto;flex-wrap:wrap;}
+.rate-chip{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:8px 14px;min-width:150px;}
+.rate-chip .rc-icon{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;}
+.rate-chip .rc-label{font-size:.68rem;color:rgba(255,255,255,.45);letter-spacing:.03em;}
+.rate-chip .rc-value{font-family:var(--mono);font-size:.85rem;font-weight:600;color:#fff;}
+.rc-live{display:inline-block;font-size:.58rem;font-weight:800;letter-spacing:.05em;background:rgba(57,217,138,.16);color:#39D98A;padding:1px 6px;border-radius:8px;margin-left:6px;}
+.rc-stale{background:rgba(255,122,122,.16);color:#FF7A7A;}
+
+/* FLOW */
+.flow-bar{background:var(--surface);border-bottom:1px solid var(--ink-line);padding:1rem 2rem;}
+.flow-inner{max-width:1320px;margin:0 auto;display:flex;align-items:center;gap:0;}
+.flow-step{display:flex;align-items:center;gap:10px;flex:1;position:relative;}
+.flow-step:not(:last-child)::after{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:40px;height:1px;background:var(--ink-line);}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--surface-alt);border:2px solid var(--ink-line);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:var(--ink-soft);flex-shrink:0;transition:all .3s;}
+.step-num.active{background:var(--gold);border-color:var(--gold);color:#fff;box-shadow:0 0 0 4px rgba(201,168,76,.15);}
+.step-num.done{background:var(--success);border-color:var(--success);color:#fff;}
+.step-label{font-size:.8rem;font-weight:500;color:var(--ink-soft);white-space:nowrap;}
+.flow-step.active .step-label{color:var(--ink);font-weight:600;}
+@media(max-width:700px){.step-label{display:none;}.flow-step:not(:last-child)::after{width:20px;}}
+
+.page-body{max-width:1320px;margin:0 auto;padding:2rem 1.5rem;display:grid;grid-template-columns:1fr 340px;gap:1.5rem;}
+@media(max-width:1024px){.page-body{grid-template-columns:1fr;}}
+.card-panel{background:var(--surface);border:1px solid var(--ink-line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:1.5rem;}
+.card-panel-header{padding:1.2rem 1.5rem;border-bottom:1px solid var(--ink-line);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+.card-panel-header h3{font-family:var(--serif);font-size:1.1rem;color:var(--ink);font-weight:normal;}
+.card-panel-body{padding:1.5rem;}
+.analytics-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;}
+.stat-card{background:var(--surface);border:1px solid var(--ink-line);border-radius:var(--radius);padding:1.25rem;display:flex;gap:1rem;align-items:center;box-shadow:var(--shadow);}
+.stat-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0;}
+.stat-icon.gold{background:var(--gold-light);color:var(--gold-dark);}
+.stat-icon.green{background:var(--success-bg);color:var(--success);}
+.stat-icon.blue{background:var(--info-bg);color:var(--info);}
+.stat-value{font-family:var(--serif);font-size:1.45rem;line-height:1;}
+.stat-label{font-size:.74rem;color:var(--ink-soft);margin-top:2px;}
+@media(max-width:700px){.analytics-strip{grid-template-columns:1fr;}}
+
+.statement-row{display:flex;align-items:center;justify-content:space-between;padding:.85rem 0;border-bottom:1px solid var(--ink-line);}
+.statement-row:last-child{border-bottom:none;}
+.stmt-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;margin-right:.75rem;}
+.stmt-meta{flex:1;}
+.stmt-meta strong{display:block;font-size:.875rem;font-weight:600;color:var(--ink);}
+.stmt-meta span{font-size:.775rem;color:var(--ink-soft);}
+.stmt-amount{text-align:right;}
+.stmt-amount strong{display:block;font-size:.92rem;font-weight:600;font-family:var(--mono);}
+.badge-pill{display:inline-block;font-size:.68rem;font-weight:600;padding:3px 9px;border-radius:20px;}
+.badge-paid{background:var(--success-bg);color:var(--success);}
+.badge-due{background:var(--warning-bg);color:var(--warning);}
+.badge-overdue{background:var(--danger-bg);color:var(--danger);}
+.badge-pending{background:var(--info-bg);color:var(--info);}
+.badge-partial{background:var(--info-bg);color:var(--info);}
+.badge-crypto{background:var(--crypto-bg);color:var(--crypto);}
+
+.form-group{margin-bottom:1.1rem;}
+.form-label{display:block;font-size:.78rem;font-weight:600;color:var(--ink-soft);letter-spacing:.02em;margin-bottom:6px;}
+.form-input,.form-select-custom{width:100%;padding:.72rem 1rem;border:1.5px solid var(--ink-line);border-radius:var(--radius-sm);font-family:var(--sans);font-size:.9rem;color:var(--ink);background:var(--surface);transition:border-color .2s,box-shadow .2s;outline:none;appearance:none;}
+.form-input:focus,.form-select-custom:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.14);}
+.form-input.is-invalid{border-color:var(--danger);}
+.form-input[readonly]{background:var(--surface-alt);color:var(--ink-soft);}
+.input-group-wrap{position:relative;display:flex;align-items:center;}
+.input-prefix{position:absolute;left:12px;font-size:.875rem;font-weight:600;color:var(--ink-soft);pointer-events:none;font-family:var(--mono);}
+.input-group-wrap .form-input{padding-left:2.1rem;font-family:var(--mono);}
+.form-select-wrap{position:relative;}
+.form-select-wrap::after{content:'\f107';font-family:'Font Awesome 6 Free';font-weight:900;position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--ink-soft);pointer-events:none;font-size:.85rem;}
+.form-row{display:grid;gap:1rem;}
+.form-row-2{grid-template-columns:1fr 1fr;}
+.form-row-3{grid-template-columns:1fr 1fr 1fr;}
+@media(max-width:600px){.form-row-2,.form-row-3{grid-template-columns:1fr;}}
+
+.pm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(152px,1fr));gap:.8rem;}
+.pm-card{border:1.5px solid var(--ink-line);border-radius:var(--radius-sm);padding:1.05rem 1rem;cursor:pointer;transition:all .18s;text-align:center;background:var(--surface);position:relative;}
+.pm-card:hover{border-color:var(--gold);background:var(--gold-light);transform:translateY(-1px);}
+.pm-card.active{border-color:var(--gold);background:var(--gold-light);box-shadow:0 0 0 3px rgba(201,168,76,.15);}
+.pm-icon{font-size:1.6rem;margin-bottom:.4rem;display:block;}
+.pm-name{font-size:.8rem;font-weight:700;color:var(--ink);}
+.pm-sub{font-size:.68rem;color:var(--ink-soft);}
+.pm-fee-tag{position:absolute;top:6px;right:6px;font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:20px;background:var(--surface-alt);color:var(--ink-soft);font-family:var(--mono);}
+.pm-detail-panel{display:none;background:var(--surface-alt);border:1px solid var(--ink-line);border-radius:var(--radius-sm);padding:1.25rem;margin-top:1rem;}
+.pm-detail-panel.show{display:block;animation:fadeIn .25s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+.pm-section-title{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:1rem;display:flex;align-items:center;gap:8px;}
+.pm-section-title::after{content:'';flex:1;height:1px;background:var(--ink-line);}
+.fee-callout{display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px dashed var(--ink-line);border-radius:var(--radius-sm);padding:.7rem 1rem;font-size:.82rem;margin-top:.7rem;}
+.fee-callout b{font-family:var(--mono);color:var(--gold-dark);}
+.dest-toggle{display:flex;gap:6px;background:var(--surface);border:1px solid var(--ink-line);border-radius:999px;padding:4px;margin-bottom:.9rem;width:fit-content;}
+.dest-toggle button{border:none;background:transparent;padding:.45rem 1rem;border-radius:999px;font-size:.78rem;font-weight:600;color:var(--ink-soft);cursor:pointer;transition:all .18s;}
+.dest-toggle button.active{background:var(--ink);color:#fff;}
+.dest-auto-card{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,var(--ink) 0%,var(--ink-mid) 100%);color:#fff;border-radius:var(--radius-sm);padding:.9rem 1rem;}
+.dest-auto-card i{font-size:1.3rem;color:var(--gold);}
+.dest-auto-card .dac-label{font-size:.68rem;color:rgba(255,255,255,.5);letter-spacing:.04em;text-transform:uppercase;}
+.dest-auto-card .dac-value{font-family:var(--mono);font-weight:700;font-size:.95rem;color:var(--gold);}
+
+.btn-gold{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:#fff;border:none;padding:.78rem 1.55rem;border-radius:var(--radius-sm);font-family:var(--sans);font-weight:600;font-size:.9rem;cursor:pointer;transition:all .2s;text-decoration:none;box-shadow:0 6px 18px rgba(201,168,76,.28);}
+.btn-gold:hover{background:var(--gold-dark);transform:translateY(-1px);color:#fff;}
+.btn-gold:disabled{opacity:.55;cursor:not-allowed;transform:none;}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--ink);border:1.5px solid var(--ink-line);padding:.7rem 1.25rem;border-radius:var(--radius-sm);font-family:var(--sans);font-weight:600;font-size:.875rem;cursor:pointer;transition:all .2s;}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold-dark);background:var(--gold-light);}
+.btn-sm{padding:.4rem .9rem;font-size:.8rem;}
+.btn-ghost-sm{background:none;border:1px dashed var(--ink-line);color:var(--ink-soft);padding:.4rem .8rem;border-radius:var(--radius-sm);font-size:.76rem;cursor:pointer;}
+.btn-ghost-sm:hover{border-color:var(--gold);color:var(--gold-dark);}
+.form-actions{display:flex;gap:.75rem;justify-content:flex-end;margin-top:1.25rem;flex-wrap:wrap;}
+
+.timeline{position:relative;padding-left:28px;}
+.timeline::before{content:'';position:absolute;left:8px;top:8px;bottom:0;width:1px;background:var(--ink-line);}
+.timeline-item{position:relative;margin-bottom:1.25rem;}
+.timeline-dot{position:absolute;left:-24px;top:4px;width:14px;height:14px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 2px currentColor;}
+.timeline-dot.paid{color:var(--success);background:var(--success);}
+.timeline-dot.partial{color:var(--info);background:var(--info);}
+.timeline-dot.due{color:var(--warning);background:var(--warning);}
+.tl-body{background:var(--surface-alt);border-radius:var(--radius-sm);padding:.85rem 1rem;display:flex;justify-content:space-between;align-items:center;gap:.75rem;flex-wrap:wrap;}
+.tl-title{font-weight:600;font-size:.875rem;color:var(--ink);}
+.tl-sub{font-size:.75rem;color:var(--ink-soft);margin-top:2px;}
+.tl-amount{font-weight:700;font-size:.92rem;text-align:right;font-family:var(--mono);}
+
+.qr-box{background:linear-gradient(150deg,var(--ink) 0%,var(--ink-mid) 100%);border-radius:var(--radius);padding:1.5rem;text-align:center;color:#fff;}
+.qr-placeholder{width:140px;height:140px;background:#fff;border-radius:9px;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;}
+.qr-label{font-size:.8rem;color:rgba(255,255,255,.6);margin-bottom:.75rem;}
+.qr-amount{font-family:var(--serif);font-size:1.5rem;color:var(--gold);margin-bottom:.5rem;}
+
+.notif-item{display:flex;gap:.75rem;align-items:flex-start;padding:.875rem 0;border-bottom:1px solid var(--ink-line);}
+.notif-item:last-child{border-bottom:none;}
+.notif-dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex-shrink:0;}
+.notif-msg{font-size:.85rem;color:var(--ink);line-height:1.45;}
+.notif-time{font-size:.72rem;color:var(--ink-soft);margin-top:2px;}
+
+.chart-wrap{display:flex;align-items:flex-end;gap:8px;height:120px;padding:0 4px;}
+.chart-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.chart-bar{width:100%;border-radius:4px 4px 0 0;background:linear-gradient(180deg,var(--gold) 0%,var(--gold-dark) 100%);min-height:8px;cursor:pointer;transition:opacity .2s;}
+.chart-bar:hover{opacity:.8;}
+.chart-bar.current{background:var(--ink);}
+.chart-bar-label{font-size:.7rem;color:var(--ink-soft);}
+
+.progress-bar-wrap{background:var(--surface-alt);border-radius:10px;height:8px;overflow:hidden;}
+.progress-bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--gold),var(--gold-dark));transition:width .8s ease;}
+
+.success-screen{display:none;text-align:center;padding:3rem 2rem;}
+.success-circle{width:88px;height:88px;border-radius:50%;background:var(--success-bg);border:3px solid var(--success);display:flex;align-items:center;justify-content:center;font-size:2.3rem;color:var(--success);margin:0 auto 1.5rem;animation:successPop .5s ease;}
+@keyframes successPop{0%{transform:scale(.5);opacity:0;}70%{transform:scale(1.08);}100%{transform:scale(1);opacity:1;}}
+.receipt-card{background:var(--surface);border:1px solid var(--ink-line);border-radius:var(--radius-lg);padding:0;margin:1.5rem 0;text-align:left;overflow:hidden;box-shadow:var(--shadow-lg);}
+.receipt-band{background:var(--ink);color:#fff;padding:1.4rem 1.75rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;}
+.receipt-band .rb-brand{font-family:var(--serif);font-size:1.15rem;}
+.receipt-band .rb-sub{font-size:.72rem;color:rgba(255,255,255,.5);margin-top:2px;}
+.receipt-band .rb-txn{font-family:var(--mono);color:var(--gold);font-weight:700;text-align:right;}
+.receipt-body{padding:1.5rem 1.75rem;}
+.receipt-grid{display:grid;grid-template-columns:1fr 1fr;gap:.9rem 1.5rem;margin-bottom:1.1rem;}
+.receipt-grid .field-label{font-size:.7rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);}
+.receipt-grid .field-val{font-size:.875rem;color:var(--ink);font-weight:500;margin-top:2px;font-family:var(--mono);}
+.breakdown-row{display:flex;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--ink-line);font-size:.875rem;font-family:var(--mono);}
+.breakdown-row span:first-child{font-family:var(--sans);}
+.breakdown-row.total{border-bottom:none;font-weight:700;font-size:1.05rem;color:var(--success);padding-top:.9rem;}
+.breakdown-row.sub{font-size:.78rem;color:var(--ink-soft);padding:.3rem 0 .3rem 1rem;border-bottom:none;}
+.breakdown-row.balance{color:var(--warning);font-weight:700;}
+.breakdown-bg{background:var(--surface-alt);border-radius:var(--radius-sm);padding:1rem 1.1rem;margin-bottom:1rem;}
+.receipt-foot{text-align:center;color:var(--ink-soft);font-size:.78rem;border-top:1px dashed var(--ink-line);padding-top:1rem;}
+
+.chat-section{background:var(--ink);padding:3rem 2rem;margin-top:2rem;}
+.chat-inner{max-width:800px;margin:0 auto;}
+.chat-title{font-family:var(--serif);font-size:1.8rem;color:#fff;text-align:center;margin-bottom:.5rem;}
+.chat-subtitle{text-align:center;color:rgba(255,255,255,.5);margin-bottom:1.5rem;font-size:.875rem;}
+.chat-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:1.25rem;height:280px;overflow-y:auto;margin-bottom:1rem;}
+.bot-msg,.user-msg{max-width:75%;padding:.7rem 1rem;border-radius:14px;font-size:.875rem;margin-bottom:.75rem;line-height:1.5;}
+.bot-msg{background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);border-bottom-left-radius:4px;}
+.user-msg{background:var(--gold);color:#fff;margin-left:auto;border-bottom-right-radius:4px;font-weight:500;}
+.chat-input-row{display:flex;gap:.5rem;}
+.chat-input{flex:1;padding:.75rem 1rem;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:var(--radius-sm);color:#fff;font-family:var(--sans);font-size:.9rem;outline:none;}
+.chat-input::placeholder{color:rgba(255,255,255,.3);}
+.chat-input:focus{border-color:var(--gold);}
+.chat-send-btn{background:var(--gold);color:#fff;border:none;padding:.75rem 1.1rem;border-radius:var(--radius-sm);cursor:pointer;font-size:1rem;transition:background .2s;}
+.chat-send-btn:hover{background:var(--gold-dark);}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(16,14,28,.6);z-index:500;align-items:center;justify-content:center;padding:1rem;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--surface);border-radius:var(--radius);width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp .3s ease;}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.modal-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--ink-line);display:flex;justify-content:space-between;align-items:center;}
+.modal-header h4{font-family:var(--serif);font-size:1.1rem;}
+.modal-close{background:none;border:none;font-size:1.25rem;cursor:pointer;color:var(--ink-soft);padding:4px;}
+.modal-body{padding:1.5rem;}
+.modal-footer{padding:1rem 1.5rem;border-top:1px solid var(--ink-line);display:flex;gap:.75rem;justify-content:flex-end;}
+.quickpay-amount{font-family:var(--serif);font-size:2.4rem;color:var(--gold);margin:.75rem 0;}
+
+.site-footer{background:var(--ink-mid);color:rgba(255,255,255,.55);padding:3rem 2rem 1.5rem;}
+.footer-inner{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:2rem;}
+.footer-brand-name{font-family:var(--serif);font-size:1.2rem;color:#fff;margin-bottom:.5rem;}
+.footer-h{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:.75rem;}
+.footer-links{display:flex;flex-direction:column;gap:6px;}
+.footer-links a{color:rgba(255,255,255,.55);text-decoration:none;font-size:.875rem;}
+.footer-links a:hover{color:var(--gold);}
+.footer-bottom{max-width:1320px;margin:2rem auto 0;padding-top:1.25rem;border-top:1px solid rgba(255,255,255,.08);font-size:.8rem;text-align:center;}
+.footer-bottom a{color:var(--gold);text-decoration:none;}
+.social-row{display:flex;gap:8px;margin-top:.75rem;}
+.social-btn{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);font-size:.85rem;text-decoration:none;}
+.social-btn:hover{background:var(--gold);border-color:var(--gold);color:#fff;}
+
+.fab{position:fixed;bottom:28px;right:28px;width:56px;height:56px;border-radius:50%;background:var(--gold);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.2rem;box-shadow:0 8px 26px rgba(201,168,76,.45);z-index:400;transition:all .2s;}
+.fab:hover{background:var(--gold-dark);transform:scale(1.08);}
+.back-top{position:fixed;bottom:28px;left:28px;width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--ink-line);display:flex;align-items:center;justify-content:center;font-size:.9rem;color:var(--ink-soft);cursor:pointer;box-shadow:var(--shadow);text-decoration:none;z-index:400;transition:all .2s;opacity:0;}
+.back-top.visible{opacity:1;}
+.back-top:hover{border-color:var(--gold);color:var(--gold);}
+
+.toast-wrap{position:fixed;top:20px;right:20px;z-index:600;display:flex;flex-direction:column;gap:8px;}
+.toast-item{background:var(--surface);border:1px solid var(--ink-line);border-left:3px solid var(--gold);border-radius:var(--radius-sm);padding:.875rem 1rem;min-width:280px;max-width:340px;box-shadow:var(--shadow-lg);display:flex;align-items:flex-start;gap:10px;animation:toastIn .3s ease;font-size:.85rem;}
+@keyframes toastIn{from{transform:translateX(40px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+.toast-icon{color:var(--gold);margin-top:1px;}
+.toast-title{font-weight:600;margin-bottom:2px;}
+.toast-msg{color:var(--ink-soft);}
+
+.switch-row{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--ink-soft);}
+.toggle-input{display:none;}
+.toggle-label{width:40px;height:22px;background:var(--ink-line);border-radius:11px;position:relative;cursor:pointer;transition:background .2s;}
+.toggle-label::after{content:'';position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.toggle-input:checked + .toggle-label{background:var(--gold);}
+.toggle-input:checked + .toggle-label::after{left:21px;}
+
+.demo-banner{background:var(--warning-bg);border:1px solid rgba(142,98,0,.25);color:var(--warning);border-radius:var(--radius-sm);padding:.75rem 1rem;font-size:.8rem;display:flex;gap:8px;align-items:flex-start;margin-bottom:1.25rem;}
+.receipt-currency-badge{display:inline-block;font-size:.65rem;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:20px;background:var(--gold-light);color:var(--gold-dark);margin-left:6px;font-family:var(--mono);}
+.history-empty{text-align:center;padding:2rem 1rem;color:var(--ink-soft);font-size:.875rem;}
+
+.bill-line{display:flex;justify-content:space-between;align-items:center;gap:.75rem;padding:.5rem 0;border-bottom:1px dashed var(--ink-line);font-size:.83rem;}
+.bill-line:last-child{border-bottom:none;}
+.bill-line .bl-name{color:var(--ink-soft);flex:1;}
+.bill-line .bl-amt-input{width:110px;text-align:right;padding:.35rem .5rem;border:1.5px solid var(--ink-line);border-radius:8px;font-family:var(--mono);font-size:.82rem;background:var(--surface);}
+.bill-line .bl-amt-input:focus{border-color:var(--gold);outline:none;box-shadow:0 0 0 2px rgba(201,168,76,.15);}
+.bill-line .bl-remove{background:none;border:none;color:var(--ink-soft);cursor:pointer;font-size:.75rem;padding:2px 6px;}
+.bill-line .bl-remove:hover{color:var(--danger);}
+.sync-indicator{display:inline-flex;align-items:center;gap:5px;font-size:.68rem;color:var(--ink-soft);}
+.sync-indicator .dot{width:6px;height:6px;border-radius:50%;background:var(--success);}
+
+.amount-pay-toggle{display:flex;gap:6px;background:var(--surface-alt);border-radius:999px;padding:4px;width:fit-content;margin-bottom:.9rem;}
+.amount-pay-toggle button{border:none;background:transparent;padding:.4rem .95rem;border-radius:999px;font-size:.76rem;font-weight:600;color:var(--ink-soft);cursor:pointer;}
+.amount-pay-toggle button.active{background:var(--gold);color:#fff;}
+
+@media print{
+  .site-nav,.trust-strip,.ticker-wrap,.flow-bar,.chat-section,.site-footer,.fab,.back-top,.toast-wrap,.form-actions,#mainContent,.modal-overlay{display:none !important;}
+  body{background:#fff;}
+  .receipt-card{box-shadow:none;border:1px solid #ccc;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <div class="brand-logo"><i class="fas fa-building"></i></div>
+      <span class="brand-name">Mwarokin <span>Estates</span></span>
+    </a>
+    <button class="nav-toggler" onclick="document.getElementById('navMenu').style.display=document.getElementById('navMenu').style.display==='flex'?'none':'flex'"><i class="fas fa-bars"></i></button>
+    <ul class="nav-links" id="navMenu">
+      <li><a href="Mwarokin Amenities.html">Amenities</a></li>
+      <li><a href="Communication.html">Communication</a></li>
+      <li><a href="ManageBills.html">Manage Bills</a></li>
+      <li><a href="LipaMdogo.html">Lipa Mdogo</a></li>
+      <li><a href="Contact.html">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip">
+  <span><i class="fas fa-lock"></i>256-bit encrypted checkout</span>
+  <span><i class="fas fa-shield-alt"></i>PCI-aligned card handling</span>
+  <span><i class="fas fa-receipt"></i>Instant itemised receipts</span>
+  <span><i class="fas fa-bolt"></i>Real-time, synced across every tab</span>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-tag">Tenant Portal · Rent Payment</div>
+      <h1>Welcome back, Mwarokin Tenant</h1>
+      <p style="color:rgba(255,255,255,0.55); margin-top:0.5rem; font-size:0.925rem;">Pay this month's rent, bills and amenities in one secure checkout — across mobile money, bank, card, SylloPay or crypto. Every shilling posts to your landlord's property account instantly.</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item"><small>Your Tenant ID</small><p id="heroTenantId">MWK-0123</p></div>
+        <div class="hero-meta-item"><small>My Home</small><p id="heroHome">Sunrise · Unit 4B</p></div>
+        <div class="hero-meta-item"><small>Next Due Date</small><p id="nextDueDisplay">Next Month…</p></div>
+      </div>
+    </div>
+    <div class="hero-balance-card">
+      <div class="currency-switcher">
+        <button class="currency-btn" onclick="toggleCurrencyDropdown()" id="currBtnLabel"><i class="fas fa-globe"></i> KES ▾</button>
+        <div class="currency-dropdown" id="currencyDrop">
+          <div class="currency-opt active" data-cur="KES" data-sym="KSh " data-rate="1" onclick="selectCurrency(this)">🇰🇪 Kenyan Shilling (KES)</div>
+          <div class="currency-opt" data-cur="USD" data-sym="$" data-rate="0.0077" onclick="selectCurrency(this)">🇺🇸 US Dollar (USD)</div>
+          <div class="currency-opt" data-cur="EUR" data-sym="€" data-rate="0.0071" onclick="selectCurrency(this)">🇪🇺 Euro (EUR)</div>
+          <div class="currency-opt" data-cur="GBP" data-sym="£" data-rate="0.0061" onclick="selectCurrency(this)">🇬🇧 British Pound (GBP)</div>
+          <div class="currency-opt" data-cur="CNY" data-sym="¥" data-rate="0.056" onclick="selectCurrency(this)">🇨🇳 Chinese Yuan (CNY)</div>
+          <div class="currency-opt" data-cur="ZAR" data-sym="R " data-rate="0.143" onclick="selectCurrency(this)">🇿🇦 Rand (ZAR)</div>
+          <div class="currency-opt" data-cur="TZS" data-sym="TSh " data-rate="20.5" onclick="selectCurrency(this)">🇹🇿 Tanz. Shilling (TZS)</div>
+          <div class="currency-opt" data-cur="NGN" data-sym="₦" data-rate="11.8" onclick="selectCurrency(this)">🇳🇬 Naira (NGN)</div>
+        </div>
+      </div>
+      <div class="hero-fee-note" id="rateSourceNote">Rates shown are indicative reference rates, refreshed locally.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-head">
+    <div class="ticker-title"><span class="pulse-dot"></span> Live Transaction Rates <span class="rc-live" id="liveBadge">LIVE</span></div>
+    <div><span class="ticker-updated" id="rateUpdated">Updated —</span><button class="ticker-refresh" onclick="refreshRates(true)"><i class="fas fa-sync-alt"></i> Refresh</button></div>
+  </div>
+  <div class="ticker-track-outer"><div class="ticker-track" id="rateTicker"></div></div>
+</div>
+
+<!-- FLOW -->
+<div class="flow-bar">
+  <div class="flow-inner">
+    <div class="flow-step active" id="flowStep1"><div class="step-num active" id="sn1">1</div><div class="step-label">Select Payment</div></div>
+    <div class="flow-step" id="flowStep2"><div class="step-num" id="sn2">2</div><div class="step-label">Payment Method</div></div>
+    <div class="flow-step" id="flowStep3"><div class="step-num" id="sn3">3</div><div class="step-label">Review &amp; Confirm</div></div>
+    <div class="flow-step" id="flowStep4"><div class="step-num" id="sn4">4</div><div class="step-label">Complete</div></div>
+  </div>
+</div>
+
+<!-- SUCCESS SCREEN -->
+<div id="successScreen" class="success-screen" style="max-width:680px; margin:2rem auto; display:none;">
+  <div class="success-circle"><i class="fas fa-check"></i></div>
+  <h2 style="font-family:var(--serif); font-size:2rem; margin-bottom:0.5rem;" id="successHeadline">Payment Successful</h2>
+  <p style="color:var(--ink-soft); margin-bottom:1.5rem;" id="successSub">Your rent has been processed and posted to your landlord's property account.</p>
+
+  <div class="receipt-card" id="receiptPrintArea">
+    <div class="receipt-band">
+      <div><div class="rb-brand">Mwarokin Estates</div><div class="rb-sub">Official Payment Receipt</div></div>
+      <div class="rb-txn"><div style="font-size:.7rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.05em;">Transaction ID</div><div id="rcTxnId">TXN-—</div></div>
+    </div>
+    <div class="receipt-body">
+      <div class="receipt-grid">
+        <div><div class="field-label">Date &amp; Time</div><div class="field-val" id="rcDate">—</div></div>
+        <div><div class="field-label">Payment Method</div><div class="field-val" id="rcMethod">—</div></div>
+        <div><div class="field-label">Property</div><div class="field-val" id="rcProperty">—</div></div>
+        <div><div class="field-label">Billing Period</div><div class="field-val" id="rcPeriod">—</div></div>
+        <div><div class="field-label">Tenant ID / Unit</div><div class="field-val" id="rcTenantUnit">—</div></div>
+        <div><div class="field-label">Currency Paid In</div><div class="field-val" id="rcCurrency">—</div></div>
+        <div><div class="field-label">Posted To</div><div class="field-val" id="rcRailRef">—</div></div>
+        <div><div class="field-label">Status</div><div class="field-val" id="rcStatus"><span class="badge-pill badge-paid">Confirmed</span></div></div>
+      </div>
+      <div class="breakdown-bg">
+        <div class="breakdown-row"><span>Monthly Rent</span><span id="rcRent">—</span></div>
+        <div id="rcBillsBreakdown"></div>
+        <div class="breakdown-row"><span>Bills &amp; Amenities</span><span id="rcCharges">—</span></div>
+        <div class="breakdown-row"><span id="rcRailFeeLabel">Transaction Fee</span><span id="rcRailFee">—</span></div>
+        <div class="breakdown-row total"><span id="rcTotalLabel">Total Paid</span><span id="rcTotal">—</span></div>
+        <div class="breakdown-row balance" id="rcBalanceRow" style="display:none;"><span>Remaining Balance</span><span id="rcBalance">—</span></div>
+      </div>
+      <div class="receipt-foot">Thank you for your payment · Electronic receipt — no signature required · Mwarokin Estates, Powered by SylloPay</div>
+    </div>
+  </div>
+
+  <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
+    <button class="btn-outline btn-sm" onclick="window.print()"><i class="fas fa-print"></i> Print Receipt</button>
+    <button class="btn-outline btn-sm" onclick="downloadReceiptPDF()"><i class="fas fa-download"></i> Download PDF</button>
+    <button class="btn-gold" onclick="returnToDashboard()"><i class="fas fa-home"></i> Back to Dashboard</button>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="page-body" id="mainContent">
+  <div>
+    <div class="analytics-strip">
+      <div class="stat-card"><div class="stat-icon gold"><i class="fas fa-calendar-check"></i></div><div><div class="stat-value" id="statOnTime">9</div><div class="stat-label">On-time Payments</div></div></div>
+      <div class="stat-card"><div class="stat-icon green"><i class="fas fa-chart-line"></i></div><div><div class="stat-value" id="statRate">92%</div><div class="stat-label">Payment Rate</div></div></div>
+      <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-clock"></i></div><div><div class="stat-value" id="statDays">5</div><div class="stat-label">Days Until Due</div></div></div>
+    </div>
+
+    <div class="card-panel">
+      <div class="card-panel-header">
+        <h3>Real-time Statement</h3>
+        <div style="display:flex;align-items:center;gap:.75rem;">
+          <span class="sync-indicator" id="syncIndicator"><span class="dot"></span> Synced across tabs</span>
+          <button class="btn-outline btn-sm" onclick="refreshStatement()"><i class="fas fa-sync-alt" id="refreshIcon"></i> Refresh</button>
+        </div>
+      </div>
+      <div class="card-panel-body" id="stmtContainer"></div>
+    </div>
+
+    <div class="card-panel">
+      <div class="card-panel-header">
+        <h3>Manage Bills — This Month's Amenities</h3>
+        <span style="font-size:0.75rem; color:var(--ink-soft);" id="billsMonthLabel">—</span>
+      </div>
+      <div class="card-panel-body">
+        <div id="billsContainer"></div>
+        <button class="btn-ghost-sm" style="margin-top:.75rem;" onclick="addBillLine()"><i class="fas fa-plus"></i> Add a line item</button>
+      </div>
+    </div>
+
+    <div class="card-panel">
+      <div class="card-panel-header"><h3>Payment History Chart</h3><span style="font-size:0.75rem; color:var(--ink-soft);">Last 6 months</span></div>
+      <div class="card-panel-body"><div class="chart-wrap" id="chartWrap"></div></div>
+    </div>
+
+    <!-- PAYMENT FORM -->
+    <div class="card-panel">
+      <div class="card-panel-header">
+        <h3>Submit Rent Payment</h3>
+        <div class="switch-row"><span style="font-size:0.8rem; color:var(--ink-soft);">Recurring</span><input type="checkbox" class="toggle-input" id="recurringToggle"><label class="toggle-label" for="recurringToggle"></label></div>
+      </div>
+      <div class="card-panel-body">
+        <div class="demo-banner">
+          <i class="fas fa-shield-alt" style="margin-top:2px;"></i>
+          <span>Submitting a payment posts it — with its own transaction ID, fee breakdown and receipt — to the property's ledger in real time, and notifies the landlord's account instantly. To move real money, wire a licensed processor on a backend server (see the "Go-Live Checklist" button below).</span>
+        </div>
+
+        <div class="form-row form-row-2">
+          <div class="form-group"><label class="form-label">Payment Month</label><input type="month" class="form-input" id="payMonth" onchange="onMonthChange()"></div>
+          <div class="form-group"><label class="form-label">Payment Date</label><input type="date" class="form-input" id="payDate"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Property Address</label><input type="text" class="form-input" id="propAddress" placeholder="e.g. Sunrise Apartments, Unit 4B, Nairobi" oninput="onIdentityChange()"></div>
+        <div class="form-row form-row-2">
+          <div class="form-group"><label class="form-label">Building</label><input type="text" class="form-input" id="propBuilding" placeholder="Block / Building name" oninput="onIdentityChange()"></div>
+          <div class="form-group"><label class="form-label">Unit Number</label><input type="text" class="form-input" id="propUnit" placeholder="e.g. 4B" oninput="onIdentityChange()"></div>
+        </div>
+        <div class="form-row form-row-2">
+          <div class="form-group"><label class="form-label">Phone Number</label><input type="tel" class="form-input" id="tenantPhone" placeholder="+254 7xx xxx xxx"></div>
+          <div class="form-group"><label class="form-label">Account Number</label><input type="text" class="form-input" id="tenantAccount" placeholder="Tenant account / ref"></div>
+        </div>
+
+        <div class="form-row form-row-3">
+          <div class="form-group">
+            <label class="form-label">Monthly Rent</label>
+            <div class="input-group-wrap"><span class="input-prefix" id="symRent">KSh</span><input type="number" class="form-input" id="fRent" value="18000" oninput="calcTotal()"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bills &amp; Amenities</label>
+            <div class="input-group-wrap"><span class="input-prefix" id="symCharges">KSh</span><input type="number" class="form-input" id="fCharges" value="2500" readonly></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Transaction Fee</label>
+            <div class="input-group-wrap"><span class="input-prefix" id="symFee">KSh</span><input type="text" class="form-input" id="fFee" style="font-weight:600;" readonly></div>
+          </div>
+        </div>
+
+        <div class="amount-pay-toggle" id="amountPayToggle">
+          <button type="button" class="active" data-mode="full" onclick="setPayMode('full')">Pay in full</button>
+          <button type="button" data-mode="partial" onclick="setPayMode('partial')">Pay a portion (Lipa Mdogo)</button>
+        </div>
+        <div class="form-group" id="partialAmountGroup" style="display:none;">
+          <label class="form-label">Amount You're Paying Now</label>
+          <div class="input-group-wrap"><span class="input-prefix" id="symPartial">KSh</span><input type="number" class="form-input" id="fPartial" oninput="calcTotal()" placeholder="e.g. 5000"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Total Amount Due</label>
+          <div class="input-group-wrap"><span class="input-prefix" id="symTotal">KSh</span><input type="text" class="form-input" id="fTotal" style="font-weight:700; font-size:1.05rem;" readonly></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" style="margin-bottom:0.75rem;">Payment Method</label>
+          <div class="pm-grid" id="pmGrid">
+            <div class="pm-card active" data-pm="mpesa" onclick="selectPM(this)"><span class="pm-fee-tag" id="tag_mpesa">—</span><span class="pm-icon" style="color:#4CAF50;">📲</span><div class="pm-name">M-Pesa</div><div class="pm-sub">Mobile Money</div></div>
+            <div class="pm-card" data-pm="mobile_money" onclick="selectPM(this)"><span class="pm-fee-tag" id="tag_mobile_money">—</span><span class="pm-icon" style="color:#FF9800;">📲</span><div class="pm-name">Airtel Money</div><div class="pm-sub">Mobile Money</div></div>
+            <div class="pm-card" data-pm="bank_kenya" onclick="selectPM(this)"><span class="pm-fee-tag" id="tag_bank_kenya">—</span><span class="pm-icon" style="color:#1565C0;">🏦</span><div class="pm-name">Bank</div><div class="pm-sub">26 banks</div></div>
+            <div class="pm-card" data-pm="bank_africa" onclick="selectPM(this)"><span class="pm-fee-tag" id="tag_bank_africa">—</span><span class="pm-icon" style="color:#7B1FA2;">🌍</span><div class="pm-name">African Bank</div><div class="pm-sub">Pan-African</div></div>
+            <div class="pm-card" data-pm="card" onclick="selectPM(this)"><span class="pm-fee-tag" id="tag_card">—</span><span class="pm-icon" style="color:#C62828;">💳</span><div class="pm-name">Card</div><div class="pm-sub">Visa / Mastercard</div></div>
+            <div class="pm-card" data-pm="syllopay" onclick="selectPM(this)"><span class="pm-fee-tag" id="tag_syllopay">—</span><span class="pm-icon" style="color:#C9A84C;">⚡</span><div class="pm-name">SylloPay</div><div class="pm-sub">Instant Wallet</div></div>
+            <div class="pm-card" data-pm="crypto" onclick="selectPM(this)"><span class="pm-fee-tag" id="tag_crypto">—</span><span class="pm-icon" style="color:#7C4DFF;">🪙</span><div class="pm-name">Crypto</div><div class="pm-sub">BTC / ETH / USDT</div></div>
+          </div>
+
+          <div class="pm-detail-panel show" id="panel_mpesa">
+            <div class="pm-section-title">M-Pesa Payment</div>
+            <div class="dest-toggle" id="mpesaDestToggle">
+              <button type="button" class="active" data-dest="auto" onclick="setMpesaDest('auto')"><i class="fas fa-link"></i> Auto-connect to Landlord</button>
+              <button type="button" data-dest="manual" onclick="setMpesaDest('manual')"><i class="fas fa-keyboard"></i> Enter Paybill/Till manually</button>
+            </div>
+            <div id="mpesaAutoBlock">
+              <div class="dest-auto-card">
+                <i class="fas fa-building-columns"></i>
+                <div><div class="dac-label" id="mpesaAutoLabel">Landlord Paybill</div><div class="dac-value" id="mpesaAutoValue">522533</div></div>
+              </div>
+            </div>
+            <div id="mpesaManualBlock" style="display:none;">
+              <div class="form-row form-row-2">
+                <div class="form-group">
+                  <label class="form-label">Destination Type</label>
+                  <div class="form-select-wrap"><select class="form-input form-select-custom" id="mpesaManualType"><option value="paybill">Paybill Number</option><option value="till">Till Number</option></select></div>
+                </div>
+                <div class="form-group"><label class="form-label">Paybill / Till Number</label><input type="text" class="form-input" id="mpesaManualNumber" placeholder="Enter number"></div>
+              </div>
+            </div>
+            <div class="form-row form-row-2">
+              <div class="form-group"><label class="form-label">M-Pesa Phone Number</label><input type="tel" class="form-input" placeholder="e.g. 0712 345 678" id="mpesaPhone"></div>
+              <div class="form-group"><label class="form-label">Account Reference (your unit number)</label><input type="text" class="form-input" id="mpesaAccountRef" placeholder="e.g. 4B"></div>
+            </div>
+            <div style="background:var(--success-bg); border-radius:var(--radius-sm); padding:0.875rem 1rem; font-size:0.85rem; color:var(--success); display:flex; gap:8px; align-items:flex-start;">
+              <i class="fas fa-info-circle" style="margin-top:2px;"></i>
+              <span>Submitting calls <code>POST /api/mpesa/stkpush</code> on your backend, which triggers a real Daraja STK push to this phone. This demo simulates that response — wire the endpoint in to go live.</span>
+            </div>
+            <div class="fee-callout"><span>M-Pesa Transaction Fee 📲</span><b id="feeInline_mpesa">—</b></div>
+          </div>
+
+          <div class="pm-detail-panel" id="panel_mobile_money">
+            <div class="pm-section-title">Airtel Money</div>
+            <div class="form-group">
+              <label class="form-label">Provider</label>
+              <div class="form-select-wrap">
+                <select class="form-input form-select-custom" id="mobileMoneyProvider">
+                  <option value="">Select Mobile Money Provider</option>
+                  <optgroup label="Kenya"><option value="mpesa">M-Pesa</option><option value="airtel_money">Airtel Money</option><option value="tkash">T-Kash</option><option value="syllopay">SylloPay Wallet</option></optgroup>
+                  <optgroup label="Tanzania"><option value="vodacom_mpesa">Vodacom M-Pesa</option><option value="tigopesa">Tigo Pesa</option><option value="airtel_tz">Airtel Money Tanzania</option><option value="halopesa">HaloPesa</option></optgroup>
+                  <optgroup label="Uganda"><option value="mtn_momo">MTN Mobile Money</option><option value="airtel_uganda">Airtel Money Uganda</option></optgroup>
+                  <optgroup label="Africa-Wide"><option value="orange_money">Orange Money</option><option value="wave">Wave Mobile Money</option><option value="moov_money">Moov Money</option></optgroup>
+                </select>
+              </div>
+            </div>
+            <div class="form-group"><label class="form-label">Mobile Number</label><input type="tel" class="form-input" placeholder="+254 7xx xxx xxx"></div>
+            <div class="fee-callout"><span>Airtel Money Transaction Fee</span><b id="feeInline_mobile_money">—</b></div>
+          </div>
+
+          <div class="pm-detail-panel" id="panel_bank_kenya">
+            <div class="pm-section-title">Local &amp; International Bank Transfer</div>
+            <div class="form-group">
+              <label class="form-label">Select Bank</label>
+              <div class="form-select-wrap">
+                <select class="form-input form-select-custom" id="bankPaymentMethod">
+                  <option value="">Select Bank</option>
+                  <optgroup label="Tier 1 Banks"><option value="kcb">KCB Bank Kenya</option><option value="equity">Equity Bank Kenya</option><option value="coop">Co-operative Bank</option><option value="absa">Absa Bank Kenya</option><option value="ncba">NCBA Bank</option><option value="dtb">Diamond Trust Bank (DTB)</option></optgroup>
+                  <optgroup label="Other Banks"><option value="sbm">SBM Bank Kenya</option><option value="ecobank">Ecobank Kenya</option><option value="family">Family Bank</option><option value="uba">United Bank for Africa (UBA)</option></optgroup>
+                </select>
+              </div>
+            </div>
+            <div class="form-row form-row-2">
+              <div class="form-group"><label class="form-label">Account Number</label><input type="text" class="form-input" placeholder="Bank account number"></div>
+              <div class="form-group"><label class="form-label">Account Name</label><input type="text" class="form-input" placeholder="As on bank account"></div>
+            </div>
+            <div class="fee-callout"><span>🏦 Local &amp; International Transaction Bank Fee</span><b id="feeInline_bank_kenya">—</b></div>
+          </div>
+
+          <div class="pm-detail-panel" id="panel_bank_africa">
+            <div class="pm-section-title">Pan-African Bank Transfer</div>
+            <div class="form-group">
+              <label class="form-label">Select African Bank</label>
+              <div class="form-select-wrap">
+                <select class="form-input form-select-custom" id="africanBanks">
+                  <option value="">Select African Bank</option>
+                  <optgroup label="West Africa"><option value="uba">United Bank for Africa (UBA)</option><option value="access_bank">Access Bank</option><option value="gtbank">GTBank</option></optgroup>
+                  <optgroup label="Southern Africa"><option value="fnb">First National Bank (FNB)</option><option value="standard_bank">Standard Bank</option><option value="nedbank">Nedbank</option></optgroup>
+                  <optgroup label="Pan-African"><option value="ecobank">Ecobank (38 Countries)</option></optgroup>
+                </select>
+              </div>
+            </div>
+            <div class="form-row form-row-2">
+              <div class="form-group"><label class="form-label">SWIFT / BIC Code</label><input type="text" class="form-input" placeholder="e.g. ECOCKENANXX"></div>
+              <div class="form-group"><label class="form-label">Account Number / IBAN</label><input type="text" class="form-input" placeholder="Account number"></div>
+            </div>
+            <div class="fee-callout"><span>🌍 Pan-African Bank Transaction Fee</span><b id="feeInline_bank_africa">—</b></div>
+          </div>
+
+          <div class="pm-detail-panel" id="panel_card">
+            <div class="pm-section-title">Card Payment</div>
+            <div class="form-group"><label class="form-label">Card Number</label><input type="text" class="form-input" placeholder="1234  5678  9012  3456" maxlength="19" oninput="fmtCard(this)"></div>
+            <div class="form-row form-row-3">
+              <div class="form-group" style="grid-column:span 2;"><label class="form-label">Cardholder Name</label><input type="text" class="form-input" placeholder="As printed on card"></div>
+              <div class="form-group"><label class="form-label">Expiry (MM/YY)</label><input type="text" class="form-input" placeholder="MM/YY" maxlength="5" oninput="fmtExpiry(this)"></div>
+            </div>
+            <div class="form-group" style="max-width:120px;"><label class="form-label">CVV</label><input type="password" class="form-input" placeholder="•••" maxlength="4"></div>
+            <div style="display:flex; gap:8px; align-items:center; font-size:0.8rem; color:var(--ink-soft);"><i class="fas fa-lock" style="color:var(--success);"></i> Card data is tokenised client-side by a PCI-compliant processor (Stripe/Flutterwave/Paystack) — never sent to your own server raw.</div>
+            <div class="fee-callout"><span>💳 Card Processing Fee</span><b id="feeInline_card">—</b></div>
+          </div>
+
+          <div class="pm-detail-panel" id="panel_syllopay">
+            <div class="pm-section-title">SylloPay Wallet</div>
+            <div style="text-align:center; padding:1rem 0;">
+              <div style="font-size:3rem; margin-bottom:0.5rem;">⚡</div>
+              <div style="font-family:var(--serif); font-size:1.2rem; margin-bottom:0.25rem;">SylloPay Balance</div>
+              <div style="font-size:2rem; color:var(--gold); font-weight:700; font-family:var(--mono);" id="sylloBalance">KSh 24,500</div>
+              <div style="font-size:0.8rem; color:var(--ink-soft); margin:0.5rem 0 1rem;">Available instantly</div>
+              <div style="background:var(--success-bg); border-radius:var(--radius-sm); padding:0.75rem; font-size:0.85rem; color:var(--success);"><i class="fas fa-check-circle"></i> Sufficient balance for this payment</div>
+            </div>
+            <div class="fee-callout"><span>⚡ SylloPay Transaction Fee</span><b id="feeInline_syllopay">—</b></div>
+          </div>
+
+          <div class="pm-detail-panel" id="panel_crypto">
+            <div class="pm-section-title">Crypto Payment</div>
+            <div class="form-row form-row-2">
+              <div class="form-group"><label class="form-label">Asset</label><div class="form-select-wrap"><select class="form-input form-select-custom" id="cryptoAsset" onchange="updateCryptoQuote()"><option value="BTC">Bitcoin (BTC)</option><option value="ETH">Ethereum (ETH)</option><option value="USDT" selected>Tether (USDT)</option><option value="USDC">USD Coin (USDC)</option></select></div></div>
+              <div class="form-group"><label class="form-label">Network</label><div class="form-select-wrap"><select class="form-input form-select-custom" id="cryptoNetwork"><option value="TRC20">Tron (TRC20)</option><option value="ERC20">Ethereum (ERC20)</option><option value="BEP20">BNB Smart Chain (BEP20)</option><option value="BTC">Bitcoin Mainnet</option></select></div></div>
+            </div>
+            <div style="background:var(--surface); border:1px dashed var(--ink-line); border-radius:var(--radius-sm); padding:.9rem 1rem; margin-bottom:.9rem;">
+              <div style="display:flex; justify-content:space-between; font-size:.82rem; margin-bottom:6px;"><span>Amount due in asset (live market rate)</span><b style="font-family:var(--mono); color:var(--crypto);" id="cryptoAmount">—</b></div>
+              <div style="display:flex; justify-content:space-between; font-size:.82rem;"><span>Deposit address</span><span style="font-family:var(--mono); font-size:.75rem;">Twk9…MwEst4B (demo)</span></div>
+            </div>
+            <div style="background:var(--crypto-bg); border-radius:var(--radius-sm); padding:0.75rem 1rem; font-size:0.82rem; color:var(--crypto); display:flex; gap:8px; align-items:flex-start;"><i class="fas fa-info-circle" style="margin-top:2px;"></i><span>Send the exact amount to the deposit address. A production gateway confirms via webhook after 1–3 confirmations.</span></div>
+            <div class="fee-callout"><span>Network + gateway fee</span><b id="feeInline_crypto">—</b></div>
+          </div>
+
+          <button class="btn-outline btn-sm" style="margin-top:0.75rem;" onclick="openModal('addPMModal')"><i class="fas fa-plus"></i> Add New Payment Method</button>
+        </div>
+
+        <div id="payResult" style="margin-top:1rem;"></div>
+
+        <div class="form-actions">
+          <button class="btn-outline" onclick="openModal('goLiveModal')"><i class="fas fa-plug"></i> Go-Live Checklist</button>
+          <button class="btn-outline" onclick="calcTotal()"><i class="fas fa-calculator"></i> Recalculate</button>
+          <button class="btn-gold" id="submitBtn" onclick="submitPayment()"><i class="fas fa-paper-plane"></i> Submit Payment</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-panel">
+      <div class="card-panel-header">
+        <h3>Payment History</h3>
+        <div style="display:flex; gap:6px;">
+          <button class="btn-outline btn-sm" onclick="filterHistory('3m')">3M</button>
+          <button class="btn-outline btn-sm" onclick="filterHistory('6m')">6M</button>
+          <button class="btn-outline btn-sm" onclick="filterHistory('1y')">1Y</button>
+          <button class="btn-outline btn-sm" onclick="clearMyPayments()" title="Clear only your logged payments"><i class="fas fa-trash-alt"></i></button>
+        </div>
+      </div>
+      <div class="card-panel-body"><div class="timeline" id="historyContainer"></div></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="card-panel">
+      <div class="card-panel-header"><h3>Payment Overview</h3></div>
+      <div class="card-panel-body">
+        <div style="margin-bottom:1rem;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="font-size:0.85rem;">Progress</span><span style="font-size:0.85rem; font-weight:600;" id="progLabel">75%</span></div>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:75%" id="progBar"></div></div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:0.75rem; text-align:center;">
+          <div><div style="font-family:var(--serif); font-size:1.3rem; color:var(--gold);" id="sideRent">KSh 20,500</div><div style="font-size:0.72rem; color:var(--ink-soft);">Monthly Rent</div></div>
+          <div><div style="font-family:var(--serif); font-size:1.3rem;" id="sideTotal">9</div><div style="font-size:0.72rem; color:var(--ink-soft);">On-time</div></div>
+          <div><div style="font-family:var(--serif); font-size:1.3rem; color:var(--gold);">4.8 ★</div><div style="font-size:0.72rem; color:var(--ink-soft);">Rating</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-panel">
+      <div class="card-panel-header"><h3>Quick Pay QR</h3></div>
+      <div class="card-panel-body">
+        <div class="qr-box">
+          <div style="font-size:0.75rem; color:rgba(255,255,255,0.4); margin-bottom:0.5rem; letter-spacing:0.06em; text-transform:uppercase;">Scan to Pay</div>
+          <div class="qr-placeholder" id="qrCanvas"><canvas id="qrcode" width="130" height="130"></canvas></div>
+          <div class="qr-amount" id="qrAmount">KSh 20,500</div>
+          <div class="qr-label">Use your mobile banking app to scan and pay instantly</div>
+          <button class="btn-outline btn-sm" style="color:white; border-color:rgba(255,255,255,0.2); font-size:0.8rem;" onclick="showToast('QR Ready','Download will save this code to your device.','info')"><i class="fas fa-download"></i> Download QR</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-panel">
+      <div class="card-panel-header"><h3>Notifications</h3><span style="background:var(--gold); color:white; font-size:0.7rem; font-weight:700; padding:2px 8px; border-radius:20px;" id="notifCount">3</span></div>
+      <div class="card-panel-body" id="notifContainer"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CHATBOT -->
+<section class="chat-section">
+  <div class="chat-inner">
+    <h2 class="chat-title">Mwarokin Assistant</h2>
+    <p class="chat-subtitle">Ask anything about your rent, payments, or property.</p>
+    <div class="chat-box" id="chatBox"><div class="bot-msg">Hello! I'm your Mwarokin assistant. How can I help you with your rent payment today?</div></div>
+    <div class="chat-input-row">
+      <input type="text" class="chat-input" id="chatInput" placeholder="Ask a question..." onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="chat-send-btn" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand-name">Mwarokin Estates</div>
+      <p style="font-size:0.85rem; margin-bottom:0.75rem;">Africa's premium property management platform.</p>
+      <p style="font-size:0.8rem;"><i class="fas fa-map-marker-alt" style="color:var(--gold); margin-right:6px;"></i>Africa, Global</p>
+      <p style="font-size:0.8rem;"><i class="fas fa-phone-alt" style="color:var(--gold); margin-right:6px;"></i>+254-704-919-388</p>
+      <p style="font-size:0.8rem;"><i class="fas fa-envelope" style="color:var(--gold); margin-right:6px;"></i>Property@Mwarokin.com</p>
+      <div class="social-row"><a class="social-btn" href="#"><i class="fab fa-twitter"></i></a><a class="social-btn" href="#"><i class="fab fa-facebook-f"></i></a><a class="social-btn" href="#"><i class="fab fa-linkedin-in"></i></a></div>
+    </div>
+    <div><div class="footer-h">Quick Links</div><div class="footer-links"><a href="Payments.html">Payments</a><a href="ManageBills.html">Manage Bills</a><a href="LipaMdogo.html">Lipa Mdogo Mdogo</a></div></div>
+    <div><div class="footer-h">Services</div><div class="footer-links"><a href="Property-agent.html">Property Agents</a><a href="Contact.html">Contact Us</a></div></div>
+  </div>
+  <div class="footer-bottom">Mwarokin Estates &copy; 2026. All Rights Reserved. Powered by <a href="https://www.syllogismtechnologyafrica.com">Syllogism Technology Africa</a></div>
+</footer>
+
+<button class="fab" onclick="openModal('quickPayModal')" title="Quick Pay"><i class="fas fa-bolt"></i></button>
+<a class="back-top" id="backTop" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;"><i class="fas fa-arrow-up"></i></a>
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- ADD PM MODAL -->
+<div class="modal-overlay" id="addPMModal">
+  <div class="modal-box">
+    <div class="modal-header"><h4>Add Payment Method</h4><button class="modal-close" onclick="closeModal('addPMModal')"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Payment Type</label>
+        <div class="form-select-wrap"><select class="form-input form-select-custom" id="newPMType" onchange="showNewPMDetails(this.value)"><option value="">Select Payment Type</option><option value="credit_card">Credit Card</option><option value="bank_account">Bank Account</option><option value="mobile_money">Mobile Money</option><option value="crypto_wallet">Crypto Wallet</option></select></div>
+      </div>
+      <div id="newPMDetails"></div>
+    </div>
+    <div class="modal-footer"><button class="btn-outline btn-sm" onclick="closeModal('addPMModal')">Cancel</button><button class="btn-gold btn-sm" onclick="savePM()"><i class="fas fa-save"></i> Save Method</button></div>
+  </div>
+</div>
+
+<!-- QUICK PAY MODAL -->
+<div class="modal-overlay" id="quickPayModal">
+  <div class="modal-box" style="max-width:340px; text-align:center;">
+    <div class="modal-header" style="justify-content:center; position:relative;"><h4>Quick Pay</h4><button class="modal-close" style="position:absolute; right:1.5rem;" onclick="closeModal('quickPayModal')"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      <div style="font-size:0.8rem; color:var(--ink-soft); margin-bottom:4px;" id="quickPayLabel">This Month's Rent</div>
+      <div class="quickpay-amount" id="quickPayAmt">KSh 20,500</div>
+      <div style="font-size:0.8rem; color:var(--ink-soft); margin-bottom:1.5rem;">via M-Pesa · auto-connected to landlord</div>
+      <button class="btn-gold" style="width:100%;" onclick="doQuickPay()"><i class="fas fa-bolt"></i> Pay Now</button>
+      <button class="btn-outline" style="width:100%; margin-top:8px;" onclick="closeModal('quickPayModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW RECEIPT MODAL -->
+<div class="modal-overlay" id="viewReceiptModal">
+  <div class="modal-box" style="max-width:520px;">
+    <div class="modal-header"><h4>Payment Receipt</h4><button class="modal-close" onclick="closeModal('viewReceiptModal')"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body" id="viewReceiptBody"></div>
+    <div class="modal-footer"><button class="btn-outline btn-sm" onclick="window.print()"><i class="fas fa-print"></i> Print</button><button class="btn-gold btn-sm" onclick="closeModal('viewReceiptModal')">Close</button></div>
+  </div>
+</div>
+
+<!-- GO-LIVE MODAL -->
+<div class="modal-overlay" id="goLiveModal">
+  <div class="modal-box" style="max-width:620px;">
+    <div class="modal-header"><h4>Go-Live Checklist — Connecting Real Payment Rails</h4><button class="modal-close" onclick="closeModal('goLiveModal')"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body" style="font-size:.85rem; line-height:1.7;">
+      <p style="margin-bottom:.75rem;">This page is a fully working <b>frontend</b>. To move real money, each rail below needs a small backend endpoint holding your secret credentials — never place API secrets in this HTML/JS.</p>
+      <div style="margin-bottom:.9rem;"><b>📲 M-Pesa / Airtel Money</b><br>Register on Safaricom Daraja / Airtel Money Africa, get API credentials, implement <code>POST /api/mpesa/stkpush</code> and a <code>/api/mpesa/callback</code> webhook. The landlord's paybill/till connects automatically per property once configured in your backend's property table.</div>
+      <div style="margin-bottom:.9rem;"><b>🏦 Bank Transfer</b><br>Use a licensed aggregator — implement <code>POST /api/bank/transfer</code> and a settlement webhook.</div>
+      <div style="margin-bottom:.9rem;"><b>💳 Card</b><br>Use a PCI-DSS certified processor (Stripe, Flutterwave, Paystack, Pesapal) — card fields hosted/tokenised by their SDK.</div>
+      <div style="margin-bottom:.9rem;"><b>⚡ SylloPay</b><br>Call your SylloPay ledger API to debit the tenant and credit the landlord, idempotently keyed by transaction ID.</div>
+      <div style="margin-bottom:.9rem;"><b>🪙 Crypto</b><br>Use a gateway (Coinbase Commerce, BitPay, NOWPayments) to generate a real deposit address per invoice and confirm via webhook.</div>
+      <p style="color:var(--ink-soft);">Until those endpoints exist, this page simulates confirmation locally so you can test the full UX, receipts and real-time sync end-to-end. Every rail — mobile money, bank, card, SylloPay or crypto — charges only a flat KSh 1–5 transaction fee per rent payment, regardless of amount.</p>
+    </div>
+    <div class="modal-footer"><button class="btn-gold btn-sm" onclick="closeModal('goLiveModal')">Got it</button></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════
+const API_CONFIG = {
+  mpesaStkPush:   '/api/mpesa/stkpush',
+  bankTransfer:   '/api/bank/transfer',
+  cardCharge:     '/api/card/charge',
+  syllopayDebit:  '/api/syllopay/debit',
+  cryptoInvoice:  '/api/crypto/invoice',
+  fxRatesLive:    'https://api.frankfurter.app/latest?from=KES',
+  cryptoRatesLive:'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether&vs_currencies=kes'
+};
+
+// PROPERTY / LANDLORD RECORD — in production, fetched from your backend per logged-in tenant.
+// This is what powers the "auto-connect to landlord paybill/till" feature.
+const PROPERTY_RECORD = {
+  tenantId: 'MWK-0123',
+  building: 'Sunrise',
+  unit: '4B',
+  landlordName: 'Mwarokin Property Holdings Ltd',
+  landlordPaybill: '522533',
+  landlordTill: '9004471',
+  landlordAccountRef: 'MWK-0123-4B'
+};
+
+let currSym = 'KSh ';
+let currRate = 1;
+let currCode = 'KES';
+let currentStep = 1;
+let activePM = 'mpesa';
+let mpesaDest = 'auto';
+let payMode = 'full';
+let ratesAreLive = false;
+
+const baseRent = 18000;
+const STORAGE_KEY = 'mwarokin_rent_payments_v4';
+const BILLS_KEY = 'mwarokin_manage_bills_v2';
+const CHANNEL_NAME = 'mwarokin_rent_realtime';
+const TENANT_ID = PROPERTY_RECORD.tenantId;
+
+const rtChannel = ('BroadcastChannel' in window) ? new BroadcastChannel(CHANNEL_NAME) : null;
+
+// Flat transaction fee schedule — Mwarokin Estates takes only KSh 1–5 per rent payment, on every rail.
+const FEE_SCHEDULE = {
+  mpesa:        { label:'M-Pesa Transaction Fee 📲',                        min:1, max:5 },
+  mobile_money: { label:'Airtel Money Transaction Fee',                     min:1, max:5 },
+  bank_kenya:   { label:'Local & International Transaction Bank Fee 🏦',    min:1, max:5 },
+  bank_africa:  { label:'Pan-African Bank Transaction Fee 🌍',              min:1, max:5 },
+  card:         { label:'Card Processing Fee 💳',                           min:1, max:5 },
+  syllopay:     { label:'SylloPay Transaction Fee ⚡',                       min:1, max:5 },
+  crypto:       { label:'Crypto Network + Gateway Fee 🪙',                   min:1, max:5 }
+};
+
+let baseRates = { mpesa:1.00, airtel:1.20, mtn_momo:1.15, bank_local:0.60, bank_africa:1.80, card:2.90, syllopay:0.00, btc:6250000, eth:325000, usdt:129.30 };
+let lastRates = {...baseRates};
+
+const AMENITY_CATALOGUE = [
+  { key:'water',    label:'Water',            icon:'💧', base:900,  variance:250 },
+  { key:'garbage',  label:'Garbage Collection',icon:'🗑️', base:400,  variance:0 },
+  { key:'security', label:'Security & Gate',   icon:'🛡️', base:600,  variance:0 },
+  { key:'parking',  label:'Parking',           icon:'🚗', base:500,  variance:0 },
+  { key:'internet', label:'Estate WiFi',       icon:'📶', base:300,  variance:0 },
+  { key:'service',  label:'Service Charge',    icon:'🧹', base:800,  variance:100 },
+  { key:'power_bk', label:'Backup Power Levy', icon:'🔋', base:250,  variance:0 }
+];
+
+// The single flat transaction fee for this payment attempt — Mwarokin Estates only ever takes KSh 1–5, in KES,
+// no matter the rail or the amount. Rolled fresh whenever the payment method changes.
+let currentFeeKES = 1;
+function rollTransactionFee(){
+  currentFeeKES = Math.floor(Math.random() * 5) + 1; // KSh 1–5, flat, regardless of rail or amount
+  return currentFeeKES;
+}
+
+// ══════════════════════════════════════════════
+// NEXT-MONTH DUE AMOUNT (dynamic — always rent + this month's bills, never hardcoded)
+// ══════════════════════════════════════════════
+function getNextDueTotalKES(){
+  const rentDisp = parseFloat(document.getElementById('fRent') ? document.getElementById('fRent').value : baseRent) || baseRent;
+  const chargesDisp = parseFloat(document.getElementById('fCharges') ? document.getElementById('fCharges').value : 0) || 0;
+  const rentKES = currRate ? rentDisp / currRate : rentDisp;
+  const chargesKES = currRate ? chargesDisp / currRate : chargesDisp;
+  return rentKES + chargesKES;
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
+  const today = new Date();
+  document.getElementById('payMonth').value = today.toISOString().slice(0,7);
+  document.getElementById('payDate').valueAsDate = today;
+  document.getElementById('heroTenantId').textContent = PROPERTY_RECORD.tenantId;
+  document.getElementById('heroHome').textContent = PROPERTY_RECORD.building + ' · Unit ' + PROPERTY_RECORD.unit;
+  document.getElementById('propBuilding').value = PROPERTY_RECORD.building;
+  document.getElementById('propUnit').value = PROPERTY_RECORD.unit;
+  document.getElementById('propAddress').value = PROPERTY_RECORD.building + ' Apartments, Unit ' + PROPERTY_RECORD.unit + ', Nairobi';
+  document.getElementById('tenantAccount').value = PROPERTY_RECORD.landlordAccountRef;
+
+  loadFromStorage();
+  generateMonthlyBills();
+  renderBills();
+  renderRateTicker();
+  updateFeeTags();
+  rollTransactionFee();
+  setMpesaDest('auto');
+  calcTotal();
+  renderStatement();
+  renderHistory();
+  renderNotifications();
+  renderChart();
+  drawQR();
+  updateNextDueDisplays();
+
+  fetchLiveRates();
+
+  window.addEventListener('scroll', function() {
+    const bt = document.getElementById('backTop');
+    if(window.scrollY > 300) bt.classList.add('visible'); else bt.classList.remove('visible');
+  });
+
+  document.addEventListener('click', function(e) {
+    if(!e.target.closest('.currency-switcher')) document.getElementById('currencyDrop').classList.remove('open');
+  });
+
+  // Loading/reminder toast now reflects NEXT MONTH'S actual amount owed (rent + this month's bills), not a fixed figure
+  setTimeout(() => {
+    const nextDueKES = getNextDueTotalKES();
+    showToast('Rent due in 5 days', 'Your rent for next month of ' + currSym + fmt(nextDueKES * currRate) + ' is due soon.', 'warning');
+  }, 1500);
+
+  setInterval(fetchLiveRates, 60000);
+
+  if(rtChannel){
+    rtChannel.onmessage = (ev) => {
+      const msg = ev.data || {};
+      if(msg.type === 'payment_recorded'){
+        renderHistory(); renderStatement(); renderChart();
+        flashSyncIndicator();
+        showToast('Payment Synced', 'A payment was recorded in another tab and is now reflected here.', 'info');
+      }
+      if(msg.type === 'bills_updated'){ renderBills(); calcTotal(); updateNextDueDisplays(); }
+      if(msg.type === 'landlord_notified'){ renderNotifications(); }
+    };
+  }
+  window.addEventListener('storage', (e) => {
+    if(e.key === STORAGE_KEY){ renderHistory(); renderStatement(); renderChart(); flashSyncIndicator(); }
+    if(e.key === BILLS_KEY){ renderBills(); calcTotal(); updateNextDueDisplays(); }
+  });
+});
+
+function flashSyncIndicator(){
+  const el = document.getElementById('syncIndicator');
+  if(!el) return;
+  el.style.color = 'var(--success)';
+  setTimeout(() => { el.style.color = ''; }, 1200);
+}
+
+function onIdentityChange(){
+  document.getElementById('mpesaAutoValue').textContent = mpesaDest === 'till' ? PROPERTY_RECORD.landlordTill : PROPERTY_RECORD.landlordPaybill;
+}
+
+// Keeps the QR amount, sidebar rent, and Quick Pay modal in sync with the real next-due total (rent + this month's bills)
+function updateNextDueDisplays(){
+  const nextDueKES = getNextDueTotalKES();
+  const dispAmount = currSym + fmt(nextDueKES * currRate);
+  const qr = document.getElementById('qrAmount'); if(qr) qr.textContent = dispAmount;
+  const sideRent = document.getElementById('sideRent'); if(sideRent) sideRent.textContent = dispAmount;
+  const quickPay = document.getElementById('quickPayAmt'); if(quickPay) quickPay.textContent = dispAmount;
+  const monthLabelSrc = document.getElementById('payMonth');
+  if(monthLabelSrc && monthLabelSrc.value){
+    const d = new Date(monthLabelSrc.value + '-01');
+    const nextMonthLabel = new Date(d.getFullYear(), d.getMonth() + 1, 1).toLocaleDateString('en-KE',{year:'numeric',month:'long'});
+    const nextDueDisplay = document.getElementById('nextDueDisplay');
+    if(nextDueDisplay) nextDueDisplay.textContent = nextMonthLabel;
+  }
+}
+
+// ══════════════════════════════════════════════
+// LIVE FX + CRYPTO RATES
+// ══════════════════════════════════════════════
+async function fetchLiveRates(manual){
+  const badge = document.getElementById('liveBadge');
+  try {
+    const [fxRes, cryptoRes] = await Promise.all([
+      fetch(API_CONFIG.fxRatesLive).then(r => r.ok ? r.json() : Promise.reject(r.status)),
+      fetch(API_CONFIG.cryptoRatesLive).then(r => r.ok ? r.json() : Promise.reject(r.status))
+    ]);
+    if(fxRes && fxRes.rates){
+      ['USD','EUR','GBP','CNY','ZAR'].forEach(code => updateCurrencyRateIfPresent(code, fxRes.rates[code]));
+    }
+    if(cryptoRes && cryptoRes.bitcoin){
+      lastRates = {...baseRates};
+      baseRates.btc = cryptoRes.bitcoin.kes || baseRates.btc;
+      baseRates.eth = (cryptoRes.ethereum && cryptoRes.ethereum.kes) || baseRates.eth;
+      baseRates.usdt = (cryptoRes.tether && cryptoRes.tether.kes) || baseRates.usdt;
+    }
+    ratesAreLive = true;
+    if(badge){ badge.textContent = 'LIVE'; badge.classList.remove('rc-stale'); }
+    document.getElementById('rateSourceNote').textContent = 'FX via frankfurter.app · Crypto via CoinGecko — refreshed every 60s.';
+  } catch(err){
+    ratesAreLive = false;
+    if(badge){ badge.textContent = 'OFFLINE'; badge.classList.add('rc-stale'); }
+    document.getElementById('rateSourceNote').textContent = 'Live feed unreachable — showing last known reference rates.';
+  }
+  renderRateTicker();
+  updateCryptoQuote();
+  if(manual) showToast('Rates Refreshed', ratesAreLive ? 'Pulled the latest live FX and crypto rates.' : 'Could not reach the live feed — kept last known rates.', ratesAreLive ? 'success' : 'warning');
+}
+function updateCurrencyRateIfPresent(code, kesToTarget){
+  if(!kesToTarget) return;
+  const opt = document.querySelector('.currency-opt[data-cur="'+code+'"]');
+  if(opt) opt.dataset.rate = kesToTarget;
+  if(currCode === code) currRate = kesToTarget;
+}
+
+// ══════════════════════════════════════════════
+// CURRENCY
+// ══════════════════════════════════════════════
+function toggleCurrencyDropdown() { document.getElementById('currencyDrop').classList.toggle('open'); }
+function selectCurrency(el) {
+  document.querySelectorAll('.currency-opt').forEach(o => o.classList.remove('active'));
+  el.classList.add('active');
+  currSym = el.dataset.sym; currRate = parseFloat(el.dataset.rate); currCode = el.dataset.cur;
+  document.getElementById('currBtnLabel').innerHTML = '<i class="fas fa-globe"></i> ' + currCode + ' ▾';
+  document.getElementById('currencyDrop').classList.remove('open');
+  ['symRent','symCharges','symFee','symTotal','symPartial'].forEach(id => { const e=document.getElementById(id); if(e) e.textContent = currSym; });
+  document.getElementById('sylloBalance').textContent = currSym + fmt(24500 * currRate);
+  document.getElementById('fRent').value = (baseRent * currRate).toFixed(currRate < 1 ? 2 : 0);
+  calcTotal(); renderStatement(); renderHistory(); renderBills(); updateCryptoQuote(); updateNextDueDisplays();
+}
+function fmt(n) { return parseFloat(n||0).toLocaleString('en-KE', {maximumFractionDigits: currRate < 1 ? 2 : 0, minimumFractionDigits: 0}); }
+
+// ══════════════════════════════════════════════
+// MANAGE BILLS
+// ══════════════════════════════════════════════
+function monthKey(){ return document.getElementById('payMonth').value || new Date().toISOString().slice(0,7); }
+function getBillsStore(){ try { return JSON.parse(localStorage.getItem(BILLS_KEY) || '{}'); } catch(e){ return {}; } }
+function saveBillsStore(store){
+  try { localStorage.setItem(BILLS_KEY, JSON.stringify(store)); if(rtChannel) rtChannel.postMessage({type:'bills_updated'}); } catch(e){}
+}
+function seededVariance(seedStr, spread){
+  let h = 0; for(let i=0;i<seedStr.length;i++) h = (h*31 + seedStr.charCodeAt(i)) >>> 0;
+  const frac = (h % 1000) / 1000; return Math.round((frac - 0.5) * 2 * spread);
+}
+function generateMonthlyBills(){
+  const store = getBillsStore();
+  const mk = TENANT_ID + ':' + monthKey();
+  if(store[mk]) return;
+  const lines = AMENITY_CATALOGUE.map(a => ({ key:a.key, label:a.label, icon:a.icon, amount: a.base + seededVariance(mk + a.key, a.variance) }));
+  store[mk] = { tenant: TENANT_ID, month: monthKey(), lines, generatedAt: new Date().toISOString() };
+  saveBillsStore(store);
+}
+function onMonthChange(){ generateMonthlyBills(); renderBills(); calcTotal(); updateNextDueDisplays(); }
+
+function renderBills(){
+  const store = getBillsStore();
+  const mk = TENANT_ID + ':' + monthKey();
+  const bill = store[mk];
+  const label = document.getElementById('billsMonthLabel');
+  const c = document.getElementById('billsContainer');
+  if(!bill){ c.innerHTML = '<div class="history-empty">No bills generated yet for this month.</div>'; return; }
+
+  label.textContent = new Date(monthKey()+'-01').toLocaleDateString('en-KE',{year:'numeric',month:'long'}) + ' · Tenant ' + bill.tenant;
+
+  const total = bill.lines.reduce((s,l) => s + l.amount, 0);
+  c.innerHTML = bill.lines.map((l,idx) => `
+    <div class="bill-line">
+      <span class="bl-name">${l.icon} ${l.label}</span>
+      <input class="bl-amt-input" type="number" value="${l.amount}" data-idx="${idx}" onchange="editBillLine(${idx}, this.value)" oninput="liveEditBillLine(${idx}, this.value)">
+      <button class="bl-remove" onclick="removeBillLine(${idx})" title="Remove"><i class="fas fa-times"></i></button>
+    </div>`).join('') + `
+    <div class="bill-line" style="border-top:1.5px solid var(--ink-line); margin-top:6px; padding-top:8px;">
+      <span class="bl-name" style="font-weight:700; color:var(--ink);">Total Bills &amp; Amenities</span>
+      <span class="bl-amt" style="color:var(--gold-dark); font-size:.95rem; font-family:var(--mono);">${currSym}${fmt(total * currRate)}</span>
+      <span style="width:26px;"></span>
+    </div>`;
+
+  const chargesEl = document.getElementById('fCharges');
+  if(chargesEl){ chargesEl.value = (total * currRate).toFixed(currRate < 1 ? 2 : 0); calcTotal(); updateNextDueDisplays(); }
+}
+
+// Insert/edit total recalculates live as the tenant types (no need to blur the field)
+function liveEditBillLine(idx, val){
+  const store = getBillsStore();
+  const mk = TENANT_ID + ':' + monthKey();
+  if(!store[mk] || !store[mk].lines[idx]) return;
+  const total = store[mk].lines.reduce((s,l,i) => s + (i===idx ? (parseFloat(val)||0) : l.amount), 0);
+  const chargesEl = document.getElementById('fCharges');
+  if(chargesEl){ chargesEl.value = (total * currRate).toFixed(currRate < 1 ? 2 : 0); calcTotal(); updateNextDueDisplays(); }
+}
+function editBillLine(idx, val){
+  const store = getBillsStore();
+  const mk = TENANT_ID + ':' + monthKey();
+  if(!store[mk] || !store[mk].lines[idx]) return;
+  store[mk].lines[idx].amount = parseFloat(val) || 0;
+  saveBillsStore(store);
+  renderBills();
+  updateNextDueDisplays();
+  showToast('Bill Updated', store[mk].lines[idx].label + ' set to ' + currSym + fmt(store[mk].lines[idx].amount * currRate) + '. Total recalculated.', 'info');
+}
+function removeBillLine(idx){
+  const store = getBillsStore();
+  const mk = TENANT_ID + ':' + monthKey();
+  if(!store[mk]) return;
+  store[mk].lines.splice(idx,1);
+  saveBillsStore(store);
+  renderBills();
+  updateNextDueDisplays();
+}
+function addBillLine(){
+  const store = getBillsStore();
+  const mk = TENANT_ID + ':' + monthKey();
+  if(!store[mk]) return;
+  store[mk].lines.push({ key:'custom_'+Date.now(), label:'New Line Item', icon:'📄', amount:0 });
+  saveBillsStore(store);
+  renderBills();
+  updateNextDueDisplays();
+  showToast('Line Added', 'A new bill line was inserted — edit its name and amount above.', 'success');
+}
+
+// ══════════════════════════════════════════════
+// FEES — flat KSh 1–5 per transaction, on every rail, no matter the amount
+// ══════════════════════════════════════════════
+function computeRailFee(pmKey) {
+  const f = FEE_SCHEDULE[pmKey] || { label:'Transaction Fee', min:1, max:5 };
+  return { feeKES: currentFeeKES, label: f.label };
+}
+function updateFeeTags() {
+  Object.keys(FEE_SCHEDULE).forEach(k => {
+    const tag = document.getElementById('tag_' + k);
+    if(tag) tag.textContent = 'KSh 1–5';
+  });
+}
+
+// ══════════════════════════════════════════════
+// PAY MODE (full vs partial / Lipa Mdogo)
+// ══════════════════════════════════════════════
+function setPayMode(mode){
+  payMode = mode;
+  document.querySelectorAll('#amountPayToggle button').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  document.getElementById('partialAmountGroup').style.display = mode === 'partial' ? 'block' : 'none';
+  calcTotal();
+}
+
+// ══════════════════════════════════════════════
+// TOTAL CALC — recalculates instantly on every edit or insert
+// ══════════════════════════════════════════════
+function calcTotal() {
+  const rentDisp = parseFloat(document.getElementById('fRent').value) || 0;
+  const chargesDisp = parseFloat(document.getElementById('fCharges').value) || 0;
+
+  // Flat transaction fee — always KSh 1–5, regardless of rail or rent amount
+  const feeKES = currentFeeKES;
+  const totalFeeDisp = feeKES * currRate;
+
+  let dueDisp = rentDisp + chargesDisp + totalFeeDisp;
+  let payingNowDisp = dueDisp;
+  if(payMode === 'partial'){
+    const partial = parseFloat(document.getElementById('fPartial').value) || 0;
+    payingNowDisp = Math.min(partial, dueDisp);
+  }
+
+  document.getElementById('fFee').value = fmt(totalFeeDisp);
+  document.getElementById('fTotal').value = fmt(payMode === 'partial' ? payingNowDisp : dueDisp);
+
+  Object.keys(FEE_SCHEDULE).forEach(k => {
+    const el = document.getElementById('feeInline_' + k);
+    if(el) { el.textContent = currSym + fmt(feeKES * currRate) + ' (flat, KSh 1–5)'; }
+  });
+
+  updateCryptoQuote();
+}
+
+// ══════════════════════════════════════════════
+// PAYMENT METHOD SELECTION
+// ══════════════════════════════════════════════
+function selectPM(el) {
+  document.querySelectorAll('.pm-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  activePM = el.dataset.pm;
+  document.querySelectorAll('.pm-detail-panel').forEach(p => p.classList.remove('show'));
+  const panel = document.getElementById('panel_' + activePM);
+  if(panel) panel.classList.add('show');
+  rollTransactionFee();
+  setStep(2);
+  calcTotal();
+}
+
+function setMpesaDest(mode){
+  mpesaDest = mode;
+  document.querySelectorAll('#mpesaDestToggle button').forEach(b => b.classList.toggle('active', b.dataset.dest === mode));
+  document.getElementById('mpesaAutoBlock').style.display = mode === 'auto' ? 'block' : 'none';
+  document.getElementById('mpesaManualBlock').style.display = mode === 'manual' ? 'block' : 'none';
+  if(mode === 'auto'){
+    document.getElementById('mpesaAutoLabel').textContent = 'Landlord Paybill';
+    document.getElementById('mpesaAutoValue').textContent = PROPERTY_RECORD.landlordPaybill;
+  }
+}
+
+// ══════════════════════════════════════════════
+// FLOW STEPS
+// ══════════════════════════════════════════════
+function setStep(n) {
+  currentStep = n;
+  for(let i = 1; i <= 4; i++) {
+    const el = document.getElementById('sn' + i);
+    el.classList.remove('active','done');
+    if(i < n) { el.classList.add('done'); el.innerHTML = '<i class="fas fa-check" style="font-size:0.7rem;"></i>'; }
+    else if(i === n) { el.classList.add('active'); el.textContent = i; }
+    else { el.textContent = i; }
+    document.getElementById('flowStep' + i).classList.toggle('active', i === n);
+  }
+}
+
+// ══════════════════════════════════════════════
+// SUBMIT / COMPLETE PAYMENT
+// ══════════════════════════════════════════════
+function submitPayment() {
+  const required = ['propAddress','propBuilding','propUnit','tenantPhone','tenantAccount'];
+  let valid = true;
+  required.forEach(id => {
+    const el = document.getElementById(id);
+    if(!el.value.trim()) { el.classList.add('is-invalid'); valid = false; } else el.classList.remove('is-invalid');
+  });
+  if(activePM === 'mpesa' && mpesaDest === 'manual'){
+    const num = document.getElementById('mpesaManualNumber');
+    if(!num.value.trim()){ num.classList.add('is-invalid'); valid = false; } else num.classList.remove('is-invalid');
+  }
+  if(payMode === 'partial'){
+    const partialEl = document.getElementById('fPartial');
+    if(!parseFloat(partialEl.value)){ partialEl.classList.add('is-invalid'); valid = false; } else partialEl.classList.remove('is-invalid');
+  }
+  if(!valid) { showToast('Missing Information', 'Please fill all required fields.', 'error'); return; }
+
+  setStep(3);
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.disabled = true;
+  const resultDiv = document.getElementById('payResult');
+  const gatewayLabel = activePM === 'mpesa' ? 'Awaiting M-Pesa STK push confirmation'
+    : activePM === 'crypto' ? 'Awaiting on-chain confirmation'
+    : activePM === 'syllopay' ? 'Debiting SylloPay wallet'
+    : 'Processing your payment securely';
+  resultDiv.innerHTML = `
+    <div style="background:var(--info-bg); border-radius:var(--radius-sm); padding:1rem; display:flex; align-items:center; gap:10px; font-size:0.875rem; color:var(--info);">
+      <i class="fas fa-spinner fa-spin"></i>
+      <div>${gatewayLabel}…
+        <div style="background:rgba(18,79,145,0.15); border-radius:4px; height:4px; margin-top:8px; overflow:hidden;">
+          <div style="height:100%; background:var(--info); animation:prog 2.2s linear forwards;"></div>
+        </div>
+      </div>
+    </div>
+    <style>@keyframes prog{from{width:0}to{width:100%}}</style>`;
+
+  saveToStorage();
+  setTimeout(() => { completePayment(); submitBtn.disabled = false; }, 2200);
+}
+
+function destinationRef(){
+  if(activePM === 'mpesa'){
+    if(mpesaDest === 'auto') return 'Landlord Paybill ' + PROPERTY_RECORD.landlordPaybill + ' (auto-connected)';
+    const type = document.getElementById('mpesaManualType').value === 'till' ? 'Till' : 'Paybill';
+    return type + ' ' + (document.getElementById('mpesaManualNumber').value || '—') + ' (manually entered)';
+  }
+  if(activePM === 'mobile_money') return 'Landlord Mobile Money Account (auto-connected)';
+  if(activePM === 'bank_kenya' || activePM === 'bank_africa') return 'Landlord Bank Account · Ref ' + Math.floor(Math.random()*90000+10000);
+  if(activePM === 'crypto') return document.getElementById('cryptoAsset').value + ' · ' + document.getElementById('cryptoNetwork').value + ' (Landlord Wallet)';
+  if(activePM === 'card') return 'Card •••• ' + Math.floor(Math.random()*9000+1000) + ' → Landlord Settlement Account';
+  if(activePM === 'syllopay') return 'SylloPay Instant → Landlord SylloPay Wallet';
+  return '—';
+}
+
+function completePayment() {
+  setStep(4);
+  const rent = parseFloat(document.getElementById('fRent').value) || 0;
+  const charges = parseFloat(document.getElementById('fCharges').value) || 0;
+  const totalFee = parseFloat((document.getElementById('fFee').value || '0').toString().replace(/,/g,'')) || 0;
+  const feeDisp = currentFeeKES * currRate;
+  const dueDisp = rent + charges + totalFee;
+  const payingNowDisp = payMode === 'partial' ? Math.min(parseFloat(document.getElementById('fPartial').value)||0, dueDisp) : dueDisp;
+  const balanceDisp = Math.max(dueDisp - payingNowDisp, 0);
+
+  const now = new Date();
+  const txn = 'TXN-' + Math.floor(Math.random() * 900000000 + 100000000);
+  const pmNames = FEE_SCHEDULE[activePM] ? FEE_SCHEDULE[activePM].label : activePM;
+  const property = document.getElementById('propAddress').value || (PROPERTY_RECORD.building + ' Apartments, Unit ' + PROPERTY_RECORD.unit);
+  const unit = document.getElementById('propUnit').value || PROPERTY_RECORD.unit;
+  const building = document.getElementById('propBuilding').value || PROPERTY_RECORD.building;
+  const month = document.getElementById('payMonth').value;
+  const periodLabel = month ? new Date(month + '-01').toLocaleDateString('en-KE',{year:'numeric',month:'long'}) : 'Current Month';
+
+  const store = getBillsStore();
+  const mk = TENANT_ID + ':' + monthKey();
+  const billLines = store[mk] ? store[mk].lines : [];
+  const railRef = destinationRef();
+  const isPartial = payMode === 'partial' && balanceDisp > 0;
+
+  const record = {
+    txnId: txn, dateISO: now.toISOString(),
+    dateDisplay: now.toLocaleDateString('en-KE', {year:'numeric', month:'short', day:'numeric'}),
+    timeDisplay: now.toLocaleTimeString('en-KE', {hour:'2-digit', minute:'2-digit'}),
+    month: periodLabel, property, unit, building, tenantId: TENANT_ID,
+    method: pmNames, railRef, currCode, currSym,
+    rent, charges, billLines, fee: feeDisp,
+    due: dueDisp, total: payingNowDisp, balance: balanceDisp, isPartial,
+    status: isPartial ? 'partial' : 'paid'
+  };
+  savePaymentRecord(record);
+  notifyLandlord(record);
+
+  document.getElementById('rcRent').textContent = currSym + fmt(rent);
+  document.getElementById('rcBillsBreakdown').innerHTML = billLines.map(l => `<div class="breakdown-row sub"><span>${l.icon} ${l.label}</span><span>${currSym}${fmt(l.amount * currRate)}</span></div>`).join('');
+  document.getElementById('rcCharges').textContent = currSym + fmt(charges);
+  document.getElementById('rcRailFeeLabel').textContent = pmNames.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '').trim();
+  document.getElementById('rcRailFee').textContent = currSym + fmt(feeDisp);
+  document.getElementById('rcTotalLabel').textContent = isPartial ? 'Amount Paid Now' : 'Total Paid';
+  document.getElementById('rcTotal').textContent = currSym + fmt(payingNowDisp);
+  document.getElementById('rcBalanceRow').style.display = isPartial ? 'flex' : 'none';
+  document.getElementById('rcBalance').textContent = currSym + fmt(balanceDisp);
+  document.getElementById('rcTxnId').textContent = txn;
+  document.getElementById('rcDate').textContent = record.dateDisplay + ' · ' + record.timeDisplay;
+  document.getElementById('rcMethod').textContent = pmNames;
+  document.getElementById('rcProperty').textContent = property;
+  document.getElementById('rcPeriod').textContent = periodLabel;
+  document.getElementById('rcTenantUnit').textContent = TENANT_ID + ' · ' + building + ' ' + unit;
+  document.getElementById('rcRailRef').textContent = railRef;
+  document.getElementById('rcCurrency').innerHTML = currCode + '<span class="receipt-currency-badge">Paid in ' + currCode + '</span>';
+  document.getElementById('rcStatus').innerHTML = '<span class="badge-pill ' + (isPartial ? 'badge-partial' : 'badge-paid') + '">' + (isPartial ? 'Partial · Confirmed' : 'Confirmed') + '</span>';
+  document.getElementById('successHeadline').textContent = isPartial ? 'Partial Payment Received' : 'Payment Successful';
+  document.getElementById('successSub').textContent = isPartial
+    ? 'Your instalment has been posted to your landlord\'s property account. Remaining balance is tracked below.'
+    : 'Your rent has been processed and posted to your landlord\'s property account.';
+
+  document.getElementById('mainContent').style.display = 'none';
+  document.getElementById('successScreen').style.display = 'block';
+  document.getElementById('successScreen').scrollIntoView({behavior:'smooth'});
+
+  showToast(isPartial ? 'Partial Payment Received' : 'Payment Successful!', currSym + fmt(payingNowDisp) + ' (' + currCode + ') posted to ' + railRef + '. Receipt ' + txn + ' saved.', 'success');
+
+  renderHistory(); renderStatement(); renderChart(); renderNotifications(); updateNextDueDisplays();
+}
+
+// Landlord deposit notification — real-time record of tenant/unit/building/amount posted to the property account
+function notifyLandlord(record){
+  try {
+    const KEY = 'mwarokin_landlord_notifications_v1';
+    const arr = JSON.parse(localStorage.getItem(KEY) || '[]');
+    arr.unshift({
+      id: 'DEP-' + Math.floor(Math.random()*900000+100000),
+      tenantId: record.tenantId, unit: record.unit, building: record.building,
+      amount: record.total, currCode: record.currCode, currSym: record.currSym,
+      type: record.isPartial ? 'partial' : 'full', month: record.month,
+      postedTo: record.railRef, timeISO: new Date().toISOString()
+    });
+    localStorage.setItem(KEY, JSON.stringify(arr.slice(0,50)));
+    if(rtChannel) rtChannel.postMessage({type:'landlord_notified'});
+  } catch(e){}
+}
+
+function returnToDashboard() {
+  document.getElementById('successScreen').style.display = 'none';
+  document.getElementById('mainContent').style.display = 'grid';
+  document.getElementById('payResult').innerHTML = '';
+  setStep(1);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ══════════════════════════════════════════════
+// QUICK PAY
+// ══════════════════════════════════════════════
+function doQuickPay() {
+  closeModal('quickPayModal');
+  setTimeout(() => {
+    document.getElementById('tenantPhone').value = document.getElementById('tenantPhone').value || '+254704919388';
+    setPayMode('full');
+    setMpesaDest('auto');
+    submitPayment();
+  }, 300);
+}
+
+// ══════════════════════════════════════════════
+// STATEMENT
+// ══════════════════════════════════════════════
+function renderStatement() {
+  const paid = getPaymentRecords();
+  const nextDueKES = getNextDueTotalKES();
+  const data = [
+    { month:'This Month', date:'Due soon', amountKES:nextDueKES, status:'due' },
+    { month:'Last Month', date:'Paid', amountKES:20500, status:'paid' },
+    { month:'2 Months Ago', date:'Paid', amountKES:20500, status:'paid' },
+    { month:'3 Months Ago', date:'Paid', amountKES:19800, status:'paid' },
+  ];
+  const c = document.getElementById('stmtContainer');
+  let rows = data.map(d => {
+    const a = d.amountKES * currRate;
+    const icons = { paid:'✅', due:'⏰', partial:'🔄' };
+    const colors = { paid:'var(--success)', due:'var(--warning)', partial:'var(--info)' };
+    return `<div class="statement-row">
+      <div style="display:flex; align-items:center;">
+        <div class="stmt-icon" style="background:${d.status==='paid'?'var(--success-bg)':'var(--warning-bg)'}; color:${colors[d.status]};">${icons[d.status]||'🔄'}</div>
+        <div class="stmt-meta"><strong>${d.month}</strong><span>${d.date}</span></div>
+      </div>
+      <div class="stmt-amount"><strong style="color:${colors[d.status]};">${d.status==='paid'?'- ':''} ${currSym}${fmt(a)}</strong><span class="badge-pill badge-${d.status}">${d.status.charAt(0).toUpperCase()+d.status.slice(1)}</span></div>
+    </div>`;
+  }).join('');
+
+  if(paid.length){
+    rows = paid.slice(0,3).map(r => `<div class="statement-row">
+      <div style="display:flex; align-items:center;">
+        <div class="stmt-icon" style="background:${r.isPartial?'var(--info-bg)':'var(--success-bg)'}; color:${r.isPartial?'var(--info)':'var(--success)'};">${r.isPartial?'🔄':'✅'}</div>
+        <div class="stmt-meta"><strong>${r.month}</strong><span>${r.dateDisplay} · ${r.method}</span></div>
+      </div>
+      <div class="stmt-amount"><strong style="color:${r.isPartial?'var(--info)':'var(--success)'};">${r.currSym}${fmt(r.total)}</strong><span class="badge-pill ${r.isPartial?'badge-partial':'badge-paid'}">${r.isPartial?'Partial':'Paid'} · ${r.currCode}</span></div>
+    </div>`).join('') + rows;
+  }
+  c.innerHTML = rows;
+}
+function refreshStatement() {
+  const icon = document.getElementById('refreshIcon');
+  icon.className = 'fas fa-sync-alt fa-spin';
+  setTimeout(() => { renderStatement(); icon.className = 'fas fa-sync-alt'; showToast('Statement Updated', 'Your statement has been refreshed.', 'info'); }, 700);
+}
+
+// ══════════════════════════════════════════════
+// HISTORY
+// ══════════════════════════════════════════════
+function renderHistory(filter) {
+  const seed = [
+    { month:'Last Month', type:'Rent + Utilities', date:'Paid', amount:20500, status:'paid', currCode:'KES', currSym:'KSh ' },
+    { month:'2 Months Ago', type:'Rent + Utilities', date:'Paid', amount:20500, status:'paid', currCode:'KES', currSym:'KSh ' },
+    { month:'3 Months Ago', type:'Rent + Utilities', date:'Paid', amount:19800, status:'paid', currCode:'KES', currSym:'KSh ' },
+  ];
+  const realRecords = getPaymentRecords().map(r => ({
+    txnId: r.txnId, month: r.month, type: r.method,
+    date: r.dateDisplay + ' · ' + r.timeDisplay,
+    amount: r.total, status: r.isPartial ? 'partial' : 'paid',
+    currCode: r.currCode, currSym: r.currSym, isReal: true
+  }));
+  let items = realRecords.concat(seed);
+  if(filter === '3m') items = items.slice(0,3); else if(filter === '6m') items = items.slice(0,6);
+
+  const c = document.getElementById('historyContainer');
+  if(!items.length){ c.innerHTML = '<div class="history-empty">No payments logged yet. Submit a payment above to see it appear here with a receipt.</div>'; return; }
+
+  c.innerHTML = items.map(d => {
+    const displayAmount = d.isReal ? (d.currSym + fmt(d.amount)) : (currSym + fmt(d.amount * currRate));
+    const receiptBtn = d.isReal ? `<button class="btn-outline btn-sm" style="margin-top:6px;" onclick="viewReceipt('${d.txnId}')"><i class="fas fa-receipt"></i> View Receipt</button>` : '';
+    return `<div class="timeline-item">
+      <div class="timeline-dot ${d.status}"></div>
+      <div class="tl-body">
+        <div><div class="tl-title">${d.month}${d.isReal ? ' <span class="receipt-currency-badge">'+d.currCode+'</span>' : ''}</div><div class="tl-sub">${d.type} · ${d.date}</div>${receiptBtn}</div>
+        <div><div class="tl-amount" style="color:${d.status==='partial'?'var(--info)':'var(--success)'};">${displayAmount}</div><span class="badge-pill badge-${d.status}" style="float:right;">${d.status.charAt(0).toUpperCase()+d.status.slice(1)}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function filterHistory(f) { renderHistory(f); }
+
+// ══════════════════════════════════════════════
+// PERSISTED RECEIPTS
+// ══════════════════════════════════════════════
+function getPaymentRecords() {
+  try { const raw = localStorage.getItem(STORAGE_KEY); const arr = raw ? JSON.parse(raw) : []; return Array.isArray(arr) ? arr : []; } catch(e) { return []; }
+}
+function savePaymentRecord(record) {
+  try { const arr = getPaymentRecords(); arr.unshift(record); localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); if(rtChannel) rtChannel.postMessage({type:'payment_recorded', txnId: record.txnId}); } catch(e) {}
+}
+function clearMyPayments() {
+  if(!confirm('Clear all payments you have logged in this browser? This cannot be undone.')) return;
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
+  renderHistory(); renderStatement();
+  showToast('History Cleared', 'Your logged payments have been removed from this device.', 'info');
+}
+function viewReceipt(txnId) {
+  const rec = getPaymentRecords().find(r => r.txnId === txnId);
+  if(!rec) return;
+  const body = document.getElementById('viewReceiptBody');
+  const billsHtml = (rec.billLines||[]).map(l => `<div class="breakdown-row sub"><span>${l.icon} ${l.label}</span><span>${rec.currSym}${fmt(l.amount)}</span></div>`).join('');
+  body.innerHTML = `
+    <div class="receipt-card" style="margin:0;">
+      <div class="receipt-band">
+        <div><div class="rb-brand" style="font-size:1rem;">Mwarokin Estates</div><div class="rb-sub">Official Payment Receipt</div></div>
+        <div class="rb-txn"><div style="font-size:.68rem;color:rgba(255,255,255,.45);text-transform:uppercase;">Transaction ID</div>${rec.txnId}</div>
+      </div>
+      <div class="receipt-body">
+        <div class="receipt-grid">
+          <div><div class="field-label">Date</div><div class="field-val">${rec.dateDisplay} · ${rec.timeDisplay}</div></div>
+          <div><div class="field-label">Method</div><div class="field-val">${rec.method}</div></div>
+          <div><div class="field-label">Property</div><div class="field-val">${rec.property}</div></div>
+          <div><div class="field-label">Period</div><div class="field-val">${rec.month}</div></div>
+          <div><div class="field-label">Tenant / Unit</div><div class="field-val">${rec.tenantId || TENANT_ID} · ${rec.building||''} ${rec.unit || '—'}</div></div>
+          <div><div class="field-label">Currency Paid In</div><div class="field-val">${rec.currCode}</div></div>
+          <div><div class="field-label">Posted To</div><div class="field-val">${rec.railRef || '—'}</div></div>
+          <div><div class="field-label">Status</div><div class="field-val"><span class="badge-pill ${rec.isPartial?'badge-partial':'badge-paid'}">${rec.isPartial?'Partial · Confirmed':'Confirmed'}</span></div></div>
+        </div>
+        <div class="breakdown-bg">
+          <div class="breakdown-row"><span>Monthly Rent</span><span>${rec.currSym}${fmt(rec.rent)}</span></div>
+          ${billsHtml}
+          <div class="breakdown-row"><span>Bills &amp; Amenities</span><span>${rec.currSym}${fmt(rec.charges)}</span></div>
+          <div class="breakdown-row"><span>Transaction Fee</span><span>${rec.currSym}${fmt(rec.fee || 0)}</span></div>
+          <div class="breakdown-row total"><span>${rec.isPartial?'Amount Paid Now':'Total Paid'}</span><span>${rec.currSym}${fmt(rec.total)} ${rec.currCode}</span></div>
+          ${rec.isPartial ? `<div class="breakdown-row balance"><span>Remaining Balance</span><span>${rec.currSym}${fmt(rec.balance)}</span></div>` : ''}
+        </div>
+        <div class="receipt-foot">Thank you for your payment · Electronic receipt — no signature required</div>
+      </div>
+    </div>`;
+  openModal('viewReceiptModal');
+}
+
+// ══════════════════════════════════════════════
+// PDF RECEIPT
+// ══════════════════════════════════════════════
+function downloadReceiptPDF() {
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit:'pt', format:'a5' });
+    const txn = document.getElementById('rcTxnId').textContent;
+    const W = doc.internal.pageSize.getWidth();
+    doc.setFillColor(16,14,28); doc.rect(0,0,W,70,'F');
+    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.text('Mwarokin Estates', 24, 32);
+    doc.setFontSize(9); doc.setTextColor(200,200,200); doc.text('Official Payment Receipt', 24, 48);
+    doc.setTextColor(201,168,76); doc.setFontSize(10); doc.text(txn, W-24, 40, {align:'right'});
+    let y = 96;
+    doc.setTextColor(20,20,30); doc.setFont('helvetica','normal'); doc.setFontSize(10);
+    const rows = [
+      ['Date & Time', document.getElementById('rcDate').textContent],
+      ['Payment Method', document.getElementById('rcMethod').textContent],
+      ['Property', document.getElementById('rcProperty').textContent],
+      ['Billing Period', document.getElementById('rcPeriod').textContent],
+      ['Tenant / Unit', document.getElementById('rcTenantUnit').textContent],
+      ['Currency Paid In', document.getElementById('rcCurrency').textContent.replace('Paid in ','')],
+      ['Posted To', document.getElementById('rcRailRef').textContent],
+      ['Status', document.getElementById('rcStatus').textContent]
+    ];
+    rows.forEach(r => { doc.setFont('helvetica','bold'); doc.text(r[0]+':', 24, y); doc.setFont('helvetica','normal'); doc.text(String(r[1]), 170, y); y += 18; });
+    y += 8; doc.setDrawColor(230,230,230); doc.line(24, y, W-24, y); y += 20;
+    const breakdown = [
+      ['Monthly Rent', document.getElementById('rcRent').textContent],
+      ['Bills & Amenities', document.getElementById('rcCharges').textContent],
+      [document.getElementById('rcRailFeeLabel').textContent, document.getElementById('rcRailFee').textContent]
+    ];
+    breakdown.forEach(r => { doc.text(r[0], 24, y); doc.text(String(r[1]), W-24, y, {align:'right'}); y += 18; });
+    y += 6; doc.setDrawColor(200,200,200); doc.line(24, y, W-24, y); y += 20;
+    doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(19,107,65);
+    doc.text(document.getElementById('rcTotalLabel').textContent, 24, y);
+    doc.text(document.getElementById('rcTotal').textContent, W-24, y, {align:'right'});
+    if(document.getElementById('rcBalanceRow').style.display !== 'none'){
+      y += 20; doc.setTextColor(142,98,0); doc.setFontSize(10);
+      doc.text('Remaining Balance', 24, y); doc.text(document.getElementById('rcBalance').textContent, W-24, y, {align:'right'});
+    }
+    y += 40; doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(120,120,120);
+    doc.text('Thank you for your payment. Electronic receipt — no signature required.', 24, y);
+    doc.text('Mwarokin Estates, Powered by SylloPay & Syllogism Technology Africa', 24, y+12);
+    doc.save(txn + '_MwarokinReceipt.pdf');
+    showToast('Receipt Downloaded', 'Your PDF receipt has been saved to your device.', 'success');
+  } catch(e) { showToast('Download Unavailable', 'Could not generate PDF in this browser. Use Print instead.', 'error'); }
+}
+
+// ══════════════════════════════════════════════
+// NOTIFICATIONS — includes real-time landlord deposit confirmations
+// ══════════════════════════════════════════════
+function renderNotifications() {
+  const nextDueKES = getNextDueTotalKES();
+  const base = [
+    { color:'var(--warning)', msg:'Your rent for next month of ' + currSym + fmt(nextDueKES * currRate) + ' is due in 5 days.', time:'2 hours ago' },
+    { color:'var(--info)', msg:'Property inspection scheduled soon.', time:'1 day ago' },
+  ];
+  let landlordNotifs = [];
+  try {
+    const arr = JSON.parse(localStorage.getItem('mwarokin_landlord_notifications_v1') || '[]');
+    landlordNotifs = arr.slice(0,4).map(n => ({
+      color: n.type === 'partial' ? 'var(--info)' : 'var(--success)',
+      msg: 'Landlord notified: ' + (n.type === 'partial' ? 'partial deposit' : 'full deposit') + ' of ' + n.currSym + fmt(n.amount) + ' registered for Tenant ' + n.tenantId + ' · ' + n.building + ' ' + n.unit + ' (' + n.month + '), posted to ' + n.postedTo + '.',
+      time: timeAgo(n.timeISO)
+    }));
+  } catch(e){}
+  const n = landlordNotifs.concat(base);
+  document.getElementById('notifContainer').innerHTML = n.map(x => `<div class="notif-item"><div class="notif-dot" style="background:${x.color};"></div><div><div class="notif-msg">${x.msg}</div><div class="notif-time">${x.time}</div></div></div>`).join('');
+  document.getElementById('notifCount').textContent = n.length;
+}
+function timeAgo(iso){
+  try {
+    const diffMs = Date.now() - new Date(iso).getTime();
+    const mins = Math.floor(diffMs/60000);
+    if(mins < 1) return 'just now';
+    if(mins < 60) return mins + ' min ago';
+    const hrs = Math.floor(mins/60);
+    if(hrs < 24) return hrs + ' hr ago';
+    return Math.floor(hrs/24) + ' day(s) ago';
+  } catch(e){ return 'recently'; }
+}
+
+// ══════════════════════════════════════════════
+// CHART
+// ══════════════════════════════════════════════
+function renderChart() {
+  const data = [ {m:'-5mo',a:18000}, {m:'-4mo',a:18000}, {m:'-3mo',a:19800}, {m:'-2mo',a:20500}, {m:'-1mo',a:20500}, {m:'Now',a:20500,current:true} ];
+  const max = Math.max(...data.map(d => d.a));
+  document.getElementById('chartWrap').innerHTML = data.map(d => {
+    const h = Math.round((d.a / max) * 100);
+    return `<div class="chart-col"><div class="chart-bar${d.current?' current':''}" style="height:${h}%;" title="${currSym}${fmt(d.a * currRate)}"></div><div class="chart-bar-label">${d.m}</div></div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════
+// LIVE RATE TICKER
+// ══════════════════════════════════════════════
+function renderRateTicker() {
+  const t = document.getElementById('rateTicker');
+  const chips = [
+    { key:'mpesa', icon:'📲', color:'#4CAF50', label:'M-Pesa Transaction Fee', fmtVal: v => 'KSh 1–5' },
+    { key:'airtel', icon:'📲', color:'#FF9800', label:'Airtel Money Transaction Fee', fmtVal: v => 'KSh 1–5' },
+    { key:'bank_local', icon:'🏦', color:'#1565C0', label:'Local & International Bank Fee', fmtVal: v => 'KSh 1–5' },
+    { key:'bank_africa', icon:'🌍', color:'#7B1FA2', label:'Pan-African Bank Fee', fmtVal: v => 'KSh 1–5' },
+    { key:'card', icon:'💳', color:'#C62828', label:'Card Processing Fee', fmtVal: v => 'KSh 1–5' },
+    { key:'syllopay', icon:'⚡', color:'#C9A84C', label:'SylloPay Transaction Fee', fmtVal: v => 'KSh 1–5' },
+    { key:'btc', icon:'₿', color:'#F7931A', label:'BTC / KES (live)', fmtVal: v => v.toLocaleString('en-KE',{maximumFractionDigits:0}) },
+    { key:'eth', icon:'Ξ', color:'#8C8C8C', label:'ETH / KES (live)', fmtVal: v => v.toLocaleString('en-KE',{maximumFractionDigits:0}) },
+    { key:'usdt', icon:'₮', color:'#26A17B', label:'USDT / KES (live)', fmtVal: v => v.toLocaleString('en-KE',{maximumFractionDigits:2}) },
+  ];
+  t.innerHTML = chips.map(c => {
+    const val = baseRates[c.key], prev = lastRates[c.key];
+    let deltaHtml = '<span class="rc-delta">•</span>';
+    if(c.key==='btc'||c.key==='eth'||c.key==='usdt'){
+      if(val > prev) deltaHtml = '<span class="rc-delta" style="color:#39D98A;"><i class="fas fa-caret-up"></i></span>';
+      else if(val < prev) deltaHtml = '<span class="rc-delta" style="color:#FF7A7A;"><i class="fas fa-caret-down"></i></span>';
+    } else { deltaHtml = ''; }
+    return `<div class="rate-chip"><div class="rc-icon" style="background:${c.color}22;color:${c.color};">${c.icon}</div><div><div class="rc-label">${c.label}</div><div class="rc-value">${c.fmtVal(val)} ${deltaHtml}</div></div></div>`;
+  }).join('');
+  document.getElementById('rateUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+function refreshRates(manual) { fetchLiveRates(manual); }
+
+// ══════════════════════════════════════════════
+// CRYPTO QUOTE
+// ══════════════════════════════════════════════
+function updateCryptoQuote() {
+  const assetEl = document.getElementById('cryptoAsset');
+  if(!assetEl) return;
+  const asset = assetEl.value;
+  const totalKES = (parseFloat(document.getElementById('fTotal') ? document.getElementById('fTotal').value.replace(/,/g,'') : 0) || 0) / currRate;
+  const rateMap = { BTC: baseRates.btc, ETH: baseRates.eth, USDT: baseRates.usdt, USDC: baseRates.usdt };
+  const rate = rateMap[asset] || baseRates.usdt;
+  const amt = rate ? (totalKES / rate) : 0;
+  const decimals = asset === 'BTC' ? 8 : (asset === 'ETH' ? 6 : 2);
+  const out = document.getElementById('cryptoAmount');
+  if(out) out.textContent = amt.toFixed(decimals) + ' ' + asset;
+}
+
+// ══════════════════════════════════════════════
+// QR CODE
+// ══════════════════════════════════════════════
+function drawQR() {
+  const canvas = document.getElementById('qrcode');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,130,130);
+  ctx.fillStyle = '#100E1C';
+  const cell = 5;
+  const pattern = [
+    [1,1,1,1,1,1,1,0,1,0,0,1,0,1,1,1,1,1,1,1,1,0,1,0,0,1],
+    [1,0,0,0,0,0,1,0,0,1,1,0,0,1,0,0,0,0,0,0,1,0,1,1,0,0],
+    [1,0,1,1,1,0,1,0,1,0,0,1,0,1,0,1,1,1,0,0,1,0,0,1,1,0],
+    [1,0,1,1,1,0,1,0,0,0,1,0,0,1,0,1,1,1,0,0,1,0,1,0,0,0],
+    [1,0,0,0,0,0,1,0,1,1,0,1,0,1,0,0,0,0,0,0,1,0,0,1,1,0],
+    [1,1,1,1,1,1,1,0,1,0,1,0,0,1,1,1,1,1,1,1,1,0,1,0,1,0],
+    [0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,1],
+    [1,0,1,1,0,1,1,1,0,0,1,0,0,1,0,1,1,0,1,1,0,1,0,0,1,0],
+    [0,1,1,0,0,1,0,0,1,1,0,1,0,0,1,1,0,1,1,0,0,1,1,0,1,0],
+    [1,0,0,1,1,0,1,0,0,1,0,0,0,1,0,0,1,0,0,1,1,0,0,1,0,1],
+    [0,1,0,0,1,0,0,1,1,0,1,1,0,0,1,0,0,1,1,0,0,1,1,0,1,0],
+    [1,0,1,0,0,1,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,1,0,0],
+    [0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0],
+    [1,1,1,1,1,1,1,0,1,0,0,1,0,1,1,1,1,1,1,0,1,0,1,0,0,1],
+    [1,0,0,0,0,0,1,0,0,1,0,0,0,1,0,0,0,0,1,0,0,1,0,1,1,0],
+    [1,0,1,1,1,0,1,0,1,0,1,0,0,1,0,1,1,0,1,0,1,0,0,0,0,1],
+    [1,0,1,1,1,0,1,0,0,1,0,1,0,1,0,1,1,0,1,0,0,1,1,0,1,0],
+    [1,0,0,0,0,0,1,0,1,0,0,0,0,1,0,0,0,0,1,0,1,0,0,1,0,1],
+    [1,1,1,1,1,1,1,0,0,1,1,0,0,1,1,1,1,1,1,0,0,1,1,0,0,0],
+  ];
+  pattern.forEach((row, ri) => { row.forEach((v, ci) => { if(v) ctx.fillRect(ci*cell+5, ri*cell+5, cell-1, cell-1); }); });
+}
+
+// ══════════════════════════════════════════════
+// MODAL
+// ══════════════════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.addEventListener('click', function(e) { if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('open'); });
+
+function showNewPMDetails(type) {
+  const c = document.getElementById('newPMDetails');
+  if(type === 'credit_card') {
+    c.innerHTML = `<div class="form-group"><label class="form-label">Card Number</label><input type="text" class="form-input" placeholder="1234 5678 9012 3456"></div>
+      <div class="form-row form-row-2"><div class="form-group"><label class="form-label">Expiry (MM/YY)</label><input type="text" class="form-input" placeholder="MM/YY"></div><div class="form-group"><label class="form-label">CVV</label><input type="password" class="form-input" placeholder="•••"></div></div>`;
+  } else if(type === 'bank_account') {
+    c.innerHTML = `<div class="form-group"><label class="form-label">Select Bank</label><div class="form-select-wrap"><select class="form-input form-select-custom"><option value="">Select Bank</option><option>KCB Bank Kenya</option><option>Equity Bank Kenya</option></select></div></div>
+      <div class="form-group"><label class="form-label">Account Number</label><input type="text" class="form-input" placeholder="Your account number"></div>`;
+  } else if(type === 'mobile_money') {
+    c.innerHTML = `<div class="form-group"><label class="form-label">Mobile Number</label><input type="tel" class="form-input" placeholder="+254 7xx xxx xxx"></div>`;
+  } else if(type === 'crypto_wallet') {
+    c.innerHTML = `<div class="form-group"><label class="form-label">Wallet Address</label><input type="text" class="form-input" placeholder="Paste your wallet address"></div>`;
+  } else { c.innerHTML = ''; }
+}
+function savePM() { showToast('Method Saved', 'Your new payment method has been added successfully.', 'success'); closeModal('addPMModal'); }
+
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+function showToast(title, msg, type) {
+  const colors = { success:'var(--success)', error:'var(--danger)', warning:'var(--warning)', info:'var(--info)' };
+  const icons = { success:'fa-check-circle', error:'fa-times-circle', warning:'fa-exclamation-triangle', info:'fa-info-circle' };
+  const c = document.getElementById('toastWrap');
+  const t = document.createElement('div');
+  t.className = 'toast-item';
+  t.style.borderLeftColor = colors[type] || 'var(--gold)';
+  t.innerHTML = `<i class="fas ${icons[type]||'fa-bell'} toast-icon" style="color:${colors[type]||'var(--gold)'};"></i><div><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div>`;
+  c.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(20px)'; t.style.transition='all 0.3s'; setTimeout(()=>t.remove(), 300); }, 4200);
+}
+
+// ══════════════════════════════════════════════
+// CHATBOT
+// ══════════════════════════════════════════════
+function sendChat() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if(!msg) return;
+  const box = document.getElementById('chatBox');
+  const userDiv = document.createElement('div'); userDiv.className = 'user-msg'; userDiv.textContent = msg;
+  box.appendChild(userDiv); input.value = '';
+  setTimeout(() => { const botDiv = document.createElement('div'); botDiv.className = 'bot-msg'; botDiv.textContent = getBotReply(msg.toLowerCase()); box.appendChild(botDiv); box.scrollTop = box.scrollHeight; }, 700);
+  box.scrollTop = box.scrollHeight;
+}
+function getBotReply(m) {
+  if(m.includes('bill') || m.includes('amenit')) return 'Your Manage Bills panel is fully editable — change any amount and your total recalculates instantly, or add a new line item with the button below the list.';
+  if(m.includes('paybill') || m.includes('till')) return 'By default your M-Pesa payment auto-connects to your landlord\'s paybill (' + PROPERTY_RECORD.landlordPaybill + '). Toggle to "Enter manually" if you need to pay a different paybill or till number.';
+  if(m.includes('partial') || m.includes('mdogo') || m.includes('portion')) return 'Choose "Pay a portion (Lipa Mdogo)" above the payment method grid to pay in instalments. Your receipt will show the remaining balance after each partial payment.';
+  if(m.includes('fee') || m.includes('processing')) return 'Every transaction — M-Pesa, Airtel Money, bank, card, SylloPay or crypto — carries only a flat Mwarokin Estates transaction fee of KSh 1–5, shown live in the fee breakdown before you submit.';
+  if(m.includes('mpesa') || m.includes('m-pesa')) return 'M-Pesa auto-connects to your landlord\'s paybill by default. You can switch to manual entry if paying a different number.';
+  if(m.includes('crypto') || m.includes('bitcoin') || m.includes('btc') || m.includes('usdt')) return 'We accept BTC, ETH, USDT and USDC. Live BTC/ETH/USDT-KES prices refresh every 60 seconds.';
+  if(m.includes('receipt') || m.includes('confirm')) return 'Every payment is logged with its own transaction ID, itemised bill breakdown, fee breakdown, and landlord posting reference. View or download any receipt from Payment History.';
+  if(m.includes('landlord') || m.includes('deposit')) return 'The moment your payment clears, your landlord\'s property account is notified with your tenant ID, unit, building and amount — visible in the Notifications panel in real time.';
+  if(m.includes('due') || m.includes('when')) return 'Your rent for next month of ' + currSym + fmt(getNextDueTotalKES()*currRate) + ' is due in the next few days — check the countdown card at the top of the page.';
+  if(m.includes('currency')) return 'Switch currencies using the selector on the balance card — whatever you pay in gets locked onto that payment\'s receipt.';
+  return 'I can help with rent payments, bills, payment methods, live rates, fees, receipts and landlord deposit notifications. What would you like to know?';
+}
+
+// ══════════════════════════════════════════════
+// FORM DRAFT STORAGE
+// ══════════════════════════════════════════════
+function saveToStorage() {
+  const data = { propAddress: document.getElementById('propAddress').value, propBuilding: document.getElementById('propBuilding').value, propUnit: document.getElementById('propUnit').value, tenantPhone: document.getElementById('tenantPhone').value, tenantAccount: document.getElementById('tenantAccount').value };
+  try { localStorage.setItem('mwarokin_rent_draft', JSON.stringify(data)); } catch(e){}
+}
+function loadFromStorage() {
+  try {
+    const d = JSON.parse(localStorage.getItem('mwarokin_rent_draft') || '{}');
+    if(d.tenantPhone) document.getElementById('tenantPhone').value = d.tenantPhone;
+  } catch(e){}
+}
+
+// ══════════════════════════════════════════════
+// FORMATTERS
+// ══════════════════════════════════════════════
+function fmtCard(el) { let v = el.value.replace(/\D/g,'').substring(0,16); el.value = v.replace(/(.{4})/g,'$1 ').trim(); }
+function fmtExpiry(el) { let v = el.value.replace(/\D/g,'').substring(0,4); if(v.length >= 2) v = v.slice(0,2) + '/' + v.slice(2); el.value = v; }
+</script>
+</body>
+</html>

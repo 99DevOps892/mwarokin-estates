@@ -1,1958 +1,1693 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mwarokin Estates · Vacant Homes</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Vacant Homes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* ─── Reset & Base ─── */
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --primary-light: #dbeafe;
+            --secondary: #8b5cf6;
+            --accent: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --darker: #0f172a;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --gray-light: #e2e8f0;
+            --border-radius: 16px;
+            --border-radius-sm: 8px;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 10px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --gold: #c9a84c;
-            --gold-light: #e8d5a3;
-            --gold-glow: rgba(201, 168, 76, 0.25);
-            --navy: #0b1a2e;
-            --navy-light: #1a2f4a;
-            --slate: #94a3b8;
-            --slate-light: #e2e8f0;
-            --white: #ffffff;
-            --off-white: #f7f9fc;
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-            --shadow-md: 0 12px 40px rgba(0, 0, 0, 0.07);
-            --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.10);
-            --shadow-xl: 0 32px 80px rgba(0, 0, 0, 0.14);
-            --radius: 20px;
-            --radius-sm: 12px;
-            --transition: 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-            --font: 'Inter', sans-serif;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
         body {
-            font-family: var(--font);
-            background: var(--off-white);
-            color: var(--navy);
-            line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f1f5f9;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        /* ─── Scrollbar ─── */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--off-white);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--gold);
-            border-radius: 8px;
-        }
-
-        /* ─── Layout ─── */
-        .app {
-            display: flex;
+        .container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
             min-height: 100vh;
         }
 
-        /* ─── Sidebar ─── */
+        /* Sidebar Styles */
         .sidebar {
-            width: 280px;
-            background: var(--navy);
-            padding: 2rem 1.5rem;
+            background: var(--darker);
+            color: white;
+            padding: 1.5rem;
             position: fixed;
-            inset: 0;
-            z-index: 1000;
+            width: 280px;
+            height: 100vh;
             overflow-y: auto;
-            transition: transform var(--transition);
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-            border-right: 1px solid rgba(255, 255, 255, 0.04);
+            z-index: 100;
+            transition: var(--transition);
         }
 
-        .sidebar-brand {
+        .logo {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .sidebar-brand .brand-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: var(--radius-sm);
-            background: linear-gradient(135deg, var(--gold), #b8953a);
+        .logo i {
+            font-size: 2rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .nav-item {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            color: var(--white);
-            box-shadow: 0 8px 24px rgba(201, 168, 76, 0.30);
-        }
-
-        .sidebar-brand h1 {
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: var(--white);
-            letter-spacing: -0.02em;
-        }
-        .sidebar-brand h1 span {
-            color: var(--gold);
-        }
-
-        .sidebar-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-            flex: 1;
-        }
-
-        .sidebar-nav .nav-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: rgba(255, 255, 255, 0.30);
-            padding: 0.5rem 0.75rem 0.5rem;
-            font-weight: 600;
-        }
-
-        .sidebar-nav a {
-            display: flex;
-            align-items: center;
-            gap: 0.875rem;
-            padding: 0.7rem 1rem;
-            border-radius: var(--radius-sm);
-            color: rgba(255, 255, 255, 0.65);
+            gap: 0.75rem;
+            padding: 0.9rem 1rem;
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: all var(--transition);
             position: relative;
         }
 
-        .sidebar-nav a i {
-            width: 20px;
-            font-size: 1.1rem;
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-item i {
+            font-size: 1.25rem;
+            width: 24px;
             text-align: center;
-            flex-shrink: 0;
         }
 
-        .sidebar-nav a:hover {
-            color: var(--white);
-            background: rgba(255, 255, 255, 0.06);
+        .nav-badge {
+            position: absolute;
+            right: 1rem;
+            background: var(--accent);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
         }
 
-        .sidebar-nav a.active {
-            color: var(--white);
-            background: linear-gradient(135deg, rgba(201, 168, 76, 0.18), rgba(201, 168, 76, 0.06));
-            box-shadow: inset 3px 0 0 var(--gold);
+        /* Main Content */
+        .main-content {
+            grid-column: 2;
+            padding: 2rem;
+            background-color: #f8fafc;
+            transition: var(--transition);
         }
 
-        .sidebar-nav a .badge {
-            margin-left: auto;
-            background: var(--gold);
-            color: var(--navy);
-            font-size: 0.65rem;
-            font-weight: 700;
-            padding: 0.15rem 0.6rem;
-            border-radius: 20px;
-            letter-spacing: 0.02em;
-        }
-
-        .sidebar-footer {
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-            padding-top: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .sidebar-footer .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--gold), #b8953a);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            font-weight: 700;
-            font-size: 0.9rem;
-        }
-
-        .sidebar-footer .user-info {
-            flex: 1;
-        }
-        .sidebar-footer .user-info .name {
-            color: var(--white);
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        .sidebar-footer .user-info .role {
-            color: rgba(255, 255, 255, 0.40);
-            font-size: 0.75rem;
-        }
-
-        /* ─── Main ─── */
-        .main {
-            margin-left: 280px;
-            flex: 1;
-            padding: 2rem 2.5rem 3rem;
-            min-height: 100vh;
-        }
-
-        /* ─── Top Bar ─── */
-        .topbar {
+        /* Header */
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
         }
 
-        .topbar-left {
+        .search-container {
             display: flex;
             align-items: center;
             gap: 1rem;
         }
 
-        .topbar-left .menu-toggle {
-            display: none;
-            background: var(--white);
-            border: none;
-            width: 44px;
-            height: 44px;
-            border-radius: var(--radius-sm);
-            box-shadow: var(--shadow-sm);
-            font-size: 1.2rem;
-            color: var(--navy);
-            cursor: pointer;
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 0.75rem 1rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            width: 400px;
             transition: var(--transition);
         }
-        .topbar-left .menu-toggle:hover {
-            box-shadow: var(--shadow-md);
+
+        .search-bar:focus-within {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
 
-        .topbar-left h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-        }
-        .topbar-left h2 span {
-            color: var(--gold);
-        }
-
-        .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .search-wrapper {
-            display: flex;
-            align-items: center;
-            background: var(--white);
-            border-radius: 60px;
-            padding: 0.45rem 1rem 0.45rem 1.25rem;
-            box-shadow: var(--shadow-sm);
-            transition: all var(--transition);
-            border: 1px solid transparent;
-            min-width: 300px;
-        }
-        .search-wrapper:focus-within {
-            border-color: var(--gold);
-            box-shadow: 0 0 0 4px var(--gold-glow);
-        }
-        .search-wrapper i {
-            color: var(--slate);
-            font-size: 0.95rem;
-        }
-        .search-wrapper input {
+        .search-bar input {
             border: none;
             outline: none;
-            background: transparent;
-            padding: 0.6rem 0.75rem;
-            font-family: var(--font);
-            font-size: 0.9rem;
             width: 100%;
-            color: var(--navy);
-        }
-        .search-wrapper input::placeholder {
-            color: var(--slate);
+            font-size: 1rem;
+            margin-left: 0.5rem;
+            background: transparent;
         }
 
-        .topbar-actions {
+        .filter-btn {
+            background: white;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            cursor: pointer;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-        }
-
-        .topbar-actions button {
-            background: var(--white);
-            border: none;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            box-shadow: var(--shadow-sm);
-            cursor: pointer;
-            transition: all var(--transition);
-            color: var(--navy);
-            font-size: 1rem;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .topbar-actions button:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-2px);
-        }
-        .topbar-actions .notif-dot {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 8px;
-            height: 8px;
-            background: #ef4444;
-            border-radius: 50%;
-            border: 2px solid var(--white);
-        }
-
-        .topbar-actions .avatar-sm {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--gold), #b8953a);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            box-shadow: var(--shadow-sm);
+            font-weight: 500;
             transition: var(--transition);
         }
-        .topbar-actions .avatar-sm:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-2px);
+
+        .filter-btn:hover {
+            background: var(--primary-light);
         }
 
-        /* ─── Stats ─── */
-        .stats-grid {
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notifications {
+            position: relative;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .notifications:hover {
+            background: var(--gray-light);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--danger);
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            box-shadow: var(--shadow);
+        }
+
+        /* Dashboard Cards */
+        .dashboard-cards {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 1.5rem;
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--gradient);
         }
 
         .stat-card {
-            background: var(--white);
-            border-radius: var(--radius);
-            padding: 1.5rem 1.75rem;
-            box-shadow: var(--shadow-sm);
-            transition: all var(--transition);
-            border: 1px solid rgba(0, 0, 0, 0.02);
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
-        .stat-card:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-4px);
+
+        .stat-info h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .stat-card .stat-left h3 {
-            font-size: 1.75rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            color: var(--navy);
+        .stat-info p {
+            color: var(--gray);
+            font-size: 0.9rem;
         }
-        .stat-card .stat-left p {
-            color: var(--slate);
-            font-size: 0.85rem;
-            font-weight: 500;
-            margin-top: 0.1rem;
-        }
-        .stat-card .stat-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: var(--radius-sm);
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.3rem;
-        }
-        .stat-card .stat-icon.gold {
-            background: rgba(201, 168, 76, 0.12);
-            color: var(--gold);
-        }
-        .stat-card .stat-icon.blue {
-            background: rgba(59, 130, 246, 0.10);
-            color: #3b82f6;
-        }
-        .stat-card .stat-icon.purple {
-            background: rgba(139, 92, 246, 0.10);
-            color: #8b5cf6;
-        }
-        .stat-card .stat-icon.green {
-            background: rgba(16, 185, 129, 0.10);
-            color: #10b981;
+            font-size: 1.5rem;
         }
 
-        /* ─── Filter Bar ─── */
-        .filter-bar {
-            background: var(--white);
-            border-radius: var(--radius);
-            padding: 1.25rem 1.75rem;
-            box-shadow: var(--shadow-sm);
+        .properties .stat-icon {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+        }
+
+        .vacant .stat-icon {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .agents .stat-icon {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: var(--secondary);
+        }
+
+        .revenue .stat-icon {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
             margin-bottom: 2rem;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 1.25rem 1.5rem;
-            border: 1px solid rgba(0, 0, 0, 0.02);
         }
 
-        .filter-bar .filter-group {
+        .filter-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 0.6rem;
+            margin-bottom: 1.5rem;
         }
-        .filter-bar .filter-group label {
-            font-size: 0.8rem;
+
+        .filter-title {
+            font-size: 1.25rem;
             font-weight: 600;
-            color: var(--slate);
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
         }
-        .filter-bar .filter-group select,
-        .filter-bar .filter-group input {
-            padding: 0.5rem 1rem;
-            border: 1px solid var(--slate-light);
-            border-radius: 60px;
-            font-family: var(--font);
-            font-size: 0.85rem;
-            background: var(--off-white);
-            color: var(--navy);
-            outline: none;
+
+        .filter-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .filter-select, .filter-input {
+            padding: 0.75rem;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius-sm);
+            font-family: 'Poppins', sans-serif;
             transition: var(--transition);
-            cursor: pointer;
-            min-width: 140px;
-        }
-        .filter-bar .filter-group select:focus,
-        .filter-bar .filter-group input:focus {
-            border-color: var(--gold);
-            box-shadow: 0 0 0 3px var(--gold-glow);
         }
 
-        .filter-bar .filter-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-left: auto;
-        }
-        .filter-bar .filter-actions button {
-            padding: 0.5rem 1.25rem;
-            border-radius: 60px;
-            border: none;
-            font-family: var(--font);
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .filter-bar .filter-actions .btn-reset {
-            background: var(--off-white);
-            color: var(--slate);
-        }
-        .filter-bar .filter-actions .btn-reset:hover {
-            background: var(--slate-light);
-        }
-        .filter-bar .filter-actions .btn-apply {
-            background: var(--gold);
-            color: var(--white);
-            box-shadow: 0 4px 16px rgba(201, 168, 76, 0.30);
-        }
-        .filter-bar .filter-actions .btn-apply:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(201, 168, 76, 0.35);
+        .filter-select:focus, .filter-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
 
-        /* ─── Section Header ─── */
+        /* Properties Section */
         .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-        }
-        .section-header h2 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            letter-spacing: -0.01em;
-        }
-        .section-header h2 span {
-            color: var(--gold);
-        }
-        .section-header .view-toggles {
-            display: flex;
-            gap: 0.4rem;
-        }
-        .section-header .view-toggles button {
-            background: var(--white);
-            border: 1px solid var(--slate-light);
-            padding: 0.4rem 0.9rem;
-            border-radius: 60px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all var(--transition);
-            color: var(--slate);
-            font-family: var(--font);
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-        .section-header .view-toggles button:hover {
-            border-color: var(--gold);
-            color: var(--navy);
-        }
-        .section-header .view-toggles button.active {
-            background: var(--gold);
-            border-color: var(--gold);
-            color: var(--white);
-            box-shadow: 0 4px 16px rgba(201, 168, 76, 0.25);
         }
 
-        /* ─── Property Grid ─── */
-        .property-grid {
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .view-options {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .view-btn {
+            background: white;
+            border: 1px solid var(--gray-light);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .view-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .properties-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 1.75rem;
-            margin-bottom: 2.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .property-card {
-            background: var(--white);
-            border-radius: var(--radius);
+            background: white;
+            border-radius: var(--border-radius);
             overflow: hidden;
-            box-shadow: var(--shadow-sm);
-            transition: all var(--transition);
-            border: 1px solid rgba(0, 0, 0, 0.02);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
             position: relative;
-            cursor: default;
-        }
-        .property-card:hover {
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-8px);
         }
 
-        .property-card .card-image {
-            position: relative;
-            height: 220px;
-            overflow: hidden;
-            background: var(--slate-light);
+        .property-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
         }
-        .property-card .card-image img {
+
+        .property-img {
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .property-img img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.7s ease;
-        }
-        .property-card:hover .card-image img {
-            transform: scale(1.04);
+            transition: var(--transition);
         }
 
-        .property-card .card-image .badge {
+        .property-card:hover .property-img img {
+            transform: scale(1.05);
+        }
+
+        .property-img::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.1) 100%);
+        }
+
+        .property-badge {
             position: absolute;
             top: 1rem;
             right: 1rem;
-            padding: 0.3rem 1rem;
-            border-radius: 60px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            background: var(--gold);
-            color: var(--white);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-        .property-card .card-image .badge.vacant {
-            background: #f59e0b;
-        }
-        .property-card .card-image .badge.occupied {
-            background: #10b981;
-        }
-        .property-card .card-image .badge.pending {
-            background: #3b82f6;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 2;
         }
 
-        .property-card .card-image .favorite {
+        .status-vacant {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .status-occupied {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .status-pending {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .property-favorite {
             position: absolute;
             top: 1rem;
             left: 1rem;
+            background: rgba(255, 255, 255, 0.9);
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(4px);
-            border: none;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all var(--transition);
-            color: var(--slate);
-            font-size: 0.95rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            z-index: 2;
+            transition: var(--transition);
         }
-        .property-card .card-image .favorite:hover {
+
+        .property-favorite:hover {
+            background: white;
             transform: scale(1.1);
         }
-        .property-card .card-image .favorite.active {
-            color: #ef4444;
-        }
-        .property-card .card-image .favorite.active i {
-            font-weight: 900;
+
+        .property-favorite.active {
+            background: var(--danger);
+            color: white;
         }
 
-        .property-card .card-image .image-count {
-            position: absolute;
-            bottom: 1rem;
-            right: 1rem;
-            background: rgba(0, 0, 0, 0.55);
-            backdrop-filter: blur(4px);
-            color: var(--white);
-            font-size: 0.7rem;
-            padding: 0.2rem 0.7rem;
-            border-radius: 60px;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
+        .property-details {
+            padding: 1.5rem;
         }
 
-        .property-card .card-body {
-            padding: 1.25rem 1.5rem 1.5rem;
+        .property-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
         }
 
-        .property-card .card-body .price {
-            font-size: 1.35rem;
-            font-weight: 800;
-            color: var(--gold);
-            letter-spacing: -0.01em;
-        }
-        .property-card .card-body .address {
+        .property-address {
+            font-size: 1.1rem;
             font-weight: 600;
-            font-size: 1.05rem;
-            margin: 0.2rem 0 0.1rem;
-            color: var(--navy);
-        }
-        .property-card .card-body .location {
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            color: var(--slate);
-            font-size: 0.85rem;
-            margin-bottom: 0.75rem;
-        }
-        .property-card .card-body .location i {
-            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
         }
 
-        .property-card .card-body .features {
+        .property-location {
             display: flex;
-            gap: 1.25rem;
-            padding: 0.75rem 0;
-            border-top: 1px solid var(--slate-light);
-            border-bottom: 1px solid var(--slate-light);
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray);
+            font-size: 0.9rem;
             margin-bottom: 1rem;
         }
-        .property-card .card-body .features span {
+
+        .property-features {
             display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            font-size: 0.85rem;
-            color: var(--slate);
-            font-weight: 500;
-        }
-        .property-card .card-body .features span i {
-            color: var(--gold);
+            justify-content: space-between;
+            border-top: 1px solid var(--gray-light);
+            padding-top: 1rem;
             font-size: 0.9rem;
         }
 
-        .property-card .card-body .actions {
-            display: flex;
-            gap: 0.6rem;
-        }
-        .property-card .card-body .actions button {
-            flex: 1;
-            padding: 0.55rem 1rem;
-            border-radius: 60px;
-            border: none;
-            font-family: var(--font);
-            font-weight: 600;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all var(--transition);
+        .feature {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-        }
-        .property-card .card-body .actions .btn-details {
-            background: var(--off-white);
-            color: var(--navy);
-        }
-        .property-card .card-body .actions .btn-details:hover {
-            background: var(--slate-light);
-        }
-        .property-card .card-body .actions .btn-tour {
-            background: var(--gold);
-            color: var(--white);
-            box-shadow: 0 4px 16px rgba(201, 168, 76, 0.25);
-        }
-        .property-card .card-body .actions .btn-tour:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(201, 168, 76, 0.30);
-        }
-
-        /* ─── Map View ─── */
-        .map-container {
-            display: none;
-            background: var(--white);
-            border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
-            height: 420px;
-            margin-bottom: 2.5rem;
-            border: 1px solid rgba(0, 0, 0, 0.02);
-        }
-        .map-container.active {
-            display: block;
-        }
-        .map-container .map-placeholder {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #e8edf5, #d5dce6);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--slate);
             gap: 0.5rem;
         }
-        .map-container .map-placeholder i {
-            font-size: 3rem;
-            color: var(--gold);
-            opacity: 0.5;
+
+        .property-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
         }
-        .map-container .map-placeholder p {
+
+        .btn {
+            padding: 0.75rem 1rem;
+            border-radius: var(--border-radius-sm);
+            border: none;
+            font-family: 'Poppins', sans-serif;
             font-weight: 500;
-        }
-
-        /* ─── Recent Activity ─── */
-        .activity-section {
-            margin-top: 2rem;
-        }
-        .activity-section .section-header {
-            margin-bottom: 1rem;
-        }
-
-        .activity-list {
-            background: var(--white);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-sm);
-            overflow: hidden;
-            border: 1px solid rgba(0, 0, 0, 0.02);
-        }
-        .activity-item {
+            cursor: pointer;
+            transition: var(--transition);
             display: flex;
             align-items: center;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--slate-light);
-            transition: var(--transition);
-            gap: 1rem;
+            gap: 0.5rem;
+            flex: 1;
+            justify-content: center;
         }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-light);
+        }
+
+        /* Map View */
+        .map-container {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            height: 500px;
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+        .map-view .properties-grid {
+            display: none;
+        }
+
+        .map-view .map-container {
+            display: block;
+        }
+
+        /* Recent Activity */
+        .activity-list {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .activity-item {
+            display: flex;
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--gray-light);
+            transition: var(--transition);
+        }
+
+        .activity-item:hover {
+            background: var(--primary-light);
+        }
+
         .activity-item:last-child {
             border-bottom: none;
         }
-        .activity-item:hover {
-            background: var(--off-white);
-        }
-        .activity-item .a-icon {
-            width: 42px;
-            height: 42px;
+
+        .activity-icon {
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-right: 1rem;
             flex-shrink: 0;
-            font-size: 1rem;
-        }
-        .activity-item .a-icon.gold-bg {
-            background: rgba(201, 168, 76, 0.12);
-            color: var(--gold);
-        }
-        .activity-item .a-icon.blue-bg {
-            background: rgba(59, 130, 246, 0.10);
-            color: #3b82f6;
-        }
-        .activity-item .a-icon.green-bg {
-            background: rgba(16, 185, 129, 0.10);
-            color: #10b981;
-        }
-        .activity-item .a-content {
-            flex: 1;
-        }
-        .activity-item .a-content h4 {
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-        .activity-item .a-content p {
-            color: var(--slate);
-            font-size: 0.85rem;
-        }
-        .activity-item .a-time {
-            color: var(--slate);
-            font-size: 0.75rem;
-            font-weight: 500;
-            white-space: nowrap;
         }
 
-        /* ─── Modals ─── */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(11, 26, 46, 0.55);
-            backdrop-filter: blur(8px);
-            z-index: 2000;
+        .activity-details {
+            flex-grow: 1;
+        }
+
+        .activity-details h4 {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-details p {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        /* Modal Styles */
+        .modal {
             display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
             align-items: center;
             justify-content: center;
-            padding: 1.5rem;
-            animation: fadeIn 0.3s ease;
+            backdrop-filter: blur(5px);
         }
-        .modal-overlay.active {
+
+        .modal.active {
             display: flex;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.96);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .modal {
-            background: var(--white);
-            border-radius: var(--radius);
-            max-width: 780px;
-            width: 100%;
+        .modal-content {
+            background: white;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 800px;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: var(--shadow-xl);
-            animation: slideUp 0.35s ease;
+            box-shadow: var(--shadow-lg);
+            animation: modalFadeIn 0.3s ease-out;
         }
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--slate-light);
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
         }
-        .modal-header h2 {
-            font-size: 1.3rem;
-            font-weight: 700;
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
         }
-        .modal-header .close-modal {
+
+        .modal-close {
             background: none;
             border: none;
             font-size: 1.5rem;
             cursor: pointer;
-            color: var(--slate);
+            color: var(--gray);
             transition: var(--transition);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
-        .modal-header .close-modal:hover {
-            background: var(--off-white);
-            color: var(--navy);
+
+        .modal-close:hover {
+            color: var(--dark);
         }
 
         .modal-body {
-            padding: 2rem;
+            padding: 1.5rem;
         }
 
-        .modal-body .detail-grid {
+        /* Property Detail Modal */
+        .property-detail-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 2rem;
         }
-        .modal-body .detail-grid .detail-img {
-            border-radius: var(--radius-sm);
+
+        .property-detail-img {
+            height: 300px;
+            border-radius: var(--border-radius);
             overflow: hidden;
-            height: 260px;
-            background: var(--slate-light);
         }
-        .modal-body .detail-grid .detail-img img {
+
+        .property-detail-img img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-        .modal-body .detail-grid .detail-info .detail-price {
+
+        .property-detail-info h3 {
             font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--gold);
-        }
-        .modal-body .detail-grid .detail-info .detail-address {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin: 0.2rem 0 0.1rem;
-        }
-        .modal-body .detail-grid .detail-info .detail-location {
-            color: var(--slate);
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
             margin-bottom: 1rem;
         }
-        .modal-body .detail-grid .detail-info .detail-features {
+
+        .property-detail-features {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.6rem 1.5rem;
-            margin: 1rem 0 1.25rem;
-        }
-        .modal-body .detail-grid .detail-info .detail-features div {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-        }
-        .modal-body .detail-grid .detail-info .detail-features div i {
-            color: var(--gold);
-            width: 18px;
-        }
-        .modal-body .detail-grid .detail-info .detail-desc {
-            color: var(--slate);
-            font-size: 0.9rem;
-            line-height: 1.7;
-            margin-bottom: 1.25rem;
-        }
-        .modal-body .detail-grid .detail-info .detail-actions {
-            display: flex;
-            gap: 0.75rem;
-        }
-        .modal-body .detail-grid .detail-info .detail-actions button {
-            padding: 0.6rem 1.5rem;
-            border-radius: 60px;
-            border: none;
-            font-family: var(--font);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-        }
-        .modal-body .detail-grid .detail-info .detail-actions .btn-outline {
-            background: var(--off-white);
-            color: var(--navy);
-        }
-        .modal-body .detail-grid .detail-info .detail-actions .btn-outline:hover {
-            background: var(--slate-light);
-        }
-        .modal-body .detail-grid .detail-info .detail-actions .btn-primary {
-            background: var(--gold);
-            color: var(--white);
-            box-shadow: 0 4px 16px rgba(201, 168, 76, 0.25);
-        }
-        .modal-body .detail-grid .detail-info .detail-actions .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(201, 168, 76, 0.30);
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
         }
 
-        /* ─── Schedule Form ─── */
+        .property-detail-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .property-detail-feature i {
+            color: var(--primary);
+            font-size: 1.25rem;
+        }
+
+        .property-description {
+            margin: 1.5rem 0;
+            line-height: 1.7;
+        }
+
+        /* Schedule Modal */
         .schedule-form {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.25rem;
+            gap: 1.5rem;
         }
-        .schedule-form .form-group {
+
+        .form-group {
             display: flex;
             flex-direction: column;
-            gap: 0.3rem;
         }
-        .schedule-form .form-group.full {
-            grid-column: 1 / -1;
-        }
-        .schedule-form .form-group label {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--slate);
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-        .schedule-form .form-group input,
-        .schedule-form .form-group select,
-        .schedule-form .form-group textarea {
-            padding: 0.65rem 1rem;
-            border: 1px solid var(--slate-light);
-            border-radius: var(--radius-sm);
-            font-family: var(--font);
+
+        .form-label {
             font-size: 0.9rem;
-            background: var(--off-white);
-            color: var(--navy);
-            outline: none;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            padding: 0.75rem;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius-sm);
+            font-family: 'Poppins', sans-serif;
             transition: var(--transition);
         }
-        .schedule-form .form-group input:focus,
-        .schedule-form .form-group select:focus,
-        .schedule-form .form-group textarea:focus {
-            border-color: var(--gold);
-            box-shadow: 0 0 0 4px var(--gold-glow);
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
-        .schedule-form .form-group textarea {
+
+        .form-textarea {
+            min-height: 100px;
             resize: vertical;
-            min-height: 80px;
         }
-        .schedule-form .form-group .submit-btn {
-            padding: 0.75rem 2rem;
-            border-radius: 60px;
-            border: none;
-            background: var(--gold);
-            color: var(--white);
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all var(--transition);
-            box-shadow: 0 4px 16px rgba(201, 168, 76, 0.25);
-            width: 100%;
+
+        .form-full {
+            grid-column: 1 / -1;
+        }
+
+        /* Back to Top */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient);
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
-        }
-        .schedule-form .form-group .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 28px rgba(201, 168, 76, 0.35);
-        }
-
-        /* ─── Footer ─── */
-        .footer {
-            margin-top: 3.5rem;
-            padding: 1.5rem 0 0.5rem;
-            border-top: 1px solid var(--slate-light);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            color: var(--slate);
-            font-size: 0.85rem;
-        }
-        .footer span {
-            color: var(--gold);
-            font-weight: 600;
-        }
-
-        /* ─── Back to Top ─── */
-        .back-top {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: var(--gold);
-            color: var(--white);
-            border: none;
-            box-shadow: 0 8px 24px rgba(201, 168, 76, 0.30);
-            cursor: pointer;
-            font-size: 1.1rem;
-            transition: all var(--transition);
+            text-decoration: none;
+            box-shadow: var(--shadow-lg);
             opacity: 0;
             visibility: hidden;
-            transform: translateY(20px);
-            z-index: 500;
+            transition: var(--transition);
+            z-index: 99;
         }
-        .back-top.active {
+
+        .back-to-top.active {
             opacity: 1;
             visibility: visible;
-            transform: translateY(0);
-        }
-        .back-top:hover {
-            transform: translateY(-4px) scale(1.04);
-            box-shadow: 0 12px 32px rgba(201, 168, 76, 0.40);
         }
 
-        /* ─── Responsive ─── */
+        .back-to-top:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--gradient);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            z-index: 101;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--darker);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        /* Responsive */
         @media (max-width: 1200px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .properties-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             }
-            .property-grid {
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            
+            .property-detail-grid {
+                grid-template-columns: 1fr;
             }
         }
 
-        @media (max-width: 992px) {
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
             .sidebar {
                 transform: translateX(-100%);
             }
-            .sidebar.open {
+            
+            .sidebar.active {
                 transform: translateX(0);
             }
-            .main {
-                margin-left: 0;
-                padding: 1.5rem;
+            
+            .main-content {
+                grid-column: 1;
+                padding-left: 2rem;
+                padding-right: 2rem;
             }
-            .topbar-left .menu-toggle {
+            
+            .mobile-menu-toggle {
                 display: flex;
-            }
-            .search-wrapper {
-                min-width: 200px;
-            }
-            .modal-body .detail-grid {
-                grid-template-columns: 1fr;
             }
         }
 
         @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 1rem;
+            .dashboard-cards {
+                grid-template-columns: repeat(2, 1fr);
             }
-            .stat-card {
-                padding: 1rem 1.25rem;
-            }
-            .stat-card .stat-left h3 {
-                font-size: 1.4rem;
-            }
-            .filter-bar {
-                flex-direction: column;
-                align-items: stretch;
-                padding: 1.25rem;
-                gap: 0.75rem;
-            }
-            .filter-bar .filter-group {
-                flex-wrap: wrap;
-            }
-            .filter-bar .filter-group select,
-            .filter-bar .filter-group input {
-                min-width: 100%;
-            }
-            .filter-bar .filter-actions {
-                margin-left: 0;
-                justify-content: stretch;
-            }
-            .filter-bar .filter-actions button {
-                flex: 1;
-                justify-content: center;
-            }
-            .property-grid {
+            
+            .properties-grid {
                 grid-template-columns: 1fr;
             }
-            .topbar {
+            
+            .search-bar {
+                width: 300px;
+            }
+            
+            .header {
                 flex-direction: column;
-                align-items: stretch;
+                align-items: flex-start;
+                gap: 1rem;
             }
-            .topbar-right {
-                flex-wrap: wrap;
+            
+            .search-container {
+                width: 100%;
+                justify-content: space-between;
             }
-            .search-wrapper {
-                min-width: 100%;
+            
+            .search-bar {
+                width: 100%;
             }
+            
             .schedule-form {
                 grid-template-columns: 1fr;
             }
-            .modal-body {
-                padding: 1.25rem;
-            }
-            .modal-header {
-                padding: 1rem 1.25rem;
-            }
-            .activity-item {
-                flex-wrap: wrap;
-                gap: 0.5rem;
-            }
-            .activity-item .a-time {
-                margin-left: auto;
-            }
         }
 
-        @media (max-width: 480px) {
-            .stats-grid {
+        @media (max-width: 640px) {
+            .dashboard-cards {
                 grid-template-columns: 1fr;
             }
-            .topbar-actions button:not(.avatar-sm) {
-                display: none;
+            
+            .filter-controls {
+                grid-template-columns: 1fr;
             }
-            .section-header .view-toggles button span {
-                display: none;
-            }
-            .property-card .card-body .actions {
+            
+            .property-actions {
                 flex-direction: column;
+            }
+            
+            .modal-content {
+                width: 95%;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Mobile Menu Toggle -->
+    <div class="mobile-menu-toggle">
+        <i class="fas fa-bars"></i>
+    </div>
 
-    <div class="app">
-
-        <!-- ─── SIDEBAR ─── -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-brand">
-                <div class="brand-icon"><i class="fas fa-crown"></i></div>
-                <h1>Mwarokin<span>Estates</span></h1>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-home"></i>
+                <h1>Mwarokin Estates</h1>
             </div>
-
-            <nav class="sidebar-nav">
-                <div class="nav-label">Main</div>
-                <a href="#" class="active"><i class="fas fa-th-large"></i> Dashboard</a>
-                <a href="#"><i class="fas fa-home"></i> Properties <span class="badge">24</span></a>
-                <a href="#"><i class="fas fa-calendar-check"></i> Viewings</a>
-                <a href="#"><i class="fas fa-file-contract"></i> Leases</a>
-
-                <div class="nav-label" style="margin-top:0.75rem;">Management</div>
-                <a href="#"><i class="fas fa-users"></i> Tenants</a>
-                <a href="#"><i class="fas fa-user-tie"></i> Agents</a>
-                <a href="#"><i class="fas fa-wallet"></i> Payments</a>
-                <a href="#"><i class="fas fa-chart-line"></i> Analytics</a>
-
-                <div class="nav-label" style="margin-top:0.75rem;">Settings</div>
-                <a href="#"><i class="fas fa-user"></i> My Profile</a>
-                <a href="#"><i class="fas fa-globe"></i> Language</a>
-                <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
-            </nav>
-
-            <div class="sidebar-footer">
-                <div class="avatar">JD</div>
-                <div class="user-info">
-                    <div class="name">John Doe</div>
-                    <div class="role">Property Manager</div>
-                </div>
-                <i class="fas fa-ellipsis-v" style="color: rgba(255,255,255,0.25); cursor:pointer;"></i>
-            </div>
+            
+            <a href="LipaMdogo.html" class="nav-item">
+                <i class="fas fa-calculator"></i>
+                <span>Lipa Mdogo</span>
+            </a>
+            
+            <a href="Premium Properties.html" class="nav-item">
+                <i class="fas fa-crown"></i>
+                <span>Premium Properties</span>
+            </a>
+            
+            <a href="Videos.html" class="nav-item">
+                <i class="fas fa-vr-cardboard"></i>
+                <span>Home Video</span>
+            </a>
+            
+            <a href="Neighborhoods.html" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Neighborhoods</span>
+            </a>
+            
+            <a href="Schedual Viewing.html" class="nav-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Schedule Viewing</span>
+            </a>
+            
+            <a href="LeaseDraft.html" class="nav-item">
+                <i class="fas fa-file-contract"></i>
+                <span>Leases Draft</span>
+            </a>
+            
+            <a href="Payments.html" class="nav-item">
+                <i class="fas fa-wallet"></i>
+                <span>Payments</span>
+            </a>
+            
+            <a href="My Profile.html" class="nav-item">
+                <i class="fa fa-user"></i>
+                <span>My Profile</span>
+            </a>
+            
+            <a href="LanguageSupport.html" class="nav-item">
+                <i class="fas fa-language"></i>
+                <span>Language Support</span>
+            </a>
+            
+            <a href="LogOut.html" class="nav-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
         </aside>
 
-        <!-- ─── MAIN ─── -->
-        <main class="main">
-
-            <!-- Top Bar -->
-            <header class="topbar">
-                <div class="topbar-left">
-                    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <h2>Vacant <span>Homes</span></h2>
-                </div>
-                <div class="topbar-right">
-                    <div class="search-wrapper">
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="search-container">
+                    <div class="search-bar">
                         <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Search properties, locations..." />
+                        <input type="text" placeholder="Search properties, locations, agents...">
                     </div>
-                    <div class="topbar-actions">
-                        <button aria-label="Notifications">
-                            <i class="fas fa-bell"></i>
-                            <span class="notif-dot"></span>
-                        </button>
-                        <button aria-label="Messages">
-                            <i class="fas fa-envelope"></i>
-                        </button>
-                        <div class="avatar-sm">JD</div>
+                    <button class="filter-btn">
+                        <i class="fas fa-sliders-h"></i>
+                        <span>Filters</span>
+                    </button>
+                </div>
+                
+                <div class="user-profile">
+                    <div class="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="user-img">JD</div>
+                    <div class="user-info">
+                        <h4>John Doe</h4>
+                        <p>Admin</p>
                     </div>
                 </div>
-            </header>
+            </div>
 
-            <!-- Stats -->
-            <section class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-left">
+            <!-- Dashboard Cards -->
+            <div class="dashboard-cards">
+                <div class="card stat-card properties">
+                    <div class="stat-info">
                         <h3>142</h3>
                         <p>Total Properties</p>
                     </div>
-                    <div class="stat-icon gold"><i class="fas fa-building"></i></div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-left">
-                        <h3>24</h3>
-                        <p>Vacant Homes</p>
+                    <div class="stat-icon">
+                        <i class="fas fa-building"></i>
                     </div>
-                    <div class="stat-icon blue"><i class="fas fa-door-open"></i></div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-left">
+                
+                <div class="card stat-card vacant">
+                    <div class="stat-info">
+                        <h3>24</h3>
+                        <p>Vacant Properties</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                </div>
+                
+                <div class="card stat-card agents">
+                    <div class="stat-info">
                         <h3>18</h3>
                         <p>Active Agents</p>
                     </div>
-                    <div class="stat-icon purple"><i class="fas fa-user-tie"></i></div>
+                    <div class="stat-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-left">
-                        <h3>$82.5K</h3>
+                
+                <div class="card stat-card revenue">
+                    <div class="stat-info">
+                        <h3>$82,540</h3>
                         <p>Monthly Revenue</p>
                     </div>
-                    <div class="stat-icon green"><i class="fas fa-arrow-up"></i></div>
-                </div>
-            </section>
-
-            <!-- Filter Bar -->
-            <div class="filter-bar">
-                <div class="filter-group">
-                    <label>Type</label>
-                    <select>
-                        <option>All Types</option>
-                        <option>Apartment</option>
-                        <option>House</option>
-                        <option>Condo</option>
-                        <option>Villa</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Price</label>
-                    <select>
-                        <option>Any Price</option>
-                        <option>$0 – $1,000</option>
-                        <option>$1,000 – $2,000</option>
-                        <option>$2,000 – $3,000</option>
-                        <option>$3,000+</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Beds</label>
-                    <select>
-                        <option>Any</option>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4+</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Location</label>
-                    <select>
-                        <option>All Areas</option>
-                        <option>Downtown</option>
-                        <option>Westlands</option>
-                        <option>Kilimani</option>
-                        <option>Riverside</option>
-                    </select>
-                </div>
-                <div class="filter-actions">
-                    <button class="btn-reset"><i class="fas fa-undo-alt"></i> Reset</button>
-                    <button class="btn-apply"><i class="fas fa-sliders-h"></i> Apply</button>
+                    <div class="stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
                 </div>
             </div>
 
-            <!-- Section Header -->
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <div class="filter-header">
+                    <h3 class="filter-title">Filter Properties</h3>
+                    <button class="btn btn-outline">
+                        <i class="fas fa-sync-alt"></i>
+                        Reset Filters
+                    </button>
+                </div>
+                <div class="filter-controls">
+                    <div class="filter-group">
+                        <label class="filter-label">Property Type</label>
+                        <select class="filter-select">
+                            <option value="">All Types</option>
+                            <option value="apartment">Apartment</option>
+                            <option value="house">House</option>
+                            <option value="condo">Condo</option>
+                            <option value="villa">Villa</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Price Range</label>
+                        <select class="filter-select">
+                            <option value="">Any Price</option>
+                            <option value="0-1000">Under $1,000</option>
+                            <option value="1000-2000">$1,000 - $2,000</option>
+                            <option value="2000-3000">$2,000 - $3,000</option>
+                            <option value="3000+">Over $3,000</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Bedrooms</label>
+                        <select class="filter-select">
+                            <option value="">Any</option>
+                            <option value="1">1 Bedroom</option>
+                            <option value="2">2 Bedrooms</option>
+                            <option value="3">3 Bedrooms</option>
+                            <option value="4+">4+ Bedrooms</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Location</label>
+                        <select class="filter-select">
+                            <option value="">All Areas</option>
+                            <option value="downtown">Downtown</option>
+                            <option value="suburbs">Suburbs</option>
+                            <option value="riverside">Riverside</option>
+                            <option value="hills">Hills</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Available Properties Section -->
             <div class="section-header">
-                <h2>Available <span>Vacant Homes</span></h2>
-                <div class="view-toggles">
-                    <button class="active" data-view="grid"><i class="fas fa-th"></i> <span>Grid</span></button>
-                    <button data-view="map"><i class="fas fa-map"></i> <span>Map</span></button>
+                <h2 class="section-title">Available Properties</h2>
+                <div class="view-options">
+                    <button class="view-btn active" data-view="grid">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="view-btn" data-view="map">
+                        <i class="fas fa-map"></i>
+                    </button>
                 </div>
             </div>
 
-            <!-- Property Grid -->
-            <div class="property-grid" id="propertyGrid">
-                <!-- Card 1 -->
-                <div class="property-card" data-id="1">
-                    <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Modern Apartment" loading="lazy" />
-                        <span class="badge vacant">Vacant</span>
-                        <button class="favorite" aria-label="Favorite"><i class="far fa-heart"></i></button>
-                        <div class="image-count"><i class="fas fa-camera"></i> 8</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="price">$2,500 / mo</div>
-                        <div class="address">123 Main Street</div>
-                        <div class="location"><i class="fas fa-map-marker-alt"></i> Downtown, Nairobi</div>
-                        <div class="features">
-                            <span><i class="fas fa-bed"></i> 3 Beds</span>
-                            <span><i class="fas fa-bath"></i> 2 Baths</span>
-                            <span><i class="fas fa-ruler-combined"></i> 1,850 sqft</span>
-                        </div>
-                        <div class="actions">
-                            <button class="btn-details" data-id="1"><i class="fas fa-eye"></i> Details</button>
-                            <button class="btn-tour" data-id="1"><i class="fas fa-calendar-alt"></i> Tour</button>
+            <!-- Properties Grid -->
+            <div class="properties-grid">
+                <!-- Property 1 -->
+                <div class="property-card">
+                    <div class="property-img">
+                        <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Modern Apartment">
+                        <span class="property-badge status-vacant">Vacant</span>
+                        <div class="property-favorite">
+                            <i class="far fa-heart"></i>
                         </div>
                     </div>
-                </div>
-
-                <!-- Card 2 -->
-                <div class="property-card" data-id="2">
-                    <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1513584684374-8bab748fbf90?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Luxury Villa" loading="lazy" />
-                        <span class="badge vacant">Vacant</span>
-                        <button class="favorite active" aria-label="Favorite"><i class="fas fa-heart"></i></button>
-                        <div class="image-count"><i class="fas fa-camera"></i> 12</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="price">$3,200 / mo</div>
-                        <div class="address">456 Oak Avenue</div>
-                        <div class="location"><i class="fas fa-map-marker-alt"></i> Westlands, Nairobi</div>
-                        <div class="features">
-                            <span><i class="fas fa-bed"></i> 4 Beds</span>
-                            <span><i class="fas fa-bath"></i> 3 Baths</span>
-                            <span><i class="fas fa-ruler-combined"></i> 2,400 sqft</span>
+                    <div class="property-details">
+                        <div class="property-price">$2,500/mo</div>
+                        <h3 class="property-address">123 Main Street</h3>
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Downtown, Nairobi</span>
                         </div>
-                        <div class="actions">
-                            <button class="btn-details" data-id="2"><i class="fas fa-eye"></i> Details</button>
-                            <button class="btn-tour" data-id="2"><i class="fas fa-calendar-alt"></i> Tour</button>
+                        <div class="property-features">
+                            <div class="feature">
+                                <i class="fas fa-bed"></i>
+                                <span>3 Beds</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-bath"></i>
+                                <span>2 Baths</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-ruler-combined"></i>
+                                <span>1,850 sq ft</span>
+                            </div>
+                        </div>
+                        <div class="property-actions">
+                            <button class="btn btn-outline view-details-btn" data-property="1">
+                                <i class="fas fa-eye"></i>
+                                View Details
+                            </button>
+                            <button class="btn btn-primary schedule-btn" data-property="1">
+                                <i class="fas fa-calendar-alt"></i>
+                                Schedule Tour
+                            </button>
                         </div>
                     </div>
                 </div>
-
-                <!-- Card 3 -->
-                <div class="property-card" data-id="3">
-                    <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Cozy Condo" loading="lazy" />
-                        <span class="badge vacant">Vacant</span>
-                        <button class="favorite" aria-label="Favorite"><i class="far fa-heart"></i></button>
-                        <div class="image-count"><i class="fas fa-camera"></i> 6</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="price">$1,800 / mo</div>
-                        <div class="address">789 Pine Road</div>
-                        <div class="location"><i class="fas fa-map-marker-alt"></i> Kilimani, Nairobi</div>
-                        <div class="features">
-                            <span><i class="fas fa-bed"></i> 2 Beds</span>
-                            <span><i class="fas fa-bath"></i> 1 Bath</span>
-                            <span><i class="fas fa-ruler-combined"></i> 1,200 sqft</span>
-                        </div>
-                        <div class="actions">
-                            <button class="btn-details" data-id="3"><i class="fas fa-eye"></i> Details</button>
-                            <button class="btn-tour" data-id="3"><i class="fas fa-calendar-alt"></i> Tour</button>
+                
+                <!-- Property 2 -->
+                <div class="property-card">
+                    <div class="property-img">
+                        <img src="https://images.unsplash.com/photo-1513584684374-8bab748fbf90?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Luxury Villa">
+                        <span class="property-badge status-vacant">Vacant</span>
+                        <div class="property-favorite">
+                            <i class="far fa-heart"></i>
                         </div>
                     </div>
-                </div>
-
-                <!-- Card 4 -->
-                <div class="property-card" data-id="4">
-                    <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Penthouse" loading="lazy" />
-                        <span class="badge vacant">Vacant</span>
-                        <button class="favorite" aria-label="Favorite"><i class="far fa-heart"></i></button>
-                        <div class="image-count"><i class="fas fa-camera"></i> 10</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="price">$4,500 / mo</div>
-                        <div class="address">101 Skyline Drive</div>
-                        <div class="location"><i class="fas fa-map-marker-alt"></i> Riverside, Nairobi</div>
-                        <div class="features">
-                            <span><i class="fas fa-bed"></i> 3 Beds</span>
-                            <span><i class="fas fa-bath"></i> 3 Baths</span>
-                            <span><i class="fas fa-ruler-combined"></i> 2,800 sqft</span>
+                    <div class="property-details">
+                        <div class="property-price">$3,200/mo</div>
+                        <h3 class="property-address">456 Oak Avenue</h3>
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Westlands, Nairobi</span>
                         </div>
-                        <div class="actions">
-                            <button class="btn-details" data-id="4"><i class="fas fa-eye"></i> Details</button>
-                            <button class="btn-tour" data-id="4"><i class="fas fa-calendar-alt"></i> Tour</button>
+                        <div class="property-features">
+                            <div class="feature">
+                                <i class="fas fa-bed"></i>
+                                <span>4 Beds</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-bath"></i>
+                                <span>3 Baths</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-ruler-combined"></i>
+                                <span>2,400 sq ft</span>
+                            </div>
+                        </div>
+                        <div class="property-actions">
+                            <button class="btn btn-outline view-details-btn" data-property="2">
+                                <i class="fas fa-eye"></i>
+                                View Details
+                            </button>
+                            <button class="btn btn-primary schedule-btn" data-property="2">
+                                <i class="fas fa-calendar-alt"></i>
+                                Schedule Tour
+                            </button>
                         </div>
                     </div>
                 </div>
-
-                <!-- Card 5 -->
-                <div class="property-card" data-id="5">
-                    <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Garden Home" loading="lazy" />
-                        <span class="badge vacant">Vacant</span>
-                        <button class="favorite" aria-label="Favorite"><i class="far fa-heart"></i></button>
-                        <div class="image-count"><i class="fas fa-camera"></i> 9</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="price">$2,100 / mo</div>
-                        <div class="address">234 Garden Lane</div>
-                        <div class="location"><i class="fas fa-map-marker-alt"></i> Lavington, Nairobi</div>
-                        <div class="features">
-                            <span><i class="fas fa-bed"></i> 3 Beds</span>
-                            <span><i class="fas fa-bath"></i> 2 Baths</span>
-                            <span><i class="fas fa-ruler-combined"></i> 1,950 sqft</span>
-                        </div>
-                        <div class="actions">
-                            <button class="btn-details" data-id="5"><i class="fas fa-eye"></i> Details</button>
-                            <button class="btn-tour" data-id="5"><i class="fas fa-calendar-alt"></i> Tour</button>
+                
+                <!-- Property 3 -->
+                <div class="property-card">
+                    <div class="property-img">
+                        <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Cozy Condo">
+                        <span class="property-badge status-vacant">Vacant</span>
+                        <div class="property-favorite active">
+                            <i class="fas fa-heart"></i>
                         </div>
                     </div>
-                </div>
-
-                <!-- Card 6 -->
-                <div class="property-card" data-id="6">
-                    <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Modern Loft" loading="lazy" />
-                        <span class="badge vacant">Vacant</span>
-                        <button class="favorite" aria-label="Favorite"><i class="far fa-heart"></i></button>
-                        <div class="image-count"><i class="fas fa-camera"></i> 7</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="price">$1,950 / mo</div>
-                        <div class="address">567 Loft Street</div>
-                        <div class="location"><i class="fas fa-map-marker-alt"></i> Kilimani, Nairobi</div>
-                        <div class="features">
-                            <span><i class="fas fa-bed"></i> 2 Beds</span>
-                            <span><i class="fas fa-bath"></i> 2 Baths</span>
-                            <span><i class="fas fa-ruler-combined"></i> 1,400 sqft</span>
+                    <div class="property-details">
+                        <div class="property-price">$1,800/mo</div>
+                        <h3 class="property-address">789 Pine Road</h3>
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Kilimani, Nairobi</span>
                         </div>
-                        <div class="actions">
-                            <button class="btn-details" data-id="6"><i class="fas fa-eye"></i> Details</button>
-                            <button class="btn-tour" data-id="6"><i class="fas fa-calendar-alt"></i> Tour</button>
+                        <div class="property-features">
+                            <div class="feature">
+                                <i class="fas fa-bed"></i>
+                                <span>2 Beds</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-bath"></i>
+                                <span>1 Bath</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-ruler-combined"></i>
+                                <span>1,200 sq ft</span>
+                            </div>
+                        </div>
+                        <div class="property-actions">
+                            <button class="btn btn-outline view-details-btn" data-property="3">
+                                <i class="fas fa-eye"></i>
+                                View Details
+                            </button>
+                            <button class="btn btn-primary schedule-btn" data-property="3">
+                                <i class="fas fa-calendar-alt"></i>
+                                Schedule Tour
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Map Container -->
-            <div class="map-container" id="mapContainer">
-                <div class="map-placeholder">
-                    <i class="fas fa-map-marked-alt"></i>
-                    <p>Interactive Map View</p>
-                    <span style="font-size:0.85rem; opacity:0.6;">Vacant properties displayed on map</span>
+            <!-- Map View -->
+            <div class="map-container">
+                <div style="width: 100%; height: 100%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: var(--gray);">
+                    <div style="text-align: center;">
+                        <i class="fas fa-map-marked-alt" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                        <p>Interactive Map View</p>
+                        <p style="font-size: 0.9rem;">Properties would be displayed on an interactive map here</p>
+                    </div>
                 </div>
             </div>
 
             <!-- Recent Activity -->
-            <section class="activity-section">
-                <div class="section-header">
-                    <h2>Recent <span>Activity</span></h2>
-                    <span style="color:var(--slate);font-size:0.85rem;">Last 24 hours</span>
+            <h2 class="section-title">Recent Activity</h2>
+            <div class="activity-list card">
+                <div class="activity-item">
+                    <div class="activity-icon" style="background-color: rgba(16, 185, 129, 0.1); color: var(--success);">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <div class="activity-details">
+                        <h4>New Lease Signed</h4>
+                        <p>Property at 567 Elm Street has been leased to Robert Johnson</p>
+                    </div>
+                    <div class="activity-time">2 hours ago</div>
                 </div>
-                <div class="activity-list">
-                    <div class="activity-item">
-                        <div class="a-icon gold-bg"><i class="fas fa-key"></i></div>
-                        <div class="a-content">
-                            <h4>New Lease Signed</h4>
-                            <p>Property at 567 Elm Street leased to Robert Johnson</p>
-                        </div>
-                        <div class="a-time">2 hours ago</div>
+                
+                <div class="activity-item">
+                    <div class="activity-icon" style="background-color: rgba(59, 130, 246, 0.1); color: var(--primary);">
+                        <i class="fas fa-home"></i>
                     </div>
-                    <div class="activity-item">
-                        <div class="a-icon blue-bg"><i class="fas fa-home"></i></div>
-                        <div class="a-content">
-                            <h4>Property Added</h4>
-                            <p>New vacant listing at 321 Maple Avenue</p>
-                        </div>
-                        <div class="a-time">5 hours ago</div>
+                    <div class="activity-details">
+                        <h4>Property Added</h4>
+                        <p>New property listed at 321 Maple Avenue</p>
                     </div>
-                    <div class="activity-item">
-                        <div class="a-icon green-bg"><i class="fas fa-file-invoice-dollar"></i></div>
-                        <div class="a-content">
-                            <h4>Payment Received</h4>
-                            <p>Rent payment from Michael Brown for 159 Oak Lane</p>
-                        </div>
-                        <div class="a-time">Yesterday</div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="a-icon gold-bg"><i class="fas fa-calendar-check"></i></div>
-                        <div class="a-content">
-                            <h4>Viewing Scheduled</h4>
-                            <p>Tour booked for 123 Main Street with Sarah Kim</p>
-                        </div>
-                        <div class="a-time">Yesterday</div>
-                    </div>
+                    <div class="activity-time">5 hours ago</div>
                 </div>
-            </section>
-
-            <!-- Footer -->
-            <footer class="footer">
-                <span>Mwarokin Estates</span>
-                <p>&copy; 2026 · All Rights Reserved. Powered by <span>Syllogism Technology Africa</span></p>
-            </footer>
-
+                
+                <div class="activity-item">
+                    <div class="activity-icon" style="background-color: rgba(245, 158, 11, 0.1); color: var(--warning);">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <div class="activity-details">
+                        <h4>Payment Received</h4>
+                        <p>Rent payment from Michael Brown for 159 Oak Lane</p>
+                    </div>
+                    <div class="activity-time">Yesterday</div>
+                </div>
+            </div>
         </main>
     </div>
-
-    <!-- ─── BACK TO TOP ─── -->
-    <button class="back-top" id="backTop" aria-label="Back to top">
-        <i class="fas fa-chevron-up"></i>
-    </button>
-
-    <!-- ─── DETAIL MODAL ─── -->
-    <div class="modal-overlay" id="detailModal">
-        <div class="modal">
+    
+    <!-- Property Detail Modal -->
+    <div class="modal" id="propertyDetailModal">
+        <div class="modal-content">
             <div class="modal-header">
-                <h2>Property Details</h2>
-                <button class="close-modal" id="closeDetail"><i class="fas fa-times"></i></button>
+                <h2 class="modal-title">Property Details</h2>
+                <button class="modal-close">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="detail-grid">
-                    <div class="detail-img">
-                        <img id="detailImg" src="" alt="Property" />
+                <div class="property-detail-grid">
+                    <div class="property-detail-img">
+                        <img id="detailImg" src="" alt="Property Image">
                     </div>
-                    <div class="detail-info">
-                        <div class="detail-price" id="detailPrice">$2,500 / mo</div>
-                        <div class="detail-address" id="detailAddress">123 Main Street</div>
-                        <div class="detail-location"><i class="fas fa-map-marker-alt"></i> <span id="detailLocation">Downtown, Nairobi</span></div>
-                        <div class="detail-features">
-                            <div><i class="fas fa-bed"></i> <span id="detailBeds">3</span> Bedrooms</div>
-                            <div><i class="fas fa-bath"></i> <span id="detailBaths">2</span> Bathrooms</div>
-                            <div><i class="fas fa-ruler-combined"></i> <span id="detailArea">1,850</span> sqft</div>
-                            <div><i class="fas fa-car"></i> <span id="detailParking">1</span> Parking</div>
+                    <div class="property-detail-info">
+                        <h3 id="detailAddress"></h3>
+                        <div class="property-price" id="detailPrice"></div>
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span id="detailLocation"></span>
                         </div>
-                        <div class="detail-desc" id="detailDesc">
-                            This stunning modern apartment offers breathtaking city views and luxurious amenities.
+                        
+                        <div class="property-detail-features">
+                            <div class="property-detail-feature">
+                                <i class="fas fa-bed"></i>
+                                <div>
+                                    <strong id="detailBeds"></strong>
+                                    <p>Bedrooms</p>
+                                </div>
+                            </div>
+                            <div class="property-detail-feature">
+                                <i class="fas fa-bath"></i>
+                                <div>
+                                    <strong id="detailBaths"></strong>
+                                    <p>Bathrooms</p>
+                                </div>
+                            </div>
+                            <div class="property-detail-feature">
+                                <i class="fas fa-ruler-combined"></i>
+                                <div>
+                                    <strong id="detailArea"></strong>
+                                    <p>Square Feet</p>
+                                </div>
+                            </div>
+                            <div class="property-detail-feature">
+                                <i class="fas fa-car"></i>
+                                <div>
+                                    <strong id="detailParking"></strong>
+                                    <p>Parking</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="detail-actions">
-                            <button class="btn-outline" id="detailTourBtn"><i class="fas fa-calendar-alt"></i> Schedule Tour</button>
-                            <button class="btn-primary"><i class="fas fa-phone"></i> Contact Agent</button>
+                        
+                        <div class="property-description">
+                            <p id="detailDescription"></p>
+                        </div>
+                        
+                        <div class="property-actions">
+                            <button class="btn btn-outline schedule-btn" id="detailScheduleBtn">
+                                <i class="fas fa-calendar-alt"></i>
+                                Schedule Tour
+                            </button>
+                            <button class="btn btn-primary">
+                                <i class="fas fa-phone"></i>
+                                Contact Agent
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- ─── SCHEDULE MODAL ─── -->
-    <div class="modal-overlay" id="scheduleModal">
-        <div class="modal">
+    
+    <!-- Schedule Tour Modal -->
+    <div class="modal" id="scheduleModal">
+        <div class="modal-content">
             <div class="modal-header">
-                <h2>Schedule a Tour</h2>
-                <button class="close-modal" id="closeSchedule"><i class="fas fa-times"></i></button>
+                <h2 class="modal-title">Schedule Property Tour</h2>
+                <button class="modal-close">&times;</button>
             </div>
             <div class="modal-body">
-                <form class="schedule-form" id="scheduleForm">
-                    <div class="form-group full">
-                        <label>Property</label>
-                        <input type="text" id="scheduleProperty" readonly value="123 Main Street" />
+                <div class="schedule-form">
+                    <div class="form-group">
+                        <label class="form-label">Property</label>
+                        <input type="text" class="form-input" id="scheduleProperty" readonly>
                     </div>
                     <div class="form-group">
-                        <label>Full Name</label>
-                        <input type="text" placeholder="John Doe" required />
+                        <label class="form-label">Your Name</label>
+                        <input type="text" class="form-input" placeholder="Enter your full name">
                     </div>
                     <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" placeholder="john@example.com" required />
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" placeholder="Enter your email">
                     </div>
                     <div class="form-group">
-                        <label>Phone</label>
-                        <input type="tel" placeholder="+254 700 123 456" required />
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" class="form-input" placeholder="Enter your phone number">
                     </div>
                     <div class="form-group">
-                        <label>Preferred Date</label>
-                        <input type="date" required />
+                        <label class="form-label">Preferred Date</label>
+                        <input type="date" class="form-input">
                     </div>
                     <div class="form-group">
-                        <label>Preferred Time</label>
-                        <select>
-                            <option>9:00 AM</option>
-                            <option>10:00 AM</option>
-                            <option>11:00 AM</option>
-                            <option selected>12:00 PM</option>
-                            <option>1:00 PM</option>
-                            <option>2:00 PM</option>
-                            <option>3:00 PM</option>
-                            <option>4:00 PM</option>
+                        <label class="form-label">Preferred Time</label>
+                        <select class="form-select">
+                            <option value="">Select a time</option>
+                            <option value="9:00">9:00 AM</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="12:00">12:00 PM</option>
+                            <option value="13:00">1:00 PM</option>
+                            <option value="14:00">2:00 PM</option>
+                            <option value="15:00">3:00 PM</option>
+                            <option value="16:00">4:00 PM</option>
                         </select>
                     </div>
-                    <div class="form-group full">
-                        <label>Additional Notes</label>
-                        <textarea placeholder="Any special requests or questions..."></textarea>
+                    <div class="form-group form-full">
+                        <label class="form-label">Additional Notes</label>
+                        <textarea class="form-textarea" placeholder="Any special requests or questions..."></textarea>
                     </div>
-                    <div class="form-group full">
-                        <button type="submit" class="submit-btn"><i class="fas fa-paper-plane"></i> Submit Request</button>
+                    <div class="form-group form-full">
+                        <button class="btn btn-primary" style="width: 100%;">
+                            <i class="fas fa-paper-plane"></i>
+                            Submit Request
+                        </button>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- ─── JAVASCRIPT ─── -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
+    <!-- Back to Top -->
+    <a href="#" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </a>
 
-            // ── Data ──
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Mwarokin Estates -Vacant Homes- © 2026. All Rights Reserved. Powered By: Syllogism Technology Africa.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navigation active state
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Mobile menu toggle
+            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+            const sidebar = document.querySelector('.sidebar');
+            
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+                this.querySelector('i').classList.toggle('fa-bars');
+                this.querySelector('i').classList.toggle('fa-times');
+            });
+
+            // View toggle (Grid/Map)
+            const viewButtons = document.querySelectorAll('.view-btn');
+            const propertiesGrid = document.querySelector('.properties-grid');
+            const mapContainer = document.querySelector('.map-container');
+            const mainContent = document.querySelector('.main-content');
+            
+            viewButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const view = this.getAttribute('data-view');
+                    
+                    viewButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    if (view === 'grid') {
+                        propertiesGrid.style.display = 'grid';
+                        mapContainer.style.display = 'none';
+                        mainContent.classList.remove('map-view');
+                    } else {
+                        propertiesGrid.style.display = 'none';
+                        mapContainer.style.display = 'block';
+                        mainContent.classList.add('map-view');
+                    }
+                });
+            });
+
+            // Favorite properties
+            const favoriteButtons = document.querySelectorAll('.property-favorite');
+            
+            favoriteButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    this.classList.toggle('active');
+                    
+                    const icon = this.querySelector('i');
+                    if (this.classList.contains('active')) {
+                        icon.classList.remove('far', 'fa-heart');
+                        icon.classList.add('fas', 'fa-heart');
+                    } else {
+                        icon.classList.remove('fas', 'fa-heart');
+                        icon.classList.add('far', 'fa-heart');
+                    }
+                });
+            });
+
+            // Property detail modal
+            const propertyDetailModal = document.getElementById('propertyDetailModal');
+            const viewDetailButtons = document.querySelectorAll('.view-details-btn');
+            const modalCloseButtons = document.querySelectorAll('.modal-close');
+            
+            // Property data
             const propertyData = {
                 1: {
-                    img: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-                    price: "$2,500 / mo",
+                    img: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
                     address: "123 Main Street",
+                    price: "$2,500/mo",
                     location: "Downtown, Nairobi",
                     beds: "3",
                     baths: "2",
                     area: "1,850",
                     parking: "1",
-                    desc: "Stunning modern apartment in the heart of downtown offering breathtaking city views and premium finishes. Features an open floor plan, gourmet kitchen with stainless steel appliances, and access to a rooftop terrace."
+                    description: "This stunning modern apartment in the heart of downtown offers breathtaking city views and luxurious amenities. The open floor plan features high ceilings, large windows, and premium finishes throughout. The gourmet kitchen includes stainless steel appliances and quartz countertops. Building amenities include a fitness center, rooftop terrace, and 24-hour concierge service."
                 },
                 2: {
-                    img: "https://images.unsplash.com/photo-1513584684374-8bab748fbf90?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-                    price: "$3,200 / mo",
+                    img: "https://images.unsplash.com/photo-1513584684374-8bab748fbf90?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
                     address: "456 Oak Avenue",
+                    price: "$3,200/mo",
                     location: "Westlands, Nairobi",
                     beds: "4",
                     baths: "3",
                     area: "2,400",
                     parking: "2",
-                    desc: "Elegant villa in prestigious Westlands with a gourmet kitchen, luxurious master suite, and private backyard. Includes a two-car garage and is close to shopping, dining, and top-rated schools."
+                    description: "Elegant villa in the prestigious Westlands neighborhood. This spacious home features a gourmet kitchen with custom cabinetry, a luxurious master suite with walk-in closet, and a private backyard perfect for entertaining. The property includes a two-car garage and is situated on a quiet cul-de-sac. Close to shopping, dining, and top-rated schools."
                 },
                 3: {
-                    img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-                    price: "$1,800 / mo",
+                    img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
                     address: "789 Pine Road",
+                    price: "$1,800/mo",
                     location: "Kilimani, Nairobi",
                     beds: "2",
                     baths: "1",
                     area: "1,200",
                     parking: "1",
-                    desc: "Charming condo in vibrant Kilimani with an open floor plan, hardwood floors, and a private balcony. Within walking distance to cafes, restaurants, and public transport. Perfect for professionals."
-                },
-                4: {
-                    img: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-                    price: "$4,500 / mo",
-                    address: "101 Skyline Drive",
-                    location: "Riverside, Nairobi",
-                    beds: "3",
-                    baths: "3",
-                    area: "2,800",
-                    parking: "2",
-                    desc: "Luxurious penthouse with panoramic views, floor-to-ceiling windows, and high-end finishes. Features a private rooftop terrace, smart home technology, and 24-hour concierge service."
-                },
-                5: {
-                    img: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-                    price: "$2,100 / mo",
-                    address: "234 Garden Lane",
-                    location: "Lavington, Nairobi",
-                    beds: "3",
-                    baths: "2",
-                    area: "1,950",
-                    parking: "1",
-                    desc: "Beautiful garden home surrounded by lush greenery. Features a spacious living area, modern kitchen, and a private garden perfect for entertaining. Located in a quiet, family-friendly neighborhood."
-                },
-                6: {
-                    img: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-                    price: "$1,950 / mo",
-                    address: "567 Loft Street",
-                    location: "Kilimani, Nairobi",
-                    beds: "2",
-                    baths: "2",
-                    area: "1,400",
-                    parking: "1",
-                    desc: "Modern loft-style apartment with exposed brick and high ceilings. Open-concept living and dining area, gourmet kitchen, and a balcony with city views. Close to nightlife and dining."
+                    description: "Charming condo in the vibrant Kilimani area. This recently updated unit features an open floor plan with hardwood floors, modern kitchen with stainless steel appliances, and a private balcony. The building offers secure parking, a fitness center, and is within walking distance to cafes, restaurants, and public transportation. Perfect for professionals or couples."
                 }
             };
-
-            // ── DOM refs ──
-            const sidebar = document.getElementById('sidebar');
-            const menuToggle = document.getElementById('menuToggle');
-            const viewBtns = document.querySelectorAll('.view-toggles button');
-            const grid = document.getElementById('propertyGrid');
-            const mapContainer = document.getElementById('mapContainer');
-            const backTop = document.getElementById('backTop');
-            const detailModal = document.getElementById('detailModal');
+            
+            viewDetailButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const propertyId = this.getAttribute('data-property');
+                    const data = propertyData[propertyId];
+                    
+                    document.getElementById('detailImg').src = data.img;
+                    document.getElementById('detailAddress').textContent = data.address;
+                    document.getElementById('detailPrice').textContent = data.price;
+                    document.getElementById('detailLocation').textContent = data.location;
+                    document.getElementById('detailBeds').textContent = data.beds;
+                    document.getElementById('detailBaths').textContent = data.baths;
+                    document.getElementById('detailArea').textContent = data.area;
+                    document.getElementById('detailParking').textContent = data.parking;
+                    document.getElementById('detailDescription').textContent = data.description;
+                    
+                    // Set the property for scheduling
+                    document.getElementById('detailScheduleBtn').setAttribute('data-property', propertyId);
+                    document.getElementById('scheduleProperty').value = data.address;
+                    
+                    propertyDetailModal.classList.add('active');
+                });
+            });
+            
+            // Schedule modal
             const scheduleModal = document.getElementById('scheduleModal');
-            const closeDetail = document.getElementById('closeDetail');
-            const closeSchedule = document.getElementById('closeSchedule');
-            const detailImg = document.getElementById('detailImg');
-            const detailPrice = document.getElementById('detailPrice');
-            const detailAddress = document.getElementById('detailAddress');
-            const detailLocation = document.getElementById('detailLocation');
-            const detailBeds = document.getElementById('detailBeds');
-            const detailBaths = document.getElementById('detailBaths');
-            const detailArea = document.getElementById('detailArea');
-            const detailParking = document.getElementById('detailParking');
-            const detailDesc = document.getElementById('detailDesc');
-            const detailTourBtn = document.getElementById('detailTourBtn');
-            const scheduleProperty = document.getElementById('scheduleProperty');
-
-            let currentPropertyId = null;
-
-            // ── Sidebar toggle ──
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('open');
-            });
-            // Close sidebar on outside click (mobile)
-            document.addEventListener('click', (e) => {
-                if (window.innerWidth <= 992) {
-                    if (!sidebar.contains(e.target) && e.target !== menuToggle && !menuToggle.contains(e.target)) {
-                        sidebar.classList.remove('open');
-                    }
-                }
-            });
-
-            // ── View toggle ──
-            viewBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    viewBtns.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    const view = btn.dataset.view;
-                    if (view === 'grid') {
-                        grid.style.display = 'grid';
-                        mapContainer.classList.remove('active');
-                    } else {
-                        grid.style.display = 'none';
-                        mapContainer.classList.add('active');
-                    }
-                });
-            });
-
-            // ── Favorite toggle ──
-            document.querySelectorAll('.favorite').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    btn.classList.toggle('active');
-                    const icon = btn.querySelector('i');
-                    if (btn.classList.contains('active')) {
-                        icon.className = 'fas fa-heart';
-                    } else {
-                        icon.className = 'far fa-heart';
-                    }
-                });
-            });
-
-            // ── Open Detail Modal ──
-            function openDetail(id) {
-                const data = propertyData[id];
-                if (!data) return;
-                currentPropertyId = id;
-                detailImg.src = data.img;
-                detailPrice.textContent = data.price;
-                detailAddress.textContent = data.address;
-                detailLocation.textContent = data.location;
-                detailBeds.textContent = data.beds;
-                detailBaths.textContent = data.baths;
-                detailArea.textContent = data.area;
-                detailParking.textContent = data.parking;
-                detailDesc.textContent = data.desc;
-                detailTourBtn.dataset.id = id;
-                detailModal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-
-            document.querySelectorAll('.btn-details').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const id = btn.dataset.id;
-                    openDetail(id);
-                });
-            });
-
-            // ── Open Schedule from detail ──
-            detailTourBtn.addEventListener('click', () => {
-                const id = detailTourBtn.dataset.id;
-                const data = propertyData[id];
-                if (data) {
-                    scheduleProperty.value = data.address;
-                }
-                detailModal.classList.remove('active');
-                scheduleModal.classList.add('active');
-            });
-
-            // ── Open Schedule from card ──
-            document.querySelectorAll('.btn-tour').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const id = btn.dataset.id;
-                    const data = propertyData[id];
-                    if (data) {
-                        scheduleProperty.value = data.address;
-                    }
+            const scheduleButtons = document.querySelectorAll('.schedule-btn');
+            
+            scheduleButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const propertyId = this.getAttribute('data-property');
+                    const data = propertyData[propertyId];
+                    
+                    document.getElementById('scheduleProperty').value = data.address;
+                    
+                    // Close property detail modal if open
+                    propertyDetailModal.classList.remove('active');
+                    
+                    // Open schedule modal
                     scheduleModal.classList.add('active');
-                    document.body.style.overflow = 'hidden';
                 });
             });
-
-            // ── Close modals ──
-            function closeAllModals() {
-                detailModal.classList.remove('active');
-                scheduleModal.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-
-            closeDetail.addEventListener('click', closeAllModals);
-            closeSchedule.addEventListener('click', closeAllModals);
-
-            // Close on backdrop click
-            [detailModal, scheduleModal].forEach(modal => {
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) closeAllModals();
+            
+            // Close modals
+            modalCloseButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    propertyDetailModal.classList.remove('active');
+                    scheduleModal.classList.remove('active');
                 });
             });
-
-            // ── Schedule form submit ──
-            document.getElementById('scheduleForm').addEventListener('submit', (e) => {
-                e.preventDefault();
-                alert('✅ Tour request submitted! We\'ll contact you shortly.');
-                closeAllModals();
-            });
-
-            // ── Back to top ──
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 350) {
-                    backTop.classList.add('active');
-                } else {
-                    backTop.classList.remove('active');
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target === propertyDetailModal) {
+                    propertyDetailModal.classList.remove('active');
+                }
+                if (e.target === scheduleModal) {
+                    scheduleModal.classList.remove('active');
                 }
             });
-            backTop.addEventListener('click', () => {
+
+            // Back to top button
+            const backToTop = document.querySelector('.back-to-top');
+            
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    backToTop.classList.add('active');
+                } else {
+                    backToTop.classList.remove('active');
+                }
+            });
+            
+            backToTop.addEventListener('click', function(e) {
+                e.preventDefault();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
 
-            // ── Filter apply (demo) ──
-            document.querySelector('.btn-apply').addEventListener('click', () => {
-                const cards = document.querySelectorAll('.property-card');
-                // Simple shuffle animation for demo
-                cards.forEach((card, i) => {
-                    card.style.transition = 'all 0.4s ease';
-                    card.style.opacity = '0';
-                    card.style.transform = 'scale(0.96) translateY(20px)';
-                    setTimeout(() => {
-                        card.style.opacity = '1';
-                        card.style.transform = 'scale(1) translateY(0)';
-                    }, 50 + i * 80);
+            // Filter functionality
+            const filterSelects = document.querySelectorAll('.filter-select');
+            
+            filterSelects.forEach(select => {
+                select.addEventListener('change', function() {
+                    // In a real application, this would filter the properties
+                    console.log(`Filter changed: ${this.value}`);
                 });
             });
 
-            // ── Reset filters ──
-            document.querySelector('.btn-reset').addEventListener('click', () => {
-                document.querySelectorAll('.filter-bar select').forEach(el => el.selectedIndex = 0);
-                document.querySelectorAll('.property-card').forEach(card => {
-                    card.style.opacity = '1';
-                    card.style.transform = 'scale(1) translateY(0)';
+            // Simulate real-time updates
+            function updateStats() {
+                const stats = document.querySelectorAll('.stat-info h3');
+                
+                stats.forEach(stat => {
+                    const currentValue = parseInt(stat.textContent.replace(/[^0-9]/g, ''));
+                    const randomChange = Math.floor(Math.random() * 5) - 2; // -2 to +2
+                    const newValue = Math.max(0, currentValue + randomChange);
+                    
+                    if (newValue !== currentValue) {
+                        // Animate the number change
+                        stat.textContent = stat.textContent.replace(currentValue, newValue);
+                    }
                 });
-            });
-
-            // ── Keyboard shortcuts ──
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') closeAllModals();
-            });
-
-            console.log('🏡 Mwarokin Estates · Vacant Homes UI loaded.');
+            }
+            
+            // Update stats every 10 seconds
+            setInterval(updateStats, 10000);
         });
     </script>
-
 </body>
 </html>
