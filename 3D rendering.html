@@ -1,898 +1,446 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mwarokin Estates - Architecture Designer</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #667eea;
-            --primary-dark: #5a6fd8;
-            --secondary: #764ba2;
-            --accent: #4ade80;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --dark: #1e293b;
-            --light: #f8fafc;
-            --glass: rgba(255, 255, 255, 0.1);
-            --glass-dark: rgba(0, 0, 0, 0.2);
-            --border: rgba(255, 255, 255, 0.2);
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            --radius: 12px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            overflow: hidden;
-            height: 100vh;
-            color: var(--light);
-        }
-
-        .app-container {
-            display: flex;
-            height: 100vh;
-            backdrop-filter: blur(10px);
-        }
-
-        /* Left Toolbar */
-        .toolbar-left {
-            width: 80px;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px 0;
-            box-shadow: var(--shadow);
-            z-index: 10;
-        }
-
-        .logo {
-            font-size: 32px;
-            margin-bottom: 30px;
-            animation: float 3s ease-in-out infinite;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .tool-btn {
-            width: 50px;
-            height: 50px;
-            margin: 8px 0;
-            border: none;
-            border-radius: var(--radius);
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            position: relative;
-            overflow: hidden;
-            color: var(--light);
-        }
-
-        .tool-btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: translate(-50%, -50%);
-            transition: var(--transition);
-        }
-
-        .tool-btn:hover::before {
-            width: 100px;
-            height: 100px;
-        }
-
-        .tool-btn:hover {
-            transform: scale(1.1) rotate(5deg);
-            background: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .tool-btn.active {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-            transform: scale(1.05);
-        }
-
-        .tool-btn span {
-            position: relative;
-            z-index: 1;
-        }
-
-        .spacer {
-            flex: 1;
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        /* Top Bar */
-        .top-bar {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            padding: 15px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--shadow);
-            z-index: 5;
-        }
-
-        .top-bar-left, .top-bar-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .icon-btn {
-            width: 40px;
-            height: 40px;
-            border: none;
-            border-radius: 10px;
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--light);
-            font-size: 16px;
-        }
-
-        .icon-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .icon-btn:active {
-            transform: translateY(0);
-        }
-
-        .icon-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .zoom-display {
-            color: var(--light);
-            font-weight: 600;
-            padding: 0 15px;
-            font-size: 14px;
-            min-width: 60px;
-            text-align: center;
-        }
-
-        .divider {
-            width: 1px;
-            height: 25px;
-            background: var(--border);
-            margin: 0 10px;
-        }
-
-        .dimension-display {
-            color: var(--accent);
-            font-weight: 600;
-            padding: 8px 15px;
-            background: rgba(74, 222, 128, 0.15);
-            border-radius: 8px;
-            font-size: 14px;
-            min-width: 120px;
-            text-align: center;
-            border: 1px solid rgba(74, 222, 128, 0.3);
-        }
-
-        /* Canvas Area */
-        .canvas-area {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-            background: var(--dark);
-        }
-
-        #canvas {
-            width: 100%;
-            height: 100%;
-            cursor: crosshair;
-        }
-
-        .canvas-info {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border-radius: var(--radius);
-            padding: 20px;
-            color: var(--light);
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-            animation: slideInLeft 0.5s ease-out;
-            min-width: 220px;
-        }
-
-        @keyframes slideInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .canvas-info h3 {
-            font-size: 16px;
-            margin-bottom: 12px;
-            color: var(--accent);
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .info-item {
-            margin: 8px 0;
-            font-size: 13px;
-            opacity: 0.9;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .info-label {
-            font-weight: 600;
-        }
-
-        .help-text {
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid var(--border);
-            font-size: 12px;
-            opacity: 0.7;
-        }
-
-        /* Right Panel */
-        .right-panel {
-            width: 350px;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border-left: 1px solid var(--border);
-            padding: 25px;
-            overflow-y: auto;
-            box-shadow: var(--shadow);
-            z-index: 5;
-        }
-
-        .right-panel::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .right-panel::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-        }
-
-        .right-panel::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-        }
-
-        .panel-section {
-            margin-bottom: 30px;
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .section-title {
-            color: var(--light);
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .section-title::before {
-            content: '';
-            width: 4px;
-            height: 20px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 2px;
-        }
-
-        .color-picker-container {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .color-input {
-            width: 60px;
-            height: 60px;
-            border: none;
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: var(--shadow);
-            border: 2px solid var(--border);
-        }
-
-        .color-input:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .color-text {
-            flex: 1;
-            background: var(--glass);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 12px;
-            color: var(--light);
-            font-size: 14px;
-            backdrop-filter: blur(10px);
-        }
-
-        .material-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .material-btn {
-            padding: 12px;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            transition: var(--transition);
-            text-align: center;
-            backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .material-btn::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            opacity: 0;
-            transition: var(--transition);
-        }
-
-        .material-btn:hover::after {
-            opacity: 1;
-        }
-
-        .material-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-            border-color: rgba(255, 255, 255, 0.4);
-        }
-
-        .slider-container {
-            margin-top: 10px;
-        }
-
-        .slider-label {
-            color: var(--light);
-            font-size: 14px;
-            margin-bottom: 8px;
-            display: block;
-            font-weight: 500;
-        }
-
-        .slider {
-            width: 100%;
-            height: 6px;
-            border-radius: 5px;
-            background: rgba(255, 255, 255, 0.2);
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            transition: var(--transition);
-        }
-
-        .slider::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-        }
-
-        .layer-item {
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            border-radius: 10px;
-            padding: 12px;
-            margin: 8px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            transition: var(--transition);
-            border: 2px solid transparent;
-        }
-
-        .layer-item:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateX(5px);
-        }
-
-        .layer-item.active {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-
-        .layer-name {
-            color: var(--light);
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .layer-toggle {
-            width: 30px;
-            height: 30px;
-            border: none;
-            background: var(--glass);
-            border-radius: 8px;
-            cursor: pointer;
-            color: var(--light);
-            transition: var(--transition);
-        }
-
-        .layer-toggle:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
-        }
-
-        .stats-card {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border-radius: var(--radius);
-            padding: 20px;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-        }
-
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            color: var(--light);
-            font-size: 14px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .stat-row:last-child {
-            border-bottom: none;
-        }
-
-        .stat-label {
-            opacity: 0.8;
-        }
-
-        .stat-value {
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        .action-btn {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .action-btn.primary {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: var(--light);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .action-btn.primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
-        }
-
-        .action-btn.danger {
-            background: rgba(239, 68, 68, 0.2);
-            color: #fca5a5;
-            border: 2px solid rgba(239, 68, 68, 0.3);
-        }
-
-        .action-btn.danger:hover {
-            background: rgba(239, 68, 68, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .tooltip {
-            position: absolute;
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s;
-            z-index: 1000;
-            white-space: nowrap;
-        }
-
-        /* Context Menu */
-        .context-menu {
-            position: absolute;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 8px 0;
-            box-shadow: var(--shadow);
-            z-index: 100;
-            display: none;
-        }
-
-        .context-menu-item {
-            padding: 10px 20px;
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .context-menu-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        /* Modal */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: var(--transition);
-        }
-
-        .modal.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .modal-content {
-            background: var(--glass);
-            backdrop-filter: blur(30px);
-            border-radius: var(--radius);
-            padding: 30px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-            transform: translateY(20px);
-            transition: var(--transition);
-        }
-
-        .modal.active .modal-content {
-            transform: translateY(0);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--light);
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            color: var(--light);
-            font-size: 20px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .modal-close:hover {
-            color: var(--accent);
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .right-panel {
-                width: 300px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .toolbar-left {
-                width: 60px;
-            }
-            
-            .right-panel {
-                position: absolute;
-                right: 0;
-                height: 100%;
-                transform: translateX(100%);
-                transition: var(--transition);
-            }
-            
-            .right-panel.active {
-                transform: translateX(0);
-            }
-            
-            .toggle-panel {
-                display: block;
-            }
-        }
-
-        /* Loading Screen */
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease;
-        }
-
-        .loading-logo {
-            font-size: 60px;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .loading-bar {
-            width: 200px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .loading-progress {
-            height: 100%;
-            background: var(--light);
-            border-radius: 2px;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        /* Notification */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 15px 20px;
-            color: var(--light);
-            box-shadow: var(--shadow);
-            transform: translateX(150%);
-            transition: var(--transition);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .notification.active {
-            transform: translateX(0);
-        }
-
-        .notification.success {
-            border-left: 4px solid var(--accent);
-        }
-
-        .notification.error {
-            border-left: 4px solid var(--danger);
-        }
-
-        .notification.warning {
-            border-left: 4px solid var(--warning);
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mwarokin Estates — Architecture Studio</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+    :root{
+        --obsidian:#07090a;
+        --obsidian-2:#0e1412;
+        --obsidian-3:#161f1b;
+        --panel:#101815;
+        --forest:#0e2b20;
+        --forest-deep:#081c15;
+        --forest-glow:#1b4a35;
+        --gold:#c8a24a;
+        --gold-bright:#ecd08e;
+        --gold-dim:#7c6530;
+        --gold-line:rgba(200,162,74,.22);
+        --ivory:#f1ecdf;
+        --muted:#8ea297;
+        --muted-dim:#5c6d64;
+        --danger:#b1503f;
+        --success:#7fae7a;
+        --radius:10px;
+        --radius-lg:16px;
+        --ease:cubic-bezier(.4,0,.2,1);
+        --font-display:'Syne',sans-serif;
+        --font-serif:'Cormorant Garamond',serif;
+        --font-body:'DM Sans',sans-serif;
+        --font-mono:'JetBrains Mono',monospace;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html,body{height:100%;}
+    body{
+        font-family:var(--font-body);
+        background:
+            radial-gradient(1200px 700px at 82% -10%, rgba(200,162,74,.06), transparent 60%),
+            radial-gradient(900px 600px at -10% 110%, rgba(27,74,53,.25), transparent 60%),
+            var(--obsidian);
+        overflow:hidden;
+        color:var(--ivory);
+    }
+
+    /* ===== Loading Screen — render-boot sequence ===== */
+    .loading-screen{
+        position:fixed;inset:0;z-index:9999;
+        background:radial-gradient(1100px 700px at 50% 40%, var(--forest-deep), var(--obsidian) 70%);
+        display:flex;flex-direction:column;align-items:center;justify-content:center;
+        transition:opacity .6s var(--ease);
+    }
+    .loading-crest{
+        width:70px;height:70px;border-radius:50%;
+        border:1px solid var(--gold-line);
+        display:flex;align-items:center;justify-content:center;
+        margin-bottom:22px;position:relative;
+        box-shadow:0 0 0 1px rgba(200,162,74,.08), 0 0 40px rgba(200,162,74,.08);
+    }
+    .loading-crest::before{
+        content:'';position:absolute;inset:-14px;border-radius:50%;
+        border:1px dashed rgba(200,162,74,.25);
+        animation:spin 12s linear infinite;
+    }
+    .loading-crest i{font-size:24px;color:var(--gold);}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .loading-screen h2{
+        font-family:var(--font-display);font-weight:700;letter-spacing:.06em;
+        font-size:22px;color:var(--ivory);text-transform:uppercase;
+    }
+    .loading-sub{
+        font-family:var(--font-serif);font-style:italic;color:var(--muted);
+        font-size:15px;margin-top:6px;letter-spacing:.02em;
+    }
+    .loading-line{
+        font-family:var(--font-mono);font-size:11px;color:var(--gold-dim);
+        margin-top:22px;letter-spacing:.04em;min-height:14px;
+    }
+    .loading-bar{width:240px;height:2px;background:rgba(255,255,255,.06);margin-top:14px;overflow:hidden;}
+    .loading-progress{height:100%;width:0%;background:linear-gradient(90deg,var(--gold-dim),var(--gold-bright));transition:width .3s var(--ease);}
+
+    .app-container{display:flex;height:100vh;}
+
+    /* ===== Left Toolbar (instrument rail) ===== */
+    .toolbar-left{
+        width:76px;background:linear-gradient(180deg,var(--obsidian-2),var(--obsidian));
+        border-right:1px solid var(--gold-line);
+        display:flex;flex-direction:column;align-items:center;padding:20px 0;
+        z-index:10;
+    }
+    .logo{
+        width:42px;height:42px;border-radius:50%;
+        border:1px solid var(--gold-line);
+        display:flex;align-items:center;justify-content:center;
+        margin-bottom:26px;color:var(--gold);font-size:16px;
+        background:radial-gradient(circle at 35% 30%, rgba(200,162,74,.12), transparent 70%);
+    }
+    .rail-label{
+        font-family:var(--font-mono);font-size:9px;letter-spacing:.14em;
+        color:var(--muted-dim);text-transform:uppercase;margin-bottom:10px;
+    }
+    .tool-btn{
+        width:46px;height:46px;margin:5px 0;border:1px solid transparent;
+        border-radius:var(--radius);background:transparent;cursor:pointer;
+        transition:all .25s var(--ease);
+        display:flex;align-items:center;justify-content:center;
+        font-size:16px;color:var(--muted);position:relative;
+    }
+    .tool-btn:hover{color:var(--ivory);background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.06);}
+    .tool-btn.active{
+        color:var(--obsidian);
+        background:linear-gradient(155deg,var(--gold-bright),var(--gold));
+        box-shadow:0 4px 18px rgba(200,162,74,.35);
+        border-color:var(--gold);
+    }
+    .tool-btn.active::after{
+        content:'';position:absolute;left:-14px;top:50%;transform:translateY(-50%);
+        width:4px;height:16px;border-radius:2px;background:var(--gold);
+    }
+    .spacer{flex:1;}
+    .rail-divider{width:28px;height:1px;background:var(--gold-line);margin:8px 0;}
+
+    /* ===== Main content ===== */
+    .main-content{flex:1;display:flex;flex-direction:column;position:relative;min-width:0;}
+
+    .top-bar{
+        background:var(--obsidian-2);
+        border-bottom:1px solid var(--gold-line);
+        padding:12px 22px;display:flex;justify-content:space-between;align-items:center;
+        z-index:5;
+    }
+    .top-bar-left,.top-bar-right{display:flex;align-items:center;gap:8px;}
+    .brand-block{display:flex;flex-direction:column;margin-right:18px;}
+    .brand-eyebrow{font-family:var(--font-mono);font-size:9px;letter-spacing:.16em;color:var(--gold-dim);text-transform:uppercase;}
+    .brand-title{font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--ivory);letter-spacing:.01em;}
+
+    .icon-btn{
+        width:36px;height:36px;border:1px solid rgba(255,255,255,.06);border-radius:8px;
+        background:var(--obsidian-3);cursor:pointer;transition:all .2s var(--ease);
+        display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;
+    }
+    .icon-btn:hover{color:var(--gold-bright);border-color:var(--gold-line);background:rgba(200,162,74,.08);}
+    .icon-btn:active{transform:translateY(1px);}
+    .icon-btn:disabled{opacity:.3;cursor:not-allowed;}
+    .icon-btn:disabled:hover{color:var(--muted);border-color:rgba(255,255,255,.06);background:var(--obsidian-3);}
+
+    .zoom-display{font-family:var(--font-mono);color:var(--muted);font-weight:500;padding:0 10px;font-size:12px;min-width:52px;text-align:center;}
+    .divider{width:1px;height:22px;background:var(--gold-line);margin:0 8px;}
+
+    .dimension-display{
+        font-family:var(--font-mono);color:var(--gold-bright);font-weight:600;
+        padding:7px 14px;background:rgba(200,162,74,.08);border-radius:8px;
+        font-size:12.5px;min-width:118px;text-align:center;border:1px solid var(--gold-line);
+        letter-spacing:.02em;
+    }
+
+    .render-tabs{display:flex;gap:2px;background:var(--obsidian-3);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:3px;}
+    .render-tab{
+        font-family:var(--font-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+        padding:6px 11px;border-radius:6px;color:var(--muted-dim);cursor:pointer;transition:all .2s var(--ease);
+        border:none;background:transparent;
+    }
+    .render-tab.active{background:linear-gradient(155deg,var(--gold-bright),var(--gold));color:var(--obsidian);font-weight:700;}
+    .render-tab:hover:not(.active){color:var(--ivory);}
+
+    /* ===== Canvas / Viewport ===== */
+    .canvas-area{flex:1;position:relative;overflow:hidden;background:var(--obsidian);}
+    #canvas{width:100%;height:100%;cursor:crosshair;}
+
+    .viewport-frame{position:absolute;inset:14px;pointer-events:none;z-index:3;}
+    .vf-corner{position:absolute;width:22px;height:22px;border-color:var(--gold-line);opacity:.55;}
+    .vf-tl{top:0;left:0;border-top:1px solid var(--gold-line);border-left:1px solid var(--gold-line);}
+    .vf-tr{top:0;right:0;border-top:1px solid var(--gold-line);border-right:1px solid var(--gold-line);}
+    .vf-bl{bottom:0;left:0;border-bottom:1px solid var(--gold-line);border-left:1px solid var(--gold-line);}
+    .vf-br{bottom:0;right:0;border-bottom:1px solid var(--gold-line);border-right:1px solid var(--gold-line);}
+
+    .canvas-info{
+        position:absolute;top:26px;left:26px;
+        background:rgba(14,20,18,.72);backdrop-filter:blur(16px);
+        border-radius:var(--radius-lg);padding:18px 20px;
+        border:1px solid var(--gold-line);min-width:220px;z-index:4;
+        animation:slideInLeft .5s var(--ease);
+    }
+    @keyframes slideInLeft{from{opacity:0;transform:translateX(-16px);}to{opacity:1;transform:translateX(0);}}
+    .canvas-info h3{
+        font-family:var(--font-display);font-size:13px;letter-spacing:.06em;text-transform:uppercase;
+        margin-bottom:12px;color:var(--gold-bright);font-weight:700;display:flex;align-items:center;gap:8px;
+    }
+    .info-item{margin:7px 0;font-size:12.5px;color:var(--muted);display:flex;justify-content:space-between;font-family:var(--font-mono);}
+    .info-item span:last-child{color:var(--ivory);font-weight:500;}
+    .help-text{
+        margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06);
+        font-size:12px;font-family:var(--font-serif);font-style:italic;color:var(--muted-dim);
+    }
+
+    /* Gizmo — orientation compass, signature element */
+    .gizmo{
+        position:absolute;top:26px;right:26px;width:76px;height:76px;z-index:4;
+        border-radius:50%;border:1px solid var(--gold-line);
+        background:rgba(14,20,18,.6);backdrop-filter:blur(10px);
+    }
+    .gizmo svg{width:100%;height:100%;}
+    .gizmo-label{
+        position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);
+        font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;color:var(--muted-dim);white-space:nowrap;
+    }
+
+    .status-strip{
+        position:absolute;bottom:0;left:0;right:0;height:30px;z-index:4;
+        background:rgba(7,9,10,.75);backdrop-filter:blur(12px);
+        border-top:1px solid var(--gold-line);
+        display:flex;align-items:center;justify-content:space-between;
+        padding:0 22px;font-family:var(--font-mono);font-size:10px;color:var(--muted-dim);letter-spacing:.05em;
+    }
+    .status-strip .dot{width:5px;height:5px;border-radius:50%;background:var(--success);display:inline-block;margin-right:6px;box-shadow:0 0 6px var(--success);}
+
+    /* ===== Right Panel ===== */
+    .right-panel{
+        width:340px;background:var(--obsidian-2);border-left:1px solid var(--gold-line);
+        padding:24px 22px;overflow-y:auto;z-index:5;
+    }
+    .right-panel::-webkit-scrollbar{width:6px;}
+    .right-panel::-webkit-scrollbar-track{background:transparent;}
+    .right-panel::-webkit-scrollbar-thumb{background:var(--gold-line);border-radius:10px;}
+
+    .panel-section{margin-bottom:28px;animation:fadeIn .5s var(--ease);}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+    .section-title{
+        font-family:var(--font-display);color:var(--ivory);font-size:13px;font-weight:700;
+        letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:10px;
+    }
+    .section-title::before{content:'';width:3px;height:14px;background:var(--gold);border-radius:2px;}
+    .section-eyebrow{font-family:var(--font-mono);font-size:9.5px;color:var(--muted-dim);letter-spacing:.12em;margin-top:-12px;margin-bottom:14px;text-transform:uppercase;}
+
+    .color-picker-container{display:flex;gap:10px;align-items:center;}
+    .color-input{
+        width:52px;height:52px;border:1px solid var(--gold-line);border-radius:var(--radius);
+        cursor:pointer;transition:all .2s var(--ease);background:transparent;
+    }
+    .color-input:hover{transform:scale(1.05);box-shadow:0 4px 16px rgba(200,162,74,.25);}
+    .color-text{
+        flex:1;background:var(--obsidian-3);border:1px solid rgba(255,255,255,.08);border-radius:8px;
+        padding:11px 12px;color:var(--ivory);font-size:13px;font-family:var(--font-mono);
+    }
+
+    .material-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px;}
+    .material-btn{
+        padding:0;height:56px;border:1px solid rgba(255,255,255,.08);border-radius:9px;cursor:pointer;
+        font-size:10px;font-weight:600;font-family:var(--font-mono);letter-spacing:.04em;text-transform:uppercase;
+        transition:all .22s var(--ease);position:relative;overflow:hidden;
+        display:flex;align-items:flex-end;justify-content:center;padding-bottom:7px;color:rgba(255,255,255,.85);
+        text-shadow:0 1px 3px rgba(0,0,0,.5);
+    }
+    .material-btn::before{
+        content:'';position:absolute;inset:0;
+        background:linear-gradient(155deg, rgba(255,255,255,.28), transparent 45%);
+    }
+    .material-btn:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.4);border-color:var(--gold-line);}
+    .material-btn.selected{outline:2px solid var(--gold);outline-offset:2px;}
+
+    .slider-container{margin-top:16px;}
+    .slider-label{
+        color:var(--muted);font-size:12px;margin-bottom:9px;display:flex;justify-content:space-between;
+        font-family:var(--font-mono);letter-spacing:.02em;
+    }
+    .slider-label b{color:var(--gold-bright);font-weight:600;}
+    .slider{width:100%;height:3px;border-radius:5px;background:rgba(255,255,255,.1);outline:none;-webkit-appearance:none;}
+    .slider::-webkit-slider-thumb{
+        -webkit-appearance:none;appearance:none;width:15px;height:15px;border-radius:50%;
+        background:linear-gradient(155deg,var(--gold-bright),var(--gold));cursor:pointer;
+        box-shadow:0 2px 8px rgba(0,0,0,.4);border:2px solid var(--obsidian-2);
+    }
+
+    .layer-item{
+        background:var(--obsidian-3);border-radius:9px;padding:12px 13px;margin:7px 0;
+        display:flex;justify-content:space-between;align-items:center;cursor:pointer;
+        transition:all .22s var(--ease);border:1px solid transparent;
+    }
+    .layer-item:hover{background:rgba(255,255,255,.04);}
+    .layer-item.active{border-color:var(--gold-line);background:rgba(200,162,74,.07);}
+    .layer-name{color:var(--ivory);font-weight:500;font-size:13px;}
+    .layer-toggle{
+        width:26px;height:26px;border:none;background:transparent;border-radius:6px;
+        cursor:pointer;color:var(--muted);transition:all .2s var(--ease);
+    }
+    .layer-toggle:hover{color:var(--gold-bright);background:rgba(200,162,74,.1);}
+
+    .stats-card{background:var(--obsidian-3);border-radius:var(--radius-lg);padding:16px 18px;border:1px solid rgba(255,255,255,.06);}
+    .stat-row{
+        display:flex;justify-content:space-between;padding:9px 0;font-size:12.5px;
+        border-bottom:1px solid rgba(255,255,255,.05);
+    }
+    .stat-row:last-child{border-bottom:none;}
+    .stat-label{color:var(--muted);font-family:var(--font-body);}
+    .stat-value{font-weight:600;color:var(--gold-bright);font-family:var(--font-mono);}
+
+    .action-btn{
+        width:100%;padding:12px;margin:7px 0;border:1px solid transparent;border-radius:9px;
+        font-weight:600;cursor:pointer;transition:all .22s var(--ease);font-size:13px;
+        display:flex;align-items:center;justify-content:center;gap:9px;font-family:var(--font-body);
+    }
+    .action-btn.primary{
+        background:linear-gradient(155deg,var(--gold-bright),var(--gold));color:var(--obsidian);
+        box-shadow:0 4px 16px rgba(200,162,74,.25);
+    }
+    .action-btn.primary:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(200,162,74,.35);}
+    .action-btn.ghost{background:var(--obsidian-3);color:var(--ivory);border-color:rgba(255,255,255,.08);}
+    .action-btn.ghost:hover{border-color:var(--gold-line);color:var(--gold-bright);}
+    .action-btn.danger{background:rgba(177,80,63,.12);color:#e39d92;border-color:rgba(177,80,63,.3);}
+    .action-btn.danger:hover{background:rgba(177,80,63,.2);transform:translateY(-2px);}
+
+    /* Context Menu */
+    .context-menu{
+        position:absolute;background:var(--obsidian-2);border:1px solid var(--gold-line);
+        border-radius:var(--radius);padding:6px 0;box-shadow:0 12px 40px rgba(0,0,0,.5);z-index:100;display:none;
+    }
+    .context-menu-item{
+        padding:9px 20px;cursor:pointer;transition:all .18s var(--ease);font-size:13px;
+        display:flex;align-items:center;gap:10px;color:var(--muted);font-family:var(--font-body);
+    }
+    .context-menu-item:hover{background:rgba(200,162,74,.08);color:var(--gold-bright);}
+
+    /* Modal */
+    .modal{
+        position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);
+        display:flex;align-items:center;justify-content:center;z-index:1000;
+        opacity:0;pointer-events:none;transition:opacity .25s var(--ease);
+    }
+    .modal.active{opacity:1;pointer-events:all;}
+    .modal-content{
+        background:var(--obsidian-2);border:1px solid var(--gold-line);border-radius:var(--radius-lg);
+        padding:28px;width:90%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,.5);
+        transform:translateY(16px);transition:transform .25s var(--ease);
+    }
+    .modal.active .modal-content{transform:translateY(0);}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+    .modal-title{font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--ivory);}
+    .modal-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;transition:color .2s var(--ease);}
+    .modal-close:hover{color:var(--gold-bright);}
+
+    @media (max-width:1024px){.right-panel{width:290px;}}
+    @media (max-width:768px){
+        .toolbar-left{width:58px;}
+        .right-panel{position:absolute;right:0;height:100%;transform:translateX(100%);transition:transform .3s var(--ease);}
+        .right-panel.active{transform:translateX(0);}
+    }
+
+    .notification{
+        position:fixed;top:22px;right:22px;background:var(--obsidian-2);
+        border:1px solid var(--gold-line);border-radius:var(--radius);padding:14px 18px;color:var(--ivory);
+        box-shadow:0 12px 40px rgba(0,0,0,.5);transform:translateX(150%);transition:transform .3s var(--ease);
+        z-index:1000;display:flex;align-items:center;gap:10px;font-size:13px;font-family:var(--font-body);
+    }
+    .notification.active{transform:translateX(0);}
+    .notification.success{border-left:3px solid var(--success);}
+    .notification.error{border-left:3px solid var(--danger);}
+    .notification.warning{border-left:3px solid var(--gold);}
+</style>
 </head>
 <body>
-    <!-- Loading Screen -->
     <div class="loading-screen" id="loadingScreen">
-        <div class="loading-logo">🏗️</div>
+        <div class="loading-crest"><i class="fas fa-drafting-compass"></i></div>
         <h2>Mwarokin Estates</h2>
-        <p>Loading Architecture Designer...</p>
-        <div class="loading-bar">
-            <div class="loading-progress" id="loadingProgress"></div>
-        </div>
+        <div class="loading-sub">Architecture Studio</div>
+        <div class="loading-line" id="loadingLine">Initializing viewport…</div>
+        <div class="loading-bar"><div class="loading-progress" id="loadingProgress"></div></div>
     </div>
 
-    <!-- Notification -->
     <div class="notification" id="notification">
         <i class="fas fa-check-circle"></i>
         <span id="notificationText">Operation completed successfully</span>
     </div>
 
-    <!-- Context Menu -->
     <div class="context-menu" id="contextMenu">
         <div class="context-menu-item" data-action="copy"><i class="fas fa-copy"></i> Copy</div>
         <div class="context-menu-item" data-action="cut"><i class="fas fa-cut"></i> Cut</div>
         <div class="context-menu-item" data-action="paste"><i class="fas fa-paste"></i> Paste</div>
         <div class="context-menu-item" data-action="duplicate"><i class="fas fa-clone"></i> Duplicate</div>
-        <div class="divider"></div>
         <div class="context-menu-item" data-action="delete"><i class="fas fa-trash"></i> Delete</div>
     </div>
 
-    <!-- Export Modal -->
     <div class="modal" id="exportModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">Export Design</h3>
                 <button class="modal-close" id="closeExportModal">&times;</button>
             </div>
-            <div class="panel-section">
-                <h3 class="section-title">Export Options</h3>
-                <div class="action-btn primary" id="exportJSON">
-                    <i class="fas fa-file-code"></i> Export as JSON
-                </div>
-                <div class="action-btn primary" id="exportPNG">
-                    <i class="fas fa-image"></i> Export as PNG
-                </div>
-                <div class="action-btn primary" id="exportPDF">
-                    <i class="fas fa-file-pdf"></i> Export as PDF
-                </div>
+            <div class="panel-section" style="margin-bottom:0;">
+                <div class="section-eyebrow" style="margin-top:0;">Output Format</div>
+                <div class="action-btn primary" id="exportJSON"><i class="fas fa-file-code"></i> Export as JSON</div>
+                <div class="action-btn ghost" id="exportPNG"><i class="fas fa-image"></i> Export as PNG</div>
+                <div class="action-btn ghost" id="exportPDF"><i class="fas fa-file-pdf"></i> Export as PDF</div>
             </div>
         </div>
     </div>
 
     <div class="app-container">
-        <!-- Left Toolbar -->
         <div class="toolbar-left">
-            <div class="logo">🏗️</div>
-            
-            <button class="tool-btn active" data-tool="select" title="Select Tool">
-                <i class="fas fa-mouse-pointer"></i>
-            </button>
-            <button class="tool-btn" data-tool="wall" title="Wall Tool">
-                <i class="fas fa-grip-lines"></i>
-            </button>
-            <button class="tool-btn" data-tool="room" title="Room Tool">
-                <i class="fas fa-square"></i>
-            </button>
-            <button class="tool-btn" data-tool="door" title="Door Tool">
-                <i class="fas fa-door-open"></i>
-            </button>
-            <button class="tool-btn" data-tool="window" title="Window Tool">
-                <i class="fas fa-square-full"></i>
-            </button>
-            <button class="tool-btn" data-tool="furniture" title="Furniture Tool">
-                <i class="fas fa-couch"></i>
-            </button>
-            <button class="tool-btn" data-tool="stairs" title="Stairs Tool">
-                <i class="fas fa-stairs"></i>
-            </button>
-            
+            <div class="logo"><i class="fas fa-drafting-compass"></i></div>
+            <div class="rail-label">Tools</div>
+            <button class="tool-btn active" data-tool="select" title="Select Tool"><i class="fas fa-mouse-pointer"></i></button>
+            <button class="tool-btn" data-tool="wall" title="Wall Tool"><i class="fas fa-grip-lines"></i></button>
+            <button class="tool-btn" data-tool="room" title="Room Tool"><i class="fas fa-square"></i></button>
+            <button class="tool-btn" data-tool="door" title="Door Tool"><i class="fas fa-door-open"></i></button>
+            <button class="tool-btn" data-tool="window" title="Window Tool"><i class="fas fa-square-full"></i></button>
+            <button class="tool-btn" data-tool="furniture" title="Furniture Tool"><i class="fas fa-couch"></i></button>
+            <button class="tool-btn" data-tool="stairs" title="Stairs Tool"><i class="fas fa-stairs"></i></button>
             <div class="spacer"></div>
-            
-            <button class="tool-btn" id="toggleGrid" title="Toggle Grid">
-                <i class="fas fa-border-all"></i>
-            </button>
-            <button class="tool-btn" id="toggleLight" title="Toggle Lighting">
-                <i class="fas fa-sun"></i>
-            </button>
-            <button class="tool-btn" id="togglePanel" title="Toggle Panel">
-                <i class="fas fa-cog"></i>
-            </button>
+            <div class="rail-divider"></div>
+            <button class="tool-btn" id="toggleGrid" title="Toggle Grid"><i class="fas fa-border-all"></i></button>
+            <button class="tool-btn" id="toggleLight" title="Toggle Lighting"><i class="fas fa-sun"></i></button>
+            <button class="tool-btn" id="togglePanel" title="Toggle Panel"><i class="fas fa-cog"></i></button>
         </div>
 
-        <!-- Main Content -->
         <div class="main-content">
-            <!-- Top Bar -->
             <div class="top-bar">
                 <div class="top-bar-left">
+                    <div class="brand-block">
+                        <div class="brand-eyebrow">Mwarokin Estates</div>
+                        <div class="brand-title">Architecture Studio</div>
+                    </div>
+                    <div class="divider"></div>
                     <button class="icon-btn" id="undoBtn" title="Undo"><i class="fas fa-undo"></i></button>
                     <button class="icon-btn" id="redoBtn" title="Redo"><i class="fas fa-redo"></i></button>
-                    
                     <div class="divider"></div>
-                    
                     <button class="icon-btn" id="zoomInBtn" title="Zoom In"><i class="fas fa-search-plus"></i></button>
                     <div class="zoom-display" id="zoomDisplay">100%</div>
                     <button class="icon-btn" id="zoomOutBtn" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
-                    
                     <div class="divider"></div>
-                    
                     <button class="icon-btn" id="measureBtn" title="Toggle Measurements"><i class="fas fa-ruler"></i></button>
                     <button class="icon-btn" id="snapBtn" title="Snap to Grid"><i class="fas fa-magnet"></i></button>
                 </div>
-                
+
                 <div class="top-bar-right">
+                    <div class="render-tabs" id="renderTabs">
+                        <button class="render-tab active" data-quality="draft">Draft</button>
+                        <button class="render-tab" data-quality="studio">Studio</button>
+                        <button class="render-tab" data-quality="cinematic">Cinematic</button>
+                    </div>
+                    <div class="divider"></div>
                     <div class="dimension-display" id="dimensionDisplay">0ft × 0ft</div>
                     <button class="icon-btn" id="deleteBtn" title="Delete Selected"><i class="fas fa-trash"></i></button>
                     <button class="icon-btn" id="clearBtn" title="Clear All"><i class="fas fa-broom"></i></button>
@@ -900,53 +448,72 @@
                 </div>
             </div>
 
-            <!-- Canvas Area -->
             <div class="canvas-area">
                 <canvas id="canvas"></canvas>
-                
+
+                <div class="viewport-frame">
+                    <div class="vf-corner vf-tl"></div>
+                    <div class="vf-corner vf-tr"></div>
+                    <div class="vf-corner vf-bl"></div>
+                    <div class="vf-corner vf-br"></div>
+                </div>
+
                 <div class="canvas-info">
                     <h3><i class="fas fa-tools"></i> <span id="currentTool">SELECT MODE</span></h3>
-                    <div class="info-item">
-                        <span class="info-label">Elements:</span> <span id="elementCount">0</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Layer:</span> <span id="currentLayer">Ground Floor</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Grid:</span> <span id="gridStatus">ON</span>
-                    </div>
+                    <div class="info-item"><span>Elements</span><span id="elementCount">0</span></div>
+                    <div class="info-item"><span>Layer</span><span id="currentLayer">Ground Floor</span></div>
+                    <div class="info-item"><span>Grid</span><span id="gridStatus">ON</span></div>
                     <div class="help-text" id="helpText">Click to select elements</div>
+                </div>
+
+                <div class="gizmo" title="Viewport orientation">
+                    <svg viewBox="0 0 76 76">
+                        <circle cx="38" cy="38" r="35" fill="none" stroke="rgba(200,162,74,.18)" stroke-width="1"/>
+                        <line x1="38" y1="38" x2="38" y2="10" stroke="#c8a24a" stroke-width="1.4"/>
+                        <line x1="38" y1="38" x2="60" y2="52" stroke="#7fae7a" stroke-width="1.4"/>
+                        <line x1="38" y1="38" x2="16" y2="52" stroke="#8ea297" stroke-width="1.4"/>
+                        <circle cx="38" cy="38" r="3" fill="#ecd08e"/>
+                        <text x="38" y="7" text-anchor="middle" font-size="7" fill="#ecd08e" font-family="JetBrains Mono">Z</text>
+                        <text x="64" y="55" text-anchor="middle" font-size="7" fill="#7fae7a" font-family="JetBrains Mono">Y</text>
+                        <text x="12" y="55" text-anchor="middle" font-size="7" fill="#8ea297" font-family="JetBrains Mono">X</text>
+                    </svg>
+                    <div class="gizmo-label">VIEW</div>
+                </div>
+
+                <div class="status-strip">
+                    <span><span class="dot"></span>ENGINE: MWAROKIN RENDER · GI ON</span>
+                    <span id="qualityLabel">QUALITY: DRAFT</span>
+                    <span>© SYLLOGISM TECHNOLOGY AFRICA</span>
                 </div>
             </div>
         </div>
 
-        <!-- Right Panel -->
         <div class="right-panel" id="rightPanel">
             <div class="panel-section">
-                <h3 class="section-title">Color & Materials</h3>
+                <h3 class="section-title">Material</h3>
+                <div class="section-eyebrow">Surface & finish</div>
                 <div class="color-picker-container">
                     <input type="color" id="colorPicker" class="color-input" value="#8b7355">
                     <input type="text" id="colorText" class="color-text" value="#8b7355">
                 </div>
-                
                 <div class="material-grid">
-                    <button class="material-btn" style="background: #8b7355; color: white;" data-color="#8b7355">Wood</button>
-                    <button class="material-btn" style="background: #808080; color: white;" data-color="#808080">Concrete</button>
-                    <button class="material-btn" style="background: #b22222; color: white;" data-color="#b22222">Brick</button>
-                    <button class="material-btn" style="background: #87ceeb; color: #333;" data-color="#87ceeb">Glass</button>
-                    <button class="material-btn" style="background: #708090; color: white;" data-color="#708090">Metal</button>
-                    <button class="material-btn" style="background: #ffffff; color: #333;" data-color="#ffffff">White</button>
+                    <button class="material-btn selected" style="background:linear-gradient(155deg,#a3855f,#6b5335);" data-color="#8b7355">Wood</button>
+                    <button class="material-btn" style="background:linear-gradient(155deg,#9a9a9a,#5c5c5c);" data-color="#808080">Concrete</button>
+                    <button class="material-btn" style="background:linear-gradient(155deg,#c9564f,#7c2e28);" data-color="#b22222">Brick</button>
+                    <button class="material-btn" style="background:linear-gradient(155deg,#a9d9ee,#5a94a8);" data-color="#87ceeb">Glass</button>
+                    <button class="material-btn" style="background:linear-gradient(155deg,#8b96a1,#4b555f);" data-color="#708090">Metal</button>
+                    <button class="material-btn" style="background:linear-gradient(155deg,#ffffff,#c9c9c9);" data-color="#ffffff">White</button>
                 </div>
             </div>
 
             <div class="panel-section">
+                <h3 class="section-title">Viewport</h3>
                 <div class="slider-container">
-                    <label class="slider-label">Grid Size: <span id="gridSizeValue">20</span>px</label>
+                    <div class="slider-label">Grid Size <b><span id="gridSizeValue">20</span>px</b></div>
                     <input type="range" min="10" max="50" value="20" class="slider" id="gridSlider">
                 </div>
-                
                 <div class="slider-container">
-                    <label class="slider-label">Opacity: <span id="opacityValue">100</span>%</label>
+                    <div class="slider-label">Opacity <b><span id="opacityValue">100</span>%</b></div>
                     <input type="range" min="10" max="100" value="100" class="slider" id="opacitySlider">
                 </div>
             </div>
@@ -967,42 +534,24 @@
                         <button class="layer-toggle"><i class="fas fa-eye"></i></button>
                     </div>
                 </div>
-                <button class="action-btn primary" id="addLayerBtn"><i class="fas fa-plus"></i> Add New Layer</button>
+                <button class="action-btn ghost" id="addLayerBtn"><i class="fas fa-plus"></i> Add New Layer</button>
             </div>
 
             <div class="panel-section">
-                <h3 class="section-title">Design Statistics</h3>
+                <h3 class="section-title">Statistics</h3>
                 <div class="stats-card">
-                    <div class="stat-row">
-                        <span class="stat-label">Total Elements</span>
-                        <span class="stat-value" id="statTotal">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Walls</span>
-                        <span class="stat-value" id="statWalls">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Rooms</span>
-                        <span class="stat-value" id="statRooms">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Doors</span>
-                        <span class="stat-value" id="statDoors">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Windows</span>
-                        <span class="stat-value" id="statWindows">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Total Area</span>
-                        <span class="stat-value" id="statArea">0 sq ft</span>
-                    </div>
+                    <div class="stat-row"><span class="stat-label">Total Elements</span><span class="stat-value" id="statTotal">0</span></div>
+                    <div class="stat-row"><span class="stat-label">Walls</span><span class="stat-value" id="statWalls">0</span></div>
+                    <div class="stat-row"><span class="stat-label">Rooms</span><span class="stat-value" id="statRooms">0</span></div>
+                    <div class="stat-row"><span class="stat-label">Doors</span><span class="stat-value" id="statDoors">0</span></div>
+                    <div class="stat-row"><span class="stat-label">Windows</span><span class="stat-value" id="statWindows">0</span></div>
+                    <div class="stat-row"><span class="stat-label">Total Area</span><span class="stat-value" id="statArea">0 sq ft</span></div>
                 </div>
             </div>
 
-            <div class="panel-section">
+            <div class="panel-section" style="margin-bottom:0;">
                 <button class="action-btn primary" id="saveBtn"><i class="fas fa-save"></i> Save Design</button>
-                <button class="action-btn primary" id="loadBtn"><i class="fas fa-folder-open"></i> Load Design</button>
+                <button class="action-btn ghost" id="loadBtn"><i class="fas fa-folder-open"></i> Load Design</button>
                 <button class="action-btn danger" id="clearAllBtn"><i class="fas fa-trash"></i> Clear Canvas</button>
             </div>
         </div>
@@ -1029,6 +578,7 @@
         let history = [];
         let historyIndex = -1;
         let lightingMode = 'day';
+        let renderQuality = 'draft';
         let snapToGrid = true;
         let copiedElement = null;
         let contextMenu = { x: 0, y: 0, visible: false };
@@ -1036,37 +586,46 @@
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
 
-        // Initialize
         function init() {
-            // Simulate loading
             simulateLoading();
-            
-            // Setup
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
             setupEventListeners();
             draw();
-            
-            // Add initial history state
             addToHistory();
         }
 
         function simulateLoading() {
+            const lines = [
+                'Initializing viewport…',
+                'Loading material library…',
+                'Calibrating gold-leaf specular…',
+                'Building global illumination cache…',
+                'Compiling Mwarokin Estates scene…'
+            ];
             let progress = 0;
+            let lineIdx = 0;
+            const lineEl = document.getElementById('loadingLine');
+            const lineInterval = setInterval(() => {
+                lineIdx = (lineIdx + 1) % lines.length;
+                lineEl.textContent = lines[lineIdx];
+            }, 500);
             const interval = setInterval(() => {
                 progress += Math.random() * 15;
                 if (progress >= 100) {
                     progress = 100;
                     clearInterval(interval);
+                    clearInterval(lineInterval);
+                    lineEl.textContent = 'Scene ready.';
                     setTimeout(() => {
                         document.getElementById('loadingScreen').style.opacity = '0';
                         setTimeout(() => {
                             document.getElementById('loadingScreen').style.display = 'none';
-                        }, 500);
-                    }, 500);
+                        }, 600);
+                    }, 400);
                 }
                 document.getElementById('loadingProgress').style.width = `${progress}%`;
-            }, 100);
+            }, 120);
         }
 
         function resizeCanvas() {
@@ -1076,7 +635,6 @@
         }
 
         function setupEventListeners() {
-            // Tool buttons
             document.querySelectorAll('.tool-btn[data-tool]').forEach(btn => {
                 btn.addEventListener('click', () => {
                     tool = btn.dataset.tool;
@@ -1086,10 +644,10 @@
                 });
             });
 
-            // Color picker
             document.getElementById('colorPicker').addEventListener('input', (e) => {
                 currentColor = e.target.value;
                 document.getElementById('colorText').value = currentColor;
+                document.querySelectorAll('.material-btn').forEach(b => b.classList.remove('selected'));
             });
 
             document.getElementById('colorText').addEventListener('input', (e) => {
@@ -1097,30 +655,28 @@
                 document.getElementById('colorPicker').value = currentColor;
             });
 
-            // Material buttons
             document.querySelectorAll('.material-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     currentColor = btn.dataset.color;
                     document.getElementById('colorPicker').value = currentColor;
                     document.getElementById('colorText').value = currentColor;
+                    document.querySelectorAll('.material-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
                 });
             });
 
-            // Grid slider
             document.getElementById('gridSlider').addEventListener('input', (e) => {
                 gridSize = parseInt(e.target.value);
                 document.getElementById('gridSizeValue').textContent = gridSize;
                 draw();
             });
 
-            // Opacity slider
             document.getElementById('opacitySlider').addEventListener('input', (e) => {
                 opacity = parseInt(e.target.value) / 100;
                 document.getElementById('opacityValue').textContent = e.target.value;
                 draw();
             });
 
-            // Canvas events
             canvas.addEventListener('mousedown', handleMouseDown);
             canvas.addEventListener('mousemove', handleMouseMove);
             canvas.addEventListener('mouseup', handleMouseUp);
@@ -1128,7 +684,6 @@
             canvas.addEventListener('wheel', handleWheel);
             canvas.addEventListener('contextmenu', handleContextMenu);
 
-            // Top bar buttons
             document.getElementById('undoBtn').addEventListener('click', undo);
             document.getElementById('redoBtn').addEventListener('click', redo);
             document.getElementById('zoomInBtn').addEventListener('click', () => zoomCanvas(1.2));
@@ -1160,39 +715,23 @@
                 document.getElementById('rightPanel').classList.toggle('active');
             });
 
-            // Layer buttons
-            document.querySelectorAll('.layer-item').forEach(item => {
-                item.addEventListener('click', (e) => {
-                    if (!e.target.classList.contains('layer-toggle') && !e.target.parentElement.classList.contains('layer-toggle')) {
-                        activeLayer = parseInt(item.dataset.layer);
-                        document.querySelectorAll('.layer-item').forEach(i => i.classList.remove('active'));
-                        item.classList.add('active');
-                        updateUI();
-                    }
-                });
-                
-                const toggleBtn = item.querySelector('.layer-toggle');
-                toggleBtn.addEventListener('click', () => {
-                    const icon = toggleBtn.querySelector('i');
-                    if (icon.classList.contains('fa-eye')) {
-                        icon.classList.remove('fa-eye');
-                        icon.classList.add('fa-eye-slash');
-                        // In a real app, we would hide the layer here
-                    } else {
-                        icon.classList.remove('fa-eye-slash');
-                        icon.classList.add('fa-eye');
-                        // In a real app, we would show the layer here
-                    }
+            document.querySelectorAll('.render-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    renderQuality = tab.dataset.quality;
+                    document.querySelectorAll('.render-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById('qualityLabel').textContent = `QUALITY: ${renderQuality.toUpperCase()}`;
+                    showNotification(`Render quality set to ${renderQuality}`, 'success');
                 });
             });
 
-            // Action buttons
+            document.querySelectorAll('.layer-item').forEach(item => attachLayerHandlers(item));
+
             document.getElementById('saveBtn').addEventListener('click', saveDesign);
             document.getElementById('loadBtn').addEventListener('click', loadDesign);
             document.getElementById('clearAllBtn').addEventListener('click', clearCanvas);
             document.getElementById('addLayerBtn').addEventListener('click', addNewLayer);
 
-            // Export modal
             document.getElementById('closeExportModal').addEventListener('click', () => {
                 document.getElementById('exportModal').classList.remove('active');
             });
@@ -1200,20 +739,34 @@
             document.getElementById('exportPNG').addEventListener('click', exportAsPNG);
             document.getElementById('exportPDF').addEventListener('click', exportAsPDF);
 
-            // Context menu
             document.getElementById('contextMenu').addEventListener('click', handleContextMenuAction);
             document.addEventListener('click', () => {
                 document.getElementById('contextMenu').style.display = 'none';
             });
 
-            // Keyboard shortcuts
             document.addEventListener('keydown', handleKeyDown);
+        }
+
+        function attachLayerHandlers(item) {
+            item.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('layer-toggle') && !e.target.parentElement.classList.contains('layer-toggle')) {
+                    activeLayer = parseInt(item.dataset.layer);
+                    document.querySelectorAll('.layer-item').forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    updateUI();
+                }
+            });
+            const toggleBtn = item.querySelector('.layer-toggle');
+            toggleBtn.addEventListener('click', () => {
+                const icon = toggleBtn.querySelector('i');
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+            });
         }
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            const bgColor = lightingMode === 'day' ? '#f5f5f5' : '#1a1a2e';
+            const bgColor = lightingMode === 'day' ? '#12181a' : '#07090a';
             ctx.fillStyle = bgColor;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -1222,16 +775,14 @@
             ctx.scale(zoom, zoom);
 
             if (showGrid) {
-                ctx.strokeStyle = lightingMode === 'day' ? '#e0e0e0' : '#2a2a3e';
+                ctx.strokeStyle = lightingMode === 'day' ? 'rgba(200,162,74,.08)' : 'rgba(200,162,74,.05)';
                 ctx.lineWidth = 1 / zoom;
-                
                 for (let x = 0; x < canvas.width / zoom; x += gridSize) {
                     ctx.beginPath();
                     ctx.moveTo(x, 0);
                     ctx.lineTo(x, canvas.height / zoom);
                     ctx.stroke();
                 }
-                
                 for (let y = 0; y < canvas.height / zoom; y += gridSize) {
                     ctx.beginPath();
                     ctx.moveTo(0, y);
@@ -1240,13 +791,8 @@
                 }
             }
 
-            elements.forEach(element => {
-                drawElement(element, element === selectedElement);
-            });
-
-            if (tempElement) {
-                drawElement(tempElement, false, true);
-            }
+            elements.forEach(element => drawElement(element, element === selectedElement));
+            if (tempElement) drawElement(tempElement, false, true);
 
             ctx.restore();
             updateStats();
@@ -1254,31 +800,27 @@
 
         function drawElement(element, isSelected, isTemp = false) {
             ctx.save();
-            
             let color = element.color;
             if (lightingMode === 'night') {
                 const rgb = hexToRgb(color);
-                color = `rgb(${Math.floor(rgb.r * 0.6)}, ${Math.floor(rgb.g * 0.6)}, ${Math.floor(rgb.b * 0.6)})`;
+                color = `rgb(${Math.floor(rgb.r * 0.55)}, ${Math.floor(rgb.g * 0.55)}, ${Math.floor(rgb.b * 0.55)})`;
             }
 
             ctx.globalAlpha = isTemp ? opacity * 0.7 : opacity;
             ctx.fillStyle = color;
-            ctx.strokeStyle = isSelected ? '#00d4ff' : lightingMode === 'day' ? '#333' : '#666';
-            ctx.lineWidth = (isSelected ? 3 : 1) / zoom;
+            ctx.strokeStyle = isSelected ? '#ecd08e' : lightingMode === 'day' ? 'rgba(241,236,223,.5)' : 'rgba(142,162,151,.4)';
+            ctx.lineWidth = (isSelected ? 2.5 : 1) / zoom;
 
             switch (element.type) {
                 case 'wall':
                     ctx.fillRect(element.x, element.y, element.width, element.height);
                     ctx.strokeRect(element.x, element.y, element.width, element.height);
-                    
                     if (measurements && !isTemp) {
-                        ctx.fillStyle = lightingMode === 'day' ? '#333' : '#fff';
-                        ctx.font = `${12 / zoom}px Arial`;
+                        ctx.fillStyle = lightingMode === 'day' ? '#f1ecdf' : '#ecd08e';
+                        ctx.font = `${12 / zoom}px 'JetBrains Mono', monospace`;
                         ctx.textAlign = 'center';
-                        
                         const widthFt = (element.width / gridSize * 3).toFixed(1);
                         ctx.fillText(`${widthFt}ft`, element.x + element.width / 2, element.y - 5 / zoom);
-                        
                         const heightFt = (element.height / gridSize * 3).toFixed(1);
                         ctx.save();
                         ctx.translate(element.x - 5 / zoom, element.y + element.height / 2);
@@ -1287,36 +829,29 @@
                         ctx.restore();
                     }
                     break;
-
                 case 'room':
                     ctx.fillRect(element.x, element.y, element.width, element.height);
                     ctx.strokeRect(element.x, element.y, element.width, element.height);
-                    
-                    ctx.fillStyle = lightingMode === 'day' ? '#000' : '#fff';
-                    ctx.font = `bold ${14 / zoom}px Arial`;
+                    ctx.fillStyle = lightingMode === 'day' ? '#0e1412' : '#f1ecdf';
+                    ctx.font = `bold ${14 / zoom}px 'Syne', sans-serif`;
                     ctx.textAlign = 'center';
                     ctx.fillText('Room', element.x + element.width / 2, element.y + element.height / 2);
-                    
                     const area = ((element.width / gridSize * 3) * (element.height / gridSize * 3)).toFixed(0);
-                    ctx.font = `${10 / zoom}px Arial`;
+                    ctx.font = `${10 / zoom}px 'JetBrains Mono', monospace`;
                     ctx.fillText(`${area} sq ft`, element.x + element.width / 2, element.y + element.height / 2 + 15 / zoom);
                     break;
-
                 case 'door':
                     ctx.fillRect(element.x, element.y, element.width, element.height);
                     ctx.strokeRect(element.x, element.y, element.width, element.height);
-                    
                     ctx.beginPath();
                     ctx.arc(element.x, element.y + element.height, element.width, -Math.PI / 2, 0);
-                    ctx.strokeStyle = isSelected ? '#00d4ff' : '#666';
+                    ctx.strokeStyle = isSelected ? '#ecd08e' : 'rgba(142,162,151,.5)';
                     ctx.stroke();
                     break;
-
                 case 'window':
-                    ctx.fillStyle = 'rgba(135, 206, 235, 0.5)';
+                    ctx.fillStyle = 'rgba(135, 206, 235, 0.35)';
                     ctx.fillRect(element.x, element.y, element.width, element.height);
                     ctx.strokeRect(element.x, element.y, element.width, element.height);
-                    
                     ctx.beginPath();
                     ctx.moveTo(element.x + element.width / 2, element.y);
                     ctx.lineTo(element.x + element.width / 2, element.y + element.height);
@@ -1324,20 +859,17 @@
                     ctx.lineTo(element.x + element.width, element.y + element.height / 2);
                     ctx.stroke();
                     break;
-
                 case 'furniture':
                     ctx.beginPath();
                     const radius = Math.min(element.width, element.height) / 2;
                     ctx.arc(element.x + element.width / 2, element.y + element.height / 2, radius, 0, Math.PI * 2);
                     ctx.fill();
                     ctx.stroke();
-                    
-                    ctx.fillStyle = lightingMode === 'day' ? '#000' : '#fff';
-                    ctx.font = `${10 / zoom}px Arial`;
+                    ctx.fillStyle = lightingMode === 'day' ? '#0e1412' : '#f1ecdf';
+                    ctx.font = `${10 / zoom}px 'DM Sans', sans-serif`;
                     ctx.textAlign = 'center';
                     ctx.fillText('Furniture', element.x + element.width / 2, element.y + element.height / 2);
                     break;
-
                 case 'stairs':
                     const steps = 8;
                     const stepHeight = element.height / steps;
@@ -1347,17 +879,12 @@
                     }
                     break;
             }
-
             ctx.restore();
         }
 
         function hexToRgb(hex) {
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-            return result ? {
-                r: parseInt(result[1], 16),
-                g: parseInt(result[2], 16),
-                b: parseInt(result[3], 16)
-            } : { r: 0, g: 0, b: 0 };
+            return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : { r: 0, g: 0, b: 0 };
         }
 
         function handleMouseDown(e) {
@@ -1372,10 +899,7 @@
                 return;
             }
 
-            const clickedElement = elements.find(el => {
-                return x >= el.x && x <= el.x + el.width && y >= el.y && y <= el.y + el.height;
-            });
-
+            const clickedElement = elements.find(el => x >= el.x && x <= el.x + el.width && y >= el.y && y <= el.y + el.height);
             if (clickedElement && tool === 'select') {
                 selectedElement = clickedElement;
                 draw();
@@ -1406,7 +930,6 @@
             if (isDrawing && drawStart) {
                 const snappedX = snapToGrid ? Math.round(x / gridSize) * gridSize : x;
                 const snappedY = snapToGrid ? Math.round(y / gridSize) * gridSize : y;
-                
                 const width = snappedX - drawStart.x;
                 const height = snappedY - drawStart.y;
 
@@ -1423,7 +946,6 @@
                 const widthFt = (Math.abs(width) / gridSize * 3).toFixed(1);
                 const heightFt = (Math.abs(height) / gridSize * 3).toFixed(1);
                 document.getElementById('dimensionDisplay').textContent = `${widthFt}ft × ${heightFt}ft`;
-                
                 draw();
             }
         }
@@ -1434,7 +956,6 @@
                 canvas.style.cursor = 'crosshair';
                 return;
             }
-
             if (isDrawing && tempElement) {
                 if (tempElement.width > 5 && tempElement.height > 5) {
                     tempElement.id = Date.now();
@@ -1455,14 +976,10 @@
             const rect = canvas.getBoundingClientRect();
             const mouseX = e.clientX - rect.left;
             const mouseY = e.clientY - rect.top;
-            
             const zoomFactor = e.deltaY > 0 ? 1/1.1 : 1.1;
             const newZoom = Math.max(0.3, Math.min(3, zoom * zoomFactor));
-            
-            // Zoom towards mouse position
             pan.x = mouseX - (mouseX - pan.x) * (newZoom / zoom);
             pan.y = mouseY - (mouseY - pan.y) * (newZoom / zoom);
-            
             zoom = newZoom;
             document.getElementById('zoomDisplay').textContent = Math.round(zoom * 100) + '%';
             draw();
@@ -1473,90 +990,55 @@
             const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-            
-            contextMenu.x = x;
-            contextMenu.y = y;
-            
+            contextMenu.x = x; contextMenu.y = y;
             const menu = document.getElementById('contextMenu');
             menu.style.left = `${x}px`;
             menu.style.top = `${y}px`;
             menu.style.display = 'block';
-            
             return false;
         }
 
         function handleContextMenuAction(e) {
             const action = e.target.dataset.action || e.target.parentElement.dataset.action;
-            
             switch(action) {
                 case 'copy':
-                    if (selectedElement) {
-                        copiedElement = JSON.parse(JSON.stringify(selectedElement));
-                        showNotification('Element copied to clipboard', 'success');
-                    }
+                    if (selectedElement) { copiedElement = JSON.parse(JSON.stringify(selectedElement)); showNotification('Element copied to clipboard', 'success'); }
                     break;
                 case 'cut':
                     if (selectedElement) {
                         copiedElement = JSON.parse(JSON.stringify(selectedElement));
                         elements = elements.filter(el => el !== selectedElement);
                         selectedElement = null;
-                        addToHistory();
-                        draw();
+                        addToHistory(); draw();
                         showNotification('Element cut to clipboard', 'success');
                     }
                     break;
                 case 'paste':
                     if (copiedElement) {
                         const newElement = JSON.parse(JSON.stringify(copiedElement));
-                        newElement.id = Date.now();
-                        newElement.x += 20;
-                        newElement.y += 20;
-                        elements.push(newElement);
-                        addToHistory();
-                        draw();
+                        newElement.id = Date.now(); newElement.x += 20; newElement.y += 20;
+                        elements.push(newElement); addToHistory(); draw();
                         showNotification('Element pasted', 'success');
                     }
                     break;
                 case 'duplicate':
                     if (selectedElement) {
                         const newElement = JSON.parse(JSON.stringify(selectedElement));
-                        newElement.id = Date.now();
-                        newElement.x += 20;
-                        newElement.y += 20;
-                        elements.push(newElement);
-                        addToHistory();
-                        draw();
+                        newElement.id = Date.now(); newElement.x += 20; newElement.y += 20;
+                        elements.push(newElement); addToHistory(); draw();
                         showNotification('Element duplicated', 'success');
                     }
                     break;
-                case 'delete':
-                    deleteSelected();
-                    break;
+                case 'delete': deleteSelected(); break;
             }
-            
             document.getElementById('contextMenu').style.display = 'none';
         }
 
         function handleKeyDown(e) {
-            // Ctrl+Z for undo
-            if (e.ctrlKey && e.key === 'z') {
-                e.preventDefault();
-                undo();
-            }
-            // Ctrl+Y for redo
-            else if (e.ctrlKey && e.key === 'y') {
-                e.preventDefault();
-                redo();
-            }
-            // Delete key
-            else if (e.key === 'Delete') {
-                deleteSelected();
-            }
-            // Escape key
-            else if (e.key === 'Escape') {
-                selectedElement = null;
-                draw();
-            }
+            if (e.ctrlKey && e.key === 'z') { e.preventDefault(); undo(); }
+            else if (e.ctrlKey && e.key === 'y') { e.preventDefault(); redo(); }
+            else if (e.key === 'Delete') { deleteSelected(); }
+            else if (e.key === 'Escape') { selectedElement = null; draw(); }
         }
 
         function zoomCanvas(factor) {
@@ -1576,9 +1058,7 @@
             if (historyIndex > 0) {
                 historyIndex--;
                 elements = JSON.parse(JSON.stringify(history[historyIndex]));
-                selectedElement = null;
-                draw();
-                updateUndoRedoButtons();
+                selectedElement = null; draw(); updateUndoRedoButtons();
                 showNotification('Undo completed', 'success');
             }
         }
@@ -1587,9 +1067,7 @@
             if (historyIndex < history.length - 1) {
                 historyIndex++;
                 elements = JSON.parse(JSON.stringify(history[historyIndex]));
-                selectedElement = null;
-                draw();
-                updateUndoRedoButtons();
+                selectedElement = null; draw(); updateUndoRedoButtons();
                 showNotification('Redo completed', 'success');
             }
         }
@@ -1602,81 +1080,55 @@
         function deleteSelected() {
             if (selectedElement) {
                 elements = elements.filter(el => el !== selectedElement);
-                selectedElement = null;
-                addToHistory();
-                draw();
+                selectedElement = null; addToHistory(); draw();
                 showNotification('Element deleted', 'success');
             }
         }
 
         function clearCanvas() {
             if (confirm('Clear all elements?')) {
-                elements = [];
-                selectedElement = null;
-                addToHistory();
-                draw();
+                elements = []; selectedElement = null; addToHistory(); draw();
                 showNotification('Canvas cleared', 'success');
             }
         }
 
         function saveDesign() {
-            const design = {
-                elements,
-                metadata: {
-                    gridSize,
-                    zoom,
-                    created: new Date().toISOString(),
-                    version: '1.0'
-                }
-            };
-            
-            localStorage.setItem('architectureDesign', JSON.stringify(design));
-            showNotification('Design saved successfully', 'success');
+            const design = { elements, metadata: { gridSize, zoom, renderQuality, created: new Date().toISOString(), version: '2.0' } };
+            try {
+                localStorage.setItem('mwarokinArchitectureDesign', JSON.stringify(design));
+                showNotification('Design saved successfully', 'success');
+            } catch (e) {
+                showNotification('Storage unavailable in this preview', 'warning');
+            }
         }
 
         function loadDesign() {
-            const saved = localStorage.getItem('architectureDesign');
+            let saved = null;
+            try { saved = localStorage.getItem('mwarokinArchitectureDesign'); } catch (e) {}
             if (saved) {
                 try {
                     const design = JSON.parse(saved);
                     elements = design.elements || [];
                     gridSize = design.metadata?.gridSize || 20;
                     zoom = design.metadata?.zoom || 1;
-                    
                     document.getElementById('gridSlider').value = gridSize;
                     document.getElementById('gridSizeValue').textContent = gridSize;
                     document.getElementById('zoomDisplay').textContent = Math.round(zoom * 100) + '%';
-                    
-                    addToHistory();
-                    draw();
+                    addToHistory(); draw();
                     showNotification('Design loaded successfully', 'success');
-                } catch (e) {
-                    showNotification('Error loading design', 'error');
-                }
+                } catch (e) { showNotification('Error loading design', 'error'); }
             } else {
                 showNotification('No saved design found', 'warning');
             }
         }
 
         function exportDesign() {
-            const design = {
-                elements,
-                metadata: {
-                    gridSize,
-                    zoom,
-                    created: new Date().toISOString(),
-                    version: '1.0'
-                }
-            };
-            
+            const design = { elements, metadata: { gridSize, zoom, renderQuality, created: new Date().toISOString(), version: '2.0' } };
             const blob = new Blob([JSON.stringify(design, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url;
-            a.download = `architecture-design-${Date.now()}.json`;
-            a.click();
+            a.href = url; a.download = `mwarokin-architecture-design-${Date.now()}.json`; a.click();
             URL.revokeObjectURL(url);
-            
             document.getElementById('exportModal').classList.remove('active');
             showNotification('Design exported as JSON', 'success');
         }
@@ -1684,50 +1136,27 @@
         function exportAsPNG() {
             const tempCanvas = document.createElement('canvas');
             const tempCtx = tempCanvas.getContext('2d');
-            
-            tempCanvas.width = canvas.width;
-            tempCanvas.height = canvas.height;
-            
-            // Draw background
-            tempCtx.fillStyle = '#ffffff';
+            tempCanvas.width = canvas.width; tempCanvas.height = canvas.height;
+            tempCtx.fillStyle = '#0e1412';
             tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-            
-            // Draw elements
             tempCtx.save();
             tempCtx.translate(pan.x, pan.y);
             tempCtx.scale(zoom, zoom);
-            
-            elements.forEach(element => {
-                drawElementOnContext(tempCtx, element, false);
-            });
-            
+            elements.forEach(element => drawElementOnContext(tempCtx, element, false));
             tempCtx.restore();
-            
             const url = tempCanvas.toDataURL('image/png');
             const a = document.createElement('a');
-            a.href = url;
-            a.download = `architecture-design-${Date.now()}.png`;
-            a.click();
-            
+            a.href = url; a.download = `mwarokin-architecture-design-${Date.now()}.png`; a.click();
             document.getElementById('exportModal').classList.remove('active');
             showNotification('Design exported as PNG', 'success');
         }
 
         function drawElementOnContext(ctx, element, isSelected) {
             ctx.fillStyle = element.color;
-            ctx.strokeStyle = isSelected ? '#00d4ff' : '#333';
+            ctx.strokeStyle = isSelected ? '#ecd08e' : '#333';
             ctx.lineWidth = isSelected ? 3 : 1;
-
             switch (element.type) {
-                case 'wall':
-                    ctx.fillRect(element.x, element.y, element.width, element.height);
-                    ctx.strokeRect(element.x, element.y, element.width, element.height);
-                    break;
-                case 'room':
-                    ctx.fillRect(element.x, element.y, element.width, element.height);
-                    ctx.strokeRect(element.x, element.y, element.width, element.height);
-                    break;
-                case 'door':
+                case 'wall': case 'room': case 'door':
                     ctx.fillRect(element.x, element.y, element.width, element.height);
                     ctx.strokeRect(element.x, element.y, element.width, element.height);
                     break;
@@ -1740,8 +1169,7 @@
                     const radius = Math.min(element.width, element.height) / 2;
                     ctx.beginPath();
                     ctx.arc(element.x + element.width / 2, element.y + element.height / 2, radius, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.stroke();
+                    ctx.fill(); ctx.stroke();
                     break;
                 case 'stairs':
                     const steps = 8;
@@ -1755,43 +1183,18 @@
         }
 
         function exportAsPDF() {
-            showNotification('PDF export feature would be implemented in a production app', 'warning');
+            showNotification('PDF export would be implemented server-side in production', 'warning');
             document.getElementById('exportModal').classList.remove('active');
         }
 
         function addNewLayer() {
             const layersList = document.getElementById('layersList');
             const layerCount = layersList.children.length + 1;
-            
             const newLayer = document.createElement('div');
             newLayer.className = 'layer-item';
             newLayer.dataset.layer = layerCount;
-            newLayer.innerHTML = `
-                <span class="layer-name">New Layer ${layerCount}</span>
-                <button class="layer-toggle"><i class="fas fa-eye"></i></button>
-            `;
-            
-            newLayer.addEventListener('click', (e) => {
-                if (!e.target.classList.contains('layer-toggle') && !e.target.parentElement.classList.contains('layer-toggle')) {
-                    activeLayer = parseInt(newLayer.dataset.layer);
-                    document.querySelectorAll('.layer-item').forEach(i => i.classList.remove('active'));
-                    newLayer.classList.add('active');
-                    updateUI();
-                }
-            });
-            
-            const toggleBtn = newLayer.querySelector('.layer-toggle');
-            toggleBtn.addEventListener('click', () => {
-                const icon = toggleBtn.querySelector('i');
-                if (icon.classList.contains('fa-eye')) {
-                    icon.classList.remove('fa-eye');
-                    icon.classList.add('fa-eye-slash');
-                } else {
-                    icon.classList.remove('fa-eye-slash');
-                    icon.classList.add('fa-eye');
-                }
-            });
-            
+            newLayer.innerHTML = `<span class="layer-name">New Layer ${layerCount}</span><button class="layer-toggle"><i class="fas fa-eye"></i></button>`;
+            attachLayerHandlers(newLayer);
             layersList.appendChild(newLayer);
             showNotification(`New layer added: New Layer ${layerCount}`, 'success');
         }
@@ -1803,42 +1206,26 @@
             document.getElementById('statDoors').textContent = elements.filter(e => e.type === 'door').length;
             document.getElementById('statWindows').textContent = elements.filter(e => e.type === 'window').length;
             document.getElementById('elementCount').textContent = elements.length;
-            
-            // Calculate total area
             let totalArea = 0;
             elements.forEach(element => {
-                if (element.type === 'room') {
-                    const area = (element.width / gridSize * 3) * (element.height / gridSize * 3);
-                    totalArea += area;
-                }
+                if (element.type === 'room') totalArea += (element.width / gridSize * 3) * (element.height / gridSize * 3);
             });
             document.getElementById('statArea').textContent = `${totalArea.toFixed(0)} sq ft`;
         }
 
         function updateUI() {
-            const toolNames = {
-                'select': 'SELECT MODE',
-                'wall': 'WALL TOOL',
-                'room': 'ROOM TOOL',
-                'door': 'DOOR TOOL',
-                'window': 'WINDOW TOOL',
-                'furniture': 'FURNITURE TOOL',
-                'stairs': 'STAIRS TOOL'
-            };
-            
+            const toolNames = { select: 'SELECT MODE', wall: 'WALL TOOL', room: 'ROOM TOOL', door: 'DOOR TOOL', window: 'WINDOW TOOL', furniture: 'FURNITURE TOOL', stairs: 'STAIRS TOOL' };
             const helpTexts = {
-                'select': 'Click to select elements. Right-click for context menu.',
-                'wall': 'Click and drag to draw walls. Hold Shift to pan.',
-                'room': 'Click and drag to create rooms. Use mouse wheel to zoom.',
-                'door': 'Click and drag to place doors. Ctrl+Z to undo.',
-                'window': 'Click and drag to place windows. Ctrl+Y to redo.',
-                'furniture': 'Click and drag to place furniture. Delete to remove selected.',
-                'stairs': 'Click and drag to create stairs. Escape to deselect.'
+                select: 'Click to select elements. Right-click for context menu.',
+                wall: 'Click and drag to draw walls. Hold Shift to pan.',
+                room: 'Click and drag to create rooms. Use mouse wheel to zoom.',
+                door: 'Click and drag to place doors. Ctrl+Z to undo.',
+                window: 'Click and drag to place windows. Ctrl+Y to redo.',
+                furniture: 'Click and drag to place furniture. Delete to remove selected.',
+                stairs: 'Click and drag to create stairs. Escape to deselect.'
             };
-            
             document.getElementById('currentTool').textContent = toolNames[tool];
             document.getElementById('helpText').textContent = helpTexts[tool];
-            
             const layerNames = ['Ground Floor', 'Walls', 'Furniture', 'New Layer 4', 'New Layer 5'];
             document.getElementById('currentLayer').textContent = layerNames[activeLayer - 1] || `Layer ${activeLayer}`;
         }
@@ -1846,19 +1233,13 @@
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
             const text = document.getElementById('notificationText');
-            
             notification.className = 'notification';
             notification.classList.add(type);
             text.textContent = message;
-            
             notification.classList.add('active');
-            
-            setTimeout(() => {
-                notification.classList.remove('active');
-            }, 3000);
+            setTimeout(() => notification.classList.remove('active'), 3000);
         }
 
-        // Initialize
         init();
     </script>
 </body>

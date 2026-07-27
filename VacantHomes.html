@@ -1,1693 +1,818 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mwarokin Estates - Vacant Homes</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #3b82f6;
-            --primary-dark: #2563eb;
-            --primary-light: #dbeafe;
-            --secondary: #8b5cf6;
-            --accent: #ec4899;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --dark: #1e293b;
-            --darker: #0f172a;
-            --light: #f8fafc;
-            --gray: #64748b;
-            --gray-light: #e2e8f0;
-            --border-radius: 16px;
-            --border-radius-sm: 8px;
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 10px -2px rgba(0, 0, 0, 0.05);
-            --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f1f5f9;
-            color: var(--dark);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        .container {
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            min-height: 100vh;
-        }
-
-        /* Sidebar Styles */
-        .sidebar {
-            background: var(--darker);
-            color: white;
-            padding: 1.5rem;
-            position: fixed;
-            width: 280px;
-            height: 100vh;
-            overflow-y: auto;
-            z-index: 100;
-            transition: var(--transition);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .logo i {
-            font-size: 2rem;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .logo h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.9rem 1rem;
-            border-radius: var(--border-radius-sm);
-            margin-bottom: 0.5rem;
-            cursor: pointer;
-            transition: var(--transition);
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            position: relative;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
-            transform: translateX(5px);
-        }
-
-        .nav-item i {
-            font-size: 1.25rem;
-            width: 24px;
-            text-align: center;
-        }
-
-        .nav-badge {
-            position: absolute;
-            right: 1rem;
-            background: var(--accent);
-            color: white;
-            font-size: 0.7rem;
-            padding: 0.2rem 0.5rem;
-            border-radius: 10px;
-        }
-
-        /* Main Content */
-        .main-content {
-            grid-column: 2;
-            padding: 2rem;
-            background-color: #f8fafc;
-            transition: var(--transition);
-        }
-
-        /* Header */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--gray-light);
-        }
-
-        .search-container {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .search-bar {
-            display: flex;
-            align-items: center;
-            background: white;
-            padding: 0.75rem 1rem;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            width: 400px;
-            transition: var(--transition);
-        }
-
-        .search-bar:focus-within {
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-        }
-
-        .search-bar input {
-            border: none;
-            outline: none;
-            width: 100%;
-            font-size: 1rem;
-            margin-left: 0.5rem;
-            background: transparent;
-        }
-
-        .filter-btn {
-            background: white;
-            border: none;
-            padding: 0.75rem 1rem;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 500;
-            transition: var(--transition);
-        }
-
-        .filter-btn:hover {
-            background: var(--primary-light);
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .notifications {
-            position: relative;
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 50%;
-            transition: var(--transition);
-        }
-
-        .notifications:hover {
-            background: var(--gray-light);
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: var(--danger);
-            color: white;
-            font-size: 0.7rem;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .user-img {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: var(--gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            box-shadow: var(--shadow);
-        }
-
-        /* Dashboard Cards */
-        .dashboard-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .card {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 5px;
-            height: 100%;
-            background: var(--gradient);
-        }
-
-        .stat-card {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .stat-info h3 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .stat-info p {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-
-        .properties .stat-icon {
-            background-color: rgba(59, 130, 246, 0.1);
-            color: var(--primary);
-        }
-
-        .vacant .stat-icon {
-            background-color: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
-        }
-
-        .agents .stat-icon {
-            background-color: rgba(139, 92, 246, 0.1);
-            color: var(--secondary);
-        }
-
-        .revenue .stat-icon {
-            background-color: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-        }
-
-        /* Filter Section */
-        .filter-section {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            margin-bottom: 2rem;
-        }
-
-        .filter-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .filter-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
-
-        .filter-controls {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .filter-label {
-            font-size: 0.9rem;
-            color: var(--gray);
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .filter-select, .filter-input {
-            padding: 0.75rem;
-            border: 1px solid var(--gray-light);
-            border-radius: var(--border-radius-sm);
-            font-family: 'Poppins', sans-serif;
-            transition: var(--transition);
-        }
-
-        .filter-select:focus, .filter-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-        }
-
-        /* Properties Section */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .view-options {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .view-btn {
-            background: white;
-            border: 1px solid var(--gray-light);
-            padding: 0.5rem 1rem;
-            border-radius: var(--border-radius-sm);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .view-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .properties-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .property-card {
-            background: white;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            position: relative;
-        }
-
-        .property-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .property-img {
-            height: 200px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .property-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: var(--transition);
-        }
-
-        .property-card:hover .property-img img {
-            transform: scale(1.05);
-        }
-
-        .property-img::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.1) 100%);
-        }
-
-        .property-badge {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            padding: 0.35rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            z-index: 2;
-        }
-
-        .status-vacant {
-            background-color: var(--warning);
-            color: white;
-        }
-
-        .status-occupied {
-            background-color: var(--success);
-            color: white;
-        }
-
-        .status-pending {
-            background-color: var(--primary);
-            color: white;
-        }
-
-        .property-favorite {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            background: rgba(255, 255, 255, 0.9);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 2;
-            transition: var(--transition);
-        }
-
-        .property-favorite:hover {
-            background: white;
-            transform: scale(1.1);
-        }
-
-        .property-favorite.active {
-            background: var(--danger);
-            color: white;
-        }
-
-        .property-details {
-            padding: 1.5rem;
-        }
-
-        .property-price {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: var(--primary);
-        }
-
-        .property-address {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .property-location {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--gray);
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        .property-features {
-            display: flex;
-            justify-content: space-between;
-            border-top: 1px solid var(--gray-light);
-            padding-top: 1rem;
-            font-size: 0.9rem;
-        }
-
-        .feature {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .property-actions {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: 1rem;
-        }
-
-        .btn {
-            padding: 0.75rem 1rem;
-            border-radius: var(--border-radius-sm);
-            border: none;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex: 1;
-            justify-content: center;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-        }
-
-        .btn-outline:hover {
-            background: var(--primary-light);
-        }
-
-        /* Map View */
-        .map-container {
-            background: white;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            height: 500px;
-            margin-bottom: 2rem;
-            display: none;
-        }
-
-        .map-view .properties-grid {
-            display: none;
-        }
-
-        .map-view .map-container {
-            display: block;
-        }
-
-        /* Recent Activity */
-        .activity-list {
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        .activity-item {
-            display: flex;
-            padding: 1.25rem;
-            border-bottom: 1px solid var(--gray-light);
-            transition: var(--transition);
-        }
-
-        .activity-item:hover {
-            background: var(--primary-light);
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-icon {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-            flex-shrink: 0;
-        }
-
-        .activity-details {
-            flex-grow: 1;
-        }
-
-        .activity-details h4 {
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-        }
-
-        .activity-details p {
-            font-size: 0.9rem;
-            color: var(--gray);
-        }
-
-        .activity-time {
-            font-size: 0.8rem;
-            color: var(--gray);
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: var(--border-radius);
-            width: 90%;
-            max-width: 800px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: var(--shadow-lg);
-            animation: modalFadeIn 0.3s ease-out;
-        }
-
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--gray-light);
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--gray);
-            transition: var(--transition);
-        }
-
-        .modal-close:hover {
-            color: var(--dark);
-        }
-
-        .modal-body {
-            padding: 1.5rem;
-        }
-
-        /* Property Detail Modal */
-        .property-detail-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-
-        .property-detail-img {
-            height: 300px;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-        }
-
-        .property-detail-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .property-detail-info h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .property-detail-features {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
-
-        .property-detail-feature {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .property-detail-feature i {
-            color: var(--primary);
-            font-size: 1.25rem;
-        }
-
-        .property-description {
-            margin: 1.5rem 0;
-            line-height: 1.7;
-        }
-
-        /* Schedule Modal */
-        .schedule-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-label {
-            font-size: 0.9rem;
-            color: var(--gray);
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .form-input, .form-select, .form-textarea {
-            padding: 0.75rem;
-            border: 1px solid var(--gray-light);
-            border-radius: var(--border-radius-sm);
-            font-family: 'Poppins', sans-serif;
-            transition: var(--transition);
-        }
-
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-        }
-
-        .form-textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        .form-full {
-            grid-column: 1 / -1;
-        }
-
-        /* Back to Top */
-        .back-to-top {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--gradient);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            box-shadow: var(--shadow-lg);
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
-            z-index: 99;
-        }
-
-        .back-to-top.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .back-to-top:hover {
-            transform: translateY(-5px);
-        }
-
-        /* Mobile Menu Toggle */
-        .mobile-menu-toggle {
-            display: none;
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: var(--gradient);
-            color: white;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            align-items: center;
-            justify-content: center;
-            z-index: 101;
-            box-shadow: var(--shadow);
-            cursor: pointer;
-        }
-
-        /* Footer */
-        .footer {
-            background: var(--darker);
-            color: white;
-            padding: 2rem;
-            text-align: center;
-            margin-top: 3rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .properties-grid {
-                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            }
-            
-            .property-detail-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 1024px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-            
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                grid-column: 1;
-                padding-left: 2rem;
-                padding-right: 2rem;
-            }
-            
-            .mobile-menu-toggle {
-                display: flex;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .dashboard-cards {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .properties-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .search-bar {
-                width: 300px;
-            }
-            
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-            
-            .search-container {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
-            .search-bar {
-                width: 100%;
-            }
-            
-            .schedule-form {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .dashboard-cards {
-                grid-template-columns: 1fr;
-            }
-            
-            .filter-controls {
-                grid-template-columns: 1fr;
-            }
-            
-            .property-actions {
-                flex-direction: column;
-            }
-            
-            .modal-content {
-                width: 95%;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mwarokin Estates — Vacant Homes</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --obsidian:#07090a;
+  --obsidian-2:#0d1310;
+  --panel:#0f1613;
+  --panel-2:#131b17;
+  --forest:#12291f;
+  --forest-light:#1f4335;
+  --forest-lighter:#2d5c48;
+  --gold:#c8a24a;
+  --gold-soft:#e2c47c;
+  --gold-dim:#b88f3c;
+  --ivory:#f4efe4;
+  --ivory-dim:#c9c3b4;
+  --line:rgba(200,162,74,0.14);
+  --line-soft:rgba(244,239,228,0.08);
+  --danger:#c0564a;
+  --live:#4a9d6f;
+  --radius:14px;
+  --radius-sm:8px;
+  --ease:cubic-bezier(.4,0,.2,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--obsidian);
+  color:var(--ivory);
+  line-height:1.6;
+  overflow-x:hidden;
+}
+::selection{background:var(--gold); color:var(--obsidian);}
+a{color:inherit;text-decoration:none;}
+
+/* subtle grain / vignette on body */
+body::before{
+  content:'';
+  position:fixed; inset:0;
+  background:radial-gradient(ellipse at 20% -10%, rgba(45,92,72,0.25), transparent 55%),
+             radial-gradient(ellipse at 100% 110%, rgba(200,162,74,0.06), transparent 50%);
+  pointer-events:none;
+  z-index:0;
+}
+
+.container{display:grid; grid-template-columns:270px 1fr; min-height:100vh; position:relative; z-index:1;}
+
+/* Sidebar */
+.sidebar{
+  background:linear-gradient(180deg,var(--obsidian-2),var(--obsidian));
+  border-right:1px solid var(--line-soft);
+  padding:1.75rem 1.25rem;
+  position:fixed; width:270px; height:100vh; overflow-y:auto; z-index:100;
+}
+.logo{display:flex; align-items:center; gap:.7rem; margin-bottom:2.2rem; padding-bottom:1.2rem; border-bottom:1px solid var(--line);}
+.logo-mark{width:38px;height:38px;border-radius:8px;background:linear-gradient(135deg,var(--forest-light),var(--forest));border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:1.05rem;}
+.logo h1{font-family:'Syne',sans-serif; font-size:1.15rem; font-weight:700; letter-spacing:.02em;}
+.logo span{display:block; font-family:'JetBrains Mono',monospace; font-size:.62rem; color:var(--ivory-dim); letter-spacing:.14em; text-transform:uppercase; margin-top:2px;}
+.nav-item{
+  display:flex; align-items:center; gap:.8rem; padding:.75rem .9rem; border-radius:var(--radius-sm);
+  margin-bottom:.2rem; color:var(--ivory-dim); font-size:.92rem; transition:var(--ease) .2s; position:relative;
+}
+.nav-item i{width:20px; text-align:center; font-size:1rem;}
+.nav-item:hover{background:rgba(244,239,228,0.04); color:var(--ivory);}
+.nav-item.active{background:linear-gradient(90deg,rgba(200,162,74,0.1),transparent); color:var(--gold-soft);}
+.nav-item.active::before{content:''; position:absolute; left:-1.25rem; top:0; bottom:0; width:3px; background:var(--gold);}
+
+/* Main */
+.main-content{grid-column:2; padding:2.2rem 2.6rem 3rem; position:relative; z-index:1;}
+
+.header{
+  display:flex; justify-content:space-between; align-items:flex-start; gap:1.5rem;
+  margin-bottom:2rem; padding-bottom:1.6rem; border-bottom:1px solid var(--line);
+}
+.eyebrow{font-family:'Cormorant Garamond',serif; font-style:italic; color:var(--gold-soft); font-size:1.1rem; margin-bottom:.15rem;}
+.page-title{font-family:'Syne',sans-serif; font-size:2.1rem; font-weight:700; letter-spacing:-.01em;}
+.header-right{display:flex; align-items:center; gap:1rem;}
+.user-chip{display:flex; align-items:center; gap:.7rem; background:var(--panel); border:1px solid var(--line); padding:.5rem .9rem .5rem .5rem; border-radius:30px;}
+.user-img{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dim));display:flex;align-items:center;justify-content:center;color:var(--obsidian);font-weight:700;font-size:.8rem;}
+.user-chip .u-name{font-size:.82rem; font-weight:600;}
+.user-chip .u-role{font-size:.68rem; color:var(--ivory-dim); font-family:'JetBrains Mono',monospace;}
+
+/* live status strip */
+.live-strip{
+  display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;
+  background:linear-gradient(90deg,var(--panel),var(--panel-2));
+  border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.3rem; margin-bottom:1.6rem;
+}
+.live-dot-wrap{display:flex; align-items:center; gap:.6rem;}
+.live-dot{width:9px;height:9px;border-radius:50%; background:var(--live); position:relative;}
+.live-dot::after{content:''; position:absolute; inset:-6px; border-radius:50%; border:1px solid var(--live); animation:pulse-ring 2s var(--ease) infinite;}
+@keyframes pulse-ring{0%{transform:scale(.5); opacity:.9;} 100%{transform:scale(1.8); opacity:0;}}
+.live-text{font-family:'JetBrains Mono',monospace; font-size:.78rem; color:var(--ivory-dim); letter-spacing:.03em;}
+.live-text b{color:var(--gold-soft); font-weight:600;}
+.live-clock{font-family:'JetBrains Mono',monospace; font-size:.78rem; color:var(--ivory-dim);}
+.live-feed{font-family:'JetBrains Mono',monospace; font-size:.76rem; color:var(--ivory-dim); display:flex; align-items:center; gap:.5rem; opacity:0; transition:opacity .5s var(--ease);}
+.live-feed.show{opacity:1;}
+.live-feed i{color:var(--gold);}
+
+/* Stat cards */
+.dashboard-cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:1.1rem; margin-bottom:1.8rem;}
+.card{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  padding:1.3rem 1.4rem; position:relative; overflow:hidden; transition:var(--ease) .25s;
+}
+.card:hover{border-color:rgba(200,162,74,0.35); transform:translateY(-3px);}
+.stat-card{display:flex; align-items:center; justify-content:space-between;}
+.stat-info h3{font-family:'Syne',sans-serif; font-size:1.7rem; font-weight:700; color:var(--gold-soft); margin-bottom:.2rem; font-variant-numeric:tabular-nums;}
+.stat-info p{color:var(--ivory-dim); font-size:.82rem;}
+.stat-icon{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem; background:rgba(200,162,74,0.08); color:var(--gold);}
+.stat-info .delta{font-family:'JetBrains Mono',monospace; font-size:.68rem; color:var(--live);}
+.stat-info .delta.down{color:var(--danger);}
+
+/* Real-time search section */
+.search-section{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  padding:1.4rem; margin-bottom:1.8rem;
+}
+.search-row{display:flex; gap:.9rem; align-items:center; margin-bottom:1rem;}
+.search-bar{
+  flex:1; display:flex; align-items:center; gap:.7rem; background:var(--obsidian-2);
+  border:1px solid var(--line); border-radius:30px; padding:.75rem 1.1rem; transition:var(--ease) .2s;
+}
+.search-bar:focus-within{border-color:var(--gold); box-shadow:0 0 0 3px rgba(200,162,74,0.12);}
+.search-bar i.fa-search{color:var(--gold);}
+.search-bar input{flex:1; background:transparent; border:none; outline:none; color:var(--ivory); font-family:'DM Sans',sans-serif; font-size:.95rem;}
+.search-bar input::placeholder{color:var(--ivory-dim);}
+.search-clear{cursor:pointer; color:var(--ivory-dim); opacity:0; transition:opacity .15s;}
+.search-clear.show{opacity:1;}
+.sort-select{
+  background:var(--obsidian-2); border:1px solid var(--line); color:var(--ivory);
+  padding:.75rem 1rem; border-radius:30px; font-family:'DM Sans',sans-serif; font-size:.88rem; cursor:pointer;
+}
+.result-count{
+  font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--ivory-dim); white-space:nowrap;
+  min-width:120px; text-align:right;
+}
+.result-count b{color:var(--gold-soft); font-size:.95rem;}
+
+.filter-chips{display:flex; flex-wrap:wrap; gap:.55rem; margin-bottom:1rem;}
+.chip{
+  display:flex; align-items:center; gap:.4rem; padding:.45rem .95rem; border-radius:20px;
+  background:var(--obsidian-2); border:1px solid var(--line); color:var(--ivory-dim);
+  font-size:.8rem; cursor:pointer; transition:var(--ease) .18s; user-select:none;
+}
+.chip:hover{border-color:rgba(200,162,74,0.4); color:var(--ivory);}
+.chip.active{background:linear-gradient(135deg,var(--forest-light),var(--forest)); border-color:var(--gold-dim); color:var(--gold-soft);}
+.chip i{font-size:.72rem;}
+
+.filter-controls{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:.9rem;}
+.filter-group{display:flex; flex-direction:column; gap:.4rem;}
+.filter-label{font-size:.72rem; color:var(--ivory-dim); text-transform:uppercase; letter-spacing:.08em; font-family:'JetBrains Mono',monospace;}
+.filter-select, .filter-input{
+  padding:.65rem .8rem; background:var(--obsidian-2); border:1px solid var(--line); border-radius:var(--radius-sm);
+  color:var(--ivory); font-family:'DM Sans',sans-serif; font-size:.88rem; outline:none; transition:var(--ease) .18s;
+}
+.filter-select:focus, .filter-input:focus{border-color:var(--gold);}
+.reset-link{
+  align-self:flex-end; font-size:.8rem; color:var(--gold-soft); cursor:pointer; display:flex; align-items:center; gap:.4rem;
+  padding:.6rem 0;
+}
+.reset-link:hover{color:var(--gold);}
+
+/* Section header */
+.section-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem;}
+.section-title{font-family:'Syne',sans-serif; font-size:1.35rem; font-weight:700;}
+.view-options{display:flex; gap:.5rem;}
+.view-btn{
+  background:var(--panel); border:1px solid var(--line); color:var(--ivory-dim);
+  padding:.55rem .9rem; border-radius:var(--radius-sm); cursor:pointer; transition:var(--ease) .18s;
+}
+.view-btn.active{background:var(--forest); color:var(--gold-soft); border-color:var(--gold-dim);}
+
+/* Properties grid */
+.properties-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(310px,1fr)); gap:1.4rem; margin-bottom:1rem;}
+.property-card{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  overflow:hidden; transition:var(--ease) .3s; opacity:0; transform:translateY(10px);
+  animation:cardIn .45s var(--ease) forwards;
+}
+@keyframes cardIn{to{opacity:1; transform:translateY(0);}}
+.property-card:hover{transform:translateY(-6px); border-color:rgba(200,162,74,0.35); box-shadow:0 18px 40px -14px rgba(0,0,0,0.55);}
+.property-img{height:190px; position:relative; overflow:hidden;}
+.property-img img{width:100%; height:100%; object-fit:cover; transition:transform .5s var(--ease); filter:saturate(0.92) brightness(0.92);}
+.property-card:hover .property-img img{transform:scale(1.06);}
+.property-img::after{content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(7,9,10,0) 55%,rgba(7,9,10,0.75) 100%);}
+.property-badge{position:absolute; top:.9rem; right:.9rem; padding:.3rem .75rem; border-radius:20px; font-size:.7rem; font-weight:600; z-index:2; font-family:'JetBrains Mono',monospace; letter-spacing:.04em; text-transform:uppercase;}
+.status-vacant{background:rgba(200,162,74,0.92); color:var(--obsidian);}
+.status-pending{background:rgba(74,157,111,0.9); color:var(--obsidian);}
+.property-favorite{
+  position:absolute; top:.9rem; left:.9rem; background:rgba(7,9,10,0.55); backdrop-filter:blur(4px);
+  width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; z-index:2; transition:var(--ease) .2s; color:var(--ivory);
+}
+.property-favorite:hover{background:rgba(7,9,10,0.8);}
+.property-favorite.active{background:var(--gold); color:var(--obsidian);}
+.property-code{position:absolute; bottom:.7rem; left:1rem; z-index:2; font-family:'JetBrains Mono',monospace; font-size:.68rem; color:var(--ivory-dim); letter-spacing:.05em;}
+.property-details{padding:1.25rem 1.3rem 1.4rem;}
+.property-price{font-family:'Syne',sans-serif; font-size:1.35rem; font-weight:700; color:var(--gold-soft); margin-bottom:.3rem; font-variant-numeric:tabular-nums;}
+.property-price span{font-size:.7rem; color:var(--ivory-dim); font-weight:500; font-family:'DM Sans',sans-serif;}
+.property-address{font-size:1.02rem; font-weight:600; margin-bottom:.35rem;}
+.property-location{display:flex; align-items:center; gap:.45rem; color:var(--ivory-dim); font-size:.83rem; margin-bottom:.9rem;}
+.property-location i{color:var(--gold-dim);}
+.property-features{display:flex; justify-content:space-between; border-top:1px solid var(--line-soft); padding-top:.85rem; font-size:.8rem; color:var(--ivory-dim);}
+.feature{display:flex; align-items:center; gap:.4rem;}
+.feature i{color:var(--gold-dim);}
+.property-actions{display:flex; gap:.6rem; margin-top:1rem;}
+.btn{
+  padding:.68rem .9rem; border-radius:var(--radius-sm); border:none; font-family:'DM Sans',sans-serif;
+  font-weight:600; font-size:.83rem; cursor:pointer; transition:var(--ease) .2s; display:flex;
+  align-items:center; gap:.5rem; flex:1; justify-content:center;
+}
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-dim)); color:var(--obsidian);}
+.btn-primary:hover{filter:brightness(1.1); transform:translateY(-1px);}
+.btn-outline{background:transparent; border:1px solid var(--line); color:var(--ivory-dim);}
+.btn-outline:hover{border-color:var(--gold); color:var(--gold-soft);}
+
+/* highlight match */
+mark{background:rgba(200,162,74,0.35); color:var(--gold-soft); border-radius:3px; padding:0 2px;}
+
+/* Empty state */
+.empty-state{
+  display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+  padding:4rem 2rem; background:var(--panel); border:1px dashed var(--line); border-radius:var(--radius);
+}
+.empty-state.show{display:flex;}
+.empty-state i{font-size:2.4rem; color:var(--gold-dim); margin-bottom:1rem;}
+.empty-state h3{font-family:'Syne',sans-serif; font-size:1.2rem; margin-bottom:.4rem;}
+.empty-state p{color:var(--ivory-dim); font-size:.9rem; max-width:340px;}
+
+/* Modal */
+.modal{display:none; position:fixed; inset:0; background:rgba(4,5,5,0.72); z-index:1000; align-items:center; justify-content:center; backdrop-filter:blur(6px);}
+.modal.active{display:flex;}
+.modal-content{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); width:90%; max-width:820px;
+  max-height:90vh; overflow-y:auto; box-shadow:0 30px 70px -20px rgba(0,0,0,0.7); animation:modalIn .28s var(--ease);
+}
+@keyframes modalIn{from{opacity:0; transform:scale(.95) translateY(10px);} to{opacity:1; transform:scale(1) translateY(0);}}
+.modal-header{display:flex; justify-content:space-between; align-items:center; padding:1.3rem 1.5rem; border-bottom:1px solid var(--line);}
+.modal-title{font-family:'Syne',sans-serif; font-size:1.25rem; font-weight:700;}
+.modal-close{background:none; border:none; font-size:1.4rem; cursor:pointer; color:var(--ivory-dim); transition:.2s;}
+.modal-close:hover{color:var(--gold);}
+.modal-body{padding:1.5rem;}
+.property-detail-grid{display:grid; grid-template-columns:1fr 1fr; gap:1.8rem;}
+.property-detail-img{height:280px; border-radius:var(--radius); overflow:hidden;}
+.property-detail-img img{width:100%; height:100%; object-fit:cover;}
+.property-detail-info h3{font-family:'Syne',sans-serif; font-size:1.3rem; margin-bottom:.7rem;}
+.property-detail-features{display:grid; grid-template-columns:repeat(2,1fr); gap:.9rem; margin:1.3rem 0;}
+.property-detail-feature{display:flex; align-items:center; gap:.6rem; font-size:.85rem;}
+.property-detail-feature i{color:var(--gold); font-size:1.05rem;}
+.property-detail-feature strong{font-family:'JetBrains Mono',monospace; font-size:.9rem;}
+.property-detail-feature p{color:var(--ivory-dim); font-size:.72rem;}
+.property-description{margin:1.2rem 0; color:var(--ivory-dim); font-size:.9rem; line-height:1.7;}
+
+.schedule-form{display:grid; grid-template-columns:1fr 1fr; gap:1.1rem;}
+.form-group{display:flex; flex-direction:column;}
+.form-label{font-size:.72rem; color:var(--ivory-dim); text-transform:uppercase; letter-spacing:.06em; margin-bottom:.4rem; font-family:'JetBrains Mono',monospace;}
+.form-input, .form-select, .form-textarea{
+  padding:.7rem .85rem; background:var(--obsidian-2); border:1px solid var(--line); border-radius:var(--radius-sm);
+  color:var(--ivory); font-family:'DM Sans',sans-serif; outline:none; transition:var(--ease) .18s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus{border-color:var(--gold);}
+.form-textarea{min-height:90px; resize:vertical;}
+.form-full{grid-column:1/-1;}
+.toast{
+  position:fixed; bottom:1.5rem; right:1.5rem; background:var(--panel); border:1px solid var(--gold-dim);
+  color:var(--ivory); padding:1rem 1.3rem; border-radius:var(--radius-sm); display:flex; align-items:center; gap:.7rem;
+  transform:translateY(30px); opacity:0; transition:var(--ease) .3s; z-index:1200; font-size:.88rem;
+}
+.toast.show{transform:translateY(0); opacity:1;}
+.toast i{color:var(--gold);}
+
+.mobile-menu-toggle{display:none; position:fixed; top:18px; left:18px; background:var(--forest); color:var(--gold); width:44px; height:44px; border-radius:50%; align-items:center; justify-content:center; z-index:101; cursor:pointer; border:1px solid var(--line);}
+
+.footer{text-align:center; padding:2rem; color:var(--ivory-dim); font-size:.8rem; font-family:'JetBrains Mono',monospace; border-top:1px solid var(--line-soft); margin-top:2rem;}
+.footer b{color:var(--gold-soft);}
+
+@media (max-width:1024px){
+  .container{grid-template-columns:1fr;}
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.active{transform:translateX(0);}
+  .main-content{grid-column:1; padding-top:4.5rem;}
+  .mobile-menu-toggle{display:flex;}
+  .property-detail-grid{grid-template-columns:1fr;}
+}
+@media (max-width:640px){
+  .header{flex-direction:column; gap:1rem;}
+  .search-row{flex-direction:column; align-items:stretch;}
+  .result-count{text-align:left;}
+  .schedule-form{grid-template-columns:1fr;}
+}
+</style>
 </head>
 <body>
-    <!-- Mobile Menu Toggle -->
-    <div class="mobile-menu-toggle">
-        <i class="fas fa-bars"></i>
+
+<div class="mobile-menu-toggle"><i class="fas fa-bars"></i></div>
+
+<div class="container">
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-mark"><i class="fas fa-key"></i></div>
+      <div>
+        <h1>Mwarokin Estates</h1>
+        <span>Property Suite</span>
+      </div>
     </div>
+    <a href="LipaMdogo.html" class="nav-item"><i class="fas fa-calculator"></i><span>Lipa Mdogo</span></a>
+    <a href="Premium Properties.html" class="nav-item"><i class="fas fa-crown"></i><span>Premium Properties</span></a>
+    <a href="#" class="nav-item active"><i class="fas fa-home"></i><span>Vacant Homes</span></a>
+    <a href="Videos.html" class="nav-item"><i class="fas fa-vr-cardboard"></i><span>Home Video</span></a>
+    <a href="Neighborhoods.html" class="nav-item"><i class="fas fa-users"></i><span>Neighbourhoods</span></a>
+    <a href="Schedual Viewing.html" class="nav-item"><i class="fas fa-calendar-alt"></i><span>Schedule Viewing</span></a>
+    <a href="LeaseDraft.html" class="nav-item"><i class="fas fa-file-contract"></i><span>Leases Draft</span></a>
+    <a href="Payments.html" class="nav-item"><i class="fas fa-wallet"></i><span>Payments</span></a>
+    <a href="My Profile.html" class="nav-item"><i class="fa fa-user"></i><span>My Profile</span></a>
+    <a href="LanguageSupport.html" class="nav-item"><i class="fas fa-language"></i><span>Language Support</span></a>
+    <a href="LogOut.html" class="nav-item"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+  </aside>
 
-    <div class="container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="logo">
-                <i class="fas fa-home"></i>
-                <h1>Mwarokin Estates</h1>
-            </div>
-            
-            <a href="LipaMdogo.html" class="nav-item">
-                <i class="fas fa-calculator"></i>
-                <span>Lipa Mdogo</span>
-            </a>
-            
-            <a href="Premium Properties.html" class="nav-item">
-                <i class="fas fa-crown"></i>
-                <span>Premium Properties</span>
-            </a>
-            
-            <a href="Videos.html" class="nav-item">
-                <i class="fas fa-vr-cardboard"></i>
-                <span>Home Video</span>
-            </a>
-            
-            <a href="Neighborhoods.html" class="nav-item">
-                <i class="fas fa-users"></i>
-                <span>Neighborhoods</span>
-            </a>
-            
-            <a href="Schedual Viewing.html" class="nav-item">
-                <i class="fas fa-calendar-alt"></i>
-                <span>Schedule Viewing</span>
-            </a>
-            
-            <a href="LeaseDraft.html" class="nav-item">
-                <i class="fas fa-file-contract"></i>
-                <span>Leases Draft</span>
-            </a>
-            
-            <a href="Payments.html" class="nav-item">
-                <i class="fas fa-wallet"></i>
-                <span>Payments</span>
-            </a>
-            
-            <a href="My Profile.html" class="nav-item">
-                <i class="fa fa-user"></i>
-                <span>My Profile</span>
-            </a>
-            
-            <a href="LanguageSupport.html" class="nav-item">
-                <i class="fas fa-language"></i>
-                <span>Language Support</span>
-            </a>
-            
-            <a href="LogOut.html" class="nav-item">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </a>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Header -->
-            <div class="header">
-                <div class="search-container">
-                    <div class="search-bar">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Search properties, locations, agents...">
-                    </div>
-                    <button class="filter-btn">
-                        <i class="fas fa-sliders-h"></i>
-                        <span>Filters</span>
-                    </button>
-                </div>
-                
-                <div class="user-profile">
-                    <div class="notifications">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-badge">3</span>
-                    </div>
-                    <div class="user-img">JD</div>
-                    <div class="user-info">
-                        <h4>John Doe</h4>
-                        <p>Admin</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dashboard Cards -->
-            <div class="dashboard-cards">
-                <div class="card stat-card properties">
-                    <div class="stat-info">
-                        <h3>142</h3>
-                        <p>Total Properties</p>
-                    </div>
-                    <div class="stat-icon">
-                        <i class="fas fa-building"></i>
-                    </div>
-                </div>
-                
-                <div class="card stat-card vacant">
-                    <div class="stat-info">
-                        <h3>24</h3>
-                        <p>Vacant Properties</p>
-                    </div>
-                    <div class="stat-icon">
-                        <i class="fas fa-home"></i>
-                    </div>
-                </div>
-                
-                <div class="card stat-card agents">
-                    <div class="stat-info">
-                        <h3>18</h3>
-                        <p>Active Agents</p>
-                    </div>
-                    <div class="stat-icon">
-                        <i class="fas fa-user-tie"></i>
-                    </div>
-                </div>
-                
-                <div class="card stat-card revenue">
-                    <div class="stat-info">
-                        <h3>$82,540</h3>
-                        <p>Monthly Revenue</p>
-                    </div>
-                    <div class="stat-icon">
-                        <i class="fas fa-dollar-sign"></i>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Filter Section -->
-            <div class="filter-section">
-                <div class="filter-header">
-                    <h3 class="filter-title">Filter Properties</h3>
-                    <button class="btn btn-outline">
-                        <i class="fas fa-sync-alt"></i>
-                        Reset Filters
-                    </button>
-                </div>
-                <div class="filter-controls">
-                    <div class="filter-group">
-                        <label class="filter-label">Property Type</label>
-                        <select class="filter-select">
-                            <option value="">All Types</option>
-                            <option value="apartment">Apartment</option>
-                            <option value="house">House</option>
-                            <option value="condo">Condo</option>
-                            <option value="villa">Villa</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Price Range</label>
-                        <select class="filter-select">
-                            <option value="">Any Price</option>
-                            <option value="0-1000">Under $1,000</option>
-                            <option value="1000-2000">$1,000 - $2,000</option>
-                            <option value="2000-3000">$2,000 - $3,000</option>
-                            <option value="3000+">Over $3,000</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Bedrooms</label>
-                        <select class="filter-select">
-                            <option value="">Any</option>
-                            <option value="1">1 Bedroom</option>
-                            <option value="2">2 Bedrooms</option>
-                            <option value="3">3 Bedrooms</option>
-                            <option value="4+">4+ Bedrooms</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Location</label>
-                        <select class="filter-select">
-                            <option value="">All Areas</option>
-                            <option value="downtown">Downtown</option>
-                            <option value="suburbs">Suburbs</option>
-                            <option value="riverside">Riverside</option>
-                            <option value="hills">Hills</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Available Properties Section -->
-            <div class="section-header">
-                <h2 class="section-title">Available Properties</h2>
-                <div class="view-options">
-                    <button class="view-btn active" data-view="grid">
-                        <i class="fas fa-th"></i>
-                    </button>
-                    <button class="view-btn" data-view="map">
-                        <i class="fas fa-map"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Properties Grid -->
-            <div class="properties-grid">
-                <!-- Property 1 -->
-                <div class="property-card">
-                    <div class="property-img">
-                        <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Modern Apartment">
-                        <span class="property-badge status-vacant">Vacant</span>
-                        <div class="property-favorite">
-                            <i class="far fa-heart"></i>
-                        </div>
-                    </div>
-                    <div class="property-details">
-                        <div class="property-price">$2,500/mo</div>
-                        <h3 class="property-address">123 Main Street</h3>
-                        <div class="property-location">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>Downtown, Nairobi</span>
-                        </div>
-                        <div class="property-features">
-                            <div class="feature">
-                                <i class="fas fa-bed"></i>
-                                <span>3 Beds</span>
-                            </div>
-                            <div class="feature">
-                                <i class="fas fa-bath"></i>
-                                <span>2 Baths</span>
-                            </div>
-                            <div class="feature">
-                                <i class="fas fa-ruler-combined"></i>
-                                <span>1,850 sq ft</span>
-                            </div>
-                        </div>
-                        <div class="property-actions">
-                            <button class="btn btn-outline view-details-btn" data-property="1">
-                                <i class="fas fa-eye"></i>
-                                View Details
-                            </button>
-                            <button class="btn btn-primary schedule-btn" data-property="1">
-                                <i class="fas fa-calendar-alt"></i>
-                                Schedule Tour
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Property 2 -->
-                <div class="property-card">
-                    <div class="property-img">
-                        <img src="https://images.unsplash.com/photo-1513584684374-8bab748fbf90?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Luxury Villa">
-                        <span class="property-badge status-vacant">Vacant</span>
-                        <div class="property-favorite">
-                            <i class="far fa-heart"></i>
-                        </div>
-                    </div>
-                    <div class="property-details">
-                        <div class="property-price">$3,200/mo</div>
-                        <h3 class="property-address">456 Oak Avenue</h3>
-                        <div class="property-location">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>Westlands, Nairobi</span>
-                        </div>
-                        <div class="property-features">
-                            <div class="feature">
-                                <i class="fas fa-bed"></i>
-                                <span>4 Beds</span>
-                            </div>
-                            <div class="feature">
-                                <i class="fas fa-bath"></i>
-                                <span>3 Baths</span>
-                            </div>
-                            <div class="feature">
-                                <i class="fas fa-ruler-combined"></i>
-                                <span>2,400 sq ft</span>
-                            </div>
-                        </div>
-                        <div class="property-actions">
-                            <button class="btn btn-outline view-details-btn" data-property="2">
-                                <i class="fas fa-eye"></i>
-                                View Details
-                            </button>
-                            <button class="btn btn-primary schedule-btn" data-property="2">
-                                <i class="fas fa-calendar-alt"></i>
-                                Schedule Tour
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Property 3 -->
-                <div class="property-card">
-                    <div class="property-img">
-                        <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Cozy Condo">
-                        <span class="property-badge status-vacant">Vacant</span>
-                        <div class="property-favorite active">
-                            <i class="fas fa-heart"></i>
-                        </div>
-                    </div>
-                    <div class="property-details">
-                        <div class="property-price">$1,800/mo</div>
-                        <h3 class="property-address">789 Pine Road</h3>
-                        <div class="property-location">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>Kilimani, Nairobi</span>
-                        </div>
-                        <div class="property-features">
-                            <div class="feature">
-                                <i class="fas fa-bed"></i>
-                                <span>2 Beds</span>
-                            </div>
-                            <div class="feature">
-                                <i class="fas fa-bath"></i>
-                                <span>1 Bath</span>
-                            </div>
-                            <div class="feature">
-                                <i class="fas fa-ruler-combined"></i>
-                                <span>1,200 sq ft</span>
-                            </div>
-                        </div>
-                        <div class="property-actions">
-                            <button class="btn btn-outline view-details-btn" data-property="3">
-                                <i class="fas fa-eye"></i>
-                                View Details
-                            </button>
-                            <button class="btn btn-primary schedule-btn" data-property="3">
-                                <i class="fas fa-calendar-alt"></i>
-                                Schedule Tour
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Map View -->
-            <div class="map-container">
-                <div style="width: 100%; height: 100%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: var(--gray);">
-                    <div style="text-align: center;">
-                        <i class="fas fa-map-marked-alt" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-                        <p>Interactive Map View</p>
-                        <p style="font-size: 0.9rem;">Properties would be displayed on an interactive map here</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Activity -->
-            <h2 class="section-title">Recent Activity</h2>
-            <div class="activity-list card">
-                <div class="activity-item">
-                    <div class="activity-icon" style="background-color: rgba(16, 185, 129, 0.1); color: var(--success);">
-                        <i class="fas fa-key"></i>
-                    </div>
-                    <div class="activity-details">
-                        <h4>New Lease Signed</h4>
-                        <p>Property at 567 Elm Street has been leased to Robert Johnson</p>
-                    </div>
-                    <div class="activity-time">2 hours ago</div>
-                </div>
-                
-                <div class="activity-item">
-                    <div class="activity-icon" style="background-color: rgba(59, 130, 246, 0.1); color: var(--primary);">
-                        <i class="fas fa-home"></i>
-                    </div>
-                    <div class="activity-details">
-                        <h4>Property Added</h4>
-                        <p>New property listed at 321 Maple Avenue</p>
-                    </div>
-                    <div class="activity-time">5 hours ago</div>
-                </div>
-                
-                <div class="activity-item">
-                    <div class="activity-icon" style="background-color: rgba(245, 158, 11, 0.1); color: var(--warning);">
-                        <i class="fas fa-file-invoice-dollar"></i>
-                    </div>
-                    <div class="activity-details">
-                        <h4>Payment Received</h4>
-                        <p>Rent payment from Michael Brown for 159 Oak Lane</p>
-                    </div>
-                    <div class="activity-time">Yesterday</div>
-                </div>
-            </div>
-        </main>
-    </div>
-    
-    <!-- Property Detail Modal -->
-    <div class="modal" id="propertyDetailModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Property Details</h2>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="property-detail-grid">
-                    <div class="property-detail-img">
-                        <img id="detailImg" src="" alt="Property Image">
-                    </div>
-                    <div class="property-detail-info">
-                        <h3 id="detailAddress"></h3>
-                        <div class="property-price" id="detailPrice"></div>
-                        <div class="property-location">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span id="detailLocation"></span>
-                        </div>
-                        
-                        <div class="property-detail-features">
-                            <div class="property-detail-feature">
-                                <i class="fas fa-bed"></i>
-                                <div>
-                                    <strong id="detailBeds"></strong>
-                                    <p>Bedrooms</p>
-                                </div>
-                            </div>
-                            <div class="property-detail-feature">
-                                <i class="fas fa-bath"></i>
-                                <div>
-                                    <strong id="detailBaths"></strong>
-                                    <p>Bathrooms</p>
-                                </div>
-                            </div>
-                            <div class="property-detail-feature">
-                                <i class="fas fa-ruler-combined"></i>
-                                <div>
-                                    <strong id="detailArea"></strong>
-                                    <p>Square Feet</p>
-                                </div>
-                            </div>
-                            <div class="property-detail-feature">
-                                <i class="fas fa-car"></i>
-                                <div>
-                                    <strong id="detailParking"></strong>
-                                    <p>Parking</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="property-description">
-                            <p id="detailDescription"></p>
-                        </div>
-                        
-                        <div class="property-actions">
-                            <button class="btn btn-outline schedule-btn" id="detailScheduleBtn">
-                                <i class="fas fa-calendar-alt"></i>
-                                Schedule Tour
-                            </button>
-                            <button class="btn btn-primary">
-                                <i class="fas fa-phone"></i>
-                                Contact Agent
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <main class="main-content">
+    <div class="header">
+      <div>
+        <div class="eyebrow">Live inventory</div>
+        <h1 class="page-title">Vacant Homes</h1>
+      </div>
+      <div class="header-right">
+        <div class="user-chip">
+          <div class="user-img">JD</div>
+          <div>
+            <div class="u-name">John Doe</div>
+            <div class="u-role">Admin</div>
+          </div>
         </div>
+      </div>
     </div>
-    
-    <!-- Schedule Tour Modal -->
-    <div class="modal" id="scheduleModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Schedule Property Tour</h2>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="schedule-form">
-                    <div class="form-group">
-                        <label class="form-label">Property</label>
-                        <input type="text" class="form-input" id="scheduleProperty" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Your Name</label>
-                        <input type="text" class="form-input" placeholder="Enter your full name">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-input" placeholder="Enter your email">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Phone Number</label>
-                        <input type="tel" class="form-input" placeholder="Enter your phone number">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Preferred Date</label>
-                        <input type="date" class="form-input">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Preferred Time</label>
-                        <select class="form-select">
-                            <option value="">Select a time</option>
-                            <option value="9:00">9:00 AM</option>
-                            <option value="10:00">10:00 AM</option>
-                            <option value="11:00">11:00 AM</option>
-                            <option value="12:00">12:00 PM</option>
-                            <option value="13:00">1:00 PM</option>
-                            <option value="14:00">2:00 PM</option>
-                            <option value="15:00">3:00 PM</option>
-                            <option value="16:00">4:00 PM</option>
-                        </select>
-                    </div>
-                    <div class="form-group form-full">
-                        <label class="form-label">Additional Notes</label>
-                        <textarea class="form-textarea" placeholder="Any special requests or questions..."></textarea>
-                    </div>
-                    <div class="form-group form-full">
-                        <button class="btn btn-primary" style="width: 100%;">
-                            <i class="fas fa-paper-plane"></i>
-                            Submit Request
-                        </button>
-                    </div>
-                </div>
-            </div>
+
+    <!-- Live status strip -->
+    <div class="live-strip">
+      <div class="live-dot-wrap">
+        <span class="live-dot"></span>
+        <span class="live-text">Searching <b id="liveScope">142</b> listings in real time · Nairobi portfolio</span>
+      </div>
+      <div class="live-feed" id="liveFeed"><i class="fas fa-bolt"></i><span id="liveFeedText"></span></div>
+      <div class="live-clock" id="liveClock">--:--:--</div>
+    </div>
+
+    <!-- Dashboard Cards -->
+    <div class="dashboard-cards">
+      <div class="card stat-card">
+        <div class="stat-info"><h3 id="statTotal">142</h3><p>Total Properties</p></div>
+        <div class="stat-icon"><i class="fas fa-building"></i></div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-info"><h3 id="statVacant">24</h3><p>Vacant Right Now</p><span class="delta" id="statVacantDelta"></span></div>
+        <div class="stat-icon"><i class="fas fa-door-open"></i></div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-info"><h3 id="statMatches">24</h3><p>Matching Your Search</p></div>
+        <div class="stat-icon"><i class="fas fa-filter"></i></div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-info"><h3 id="statAvgRent">KSh 132K</h3><p>Avg. Rent (Filtered)</p></div>
+        <div class="stat-icon"><i class="fas fa-coins"></i></div>
+      </div>
+    </div>
+
+    <!-- Real-time search section -->
+    <div class="search-section">
+      <div class="search-row">
+        <div class="search-bar">
+          <i class="fas fa-search"></i>
+          <input type="text" id="searchInput" placeholder="Search by address, neighbourhood, or property type…" autocomplete="off">
+          <i class="fas fa-times-circle search-clear" id="clearSearch"></i>
         </div>
+        <select class="sort-select" id="sortSelect">
+          <option value="relevance">Sort: Relevance</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="newest">Newest Vacancy</option>
+          <option value="beds">Most Bedrooms</option>
+        </select>
+        <div class="result-count"><b id="resultCount">9</b> found</div>
+      </div>
+
+      <div class="filter-chips" id="quickChips">
+        <div class="chip" data-quick="all"><i class="fas fa-layer-group"></i>All</div>
+        <div class="chip" data-quick="under100k"><i class="fas fa-coins"></i>Under KSh 100K</div>
+        <div class="chip" data-quick="furnished"><i class="fas fa-couch"></i>Furnished</div>
+        <div class="chip" data-quick="parking"><i class="fas fa-car"></i>Parking</div>
+        <div class="chip" data-quick="new"><i class="fas fa-bolt"></i>New This Week</div>
+      </div>
+
+      <div class="filter-controls">
+        <div class="filter-group">
+          <label class="filter-label">Property Type</label>
+          <select class="filter-select" id="filterType">
+            <option value="">All Types</option>
+            <option value="Apartment">Apartment</option>
+            <option value="House">House</option>
+            <option value="Villa">Villa</option>
+            <option value="Studio">Studio</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Price Range (KSh/mo)</label>
+          <select class="filter-select" id="filterPrice">
+            <option value="">Any Price</option>
+            <option value="0-70000">Under 70,000</option>
+            <option value="70000-120000">70,000 – 120,000</option>
+            <option value="120000-200000">120,000 – 200,000</option>
+            <option value="200000-999999999">Over 200,000</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Bedrooms</label>
+          <select class="filter-select" id="filterBeds">
+            <option value="">Any</option>
+            <option value="1">1 Bedroom</option>
+            <option value="2">2 Bedrooms</option>
+            <option value="3">3 Bedrooms</option>
+            <option value="4">4+ Bedrooms</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Neighbourhood</label>
+          <select class="filter-select" id="filterLocation">
+            <option value="">All Areas</option>
+          </select>
+        </div>
+        <div class="reset-link" id="resetFilters"><i class="fas fa-sync-alt"></i>Reset all filters</div>
+      </div>
     </div>
 
-    <!-- Back to Top -->
-    <a href="#" class="back-to-top">
-        <i class="fas fa-arrow-up"></i>
-    </a>
+    <div class="section-header">
+      <h2 class="section-title">Available Properties</h2>
+      <div class="view-options">
+        <button class="view-btn active" data-view="grid"><i class="fas fa-th"></i></button>
+        <button class="view-btn" data-view="map"><i class="fas fa-map"></i></button>
+      </div>
+    </div>
 
-    <!-- Footer -->
+    <div class="properties-grid" id="propertiesGrid"></div>
+
+    <div class="empty-state" id="emptyState">
+      <i class="fas fa-house-circle-xmark"></i>
+      <h3>No vacant homes match those filters</h3>
+      <p>Try widening your price range or clearing a filter — new vacancies are added to this feed continuously.</p>
+    </div>
+
     <footer class="footer">
-        <p>Mwarokin Estates -Vacant Homes- © 2026. All Rights Reserved. Powered By: Syllogism Technology Africa.</p>
+      Mwarokin Estates — Vacant Homes © 2026. All Rights Reserved. Powered by <b>Syllogism Technology Africa</b>.
     </footer>
+  </main>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Navigation active state
-            const navItems = document.querySelectorAll('.nav-item');
-            
-            navItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    navItems.forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
+<!-- Property Detail Modal -->
+<div class="modal" id="propertyDetailModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">Property Details</h2>
+      <button class="modal-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="property-detail-grid">
+        <div class="property-detail-img"><img id="detailImg" src="" alt="Property"></div>
+        <div class="property-detail-info">
+          <h3 id="detailAddress"></h3>
+          <div class="property-price" id="detailPrice"></div>
+          <div class="property-location"><i class="fas fa-map-marker-alt"></i><span id="detailLocation"></span></div>
+          <div class="property-detail-features">
+            <div class="property-detail-feature"><i class="fas fa-bed"></i><div><strong id="detailBeds"></strong><p>Bedrooms</p></div></div>
+            <div class="property-detail-feature"><i class="fas fa-bath"></i><div><strong id="detailBaths"></strong><p>Bathrooms</p></div></div>
+            <div class="property-detail-feature"><i class="fas fa-ruler-combined"></i><div><strong id="detailArea"></strong><p>Square Feet</p></div></div>
+            <div class="property-detail-feature"><i class="fas fa-car"></i><div><strong id="detailParking"></strong><p>Parking</p></div></div>
+          </div>
+          <div class="property-description"><p id="detailDescription"></p></div>
+          <div class="property-actions">
+            <button class="btn btn-outline schedule-btn" id="detailScheduleBtn"><i class="fas fa-calendar-alt"></i>Schedule Tour</button>
+            <button class="btn btn-primary"><i class="fas fa-phone"></i>Contact Agent</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-            // Mobile menu toggle
-            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-            const sidebar = document.querySelector('.sidebar');
-            
-            mobileMenuToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('active');
-                this.querySelector('i').classList.toggle('fa-bars');
-                this.querySelector('i').classList.toggle('fa-times');
-            });
+<!-- Schedule Modal -->
+<div class="modal" id="scheduleModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">Schedule Property Tour</h2>
+      <button class="modal-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="schedule-form">
+        <div class="form-group"><label class="form-label">Property</label><input type="text" class="form-input" id="scheduleProperty" readonly></div>
+        <div class="form-group"><label class="form-label">Your Name</label><input type="text" class="form-input" placeholder="Enter your full name"></div>
+        <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" placeholder="Enter your email"></div>
+        <div class="form-group"><label class="form-label">Phone Number</label><input type="tel" class="form-input" placeholder="07XX XXX XXX"></div>
+        <div class="form-group"><label class="form-label">Preferred Date</label><input type="date" class="form-input"></div>
+        <div class="form-group">
+          <label class="form-label">Preferred Time</label>
+          <select class="form-select">
+            <option value="">Select a time</option>
+            <option>9:00 AM</option><option>10:00 AM</option><option>11:00 AM</option><option>12:00 PM</option>
+            <option>1:00 PM</option><option>2:00 PM</option><option>3:00 PM</option><option>4:00 PM</option>
+          </select>
+        </div>
+        <div class="form-group form-full"><label class="form-label">Additional Notes</label><textarea class="form-textarea" placeholder="Any special requests or questions…"></textarea></div>
+        <div class="form-group form-full">
+          <button class="btn btn-primary" style="width:100%;" id="submitScheduleBtn"><i class="fas fa-paper-plane"></i>Submit Request</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-            // View toggle (Grid/Map)
-            const viewButtons = document.querySelectorAll('.view-btn');
-            const propertiesGrid = document.querySelector('.properties-grid');
-            const mapContainer = document.querySelector('.map-container');
-            const mainContent = document.querySelector('.main-content');
-            
-            viewButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const view = this.getAttribute('data-view');
-                    
-                    viewButtons.forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    if (view === 'grid') {
-                        propertiesGrid.style.display = 'grid';
-                        mapContainer.style.display = 'none';
-                        mainContent.classList.remove('map-view');
-                    } else {
-                        propertiesGrid.style.display = 'none';
-                        mapContainer.style.display = 'block';
-                        mainContent.classList.add('map-view');
-                    }
-                });
-            });
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastText"></span></div>
 
-            // Favorite properties
-            const favoriteButtons = document.querySelectorAll('.property-favorite');
-            
-            favoriteButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    this.classList.toggle('active');
-                    
-                    const icon = this.querySelector('i');
-                    if (this.classList.contains('active')) {
-                        icon.classList.remove('far', 'fa-heart');
-                        icon.classList.add('fas', 'fa-heart');
-                    } else {
-                        icon.classList.remove('fas', 'fa-heart');
-                        icon.classList.add('far', 'fa-heart');
-                    }
-                });
-            });
+<script>
+// ---------- Property data ----------
+const properties = [
+  {id:1, type:"Apartment", address:"123 Riverside Drive", location:"Downtown, Nairobi", price:250000, beds:3, baths:2, area:1850, parking:1, furnished:true, added:1, img:"https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=1000&q=80", description:"A modern apartment in the heart of downtown with city views and premium finishes throughout. Open kitchen, quartz counters, and building amenities including a gym and rooftop terrace."},
+  {id:2, type:"Villa", address:"456 Oak Avenue", location:"Westlands, Nairobi", price:320000, beds:4, baths:3, area:2400, parking:2, furnished:false, added:4, img:"https://images.unsplash.com/photo-1513584684374-8bab748fbf90?auto=format&fit=crop&w=1000&q=80", description:"An elegant villa in the prestigious Westlands neighbourhood with a private garden, two-car garage, and a quiet cul-de-sac setting close to shopping and top schools."},
+  {id:3, type:"Studio", address:"789 Pine Road", location:"Kilimani, Nairobi", price:82000, beds:1, baths:1, area:650, parking:0, furnished:true, added:0, img:"https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1000&q=80", description:"A recently updated studio in vibrant Kilimani with hardwood floors, a compact modern kitchen, and a private balcony — steps from cafés and transit."},
+  {id:4, type:"Apartment", address:"12 Ngong Road", location:"Kilimani, Nairobi", price:145000, beds:2, baths:2, area:1200, parking:1, furnished:false, added:2, img:"https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1000&q=80", description:"Bright two-bedroom unit close to Yaya Centre, with secure parking, backup water, and 24-hour estate security."},
+  {id:5, type:"House", address:"34 Karen Close", location:"Karen, Nairobi", price:410000, beds:5, baths:4, area:3200, parking:3, furnished:false, added:6, img:"https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1000&q=80", description:"A spacious family home set on a leafy Karen plot with a mature garden, staff quarters, and borehole water supply."},
+  {id:6, type:"Studio", address:"8 Kileleshwa Lane", location:"Kileleshwa, Nairobi", price:68000, beds:1, baths:1, area:520, parking:0, furnished:true, added:0, img:"https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1000&q=80", description:"A tidy furnished studio ideal for young professionals, walking distance to Kileleshwa shopping centre."},
+  {id:7, type:"Apartment", address:"221 Lavington Green", location:"Lavington, Nairobi", price:190000, beds:3, baths:2, area:1650, parking:2, furnished:true, added:3, img:"https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1000&q=80", description:"A fully furnished three-bedroom apartment in a gated Lavington compound with pool and gym access."},
+  {id:8, type:"House", address:"5 Runda Grove", location:"Runda, Nairobi", price:520000, beds:5, baths:5, area:4100, parking:4, furnished:false, added:8, img:"https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80", description:"An executive residence in Runda's diplomatic enclave, featuring a home office, swimming pool, and manicured grounds."},
+  {id:9, type:"Villa", address:"17 Muthaiga Court", location:"Muthaiga, Nairobi", price:395000, beds:4, baths:4, area:2900, parking:2, furnished:true, added:1, img:"https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=80", description:"A fully furnished villa near Muthaiga Country Club with a private garden pavilion and staff quarters."}
+];
 
-            // Property detail modal
-            const propertyDetailModal = document.getElementById('propertyDetailModal');
-            const viewDetailButtons = document.querySelectorAll('.view-details-btn');
-            const modalCloseButtons = document.querySelectorAll('.modal-close');
-            
-            // Property data
-            const propertyData = {
-                1: {
-                    img: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-                    address: "123 Main Street",
-                    price: "$2,500/mo",
-                    location: "Downtown, Nairobi",
-                    beds: "3",
-                    baths: "2",
-                    area: "1,850",
-                    parking: "1",
-                    description: "This stunning modern apartment in the heart of downtown offers breathtaking city views and luxurious amenities. The open floor plan features high ceilings, large windows, and premium finishes throughout. The gourmet kitchen includes stainless steel appliances and quartz countertops. Building amenities include a fitness center, rooftop terrace, and 24-hour concierge service."
-                },
-                2: {
-                    img: "https://images.unsplash.com/photo-1513584684374-8bab748fbf90?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-                    address: "456 Oak Avenue",
-                    price: "$3,200/mo",
-                    location: "Westlands, Nairobi",
-                    beds: "4",
-                    baths: "3",
-                    area: "2,400",
-                    parking: "2",
-                    description: "Elegant villa in the prestigious Westlands neighborhood. This spacious home features a gourmet kitchen with custom cabinetry, a luxurious master suite with walk-in closet, and a private backyard perfect for entertaining. The property includes a two-car garage and is situated on a quiet cul-de-sac. Close to shopping, dining, and top-rated schools."
-                },
-                3: {
-                    img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-                    address: "789 Pine Road",
-                    price: "$1,800/mo",
-                    location: "Kilimani, Nairobi",
-                    beds: "2",
-                    baths: "1",
-                    area: "1,200",
-                    parking: "1",
-                    description: "Charming condo in the vibrant Kilimani area. This recently updated unit features an open floor plan with hardwood floors, modern kitchen with stainless steel appliances, and a private balcony. The building offers secure parking, a fitness center, and is within walking distance to cafes, restaurants, and public transportation. Perfect for professionals or couples."
-                }
-            };
-            
-            viewDetailButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const propertyId = this.getAttribute('data-property');
-                    const data = propertyData[propertyId];
-                    
-                    document.getElementById('detailImg').src = data.img;
-                    document.getElementById('detailAddress').textContent = data.address;
-                    document.getElementById('detailPrice').textContent = data.price;
-                    document.getElementById('detailLocation').textContent = data.location;
-                    document.getElementById('detailBeds').textContent = data.beds;
-                    document.getElementById('detailBaths').textContent = data.baths;
-                    document.getElementById('detailArea').textContent = data.area;
-                    document.getElementById('detailParking').textContent = data.parking;
-                    document.getElementById('detailDescription').textContent = data.description;
-                    
-                    // Set the property for scheduling
-                    document.getElementById('detailScheduleBtn').setAttribute('data-property', propertyId);
-                    document.getElementById('scheduleProperty').value = data.address;
-                    
-                    propertyDetailModal.classList.add('active');
-                });
-            });
-            
-            // Schedule modal
-            const scheduleModal = document.getElementById('scheduleModal');
-            const scheduleButtons = document.querySelectorAll('.schedule-btn');
-            
-            scheduleButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const propertyId = this.getAttribute('data-property');
-                    const data = propertyData[propertyId];
-                    
-                    document.getElementById('scheduleProperty').value = data.address;
-                    
-                    // Close property detail modal if open
-                    propertyDetailModal.classList.remove('active');
-                    
-                    // Open schedule modal
-                    scheduleModal.classList.add('active');
-                });
-            });
-            
-            // Close modals
-            modalCloseButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    propertyDetailModal.classList.remove('active');
-                    scheduleModal.classList.remove('active');
-                });
-            });
-            
-            // Close modal when clicking outside
-            window.addEventListener('click', function(e) {
-                if (e.target === propertyDetailModal) {
-                    propertyDetailModal.classList.remove('active');
-                }
-                if (e.target === scheduleModal) {
-                    scheduleModal.classList.remove('active');
-                }
-            });
+let favorites = new Set();
+const KES = n => "KSh " + n.toLocaleString("en-KE");
 
-            // Back to top button
-            const backToTop = document.querySelector('.back-to-top');
-            
-            window.addEventListener('scroll', function() {
-                if (window.pageYOffset > 300) {
-                    backToTop.classList.add('active');
-                } else {
-                    backToTop.classList.remove('active');
-                }
-            });
-            
-            backToTop.addEventListener('click', function(e) {
-                e.preventDefault();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
+// populate location filter
+const locSelect = document.getElementById("filterLocation");
+[...new Set(properties.map(p=>p.location.split(",")[0]))].sort().forEach(loc=>{
+  const opt = document.createElement("option");
+  opt.value = loc; opt.textContent = loc;
+  locSelect.appendChild(opt);
+});
 
-            // Filter functionality
-            const filterSelects = document.querySelectorAll('.filter-select');
-            
-            filterSelects.forEach(select => {
-                select.addEventListener('change', function() {
-                    // In a real application, this would filter the properties
-                    console.log(`Filter changed: ${this.value}`);
-                });
-            });
+const grid = document.getElementById("propertiesGrid");
+const emptyState = document.getElementById("emptyState");
+const resultCount = document.getElementById("resultCount");
+const statMatches = document.getElementById("statMatches");
+const statAvgRent = document.getElementById("statAvgRent");
 
-            // Simulate real-time updates
-            function updateStats() {
-                const stats = document.querySelectorAll('.stat-info h3');
-                
-                stats.forEach(stat => {
-                    const currentValue = parseInt(stat.textContent.replace(/[^0-9]/g, ''));
-                    const randomChange = Math.floor(Math.random() * 5) - 2; // -2 to +2
-                    const newValue = Math.max(0, currentValue + randomChange);
-                    
-                    if (newValue !== currentValue) {
-                        // Animate the number change
-                        stat.textContent = stat.textContent.replace(currentValue, newValue);
-                    }
-                });
-            }
-            
-            // Update stats every 10 seconds
-            setInterval(updateStats, 10000);
-        });
-    </script>
+let activeQuick = "all";
+let searchTerm = "";
+
+function highlight(text, term){
+  if(!term) return text;
+  const re = new RegExp("(" + term.replace(/[.*+?^${}()|[\]\\]/g,"\\$&") + ")", "ig");
+  return text.replace(re, "<mark>$1</mark>");
+}
+
+function matchesQuick(p, quick){
+  switch(quick){
+    case "under100k": return p.price < 100000;
+    case "furnished": return p.furnished;
+    case "parking": return p.parking > 0;
+    case "new": return p.added <= 2;
+    default: return true;
+  }
+}
+
+function getFiltered(){
+  const type = document.getElementById("filterType").value;
+  const priceRange = document.getElementById("filterPrice").value;
+  const beds = document.getElementById("filterBeds").value;
+  const loc = document.getElementById("filterLocation").value;
+  const term = searchTerm.trim().toLowerCase();
+
+  let list = properties.filter(p=>{
+    if(type && p.type !== type) return false;
+    if(beds && !(beds === "4" ? p.beds >= 4 : p.beds === Number(beds))) return false;
+    if(loc && !p.location.startsWith(loc)) return false;
+    if(priceRange){
+      const [min,max] = priceRange.split("-").map(Number);
+      if(p.price < min || p.price > max) return false;
+    }
+    if(!matchesQuick(p, activeQuick)) return false;
+    if(term){
+      const hay = (p.address + " " + p.location + " " + p.type).toLowerCase();
+      if(!hay.includes(term)) return false;
+    }
+    return true;
+  });
+
+  const sort = document.getElementById("sortSelect").value;
+  if(sort === "price-asc") list.sort((a,b)=>a.price-b.price);
+  else if(sort === "price-desc") list.sort((a,b)=>b.price-a.price);
+  else if(sort === "newest") list.sort((a,b)=>a.added-b.added);
+  else if(sort === "beds") list.sort((a,b)=>b.beds-a.beds);
+
+  return list;
+}
+
+function render(){
+  const list = getFiltered();
+  grid.innerHTML = "";
+
+  if(list.length === 0){
+    emptyState.classList.add("show");
+  } else {
+    emptyState.classList.remove("show");
+  }
+
+  list.forEach((p, idx)=>{
+    const card = document.createElement("div");
+    card.className = "property-card";
+    card.style.animationDelay = (idx * 0.04) + "s";
+    const isFav = favorites.has(p.id);
+    card.innerHTML = `
+      <div class="property-img">
+        <img src="${p.img}" alt="${p.address}">
+        <span class="property-badge ${p.added <= 2 ? 'status-pending' : 'status-vacant'}">${p.added <= 2 ? 'New · Vacant' : 'Vacant'}</span>
+        <div class="property-favorite ${isFav ? 'active':''}" data-id="${p.id}"><i class="${isFav ? 'fas':'far'} fa-heart"></i></div>
+        <div class="property-code">MW-${String(p.id).padStart(4,'0')}</div>
+      </div>
+      <div class="property-details">
+        <div class="property-price">${KES(p.price)}<span> /month</span></div>
+        <h3 class="property-address">${highlight(p.address, searchTerm)}</h3>
+        <div class="property-location"><i class="fas fa-map-marker-alt"></i><span>${highlight(p.location, searchTerm)}</span></div>
+        <div class="property-features">
+          <div class="feature"><i class="fas fa-bed"></i><span>${p.beds} Bed${p.beds>1?'s':''}</span></div>
+          <div class="feature"><i class="fas fa-bath"></i><span>${p.baths} Bath${p.baths>1?'s':''}</span></div>
+          <div class="feature"><i class="fas fa-ruler-combined"></i><span>${p.area.toLocaleString()} sq ft</span></div>
+        </div>
+        <div class="property-actions">
+          <button class="btn btn-outline view-details-btn" data-property="${p.id}"><i class="fas fa-eye"></i>Details</button>
+          <button class="btn btn-primary schedule-btn" data-property="${p.id}"><i class="fas fa-calendar-alt"></i>Schedule Tour</button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  resultCount.textContent = list.length;
+  statMatches.textContent = list.length;
+  document.getElementById("liveScope").textContent = properties.length;
+
+  const avg = list.length ? Math.round(list.reduce((s,p)=>s+p.price,0) / list.length) : 0;
+  statAvgRent.textContent = list.length ? "KSh " + Math.round(avg/1000) + "K" : "—";
+
+  attachCardEvents();
+}
+
+function attachCardEvents(){
+  document.querySelectorAll(".property-favorite").forEach(btn=>{
+    btn.addEventListener("click", e=>{
+      e.stopPropagation();
+      const id = Number(btn.dataset.id);
+      if(favorites.has(id)){ favorites.delete(id); } else { favorites.add(id); showToast("Added to saved homes", "fa-heart"); }
+      render();
+    });
+  });
+  document.querySelectorAll(".view-details-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=> openDetail(Number(btn.dataset.property)));
+  });
+  document.querySelectorAll(".schedule-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=> openSchedule(Number(btn.dataset.property)));
+  });
+}
+
+// ---------- Search debounce ----------
+let debounceTimer;
+const searchInput = document.getElementById("searchInput");
+const clearSearch = document.getElementById("clearSearch");
+searchInput.addEventListener("input", ()=>{
+  clearSearch.classList.toggle("show", searchInput.value.length > 0);
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(()=>{
+    searchTerm = searchInput.value;
+    render();
+  }, 180);
+});
+clearSearch.addEventListener("click", ()=>{
+  searchInput.value = ""; searchTerm = ""; clearSearch.classList.remove("show"); render();
+});
+
+// ---------- Filters ----------
+["filterType","filterPrice","filterBeds","filterLocation","sortSelect"].forEach(id=>{
+  document.getElementById(id).addEventListener("change", render);
+});
+document.getElementById("resetFilters").addEventListener("click", ()=>{
+  ["filterType","filterPrice","filterBeds","filterLocation"].forEach(id=> document.getElementById(id).value = "");
+  document.getElementById("sortSelect").value = "relevance";
+  searchInput.value = ""; searchTerm = ""; clearSearch.classList.remove("show");
+  activeQuick = "all";
+  document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
+  document.querySelector('.chip[data-quick="all"]').classList.add("active");
+  render();
+});
+
+// ---------- Quick chips ----------
+document.querySelectorAll(".chip").forEach(chip=>{
+  chip.addEventListener("click", ()=>{
+    document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
+    chip.classList.add("active");
+    activeQuick = chip.dataset.quick;
+    render();
+  });
+});
+document.querySelector('.chip[data-quick="all"]').classList.add("active");
+
+// ---------- View toggle ----------
+document.querySelectorAll(".view-btn").forEach(btn=>{
+  btn.addEventListener("click", function(){
+    document.querySelectorAll(".view-btn").forEach(b=>b.classList.remove("active"));
+    this.classList.add("active");
+    if(this.dataset.view === "map"){
+      showToast("Map view is coming soon to this workspace", "fa-map");
+      document.querySelector('.view-btn[data-view="grid"]').classList.add("active");
+      this.classList.remove("active");
+    }
+  });
+});
+
+// ---------- Modals ----------
+const detailModal = document.getElementById("propertyDetailModal");
+const scheduleModal = document.getElementById("scheduleModal");
+
+function openDetail(id){
+  const p = properties.find(x=>x.id===id);
+  document.getElementById("detailImg").src = p.img;
+  document.getElementById("detailAddress").textContent = p.address;
+  document.getElementById("detailPrice").innerHTML = KES(p.price) + " <span style='font-size:.7rem;color:var(--ivory-dim)'>/month</span>";
+  document.getElementById("detailLocation").textContent = p.location;
+  document.getElementById("detailBeds").textContent = p.beds;
+  document.getElementById("detailBaths").textContent = p.baths;
+  document.getElementById("detailArea").textContent = p.area.toLocaleString();
+  document.getElementById("detailParking").textContent = p.parking;
+  document.getElementById("detailDescription").textContent = p.description;
+  document.getElementById("detailScheduleBtn").dataset.property = id;
+  document.getElementById("scheduleProperty").value = p.address;
+  detailModal.classList.add("active");
+}
+function openSchedule(id){
+  const p = properties.find(x=>x.id===id);
+  document.getElementById("scheduleProperty").value = p.address;
+  detailModal.classList.remove("active");
+  scheduleModal.classList.add("active");
+}
+document.getElementById("detailScheduleBtn").addEventListener("click", function(){
+  openSchedule(Number(this.dataset.property));
+});
+document.querySelectorAll(".modal-close").forEach(btn=>{
+  btn.addEventListener("click", ()=>{ detailModal.classList.remove("active"); scheduleModal.classList.remove("active"); });
+});
+window.addEventListener("click", e=>{
+  if(e.target === detailModal) detailModal.classList.remove("active");
+  if(e.target === scheduleModal) scheduleModal.classList.remove("active");
+});
+document.getElementById("submitScheduleBtn").addEventListener("click", ()=>{
+  scheduleModal.classList.remove("active");
+  showToast("Tour request submitted — an agent will confirm shortly", "fa-calendar-check");
+});
+
+// ---------- Toast ----------
+let toastTimer;
+function showToast(text, icon){
+  const toast = document.getElementById("toast");
+  toast.querySelector("i").className = "fas " + icon;
+  document.getElementById("toastText").textContent = text;
+  toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> toast.classList.remove("show"), 3200);
+}
+
+// ---------- Live clock ----------
+function tickClock(){
+  const now = new Date();
+  document.getElementById("liveClock").textContent = now.toLocaleTimeString("en-KE", {hour12:false});
+}
+setInterval(tickClock, 1000); tickClock();
+
+// ---------- Simulated real-time vacancy feed ----------
+const feedMessages = [
+  "New vacancy listed in Kileleshwa",
+  "Price updated on 456 Oak Avenue",
+  "Tour requested for 789 Pine Road",
+  "Unit reserved in Lavington Green",
+  "New photos added for Runda Grove"
+];
+let feedIdx = 0;
+function pushFeed(){
+  const feed = document.getElementById("liveFeed");
+  const text = document.getElementById("liveFeedText");
+  text.textContent = feedMessages[feedIdx % feedMessages.length];
+  feed.classList.add("show");
+  feedIdx++;
+  setTimeout(()=> feed.classList.remove("show"), 4200);
+}
+setInterval(pushFeed, 7000);
+setTimeout(pushFeed, 1500);
+
+// ---------- Mobile menu ----------
+document.querySelector(".mobile-menu-toggle").addEventListener("click", function(){
+  document.querySelector(".sidebar").classList.toggle("active");
+  this.querySelector("i").classList.toggle("fa-bars");
+  this.querySelector("i").classList.toggle("fa-times");
+});
+
+// initial render
+render();
+</script>
 </body>
 </html>

@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mwarokin Estates — Architectural Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+    :root{
+        --obsidian:#07090a;
+        --obsidian-2:#0e1412;
+        --obsidian-3:#131b17;
+        --forest:#0e2b20;
+        --forest-deep:#081c15;
+        --forest-glow:#1b4a35;
+        --gold:#c8a24a;
+        --gold-bright:#ecd08e;
+        --gold-dim:#7c6530;
+        --gold-line:rgba(200,162,74,.2);
+        --gold-line-soft:rgba(200,162,74,.1);
+        --ivory:#f1ecdf;
+        --muted:#9fb0a5;
+        --muted-dim:#5c6d64;
+        --danger:#b1503f;
+        --success:#7fae7a;
+        --card:rgba(19,27,23,.7);
+        --radius-sm:9px;
+        --radius-md:15px;
+        --radius-lg:24px;
+        --shadow-card:0 20px 60px rgba(0,0,0,.5);
+        --shadow-glow:0 0 70px rgba(200,162,74,.08);
+        --transition:.35s cubic-bezier(.25,.46,.45,.94);
+        --font-display:'Syne',sans-serif;
+        --font-serif:'Cormorant Garamond',serif;
+        --font-body:'DM Sans',sans-serif;
+        --font-mono:'JetBrains Mono',monospace;
+    }
+
+    html{scroll-behavior:smooth;}
+    body{
+        font-family:var(--font-body);
+        background:var(--obsidian);
+        color:var(--ivory);
+        line-height:1.65;
+        overflow-x:hidden;
+        -webkit-font-smoothing:antialiased;
+    }
+    ::selection{background:var(--gold);color:var(--obsidian);}
+    ::-webkit-scrollbar{width:6px;}
+    ::-webkit-scrollbar-track{background:var(--obsidian);}
+    ::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:4px;}
+    ::-webkit-scrollbar-thumb:hover{background:var(--gold);}
+
+    img{max-width:100%;display:block;}
+    a{text-decoration:none;color:inherit;}
+    button{cursor:pointer;font-family:var(--font-body);border:none;background:none;color:inherit;}
+
+    /* ── Loading Bar ── */
+    .loading-bar{
+        position:fixed;top:0;left:0;width:100%;height:2px;
+        background:linear-gradient(90deg,var(--gold-dim),var(--gold-bright));
+        z-index:9999;transform:scaleX(0);transform-origin:left;transition:transform .7s ease;
+    }
+
+    /* ── Ambient glow ── */
+    .glow-orb{position:fixed;border-radius:50%;filter:blur(110px);pointer-events:none;z-index:0;opacity:.5;}
+    .glow-orb--1{width:520px;height:520px;top:-220px;right:-120px;background:rgba(200,162,74,.08);}
+    .glow-orb--2{width:440px;height:440px;bottom:-160px;left:-120px;background:rgba(27,74,53,.35);}
+
+    /* ── Header ── */
+    header{
+        position:fixed;top:0;left:0;right:0;z-index:1000;
+        padding:.9rem 2.5rem;
+        background:rgba(7,9,10,.78);
+        backdrop-filter:blur(20px) saturate(1.3);
+        border-bottom:1px solid var(--gold-line-soft);
+        display:flex;align-items:center;justify-content:space-between;
+        transition:var(--transition);
+    }
+    header.scrolled{padding:.55rem 2.5rem;background:rgba(7,9,10,.94);box-shadow:0 4px 30px rgba(0,0,0,.4);}
+
+    .logo{display:flex;align-items:center;gap:12px;font-family:var(--font-display);font-weight:700;font-size:1.3rem;letter-spacing:-.2px;}
+    .logo-icon{
+        width:38px;height:38px;border-radius:50%;
+        border:1px solid var(--gold-line);
+        display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--gold);
+        background:radial-gradient(circle at 35% 30%, rgba(200,162,74,.14), transparent 70%);
+    }
+    .logo span{color:var(--ivory);}
+    .logo .accent{color:var(--gold-bright);font-family:var(--font-serif);font-style:italic;font-weight:500;}
+
+    nav ul{display:flex;list-style:none;gap:2.1rem;}
+    nav a{font-weight:500;font-size:.86rem;letter-spacing:.02em;color:var(--muted);transition:var(--transition);position:relative;text-transform:uppercase;font-family:var(--font-mono);}
+    nav a::after{content:'';position:absolute;bottom:-6px;left:0;width:0;height:1px;background:var(--gold);transition:var(--transition);}
+    nav a:hover{color:var(--ivory);}
+    nav a:hover::after{width:100%;}
+
+    .header-actions{display:flex;align-items:center;gap:1rem;}
+
+    .btn-primary{
+        background:linear-gradient(155deg,var(--gold-bright),var(--gold));
+        color:var(--obsidian);padding:.65rem 1.6rem;border-radius:50px;font-weight:700;font-size:.85rem;
+        transition:var(--transition);box-shadow:0 4px 20px rgba(200,162,74,.25);
+        display:inline-flex;align-items:center;gap:8px;position:relative;overflow:hidden;
+    }
+    .btn-primary::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);transform:translateX(-100%);transition:.6s;}
+    .btn-primary:hover::before{transform:translateX(100%);}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(200,162,74,.35);}
+
+    .btn-outline{
+        background:transparent;color:var(--ivory);padding:.65rem 1.6rem;border-radius:50px;font-weight:600;font-size:.85rem;
+        border:1px solid var(--gold-line);transition:var(--transition);display:inline-flex;align-items:center;gap:8px;
+    }
+    .btn-outline:hover{border-color:var(--gold);background:rgba(200,162,74,.08);transform:translateY(-2px);}
+
+    .menu-toggle{display:none;font-size:1.3rem;color:var(--ivory);}
+
+    /* ── Hero ── */
+    .hero{min-height:100vh;display:flex;align-items:center;padding:7rem 2.5rem 4rem;position:relative;overflow:hidden;gap:4rem;}
+    .hero-content{flex:1;max-width:620px;z-index:2;animation:fadeUp .8s ease-out;}
+    .hero-badge{
+        display:inline-flex;align-items:center;gap:8px;
+        background:rgba(200,162,74,.1);border:1px solid var(--gold-line);
+        padding:.35rem 1rem .35rem .6rem;border-radius:50px;font-size:.75rem;font-weight:600;
+        color:var(--gold-bright);margin-bottom:1.5rem;font-family:var(--font-mono);letter-spacing:.04em;text-transform:uppercase;
+    }
+    .hero-badge i{font-size:.6rem;}
+    .hero-eyebrow{font-family:var(--font-serif);font-style:italic;color:var(--muted);font-size:1.1rem;margin-bottom:.6rem;}
+    .hero h1{font-family:var(--font-display);font-size:3.4rem;font-weight:800;line-height:1.12;letter-spacing:-1px;margin-bottom:1.4rem;}
+    .hero h1 .highlight{color:var(--gold-bright);}
+    .hero p{font-size:1.08rem;color:var(--muted);max-width:520px;line-height:1.75;margin-bottom:2.3rem;}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:1rem;}
+    .hero-meta{display:flex;gap:2rem;margin-top:2.4rem;}
+    .hero-meta .stat{font-family:var(--font-mono);}
+    .hero-meta .stat b{display:block;font-size:1.5rem;color:var(--gold-bright);font-weight:600;}
+    .hero-meta .stat span{font-size:.72rem;color:var(--muted-dim);letter-spacing:.06em;text-transform:uppercase;}
+
+    .hero-visual{flex:1;min-height:500px;position:relative;z-index:2;display:flex;align-items:center;justify-content:center;}
+    .hero-visual .scene{
+        width:100%;max-width:600px;aspect-ratio:1/.85;
+        background:radial-gradient(ellipse at 30% 40%, rgba(200,162,74,.06), transparent 70%);
+        border-radius:var(--radius-lg);border:1px solid var(--gold-line-soft);
+        display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;
+        box-shadow:var(--shadow-glow);
+    }
+    .scene::before{
+        content:'';position:absolute;inset:0;
+        background-image:linear-gradient(rgba(200,162,74,.05) 1px, transparent 1px),linear-gradient(90deg, rgba(200,162,74,.05) 1px, transparent 1px);
+        background-size:32px 32px;
+        mask-image:radial-gradient(ellipse at center, black 30%, transparent 75%);
+    }
+
+    /* 3D House */
+    .house-3d{position:relative;width:230px;height:190px;transform-style:preserve-3d;transition:transform .1s ease;cursor:grab;}
+    .house-3d:active{cursor:grabbing;}
+    .house-3d .roof{
+        width:0;height:0;border-left:135px solid transparent;border-right:135px solid transparent;
+        border-bottom:96px solid var(--gold-dim);position:absolute;top:-96px;left:-20px;
+        filter:drop-shadow(0 4px 20px rgba(0,0,0,.5));
+    }
+    .house-3d .roof::after{
+        content:'';position:absolute;top:9px;left:-125px;width:0;height:0;
+        border-left:125px solid transparent;border-right:125px solid transparent;
+        border-bottom:86px solid rgba(124,101,48,.5);
+    }
+    .house-3d .base{width:230px;height:160px;background:linear-gradient(145deg,#1b241f,#0e1512);border-radius:6px 6px 0 0;position:relative;box-shadow:0 12px 40px rgba(0,0,0,.6);border:1px solid var(--gold-line-soft);}
+    .house-3d .base .window{width:46px;height:46px;background:linear-gradient(135deg,rgba(236,208,142,.5),rgba(124,101,48,.4));border:2px solid var(--gold-dim);border-radius:6px;position:absolute;box-shadow:inset 0 0 20px rgba(0,0,0,.3), 0 0 24px rgba(200,162,74,.15);}
+    .house-3d .base .window.w1{top:26px;left:26px;}
+    .house-3d .base .window.w2{top:26px;right:26px;}
+    .house-3d .base .door{width:46px;height:74px;background:linear-gradient(145deg,#2a1f10,#150f08);position:absolute;bottom:0;left:50%;transform:translateX(-50%);border-radius:6px 6px 0 0;box-shadow:0 4px 20px rgba(0,0,0,.4);}
+    .house-3d .base .door .knob{width:9px;height:9px;background:radial-gradient(circle,var(--gold-bright),var(--gold-dim));border-radius:50%;position:absolute;top:50%;right:8px;transform:translateY(-50%);box-shadow:0 0 12px rgba(200,162,74,.5);}
+    .house-3d .base .chimney{width:22px;height:46px;background:linear-gradient(145deg,#3a2c14,#1c150a);position:absolute;top:-28px;right:20px;border-radius:4px 4px 0 0;box-shadow:0 4px 12px rgba(0,0,0,.4);}
+    .house-3d .base .chimney::after{content:'';position:absolute;top:-6px;left:-4px;width:30px;height:7px;background:#1c150a;border-radius:4px;}
+
+    .scene-label{
+        position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+        background:rgba(7,9,10,.7);backdrop-filter:blur(12px);border:1px solid var(--gold-line-soft);
+        padding:.5rem 1.2rem;border-radius:50px;font-size:.75rem;color:var(--muted);
+        display:flex;align-items:center;gap:8px;white-space:nowrap;font-family:var(--font-mono);
+    }
+    .scene-label i{color:var(--gold-bright);}
+
+    /* ── Section Common ── */
+    section{padding:6rem 2.5rem;position:relative;z-index:1;}
+    .section-header{text-align:center;max-width:700px;margin:0 auto 3.6rem;}
+    .section-header .tag{
+        display:inline-block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.6px;
+        color:var(--gold-bright);background:rgba(200,162,74,.1);padding:.3rem 1rem;border-radius:50px;margin-bottom:1rem;
+        font-family:var(--font-mono);
+    }
+    .section-header h2{font-family:var(--font-display);font-size:2.5rem;font-weight:700;letter-spacing:-.6px;line-height:1.18;margin-bottom:.9rem;}
+    .section-header h2 .highlight{color:var(--gold-bright);}
+    .section-header p{color:var(--muted);font-size:1.05rem;line-height:1.75;}
+
+    /* ── Features ── */
+    .features{background:var(--obsidian-2);border-top:1px solid var(--gold-line-soft);border-bottom:1px solid var(--gold-line-soft);}
+    .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.8rem;max-width:1300px;margin:0 auto;}
+    .feature-card{
+        background:var(--card);border:1px solid var(--gold-line-soft);border-radius:var(--radius-md);
+        padding:2.1rem 1.9rem;transition:var(--transition);position:relative;overflow:hidden;
+    }
+    .feature-card:hover{transform:translateY(-6px);border-color:var(--gold-line);box-shadow:var(--shadow-glow);}
+    .feature-card .icon{
+        width:52px;height:52px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;
+        font-size:1.3rem;color:var(--obsidian);margin-bottom:1.4rem;
+        background:linear-gradient(155deg,var(--gold-bright),var(--gold));
+        box-shadow:0 4px 18px rgba(200,162,74,.25);
+    }
+    .feature-card .inspired{
+        font-family:var(--font-mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;
+        color:var(--muted-dim);margin-bottom:.5rem;
+    }
+    .feature-card h3{font-family:var(--font-display);font-size:1.15rem;font-weight:700;margin-bottom:.6rem;}
+    .feature-card p{color:var(--muted);font-size:.93rem;line-height:1.7;}
+    .feature-card .progress{margin-top:1.1rem;height:3px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;}
+    .feature-card .progress .fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold-dim),var(--gold-bright));width:0%;transition:width 1.1s ease;}
+
+    /* ── Dashboard ── */
+    .dashboard{background:var(--obsidian);}
+    .dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.4rem;max-width:1300px;margin:0 auto;}
+    .dash-card{background:var(--card);border:1px solid var(--gold-line-soft);border-radius:var(--radius-md);padding:1.7rem 1.7rem;transition:var(--transition);}
+    .dash-card:hover{border-color:var(--gold-line);transform:translateY(-4px);box-shadow:var(--shadow-glow);}
+    .dash-card .label{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.82rem;font-weight:500;margin-bottom:.5rem;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.03em;}
+    .dash-card .value{font-family:var(--font-display);font-size:2.4rem;font-weight:700;color:var(--gold-bright);letter-spacing:-1px;}
+    .dash-card .change{font-size:.78rem;font-weight:500;margin-top:.3rem;display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);}
+    .dash-card .change.up{color:var(--success);}
+    .dash-card .bar{margin-top:1rem;height:3px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;}
+    .dash-card .bar .fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold-dim),var(--gold-bright));width:0%;transition:width 1.1s ease;}
+
+    /* ── Design Studio ── */
+    .studio{background:var(--obsidian-2);border-top:1px solid var(--gold-line-soft);border-bottom:1px solid var(--gold-line-soft);}
+    .studio-layout{display:grid;grid-template-columns:280px 1fr;gap:1.8rem;max-width:1400px;margin:0 auto;}
+    .tools-panel{background:var(--card);border:1px solid var(--gold-line-soft);border-radius:var(--radius-md);padding:1.7rem;height:fit-content;}
+    .tools-panel h3{font-family:var(--font-display);font-size:1.02rem;font-weight:700;margin-bottom:1.4rem;display:flex;align-items:center;gap:10px;color:var(--gold-bright);}
+    .tool-group{margin-bottom:1.7rem;}
+    .tool-group h4{font-size:.7rem;text-transform:uppercase;letter-spacing:.9px;color:var(--muted-dim);margin-bottom:.75rem;font-weight:700;font-family:var(--font-mono);}
+    .tool-item{
+        display:flex;align-items:center;gap:12px;padding:.65rem 1rem;border-radius:var(--radius-sm);
+        background:rgba(255,255,255,.025);border:1px solid transparent;transition:var(--transition);
+        font-size:.87rem;font-weight:500;cursor:pointer;color:var(--muted);
+    }
+    .tool-item:hover{background:rgba(200,162,74,.07);color:var(--ivory);}
+    .tool-item.active{background:rgba(200,162,74,.13);border-color:var(--gold-line);color:var(--ivory);}
+    .tool-item i{width:18px;text-align:center;color:var(--gold-bright);}
+
+    .canvas-wrap{
+        background:var(--card);border:1px solid var(--gold-line-soft);border-radius:var(--radius-md);
+        overflow:hidden;position:relative;min-height:480px;display:flex;align-items:center;justify-content:center;
+    }
+    .canvas-wrap::before{
+        content:'';position:absolute;inset:0;
+        background-image:linear-gradient(rgba(200,162,74,.04) 1px, transparent 1px),linear-gradient(90deg, rgba(200,162,74,.04) 1px, transparent 1px);
+        background-size:28px 28px;
+        mask-image:radial-gradient(ellipse at center, black 20%, transparent 78%);
+    }
+    .canvas-wrap .house-3d{transform:scale(1.08);}
+    .canvas-controls{position:absolute;bottom:20px;left:20px;display:flex;gap:9px;flex-wrap:wrap;z-index:2;}
+    .canvas-controls button{
+        background:rgba(7,9,10,.7);backdrop-filter:blur(12px);border:1px solid var(--gold-line-soft);
+        padding:.5rem 1.15rem;border-radius:50px;font-size:.76rem;font-weight:600;color:var(--muted);
+        transition:var(--transition);display:flex;align-items:center;gap:6px;font-family:var(--font-mono);
+    }
+    .canvas-controls button:hover{background:rgba(200,162,74,.14);color:var(--ivory);}
+    .canvas-controls button.active{background:linear-gradient(155deg,var(--gold-bright),var(--gold));color:var(--obsidian);border-color:transparent;}
+    .canvas-label{
+        position:absolute;top:20px;left:20px;background:rgba(7,9,10,.6);backdrop-filter:blur(12px);
+        border:1px solid var(--gold-line-soft);padding:.4rem 1rem;border-radius:50px;font-size:.72rem;color:var(--muted);
+        font-family:var(--font-mono);z-index:2;
+    }
+
+    /* ── AI Assistant ── */
+    .ai-fab{
+        position:fixed;bottom:30px;right:30px;z-index:999;width:56px;height:56px;border-radius:50%;
+        background:linear-gradient(155deg,var(--gold-bright),var(--gold));color:var(--obsidian);font-size:1.4rem;
+        box-shadow:0 6px 30px rgba(200,162,74,.35);transition:var(--transition);
+        display:flex;align-items:center;justify-content:center;border:none;
+    }
+    .ai-fab:hover{transform:scale(1.08);box-shadow:0 8px 38px rgba(200,162,74,.5);}
+    .ai-panel{
+        position:fixed;bottom:96px;right:30px;width:370px;max-width:calc(100vw - 60px);
+        background:var(--obsidian-2);border:1px solid var(--gold-line);border-radius:var(--radius-md);
+        padding:1.4rem;box-shadow:var(--shadow-card);z-index:998;display:none;backdrop-filter:blur(20px);
+    }
+    .ai-panel.open{display:block;animation:slideUp .35s ease-out;}
+    .ai-panel .header{display:flex;align-items:center;gap:12px;padding-bottom:.9rem;border-bottom:1px solid var(--gold-line-soft);margin-bottom:.9rem;}
+    .ai-panel .header i{color:var(--gold-bright);font-size:1.25rem;}
+    .ai-panel .header h4{font-family:var(--font-display);font-weight:700;font-size:1rem;}
+    .ai-panel .messages{max-height:190px;overflow-y:auto;margin-bottom:.9rem;padding-right:4px;}
+    .ai-panel .messages .msg{padding:.65rem 1rem;border-radius:var(--radius-sm);margin-bottom:.65rem;font-size:.87rem;line-height:1.5;max-width:88%;}
+    .ai-panel .messages .msg.bot{background:rgba(200,162,74,.09);border-bottom-left-radius:0;}
+    .ai-panel .messages .msg.user{background:rgba(127,174,122,.09);margin-left:auto;border-bottom-right-radius:0;}
+    .ai-panel .input-row{display:flex;gap:9px;}
+    .ai-panel .input-row input{
+        flex:1;background:rgba(255,255,255,.04);border:1px solid var(--gold-line-soft);border-radius:50px;
+        padding:.65rem 1.1rem;color:var(--ivory);font-size:.87rem;outline:none;transition:var(--transition);font-family:var(--font-body);
+    }
+    .ai-panel .input-row input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,162,74,.12);}
+    .ai-panel .input-row button{
+        width:42px;height:42px;border-radius:50%;background:linear-gradient(155deg,var(--gold-bright),var(--gold));
+        color:var(--obsidian);display:flex;align-items:center;justify-content:center;transition:var(--transition);flex-shrink:0;
+    }
+    .ai-panel .input-row button:hover{transform:scale(1.05);}
+
+    /* ── Footer ── */
+    footer{background:var(--obsidian-2);border-top:1px solid var(--gold-line-soft);padding:3.6rem 2.5rem 2rem;}
+    .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.8rem;max-width:1300px;margin:0 auto;}
+    .footer-col h4{font-family:var(--font-display);font-weight:700;font-size:.92rem;margin-bottom:1.1rem;color:var(--ivory);text-transform:uppercase;letter-spacing:.04em;}
+    .footer-col p{color:var(--muted);font-size:.88rem;line-height:1.75;max-width:320px;font-family:var(--font-serif);font-style:italic;}
+    .footer-col ul{list-style:none;}
+    .footer-col ul li{margin-bottom:.55rem;}
+    .footer-col ul a{color:var(--muted);font-size:.87rem;transition:var(--transition);}
+    .footer-col ul a:hover{color:var(--gold-bright);padding-left:4px;}
+    .footer-bottom{text-align:center;padding-top:2.2rem;margin-top:2.2rem;border-top:1px solid var(--gold-line-soft);color:var(--muted-dim);font-size:.8rem;font-family:var(--font-mono);}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes slideUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes float{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-12px) rotate(2deg);}}
+    .float-anim{animation:float 6s ease-in-out infinite;}
+
+    @media (max-width:1200px){.hero h1{font-size:2.7rem;}.footer-grid{grid-template-columns:1fr 1fr;}}
+    @media (max-width:992px){
+        .hero{flex-direction:column;text-align:center;padding-top:6rem;gap:2rem;}
+        .hero-content{max-width:100%;}
+        .hero p{max-width:100%;margin-left:auto;margin-right:auto;}
+        .hero-actions{justify-content:center;}
+        .hero-meta{justify-content:center;}
+        .hero-visual{min-height:340px;width:100%;}
+        .studio-layout{grid-template-columns:1fr;}
+        .tools-panel{order:2;}
+        .section-header h2{font-size:2rem;}
+        nav ul{display:none;}
+        .menu-toggle{display:block;}
+        .header-actions .btn-outline{display:none;}
+    }
+    @media (max-width:768px){
+        header{padding:.6rem 1.2rem;}
+        header.scrolled{padding:.4rem 1.2rem;}
+        section{padding:4rem 1.2rem;}
+        .hero{padding:5rem 1.2rem 2rem;}
+        .hero h1{font-size:2.1rem;}
+        .features-grid{grid-template-columns:1fr;}
+        .dashboard-grid{grid-template-columns:1fr 1fr;}
+        .footer-grid{grid-template-columns:1fr;gap:2rem;}
+        .ai-panel{right:12px;width:calc(100vw - 24px);bottom:88px;}
+        .house-3d{transform:scale(.75);}
+        .canvas-wrap .house-3d{transform:scale(.85);}
+    }
+    @media (max-width:480px){
+        .dashboard-grid{grid-template-columns:1fr;}
+        .hero h1{font-size:1.8rem;}
+        .btn-primary,.btn-outline{padding:.5rem 1.2rem;font-size:.78rem;}
+    }
+</style>
+</head>
+<body>
+
+<div class="loading-bar" id="loading-bar"></div>
+<div class="glow-orb glow-orb--1"></div>
+<div class="glow-orb glow-orb--2"></div>
+
+<header id="header">
+    <div class="logo">
+        <div class="logo-icon"><i class="fas fa-drafting-compass"></i></div>
+        <span>Mwarokin</span><span class="accent">&nbsp;Estates</span>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="3D rendering.html">3D Rendering</a></li>
+            <li><a href="AutomateGPRSPinLocator.html">GPRS Pin Locator</a></li>
+            <li><a href="Unmapped.html">Unmapped</a></li>
+            <li><a href="Term.html">Term</a></li>
+        </ul>
+    </nav>
+    <div class="header-actions">
+        <button class="btn-outline"><i class="fas fa-play-circle"></i> Watch Demo</button>
+        <button class="btn-primary"><i class="fas fa-rocket"></i> Try for Free</button>
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-badge"><i class="fas fa-circle" style="color:#7fae7a;font-size:.5rem;"></i> AI-Powered Design Platform</div>
+        <div class="hero-eyebrow">Architecture, coordinated end to end</div>
+        <h1>Transform Concepts into<br /><span class="highlight">Architectural Masterpieces</span></h1>
+        <p>Mwarokin Estates brings model viewing, immersive walkthroughs, field issue tracking, and site capture into one AI-assisted studio — so a concept sketch becomes a coordinated, buildable design without switching tools.</p>
+        <div class="hero-actions">
+            <button class="btn-primary"><i class="fas fa-rocket"></i> Try for Free</button>
+            <button class="btn-outline"><i class="fas fa-play-circle"></i> Watch Demo</button>
+        </div>
+        <div class="hero-meta">
+            <div class="stat"><b>4</b><span>Studio Modules</span></div>
+            <div class="stat"><b>12</b><span>Active Projects</span></div>
+            <div class="stat"><b>94%</b><span>Code Compliance</span></div>
+        </div>
+    </div>
+    <div class="hero-visual">
+        <div class="scene">
+            <div class="house-3d float-anim" id="heroHouse">
+                <div class="roof"></div>
+                <div class="base">
+                    <div class="window w1"></div>
+                    <div class="window w2"></div>
+                    <div class="door"><div class="knob"></div></div>
+                    <div class="chimney"></div>
+                </div>
+            </div>
+            <div class="scene-label"><i class="fas fa-mouse-pointer"></i> Drag to rotate · Model preview</div>
+        </div>
+    </div>
+</section>
+
+<section class="features" id="features">
+    <div class="section-header">
+        <span class="tag">Capabilities</span>
+        <h2>Built for <span class="highlight">Coordinated</span> Architecture</h2>
+        <p>From first walkthrough to final punch list — every stage of a design, in one studio.</p>
+    </div>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-cube"></i></div>
+            <div class="inspired">Model Presentation</div>
+            <h3>Instant 3D Model Viewer</h3>
+            <p>Drop in a model and present it immediately — no import wait. Clients rotate, section, and measure the design without owning any modeling software.</p>
+            <div class="progress"><div class="fill" data-width="95"></div></div>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-walking"></i></div>
+            <div class="inspired">BIM Walkthrough</div>
+            <h3>Immersive Building Walkthrough</h3>
+            <p>Walk a full BIM model room by room at true scale, with layers, storeys, and MEP systems toggled on demand — on desktop, mobile, or headset.</p>
+            <div class="progress"><div class="fill" data-width="85"></div></div>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-clipboard-check"></i></div>
+            <div class="inspired">BIM Coordination</div>
+            <h3>Field Issue Tracking</h3>
+            <p>Pin clashes and site issues directly to the model, assign them to a contractor, and track resolution — coordination and field feedback in one thread.</p>
+            <div class="progress"><div class="fill" data-width="90"></div></div>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-vector-square"></i></div>
+            <div class="inspired">Floor Scanning</div>
+            <h3>Site Capture to Floor Plan</h3>
+            <p>Walk a site with a phone and generate a measured floor plan automatically — turning an as-built survey into an editable base drawing in minutes.</p>
+            <div class="progress"><div class="fill" data-width="88"></div></div>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-robot"></i></div>
+            <div class="inspired">AI Assistance</div>
+            <h3>AI Design Assistant</h3>
+            <p>Intelligent recommendations on space planning, material selection, and structural loads — reviewed against local building codes as you design.</p>
+            <div class="progress"><div class="fill" data-width="92"></div></div>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-file-export"></i></div>
+            <div class="inspired">Interoperability</div>
+            <h3>Export &amp; Integration</h3>
+            <p>Export to DWG, OBJ, and FBX and hand off to the architectural and BIM software your consultants already use — no lock-in, no format loss.</p>
+            <div class="progress"><div class="fill" data-width="96"></div></div>
+        </div>
+    </div>
+</section>
+
+<section class="dashboard">
+    <div class="section-header">
+        <span class="tag">Analytics</span>
+        <h2>Project <span class="highlight">Performance</span></h2>
+        <p>Real-time insight into design productivity across every active build.</p>
+    </div>
+    <div class="dashboard-grid">
+        <div class="dash-card">
+            <div class="label"><i class="fas fa-project-diagram" style="color:var(--gold-bright);"></i> Active Projects</div>
+            <div class="value" id="dashProjects">12</div>
+            <div class="change up"><i class="fas fa-arrow-up"></i> +2 this month</div>
+            <div class="bar"><div class="fill" data-width="80"></div></div>
+        </div>
+        <div class="dash-card">
+            <div class="label"><i class="fas fa-clock" style="color:var(--gold-bright);"></i> Design Hours</div>
+            <div class="value" id="dashHours">156</div>
+            <div class="change up"><i class="fas fa-arrow-up"></i> +24 this week</div>
+            <div class="bar"><div class="fill" data-width="65"></div></div>
+        </div>
+        <div class="dash-card">
+            <div class="label"><i class="fas fa-chart-line" style="color:var(--success);"></i> Code Compliance</div>
+            <div class="value" id="dashEfficiency">94%</div>
+            <div class="change up"><i class="fas fa-arrow-up"></i> +5% with AI review</div>
+            <div class="bar"><div class="fill" data-width="94"></div></div>
+        </div>
+        <div class="dash-card">
+            <div class="label"><i class="fas fa-clipboard-list" style="color:var(--gold-bright);"></i> Open Field Issues</div>
+            <div class="value" id="dashSavings">7</div>
+            <div class="change up"><i class="fas fa-arrow-down"></i> Down from 19</div>
+            <div class="bar"><div class="fill" data-width="30"></div></div>
+        </div>
+    </div>
+</section>
+
+<section class="studio">
+    <div class="section-header">
+        <span class="tag">Interactive Studio</span>
+        <h2>Design in <span class="highlight">Real-Time</span></h2>
+        <p>Drag, customize, and walk through your architectural concepts instantly.</p>
+    </div>
+    <div class="studio-layout">
+        <div class="tools-panel">
+            <h3><i class="fas fa-tools"></i> Toolbox</h3>
+            <div class="tool-group">
+                <h4>Structures</h4>
+                <div class="tool-item active"><i class="fas fa-square"></i> Walls</div>
+                <div class="tool-item"><i class="fas fa-border-all"></i> Floors</div>
+                <div class="tool-item"><i class="fas fa-home"></i> Roofs</div>
+                <div class="tool-item"><i class="fas fa-window-maximize"></i> Windows</div>
+                <div class="tool-item"><i class="fas fa-door-open"></i> Doors</div>
+            </div>
+            <div class="tool-group">
+                <h4>Materials</h4>
+                <div class="tool-item"><i class="fas fa-tree"></i> Wood</div>
+                <div class="tool-item"><i class="fas fa-cube"></i> Concrete</div>
+                <div class="tool-item"><i class="fas fa-gem"></i> Glass</div>
+                <div class="tool-item"><i class="fas fa-industry"></i> Metal</div>
+            </div>
+            <div class="tool-group">
+                <h4>Site &amp; Field</h4>
+                <div class="tool-item"><i class="fas fa-vector-square"></i> Floor Scan</div>
+                <div class="tool-item"><i class="fas fa-map-pin"></i> Issue Pin</div>
+            </div>
+            <button class="btn-primary" style="width:100%;justify-content:center;margin-top:.4rem;">
+                <i class="fas fa-robot"></i> Generate with AI
+            </button>
+        </div>
+        <div class="canvas-wrap">
+            <div class="house-3d float-anim" id="studioHouse">
+                <div class="roof"></div>
+                <div class="base">
+                    <div class="window w1"></div>
+                    <div class="window w2"></div>
+                    <div class="door"><div class="knob"></div></div>
+                    <div class="chimney"></div>
+                </div>
+            </div>
+            <div class="canvas-label"><i class="fas fa-paint-brush"></i> Design Canvas</div>
+            <div class="canvas-controls">
+                <button class="active"><i class="fas fa-cube"></i> Model</button>
+                <button><i class="fas fa-walking"></i> Walkthrough</button>
+                <button><i class="fas fa-clipboard-check"></i> Issues</button>
+                <button><i class="fas fa-drafting-compass"></i> Blueprint</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<button class="ai-fab" id="aiFab"><i class="fas fa-robot"></i></button>
+<div class="ai-panel" id="aiPanel">
+    <div class="header">
+        <i class="fas fa-robot"></i>
+        <h4>AI Design Assistant</h4>
+        <span style="margin-left:auto;font-size:.68rem;color:var(--muted-dim);font-family:var(--font-mono);">
+            <i class="fas fa-circle" style="color:var(--success);font-size:.5rem;"></i> Online
+        </span>
+    </div>
+    <div class="messages" id="aiMessages">
+        <div class="msg bot">👋 Hello! I'm your AI design assistant. How can I help with your project today?</div>
+    </div>
+    <div class="input-row">
+        <input type="text" id="aiInput" placeholder="Ask about design, materials, or codes…" />
+        <button id="aiSend"><i class="fas fa-paper-plane"></i></button>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-grid">
+        <div class="footer-col">
+            <div class="logo" style="margin-bottom:1rem;">
+                <div class="logo-icon"><i class="fas fa-drafting-compass"></i></div>
+                <span>Mwarokin</span>
+            </div>
+            <p>Transforming architectural design with AI-powered tools for professionals and homeowners. Create, coordinate, and build with confidence.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Products</h4>
+            <ul>
+                <li><a href="#">Home Design</a></li>
+                <li><a href="#">Commercial Design</a></li>
+                <li><a href="#">Walkthrough Mode</a></li>
+                <li><a href="#">Site Capture</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Resources</h4>
+            <ul>
+                <li><a href="#">Documentation</a></li>
+                <li><a href="#">Tutorials</a></li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#">Support</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Company</h4>
+            <ul>
+                <li><a href="Selling.html">Selling Property</a></li>
+                <li><a href="Buying.html">Buying Property</a></li>
+                <li><a href="tenant.html">Rent Property</a></li>
+                <li><a href="VacancyLocator.html">Vacancy Locator</a></li>
+                <li><a href="CalculatePendingRent.html">Calculate Rent</a></li>
+                <li><a href="LanguageSupport.html">Language Support</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">Mwarokin Estates &copy; 2026 — Powered by Syllogism Technology Africa</div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const loadingBar = document.getElementById('loading-bar');
+    loadingBar.style.transform = 'scaleX(1)';
+    setTimeout(() => { loadingBar.style.transform = 'scaleX(0)'; }, 900);
+
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+        header.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    const menuToggle = document.getElementById('menuToggle');
+    if (menuToggle) {
+        menuToggle.addEventListener('click', () => {
+            const nav = document.querySelector('nav ul');
+            nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
+        });
+    }
+
+    const houses = document.querySelectorAll('.house-3d');
+    houses.forEach(house => {
+        let isDragging = false;
+        let prevX = 0;
+        let rotY = 0;
+
+        house.addEventListener('mousedown', (e) => {
+            isDragging = true; prevX = e.clientX; house.style.cursor = 'grabbing';
+        });
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const delta = e.clientX - prevX;
+            rotY += delta * 0.4;
+            house.style.transform = `rotateY(${rotY}deg)`;
+            prevX = e.clientX;
+        });
+        window.addEventListener('mouseup', () => {
+            if (isDragging) { isDragging = false; house.style.cursor = 'grab'; }
+        });
+        house.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0]; isDragging = true; prevX = touch.clientX;
+        }, { passive: true });
+        house.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            const touch = e.touches[0];
+            const delta = touch.clientX - prevX;
+            rotY += delta * 0.4;
+            house.style.transform = `rotateY(${rotY}deg)`;
+            prevX = touch.clientX;
+        }, { passive: true });
+        house.addEventListener('touchend', () => { isDragging = false; }, { passive: true });
+    });
+
+    const fillBars = document.querySelectorAll('.fill');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const el = entry.target;
+                const w = el.getAttribute('data-width');
+                if (w) { el.style.width = '0%'; setTimeout(() => { el.style.width = w + '%'; }, 200); }
+            }
+        });
+    }, { threshold: 0.3 });
+    fillBars.forEach(bar => observer.observe(bar));
+
+    function updateDash() {
+        const projects = document.getElementById('dashProjects');
+        const hours = document.getElementById('dashHours');
+        const eff = document.getElementById('dashEfficiency');
+        const issues = document.getElementById('dashSavings');
+        if (projects) {
+            const val = parseInt(projects.textContent) + (Math.random() > 0.6 ? 1 : 0);
+            projects.textContent = val > 0 ? val : 10;
+        }
+        if (hours) {
+            hours.textContent = parseInt(hours.textContent) + Math.floor(Math.random() * 3);
+        }
+        if (eff) {
+            const val = Math.min(99, parseInt(eff.textContent) + (Math.random() > 0.75 ? 1 : 0));
+            eff.textContent = val + '%';
+        }
+        if (issues) {
+            const val = Math.max(0, parseInt(issues.textContent) + (Math.random() > 0.7 ? -1 : 0));
+            issues.textContent = val;
+        }
+    }
+    setInterval(updateDash, 6000);
+
+    const aiFab = document.getElementById('aiFab');
+    const aiPanel = document.getElementById('aiPanel');
+    const aiMessages = document.getElementById('aiMessages');
+    const aiInput = document.getElementById('aiInput');
+    const aiSend = document.getElementById('aiSend');
+
+    aiFab.addEventListener('click', () => aiPanel.classList.toggle('open'));
+
+    function sendMessage() {
+        const text = aiInput.value.trim();
+        if (!text) return;
+        const userMsg = document.createElement('div');
+        userMsg.className = 'msg user';
+        userMsg.textContent = text;
+        aiMessages.appendChild(userMsg);
+        aiInput.value = '';
+        aiMessages.scrollTop = aiMessages.scrollHeight;
+
+        setTimeout(() => {
+            const responses = [
+                "Great question! Sustainable materials in the kitchen area would reduce environmental impact.",
+                "Orienting the primary windows north would improve natural lighting by roughly 30%.",
+                "The floor plan looks solid. Consider a small utility room near the entrance for better flow.",
+                "Structural loads check out — you may want extra insulation at the roofline.",
+                "Building codes are met at 94%. I can walk you through the remaining 6% if you'd like."
+            ];
+            const reply = responses[Math.floor(Math.random() * responses.length)];
+            const botMsg = document.createElement('div');
+            botMsg.className = 'msg bot';
+            botMsg.textContent = '🤖 ' + reply;
+            aiMessages.appendChild(botMsg);
+            aiMessages.scrollTop = aiMessages.scrollHeight;
+        }, 800 + Math.random() * 1200);
+    }
+
+    aiSend.addEventListener('click', sendMessage);
+    aiInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMessage(); });
+
+    document.querySelectorAll('.tool-item').forEach(item => {
+        item.addEventListener('click', function () {
+            const parent = this.closest('.tool-group');
+            if (parent) parent.querySelectorAll('.tool-item').forEach(el => el.classList.remove('active'));
+            this.classList.add('active');
+            showToast('Tool selected: ' + this.textContent.trim());
+        });
+    });
+
+    document.querySelectorAll('.canvas-controls button').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.canvas-controls button').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            showToast('View mode: ' + this.textContent.trim());
+        });
+    });
+
+    function showToast(msg) {
+        const existing = document.querySelector('.toast-msg');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'toast-msg';
+        toast.textContent = msg;
+        Object.assign(toast.style, {
+            position: 'fixed', bottom: '100px', left: '50%', transform: 'translateX(-50%)',
+            background: 'rgba(14,20,18,0.92)', backdropFilter: 'blur(16px)',
+            border: '1px solid rgba(200,162,74,.2)', padding: '.7rem 1.8rem', borderRadius: '50px',
+            fontSize: '.85rem', fontWeight: '600', fontFamily: "'JetBrains Mono', monospace",
+            color: '#ecd08e', zIndex: '9999', boxShadow: '0 8px 32px rgba(0,0,0,.5)',
+            transition: 'opacity .3s ease, transform .3s ease', opacity: '1'
+        });
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(-50%) translateY(10px)';
+            setTimeout(() => toast.remove(), 400);
+        }, 2800);
+    }
+
+    document.querySelectorAll('.btn-primary, .btn-outline').forEach(btn => {
+        btn.addEventListener('click', function () {
+            if (this.closest('.header-actions') || this.closest('.hero-actions')) {
+                showToast('Launching design studio…');
+            }
+        });
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!aiPanel.contains(e.target) && !aiFab.contains(e.target) && aiPanel.classList.contains('open')) {
+            aiPanel.classList.remove('open');
+        }
+    });
+
+    console.log('Mwarokin Estates — Architectural Design Studio loaded.');
+});
+</script>
+</body>
+</html>

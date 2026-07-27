@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mwarokin Estates · Payment Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{
+  --navy:#0e1a2b; --navy-light:#16283f; --navy-softer:#1e3352; --navy-deep:#081120;
+  --gold:#c9a959; --gold-light:#e8d5a3; --gold-dim:#8a6a2a; --gold-glow:rgba(201,169,89,.25);
+  --cream:#f8f5ee; --white:#ffffff;
+  --gray-100:#f3f1ed; --gray-200:#e8e4dc; --gray-300:#d0cbc2; --gray-600:#6b6560; --gray-800:#2d2823;
+  --green:#2f7d5e; --green-bg:#e7f3ed;
+  --amber:#b9822f; --amber-bg:#f7ecd8;
+  --red:#b3462c; --red-bg:#f6e6e1;
+  --blue:#2f5f8a; --blue-bg:#e6eef5;
+  --shadow-sm:0 4px 20px rgba(14,26,43,.08);
+  --shadow-md:0 12px 48px rgba(14,26,43,.12);
+  --shadow-lg:0 24px 64px rgba(14,26,43,.2);
+}
+*{box-sizing:border-box; font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; margin:0; padding:0;}
+.serif{font-family:'Fraunces',serif;}
+.mono{font-family:'JetBrains Mono',monospace;}
+html,body{background:var(--cream);}
+body{
+  background-image:
+    radial-gradient(ellipse at 8% 6%, rgba(201,169,89,.08) 0%, transparent 45%),
+    radial-gradient(ellipse at 96% 92%, rgba(14,26,43,.06) 0%, transparent 45%);
+  color:var(--gray-800); min-height:100vh;
+}
+.container{max-width:1240px; margin:0 auto; padding:28px 20px 60px;}
+::-webkit-scrollbar{width:10px; height:10px;}
+::-webkit-scrollbar-thumb{background:var(--gray-300); border-radius:10px;}
+
+.fade-in{animation:fadeIn .45s;} @keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+.slide-in{animation:slideIn .35s cubic-bezier(.25,.46,.45,.94) forwards;} @keyframes slideIn{from{transform:translateY(-8px) translateX(8px);opacity:0;}to{transform:translateY(0) translateX(0);opacity:1;}}
+.pop-in{animation:popIn .4s cubic-bezier(.34,1.56,.64,1) both;} @keyframes popIn{from{transform:scale(.92);opacity:0;}to{transform:scale(1);opacity:1;}}
+@keyframes pulseDot{0%,100%{opacity:1;}50%{opacity:.35;}}
+@keyframes tickerFlash{0%{background:rgba(201,169,89,.28);}100%{background:transparent;}}
+.flash{animation:tickerFlash 1s ease-out;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.spin{animation:spin 1s linear infinite;}
+
+/* ===== Card shell ===== */
+.p-card{background:var(--white); border-radius:20px; box-shadow:var(--shadow-sm); border:1px solid var(--gray-200);}
+.p-card-hover{transition:.3s cubic-bezier(.25,.46,.45,.94);}
+.p-card-hover:hover{transform:translateY(-3px); box-shadow:var(--shadow-md);}
+
+/* ===== Header ===== */
+.brand-header{background:linear-gradient(155deg, var(--navy) 0%, var(--navy-deep) 100%); border-radius:22px; padding:26px 30px; position:relative; overflow:hidden; box-shadow:var(--shadow-lg);}
+.brand-header::after{content:'';position:absolute;top:-70%;right:-6%;width:420px;height:420px;background:radial-gradient(circle, rgba(201,169,89,.14) 0%, transparent 70%);border-radius:50%;pointer-events:none;}
+.brand-header::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--gold),transparent);}
+.brand-icon{width:50px;height:50px;background:var(--gold);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--navy);flex-shrink:0; box-shadow:0 6px 18px rgba(201,169,89,.35);}
+.brand-badge{background:rgba(201,169,89,.14);border:1px solid rgba(201,169,89,.28);padding:7px 15px;border-radius:100px;font-size:11.5px;font-weight:600;color:var(--gold-light);letter-spacing:.3px;display:inline-flex;align-items:center;gap:7px;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulseDot 1.4s infinite;}
+
+/* ===== Ticker ===== */
+.rate-ticker{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:0; border-radius:16px; overflow:hidden; border:1px solid var(--gray-200); background:var(--white); box-shadow:var(--shadow-sm);}
+.rate-cell{padding:14px 16px; border-right:1px solid var(--gray-200); transition:.2s;}
+.rate-cell:last-child{border-right:none;}
+.rate-cell .rl{font-size:10.5px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:var(--gray-600); display:flex; align-items:center; gap:6px; margin-bottom:5px;}
+.rate-cell .rv{font-size:16px; font-weight:700; color:var(--navy);}
+.rate-cell .rd{font-size:11px; margin-top:2px; font-weight:600;}
+.rd.up{color:var(--green);} .rd.down{color:var(--red);}
+
+/* ===== Property/tenant selector ===== */
+.sel-field{background:var(--gray-100); border:1.5px solid var(--gray-200); border-radius:12px; padding:10px 14px;}
+.sel-field label{font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; color:var(--gray-600); display:block; margin-bottom:3px;}
+.sel-field select, .sel-field .val{font-size:14px; font-weight:600; color:var(--navy); background:transparent; border:none; width:100%; outline:none;}
+
+/* ===== Tabs ===== */
+.tab-btn{padding:9px 16px; border-radius:100px; font-size:12.5px; font-weight:700; cursor:pointer; transition:.25s; border:1.5px solid var(--gray-200); background:var(--white); color:var(--gray-600); display:inline-flex; align-items:center; gap:6px; white-space:nowrap;}
+.tab-btn.active{background:var(--navy); color:var(--white); border-color:var(--navy); box-shadow:0 4px 14px rgba(14,26,43,.25);}
+.tab-btn:hover:not(.active){border-color:var(--gold-light); color:var(--navy);}
+
+/* ===== Method selector ===== */
+.method-card{background:var(--white); border:2px solid var(--gray-200); border-radius:16px; padding:16px; cursor:pointer; transition:.3s cubic-bezier(.25,.46,.45,.94); position:relative;}
+.method-card:hover{border-color:var(--gold-light); box-shadow:var(--shadow-sm); transform:translateY(-2px);}
+.method-card.active{border-color:var(--gold); background:linear-gradient(180deg, rgba(201,169,89,.07), rgba(201,169,89,.02)); box-shadow:0 0 0 4px var(--gold-glow), var(--shadow-sm);}
+.method-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.method-card .m-check{position:absolute;top:12px;right:12px;width:19px;height:19px;border-radius:50%;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:9.5px;opacity:0;transform:scale(.6);transition:.3s;}
+.method-card.active .m-check{opacity:1;transform:scale(1);}
+.method-fee{font-size:10.5px; margin-top:6px; font-weight:700; color:var(--gold-dim);}
+
+/* ===== Forms ===== */
+.p-label{font-size:12px; font-weight:700; color:var(--navy); letter-spacing:.2px; display:flex; align-items:center; gap:6px; margin-bottom:6px;}
+.p-input, .p-select{width:100%; border:1.5px solid var(--gray-200); background:var(--gray-100); border-radius:10px; padding:11px 14px; font-size:14.5px; color:var(--gray-800); transition:.3s; outline:none;}
+.p-input:focus, .p-select:focus{border-color:var(--gold); background:var(--white); box-shadow:0 0 0 4px var(--gold-glow);}
+
+.btn-pay{width:100%; border:none; border-radius:100px; padding:14px 24px; font-weight:700; font-size:14.5px; color:var(--white); background:var(--navy); cursor:pointer; transition:.3s; display:flex; align-items:center; justify-content:center; gap:9px;}
+.btn-pay:hover:not(:disabled){background:var(--navy-softer); transform:translateY(-2px); box-shadow:0 8px 24px rgba(14,26,43,.22);}
+.btn-pay:disabled{opacity:.5; cursor:not-allowed; transform:none!important; box-shadow:none!important;}
+.btn-pay.gold{background:var(--gold); color:var(--navy);}
+.btn-pay.gold:hover:not(:disabled){background:#dbb96a; box-shadow:0 8px 24px rgba(201,169,89,.35);}
+.btn-ghost{background:transparent; border:1.5px solid var(--gray-200); border-radius:100px; padding:9px 18px; font-size:12.5px; font-weight:700; color:var(--navy); cursor:pointer; transition:.2s;}
+.btn-ghost:hover{border-color:var(--gold); background:var(--gray-100);}
+
+.info-box{border-radius:14px; padding:16px 18px; margin-top:18px;}
+.info-box h3{font-size:12.5px; font-weight:700; margin-bottom:8px; display:flex; align-items:center; gap:7px;}
+.info-box li{font-size:12px; line-height:1.65;}
+
+/* Fee breakdown */
+.fee-row{display:flex; justify-content:space-between; align-items:center; padding:8px 0; font-size:12.5px; border-bottom:1px dashed var(--gray-200);}
+.fee-row:last-child{border-bottom:none;}
+.fee-row .fl{color:var(--gray-600); display:flex; align-items:center; gap:6px;}
+.fee-row .fv{font-weight:700; color:var(--navy);}
+.fee-total{display:flex; justify-content:space-between; align-items:center; padding-top:10px; margin-top:6px; border-top:2px solid var(--navy); font-size:15px;}
+.fee-total .ft-label{font-weight:700; color:var(--navy);}
+.fee-total .ft-val{font-weight:800; color:var(--gold-dim); font-family:'JetBrains Mono',monospace;}
+
+/* STK wait */
+.stk-wait{border:1.5px dashed var(--gold); background:rgba(201,169,89,.07); border-radius:14px; padding:18px; margin-top:16px; display:flex; align-items:center; gap:14px;}
+.stk-wait .stk-icon{width:40px;height:40px;border-radius:50%;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;animation:pulseStk 1.4s ease infinite;}
+@keyframes pulseStk{0%,100%{box-shadow:0 0 0 0 rgba(201,169,89,.4);}50%{box-shadow:0 0 0 10px rgba(201,169,89,0);}}
+
+/* Pills */
+.pill{padding:4px 12px; border-radius:100px; font-size:11px; font-weight:700; letter-spacing:.2px; display:inline-flex; align-items:center; gap:5px; text-transform:capitalize;}
+.pill-completed{background:var(--green-bg); color:var(--green);}
+.pill-pending, .pill-initiated{background:var(--amber-bg); color:var(--amber);}
+.pill-awaiting_confirmation{background:rgba(201,169,89,.15); color:var(--gold-dim);}
+.pill-failed{background:var(--red-bg); color:var(--red);}
+.pill-paid{background:var(--green-bg); color:var(--green);}
+.pill-unpaid{background:var(--red-bg); color:var(--red);}
+.pill-partial{background:var(--amber-bg); color:var(--amber);}
+
+/* Notifications */
+.notification{position:fixed; top:20px; right:20px; z-index:1200; max-width:380px;}
+.notif-box{border-radius:14px; padding:16px 18px; box-shadow:var(--shadow-lg); display:flex; gap:12px; align-items:flex-start; background:var(--white); border-left:4px solid var(--gold); margin-bottom:10px;}
+.notif-box.success{border-left-color:var(--green);}
+.notif-box.error{border-left-color:var(--red);}
+.notif-box.landlord{border-left-color:var(--blue);}
+.notif-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;}
+.notif-icon.info{background:var(--gold-glow); color:var(--gold-dim);}
+.notif-icon.success{background:var(--green-bg); color:var(--green);}
+.notif-icon.error{background:var(--red-bg); color:var(--red);}
+.notif-icon.landlord{background:var(--blue-bg); color:var(--blue);}
+
+/* Table */
+.p-table thead th{font-size:10.5px; font-weight:700; color:var(--gray-600); text-transform:uppercase; letter-spacing:.4px; padding:12px 16px; text-align:left; border-bottom:1.5px solid var(--gray-200); white-space:nowrap;}
+.p-table tbody td{padding:13px 16px; font-size:13px; color:var(--gray-800); border-bottom:1px solid var(--gray-200); vertical-align:middle;}
+.p-table tbody tr:hover{background:var(--gray-100);}
+.p-table tbody tr:last-child td{border-bottom:none;}
+
+/* Modal */
+.modal-overlay{position:fixed; inset:0; background:rgba(8,17,32,.6); backdrop-filter:blur(3px); z-index:1500; display:flex; align-items:center; justify-content:center; padding:20px;}
+.receipt-card{background:var(--white); border-radius:20px; max-width:420px; width:100%; box-shadow:var(--shadow-lg); overflow:hidden;}
+.receipt-head{background:linear-gradient(155deg, var(--navy), var(--navy-deep)); padding:26px; text-align:center; position:relative;}
+.receipt-check{width:56px;height:56px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--navy);margin:0 auto 12px; box-shadow:0 8px 20px rgba(201,169,89,.4);}
+.receipt-body{padding:22px 26px;}
+.receipt-row{display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px dashed var(--gray-200); font-size:13px;}
+.receipt-row:last-child{border-bottom:none;}
+.receipt-row .rl2{color:var(--gray-600);}
+.receipt-row .rv2{font-weight:700; color:var(--navy); text-align:right;}
+.barcode{height:44px; background:repeating-linear-gradient(90deg, var(--navy) 0 2px, transparent 2px 5px); border-radius:4px; margin-top:16px;}
+
+/* Bills */
+.bill-item{display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border:1px solid var(--gray-200); border-radius:12px; margin-bottom:9px; transition:.2s;}
+.bill-item:hover{border-color:var(--gold-light);}
+.bill-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+
+/* Live feed */
+.feed-item{display:flex; gap:10px; padding:11px 0; border-bottom:1px solid var(--gray-200); align-items:flex-start;}
+.feed-item:last-child{border-bottom:none;}
+.feed-avatar{width:34px;height:34px;border-radius:50%;background:var(--blue-bg);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+
+/* Currency chip */
+.ccy-chip{display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:100px; font-size:11px; font-weight:700; background:var(--gray-100); color:var(--navy); border:1px solid var(--gray-200); cursor:pointer;}
+.ccy-chip.active{background:var(--navy); color:var(--white); border-color:var(--navy);}
+
+@media(max-width:768px){.container{padding:18px 12px 44px;}}
+</style>
+</head>
+<body>
+<div id="app" class="container"></div>
+
+<script>
+/* ============================================================
+   CONFIG / STATIC DATA
+   ============================================================ */
+const BUILDINGS = [
+    { id:'KLM', name:'Kilimani Court', units:['A1','A2','B1','B2','C1'] },
+    { id:'WLM', name:'Westlands Meridian', units:['101','102','201','202'] },
+    { id:'RVL', name:'Riverside Villas', units:['V1','V2','V3'] }
+];
+
+const TENANTS = [
+    { id:'TEN-2201', name:'Aisha Wanjiru', buildingId:'KLM', unit:'A1', rent:38000, landlordId:'LL-001' },
+    { id:'TEN-2202', name:'Brian Otieno', buildingId:'KLM', unit:'A2', rent:42000, landlordId:'LL-001' },
+    { id:'TEN-2203', name:'Cynthia Mutiso', buildingId:'KLM', unit:'B1', rent:35000, landlordId:'LL-001' },
+    { id:'TEN-2301', name:'David Kiptoo', buildingId:'WLM', unit:'101', rent:65000, landlordId:'LL-002' },
+    { id:'TEN-2302', name:'Esther Nyambura', buildingId:'WLM', unit:'102', rent:58000, landlordId:'LL-002' },
+    { id:'TEN-2401', name:'Farah Hassan', buildingId:'RVL', unit:'V1', rent:90000, landlordId:'LL-003' }
+];
+
+const BANKS = [
+    { name:'Equity Bank', feeRange:[50,110] },
+    { name:'KCB Bank', feeRange:[45,105] },
+    { name:'Co-operative Bank', feeRange:[45,100] },
+    { name:'Standard Chartered', feeRange:[80,180] },
+    { name:'Absa Bank Kenya', feeRange:[55,120] },
+    { name:'NCBA Bank', feeRange:[50,110] }
+];
+
+const CRYPTO_COINS = [
+    { code:'BTC', name:'Bitcoin', base:6250000, vol:0.006, netFeeUsd:[3.5,9] },
+    { code:'ETH', name:'Ethereum', base:412000, vol:0.012, netFeeUsd:[1.2,4.5] },
+    { code:'USDT', name:'USDT (Tether)', base:129.4, vol:0.001, netFeeUsd:[0.5,2] },
+    { code:'LTC', name:'Litecoin', base:9850, vol:0.01, netFeeUsd:[0.05,0.3] }
+];
+
+const FX = { // base = 1 unit of currency in KES, drifts live
+    KES:1, USD:129.40, GBP:164.80, CNY:17.95
+};
+const CCY_SYMBOLS = { KES:'KSh', USD:'$', GBP:'£', CNY:'¥' };
+const CCY_LOCALE = { KES:'en-KE', USD:'en-US', GBP:'en-GB', CNY:'zh-CN' };
+
+const BILL_TEMPLATES = [
+    { key:'rent', label:'Monthly Rent', icon:'fa-house', color:'#0e1a2b', bg:'rgba(14,26,43,.07)' },
+    { key:'service', label:'Service Charge', icon:'fa-layer-group', color:'#c9a959', bg:'rgba(201,169,89,.13)' },
+    { key:'water', label:'Water Bill', icon:'fa-droplet', color:'#2f5f8a', bg:'var(--blue-bg)' },
+    { key:'garbage', label:'Waste Management', icon:'fa-trash', color:'#2f7d5e', bg:'var(--green-bg)' },
+    { key:'parking', label:'Parking Fee', icon:'fa-square-parking', color:'#b9822f', bg:'var(--amber-bg)' },
+    { key:'amenities', label:'Amenities Levy', icon:'fa-swimming-pool', color:'#b3462c', bg:'var(--red-bg)' }
+];
+
+function rid(){ return Math.random().toString(36).slice(2,10).toUpperCase(); }
+function pad(n){ return String(n).padStart(2,'0'); }
+
+/* ============================================================
+   FEE ENGINE — Ksh 1–5 platform fee + gateway-specific fees
+   ============================================================ */
+const FeeEngine = {
+    // Tiered flat Mwarokin transaction fee: Ksh 1–5 regardless of currency (applied in KES equivalent)
+    platformFeeKES(amountKES){
+        if (amountKES <= 1000) return 1;
+        if (amountKES <= 5000) return 2;
+        if (amountKES <= 20000) return 3;
+        if (amountKES <= 80000) return 4;
+        return 5;
+    },
+    serviceFeePct(){ return 0.5; }, // % — live "current" service rate, nudged over time
+    bankFeeKES(bankName){
+        const b = BANKS.find(x=>x.name===bankName) || BANKS[0];
+        const [lo,hi] = b.feeRange;
+        return Math.round(lo + Math.random()*(hi-lo));
+    },
+    mobileWalletFeePct(){ return 1.0; },
+    cryptoNetworkFeeUsd(coinCode){
+        const c = CRYPTO_COINS.find(x=>x.code===coinCode) || CRYPTO_COINS[0];
+        const [lo,hi] = c.netFeeUsd;
+        return +(lo + Math.random()*(hi-lo)).toFixed(2);
+    },
+    breakdown({ method, amount, currency, bankName, coinCode }){
+        const amountKES = amount * (RateEngine.fx[currency]||1);
+        const platform = FeeEngine.platformFeeKES(amountKES);
+        let gatewayFeeKES = 0, gatewayLabel = '';
+        if (method === 'bank'){
+            gatewayFeeKES = FeeEngine.bankFeeKES(bankName);
+            gatewayLabel = `${bankName||'Bank'} transfer fee`;
+        } else if (method === 'mobile'){
+            gatewayFeeKES = amountKES * (FeeEngine.mobileWalletFeePct()/100);
+            gatewayLabel = 'Mobile wallet fee (1.0%)';
+        } else if (method === 'crypto'){
+            const usdFee = FeeEngine.cryptoNetworkFeeUsd(coinCode);
+            gatewayFeeKES = usdFee * RateEngine.fx.USD;
+            gatewayLabel = `Network fee (~$${usdFee})`;
+        } else if (method === 'mpesa'){
+            gatewayFeeKES = Math.min(35, Math.max(1, amountKES*0.006));
+            gatewayLabel = 'M-Pesa transaction cost';
+        } else if (method === 'syllopay'){
+            gatewayFeeKES = amountKES * 0.003;
+            gatewayLabel = 'SylloPay routing fee (0.3%)';
+        }
+        const serviceFeeKES = amountKES * (FeeEngine.serviceFeePct()/100);
+        const totalFeeKES = platform + gatewayFeeKES + serviceFeeKES;
+        const totalKES = amountKES + totalFeeKES;
+        const toDisp = (kes)=> kes / (RateEngine.fx[currency]||1);
+        return {
+            amountKES, platformKES:platform, gatewayFeeKES, gatewayLabel, serviceFeeKES,
+            totalFeeKES, totalKES,
+            display:{
+                amount: toDisp(amountKES),
+                platform: toDisp(platform),
+                gateway: toDisp(gatewayFeeKES),
+                service: toDisp(serviceFeeKES),
+                totalFee: toDisp(totalFeeKES),
+                total: toDisp(totalKES)
+            }
+        };
+    }
+};
+
+/* ============================================================
+   LIVE RATE ENGINE — simulated real-time market data
+   ============================================================ */
+const RateEngine = {
+    fx: { ...FX },
+    crypto: CRYPTO_COINS.reduce((a,c)=>{ a[c.code]=c.base; return a; },{}),
+    mpesaCost: 12, bankAvg: 78, serviceRate: 0.5, cryptoNet: 2.1,
+    listeners: [],
+    tick(){
+        this.fx.USD = clampDrift(this.fx.USD, 129.40, 0.15);
+        this.fx.GBP = clampDrift(this.fx.GBP, 164.80, 0.22);
+        this.fx.CNY = clampDrift(this.fx.CNY, 17.95, 0.03);
+        CRYPTO_COINS.forEach(c=>{ this.crypto[c.code] = clampDrift(this.crypto[c.code], c.base, c.base*c.vol); });
+        this.mpesaCost = Math.round(clampDrift(this.mpesaCost, 12, 2));
+        this.bankAvg = Math.round(clampDrift(this.bankAvg, 78, 8));
+        this.cryptoNet = +clampDrift(this.cryptoNet, 2.1, 0.4).toFixed(2);
+        this.listeners.forEach(fn=>fn());
+    },
+    onTick(fn){ this.listeners.push(fn); },
+    start(){ setInterval(()=>this.tick(), 4000); }
+};
+function clampDrift(val, base, spread){
+    const next = val + (Math.random()-0.5)*spread*0.5;
+    const min = base - spread, max = base + spread;
+    return Math.min(max, Math.max(min, next));
+}
+
+/* ============================================================
+   BROADCAST CHANNEL + PERSISTENCE (cross-tab sync w/ landlord dashboard)
+   ============================================================ */
+const bc = ('BroadcastChannel' in window) ? new BroadcastChannel('mwarokin-payments') : null;
+const STORAGE_KEY = 'mwarokin_payment_history_v2';
+const BILLS_KEY = 'mwarokin_bills_v2';
+
+function loadPayments(){
+    try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || seedPayments(); }
+    catch(e){ return seedPayments(); }
+}
+function savePayments(list){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }catch(e){} }
+
+function seedPayments(){
+    const now = Date.now();
+    return [
+        { id:'sp_1', status:'completed', amount:12000, currency:'KES', type:'syllopay', sylloCode:'SYL-4XK92', timestamp:new Date(now-43200000).toISOString(), reference:'SYL284710', tenantId:'TEN-2201', totalFee:96, receiptNo:'MWK-000241' },
+        { id:'mp_1', status:'completed', amount:5000, currency:'KES', type:'mpesa', phone:'0712 *** 456', timestamp:new Date(now-86400000).toISOString(), reference:'MPX384729', tenantId:'TEN-2202', totalFee:37, receiptNo:'MWK-000240' },
+        { id:'bt_1', status:'completed', amount:7500, currency:'KES', type:'bank_transfer', bankName:'Equity Bank', timestamp:new Date(now-172800000).toISOString(), reference:'REF384729', tenantId:'TEN-2203', totalFee:106, receiptNo:'MWK-000239' },
+        { id:'mw_1', status:'completed', amount:3500, currency:'KES', type:'mobile_wallet', walletProvider:'Airtel Money', timestamp:new Date(now-259200000).toISOString(), tenantId:'TEN-2301', totalFee:55, receiptNo:'MWK-000238' },
+        { id:'cp_1', status:'completed', amount:100, currency:'USD', type:'crypto', cryptocurrency:'Ethereum (ETH)', timestamp:new Date(now-345600000).toISOString(), tenantId:'TEN-2401', totalFee:5.4, receiptNo:'MWK-000237' }
+    ];
+}
+
+function loadBills(){
+    try{ const b = JSON.parse(localStorage.getItem(BILLS_KEY)); if (b) return b; }catch(e){}
+    const bills = {};
+    TENANTS.forEach(t=>{
+        bills[t.id] = BILL_TEMPLATES.map(tpl=>{
+            let amt = 0;
+            if (tpl.key==='rent') amt = t.rent;
+            else if (tpl.key==='service') amt = Math.round(t.rent*0.06);
+            else if (tpl.key==='water') amt = 400 + Math.round(Math.random()*900);
+            else if (tpl.key==='garbage') amt = 300;
+            else if (tpl.key==='parking') amt = Math.random()>0.4 ? 1500 : 0;
+            else if (tpl.key==='amenities') amt = Math.round(t.rent*0.02);
+            return { ...tpl, amount:amt, status: amt===0 ? 'paid' : (Math.random()>0.55?'unpaid':(Math.random()>0.5?'partial':'paid')), month: monthLabel() };
+        }).filter(b=>b.amount>0);
+    });
+    localStorage.setItem(BILLS_KEY, JSON.stringify(bills));
+    return bills;
+}
+function monthLabel(){ return new Date().toLocaleDateString('en-KE',{month:'long',year:'numeric'}); }
+
+/* ============================================================
+   FORMATTING
+   ============================================================ */
+function formatCurrency(amount, currency){
+    try{ return new Intl.NumberFormat(CCY_LOCALE[currency]||'en-KE', { style:'currency', currency, minimumFractionDigits:2 }).format(amount); }
+    catch(e){ return `${CCY_SYMBOLS[currency]||currency} ${Number(amount).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}`; }
+}
+function fmtNum(n, dp=2){ return Number(n).toLocaleString(undefined,{minimumFractionDigits:dp,maximumFractionDigits:dp}); }
+
+/* ============================================================
+   MOCK PAYMENT SERVICE
+   ============================================================ */
+const paymentService = {
+    processBankTransfer: (data) => new Promise((resolve, reject) => setTimeout(() => {
+        if (!data.amount || data.amount <= 0) return reject(new Error('Amount must be greater than zero'));
+        if (!data.bankName) return reject(new Error('Please select a bank'));
+        resolve({ id:`bt_${rid()}`, status:'pending', type:'bank_transfer', ...data, timestamp:new Date().toISOString(), reference:`REF${Math.floor(100000+Math.random()*900000)}` });
+    }, 1500)),
+    processMpesa: (data) => new Promise((resolve, reject) => setTimeout(() => {
+        if (!data.amount || data.amount <= 0) return reject(new Error('Amount must be greater than zero'));
+        if (!/^0[71]\d{8}$/.test((data.phone||'').replace(/\s/g,''))) return reject(new Error('Enter a valid M-Pesa phone number'));
+        resolve({ id:`mp_${rid()}`, status:'pending', type:'mpesa', ...data, timestamp:new Date().toISOString(), reference:`MPX${Math.floor(100000+Math.random()*900000)}` });
+    }, 1000)),
+    processSyllopay: (data) => new Promise((resolve, reject) => setTimeout(() => {
+        if (!data.amount || data.amount <= 0) return reject(new Error('Amount must be greater than zero'));
+        if (!data.sylloCode) return reject(new Error('Enter your SylloPay ID / SylloCode'));
+        resolve({ id:`sp_${rid()}`, status:'completed', type:'syllopay', ...data, timestamp:new Date().toISOString(), reference:`SYL${Math.floor(100000+Math.random()*900000)}` });
+    }, 1300)),
+    processMobileWallet: (data) => new Promise((resolve, reject) => setTimeout(() => {
+        if (!data.amount || data.amount <= 0) return reject(new Error('Amount must be greater than zero'));
+        if (!data.walletNumber) return reject(new Error('Wallet number is required'));
+        resolve({ id:`mw_${rid()}`, status:'initiated', type:'mobile_wallet', ...data, timestamp:new Date().toISOString() });
+    }, 1200)),
+    processCryptoPayment: (data) => new Promise((resolve, reject) => setTimeout(() => {
+        if (!data.amount || data.amount <= 0) return reject(new Error('Amount must be greater than zero'));
+        const coin = CRYPTO_COINS.find(c=>data.cryptocurrency && data.cryptocurrency.startsWith(c.name)) || CRYPTO_COINS[1];
+        const rateKES = RateEngine.crypto[coin.code];
+        const amtKES = data.amount * (RateEngine.fx[data.currency]||1);
+        resolve({ id:`cp_${rid()}`, status:'awaiting_confirmation', type:'crypto', ...data, timestamp:new Date().toISOString(), cryptoAmount:(amtKES/rateKES).toFixed(8), coinCode:coin.code, address:'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh' });
+    }, 1000))
+};
+
+/* ============================================================
+   NOTIFICATIONS
+   ============================================================ */
+function showNotification(message, type = 'info', title=''){
+    const wrap = document.createElement('div');
+    wrap.className = 'notification slide-in';
+    const iconMap = { info:'fa-info-circle', success:'fa-check-circle', error:'fa-exclamation-circle', landlord:'fa-user-tie' };
+    wrap.innerHTML = `
+        <div class="notif-box ${type}">
+            <div class="notif-icon ${type}"><i class="fas ${iconMap[type]||iconMap.info}"></i></div>
+            <div class="flex-1">
+                ${title?`<div style="font-size:12.5px;font-weight:700;color:var(--navy);margin-bottom:2px;">${title}</div>`:''}
+                <p style="font-size:12.5px;line-height:1.5;color:#4a453f;">${message}</p>
+            </div>
+            <button onclick="this.closest('.notification').remove()" style="background:none;border:none;cursor:pointer;color:var(--gray-600);flex-shrink:0;">
+                <i class="fas fa-times" style="font-size:11px;"></i>
+            </button>
+        </div>`;
+    document.body.appendChild(wrap);
+    setTimeout(() => { if (wrap.parentElement) wrap.remove(); }, 6500);
+}
+
+/* ============================================================
+   MAIN APP
+   ============================================================ */
+class PaymentApp {
+    constructor(){
+        this.state = {
+            payments: loadPayments(),
+            bills: loadBills(),
+            tenantId: TENANTS[0].id,
+            selectedMethod: 'syllopay',
+            currency: 'KES',
+            isSubmitting: false,
+            stkWaiting: false,
+            activeTab: 'pay', // pay | bills | history
+            lastReceipt: null,
+            feed: [],
+            tick: 0
+        };
+        RateEngine.onTick(() => { this.state.tick++; this.renderRatesOnly(); });
+        RateEngine.start();
+        if (bc){
+            bc.onmessage = (ev) => {
+                if (ev.data && ev.data.type === 'payment-completed'){
+                    this.pushFeed(ev.data.payload, true);
+                }
+            };
+        }
+    }
+
+    init(){ this.render(); }
+    setState(patch){ this.state = { ...this.state, ...patch }; this.render(); }
+
+    currentTenant(){ return TENANTS.find(t=>t.id===this.state.tenantId) || TENANTS[0]; }
+    currentBuilding(){ const t = this.currentTenant(); return BUILDINGS.find(b=>b.id===t.buildingId); }
+    tenantBills(){ return this.state.bills[this.state.tenantId] || []; }
+    tenantDue(){ return this.tenantBills().reduce((s,b)=> s + (b.status!=='paid' ? b.amount : 0), 0); }
+
+    pushFeed(entry, external){
+        const feed = [entry, ...this.state.feed].slice(0,8);
+        this.state.feed = feed;
+        this.renderFeedOnly();
+        if (external){
+            showNotification(`${entry.tenantName} · ${entry.unit}, ${entry.buildingName} paid ${formatCurrency(entry.amount,'KES')}`, 'landlord', 'Landlord notified — new deposit');
+        }
+    }
+
+    /* ---------- RENDER ---------- */
+    render(){
+        const el = document.getElementById('app');
+        const tenant = this.currentTenant();
+        const building = this.currentBuilding();
+        el.innerHTML = `
+            ${this.renderHeader()}
+            <div style="margin-top:18px;">${this.renderRateTicker()}</div>
+            <div style="margin-top:18px;">${this.renderTenantSelector(tenant, building)}</div>
+            <div style="margin-top:18px;">${this.renderTabs()}</div>
+            <div style="margin-top:18px;" id="tabPane">${this.renderActiveTab()}</div>
+            <footer style="margin-top:32px;text-align:center;font-size:12.5px;color:var(--gray-600);">
+                Mwarokin Estates · Payments — © ${new Date().getFullYear()}. All rights reserved. Powered by Syllogism Technology Africa.
+            </footer>
+            ${this.state.lastReceipt ? this.renderReceiptModal(this.state.lastReceipt) : ''}
+        `;
+        this.setupListeners();
+    }
+
+    renderRatesOnly(){
+        const holder = document.getElementById('rateTickerHolder');
+        if (holder) holder.innerHTML = this.renderRateTicker();
+        const feeHolder = document.getElementById('feeBreakdownHolder');
+        if (feeHolder && this.state.activeTab==='pay') this.updateFeePreview();
+    }
+    renderFeedOnly(){
+        const holder = document.getElementById('feedHolder');
+        if (holder) holder.innerHTML = this.renderLiveFeedItems();
+    }
+
+    renderHeader(){
+        return `
+        <div class="brand-header">
+            <div style="position:relative;z-index:1;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:14px;">
+                <div style="display:flex;align-items:center;gap:15px;">
+                    <div class="brand-icon"><i class="fas fa-building"></i></div>
+                    <div>
+                        <h1 class="serif" style="font-size:22px;font-weight:700;color:#fff;">Mwarokin <span style="color:var(--gold);">Estates</span></h1>
+                        <p style="font-size:12.5px;margin-top:2px;color:rgba(255,255,255,.6);">Payment Portal · Real-Time Multi-Gateway Settlement</p>
+                    </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                    <div class="brand-badge"><span class="live-dot"></span> Live rates · updates every few seconds</div>
+                    <div class="brand-badge"><i class="fas fa-shield-alt"></i> Bank-grade encryption</div>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    renderRateTicker(){
+        const r = RateEngine;
+        const cells = [
+            { label:'USD → KES', value:`${fmtNum(r.fx.USD)}`, delta: r.fx.USD>=FX.USD ? '+' : '−', dir: r.fx.USD>=FX.USD?'up':'down' },
+            { label:'GBP → KES', value:`${fmtNum(r.fx.GBP)}`, delta: r.fx.GBP>=FX.GBP ? '+' : '−', dir: r.fx.GBP>=FX.GBP?'up':'down' },
+            { label:'CNY → KES', value:`${fmtNum(r.fx.CNY)}`, delta: r.fx.CNY>=FX.CNY ? '+' : '−', dir: r.fx.CNY>=FX.CNY?'up':'down' },
+            { label:'M-Pesa cost', value:`KSh ${fmtNum(r.mpesaCost,0)}`, sub:'per txn (KRA-compliant)' },
+            { label:'Bank avg. fee', value:`KSh ${fmtNum(r.bankAvg,0)}`, sub:'per transfer' },
+            { label:'Service rate', value:`${r.serviceRate.toFixed(2)}%`, sub:'of transaction' },
+            { label:'BTC → KES', value:`${fmtNum(r.crypto.BTC,0)}`, dir: 'mono' },
+            { label:'ETH → KES', value:`${fmtNum(r.crypto.ETH,0)}`, dir: 'mono' }
+        ];
+        return `<div id="rateTickerHolder"><div class="rate-ticker mono">
+            ${cells.map(c=>`
+                <div class="rate-cell flash">
+                    <div class="rl"><i class="fas fa-circle" style="font-size:5px;color:var(--gold);"></i>${c.label}</div>
+                    <div class="rv">${c.value}</div>
+                    ${c.sub?`<div class="rd" style="color:var(--gray-600);">${c.sub}</div>`:''}
+                    ${c.delta?`<div class="rd ${c.dir}"><i class="fas fa-arrow-${c.dir==='up'?'up':'down'}"></i> live</div>`:''}
+                </div>`).join('')}
+        </div></div>`;
+    }
+
+    renderTenantSelector(tenant, building){
+        return `
+        <div class="p-card" style="padding:18px 20px;">
+            <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between;">
+                <div style="display:flex;flex-wrap:wrap;gap:12px;flex:1;min-width:280px;">
+                    <div class="sel-field" style="min-width:220px;flex:1;">
+                        <label>Tenant</label>
+                        <select id="tenantSelect" class="mono">
+                            ${TENANTS.map(t=>`<option value="${t.id}" ${t.id===tenant.id?'selected':''}>${t.id} — ${t.name}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="sel-field" style="min-width:130px;">
+                        <label>Unit</label>
+                        <div class="val mono">${tenant.unit}</div>
+                    </div>
+                    <div class="sel-field" style="min-width:170px;">
+                        <label>Building</label>
+                        <div class="val">${building.name}</div>
+                    </div>
+                    <div class="sel-field" style="min-width:150px;">
+                        <label>Amount Due</label>
+                        <div class="val mono" style="color:${this.tenantDue()>0?'var(--red)':'var(--green)'};">${formatCurrency(this.tenantDue(),'KES')}</div>
+                    </div>
+                </div>
+                <div style="display:flex;gap:6px;">
+                    ${Object.keys(FX).map(c=>`<div class="ccy-chip ${this.state.currency===c?'active':''}" data-ccy="${c}">${CCY_SYMBOLS[c]} ${c}</div>`).join('')}
+                </div>
+            </div>
+        </div>`;
+    }
+
+    renderTabs(){
+        const tabs = [
+            { id:'pay', label:'Make Payment', icon:'fa-credit-card' },
+            { id:'bills', label:'Manage Bills · The Ledger', icon:'fa-file-invoice-dollar' },
+            { id:'history', label:'Payment History', icon:'fa-history' }
+        ];
+        return `<div style="display:flex;gap:8px;flex-wrap:wrap;">
+            ${tabs.map(t=>`<div class="tab-btn ${this.state.activeTab===t.id?'active':''}" data-tab="${t.id}"><i class="fas ${t.icon}"></i>${t.label}</div>`).join('')}
+        </div>`;
+    }
+
+    renderActiveTab(){
+        if (this.state.activeTab==='bills') return this.renderBillsTab();
+        if (this.state.activeTab==='history') return this.renderHistoryTab();
+        return this.renderPayTab();
+    }
+
+    /* ---------- PAY TAB ---------- */
+    renderPayTab(){
+        return `
+        <div style="display:grid;grid-template-columns:1fr;gap:18px;">
+            ${this.renderPaymentMethods()}
+            <div style="display:grid;grid-template-columns:1fr;gap:18px;" class="lg-grid">
+                <div>${this.renderMethodForm()}</div>
+                <div>${this.renderFeeAndLiveFeed()}</div>
+            </div>
+        </div>
+        <style>@media(min-width:1024px){.lg-grid{grid-template-columns:1.15fr .85fr!important;}}</style>`;
+    }
+
+    renderPaymentMethods(){
+        const r = RateEngine;
+        const methods = [
+            { id:'syllopay', name:'SylloPay', icon:'fa-globe-africa', color:'#c9a959', bg:'rgba(201,169,89,.12)', sub:'Pan-African wallet', fee:'0.3% routing fee' },
+            { id:'mpesa', name:'M-Pesa', icon:'fa-mobile-alt', color:'#0e1a2b', bg:'rgba(14,26,43,.07)', sub:'STK Push', fee:`~KSh ${fmtNum(r.mpesaCost,0)} cost` },
+            { id:'bank', name:'Bank Transfer', icon:'fa-landmark', color:'#0e1a2b', bg:'rgba(14,26,43,.07)', sub:'Direct transfer', fee:`~KSh ${fmtNum(r.bankAvg,0)} avg fee` },
+            { id:'mobile', name:'Mobile Wallet', icon:'fa-wallet', color:'#c9a959', bg:'rgba(201,169,89,.12)', sub:'Airtel, T-Kash', fee:'1.0% wallet fee' },
+            { id:'crypto', name:'Crypto', icon:'fa-coins', color:'#c9a959', bg:'rgba(201,169,89,.12)', sub:'BTC, ETH, USDT', fee:`~$${fmtNum(r.cryptoNet,1)} network fee` }
+        ];
+        return `
+        <div class="p-card" style="padding:22px;">
+            <h2 class="serif" style="font-size:17px;font-weight:700;color:var(--navy);margin-bottom:2px;"><i class="fas fa-credit-card" style="color:var(--gold);margin-right:8px;"></i>Select Payment Method</h2>
+            <p style="font-size:12.5px;color:var(--gray-600);margin-bottom:14px;">Live gateway fees update automatically as market rates change.</p>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;" class="method-grid">
+                ${methods.map(m => `
+                    <div class="method-card ${this.state.selectedMethod===m.id?'active':''}" data-method="${m.id}">
+                        <div class="m-check"><i class="fas fa-check"></i></div>
+                        <div class="method-icon" style="background:${m.bg};color:${m.color};margin-bottom:10px;"><i class="fas ${m.icon}"></i></div>
+                        <div style="font-weight:700;font-size:13.5px;color:var(--navy);">${m.name}</div>
+                        <div style="font-size:11px;color:var(--gray-600);margin-top:2px;">${m.sub}</div>
+                        <div class="method-fee mono">${m.fee}</div>
+                    </div>
+                `).join('')}
+            </div>
+            <style>@media(min-width:768px){.method-grid{grid-template-columns:repeat(5,1fr)!important;}}</style>
+        </div>`;
+    }
+
+    renderMethodForm(){
+        const m = this.state.selectedMethod;
+        if (m==='syllopay') return this.renderSyllopayForm();
+        if (m==='mpesa') return this.renderMpesaForm();
+        if (m==='bank') return this.renderBankTransferForm();
+        if (m==='mobile') return this.renderMobileWalletForm();
+        if (m==='crypto') return this.renderCryptoForm();
+        return '';
+    }
+
+    renderSyllopayForm(){
+        const cur = this.state.currency;
+        return `
+        <div class="p-card fade-in" style="padding:22px;">
+            <h2 class="serif" style="font-size:16.5px;font-weight:700;color:var(--navy);margin-bottom:16px;"><i class="fas fa-globe-africa" style="color:var(--gold);margin-right:8px;"></i>Pay with SylloPay</h2>
+            <form id="syllopayForm" style="display:flex;flex-direction:column;gap:14px;">
+                <div><label class="p-label"><i class="fas fa-id-badge"></i>SylloPay ID / SylloCode</label>
+                    <input type="text" name="sylloCode" class="p-input mono" placeholder="e.g. SYL-4XK92" required /></div>
+                <div><label class="p-label"><i class="fas fa-coins"></i>Amount (${cur})</label>
+                    <input type="number" name="amount" id="amountInput" class="p-input" placeholder="Enter amount" min="1" step="0.01" required /></div>
+                <div><label class="p-label"><i class="fas fa-tag"></i>Reference (optional)</label>
+                    <input type="text" name="reference" class="p-input" placeholder="e.g. Rent — ${this.currentBuilding().name}" /></div>
+                ${this.feeBreakdownBlock()}
+                <button type="submit" ${this.state.isSubmitting?'disabled':''} class="btn-pay gold">
+                    ${this.state.isSubmitting ? '<i class="fas fa-circle-notch spin"></i> Routing via SylloPay…' : '<i class="fas fa-paper-plane"></i> Pay with SylloPay'}
+                </button>
+            </form>
+            <div class="info-box" style="background:rgba(201,169,89,.08);border:1px solid rgba(201,169,89,.2);">
+                <h3 style="color:var(--gold-dim);"><i class="fas fa-info-circle"></i>About SylloPay</h3>
+                <ul style="list-style:disc;padding-left:18px;color:#7a5d26;">
+                    <li>Cross-border pan-African payments in local currency</li>
+                    <li>Funds settle to the landlord's linked account instantly</li>
+                    <li>Routing fee is 0.3% — among the lowest of all gateways</li>
+                </ul>
+            </div>
+        </div>`;
+    }
+
+    renderMpesaForm(){
+        return `
+        <div class="p-card fade-in" style="padding:22px;">
+            <h2 class="serif" style="font-size:16.5px;font-weight:700;color:var(--navy);margin-bottom:16px;"><i class="fas fa-mobile-alt" style="color:var(--gold);margin-right:8px;"></i>Lipa Na M-Pesa</h2>
+            <form id="mpesaForm" style="display:flex;flex-direction:column;gap:14px;">
+                <div><label class="p-label"><i class="fas fa-phone"></i>M-Pesa phone number</label>
+                    <input type="text" name="phone" class="p-input" placeholder="07XX XXX XXX" required /></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                    <div><label class="p-label"><i class="fas fa-coins"></i>Amount (KES)</label>
+                        <input type="number" name="amount" id="amountInput" class="p-input" placeholder="Enter amount" min="1" step="1" required /></div>
+                    <div><label class="p-label"><i class="fas fa-tag"></i>Account reference</label>
+                        <input type="text" name="reference" class="p-input" placeholder="${this.state.tenantId}" /></div>
+                </div>
+                ${this.feeBreakdownBlock()}
+                <button type="submit" ${this.state.isSubmitting?'disabled':''} class="btn-pay">
+                    ${this.state.isSubmitting ? '<i class="fas fa-circle-notch spin"></i> Sending STK push…' : '<i class="fas fa-satellite-dish"></i> Send STK Push'}
+                </button>
+            </form>
+            ${this.state.stkWaiting ? `
+            <div class="stk-wait">
+                <div class="stk-icon"><i class="fas fa-mobile-alt"></i></div>
+                <div>
+                    <div style="font-size:13.5px;font-weight:700;color:var(--navy);">Check your phone</div>
+                    <div style="font-size:12px;margin-top:2px;color:var(--gray-600);">Enter your M-Pesa PIN to complete the payment. This request expires shortly.</div>
+                </div>
+            </div>` : ''}
+            <div class="info-box" style="background:var(--gray-100);border:1px solid var(--gray-200);">
+                <h3 style="color:var(--navy);"><i class="fas fa-info-circle" style="color:var(--gold);"></i>M-Pesa Instructions</h3>
+                <ul style="list-style:disc;padding-left:18px;color:var(--gray-600);">
+                    <li>You'll get a prompt to enter your M-Pesa PIN</li>
+                    <li>Transaction cost is a live Safaricom-tariff figure shown above</li>
+                    <li>Payments confirm within seconds and post a receipt automatically</li>
+                </ul>
+            </div>
+        </div>`;
+    }
+
+    renderBankTransferForm(){
+        return `
+        <div class="p-card fade-in" style="padding:22px;">
+            <h2 class="serif" style="font-size:16.5px;font-weight:700;color:var(--navy);margin-bottom:16px;"><i class="fas fa-landmark" style="color:var(--gold);margin-right:8px;"></i>Bank Transfer</h2>
+            <form id="bankTransferForm" style="display:flex;flex-direction:column;gap:14px;">
+                <div><label class="p-label"><i class="fas fa-university"></i>Select bank</label>
+                    <select name="bankName" id="bankSelect" class="p-select" required>
+                        <option value="">Select your bank</option>
+                        ${BANKS.map(b => `<option value="${b.name}">${b.name}</option>`).join('')}
+                    </select></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                    <div><label class="p-label"><i class="fas fa-hashtag"></i>Account number</label>
+                        <input type="text" name="accountNumber" class="p-input" placeholder="Enter account number" required /></div>
+                    <div><label class="p-label"><i class="fas fa-id-card"></i>Account name</label>
+                        <input type="text" name="accountName" class="p-input" placeholder="Enter account name" required /></div>
+                </div>
+                <div><label class="p-label"><i class="fas fa-coins"></i>Amount (${this.state.currency})</label>
+                    <input type="number" name="amount" id="amountInput" class="p-input" placeholder="Enter amount" min="1" step="0.01" required /></div>
+                <div><label class="p-label"><i class="fas fa-tag"></i>Payment reference (optional)</label>
+                    <input type="text" name="reference" class="p-input" placeholder="e.g. ${this.state.tenantId}" /></div>
+                ${this.feeBreakdownBlock()}
+                <button type="submit" ${this.state.isSubmitting?'disabled':''} class="btn-pay">
+                    ${this.state.isSubmitting ? '<i class="fas fa-circle-notch spin"></i> Processing…' : '<i class="fas fa-paper-plane"></i> Initiate Bank Transfer'}
+                </button>
+            </form>
+            <div class="info-box" style="background:var(--gray-100);border:1px solid var(--gray-200);">
+                <h3 style="color:var(--navy);"><i class="fas fa-info-circle" style="color:var(--gold);"></i>Bank Transfer Instructions</h3>
+                <ul style="list-style:disc;padding-left:18px;color:var(--gray-600);">
+                    <li>Transfers may take 1–2 business days to process</li>
+                    <li>Bank fee shown is the live per-bank current rate</li>
+                    <li>You'll receive a receipt once the landlord's account is credited</li>
+                </ul>
+            </div>
+        </div>`;
+    }
+
+    renderMobileWalletForm(){
+        const providers = ['Airtel Money','T-Kash','MTC Money','Orange Money'];
+        return `
+        <div class="p-card fade-in" style="padding:22px;">
+            <h2 class="serif" style="font-size:16.5px;font-weight:700;color:var(--navy);margin-bottom:16px;"><i class="fas fa-wallet" style="color:var(--gold);margin-right:8px;"></i>Mobile Wallet</h2>
+            <form id="mobileWalletForm" style="display:flex;flex-direction:column;gap:14px;">
+                <div><label class="p-label"><i class="fas fa-layer-group"></i>Select provider</label>
+                    <select name="walletProvider" class="p-select" required>
+                        <option value="">Select your wallet provider</option>
+                        ${providers.map(p => `<option value="${p}">${p}</option>`).join('')}
+                    </select></div>
+                <div><label class="p-label"><i class="fas fa-phone"></i>Wallet number</label>
+                    <input type="text" name="walletNumber" class="p-input" placeholder="Enter your wallet number" required /></div>
+                <div><label class="p-label"><i class="fas fa-coins"></i>Amount (${this.state.currency})</label>
+                    <input type="number" name="amount" id="amountInput" class="p-input" placeholder="Enter amount" min="1" step="0.01" required /></div>
+                ${this.feeBreakdownBlock()}
+                <button type="submit" ${this.state.isSubmitting?'disabled':''} class="btn-pay">
+                    ${this.state.isSubmitting ? '<i class="fas fa-circle-notch spin"></i> Processing…' : '<i class="fas fa-paper-plane"></i> Initiate Payment'}
+                </button>
+            </form>
+            <div class="info-box" style="background:var(--gray-100);border:1px solid var(--gray-200);">
+                <h3 style="color:var(--navy);"><i class="fas fa-info-circle" style="color:var(--gold);"></i>Mobile Payment Instructions</h3>
+                <ul style="list-style:disc;padding-left:18px;color:var(--gray-600);">
+                    <li>You'll get a prompt on your phone to confirm the payment</li>
+                    <li>Wallet fee is a flat 1.0% of the transaction</li>
+                    <li>Transactions process instantly</li>
+                </ul>
+            </div>
+        </div>`;
+    }
+
+    renderCryptoForm(){
+        return `
+        <div class="p-card fade-in" style="padding:22px;">
+            <h2 class="serif" style="font-size:16.5px;font-weight:700;color:var(--navy);margin-bottom:16px;"><i class="fas fa-coins" style="color:var(--gold);margin-right:8px;"></i>Cryptocurrency</h2>
+            <form id="cryptoForm" style="display:flex;flex-direction:column;gap:14px;">
+                <div><label class="p-label"><i class="fas fa-coins"></i>Select cryptocurrency</label>
+                    <select name="cryptocurrency" id="coinSelect" class="p-select" required>
+                        <option value="">Select cryptocurrency</option>
+                        ${CRYPTO_COINS.map(c => `<option value="${c.name} (${c.code})">${c.name} (${c.code}) — ${fmtNum(RateEngine.crypto[c.code],0)} KES</option>`).join('')}
+                    </select></div>
+                <div><label class="p-label"><i class="fas fa-dollar-sign"></i>Amount (${this.state.currency})</label>
+                    <input type="number" name="amount" id="amountInput" class="p-input" placeholder="Enter amount" min="1" step="0.01" required /></div>
+                <div><label class="p-label"><i class="fas fa-wallet"></i>Your crypto wallet address</label>
+                    <input type="text" name="walletAddress" class="p-input mono" placeholder="Enter your wallet address" required /></div>
+                ${this.feeBreakdownBlock()}
+                <button type="submit" ${this.state.isSubmitting?'disabled':''} class="btn-pay">
+                    ${this.state.isSubmitting ? '<i class="fas fa-circle-notch spin"></i> Generating address…' : '<i class="fas fa-qrcode"></i> Get Deposit Address'}
+                </button>
+            </form>
+            <div class="info-box" style="background:var(--gray-100);border:1px solid var(--gray-200);">
+                <h3 style="color:var(--navy);"><i class="fas fa-info-circle" style="color:var(--gold);"></i>Crypto Payment Instructions</h3>
+                <ul style="list-style:disc;padding-left:18px;color:var(--gray-600);">
+                    <li>Send exactly the amount shown to the provided address</li>
+                    <li>Network fee updates live with current chain congestion</li>
+                    <li>Do not send from an exchange — use a personal wallet</li>
+                </ul>
+            </div>
+        </div>`;
+    }
+
+    feeBreakdownBlock(){
+        return `<div id="feeBreakdownHolder" class="p-card" style="padding:16px 18px;background:var(--gray-100);border:1px dashed var(--gray-300);box-shadow:none;">
+            <div style="font-size:11.5px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;"><i class="fas fa-receipt" style="color:var(--gold);margin-right:5px;"></i>Live Fee Breakdown</div>
+            <div id="feeBreakdownBody">${this.computeFeePreviewHTML(0)}</div>
+        </div>`;
+    }
+
+    computeFeePreviewHTML(amount){
+        const method = this.state.selectedMethod;
+        const currency = this.state.currency;
+        const bankSel = document.getElementById('bankSelect');
+        const coinSel = document.getElementById('coinSelect');
+        const bankName = bankSel ? bankSel.value : BANKS[0].name;
+        const coinCode = coinSel && coinSel.value ? (coinSel.value.match(/\(([^)]+)\)/)||[])[1] : 'ETH';
+        if (!amount || amount<=0){
+            return `<div style="font-size:12px;color:var(--gray-600);padding:6px 0;">Enter an amount to see the live fee breakdown.</div>`;
+        }
+        const b = FeeEngine.breakdown({ method, amount, currency, bankName, coinCode });
+        return `
+            <div class="fee-row"><span class="fl"><i class="fas fa-tag" style="color:var(--gray-600);"></i>Amount</span><span class="fv mono">${formatCurrency(b.display.amount, currency)}</span></div>
+            <div class="fee-row"><span class="fl"><i class="fas fa-building-columns" style="color:var(--gray-600);"></i>Mwarokin platform fee</span><span class="fv mono">${formatCurrency(b.display.platform, currency)}</span></div>
+            <div class="fee-row"><span class="fl"><i class="fas fa-network-wired" style="color:var(--gray-600);"></i>${b.gatewayLabel}</span><span class="fv mono">${formatCurrency(b.display.gateway, currency)}</span></div>
+            <div class="fee-row"><span class="fl"><i class="fas fa-percent" style="color:var(--gray-600);"></i>Service fee (${RateEngine.serviceRate.toFixed(2)}%)</span><span class="fv mono">${formatCurrency(b.display.service, currency)}</span></div>
+            <div class="fee-total"><span class="ft-label">Total to pay</span><span class="ft-val mono">${formatCurrency(b.display.total, currency)}</span></div>
+        `;
+    }
+
+    updateFeePreview(){
+        const input = document.getElementById('amountInput');
+        const body = document.getElementById('feeBreakdownBody');
+        if (!body) return;
+        const amount = input ? parseFloat(input.value) : 0;
+        body.innerHTML = this.computeFeePreviewHTML(amount || 0);
+    }
+
+    renderFeeAndLiveFeed(){
+        return `
+        <div style="display:flex;flex-direction:column;gap:18px;">
+            <div class="p-card" style="padding:22px;background:linear-gradient(155deg,var(--navy),var(--navy-deep));border:none;">
+                <h2 class="serif" style="font-size:16px;font-weight:700;color:#fff;margin-bottom:8px;"><i class="fas fa-bolt" style="color:var(--gold);margin-right:8px;"></i>Real-Time Settlement</h2>
+                <p style="font-size:12px;color:rgba(255,255,255,.65);margin-bottom:14px;">Every completed payment instantly notifies the landlord and posts a digital receipt.</p>
+                <ul style="display:flex;flex-direction:column;gap:9px;font-size:12.5px;color:rgba(255,255,255,.82);">
+                    <li style="display:flex;gap:8px;align-items:flex-start;"><i class="fas fa-check-circle" style="color:var(--gold);margin-top:2px;"></i>Landlord account credited on confirmation</li>
+                    <li style="display:flex;gap:8px;align-items:flex-start;"><i class="fas fa-check-circle" style="color:var(--gold);margin-top:2px;"></i>Fees quoted at live current-market rates</li>
+                    <li style="display:flex;gap:8px;align-items:flex-start;"><i class="fas fa-check-circle" style="color:var(--gold);margin-top:2px;"></i>Receipts generated automatically, every time</li>
+                </ul>
+            </div>
+            <div class="p-card" style="padding:20px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                    <h2 style="font-size:14.5px;font-weight:700;color:var(--navy);"><i class="fas fa-satellite-dish" style="color:var(--gold);margin-right:7px;"></i>Live Deposit Feed</h2>
+                    <span class="brand-badge" style="background:var(--green-bg);border-color:var(--green);color:var(--green);"><span class="live-dot" style="background:var(--green);"></span> live</span>
+                </div>
+                <div id="feedHolder">${this.renderLiveFeedItems()}</div>
+            </div>
+        </div>`;
+    }
+
+    renderLiveFeedItems(){
+        if (!this.state.feed.length){
+            return `<div style="font-size:12.5px;color:var(--gray-600);padding:14px 0;text-align:center;">No deposits yet this session. Completed payments will appear here in real time.</div>`;
+        }
+        return this.state.feed.map(f=>`
+            <div class="feed-item fade-in">
+                <div class="feed-avatar"><i class="fas fa-user"></i></div>
+                <div style="flex:1;">
+                    <div style="font-size:12.5px;font-weight:700;color:var(--navy);">${f.tenantName} <span style="font-weight:500;color:var(--gray-600);">· ${f.unit}, ${f.buildingName}</span></div>
+                    <div style="font-size:12px;color:var(--gray-600);margin-top:1px;">Paid <span class="mono" style="font-weight:700;color:var(--gold-dim);">${formatCurrency(f.amount,'KES')}</span> via ${f.method}</div>
+                    <div style="font-size:10.5px;color:var(--gray-600);margin-top:2px;">${new Date(f.timestamp).toLocaleTimeString()}</div>
+                </div>
+                <span class="pill pill-completed"><i class="fas fa-check"></i></span>
+            </div>
+        `).join('');
+    }
+
+    /* ---------- BILLS TAB (Manage Bills / The Ledger) ---------- */
+    renderBillsTab(){
+        const bills = this.tenantBills();
+        const tenant = this.currentTenant();
+        const totalDue = this.tenantDue();
+        const totalAll = bills.reduce((s,b)=>s+b.amount,0);
+        return `
+        <div class="p-card" style="padding:22px;">
+            <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px;">
+                <div>
+                    <h2 class="serif" style="font-size:17px;font-weight:700;color:var(--navy);"><i class="fas fa-file-invoice-dollar" style="color:var(--gold);margin-right:8px;"></i>Manage Bills · The Ledger</h2>
+                    <p style="font-size:12.5px;color:var(--gray-600);margin-top:2px;">${tenant.name} · ${tenant.unit}, ${this.currentBuilding().name} — ${BILL_TEMPLATES[0].month || monthLabel()}</p>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-size:10.5px;font-weight:700;text-transform:uppercase;color:var(--gray-600);letter-spacing:.4px;">Outstanding</div>
+                    <div class="mono" style="font-size:20px;font-weight:800;color:${totalDue>0?'var(--red)':'var(--green)'};">${formatCurrency(totalDue,'KES')}</div>
+                </div>
+            </div>
+            <div>
+                ${bills.map(b=>`
+                    <div class="bill-item">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div class="bill-icon" style="background:${b.bg};color:${b.color};"><i class="fas ${b.icon}"></i></div>
+                            <div>
+                                <div style="font-size:13.5px;font-weight:700;color:var(--navy);">${b.label}</div>
+                                <div style="font-size:11.5px;color:var(--gray-600);">${b.month}</div>
+                            </div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:14px;">
+                            <div class="mono" style="font-weight:700;color:var(--navy);font-size:14px;">${formatCurrency(b.amount,'KES')}</div>
+                            <span class="pill pill-${b.status}">${b.status}</span>
+                            ${b.status!=='paid' ? `<button class="btn-ghost" data-payBill="${b.key}">Pay now</button>` : ''}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:14px;border-top:2px solid var(--navy);">
+                <span style="font-weight:700;color:var(--navy);font-size:13.5px;">Total billed this month</span>
+                <span class="mono" style="font-weight:800;color:var(--gold-dim);font-size:16px;">${formatCurrency(totalAll,'KES')}</span>
+            </div>
+        </div>`;
+    }
+
+    /* ---------- HISTORY TAB ---------- */
+    renderHistoryTab(){
+        const payments = this.state.payments;
+        const typeMeta = {
+            syllopay:{icon:'fa-globe-africa', label:'SylloPay'},
+            mpesa:{icon:'fa-mobile-alt', label:'M-Pesa'},
+            bank_transfer:{icon:'fa-landmark', label:'Bank transfer'},
+            mobile_wallet:{icon:'fa-wallet', label:'Mobile wallet'},
+            crypto:{icon:'fa-coins', label:'Crypto'}
+        };
+        return `
+        <div class="p-card" style="padding:22px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+                <h2 class="serif" style="font-size:17px;font-weight:700;color:var(--navy);"><i class="fas fa-history" style="color:var(--gold);margin-right:8px;"></i>Payment History</h2>
+                <span style="font-size:11.5px;font-weight:700;padding:5px 13px;border-radius:100px;background:var(--gray-100);color:var(--gray-600);">${payments.length} payments</span>
+            </div>
+            <div style="overflow-x:auto;">
+                <table class="p-table" style="width:100%;min-width:820px;">
+                    <thead><tr><th>Receipt</th><th>Tenant</th><th>Type</th><th>Amount</th><th>Fee</th><th>Details</th><th>Status</th><th>Date</th><th></th></tr></thead>
+                    <tbody>
+                        ${payments.length ? payments.map(p => {
+                            const meta = typeMeta[p.type] || {icon:'fa-money-bill', label:p.type};
+                            const t = TENANTS.find(x=>x.id===p.tenantId);
+                            return `
+                            <tr class="fade-in">
+                                <td class="mono">${p.receiptNo||p.id}</td>
+                                <td>${t?`${t.name} <span style="color:var(--gray-600);">· ${t.unit}</span>`:'—'}</td>
+                                <td><i class="fas ${meta.icon}" style="color:var(--gold);margin-right:5px;"></i>${meta.label}</td>
+                                <td class="mono" style="font-weight:700;color:var(--navy);">${formatCurrency(p.amount, p.currency)}</td>
+                                <td class="mono" style="color:var(--gray-600);">${p.totalFee?formatCurrency(p.totalFee, p.currency):'—'}</td>
+                                <td>${p.bankName || p.walletProvider || p.cryptocurrency || p.sylloCode || p.phone || ''}</td>
+                                <td><span class="pill pill-${p.status}">${p.status.replace('_',' ')}</span></td>
+                                <td style="color:var(--gray-600);">${new Date(p.timestamp).toLocaleString()}</td>
+                                <td>${p.status==='completed'?`<button class="btn-ghost" data-viewReceipt="${p.id}">Receipt</button>`:''}</td>
+                            </tr>`;
+                        }).join('') : `<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--gray-600);">No payments found.</td></tr>`}
+                    </tbody>
+                </table>
+            </div>
+        </div>`;
+    }
+
+    /* ---------- RECEIPT MODAL ---------- */
+    renderReceiptModal(r){
+        return `
+        <div class="modal-overlay" id="receiptOverlay">
+            <div class="receipt-card pop-in">
+                <div class="receipt-head">
+                    <div class="receipt-check"><i class="fas fa-check"></i></div>
+                    <div style="color:#fff;font-weight:700;font-size:16px;" class="serif">Payment Successful</div>
+                    <div style="color:rgba(255,255,255,.6);font-size:12px;margin-top:2px;">Landlord notified · funds settling</div>
+                </div>
+                <div class="receipt-body">
+                    <div class="receipt-row"><span class="rl2">Receipt No.</span><span class="rv2 mono">${r.receiptNo}</span></div>
+                    <div class="receipt-row"><span class="rl2">Tenant</span><span class="rv2">${r.tenantName}</span></div>
+                    <div class="receipt-row"><span class="rl2">Unit / Building</span><span class="rv2">${r.unit}, ${r.buildingName}</span></div>
+                    <div class="receipt-row"><span class="rl2">Method</span><span class="rv2">${r.method}</span></div>
+                    <div class="receipt-row"><span class="rl2">Amount</span><span class="rv2 mono">${formatCurrency(r.amount, r.currency)}</span></div>
+                    <div class="receipt-row"><span class="rl2">Total fees</span><span class="rv2 mono">${formatCurrency(r.totalFee, r.currency)}</span></div>
+                    <div class="receipt-row"><span class="rl2">Total paid</span><span class="rv2 mono" style="font-weight:800;color:var(--gold-dim);">${formatCurrency(r.totalPaid, r.currency)}</span></div>
+                    <div class="receipt-row"><span class="rl2">Date</span><span class="rv2">${new Date(r.timestamp).toLocaleString()}</span></div>
+                    <div class="barcode"></div>
+                    <div style="display:flex;gap:10px;margin-top:18px;">
+                        <button class="btn-ghost" style="flex:1;" id="printReceiptBtn"><i class="fas fa-print" style="margin-right:6px;"></i>Print</button>
+                        <button class="btn-pay gold" style="flex:1;" id="closeReceiptBtn">Done</button>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    /* ---------- LISTENERS ---------- */
+    setupListeners(){
+        const tenantSelect = document.getElementById('tenantSelect');
+        if (tenantSelect) tenantSelect.addEventListener('change', e => this.setState({ tenantId:e.target.value }));
+
+        document.querySelectorAll('[data-ccy]').forEach(el => el.addEventListener('click', () => this.setState({ currency: el.getAttribute('data-ccy') })));
+        document.querySelectorAll('[data-tab]').forEach(el => el.addEventListener('click', () => this.setState({ activeTab: el.getAttribute('data-tab') })));
+        document.querySelectorAll('[data-method]').forEach(el => el.addEventListener('click', () => this.setState({ selectedMethod: el.getAttribute('data-method'), stkWaiting:false })));
+        document.querySelectorAll('[data-payBill]').forEach(el => el.addEventListener('click', () => this.setState({ activeTab:'pay' })));
+        document.querySelectorAll('[data-viewReceipt]').forEach(el => el.addEventListener('click', () => {
+            const p = this.state.payments.find(x=>x.id===el.getAttribute('data-viewReceipt'));
+            if (p) this.openReceiptFromPayment(p);
+        }));
+
+        const amountInput = document.getElementById('amountInput');
+        if (amountInput) amountInput.addEventListener('input', () => this.updateFeePreview());
+        const bankSelect = document.getElementById('bankSelect');
+        if (bankSelect) bankSelect.addEventListener('change', () => this.updateFeePreview());
+        const coinSelect = document.getElementById('coinSelect');
+        if (coinSelect) coinSelect.addEventListener('change', () => this.updateFeePreview());
+
+        const bankForm = document.getElementById('bankTransferForm');
+        if (bankForm) bankForm.addEventListener('submit', (e) => this.handleSubmit(e, 'bank'));
+        const mpesaForm = document.getElementById('mpesaForm');
+        if (mpesaForm) mpesaForm.addEventListener('submit', (e) => this.handleSubmit(e, 'mpesa'));
+        const syllopayForm = document.getElementById('syllopayForm');
+        if (syllopayForm) syllopayForm.addEventListener('submit', (e) => this.handleSubmit(e, 'syllopay'));
+        const mobileForm = document.getElementById('mobileWalletForm');
+        if (mobileForm) mobileForm.addEventListener('submit', (e) => this.handleSubmit(e, 'mobile'));
+        const cryptoForm = document.getElementById('cryptoForm');
+        if (cryptoForm) cryptoForm.addEventListener('submit', (e) => this.handleSubmit(e, 'crypto'));
+
+        const overlay = document.getElementById('receiptOverlay');
+        if (overlay){
+            const closeBtn = document.getElementById('closeReceiptBtn');
+            if (closeBtn) closeBtn.addEventListener('click', () => this.setState({ lastReceipt:null }));
+            const printBtn = document.getElementById('printReceiptBtn');
+            if (printBtn) printBtn.addEventListener('click', () => window.print());
+            overlay.addEventListener('click', (e) => { if (e.target===overlay) this.setState({ lastReceipt:null }); });
+        }
+    }
+
+    openReceiptFromPayment(p){
+        const t = TENANTS.find(x=>x.id===p.tenantId);
+        const b = t ? BUILDINGS.find(bl=>bl.id===t.buildingId) : null;
+        this.setState({ lastReceipt: {
+            receiptNo: p.receiptNo || p.id,
+            tenantName: t ? t.name : '—',
+            unit: t ? t.unit : '—',
+            buildingName: b ? b.name : '—',
+            method: p.type,
+            amount: p.amount,
+            currency: p.currency,
+            totalFee: p.totalFee || 0,
+            totalPaid: p.amount + (p.totalFee||0),
+            timestamp: p.timestamp
+        }});
+    }
+
+    async handleSubmit(e, method){
+        e.preventDefault();
+        const form = e.target;
+        const fd = new FormData(form);
+        const currency = this.state.currency;
+        const tenant = this.currentTenant();
+        const building = this.currentBuilding();
+        const amount = parseFloat(fd.get('amount'));
+
+        let data = { amount, currency, tenantId: tenant.id };
+        let serviceFn;
+        try{
+            this.setState({ isSubmitting:true });
+            if (method==='bank'){
+                data = { ...data, bankName:fd.get('bankName'), accountNumber:fd.get('accountNumber'), accountName:fd.get('accountName'), reference:fd.get('reference') };
+                serviceFn = paymentService.processBankTransfer;
+            } else if (method==='mpesa'){
+                data = { ...data, phone:fd.get('phone'), currency:'KES', reference:fd.get('reference') };
+                serviceFn = paymentService.processMpesa;
+            } else if (method==='syllopay'){
+                data = { ...data, sylloCode:fd.get('sylloCode'), reference:fd.get('reference') };
+                serviceFn = paymentService.processSyllopay;
+            } else if (method==='mobile'){
+                data = { ...data, walletProvider:fd.get('walletProvider'), walletNumber:fd.get('walletNumber') };
+                serviceFn = paymentService.processMobileWallet;
+            } else if (method==='crypto'){
+                data = { ...data, cryptocurrency:fd.get('cryptocurrency'), walletAddress:fd.get('walletAddress') };
+                serviceFn = paymentService.processCryptoPayment;
+            }
+
+            const bankNameForFee = method==='bank' ? data.bankName : (BANKS[0].name);
+            const coinCodeForFee = method==='crypto' ? (data.cryptocurrency.match(/\(([^)]+)\)/)||[])[1] : 'ETH';
+            const fee = FeeEngine.breakdown({ method, amount, currency, bankName:bankNameForFee, coinCode:coinCodeForFee });
+
+            const res = await serviceFn(data);
+            const receiptNo = `MWK-${String(100000+this.state.payments.length+1).slice(-6)}`;
+            const enriched = { ...res, totalFee: fee.display.totalFee, receiptNo, currency };
+            const payments = [enriched, ...this.state.payments];
+            savePayments(payments);
+            this.setState({ payments, isSubmitting:false, stkWaiting: method==='mpesa' });
+
+            if (method==='mpesa'){
+                showNotification(`STK push sent to ${data.phone}. Enter your M-Pesa PIN to complete payment.`, 'success');
+                setTimeout(() => this.finalizePayment(enriched, fee, tenant, building), 3800);
+            } else if (method==='crypto'){
+                showNotification(`Send exactly ${res.cryptoAmount} ${res.coinCode} to the address shown. Awaiting on-chain confirmation.`, 'info');
+                setTimeout(() => this.finalizePayment(enriched, fee, tenant, building), 5000);
+            } else if (method==='mobile'){
+                showNotification(`Mobile wallet request sent. Confirm on your phone to complete.`, 'success');
+                setTimeout(() => this.finalizePayment(enriched, fee, tenant, building), 3200);
+            } else {
+                // syllopay + bank resolve fast / already completed or pending
+                this.finalizePayment(enriched, fee, tenant, building, method==='bank');
+            }
+        } catch (err){
+            this.setState({ isSubmitting:false });
+            showNotification(err.message || 'Payment failed. Please try again.', 'error');
+        }
+    }
+
+    finalizePayment(enriched, fee, tenant, building, keepPending){
+        const status = keepPending ? 'pending' : 'completed';
+        const payments = this.state.payments.map(p => p.id===enriched.id ? { ...p, status } : p);
+        savePayments(payments);
+
+        const receipt = {
+            receiptNo: enriched.receiptNo,
+            tenantName: tenant.name,
+            unit: tenant.unit,
+            buildingName: building.name,
+            method: enriched.type.replace('_',' '),
+            amount: enriched.amount,
+            currency: enriched.currency,
+            totalFee: fee.display.totalFee,
+            totalPaid: fee.display.total,
+            timestamp: enriched.timestamp
+        };
+
+        this.setState({ payments, lastReceipt: status==='completed' ? receipt : this.state.lastReceipt });
+
+        if (status==='completed'){
+            showNotification(`${formatCurrency(enriched.amount, enriched.currency)} confirmed. Landlord ${tenant.landlordId} notified.`, 'success', 'Payment complete');
+            const feedEntry = {
+                tenantName: tenant.name, unit: tenant.unit, buildingName: building.name,
+                amount: fee.amountKES, method: enriched.type.replace('_',' '), timestamp: enriched.timestamp
+            };
+            this.pushFeed(feedEntry, false);
+            if (bc) bc.postMessage({ type:'payment-completed', payload: feedEntry });
+        } else {
+            showNotification(`Bank transfer initiated. Reference ${enriched.reference}. Awaiting bank confirmation (1–2 business days).`, 'info');
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    window.app = new PaymentApp();
+    window.app.init();
+});
+</script>
+</body>
+</html>

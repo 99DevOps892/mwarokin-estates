@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title> Marketing - Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Syne:wght@500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{
+  --forest:#0d2818; --forest-mid:#1a3d28; --forest-pale:#2e6040;
+  --gold:#c9a84c; --gold-light:#e2c27a; --gold-dim:rgba(201,168,76,.14);
+  --obsidian:#080f0b; --panel:#0f2016; --panel-2:#122a1c;
+  --line:rgba(201,168,76,.14); --line-soft:rgba(245,240,232,.08);
+  --ivory:#f5f0e8; --ivory-dim:rgba(245,240,232,.66); --ivory-mut:rgba(245,240,232,.4);
+  --success:#5cb98a; --warning:#e8a838; --info:#5fa8c9; --danger:#d6684f;
+  --fb:#1877F2; --mail:#FFE01B; --gads:#4285F4; --ac:#1a6ea8; --brevo:#0b9a6e; --lc:#2fb8a6;
+  --r-lg:18px; --r-md:12px; --r-sm:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{
+  background:
+    radial-gradient(1200px 700px at 85% -10%, rgba(201,168,76,.08), transparent 60%),
+    radial-gradient(900px 600px at -5% 110%, rgba(46,96,64,.25), transparent 60%),
+    var(--obsidian);
+  color:var(--ivory); font-family:'DM Sans',sans-serif; min-height:100vh;
+}
+::selection{background:var(--gold-dim);color:var(--gold-light);}
+.mono{font-family:'DM Mono',monospace;}
+
+/* ══ SHELL ══ */
+.shell{display:grid;grid-template-columns:248px 1fr;min-height:100vh;}
+@media (max-width:980px){.shell{grid-template-columns:1fr;}.sidebar{display:none;}}
+
+/* ══ SIDEBAR ══ */
+.sidebar{
+  background:linear-gradient(180deg,var(--panel),var(--obsidian));
+  border-right:1px solid var(--line-soft);
+  padding:26px 18px; position:sticky; top:0; height:100vh; display:flex; flex-direction:column; gap:28px;
+}
+.brand{display:flex;align-items:center;gap:10px;padding:0 6px;}
+.brand .mark{
+  width:36px;height:36px;border-radius:10px;
+  background:conic-gradient(from 220deg,var(--gold),var(--forest-pale),var(--gold-light));
+  display:flex;align-items:center;justify-content:center;color:var(--obsidian);font-size:1rem;
+  box-shadow:0 6px 22px rgba(201,168,76,.25);
+}
+.brand .txt{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;letter-spacing:.01em;line-height:1.1;}
+.brand .txt small{display:block;font-family:'DM Sans';font-weight:500;font-size:.62rem;color:var(--gold);letter-spacing:.14em;text-transform:uppercase;margin-top:2px;}
+
+.nav-group-label{font-size:.62rem;text-transform:uppercase;letter-spacing:.14em;color:var(--ivory-mut);padding:0 10px;margin-bottom:8px;}
+.nav-list{display:flex;flex-direction:column;gap:2px;}
+.nav-item{
+  display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:var(--r-sm);
+  font-size:.82rem;color:var(--ivory-dim);cursor:pointer;transition:.15s ease;border-left:2px solid transparent;
+}
+.nav-item i{width:16px;text-align:center;font-size:.85rem;color:var(--ivory-mut);}
+.nav-item:hover{background:rgba(245,240,232,.04);color:var(--ivory);}
+.nav-item.active{background:var(--gold-dim);color:var(--gold-light);border-left-color:var(--gold);}
+.nav-item.active i{color:var(--gold);}
+.nav-item .count{margin-left:auto;font-size:.62rem;background:rgba(245,240,232,.08);padding:1px 7px;border-radius:20px;color:var(--ivory-mut);}
+
+.sidebar-foot{margin-top:auto;}
+.plan-card{
+  background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r-md);padding:14px;
+}
+.plan-card .tier{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--gold-light);font-size:1.05rem;}
+.plan-card p{font-size:.68rem;color:var(--ivory-mut);margin-top:4px;line-height:1.5;}
+.plan-card button{
+  margin-top:10px;width:100%;background:transparent;border:1px solid var(--gold);color:var(--gold-light);
+  padding:7px;border-radius:50px;font-size:.7rem;font-weight:600;cursor:pointer;transition:.15s;
+}
+.plan-card button:hover{background:var(--gold-dim);}
+
+/* ══ MAIN ══ */
+.main{padding:26px 34px 60px;max-width:1400px;}
+@media (max-width:640px){.main{padding:18px 16px 50px;}}
+
+.topbar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:26px;}
+.topbar h1{font-family:'Syne',sans-serif;font-weight:700;font-size:1.35rem;}
+.topbar .sub{font-size:.76rem;color:var(--ivory-mut);margin-top:2px;}
+.topbar .spacer{flex:1;}
+
+.brand-switch{display:flex;align-items:center;gap:6px;background:var(--panel-2);border:1px solid var(--line);border-radius:50px;padding:4px;}
+.brand-pill{
+  padding:7px 14px;border-radius:50px;font-size:.72rem;font-weight:600;color:var(--ivory-mut);cursor:pointer;
+  transition:.15s ease;white-space:nowrap;
+}
+.brand-pill.active{background:linear-gradient(135deg,var(--gold),#b8924a);color:var(--forest);}
+.brand-pill:hover:not(.active){color:var(--ivory);}
+
+.icon-btn{
+  width:38px;height:38px;border-radius:10px;background:var(--panel-2);border:1px solid var(--line);
+  color:var(--ivory-dim);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;position:relative;
+}
+.icon-btn:hover{border-color:var(--gold);color:var(--gold-light);}
+.icon-btn .dot{position:absolute;top:6px;right:6px;width:6px;height:6px;border-radius:50%;background:var(--danger);}
+
+/* ══ STAT ROW ══ */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+@media (max-width:900px){.stat-row{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:480px){.stat-row{grid-template-columns:1fr;}}
+.stat-card{
+  background:var(--panel);border:1px solid var(--line-soft);border-radius:var(--r-lg);padding:18px 20px;
+  position:relative;overflow:hidden;
+}
+.stat-card::after{content:'';position:absolute;right:-30px;top:-30px;width:100px;height:100px;background:radial-gradient(circle,var(--gold-dim),transparent 70%);}
+.stat-card .lbl{font-size:.66rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ivory-mut);display:flex;align-items:center;justify-content:space-between;}
+.stat-card .lbl i{color:var(--gold);}
+.stat-card .val{font-family:'Cormorant Garamond',serif;font-size:2.1rem;color:var(--ivory);margin-top:6px;}
+.stat-card .delta{font-size:.7rem;margin-top:4px;display:flex;align-items:center;gap:4px;}
+.delta.up{color:var(--success);} .delta.down{color:var(--danger);}
+
+/* ══ SECTION HEAD ══ */
+.section-head{display:flex;align-items:baseline;justify-content:space-between;margin:34px 0 16px;}
+.section-head h2{font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;}
+.section-head .eyebrow{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;display:block;}
+.section-head a{font-size:.74rem;color:var(--ivory-mut);cursor:pointer;transition:.15s;}
+.section-head a:hover{color:var(--gold-light);}
+
+/* ══ CONFLUENCE (signature element) ══ */
+.confluence{
+  background:linear-gradient(150deg,var(--panel) 0%, var(--forest) 130%);
+  border:1px solid var(--line);border-radius:var(--r-lg);padding:28px 26px 22px;position:relative;overflow:hidden;
+}
+.confluence-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:6px;}
+.confluence-head h3{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.5rem;color:var(--ivory);}
+.confluence-head h3 em{color:var(--gold-light);font-style:italic;}
+.confluence-head p{font-size:.78rem;color:var(--ivory-mut);max-width:420px;margin-top:4px;}
+.confluence-total{text-align:right;}
+.confluence-total b{font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--gold-light);display:block;}
+.confluence-total span{font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ivory-mut);}
+
+.river-wrap{margin-top:18px;}
+.river-svg{width:100%;height:auto;display:block;}
+.source-caps{display:flex;justify-content:space-between;margin-top:6px;padding:0 2px;}
+.source-caps span{font-size:.62rem;color:var(--ivory-mut);width:14.2%;text-align:center;}
+
+/* ══ INTEGRATIONS GRID ══ */
+.int-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;}
+.int-card{
+  background:var(--panel);border:1px solid var(--line-soft);border-radius:var(--r-md);padding:16px;
+  transition:.2s ease;
+}
+.int-card:hover{border-color:var(--line);transform:translateY(-2px);}
+.int-top{display:flex;align-items:center;gap:12px;}
+.int-logo{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;color:#fff;flex-shrink:0;}
+.int-name{font-weight:700;font-size:.88rem;}
+.int-cat{font-size:.65rem;color:var(--ivory-mut);}
+.int-status{margin-left:auto;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 9px;border-radius:20px;white-space:nowrap;}
+.status-connected{background:rgba(92,185,138,.15);color:var(--success);}
+.status-available{background:rgba(245,240,232,.08);color:var(--ivory-mut);}
+.int-desc{font-size:.73rem;color:var(--ivory-dim);line-height:1.5;margin:12px 0 12px;}
+.int-metrics{display:flex;gap:16px;margin-bottom:12px;}
+.int-metrics div{font-size:.6rem;color:var(--ivory-mut);text-transform:uppercase;letter-spacing:.05em;}
+.int-metrics b{display:block;font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--ivory);font-weight:600;letter-spacing:0;}
+.int-actions{display:flex;gap:8px;}
+.int-btn{
+  flex:1;text-align:center;padding:8px;border-radius:8px;font-size:.72rem;font-weight:600;cursor:pointer;transition:.15s;
+  border:1px solid var(--line);color:var(--ivory-dim);background:transparent;
+}
+.int-btn.primary{background:linear-gradient(135deg,var(--gold),#b8924a);color:var(--forest);border:none;}
+.int-btn:hover{border-color:var(--gold);color:var(--gold-light);}
+.int-btn.primary:hover{filter:brightness(1.06);color:var(--forest);}
+
+/* ══ TWO COL LOWER ══ */
+.lower-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;}
+@media (max-width:980px){.lower-grid{grid-template-columns:1fr;}}
+
+/* campaign performance */
+.panel-card{background:var(--panel);border:1px solid var(--line-soft);border-radius:var(--r-lg);padding:20px 22px;}
+.panel-card h3{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;margin-bottom:2px;}
+.panel-card .sub{font-size:.72rem;color:var(--ivory-mut);margin-bottom:18px;}
+
+.bar-chart{display:flex;align-items:flex-end;gap:12px;height:150px;padding:0 4px;}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end;}
+.bar-stack{width:100%;max-width:34px;display:flex;flex-direction:column-reverse;border-radius:4px 4px 0 0;overflow:hidden;}
+.bar-seg{width:100%;}
+.bar-col .lbl{font-size:.62rem;color:var(--ivory-mut);}
+.chart-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:16px;font-size:.68rem;color:var(--ivory-mut);}
+.chart-legend span{display:flex;align-items:center;gap:6px;}
+.chart-legend i{width:9px;height:9px;border-radius:2px;display:inline-block;}
+
+/* pipeline */
+.pipeline-cols{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px;}
+@media (max-width:1180px) and (min-width:981px){.pipeline-cols{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:520px){.pipeline-cols{grid-template-columns:repeat(2,1fr);}}
+.pipe-col-head{font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ivory-mut);margin-bottom:8px;display:flex;justify-content:space-between;}
+.pipe-col-head b{color:var(--gold-light);font-weight:700;}
+.pipe-card{background:var(--panel-2);border:1px solid var(--line);border-left:2px solid var(--gold);border-radius:8px;padding:9px 10px;margin-bottom:8px;font-size:.7rem;}
+.pipe-card .n{font-weight:600;color:var(--ivory);margin-bottom:3px;}
+.pipe-card .src{color:var(--ivory-mut);display:flex;align-items:center;gap:5px;font-size:.64rem;}
+
+/* activity feed */
+.feed{display:flex;flex-direction:column;gap:2px;}
+.feed-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line-soft);}
+.feed-item:last-child{border-bottom:none;}
+.feed-ic{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;color:#fff;}
+.feed-txt{font-size:.76rem;color:var(--ivory-dim);line-height:1.4;}
+.feed-txt b{color:var(--ivory);font-weight:600;}
+.feed-time{font-size:.63rem;color:var(--ivory-mut);margin-top:2px;}
+
+/* audience map mini */
+.geo-strip{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+.geo-pill{display:flex;align-items:center;gap:7px;background:var(--panel-2);border:1px solid var(--line);border-radius:50px;padding:6px 12px;font-size:.68rem;color:var(--ivory-dim);}
+.geo-pill b{color:var(--gold-light);}
+
+@keyframes flow{ to { stroke-dashoffset:-240; } }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ══════ SIDEBAR ══════ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark"><i class="fas fa-water"></i></div>
+      <div class="txt">Confluence<small>STA Marketing Hub</small></div>
+    </div>
+
+    <div>
+      <div class="nav-group-label">Workspace</div>
+      <div class="nav-list">
+        <div class="nav-item active"><i class="fas fa-chart-pie"></i>Overview</div>
+        <div class="nav-item"><i class="fas fa-bullhorn"></i>Campaigns<span class="count">12</span></div>
+        <div class="nav-item"><i class="fas fa-filter"></i>Lead Pipeline<span class="count">348</span></div>
+        <div class="nav-item"><i class="fas fa-plug"></i>Integrations<span class="count">7</span></div>
+        <div class="nav-item"><i class="fas fa-robot"></i>Automations</div>
+        <div class="nav-item"><i class="fas fa-users"></i>Audiences</div>
+        <div class="nav-item"><i class="fas fa-chart-line"></i>Analytics</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="nav-group-label">Brand Portfolio</div>
+      <div class="nav-list">
+        <div class="nav-item active"><i class="fas fa-city"></i>Mwarokin Estates</div>
+        <div class="nav-item"><i class="fas fa-coins"></i>SylloPay</div>
+        <div class="nav-item"><i class="fas fa-hands-helping"></i>Mali Access Union</div>
+        <div class="nav-item"><i class="fas fa-fire-burner"></i>Grill Masters</div>
+      </div>
+    </div>
+
+    <div class="sidebar-foot">
+      <div class="plan-card">
+        <div class="tier">Taifa Tier</div>
+        <p>Unlimited connections, cross-brand attribution & priority sync across all channels.</p>
+        <button>Manage Plan</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══════ MAIN ══════ -->
+  <main class="main">
+
+    <div class="topbar">
+      <div>
+        <h1>Good morning, Robin</h1>
+        <div class="sub">Every channel your brands run on, reporting to one place.</div>
+      </div>
+      <div class="spacer"></div>
+      <div class="brand-switch">
+        <div class="brand-pill active">Mwarokin Estates</div>
+        <div class="brand-pill">SylloPay</div>
+        <div class="brand-pill">MAU</div>
+        <div class="brand-pill">Grill Masters</div>
+      </div>
+      <div class="icon-btn"><i class="fas fa-bell"></i><span class="dot"></span></div>
+      <div class="icon-btn"><i class="fas fa-gear"></i></div>
+    </div>
+
+    <!-- STAT ROW -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="lbl">Leads This Month <i class="fas fa-user-plus"></i></div>
+        <div class="val">2,486</div>
+        <div class="delta up"><i class="fas fa-arrow-up"></i> 18.2% vs last month</div>
+      </div>
+      <div class="stat-card">
+        <div class="lbl">Blended CPL <i class="fas fa-coins"></i></div>
+        <div class="val">KSh 84</div>
+        <div class="delta up"><i class="fas fa-arrow-down"></i> 6.4% lower cost</div>
+      </div>
+      <div class="stat-card">
+        <div class="lbl">Conversion Rate <i class="fas fa-bullseye"></i></div>
+        <div class="val">31.7%</div>
+        <div class="delta up"><i class="fas fa-arrow-up"></i> 2.1pt improvement</div>
+      </div>
+      <div class="stat-card">
+        <div class="lbl">Ad Spend (MTD) <i class="fas fa-wallet"></i></div>
+        <div class="val">KSh 208K</div>
+        <div class="delta down"><i class="fas fa-arrow-up"></i> 4.9% vs budget</div>
+      </div>
+    </div>
+
+    <!-- CONFLUENCE SIGNATURE -->
+    <section class="confluence">
+      <div class="confluence-head">
+        <div>
+          <h3>Seven channels, <em>one river</em></h3>
+          <p>Every lead source feeds a single pipeline — no exports, no spreadsheets, no channel left behind.</p>
+        </div>
+        <div class="confluence-total">
+          <b>2,486</b>
+          <span>Unified Leads · Jul 2026</span>
+        </div>
+      </div>
+
+      <div class="river-wrap">
+        <svg class="river-svg" viewBox="0 0 1120 210" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="goldFlow" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#c9a84c" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#e2c27a" stop-opacity="0.95"/>
+            </linearGradient>
+          </defs>
+          <!-- 7 source streams converging -->
+          <path d="M0,10 C 260,10 420,95 640,100" fill="none" stroke="#1877F2" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+          <path d="M0,38 C 260,38 420,97 640,100" fill="none" stroke="#FFE01B" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+          <path d="M0,66 C 260,66 420,99 640,100" fill="none" stroke="#2fb8a6" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+          <path d="M0,94 C 260,94 420,100 640,100" fill="none" stroke="#4285F4" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+          <path d="M0,122 C 260,122 420,101 640,100" fill="none" stroke="#1a6ea8" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+          <path d="M0,150 C 260,150 420,103 640,100" fill="none" stroke="#0b9a6e" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+          <path d="M0,178 C 260,178 420,105 640,100" fill="none" stroke="#1877F2" stroke-width="5" stroke-linecap="round" opacity="0.5"/>
+
+          <!-- confluence node -->
+          <circle cx="640" cy="100" r="10" fill="#0d2818" stroke="#c9a84c" stroke-width="2"/>
+
+          <!-- unified river to brands -->
+          <path d="M640,100 C 780,100 820,40 900,32" fill="none" stroke="url(#goldFlow)" stroke-width="9" stroke-linecap="round" stroke-dasharray="8 10">
+            <animate attributeName="stroke-dashoffset" from="0" to="-180" dur="3.4s" repeatCount="indefinite"/>
+          </path>
+          <path d="M640,100 C 780,100 820,100 900,100" fill="none" stroke="url(#goldFlow)" stroke-width="9" stroke-linecap="round" stroke-dasharray="8 10">
+            <animate attributeName="stroke-dashoffset" from="0" to="-180" dur="3.4s" repeatCount="indefinite"/>
+          </path>
+          <path d="M640,100 C 780,100 820,160 900,168" fill="none" stroke="url(#goldFlow)" stroke-width="9" stroke-linecap="round" stroke-dasharray="8 10">
+            <animate attributeName="stroke-dashoffset" from="0" to="-180" dur="3.4s" repeatCount="indefinite"/>
+          </path>
+
+          <!-- brand endpoints -->
+          <g font-family="DM Sans" font-size="11" fill="#f5f0e8">
+            <circle cx="905" cy="32" r="4" fill="#c9a84c"/>
+            <text x="918" y="36">Mwarokin Estates</text>
+            <circle cx="905" cy="100" r="4" fill="#c9a84c"/>
+            <text x="918" y="104">Mali Access Union</text>
+            <circle cx="905" cy="168" r="4" fill="#c9a84c"/>
+            <text x="918" y="172">Grill Masters</text>
+          </g>
+        </svg>
+        <div class="source-caps">
+          <span>Facebook Lead Ads</span><span>Mailchimp</span><span>LeadConnector</span><span>Google Ads</span><span>ActiveCampaign</span><span>Brevo</span><span>FB Conversions</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTEGRATIONS -->
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Connected Software</span>
+        <h2>Integrations Marketplace</h2>
+      </div>
+      <a>Browse all 40+ connectors →</a>
+    </div>
+
+    <div class="int-grid">
+
+      <div class="int-card">
+        <div class="int-top">
+          <div class="int-logo" style="background:var(--fb);"><i class="fab fa-facebook-f"></i></div>
+          <div><div class="int-name">Facebook Lead Ads</div><div class="int-cat">Paid Social · Premium</div></div>
+          <div class="int-status status-connected">Connected</div>
+        </div>
+        <div class="int-desc">Instant-form leads sync straight into the pipeline the moment someone submits — no manual export.</div>
+        <div class="int-metrics">
+          <div><b>612</b>Leads (30d)</div>
+          <div><b>KSh 72</b>Avg. CPL</div>
+        </div>
+        <div class="int-actions"><div class="int-btn">Configure</div><div class="int-btn">View Data</div></div>
+      </div>
+
+      <div class="int-card">
+        <div class="int-top">
+          <div class="int-logo" style="background:linear-gradient(135deg,#FFE01B,#f0c800);color:#3a2f00;"><i class="fas fa-envelope-open-text"></i></div>
+          <div><div class="int-name">Mailchimp</div><div class="int-cat">Email & Automation</div></div>
+          <div class="int-status status-connected">Connected</div>
+        </div>
+        <div class="int-desc">Growing-business email marketing and automation, syncing every new lead into a nurture sequence automatically.</div>
+        <div class="int-metrics">
+          <div><b>44.2%</b>Open Rate</div>
+          <div><b>9</b>Live Flows</div>
+        </div>
+        <div class="int-actions"><div class="int-btn">Configure</div><div class="int-btn">View Data</div></div>
+      </div>
+
+      <div class="int-card">
+        <div class="int-top">
+          <div class="int-logo" style="background:var(--lc);"><i class="fas fa-diagram-project"></i></div>
+          <div><div class="int-name">LeadConnector</div><div class="int-cat">CRM & Pipeline Sync</div></div>
+          <div class="int-status status-connected">Connected</div>
+        </div>
+        <div class="int-desc">Routes every qualified lead to the right agent's calendar and keeps stage changes mirrored across brands.</div>
+        <div class="int-metrics">
+          <div><b>348</b>In Pipeline</div>
+          <div><b>1.8h</b>Avg. Response</div>
+        </div>
+        <div class="int-actions"><div class="int-btn">Configure</div><div class="int-btn">View Data</div></div>
+      </div>
+
+      <div class="int-card">
+        <div class="int-top">
+          <div class="int-logo" style="background:var(--gads);"><i class="fab fa-google"></i></div>
+          <div><div class="int-name">Google Ads</div><div class="int-cat">Search & Display</div></div>
+          <div class="int-status status-connected">Connected</div>
+        </div>
+        <div class="int-desc">Search intent capture for "apartments in Nairobi" and related terms, with conversion values fed straight back for bidding.</div>
+        <div class="int-metrics">
+          <div><b>4.6x</b>ROAS</div>
+          <div><b>KSh 61K</b>Spend (MTD)</div>
+        </div>
+        <div class="int-actions"><div class="int-btn">Configure</div><div class="int-btn">View Data</div></div>
+      </div>
+
+      <div class="int-card">
+        <div class="int-top">
+          <div class="int-logo" style="background:var(--ac);"><i class="fas fa-bolt"></i></div>
+          <div><div class="int-name">ActiveCampaign</div><div class="int-cat">CRM & Email</div></div>
+          <div class="int-status status-available">Available</div>
+        </div>
+        <div class="int-desc">Behaviour-based scoring and segmentation for tenants, savers, and diners across the whole STA portfolio.</div>
+        <div class="int-metrics">
+          <div><b>—</b>Not synced</div>
+          <div><b>—</b>Not synced</div>
+        </div>
+        <div class="int-actions"><div class="int-btn primary">Connect</div></div>
+      </div>
+
+      <div class="int-card">
+        <div class="int-top">
+          <div class="int-logo" style="background:var(--brevo);"><i class="fas fa-paper-plane"></i></div>
+          <div><div class="int-name">Brevo</div><div class="int-cat">Email, SMS & WhatsApp</div></div>
+          <div class="int-status status-connected">Connected</div>
+        </div>
+        <div class="int-desc">SMS and WhatsApp payment reminders for Lipa Mdogo Mdogo instalments, sent the moment a due date approaches.</div>
+        <div class="int-metrics">
+          <div><b>3,140</b>Sends (30d)</div>
+          <div><b>97%</b>Delivery Rate</div>
+        </div>
+        <div class="int-actions"><div class="int-btn">Configure</div><div class="int-btn">View Data</div></div>
+      </div>
+
+      <div class="int-card">
+        <div class="int-top">
+          <div class="int-logo" style="background:linear-gradient(135deg,#1877F2,#0d5bc7);"><i class="fas fa-arrows-turn-to-dots"></i></div>
+          <div><div class="int-name">Facebook Conversions API</div><div class="int-cat">Server-Side Tracking</div></div>
+          <div class="int-status status-connected">Connected</div>
+        </div>
+        <div class="int-desc">Sends payment and lease-signing events straight from the server, keeping attribution accurate as browser tracking fades.</div>
+        <div class="int-metrics">
+          <div><b>99.2%</b>Match Rate</div>
+          <div><b>0</b>Dropped Events</div>
+        </div>
+        <div class="int-actions"><div class="int-btn">Configure</div><div class="int-btn">View Data</div></div>
+      </div>
+
+      <div class="int-card" style="border-style:dashed;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--ivory-mut);">
+        <i class="fas fa-plus" style="font-size:1.3rem;color:var(--gold);"></i>
+        <div style="font-size:.78rem;">Add another channel</div>
+      </div>
+
+    </div>
+
+    <!-- LOWER GRID -->
+    <div class="lower-grid" style="margin-top:34px;">
+
+      <div class="panel-card">
+        <h3>Campaign Performance</h3>
+        <div class="sub">Leads by channel, last 6 weeks</div>
+        <div class="bar-chart">
+          <div class="bar-col"><div class="bar-stack" style="height:62%;"><div class="bar-seg" style="height:45%;background:var(--fb);"></div><div class="bar-seg" style="height:30%;background:var(--gads);"></div><div class="bar-seg" style="height:25%;background:var(--brevo);"></div></div><div class="lbl">W1</div></div>
+          <div class="bar-col"><div class="bar-stack" style="height:71%;"><div class="bar-seg" style="height:40%;background:var(--fb);"></div><div class="bar-seg" style="height:35%;background:var(--gads);"></div><div class="bar-seg" style="height:25%;background:var(--brevo);"></div></div><div class="lbl">W2</div></div>
+          <div class="bar-col"><div class="bar-stack" style="height:58%;"><div class="bar-seg" style="height:48%;background:var(--fb);"></div><div class="bar-seg" style="height:28%;background:var(--gads);"></div><div class="bar-seg" style="height:24%;background:var(--brevo);"></div></div><div class="lbl">W3</div></div>
+          <div class="bar-col"><div class="bar-stack" style="height:84%;"><div class="bar-seg" style="height:42%;background:var(--fb);"></div><div class="bar-seg" style="height:33%;background:var(--gads);"></div><div class="bar-seg" style="height:25%;background:var(--brevo);"></div></div><div class="lbl">W4</div></div>
+          <div class="bar-col"><div class="bar-stack" style="height:93%;"><div class="bar-seg" style="height:44%;background:var(--fb);"></div><div class="bar-seg" style="height:34%;background:var(--gads);"></div><div class="bar-seg" style="height:22%;background:var(--brevo);"></div></div><div class="lbl">W5</div></div>
+          <div class="bar-col"><div class="bar-stack" style="height:100%;"><div class="bar-seg" style="height:46%;background:var(--fb);"></div><div class="bar-seg" style="height:32%;background:var(--gads);"></div><div class="bar-seg" style="height:22%;background:var(--brevo);"></div></div><div class="lbl">W6</div></div>
+        </div>
+        <div class="chart-legend">
+          <span><i style="background:var(--fb);"></i>Facebook Lead Ads</span>
+          <span><i style="background:var(--gads);"></i>Google Ads</span>
+          <span><i style="background:var(--brevo);"></i>Brevo (SMS/WA)</span>
+        </div>
+
+        <div class="geo-strip">
+          <div class="geo-pill"><i class="fas fa-location-dot" style="color:var(--gold);"></i>Nairobi <b>62%</b></div>
+          <div class="geo-pill"><i class="fas fa-location-dot" style="color:var(--gold);"></i>Mombasa <b>17%</b></div>
+          <div class="geo-pill"><i class="fas fa-location-dot" style="color:var(--gold);"></i>Kisumu <b>9%</b></div>
+          <div class="geo-pill"><i class="fas fa-location-dot" style="color:var(--gold);"></i>Diaspora <b>12%</b></div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h3>Live Activity</h3>
+        <div class="sub">Across every connected channel</div>
+        <div class="feed">
+          <div class="feed-item">
+            <div class="feed-ic" style="background:var(--fb);"><i class="fab fa-facebook-f"></i></div>
+            <div>
+              <div class="feed-txt"><b>New lead</b> from Facebook Lead Ads — interested in A-304 vacancy.</div>
+              <div class="feed-time">2 minutes ago</div>
+            </div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-ic" style="background:var(--brevo);"><i class="fas fa-paper-plane"></i></div>
+            <div>
+              <div class="feed-txt"><b>Reminder sent</b> via Brevo WhatsApp for Lipa Mdogo Mdogo instalment #3.</div>
+              <div class="feed-time">14 minutes ago</div>
+            </div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-ic" style="background:var(--gads);"><i class="fab fa-google"></i></div>
+            <div>
+              <div class="feed-txt"><b>Bid adjusted</b> automatically after Google Ads conversion sync — ROAS up 6%.</div>
+              <div class="feed-time">31 minutes ago</div>
+            </div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-ic" style="background:var(--lc);"><i class="fas fa-diagram-project"></i></div>
+            <div>
+              <div class="feed-txt"><b>Lead moved</b> to Qualified in LeadConnector — assigned to Agent Njeri.</div>
+              <div class="feed-time">48 minutes ago</div>
+            </div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-ic" style="background:linear-gradient(135deg,#FFE01B,#d6b800);color:#3a2f00;"><i class="fas fa-envelope-open-text"></i></div>
+            <div>
+              <div class="feed-txt"><b>Nurture flow completed</b> in Mailchimp — 3 leads marked sales-ready.</div>
+              <div class="feed-time">1 hour ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PIPELINE -->
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Sales Pipeline</span>
+        <h2>Lead Stages — Mwarokin Estates</h2>
+      </div>
+      <a>Open full pipeline →</a>
+    </div>
+
+    <div class="pipeline-cols">
+      <div>
+        <div class="pipe-col-head">New <b>86</b></div>
+        <div class="pipe-card"><div class="n">Wanjiru K.</div><div class="src"><i class="fab fa-facebook-f" style="color:var(--fb);"></i>Facebook Lead Ads</div></div>
+        <div class="pipe-card"><div class="n">Otieno M.</div><div class="src"><i class="fab fa-google" style="color:var(--gads);"></i>Google Ads</div></div>
+        <div class="pipe-card"><div class="n">Fatuma A.</div><div class="src"><i class="fas fa-paper-plane" style="color:var(--brevo);"></i>Brevo Inbound</div></div>
+      </div>
+      <div>
+        <div class="pipe-col-head">Qualified <b>54</b></div>
+        <div class="pipe-card"><div class="n">David N.</div><div class="src"><i class="fas fa-diagram-project" style="color:var(--lc);"></i>LeadConnector</div></div>
+        <div class="pipe-card"><div class="n">Grace W.</div><div class="src"><i class="fab fa-facebook-f" style="color:var(--fb);"></i>Facebook Lead Ads</div></div>
+      </div>
+      <div>
+        <div class="pipe-col-head">Nurturing <b>39</b></div>
+        <div class="pipe-card"><div class="n">Peter K.</div><div class="src"><i class="fas fa-envelope-open-text" style="color:#e0c400;"></i>Mailchimp</div></div>
+        <div class="pipe-card"><div class="n">Amina S.</div><div class="src"><i class="fab fa-google" style="color:var(--gads);"></i>Google Ads</div></div>
+      </div>
+      <div>
+        <div class="pipe-col-head">Converted <b>21</b></div>
+        <div class="pipe-card" style="border-left-color:var(--success);"><div class="n">Brian O. — signed A-304</div><div class="src"><i class="fab fa-facebook-f" style="color:var(--fb);"></i>Facebook Lead Ads</div></div>
+        <div class="pipe-card" style="border-left-color:var(--success);"><div class="n">Naomi T. — signed B-112</div><div class="src"><i class="fas fa-diagram-project" style="color:var(--lc);"></i>LeadConnector</div></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+</body>
+</html>

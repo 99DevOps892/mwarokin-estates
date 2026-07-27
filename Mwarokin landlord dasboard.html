@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mwarokin Estates — Landlord Dashboard | Lipa Mdogo Mdogo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Syne:wght@500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{
+  --bg:#0b1a14; --bg-2:#0e2018;
+  --panel:#142c22; --panel-2:#1a3629; --panel-3:#0f251d;
+  --gold:#c9a227; --gold-light:#ecd28a; --gold-dim:rgba(201,162,39,.28); --gold-hair:rgba(236,210,138,.16);
+  --cream:#f3ecd9; --ink-dim:#9fb3a6; --ink-faint:#6f8579;
+  --terracotta:#d3856b; --sage:#7fb08f;
+  --radius:16px; --radius-sm:10px;
+  --shadow:0 20px 50px -20px rgba(0,0,0,.6);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --sidebar-w:264px;
+}
+*{margin:0;padding:0;box-sizing:border-box;} 
+body{
+  background:
+    radial-gradient(1000px 480px at 90% -10%, rgba(201,162,39,.09), transparent 60%),
+    radial-gradient(800px 460px at -10% 30%, rgba(127,176,143,.07), transparent 55%),
+    var(--bg);
+  color:var(--cream); font-family:'DM Sans',sans-serif; line-height:1.6; min-height:100vh;
+}
+h1,h2,h3{font-family:'Cormorant Garamond',serif;font-weight:600;}
+.eyebrow{font-family:'Syne',sans-serif;font-weight:700;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-light);}
+button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;}
+input,select{font-family:'DM Sans',sans-serif;background:var(--panel-2);border:1px solid var(--gold-hair);color:var(--cream);border-radius:var(--radius-sm);padding:10px 14px;outline:none;}
+.dash-shell{display:flex;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:linear-gradient(175deg,var(--panel),var(--panel-3));border-right:1px solid var(--gold-hair);position:fixed;height:100vh;overflow-y:auto;padding:26px 0;z-index:100;}
+.side-brand{display:flex;align-items:center;gap:12px;padding:0 24px 26px;border-bottom:1px solid var(--gold-hair);margin-bottom:20px;}
+.brand-mark{width:38px;height:38px;border-radius:9px;background:linear-gradient(155deg,var(--gold-light),var(--gold));display:flex;align-items:center;justify-content:center;color:#1c2a20;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:1.3rem;flex-shrink:0;}
+.side-brand div b{font-family:'Syne',sans-serif;font-weight:700;font-size:.98rem;display:block;}
+.side-brand div span{font-size:.72rem;color:var(--ink-faint);}
+.side-menu{list-style:none;padding:0 14px;}
+.side-menu li{margin-bottom:3px;}
+.side-menu a{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius-sm);color:var(--ink-dim);font-size:.88rem;transition:.2s;border-left:3px solid transparent;}
+.side-menu a i{width:18px;text-align:center;color:var(--ink-faint);}
+.side-menu a:hover{background:var(--panel-2);color:var(--cream);}
+.side-menu a.active{background:var(--gold-dim);color:var(--gold-light);border-left-color:var(--gold);}
+.side-menu a.active i{color:var(--gold-light);}
+
+/* MAIN */
+.main{flex:1;margin-left:var(--sidebar-w);padding:30px 34px 60px;}
+.topline{display:flex;justify-content:space-between;align-items:center;padding-bottom:22px;border-bottom:1px solid var(--gold-hair);margin-bottom:28px;flex-wrap:wrap;gap:16px;}
+.topline h1{font-size:1.8rem;font-weight:500;}
+.top-actions{display:flex;align-items:center;gap:16px;}
+.search-box{position:relative;}
+.search-box input{padding-left:38px;border-radius:30px;width:220px;}
+.search-box i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--ink-faint);font-size:.85rem;}
+.live-pill{display:flex;align-items:center;gap:8px;background:var(--panel-2);border:1px solid var(--gold-hair);border-radius:30px;padding:8px 15px;font-family:'Syne',sans-serif;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--sage);}
+.dot-live{width:7px;height:7px;border-radius:50%;background:var(--sage);animation:pulse-live 1.8s infinite;}
+@keyframes pulse-live{0%{box-shadow:0 0 0 0 rgba(127,176,143,.55);}70%{box-shadow:0 0 0 9px rgba(127,176,143,0);}100%{box-shadow:0 0 0 0 rgba(127,176,143,0);}}
+.profile-chip{display:flex;align-items:center;gap:10px;background:var(--panel-2);border:1px solid var(--gold-hair);padding:7px 14px 7px 7px;border-radius:30px;}
+.avatar{width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--gold-light),var(--gold));display:flex;align-items:center;justify-content:center;color:#1c2a20;font-weight:700;font-size:.78rem;}
+.profile-chip .nm{font-size:.82rem;font-weight:600;}
+.profile-chip .rl{font-size:.68rem;color:var(--ink-faint);}
+
+/* STAT CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:28px;}
+.card{background:linear-gradient(160deg,var(--panel),var(--panel-3));border:1px solid var(--gold-hair);border-radius:var(--radius);box-shadow:var(--shadow);}
+.stat-card{padding:22px;display:flex;align-items:center;gap:16px;border-top:3px solid transparent;transition:transform .2s var(--ease);}
+.stat-card:hover{transform:translateY(-4px);}
+.stat-card.paid{border-top-color:var(--sage);}
+.stat-card.pending{border-top-color:var(--gold);}
+.stat-card.overdue{border-top-color:var(--terracotta);}
+.stat-card.total{border-top-color:var(--gold-light);}
+.stat-icon{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0;}
+.stat-card.paid .stat-icon{background:rgba(127,176,143,.14);color:var(--sage);}
+.stat-card.pending .stat-icon{background:var(--gold-dim);color:var(--gold-light);}
+.stat-card.overdue .stat-icon{background:rgba(211,133,107,.14);color:var(--terracotta);}
+.stat-card.total .stat-icon{background:var(--gold-dim);color:var(--gold-light);}
+.stat-info h3{font-size:1.55rem;font-weight:600;}
+.stat-info p{color:var(--ink-faint);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;font-family:'Syne',sans-serif;margin-top:2px;}
+
+/* CONTENT GRID */
+.content-grid{display:grid;grid-template-columns:1.7fr 1fr;gap:24px;align-items:start;}
+.card-head{padding:20px 24px;border-bottom:1px solid var(--gold-hair);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+.card-head h3{font-size:1.2rem;font-weight:500;}
+.card-body{padding:22px 24px;}
+.btn-ghost-sm{background:none;border:1px solid var(--gold-hair);color:var(--ink-dim);font-family:'Syne',sans-serif;font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;padding:8px 14px;border-radius:30px;display:inline-flex;align-items:center;gap:7px;transition:.2s;}
+.btn-ghost-sm:hover{border-color:var(--gold-dim);color:var(--gold-light);}
+.btn-gold-sm{background:linear-gradient(155deg,var(--gold-light),var(--gold));color:#1c2a20;font-family:'Syne',sans-serif;font-weight:700;font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;padding:9px 16px;border-radius:30px;display:inline-flex;align-items:center;gap:7px;}
+
+table{width:100%;border-collapse:collapse;}
+th{font-family:'Syne',sans-serif;font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-faint);text-align:left;padding:10px 10px;border-bottom:1px solid var(--gold-hair);}
+td{padding:12px 10px;font-size:.85rem;border-bottom:1px solid var(--gold-hair);color:var(--ink-dim);vertical-align:middle;}
+.tenant-cell{display:flex;align-items:center;gap:10px;color:var(--cream);}
+.tenant-avatar{width:30px;height:30px;border-radius:50%;background:var(--panel-2);border:1px solid var(--gold-hair);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:var(--gold-light);flex-shrink:0;}
+.badge{padding:4px 11px;border-radius:20px;font-size:.66rem;font-weight:600;text-transform:uppercase;letter-spacing:.03em;}
+.badge.paid{background:rgba(127,176,143,.14);color:var(--sage);}
+.badge.pending{background:var(--gold-dim);color:var(--gold-light);}
+.badge.overdue{background:rgba(211,133,107,.16);color:var(--terracotta);}
+.row-actions{display:flex;gap:6px;}
+.icon-btn{background:var(--panel-2);border:1px solid var(--gold-hair);color:var(--ink-dim);width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:.2s;font-size:.78rem;}
+.icon-btn:hover{color:var(--gold-light);border-color:var(--gold-dim);}
+.mini-bead-row{display:flex;gap:2px;margin-top:5px;}
+.mini-bead{width:6px;height:6px;border-radius:50%;background:var(--panel-2);border:1px solid var(--gold-hair);}
+.mini-bead.p{background:var(--gold);border-color:var(--gold);}
+
+/* progress */
+.progress-container{margin-bottom:18px;}
+.progress-label{display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:7px;color:var(--ink-dim);}
+.progress-bar{height:9px;background:var(--panel-2);border-radius:10px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:10px;transition:width .8s var(--ease);}
+.progress-fill.paid{background:linear-gradient(90deg,var(--sage),#a3d4ae);}
+.progress-fill.pending{background:linear-gradient(90deg,var(--gold),var(--gold-light));}
+.progress-fill.overdue{background:linear-gradient(90deg,var(--terracotta),#e8a793);}
+
+.chart-container{height:230px;margin-top:6px;}
+
+/* feed */
+.feed{display:flex;flex-direction:column;max-height:300px;overflow-y:auto;}
+.feed-item{display:flex;gap:12px;padding:13px 2px;border-bottom:1px solid var(--gold-hair);}
+.feed-item:last-child{border-bottom:none;}
+.feed-item.new{animation:slideIn .5s var(--ease);}
+@keyframes slideIn{from{opacity:0;transform:translateX(14px);}to{opacity:1;transform:translateX(0);}}
+.feed-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.85rem;}
+.feed-icon.payment{background:rgba(127,176,143,.14);color:var(--sage);}
+.feed-icon.reminder{background:var(--gold-dim);color:var(--gold-light);}
+.feed-icon.overdue{background:rgba(211,133,107,.16);color:var(--terracotta);}
+.feed-body h4{font-size:.85rem;font-weight:600;color:var(--cream);margin-bottom:2px;font-family:'DM Sans',sans-serif;}
+.feed-body p{font-size:.78rem;color:var(--ink-dim);margin-bottom:2px;}
+.feed-time{font-size:.68rem;color:var(--ink-faint);}
+.empty-state{text-align:center;padding:26px 10px;color:var(--ink-faint);font-size:.85rem;font-style:italic;}
+
+/* modal */
+.modal-backdrop{position:fixed;inset:0;background:rgba(6,14,10,.72);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:300;opacity:0;pointer-events:none;transition:opacity .3s;}
+.modal-backdrop.show{opacity:1;pointer-events:all;}
+.modal{background:linear-gradient(160deg,var(--panel),var(--panel-3));border:1px solid var(--gold-dim);border-radius:20px;padding:30px 30px 26px;max-width:500px;width:92%;box-shadow:0 30px 70px -20px rgba(0,0,0,.7);transform:scale(.94);transition:transform .3s var(--ease);max-height:85vh;overflow-y:auto;}
+.modal-backdrop.show .modal{transform:scale(1);}
+.modal-close-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.statement-table th,.statement-table td{padding:9px 10px;font-size:.82rem;}
+
+#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(140%);background:var(--panel);border:1px solid var(--gold-hair);color:var(--cream);padding:14px 22px;border-radius:30px;box-shadow:var(--shadow);display:flex;align-items:center;gap:10px;font-size:.86rem;z-index:400;transition:transform .4s var(--ease);}
+#toast.show{transform:translateX(-50%) translateY(0);}
+#toast i{color:var(--sage);}
+
+@media(max-width:1150px){.content-grid{grid-template-columns:1fr;}.stats-row{grid-template-columns:1fr 1fr;}}
+@media(max-width:860px){.sidebar{width:74px;}.side-brand div,.side-menu span{display:none;}.side-menu a{justify-content:center;}.main{margin-left:74px;}.search-box{display:none;}}
+@media(max-width:560px){.stats-row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="dash-shell">
+  <aside class="sidebar">
+    <div class="side-brand">
+      <div class="brand-mark">M</div>
+      <div><b>Mwarokin Estates</b><span>Lipa Mdogo Mdogo</span></div>
+    </div>
+    <ul class="side-menu">
+      <li><a href="#" class="active"><i class="fas fa-gauge-high"></i><span>Dashboard</span></a></li>
+      <li><a href="#"><i class="fas fa-users"></i><span>Tenants</span></a></li>
+      <li><a href="#"><i class="fas fa-file-invoice-dollar"></i><span>Payments</span></a></li>
+      <li><a href="#"><i class="fas fa-building"></i><span>Properties</span></a></li>
+      <li><a href="#"><i class="fas fa-chart-line"></i><span>Reports</span></a></li>
+      <li><a href="#"><i class="fas fa-gear"></i><span>Settings</span></a></li>
+      <li><a href="#"><i class="fas fa-circle-question"></i><span>Help & Support</span></a></li>
+    </ul>
+  </aside>
+
+  <main class="main">
+    <div class="topline">
+      <div><span class="eyebrow">Landlord Account</span><h1>Payment Dashboard</h1></div>
+      <div class="top-actions">
+        <div class="search-box"><i class="fas fa-search"></i><input type="text" id="tenantSearch" placeholder="Search tenants..."></div>
+        <div class="live-pill"><span class="dot-live"></span> Live</div>
+        <div class="profile-chip"><div class="avatar">JD</div><div><div class="nm">John Doe</div><div class="rl">Landlord</div></div></div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="card stat-card paid"><div class="stat-icon"><i class="fas fa-circle-check"></i></div><div class="stat-info"><h3 id="statPaidTotal">KSh 0</h3><p>Paid This Month</p></div></div>
+      <div class="card stat-card pending"><div class="stat-icon"><i class="fas fa-clock"></i></div><div class="stat-info"><h3 id="statPendingTotal">KSh 0</h3><p>Pending Balance</p></div></div>
+      <div class="card stat-card overdue"><div class="stat-icon"><i class="fas fa-triangle-exclamation"></i></div><div class="stat-info"><h3 id="statOverdueTotal">KSh 0</h3><p>Overdue Balance</p></div></div>
+      <div class="card stat-card total"><div class="stat-icon"><i class="fas fa-chart-simple"></i></div><div class="stat-info"><h3 id="statExpectedTotal">KSh 0</h3><p>Total Expected</p></div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:24px;">
+      <div class="card-head">
+        <div><span class="eyebrow" id="statementMonthLabel">Monthly Statement</span><h3 style="margin-top:4px;">All Units — This Month</h3></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn-ghost-sm" id="printAll"><i class="fas fa-print"></i> Print</button>
+          <button class="btn-ghost-sm" id="exportAll"><i class="fas fa-download"></i> Export</button>
+          <button class="btn-gold-sm" id="remindAll"><i class="fas fa-bell"></i> Send Reminders</button>
+        </div>
+      </div>
+      <div class="card-body" style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>Tenant</th><th>Unit</th><th>Rent</th><th>Bills</th><th>Total Due</th><th>Paid</th><th>Balance</th><th>Status</th><th>Bead Trail</th><th></th></tr></thead>
+          <tbody id="tenantBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="card">
+        <div class="card-head"><h3>Annual Payment Trend</h3></div>
+        <div class="card-body">
+          <div class="progress-container">
+            <div class="progress-label"><span>Paid — <span id="pctPaidLbl">KSh 0</span></span><span id="pctPaidPct">0%</span></div>
+            <div class="progress-bar"><div class="progress-fill paid" id="pctPaidBar" style="width:0%;"></div></div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-label"><span>Pending — <span id="pctPendingLbl">KSh 0</span></span><span id="pctPendingPct">0%</span></div>
+            <div class="progress-bar"><div class="progress-fill pending" id="pctPendingBar" style="width:0%;"></div></div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-label"><span>Overdue — <span id="pctOverdueLbl">KSh 0</span></span><span id="pctOverduePct">0%</span></div>
+            <div class="progress-bar"><div class="progress-fill overdue" id="pctOverdueBar" style="width:0%;"></div></div>
+          </div>
+          <div class="chart-container"><canvas id="paymentChart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Live Activity</h3><span class="live-pill"><span class="dot-live"></span> Live</span></div>
+        <div class="card-body">
+          <div class="feed" id="feed"><div class="empty-state">No activity yet.</div></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="modal-backdrop" id="statementModal">
+  <div class="modal">
+    <div class="modal-close-row">
+      <div><span class="eyebrow">Tenant Statement</span><h3 id="stModalTitle" style="margin-top:4px;">Statement</h3></div>
+      <button class="icon-btn" onclick="closeStatement()"><i class="fas fa-xmark"></i></button>
+    </div>
+    <table class="statement-table">
+      <thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Status</th></tr></thead>
+      <tbody id="stModalBody"></tbody>
+      <tfoot>
+        <tr><td colspan="2" style="text-align:right;font-weight:600;color:var(--cream);">Total:</td><td id="stModalTotal" style="font-weight:600;color:var(--gold-light);"></td><td></td></tr>
+        <tr><td colspan="2" style="text-align:right;font-weight:600;color:var(--cream);">Balance:</td><td id="stModalBalance" style="font-weight:600;color:var(--gold-light);"></td><td></td></tr>
+      </tfoot>
+    </table>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:18px;">
+      <button class="btn-ghost-sm" onclick="window.print()"><i class="fas fa-print"></i> Print</button>
+      <button class="btn-gold-sm" onclick="closeStatement()">Close</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"><i class="fas fa-check-circle"></i><span id="toastText"></span></div>
+
+<script>
+const el = id => document.getElementById(id);
+const STORE_KEY = 'mwarokin_landlord_dashboard_v1';
+const monthLabel = new Date().toLocaleString('default',{month:'long',year:'numeric'});
+el('statementMonthLabel').textContent = 'Monthly Statement — ' + monthLabel;
+
+function fmt(n){ return 'KSh ' + Math.round(n).toLocaleString('en-KE'); }
+function initials(name){ return name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase(); }
+
+let tenants = [
+  {name:'Michael Johnson', unit:'Apartment 4B', rent:35000, bills:5200, paid:40200, notes:[
+    {desc:'Monthly Rent', amount:35000}, {desc:'Water Bill', amount:2500}, {desc:'Electricity Bill', amount:2700}
+  ]},
+  {name:'Sarah Kimani', unit:'Apartment 2A', rent:42000, bills:6500, paid:30000, notes:[
+    {desc:'Monthly Rent', amount:42000}, {desc:'Water Bill', amount:3000}, {desc:'Service Charge', amount:3500}
+  ]},
+  {name:'Robert Kariuki', unit:'Apartment 5C', rent:38000, bills:4800, paid:0, notes:[
+    {desc:'Monthly Rent', amount:38000}, {desc:'Service Charge', amount:4800}
+  ]},
+  {name:'Alice Njoroge', unit:'Apartment 3D', rent:45000, bills:5500, paid:50500, notes:[
+    {desc:'Monthly Rent', amount:45000}, {desc:'Water Bill', amount:2800}, {desc:'Electricity Bill', amount:2700}
+  ]},
+  {name:'David Mwangi', unit:'Apartment 1B', rent:32000, bills:4200, paid:25000, notes:[
+    {desc:'Monthly Rent', amount:32000}, {desc:'Service Charge', amount:4200}
+  ]}
+];
+let activity = [
+  {type:'payment', title:'Payment Received', text:'Michael Johnson paid KSh 40,200 for this month\u2019s rent.', time:'2 hours ago'},
+  {type:'reminder', title:'Reminder Sent', text:'Payment reminder sent to Robert Kariuki.', time:'Yesterday'},
+  {type:'payment', title:'Partial Payment', text:'Sarah Kimani made a contribution of KSh 30,000.', time:'2 days ago'},
+  {type:'overdue', title:'Overdue Alert', text:'Robert Kariuki\u2019s balance is now overdue.', time:'3 days ago'}
+];
+let trendHistory = [280000,295000,310000,305000,320000,315000,330000,325000,340000,342500,0,0];
+
+async function loadState(){
+  try{
+    const res = await window.storage.get(STORE_KEY);
+    if(res && res.value){ const d = JSON.parse(res.value); tenants=d.tenants||tenants; activity=d.activity||activity; trendHistory=d.trendHistory||trendHistory; }
+  }catch(e){}
+}
+async function saveState(){
+  try{ await window.storage.set(STORE_KEY, JSON.stringify({tenants, activity, trendHistory})); }catch(e){}
+}
+
+function statusOf(t){
+  const total = t.rent + t.bills, bal = total - t.paid;
+  if(bal<=0) return 'paid';
+  if(t.paid>0) return 'pending';
+  return 'overdue';
+}
+
+function renderTenants(filter){
+  const body = el('tenantBody');
+  body.innerHTML = '';
+  const f = (filter||'').toLowerCase();
+  tenants.forEach((t, idx)=>{
+    if(f && !t.name.toLowerCase().includes(f) && !t.unit.toLowerCase().includes(f)) return;
+    const total = t.rent + t.bills, bal = Math.max(total - t.paid, 0), status = statusOf(t);
+    const daysInMonth = 30;
+    const paidDaysCount = Math.min(Math.round((t.paid/total)*daysInMonth) || 0, daysInMonth);
+    let beads = '';
+    for(let d=0; d<daysInMonth; d+=2){ beads += `<span class="mini-bead ${d<paidDaysCount?'p':''}"></span>`; }
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><div class="tenant-cell"><div class="tenant-avatar">${initials(t.name)}</div>${t.name}</div></td>
+      <td>${t.unit}</td>
+      <td>${fmt(t.rent)}</td>
+      <td>${fmt(t.bills)}</td>
+      <td>${fmt(total)}</td>
+      <td>${fmt(t.paid)}</td>
+      <td>${fmt(bal)}</td>
+      <td><span class="badge ${status}">${status==='paid'?'Paid':status==='pending'?'Partial':'Overdue'}</span></td>
+      <td><div class="mini-bead-row">${beads}</div></td>
+      <td><div class="row-actions">
+        <button class="icon-btn" data-view="${idx}" title="View statement"><i class="fas fa-eye"></i></button>
+        <button class="icon-btn" data-remind="${idx}" title="Send reminder"><i class="fas fa-bell"></i></button>
+        <button class="icon-btn" data-record="${idx}" title="Record contribution"><i class="fas fa-hand-holding-dollar"></i></button>
+      </div></td>`;
+    body.appendChild(tr);
+  });
+
+  body.querySelectorAll('[data-view]').forEach(b=> b.addEventListener('click', e=> openStatement(+e.currentTarget.dataset.view)));
+  body.querySelectorAll('[data-remind]').forEach(b=> b.addEventListener('click', e=> sendReminder(+e.currentTarget.dataset.remind)));
+  body.querySelectorAll('[data-record]').forEach(b=> b.addEventListener('click', e=> recordContribution(+e.currentTarget.dataset.record)));
+}
+
+function renderStats(){
+  let paidSum=0, pendingSum=0, overdueSum=0, expectedSum=0;
+  tenants.forEach(t=>{
+    const total = t.rent+t.bills, bal = Math.max(total-t.paid,0), status=statusOf(t);
+    expectedSum += total;
+    paidSum += Math.min(t.paid,total);
+    if(status==='pending') pendingSum += bal;
+    if(status==='overdue') overdueSum += bal;
+  });
+  el('statPaidTotal').textContent = fmt(paidSum);
+  el('statPendingTotal').textContent = fmt(pendingSum);
+  el('statOverdueTotal').textContent = fmt(overdueSum);
+  el('statExpectedTotal').textContent = fmt(expectedSum);
+
+  const pPaid = expectedSum? paidSum/expectedSum*100:0;
+  const pPending = expectedSum? pendingSum/expectedSum*100:0;
+  const pOverdue = expectedSum? overdueSum/expectedSum*100:0;
+  el('pctPaidLbl').textContent = fmt(paidSum); el('pctPaidPct').textContent = Math.round(pPaid)+'%'; el('pctPaidBar').style.width = pPaid+'%';
+  el('pctPendingLbl').textContent = fmt(pendingSum); el('pctPendingPct').textContent = Math.round(pPending)+'%'; el('pctPendingBar').style.width = pPending+'%';
+  el('pctOverdueLbl').textContent = fmt(overdueSum); el('pctOverduePct').textContent = Math.round(pOverdue)+'%'; el('pctOverdueBar').style.width = pOverdue+'%';
+
+  trendHistory[9] = paidSum;
+  if(chart){ chart.data.datasets[0].data = trendHistory; chart.update(); }
+}
+
+function renderFeed(animateFirst){
+  const feed = el('feed');
+  if(!activity.length){ feed.innerHTML = '<div class="empty-state">No activity yet.</div>'; return; }
+  feed.innerHTML = '';
+  activity.slice().reverse().forEach((a,idx)=>{
+    const item = document.createElement('div');
+    item.className = 'feed-item' + (animateFirst && idx===0 ? ' new' : '');
+    const iconClass = a.type==='payment' ? 'payment' : a.type==='overdue' ? 'overdue' : 'reminder';
+    const icon = a.type==='payment' ? 'fa-money-bill-wave' : a.type==='overdue' ? 'fa-circle-exclamation' : 'fa-bell';
+    item.innerHTML = `<div class="feed-icon ${iconClass}"><i class="fas ${icon}"></i></div>
+      <div class="feed-body"><h4>${a.title}</h4><p>${a.text}</p><div class="feed-time">${a.time}</div></div>`;
+    feed.appendChild(item);
+  });
+}
+
+async function recordContribution(idx){
+  const t = tenants[idx];
+  const total = t.rent+t.bills, bal = Math.max(total-t.paid,0);
+  if(bal<=0){ showToast(`${t.name} has no outstanding balance.`); return; }
+  const suggestion = Math.min(bal, Math.ceil(bal/10));
+  const input = prompt(`Record a contribution from ${t.name}. Balance owed: ${fmt(bal)}.\nEnter amount received (KSh):`, suggestion);
+  if(input===null) return;
+  const amount = +input;
+  if(!amount || amount<=0){ showToast('Enter a valid amount.'); return; }
+  t.paid += amount;
+  const newBal = Math.max(total-t.paid,0);
+  activity.push({type:'payment', title:'Payment Received', text:`${t.name} paid ${fmt(amount)}${newBal<=0? ' — balance fully cleared.':'.'}`, time:'Just now'});
+  await saveState();
+  renderTenants(el('tenantSearch').value);
+  renderStats();
+  renderFeed(true);
+  showToast(`${fmt(amount)} recorded for ${t.name}. Dashboard updated live.`);
+}
+
+async function sendReminder(idx){
+  const t = tenants[idx];
+  activity.push({type:'reminder', title:'Reminder Sent', text:`Payment reminder sent to ${t.name}.`, time:'Just now'});
+  await saveState();
+  renderFeed(true);
+  showToast(`Reminder sent to ${t.name}.`);
+}
+
+el('remindAll').addEventListener('click', async ()=>{
+  const owing = tenants.filter(t=> statusOf(t)!=='paid');
+  if(!owing.length){ showToast('Every tenant is fully paid up.'); return; }
+  if(!confirm(`Send reminders to ${owing.length} tenant(s) with pending balances?`)) return;
+  owing.forEach(t=> activity.push({type:'reminder', title:'Reminder Sent', text:`Payment reminder sent to ${t.name}.`, time:'Just now'}));
+  await saveState();
+  renderFeed(true);
+  showToast('Reminders sent to all tenants with balances due.');
+});
+
+el('printAll').addEventListener('click', ()=> window.print());
+el('exportAll').addEventListener('click', ()=> showToast('Preparing export of this month\u2019s payment data...'));
+el('tenantSearch').addEventListener('input', e=> renderTenants(e.target.value));
+
+/* STATEMENT MODAL */
+let openIdx = null;
+function openStatement(idx){
+  openIdx = idx;
+  const t = tenants[idx];
+  const total = t.rent+t.bills, bal = Math.max(total-t.paid,0), status = statusOf(t);
+  el('stModalTitle').textContent = `${t.name} — ${t.unit}`;
+  const body = el('stModalBody');
+  body.innerHTML = '';
+  t.notes.forEach((n,i)=>{
+    const tr = document.createElement('tr');
+    const paidThisLine = i===0 ? Math.min(t.paid, n.amount) : (status==='paid' ? n.amount : 0);
+    tr.innerHTML = `<td>This month</td><td>${n.desc}</td><td>${fmt(n.amount)}</td><td><span class="badge ${status==='paid'?'paid':status==='pending'?'pending':'overdue'}">${status==='paid'?'Paid':status==='pending'?'Partial':'Overdue'}</span></td>`;
+    body.appendChild(tr);
+  });
+  el('stModalTotal').textContent = fmt(total);
+  el('stModalBalance').textContent = fmt(bal);
+  el('statementModal').classList.add('show');
+}
+function closeStatement(){ el('statementModal').classList.remove('show'); openIdx=null; }
+
+let toastTimer;
+function showToast(msg){
+  el('toastText').textContent = msg;
+  el('toast').classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> el('toast').classList.remove('show'), 3600);
+}
+
+/* CHART */
+let chart;
+function initChart(){
+  const ctx = el('paymentChart').getContext('2d');
+  chart = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+      datasets:[{
+        label:'Monthly Payments (KSh)', data: trendHistory,
+        borderColor:'#c9a227', backgroundColor:'rgba(201,162,39,0.12)',
+        borderWidth:2, fill:true, tension:.4, pointBackgroundColor:'#ecd28a', pointRadius:3
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:true, position:'top', labels:{ color:'#9fb3a6', font:{family:'DM Sans'} } } },
+      scales:{
+        y:{ beginAtZero:true, ticks:{ color:'#6f8579', callback:v=>'KSh '+v.toLocaleString() }, grid:{ color:'rgba(236,210,138,0.08)' } },
+        x:{ ticks:{ color:'#6f8579' }, grid:{ color:'rgba(236,210,138,0.05)' } }
+      }
+    }
+  });
+}
+
+(async function init(){
+  await loadState();
+  initChart();
+  renderTenants('');
+  renderStats();
+  renderFeed(false);
+})();
+</script>
+</body>
+</html>

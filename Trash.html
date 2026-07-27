@@ -1,1002 +1,1219 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mwarokin Estates · Waste Management</title>
-    <!-- Fonts & Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* ---------- RESET & VARIABLES ---------- */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --forest: #0D2B1F;
-            --forest-mid: #163A2A;
-            --forest-rim: #1E4D39;
-            --forest-soft: #264D38;
-            --gold: #C9A84C;
-            --gold-light: #E2C47A;
-            --cream: #FAF6EE;
-            --mist: rgba(201,168,76,0.08);
-            --danger: #B04040;
-            --success: #2E7D5C;
-            --warn: #9A7B2E;
-            --text-main: #FAF6EE;
-            --text-dim: rgba(250,246,238,0.55);
-            --radius-sm: 8px;
-            --radius-md: 14px;
-            --radius-lg: 22px;
-            --shadow-card: 0 8px 28px rgba(0,0,0,0.35);
-            --transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
-        }
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--forest);
-            color: var(--text-main);
-            min-height: 100vh;
-            overflow-x: hidden;
-            padding: 20px 24px 60px;
-        }
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: radial-gradient(ellipse 50% 35% at 80% 20%, rgba(201,168,76,0.05) 0%, transparent 70%),
-                        radial-gradient(ellipse 40% 50% at 10% 80%, rgba(30,77,57,0.3) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 0;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mwarokin Estates · Waste & Collection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root{
+  --obsidian:#07090a; --forest:#0D2B1F; --forest-mid:#122E22; --forest-rim:#1C4433; --forest-soft:#254938;
+  --gold:#C9A84C; --gold-light:#E6C878; --gold-dim:rgba(201,168,76,0.5);
+  --ivory:#F7F2E7; --text-main:#F5EFE0; --text-dim:rgba(245,239,224,0.55); --text-faint:rgba(245,239,224,0.32);
+  --danger:#C0554E; --danger-soft:rgba(192,85,78,0.16); --success:#4FAE84; --success-soft:rgba(79,174,132,0.14);
+  --warn:#C79A3F; --warn-soft:rgba(199,154,63,0.14);
+  --line:rgba(201,168,76,0.10); --line-strong:rgba(201,168,76,0.22);
+  --r-sm:9px; --r-md:15px; --r-lg:24px; --r-xl:30px;
+  --shadow:0 18px 50px rgba(0,0,0,0.45);
+  --ease:cubic-bezier(.4,0,.2,1);
+  --serif:'Cormorant Garamond',serif; --display:'Syne',sans-serif; --body:'DM Sans',sans-serif; --mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--body); background:var(--obsidian); color:var(--text-main);
+  min-height:100vh; overflow-x:hidden;
+}
+body::before{
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 40% at 85% 5%, rgba(201,168,76,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 45% 55% at 5% 90%, rgba(28,68,51,0.4) 0%, transparent 70%),
+    linear-gradient(180deg, var(--forest) 0%, var(--obsidian) 55%);
+}
+@media (prefers-reduced-motion: reduce){ *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;} }
 
-        /* ---------- LAYOUT ---------- */
-        .wrap {
-            max-width: 1380px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-        }
+.app{max-width:1440px; margin:0 auto; position:relative; z-index:1; padding:22px 26px 100px;}
 
-        /* ---------- TOPBAR ---------- */
-        .topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 0 28px;
-            border-bottom: 1px solid rgba(201,168,76,0.12);
-            margin-bottom: 28px;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-        .brand { display: flex; align-items: center; gap: 14px; }
-        .brand-icon {
-            width: 48px; height: 48px;
-            border-radius: var(--radius-sm);
-            background: linear-gradient(135deg, var(--forest-rim), var(--forest-soft));
-            border: 1px solid rgba(201,168,76,0.25);
-            display: flex; align-items: center; justify-content: center;
-            color: var(--gold);
-            font-size: 1.3rem;
-        }
-        .brand-text h1 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.7rem;
-            font-weight: 600;
-            color: var(--gold-light);
-            letter-spacing: 0.02em;
-            line-height: 1.1;
-        }
-        .brand-text p {
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            margin-top: 2px;
-        }
-        .topbar-right { display: flex; align-items: center; gap: 18px; }
-        .notif-btn {
-            position: relative;
-            width: 42px; height: 42px;
-            border-radius: var(--radius-sm);
-            background: var(--forest-mid);
-            border: 1px solid rgba(201,168,76,0.15);
-            display: flex; align-items: center; justify-content: center;
-            color: var(--gold);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .notif-btn:hover { border-color: var(--gold); background: var(--forest-rim); }
-        .notif-dot {
-            position: absolute;
-            top: 8px; right: 8px;
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            background: var(--gold);
-            border: 2px solid var(--forest);
-        }
-        .user-pill {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: var(--forest-mid);
-            border: 1px solid rgba(201,168,76,0.15);
-            border-radius: 50px;
-            padding: 6px 16px 6px 6px;
-        }
-        .user-avatar {
-            width: 36px; height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--forest-rim), var(--forest-soft));
-            border: 1.5px solid var(--gold);
-            display: flex; align-items: center; justify-content: center;
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-            font-size: 0.8rem;
-            color: var(--gold-light);
-        }
-        .user-name { font-size: 0.9rem; font-weight: 500; }
-        .user-role { font-size: 0.7rem; color: var(--gold); letter-spacing: 0.05em; }
+/* TOPBAR */
+.topbar{display:flex; align-items:center; justify-content:space-between; padding:14px 4px 24px; border-bottom:1px solid var(--line); margin-bottom:26px; gap:16px; flex-wrap:wrap;}
+.brand{display:flex; align-items:center; gap:14px;}
+.brand-icon{width:50px;height:50px;border-radius:12px;background:linear-gradient(150deg,var(--forest-rim),var(--forest-soft));border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center;color:var(--gold-light);font-size:1.25rem;position:relative;overflow:hidden;}
+.brand-icon::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(201,168,76,0.18),transparent 60%);}
+.brand-text h1{font-family:var(--serif);font-size:1.65rem;font-weight:600;color:var(--gold-light);letter-spacing:.01em;line-height:1.05;}
+.brand-text p{font-family:var(--mono);font-size:.66rem;color:var(--text-dim);letter-spacing:.14em;text-transform:uppercase;margin-top:4px;}
+.topbar-right{display:flex;align-items:center;gap:14px;}
 
-        /* ---------- LAYOUT GRID ---------- */
-        .layout {
-            display: grid;
-            grid-template-columns: 220px 1fr;
-            gap: 28px;
-        }
+.icon-btn{width:42px;height:42px;border-radius:11px;background:var(--forest-mid);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--gold);cursor:pointer;transition:.2s var(--ease);position:relative;}
+.icon-btn:hover{border-color:var(--gold-dim);background:var(--forest-rim);transform:translateY(-1px);}
+.notif-dot{position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--gold);border:2px solid var(--forest-mid);}
+.notif-dot.pulse{animation:pulseDot 1.8s infinite;}
+@keyframes pulseDot{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,.5);}50%{box-shadow:0 0 0 5px rgba(201,168,76,0);}}
 
-        /* ---------- SIDEBAR ---------- */
-        .sidebar { position: sticky; top: 24px; align-self: start; }
-        .sidebar-section {
-            background: var(--forest-mid);
-            border: 1px solid rgba(201,168,76,0.08);
-            border-radius: var(--radius-md);
-            padding: 8px;
-            margin-bottom: 16px;
-        }
-        .nav-label {
-            font-size: 0.65rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            padding: 6px 12px 12px;
-            font-family: 'Syne', sans-serif;
-        }
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 11px 14px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: var(--transition);
-            color: var(--text-dim);
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-        .nav-item i { width: 18px; text-align: center; }
-        .nav-item:hover { background: rgba(201,168,76,0.08); color: var(--text-main); }
-        .nav-item.active {
-            background: rgba(201,168,76,0.12);
-            color: var(--gold-light);
-            border-left: 2px solid var(--gold);
-        }
-        .eco-score-box {
-            background: linear-gradient(145deg, var(--forest-rim), var(--forest-soft));
-            border: 1px solid rgba(201,168,76,0.15);
-            border-radius: var(--radius-md);
-            padding: 20px 12px;
-            text-align: center;
-        }
-        .eco-score-box .score-label {
-            font-size: 0.7rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--text-dim);
-        }
-        .eco-ring {
-            position: relative;
-            width: 80px; height: 80px;
-            margin: 12px auto 8px;
-        }
-        .eco-ring svg { transform: rotate(-90deg); }
-        .eco-ring-num {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.6rem;
-            font-weight: 600;
-            color: var(--gold-light);
-        }
-        .eco-grade {
-            font-family: 'Syne', sans-serif;
-            font-size: 0.75rem;
-            color: var(--gold);
-            font-weight: 600;
-        }
+.user-pill{display:flex;align-items:center;gap:11px;background:var(--forest-mid);border:1px solid var(--line);border-radius:50px;padding:6px 16px 6px 6px;cursor:pointer;transition:.2s var(--ease);}
+.user-pill:hover{border-color:var(--gold-dim);}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(140deg,var(--forest-rim),var(--forest-soft));border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:.78rem;color:var(--gold-light);}
+.user-name{font-size:.88rem;font-weight:600;}
+.user-role{font-family:var(--mono);font-size:.63rem;color:var(--gold);letter-spacing:.06em;}
 
-        /* ---------- MAIN ---------- */
-        .main { display: flex; flex-direction: column; gap: 24px; }
+/* notif panel */
+.panel{position:absolute; top:60px; right:0; width:340px; background:var(--forest-mid); border:1px solid var(--line-strong); border-radius:var(--r-md); box-shadow:var(--shadow); z-index:500; opacity:0; visibility:hidden; transform:translateY(-8px); transition:.22s var(--ease);}
+.panel.open{opacity:1; visibility:visible; transform:translateY(0);}
+.panel-head{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+.panel-head h4{font-family:var(--display);font-size:.85rem;letter-spacing:.03em;}
+.panel-head span{font-family:var(--mono);font-size:.65rem;color:var(--gold);cursor:pointer;}
+.panel-body{max-height:340px;overflow-y:auto;}
+.panel-item{padding:13px 18px;border-bottom:1px solid rgba(255,255,255,0.03);display:flex;gap:12px;cursor:default;}
+.panel-item:last-child{border-bottom:none;}
+.panel-item i{color:var(--gold);width:16px;margin-top:2px;}
+.panel-item .pt{font-size:.82rem;font-weight:500;}
+.panel-item .ps{font-family:var(--mono);font-size:.65rem;color:var(--text-dim);margin-top:3px;}
+.panel-empty{padding:30px 18px;text-align:center;color:var(--text-faint);font-size:.8rem;}
 
-        /* property chips */
-        .prop-strip {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .prop-chip {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 18px;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-            background: var(--forest-mid);
-            border: 1px solid rgba(201,168,76,0.12);
-            color: var(--text-dim);
-        }
-        .prop-chip:hover { border-color: rgba(201,168,76,0.35); color: var(--text-main); }
-        .prop-chip.active {
-            background: linear-gradient(135deg, rgba(201,168,76,0.18), rgba(201,168,76,0.06));
-            border-color: var(--gold);
-            color: var(--gold-light);
-        }
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:230px 1fr;gap:28px;}
+.sidebar{position:sticky;top:22px;align-self:start;}
+.sidebar-section{background:var(--forest-mid);border:1px solid var(--line);border-radius:var(--r-md);padding:8px;margin-bottom:16px;}
+.nav-label{font-family:var(--display);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint);padding:8px 12px 10px;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:var(--r-sm);cursor:pointer;transition:.18s var(--ease);color:var(--text-dim);font-size:.85rem;font-weight:500;border-left:2px solid transparent;}
+.nav-item i{width:16px;text-align:center;}
+.nav-item:hover{background:rgba(201,168,76,0.06);color:var(--text-main);}
+.nav-item.active{background:rgba(201,168,76,0.1);color:var(--gold-light);border-left-color:var(--gold);}
 
-        /* cards */
-        .card {
-            background: var(--forest-mid);
-            border: 1px solid rgba(201,168,76,0.08);
-            border-radius: var(--radius-lg);
-            padding: 26px 28px;
-            transition: var(--transition);
-        }
-        .card:hover { border-color: rgba(201,168,76,0.2); box-shadow: var(--shadow-card); }
-        .card-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        .card-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: var(--gold-light);
-        }
-        .card-title-eyebrow {
-            font-size: 0.65rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            font-family: 'Syne', sans-serif;
-        }
-        .icon-btn {
-            width: 34px; height: 34px;
-            border-radius: var(--radius-sm);
-            background: rgba(201,168,76,0.06);
-            border: 1px solid rgba(201,168,76,0.1);
-            display: flex; align-items: center; justify-content: center;
-            color: var(--gold);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .icon-btn:hover { background: rgba(201,168,76,0.16); border-color: var(--gold); }
+.eco-box{background:linear-gradient(155deg,var(--forest-rim),var(--forest-soft));border:1px solid var(--line-strong);border-radius:var(--r-md);padding:22px 14px;text-align:center;}
+.eco-box .lbl{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);}
+.eco-ring{position:relative;width:88px;height:88px;margin:14px auto 8px;}
+.eco-ring svg{transform:rotate(-90deg);}
+.eco-ring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:1.7rem;font-weight:600;color:var(--gold-light);}
+.eco-grade{font-family:var(--display);font-size:.74rem;color:var(--gold);font-weight:600;}
+.eco-sub{font-family:var(--mono);font-size:.6rem;color:var(--text-faint);margin-top:6px;}
 
-        /* grids */
-        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-        .row-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+.main{display:flex;flex-direction:column;gap:24px;}
+.view{display:none;flex-direction:column;gap:24px;animation:fadeUp .35s var(--ease);}
+.view.active{display:flex;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 
-        /* schedule list */
-        .sched-list { display: flex; flex-direction: column; gap: 12px; }
-        .sched-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 18px;
-            border-radius: var(--radius-md);
-            background: rgba(13,43,31,0.4);
-            border: 1px solid rgba(201,168,76,0.06);
-            transition: var(--transition);
-        }
-        .sched-item:hover { background: rgba(30,77,57,0.3); border-color: rgba(201,168,76,0.15); }
-        .sched-left { display: flex; align-items: center; gap: 14px; }
-        .sched-icon {
-            width: 40px; height: 40px;
-            border-radius: var(--radius-sm);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.1rem;
-        }
-        .sched-icon.general { background: rgba(201,168,76,0.12); color: var(--gold); }
-        .sched-icon.recycle { background: rgba(46,125,92,0.2); color: #5EC89A; }
-        .sched-icon.organic { background: rgba(60,120,40,0.2); color: #8BC46A; }
-        .sched-label { font-weight: 500; }
-        .sched-day { font-size: 0.75rem; color: var(--text-dim); margin-top: 2px; }
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            letter-spacing: 0.04em;
-        }
-        .badge-upcoming {
-            background: rgba(201,168,76,0.1);
-            color: var(--gold-light);
-            border: 1px solid rgba(201,168,76,0.2);
-        }
-        .badge-done {
-            background: rgba(46,125,92,0.12);
-            color: #5EC89A;
-            border: 1px solid rgba(46,125,92,0.2);
-        }
+/* property chips */
+.prop-strip{display:flex;gap:10px;flex-wrap:wrap;}
+.prop-chip{display:flex;align-items:center;gap:8px;padding:9px 18px;border-radius:50px;font-size:.8rem;font-weight:500;cursor:pointer;transition:.18s var(--ease);background:var(--forest-mid);border:1px solid var(--line);color:var(--text-dim);}
+.prop-chip:hover{border-color:var(--gold-dim);color:var(--text-main);}
+.prop-chip.active{background:linear-gradient(135deg,rgba(201,168,76,0.2),rgba(201,168,76,0.05));border-color:var(--gold);color:var(--gold-light);}
 
-        /* bin meters */
-        .bin-list { display: flex; flex-direction: column; gap: 14px; }
-        .bin-row {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-        .bin-emoji { font-size: 1.6rem; line-height: 1; }
-        .bin-meta { flex: 1; }
-        .bin-name { font-weight: 500; margin-bottom: 6px; }
-        .fill-bar {
-            height: 6px;
-            background: rgba(255,255,255,0.06);
-            border-radius: 99px;
-            overflow: hidden;
-        }
-        .fill-inner {
-            height: 100%;
-            border-radius: 99px;
-            transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
-        }
-        .fill-low .fill-inner { background: linear-gradient(90deg,#2E7D5C,#5EC89A); }
-        .fill-med .fill-inner { background: linear-gradient(90deg,var(--warn),var(--gold)); }
-        .fill-high .fill-inner { background: linear-gradient(90deg,var(--danger),#E07070); }
-        .fill-pct {
-            font-size: 0.8rem;
-            font-weight: 600;
-            min-width: 36px;
-            text-align: right;
-        }
-        .fill-low .fill-pct { color: #5EC89A; }
-        .fill-med .fill-pct { color: var(--gold); }
-        .fill-high .fill-pct { color: #E07070; }
+/* countdown banner */
+.countdown-band{background:linear-gradient(120deg,var(--forest-rim) 0%,var(--forest-mid) 60%);border:1px solid var(--line-strong);border-radius:var(--r-lg);padding:22px 26px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;position:relative;overflow:hidden;}
+.countdown-band::after{content:'';position:absolute;top:-40%;right:-8%;width:220px;height:220px;background:radial-gradient(circle,rgba(201,168,76,0.14),transparent 70%);pointer-events:none;}
+.cb-left{display:flex;align-items:center;gap:16px;position:relative;z-index:1;}
+.cb-icon{width:52px;height:52px;border-radius:14px;background:rgba(201,168,76,0.12);border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center;color:var(--gold-light);font-size:1.3rem;}
+.cb-eyebrow{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);}
+.cb-title{font-family:var(--serif);font-size:1.5rem;font-weight:600;color:var(--gold-light);margin-top:2px;}
+.cb-time{display:flex;gap:10px;position:relative;z-index:1;}
+.cb-unit{background:rgba(7,9,10,0.4);border:1px solid var(--line-strong);border-radius:var(--r-sm);padding:10px 14px;text-align:center;min-width:64px;}
+.cb-unit .num{font-family:var(--mono);font-size:1.5rem;font-weight:600;color:var(--gold-light);line-height:1;}
+.cb-unit .lab{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-top:4px;}
 
-        /* stats */
-        .stat-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
-        .stat-box {
-            background: rgba(13,43,31,0.35);
-            border: 1px solid rgba(201,168,76,0.06);
-            border-radius: var(--radius-md);
-            padding: 18px 12px;
-            text-align: center;
-            transition: var(--transition);
-        }
-        .stat-box:hover { border-color: rgba(201,168,76,0.2); transform: translateY(-2px); }
-        .stat-num {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.2rem;
-            font-weight: 600;
-            color: var(--gold-light);
-            line-height: 1;
-        }
-        .stat-unit { font-size: 0.65rem; color: var(--text-dim); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 6px; }
-        .stat-delta { font-size: 0.7rem; margin-top: 6px; color: #5EC89A; }
+/* cards */
+.card{background:var(--forest-mid);border:1px solid var(--line);border-radius:var(--r-lg);padding:26px 28px;transition:.2s var(--ease);}
+.card:hover{border-color:var(--line-strong);}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:10px;flex-wrap:wrap;}
+.card-title{font-family:var(--serif);font-size:1.35rem;font-weight:600;color:var(--gold-light);}
+.card-eyebrow{font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);}
+.card-head-actions{display:flex;gap:8px;}
 
-        /* timeline */
-        .timeline { position: relative; padding-left: 28px; }
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 8px; top: 6px; bottom: 6px;
-            width: 1px;
-            background: linear-gradient(to bottom, var(--gold), transparent);
-        }
-        .tl-item {
-            position: relative;
-            margin-bottom: 18px;
-        }
-        .tl-item::before {
-            content: '';
-            position: absolute;
-            left: -24px;
-            top: 7px;
-            width: 9px; height: 9px;
-            border-radius: 50%;
-            border: 2px solid var(--gold);
-            background: var(--forest);
-        }
-        .tl-date { font-size: 0.7rem; color: var(--text-dim); letter-spacing: 0.04em; margin-bottom: 5px; }
-        .tl-card {
-            background: rgba(13,43,31,0.4);
-            border: 1px solid rgba(201,168,76,0.06);
-            border-radius: var(--radius-sm);
-            padding: 12px 16px;
-            transition: var(--transition);
-        }
-        .tl-card:hover { border-color: rgba(201,168,76,0.2); }
-        .tl-title { font-weight: 500; margin-bottom: 3px; }
-        .tl-desc { font-size: 0.78rem; color: var(--text-dim); }
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.row-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
 
-        /* quick actions */
-        .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .action-tile {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 14px 16px;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            transition: var(--transition);
-            background: rgba(13,43,31,0.35);
-            border: 1px solid rgba(201,168,76,0.06);
-        }
-        .action-tile:hover {
-            background: rgba(30,77,57,0.3);
-            border-color: rgba(201,168,76,0.2);
-            transform: translateY(-2px);
-        }
-        .action-tile-icon {
-            width: 40px; height: 40px;
-            border-radius: var(--radius-sm);
-            background: rgba(201,168,76,0.08);
-            border: 1px solid rgba(201,168,76,0.1);
-            display: flex; align-items: center; justify-content: center;
-            color: var(--gold);
-            font-size: 1rem;
-            flex-shrink: 0;
-        }
-        .action-tile-info .at-title { font-weight: 500; }
-        .action-tile-info .at-sub { font-size: 0.7rem; color: var(--text-dim); margin-top: 2px; }
+/* sensor bin cards */
+.sensor-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.sensor-card{background:rgba(7,9,10,0.32);border:1px solid var(--line);border-radius:var(--r-md);padding:18px;position:relative;transition:.2s var(--ease);}
+.sensor-card:hover{border-color:var(--line-strong);transform:translateY(-2px);}
+.sensor-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.sensor-emoji{font-size:1.5rem;}
+.sensor-live{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:.6rem;color:var(--success);}
+.sensor-live .dot{width:6px;height:6px;border-radius:50%;background:var(--success);animation:pulseDot 1.6s infinite;}
+.sensor-name{font-weight:600;font-size:.9rem;margin-bottom:2px;}
+.sensor-updated{font-family:var(--mono);font-size:.62rem;color:var(--text-faint);margin-bottom:12px;}
+.fill-bar{height:7px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;margin-bottom:8px;}
+.fill-inner{height:100%;border-radius:99px;transition:width .9s var(--ease);}
+.fill-low .fill-inner{background:linear-gradient(90deg,#3E8F6C,#5EC89A);}
+.fill-med .fill-inner{background:linear-gradient(90deg,var(--warn),var(--gold-light));}
+.fill-high .fill-inner{background:linear-gradient(90deg,var(--danger),#E07A72);}
+.sensor-bottom{display:flex;justify-content:space-between;align-items:center;}
+.fill-pct{font-family:var(--mono);font-weight:600;font-size:.95rem;}
+.fill-low .fill-pct{color:#5EC89A;}
+.fill-med .fill-pct{color:var(--gold-light);}
+.fill-high .fill-pct{color:#E07A72;}
+.sensor-tag{font-family:var(--mono);font-size:.6rem;padding:3px 9px;border-radius:20px;letter-spacing:.03em;}
+.tag-ok{background:var(--success-soft);color:#5EC89A;}
+.tag-warn{background:var(--warn-soft);color:var(--gold-light);}
+.tag-alert{background:var(--danger-soft);color:#E07A72;}
 
-        /* buttons */
-        .btn-row { display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 22px;
-            border-radius: var(--radius-sm);
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            border: none;
-            letter-spacing: 0.03em;
-        }
-        .btn-gold {
-            background: linear-gradient(135deg, var(--gold), var(--gold-light));
-            color: var(--forest);
-        }
-        .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.25); }
-        .btn-outline {
-            background: transparent;
-            border: 1px solid rgba(201,168,76,0.25);
-            color: var(--gold-light);
-        }
-        .btn-outline:hover { background: rgba(201,168,76,0.06); border-color: var(--gold); }
-        .btn-danger {
-            background: linear-gradient(135deg, #B04040, #C85050);
-            color: white;
-        }
-        .btn-danger:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(176,64,64,0.25); }
+/* stat row */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.stat-box{background:rgba(7,9,10,0.32);border:1px solid var(--line);border-radius:var(--r-md);padding:18px 12px;text-align:center;transition:.2s var(--ease);}
+.stat-box:hover{border-color:var(--line-strong);transform:translateY(-2px);}
+.stat-num{font-family:var(--serif);font-size:2.1rem;font-weight:600;color:var(--gold-light);line-height:1;}
+.stat-unit{font-family:var(--mono);font-size:.6rem;color:var(--text-dim);letter-spacing:.05em;text-transform:uppercase;margin-top:6px;}
+.stat-delta{font-family:var(--mono);font-size:.66rem;margin-top:6px;color:#5EC89A;}
 
-        /* ---------- MODAL ---------- */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.55);
-            backdrop-filter: blur(6px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-overlay.open { display: flex; }
-        .modal {
-            background: var(--forest-mid);
-            border: 1px solid rgba(201,168,76,0.15);
-            border-radius: var(--radius-lg);
-            padding: 32px;
-            width: 90%;
-            max-width: 480px;
-            box-shadow: 0 24px 60px rgba(0,0,0,0.5);
-            animation: modalIn 0.25s cubic-bezier(0.4,0,0.2,1);
-        }
-        @keyframes modalIn {
-            from { opacity: 0; transform: translateY(-18px) scale(0.96); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-        .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; color: var(--gold-light); }
-        .close-btn {
-            width: 32px; height: 32px;
-            border-radius: var(--radius-sm);
-            background: rgba(201,168,76,0.06);
-            border: 1px solid rgba(201,168,76,0.1);
-            color: var(--gold);
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex; align-items: center; justify-content: center;
-        }
-        .close-btn:hover { background: rgba(201,168,76,0.15); }
-        .form-group { margin-bottom: 18px; }
-        .form-label {
-            display: block;
-            font-size: 0.7rem;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            margin-bottom: 6px;
-            font-family: 'Syne', sans-serif;
-        }
-        .form-control {
-            width: 100%;
-            padding: 11px 14px;
-            background: rgba(13,43,31,0.5);
-            border: 1px solid rgba(201,168,76,0.1);
-            border-radius: var(--radius-sm);
-            color: var(--text-main);
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.9rem;
-            transition: var(--transition);
-            outline: none;
-        }
-        .form-control:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.08); }
-        .form-control option { background: var(--forest-mid); color: var(--text-main); }
-        textarea.form-control { resize: vertical; min-height: 80px; }
-        .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
+/* schedule list */
+.sched-list{display:flex;flex-direction:column;gap:11px;}
+.sched-item{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-radius:var(--r-md);background:rgba(7,9,10,0.3);border:1px solid var(--line);transition:.18s var(--ease);gap:12px;flex-wrap:wrap;}
+.sched-item:hover{border-color:var(--line-strong);}
+.sched-left{display:flex;align-items:center;gap:14px;}
+.sched-icon{width:40px;height:40px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0;}
+.sched-icon.general{background:rgba(201,168,76,0.12);color:var(--gold);}
+.sched-icon.recycle{background:rgba(79,174,132,0.16);color:#5EC89A;}
+.sched-icon.organic{background:rgba(139,196,106,0.16);color:#8BC46A;}
+.sched-label{font-weight:600;font-size:.88rem;}
+.sched-day{font-family:var(--mono);font-size:.68rem;color:var(--text-dim);margin-top:2px;}
+.sched-right{display:flex;align-items:center;gap:10px;}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-family:var(--mono);font-size:.63rem;font-weight:600;letter-spacing:.02em;}
+.badge-upcoming{background:rgba(201,168,76,0.1);color:var(--gold-light);border:1px solid var(--line-strong);}
+.badge-done{background:var(--success-soft);color:#5EC89A;border:1px solid rgba(79,174,132,0.25);}
 
-        /* ---------- TOAST ---------- */
-        .toast {
-            position: fixed;
-            bottom: 28px;
-            right: 28px;
-            background: var(--forest-rim);
-            border: 1px solid rgba(201,168,76,0.2);
-            border-radius: var(--radius-md);
-            padding: 14px 24px;
-            color: var(--text-main);
-            font-size: 0.9rem;
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transform: translateY(24px);
-            opacity: 0;
-            transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
-            pointer-events: none;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
-        }
-        .toast.show { transform: translateY(0); opacity: 1; }
-        .toast i { color: var(--gold); }
+.toggle{position:relative;width:38px;height:21px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle .slide{position:absolute;inset:0;background:rgba(255,255,255,0.1);border-radius:20px;cursor:pointer;transition:.2s var(--ease);}
+.toggle .slide::before{content:'';position:absolute;width:15px;height:15px;left:3px;top:3px;background:var(--text-dim);border-radius:50%;transition:.2s var(--ease);}
+.toggle input:checked + .slide{background:rgba(201,168,76,0.3);}
+.toggle input:checked + .slide::before{transform:translateX(17px);background:var(--gold-light);}
 
-        /* ---------- RESPONSIVE ---------- */
-        @media (max-width: 1060px) {
-            .layout { grid-template-columns: 1fr; }
-            .sidebar { display: none; }
-            .stat-row { grid-template-columns: repeat(2,1fr); }
-        }
-        @media (max-width: 680px) {
-            .row-2 { grid-template-columns: 1fr; }
-            .actions-grid { grid-template-columns: 1fr; }
-            .stat-row { grid-template-columns: 1fr 1fr; }
-            .btn-row { flex-direction: column; }
-            .topbar { flex-direction: column; align-items: stretch; }
-        }
-    </style>
+/* timeline */
+.timeline{position:relative;padding-left:26px;}
+.timeline::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:1px;background:linear-gradient(to bottom,var(--gold),transparent);}
+.tl-item{position:relative;margin-bottom:16px;}
+.tl-item::before{content:'';position:absolute;left:-22px;top:7px;width:9px;height:9px;border-radius:50%;border:2px solid var(--gold);background:var(--forest);}
+.tl-date{font-family:var(--mono);font-size:.65rem;color:var(--text-dim);letter-spacing:.03em;margin-bottom:5px;}
+.tl-card{background:rgba(7,9,10,0.3);border:1px solid var(--line);border-radius:var(--r-sm);padding:12px 16px;transition:.18s var(--ease);}
+.tl-card:hover{border-color:var(--line-strong);}
+.tl-title{font-weight:600;font-size:.86rem;margin-bottom:3px;}
+.tl-desc{font-size:.78rem;color:var(--text-dim);}
+.tl-empty{padding:30px 10px;text-align:center;color:var(--text-faint);font-size:.85rem;}
+
+/* actions grid */
+.actions-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.action-tile{display:flex;align-items:center;gap:14px;padding:15px 16px;border-radius:var(--r-md);cursor:pointer;transition:.18s var(--ease);background:rgba(7,9,10,0.3);border:1px solid var(--line);}
+.action-tile:hover{background:rgba(28,68,51,0.35);border-color:var(--line-strong);transform:translateY(-2px);}
+.action-tile-icon{width:40px;height:40px;border-radius:var(--r-sm);background:rgba(201,168,76,0.08);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:1rem;flex-shrink:0;}
+.at-title{font-weight:600;font-size:.85rem;}
+.at-sub{font-family:var(--mono);font-size:.63rem;color:var(--text-dim);margin-top:2px;}
+
+/* buttons */
+.btn-row{display:flex;gap:12px;margin-top:18px;flex-wrap:wrap;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:var(--r-sm);font-size:.83rem;font-weight:600;cursor:pointer;transition:.2s var(--ease);border:none;letter-spacing:.02em;font-family:var(--body);}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--forest);}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(201,168,76,0.25);}
+.btn-outline{background:transparent;border:1px solid var(--line-strong);color:var(--gold-light);}
+.btn-outline:hover{background:rgba(201,168,76,0.06);border-color:var(--gold);}
+.btn-danger{background:linear-gradient(135deg,#B04B45,#CC635C);color:white;}
+.btn-danger:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(176,75,69,0.28);}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none !important;box-shadow:none !important;}
+.btn-sm{padding:8px 16px;font-size:.76rem;}
+
+/* weekly grid */
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;}
+.day-col{background:rgba(7,9,10,0.3);border:1px solid var(--line);border-radius:var(--r-md);padding:12px 10px;min-height:150px;display:flex;flex-direction:column;gap:8px;}
+.day-col.today{border-color:var(--gold-dim);background:rgba(201,168,76,0.05);}
+.day-name{font-family:var(--display);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);text-align:center;}
+.day-col.today .day-name{color:var(--gold-light);}
+.day-event{font-size:.66rem;padding:6px 7px;border-radius:7px;line-height:1.3;}
+.day-event.general{background:rgba(201,168,76,0.12);color:var(--gold-light);}
+.day-event.recycle{background:rgba(79,174,132,0.16);color:#5EC89A;}
+.day-event.organic{background:rgba(139,196,106,0.16);color:#8BC46A;}
+.day-empty{font-size:.62rem;color:var(--text-faint);text-align:center;margin-top:auto;margin-bottom:auto;}
+
+/* history table */
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.filter-chip{padding:6px 14px;border-radius:20px;font-family:var(--mono);font-size:.68rem;background:rgba(7,9,10,0.3);border:1px solid var(--line);color:var(--text-dim);cursor:pointer;transition:.18s var(--ease);}
+.filter-chip.active{background:rgba(201,168,76,0.14);border-color:var(--gold);color:var(--gold-light);}
+.hist-table{width:100%;border-collapse:collapse;}
+.hist-table th{text-align:left;font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);padding:10px 12px;border-bottom:1px solid var(--line-strong);}
+.hist-table td{padding:12px;font-size:.82rem;border-bottom:1px solid rgba(255,255,255,0.03);}
+.hist-table tr:hover td{background:rgba(201,168,76,0.03);}
+.htag{font-family:var(--mono);font-size:.62rem;padding:3px 9px;border-radius:16px;}
+
+/* settings */
+.settings-row{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--line);gap:16px;}
+.settings-row:last-child{border-bottom:none;}
+.settings-label{font-weight:600;font-size:.86rem;}
+.settings-desc{font-family:var(--mono);font-size:.65rem;color:var(--text-dim);margin-top:3px;}
+
+/* guidelines */
+.guide-item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);}
+.guide-item:last-child{border-bottom:none;}
+.guide-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;}
+.guide-title{font-weight:600;font-size:.85rem;margin-bottom:3px;}
+.guide-desc{font-size:.78rem;color:var(--text-dim);line-height:1.5;}
+
+/* modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);z-index:1000;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--forest-mid);border:1px solid var(--line-strong);border-radius:var(--r-lg);padding:30px;width:100%;max-width:480px;box-shadow:0 26px 64px rgba(0,0,0,0.55);animation:modalIn .25s var(--ease);max-height:88vh;overflow-y:auto;}
+@keyframes modalIn{from{opacity:0;transform:translateY(-16px) scale(.97);}to{opacity:1;transform:translateY(0) scale(1);}}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;}
+.modal-title{font-family:var(--serif);font-size:1.5rem;color:var(--gold-light);}
+.close-btn{width:32px;height:32px;border-radius:var(--r-sm);background:rgba(201,168,76,0.06);border:1px solid var(--line);color:var(--gold);cursor:pointer;transition:.18s var(--ease);display:flex;align-items:center;justify-content:center;}
+.close-btn:hover{background:rgba(201,168,76,0.15);}
+.form-group{margin-bottom:16px;}
+.form-label{display:block;font-family:var(--mono);font-size:.65rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;}
+.form-control{width:100%;padding:11px 14px;background:rgba(7,9,10,0.4);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--text-main);font-family:var(--body);font-size:.87rem;transition:.18s var(--ease);outline:none;}
+.form-control:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,0.08);}
+.form-control option{background:var(--forest-mid);}
+textarea.form-control{resize:vertical;min-height:76px;}
+.modal-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:22px;}
+.err-msg{font-family:var(--mono);font-size:.68rem;color:#E07A72;margin-top:5px;display:none;}
+.form-group.has-error .form-control{border-color:#C0554E;}
+.form-group.has-error .err-msg{display:block;}
+.photo-drop{border:1.5px dashed var(--line-strong);border-radius:var(--r-sm);padding:20px;text-align:center;cursor:pointer;transition:.18s var(--ease);color:var(--text-dim);font-size:.78rem;}
+.photo-drop:hover{border-color:var(--gold);color:var(--gold-light);}
+.photo-preview{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;}
+.photo-preview img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--line-strong);}
+
+/* toast */
+.toast{position:fixed;bottom:26px;right:26px;background:var(--forest-rim);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:14px 22px;color:var(--text-main);font-size:.86rem;z-index:2000;display:flex;align-items:center;gap:12px;transform:translateY(24px);opacity:0;transition:all .35s var(--ease);pointer-events:none;box-shadow:0 14px 44px rgba(0,0,0,0.45);max-width:340px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast i{color:var(--gold);}
+
+/* mobile bottom nav */
+.mobile-nav{display:none;}
+
+@media (max-width:1060px){
+  .layout{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+  .stat-row{grid-template-columns:repeat(2,1fr);}
+  .sensor-grid{grid-template-columns:1fr;}
+  .row-3{grid-template-columns:1fr;}
+  .mobile-nav{
+    display:flex; position:fixed; bottom:0; left:0; right:0; z-index:400;
+    background:rgba(13,43,31,0.92); backdrop-filter:blur(14px); border-top:1px solid var(--line-strong);
+    padding:10px 6px calc(10px + env(safe-area-inset-bottom));
+  }
+  .mnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--text-dim);font-size:.6rem;font-family:var(--mono);cursor:pointer;}
+  .mnav-item i{font-size:1.05rem;}
+  .mnav-item.active{color:var(--gold-light);}
+  .app{padding-bottom:110px;}
+}
+@media (max-width:680px){
+  .row-2{grid-template-columns:1fr;}
+  .actions-grid{grid-template-columns:1fr;}
+  .stat-row{grid-template-columns:1fr 1fr;}
+  .btn-row{flex-direction:column;}
+  .topbar{flex-direction:row;}
+  .week-grid{grid-template-columns:repeat(7,minmax(78px,1fr));overflow-x:auto;padding-bottom:6px;}
+  .cb-time{width:100%;justify-content:space-between;}
+  .cb-unit{min-width:auto;flex:1;}
+  .panel{width:290px;right:-30px;}
+}
+</style>
 </head>
 <body>
-<div class="wrap">
+<div class="app">
 
-    <!-- TOPBAR -->
-    <div class="topbar">
-        <div class="brand">
-            <div class="brand-icon"><i class="fas fa-recycle"></i></div>
-            <div class="brand-text">
-                <h1>Mwarokin Estates</h1>
-                <p>Waste & Collection Management</p>
-            </div>
-        </div>
-        <div class="topbar-right">
-            <div class="notif-btn" title="Notifications">
-                <i class="fas fa-bell"></i>
-                <span class="notif-dot"></span>
-            </div>
-            <div class="user-pill">
-                <div class="user-avatar">JD</div>
-                <div>
-                    <div class="user-name">John Doe</div>
-                    <div class="user-role">Milki Tier</div>
-                </div>
-            </div>
-        </div>
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-icon"><i class="fas fa-recycle"></i></div>
+      <div class="brand-text">
+        <h1>Mwarokin Estates</h1>
+        <p>Waste &amp; Collection · Tenant Portal</p>
+      </div>
     </div>
-
-    <div class="layout">
-
-        <!-- SIDEBAR -->
-        <aside class="sidebar">
-            <div class="sidebar-section">
-                <div class="nav-label">Navigation</div>
-                <div class="nav-item active"><i class="fas fa-home"></i> Dashboard</div>
-                <div class="nav-item"><i class="fas fa-calendar-alt"></i> Schedule</div>
-                <div class="nav-item"><i class="fas fa-history"></i> History</div>
-                <div class="nav-item"><i class="fas fa-chart-bar"></i> Reports</div>
-                <div class="nav-item"><i class="fas fa-cog"></i> Settings</div>
-                <div class="nav-item"><i class="fas fa-question-circle"></i> Support</div>
-            </div>
-            <div class="eco-score-box">
-                <div class="score-label">Eco Score</div>
-                <div class="eco-ring">
-                    <svg width="80" height="80" viewBox="0 0 80 80">
-                        <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(201,168,76,0.1)" stroke-width="6"/>
-                        <circle cx="40" cy="40" r="32" fill="none"
-                            stroke="url(#ecoGrad)" stroke-width="6"
-                            stroke-dasharray="201" stroke-dashoffset="50"
-                            stroke-linecap="round"/>
-                        <defs>
-                            <linearGradient id="ecoGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stop-color="#C9A84C"/>
-                                <stop offset="100%" stop-color="#E2C47A"/>
-                            </linearGradient>
-                        </defs>
-                    </svg>
-                    <div class="eco-ring-num">75</div>
-                </div>
-                <div class="eco-grade">Good Standing</div>
-            </div>
-        </aside>
-
-        <!-- MAIN -->
-        <main class="main">
-
-            <!-- Property chips -->
-            <div class="prop-strip" id="propStrip">
-                <div class="prop-chip active" data-p="all"><i class="fas fa-th"></i> All Properties</div>
-                <div class="prop-chip" data-p="va"><i class="fas fa-building"></i> Villa A</div>
-                <div class="prop-chip" data-p="vb"><i class="fas fa-building"></i> Villa B</div>
-                <div class="prop-chip" data-p="ap"><i class="fas fa-layer-group"></i> Apartment 1</div>
-                <div class="prop-chip" data-p="fl"><i class="fas fa-chess-queen"></i> Flat</div>
-            </div>
-
-            <!-- Row: Collection Schedule + Bin Status -->
-            <div class="row-2">
-
-                <div class="card">
-                    <div class="card-head">
-                        <div>
-                            <div class="card-title-eyebrow">Weekly</div>
-                            <div class="card-title">Collection Schedule</div>
-                        </div>
-                        <div class="icon-btn" title="Refresh"><i class="fas fa-sync-alt"></i></div>
-                    </div>
-                    <div class="sched-list">
-                        <div class="sched-item">
-                            <div class="sched-left">
-                                <div class="sched-icon general"><i class="fas fa-trash"></i></div>
-                                <div>
-                                    <div class="sched-label">General Waste</div>
-                                    <div class="sched-day">Mon & Thu · 7:00 – 9:00 AM</div>
-                                </div>
-                            </div>
-                            <span class="badge badge-upcoming"><i class="fas fa-clock"></i> Upcoming</span>
-                        </div>
-                        <div class="sched-item">
-                            <div class="sched-left">
-                                <div class="sched-icon recycle"><i class="fas fa-recycle"></i></div>
-                                <div>
-                                    <div class="sched-label">Recyclables</div>
-                                    <div class="sched-day">Wednesday · 8:00 – 10:00 AM</div>
-                                </div>
-                            </div>
-                            <span class="badge badge-done"><i class="fas fa-check"></i> Done</span>
-                        </div>
-                        <div class="sched-item">
-                            <div class="sched-left">
-                                <div class="sched-icon organic"><i class="fas fa-leaf"></i></div>
-                                <div>
-                                    <div class="sched-label">Organic Waste</div>
-                                    <div class="sched-day">Saturday · 6:00 – 8:00 AM</div>
-                                </div>
-                            </div>
-                            <span class="badge badge-upcoming"><i class="fas fa-clock"></i> Upcoming</span>
-                        </div>
-                    </div>
-                    <div class="btn-row">
-                        <button class="btn btn-gold" id="setReminderBtn"><i class="fas fa-bell"></i> Set Reminder</button>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-head">
-                        <div>
-                            <div class="card-title-eyebrow">Live</div>
-                            <div class="card-title">Bin Status</div>
-                        </div>
-                        <div class="icon-btn" title="Refresh"><i class="fas fa-redo"></i></div>
-                    </div>
-                    <div class="bin-list">
-                        <div class="bin-row fill-med">
-                            <div class="bin-emoji">🗑️</div>
-                            <div class="bin-meta">
-                                <div class="bin-name">General Waste <span style="font-size:0.7rem;color:var(--text-dim)">· last emptied yesterday</span></div>
-                                <div class="fill-bar"><div class="fill-inner" style="width:65%"></div></div>
-                            </div>
-                            <div class="fill-pct">65%</div>
-                        </div>
-                        <div class="bin-row fill-high">
-                            <div class="bin-emoji">♻️</div>
-                            <div class="bin-meta">
-                                <div class="bin-name">Recyclables <span style="font-size:0.7rem;color:#E07070">· attention needed</span></div>
-                                <div class="fill-bar"><div class="fill-inner" style="width:85%"></div></div>
-                            </div>
-                            <div class="fill-pct">85%</div>
-                        </div>
-                        <div class="bin-row fill-low">
-                            <div class="bin-emoji">🌿</div>
-                            <div class="bin-meta">
-                                <div class="bin-name">Organic Waste <span style="font-size:0.7rem;color:var(--text-dim)">· emptied today</span></div>
-                                <div class="fill-bar"><div class="fill-inner" style="width:20%"></div></div>
-                            </div>
-                            <div class="fill-pct">20%</div>
-                        </div>
-                    </div>
-                    <div class="btn-row">
-                        <button class="btn btn-danger" id="requestPickupBtn"><i class="fas fa-truck"></i> Request Pickup</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Stats -->
-            <div class="card">
-                <div class="card-head">
-                    <div>
-                        <div class="card-title-eyebrow">This Month</div>
-                        <div class="card-title">Waste Statistics</div>
-                    </div>
-                    <div style="display:flex;gap:8px">
-                        <div class="icon-btn" title="Download"><i class="fas fa-download"></i></div>
-                    </div>
-                </div>
-                <div class="stat-row">
-                    <div class="stat-box">
-                        <div class="stat-num">450</div>
-                        <div class="stat-unit">kg Total Waste</div>
-                        <div class="stat-delta">↑ 4% vs last month</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-num">180</div>
-                        <div class="stat-unit">kg Recycled</div>
-                        <div class="stat-delta">↑ 12% vs last month</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-num">40%</div>
-                        <div class="stat-unit">Recycling Rate</div>
-                        <div class="stat-delta">↑ 3pts vs last month</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-num">12</div>
-                        <div class="stat-unit">Pickups Done</div>
-                        <div class="stat-delta" style="color:var(--text-dim)">on schedule</div>
-                    </div>
-                </div>
-                <div class="btn-row">
-                    <button class="btn btn-gold"><i class="fas fa-chart-bar"></i> Full Report</button>
-                    <button class="btn btn-outline"><i class="fas fa-file-pdf"></i> Download PDF</button>
-                </div>
-            </div>
-
-            <!-- Row: Timeline + Quick Actions -->
-            <div class="row-2">
-
-                <div class="card">
-                    <div class="card-head">
-                        <div>
-                            <div class="card-title-eyebrow">Log</div>
-                            <div class="card-title">Recent Activity</div>
-                        </div>
-                        <div class="icon-btn"><i class="fas fa-filter"></i></div>
-                    </div>
-                    <div class="timeline">
-                        <div class="tl-item">
-                            <div class="tl-date">Today, 8:30 AM</div>
-                            <div class="tl-card">
-                                <div class="tl-title">Organic Waste Collected</div>
-                                <div class="tl-desc">Your organic bin was emptied as scheduled.</div>
-                            </div>
-                        </div>
-                        <div class="tl-item">
-                            <div class="tl-date">Yesterday, 2:15 PM</div>
-                            <div class="tl-card">
-                                <div class="tl-title">Special Pickup Requested</div>
-                                <div class="tl-desc">Additional pickup for general waste — confirmed.</div>
-                            </div>
-                        </div>
-                        <div class="tl-item">
-                            <div class="tl-date">2 days ago, 9:45 AM</div>
-                            <div class="tl-card">
-                                <div class="tl-title">Recycling Bin Alert</div>
-                                <div class="tl-desc">Recyclables bin reached 85% capacity.</div>
-                            </div>
-                        </div>
-                        <div class="tl-item">
-                            <div class="tl-date">3 days ago, 7:10 AM</div>
-                            <div class="tl-card">
-                                <div class="tl-title">General Waste Collected</div>
-                                <div class="tl-desc">Routine Monday collection completed.</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-head">
-                        <div>
-                            <div class="card-title-eyebrow">Shortcuts</div>
-                            <div class="card-title">Quick Actions</div>
-                        </div>
-                    </div>
-                    <div class="actions-grid">
-                        <div class="action-tile" id="schedPickupBtn">
-                            <div class="action-tile-icon"><i class="fas fa-calendar-plus"></i></div>
-                            <div class="action-tile-info">
-                                <div class="at-title">Special Pickup</div>
-                                <div class="at-sub">Schedule a one-off collection</div>
-                            </div>
-                        </div>
-                        <div class="action-tile">
-                            <div class="action-tile-icon"><i class="fas fa-exclamation-triangle"></i></div>
-                            <div class="action-tile-info">
-                                <div class="at-title">Report Issue</div>
-                                <div class="at-sub">Missed pickup or damage</div>
-                            </div>
-                        </div>
-                        <div class="action-tile">
-                            <div class="action-tile-icon"><i class="fas fa-sync"></i></div>
-                            <div class="action-tile-info">
-                                <div class="at-title">Replace Bin</div>
-                                <div class="at-sub">Request a replacement</div>
-                            </div>
-                        </div>
-                        <div class="action-tile">
-                            <div class="action-tile-icon"><i class="fas fa-book"></i></div>
-                            <div class="action-tile-info">
-                                <div class="at-title">Guidelines</div>
-                                <div class="at-sub">Sorting & disposal rules</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div><!-- /row-2 -->
-
-        </main>
+    <div class="topbar-right">
+      <div style="position:relative;">
+        <div class="icon-btn" id="notifBtn" title="Notifications"><i class="fas fa-bell"></i><span class="notif-dot pulse" id="notifDot"></span></div>
+        <div class="panel" id="notifPanel">
+          <div class="panel-head"><h4>Notifications</h4><span id="clearNotifs">Clear all</span></div>
+          <div class="panel-body" id="notifList"></div>
+        </div>
+      </div>
+      <div style="position:relative;">
+        <div class="user-pill" id="userPill">
+          <div class="user-avatar">JD</div>
+          <div><div class="user-name">John Doe</div><div class="user-role">Milki Tier · Flat 4B</div></div>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section" id="sideNav">
+        <div class="nav-label">Navigate</div>
+        <div class="nav-item active" data-view="dashboard"><i class="fas fa-house"></i> Dashboard</div>
+        <div class="nav-item" data-view="schedule"><i class="fas fa-calendar-days"></i> Schedule</div>
+        <div class="nav-item" data-view="history"><i class="fas fa-clock-rotate-left"></i> History</div>
+        <div class="nav-item" data-view="reports"><i class="fas fa-chart-column"></i> Reports</div>
+        <div class="nav-item" data-view="settings"><i class="fas fa-gear"></i> Settings</div>
+        <div class="nav-item" data-view="support"><i class="fas fa-circle-question"></i> Support</div>
+      </div>
+      <div class="eco-box">
+        <div class="lbl">Eco Score</div>
+        <div class="eco-ring">
+          <svg width="88" height="88" viewBox="0 0 88 88">
+            <circle cx="44" cy="44" r="36" fill="none" stroke="rgba(201,168,76,0.1)" stroke-width="6"/>
+            <circle id="ecoArc" cx="44" cy="44" r="36" fill="none" stroke="url(#ecoGrad)" stroke-width="6" stroke-linecap="round" stroke-dasharray="226" stroke-dashoffset="60"/>
+            <defs><linearGradient id="ecoGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#C9A84C"/><stop offset="100%" stop-color="#E6C878"/></linearGradient></defs>
+          </svg>
+          <div class="eco-ring-num" id="ecoNum">75</div>
+        </div>
+        <div class="eco-grade" id="ecoGrade">Good Standing</div>
+        <div class="eco-sub" id="ecoSub">recycle more to climb</div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <div class="prop-strip" id="propStrip">
+        <div class="prop-chip active" data-p="all"><i class="fas fa-table-cells"></i> All Properties</div>
+        <div class="prop-chip" data-p="va"><i class="fas fa-building"></i> Villa A</div>
+        <div class="prop-chip" data-p="vb"><i class="fas fa-building"></i> Villa B</div>
+        <div class="prop-chip" data-p="ap"><i class="fas fa-layer-group"></i> Apartment 1</div>
+        <div class="prop-chip" data-p="fl"><i class="fas fa-chess-queen"></i> Flat 4B</div>
+      </div>
+
+      <!-- ================= DASHBOARD ================= -->
+      <div class="view active" id="view-dashboard">
+
+        <div class="countdown-band">
+          <div class="cb-left">
+            <div class="cb-icon"><i class="fas fa-truck"></i></div>
+            <div>
+              <div class="cb-eyebrow">Next Collection</div>
+              <div class="cb-title" id="nextCollectionLabel">General Waste</div>
+            </div>
+          </div>
+          <div class="cb-time" id="countdown">
+            <div class="cb-unit"><div class="num" id="cdH">00</div><div class="lab">Hrs</div></div>
+            <div class="cb-unit"><div class="num" id="cdM">00</div><div class="lab">Min</div></div>
+            <div class="cb-unit"><div class="num" id="cdS">00</div><div class="lab">Sec</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div><div class="card-eyebrow">Live Sensors</div><div class="card-title">Bin Status</div></div>
+            <div class="card-head-actions"><div class="icon-btn" id="refreshBins" title="Refresh sensors"><i class="fas fa-rotate"></i></div></div>
+          </div>
+          <div class="sensor-grid" id="sensorGrid"></div>
+          <div class="btn-row">
+            <button class="btn btn-danger" id="requestPickupBtn"><i class="fas fa-truck-fast"></i> Request Pickup</button>
+            <button class="btn btn-outline" id="setReminderBtn"><i class="fas fa-bell"></i> Set Reminder</button>
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="card">
+            <div class="card-head">
+              <div><div class="card-eyebrow">This Week</div><div class="card-title">Collection Schedule</div></div>
+            </div>
+            <div class="sched-list" id="schedListMini"></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <div><div class="card-eyebrow">Shortcuts</div><div class="card-title">Quick Actions</div></div>
+            </div>
+            <div class="actions-grid">
+              <div class="action-tile" data-modal="schedModal"><div class="action-tile-icon"><i class="fas fa-calendar-plus"></i></div><div><div class="at-title">Special Pickup</div><div class="at-sub">Schedule a one-off collection</div></div></div>
+              <div class="action-tile" data-modal="issueModal"><div class="action-tile-icon"><i class="fas fa-triangle-exclamation"></i></div><div><div class="at-title">Report Issue</div><div class="at-sub">Missed pickup or damage</div></div></div>
+              <div class="action-tile" data-modal="replaceModal"><div class="action-tile-icon"><i class="fas fa-arrows-rotate"></i></div><div><div class="at-title">Replace Bin</div><div class="at-sub">Request a replacement</div></div></div>
+              <div class="action-tile" data-view-jump="support"><div class="action-tile-icon"><i class="fas fa-book"></i></div><div><div class="at-title">Guidelines</div><div class="at-sub">Sorting &amp; disposal rules</div></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div><div class="card-eyebrow">Log</div><div class="card-title">Recent Activity</div></div>
+            <div class="card-head-actions"><div class="icon-btn" data-view-jump="history" title="View full history"><i class="fas fa-arrow-right"></i></div></div>
+          </div>
+          <div class="timeline" id="activityTimeline"></div>
+        </div>
+      </div>
+
+      <!-- ================= SCHEDULE ================= -->
+      <div class="view" id="view-schedule">
+        <div class="card">
+          <div class="card-head">
+            <div><div class="card-eyebrow">Weekly</div><div class="card-title">Collection Calendar</div></div>
+          </div>
+          <div class="week-grid" id="weekGrid"></div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <div><div class="card-eyebrow">Reminders</div><div class="card-title">Notify Me Before Collection</div></div>
+          </div>
+          <div class="sched-list" id="schedListFull"></div>
+        </div>
+      </div>
+
+      <!-- ================= HISTORY ================= -->
+      <div class="view" id="view-history">
+        <div class="card">
+          <div class="card-head">
+            <div><div class="card-eyebrow">Full Log</div><div class="card-title">Activity History</div></div>
+            <div class="card-head-actions"><button class="btn btn-outline btn-sm" id="exportHistoryBtn"><i class="fas fa-file-export"></i> Export</button></div>
+          </div>
+          <div class="filter-row" id="histFilters">
+            <div class="filter-chip active" data-f="all">All</div>
+            <div class="filter-chip" data-f="collection">Collections</div>
+            <div class="filter-chip" data-f="pickup">Pickup Requests</div>
+            <div class="filter-chip" data-f="issue">Issues</div>
+            <div class="filter-chip" data-f="alert">Sensor Alerts</div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="hist-table">
+              <thead><tr><th>Date</th><th>Type</th><th>Detail</th><th>Status</th></tr></thead>
+              <tbody id="histBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= REPORTS ================= -->
+      <div class="view" id="view-reports">
+        <div class="card">
+          <div class="card-head">
+            <div><div class="card-eyebrow">This Month</div><div class="card-title">Waste Statistics</div></div>
+            <div class="card-head-actions"><div class="icon-btn" id="downloadReportBtn" title="Download summary"><i class="fas fa-download"></i></div></div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-box"><div class="stat-num" id="statTotal">450</div><div class="stat-unit">kg Total Waste</div><div class="stat-delta">↑ 4% vs last month</div></div>
+            <div class="stat-box"><div class="stat-num" id="statRecycled">180</div><div class="stat-unit">kg Recycled</div><div class="stat-delta">↑ 12% vs last month</div></div>
+            <div class="stat-box"><div class="stat-num" id="statRate">40%</div><div class="stat-unit">Recycling Rate</div><div class="stat-delta">↑ 3pts vs last month</div></div>
+            <div class="stat-box"><div class="stat-num" id="statPickups">12</div><div class="stat-unit">Pickups Done</div><div class="stat-delta" style="color:var(--text-dim)">on schedule</div></div>
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="card">
+            <div class="card-head"><div><div class="card-eyebrow">Trend</div><div class="card-title">6-Month Waste Volume</div></div></div>
+            <canvas id="wasteChart" height="200"></canvas>
+          </div>
+          <div class="card">
+            <div class="card-head"><div><div class="card-eyebrow">Breakdown</div><div class="card-title">Waste by Category</div></div></div>
+            <canvas id="categoryChart" height="200"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SETTINGS ================= -->
+      <div class="view" id="view-settings">
+        <div class="card">
+          <div class="card-head"><div><div class="card-eyebrow">Preferences</div><div class="card-title">Notifications</div></div></div>
+          <div class="settings-row">
+            <div><div class="settings-label">Collection day reminders</div><div class="settings-desc">Get notified before scheduled pickups</div></div>
+            <label class="toggle"><input type="checkbox" id="toggleReminders" checked><span class="slide"></span></label>
+          </div>
+          <div class="settings-row">
+            <div><div class="settings-label">Sensor overflow alerts</div><div class="settings-desc">Notify when a bin crosses 80% capacity</div></div>
+            <label class="toggle"><input type="checkbox" id="toggleAlerts" checked><span class="slide"></span></label>
+          </div>
+          <div class="settings-row">
+            <div><div class="settings-label">Monthly report email</div><div class="settings-desc">Receive your waste summary by email</div></div>
+            <label class="toggle"><input type="checkbox" id="toggleReports"><span class="slide"></span></label>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><div class="card-eyebrow">Account</div><div class="card-title">Reminder Lead Time</div></div></div>
+          <div class="form-group">
+            <label class="form-label">Notify me before collection</label>
+            <select class="form-control" id="leadTime">
+              <option value="12">12 hours before</option>
+              <option value="6">6 hours before</option>
+              <option value="2">2 hours before</option>
+              <option value="1">1 hour before</option>
+            </select>
+          </div>
+          <div class="btn-row"><button class="btn btn-gold" id="saveSettingsBtn"><i class="fas fa-check"></i> Save Preferences</button></div>
+        </div>
+      </div>
+
+      <!-- ================= SUPPORT ================= -->
+      <div class="view" id="view-support">
+        <div class="card">
+          <div class="card-head"><div><div class="card-eyebrow">Reference</div><div class="card-title">Sorting &amp; Disposal Guidelines</div></div></div>
+          <div class="guide-item"><div class="guide-icon" style="background:rgba(201,168,76,0.12);color:var(--gold);"><i class="fas fa-trash"></i></div><div><div class="guide-title">General Waste</div><div class="guide-desc">Non-recyclable household waste, sealed in bags. No liquids, batteries, or electronics.</div></div></div>
+          <div class="guide-item"><div class="guide-icon" style="background:rgba(79,174,132,0.16);color:#5EC89A;"><i class="fas fa-recycle"></i></div><div><div class="guide-title">Recyclables</div><div class="guide-desc">Rinse and dry plastics, glass, cans, and paper before placing in the bin. Flatten cartons.</div></div></div>
+          <div class="guide-item"><div class="guide-icon" style="background:rgba(139,196,106,0.16);color:#8BC46A;"><i class="fas fa-leaf"></i></div><div><div class="guide-title">Organic Waste</div><div class="guide-desc">Food scraps and garden trimmings. Keep separate from plastic packaging.</div></div></div>
+          <div class="guide-item"><div class="guide-icon" style="background:var(--danger-soft);color:#E07A72;"><i class="fas fa-radiation"></i></div><div><div class="guide-title">Hazardous Materials</div><div class="guide-desc">Batteries, paint, chemicals — request a special pickup, never place in regular bins.</div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><div class="card-eyebrow">Need help?</div><div class="card-title">Contact Facilities Team</div></div></div>
+          <div class="form-group"><label class="form-label">Message</label><textarea class="form-control" id="supportMsg" placeholder="Describe what you need help with…"></textarea></div>
+          <div class="btn-row"><button class="btn btn-gold" id="sendSupportBtn"><i class="fas fa-paper-plane"></i> Send Message</button></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
 </div>
 
-<!-- MODAL -->
+<!-- MOBILE BOTTOM NAV -->
+<div class="mobile-nav" id="mobileNav">
+  <div class="mnav-item active" data-view="dashboard"><i class="fas fa-house"></i>Home</div>
+  <div class="mnav-item" data-view="schedule"><i class="fas fa-calendar-days"></i>Schedule</div>
+  <div class="mnav-item" data-view="history"><i class="fas fa-clock-rotate-left"></i>History</div>
+  <div class="mnav-item" data-view="reports"><i class="fas fa-chart-column"></i>Reports</div>
+  <div class="mnav-item" data-view="settings"><i class="fas fa-gear"></i>More</div>
+</div>
+
+<!-- MODAL: Special Pickup -->
 <div class="modal-overlay" id="schedModal">
-    <div class="modal">
-        <div class="modal-head">
-            <div class="modal-title">Schedule Special Pickup</div>
-            <button class="close-btn" id="closeModalBtn"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="form-group">
-            <label class="form-label">Pickup Type</label>
-            <select class="form-control" id="pickupType">
-                <option value="">Select waste type</option>
-                <option>General Waste</option>
-                <option>Recyclables</option>
-                <option>Organic Waste</option>
-                <option>Hazardous Materials</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label class="form-label">Preferred Date</label>
-            <input type="date" class="form-control" id="pickupDate">
-        </div>
-        <div class="form-group">
-            <label class="form-label">Time Slot</label>
-            <select class="form-control">
-                <option value="">Select a time slot</option>
-                <option>Morning · 7:00 – 10:00 AM</option>
-                <option>Afternoon · 1:00 – 4:00 PM</option>
-                <option>Evening · 5:00 – 8:00 PM</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label class="form-label">Special Instructions</label>
-            <textarea class="form-control" placeholder="Any notes for our collection team…"></textarea>
-        </div>
-        <div class="modal-actions">
-            <button class="btn btn-outline" id="cancelModalBtn">Cancel</button>
-            <button class="btn btn-gold" id="confirmPickupBtn"><i class="fas fa-check"></i> Confirm Pickup</button>
-        </div>
-    </div>
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">Schedule Special Pickup</div><button class="close-btn" data-close="schedModal"><i class="fas fa-times"></i></button></div>
+    <form id="pickupForm" novalidate>
+      <div class="form-group" id="fgType">
+        <label class="form-label">Pickup Type</label>
+        <select class="form-control" id="pickupType"><option value="">Select waste type</option><option>General Waste</option><option>Recyclables</option><option>Organic Waste</option><option>Hazardous Materials</option></select>
+        <div class="err-msg">Please select a waste type.</div>
+      </div>
+      <div class="form-group" id="fgDate">
+        <label class="form-label">Preferred Date</label>
+        <input type="date" class="form-control" id="pickupDate">
+        <div class="err-msg">Please choose a valid future date.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Time Slot</label>
+        <select class="form-control" id="pickupSlot"><option value="">Select a time slot</option><option>Morning · 7:00 – 10:00 AM</option><option>Afternoon · 1:00 – 4:00 PM</option><option>Evening · 5:00 – 8:00 PM</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Special Instructions</label>
+        <textarea class="form-control" id="pickupNotes" placeholder="Any notes for our collection team…"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" data-close="schedModal">Cancel</button>
+        <button type="submit" class="btn btn-gold"><i class="fas fa-check"></i> Confirm Pickup</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL: Report Issue -->
+<div class="modal-overlay" id="issueModal">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">Report an Issue</div><button class="close-btn" data-close="issueModal"><i class="fas fa-times"></i></button></div>
+    <form id="issueForm" novalidate>
+      <div class="form-group" id="fgIssueType">
+        <label class="form-label">Issue Type</label>
+        <select class="form-control" id="issueType"><option value="">Select issue type</option><option>Missed Collection</option><option>Damaged Bin</option><option>Overflowing Bin</option><option>Bad Odor / Pest Concern</option><option>Other</option></select>
+        <div class="err-msg">Please select an issue type.</div>
+      </div>
+      <div class="form-group" id="fgIssueDesc">
+        <label class="form-label">Description</label>
+        <textarea class="form-control" id="issueDesc" placeholder="Tell us what happened…"></textarea>
+        <div class="err-msg">Please add a short description.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Attach Photo (optional)</label>
+        <div class="photo-drop" id="photoDrop"><i class="fas fa-camera"></i> Tap to add a photo</div>
+        <input type="file" accept="image/*" id="photoInput" style="display:none">
+        <div class="photo-preview" id="photoPreview"></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" data-close="issueModal">Cancel</button>
+        <button type="submit" class="btn btn-danger"><i class="fas fa-flag"></i> Submit Report</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL: Replace Bin -->
+<div class="modal-overlay" id="replaceModal">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">Request Bin Replacement</div><button class="close-btn" data-close="replaceModal"><i class="fas fa-times"></i></button></div>
+    <form id="replaceForm" novalidate>
+      <div class="form-group" id="fgReplaceBin">
+        <label class="form-label">Which bin needs replacing?</label>
+        <select class="form-control" id="replaceBin"><option value="">Select bin</option><option>General Waste</option><option>Recyclables</option><option>Organic Waste</option></select>
+        <div class="err-msg">Please select a bin.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Reason</label>
+        <select class="form-control" id="replaceReason"><option>Cracked / broken</option><option>Lid missing</option><option>Wheels damaged</option><option>Lost or stolen</option></select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" data-close="replaceModal">Cancel</button>
+        <button type="submit" class="btn btn-gold"><i class="fas fa-check"></i> Submit Request</button>
+      </div>
+    </form>
+  </div>
 </div>
 
 <!-- TOAST -->
-<div class="toast" id="toast">
-    <i class="fas fa-check-circle"></i>
-    <span id="toastMsg">Done!</span>
-</div>
+<div class="toast" id="toast"><i class="fas fa-check-circle" id="toastIcon"></i><span id="toastMsg">Done!</span></div>
 
 <script>
-    (function() {
-        // Property chips toggle
-        document.querySelectorAll('.prop-chip').forEach(c => {
-            c.addEventListener('click', function() {
-                document.querySelectorAll('.prop-chip').forEach(x => x.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
+(function(){
+  'use strict';
 
-        // Sidebar nav
-        document.querySelectorAll('.nav-item').forEach(n => {
-            n.addEventListener('click', function() {
-                document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
+  /* ---------------- STORAGE & SYNC ---------------- */
+  const STORE_KEY = 'mwarokinTrash_v1';
+  const bc = ('BroadcastChannel' in window) ? new BroadcastChannel('mwarokin-trash-sync') : null;
 
-        // Toast
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            document.getElementById('toastMsg').textContent = msg;
-            t.classList.add('show');
-            clearTimeout(t._timer);
-            t._timer = setTimeout(() => t.classList.remove('show'), 3000);
-        }
+  const DEFAULT_STATE = {
+    ecoScore: 75,
+    bins: {
+      general:  { name:'General Waste',  emoji:'🗑️', pct:65, updated: Date.now() },
+      recycle:  { name:'Recyclables',    emoji:'♻️', pct:85, updated: Date.now() },
+      organic:  { name:'Organic Waste',  emoji:'🌿', pct:20, updated: Date.now() }
+    },
+    reminders: { general:true, recycle:true, organic:false },
+    settings: { reminders:true, alerts:true, reports:false, leadTime:'6' },
+    activity: [
+      { ts: Date.now()-1000*60*30, type:'collection', title:'Organic Waste Collected', desc:'Your organic bin was emptied as scheduled.', status:'done' },
+      { ts: Date.now()-1000*60*60*22, type:'pickup', title:'Special Pickup Requested', desc:'Additional pickup for general waste — confirmed.', status:'done' },
+      { ts: Date.now()-1000*60*60*46, type:'alert', title:'Recycling Bin Alert', desc:'Recyclables bin reached 85% capacity.', status:'alert' },
+      { ts: Date.now()-1000*60*60*70, type:'collection', title:'General Waste Collected', desc:'Routine Monday collection completed.', status:'done' }
+    ],
+    notifications: [
+      { ts: Date.now()-1000*60*20, text:'Recyclables bin is at 85% — request a pickup soon.', read:false },
+      { ts: Date.now()-1000*60*60*20, text:'Reminder: General waste collection tomorrow at 7:00 AM.', read:false }
+    ]
+  };
 
-        // Modal controls
-        const modal = document.getElementById('schedModal');
-        const openBtns = [document.getElementById('schedPickupBtn')];
-        const closeBtns = [document.getElementById('closeModalBtn'), document.getElementById('cancelModalBtn')];
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORE_KEY);
+      if(!raw) return structuredClone(DEFAULT_STATE);
+      const parsed = JSON.parse(raw);
+      return Object.assign(structuredClone(DEFAULT_STATE), parsed);
+    }catch(e){ return structuredClone(DEFAULT_STATE); }
+  }
+  function saveState(broadcast){
+    localStorage.setItem(STORE_KEY, JSON.stringify(state));
+    if(broadcast !== false && bc){ bc.postMessage({type:'state-update'}); }
+  }
+  let state = loadState();
 
-        openBtns.forEach(btn => btn.addEventListener('click', () => modal.classList.add('open')));
-        closeBtns.forEach(btn => btn.addEventListener('click', () => modal.classList.remove('open')));
-        modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+  if(bc){
+    bc.onmessage = (e)=>{
+      if(e.data && e.data.type === 'state-update'){
+        state = loadState();
+        renderAll();
+      }
+    };
+  }
 
-        document.getElementById('confirmPickupBtn').addEventListener('click', () => {
-            modal.classList.remove('open');
-            showToast('Special pickup scheduled successfully.');
-        });
+  /* ---------------- SCHEDULE DATA ---------------- */
+  // day: 0=Sun ... 6=Sat
+  const SCHEDULE = [
+    { key:'general', label:'General Waste', icon:'general', emoji:'fa-trash', days:[1,4], time:'7:00 – 9:00 AM' },
+    { key:'recycle', label:'Recyclables',    icon:'recycle', emoji:'fa-recycle', days:[3], time:'8:00 – 10:00 AM' },
+    { key:'organic', label:'Organic Waste',  icon:'organic', emoji:'fa-leaf', days:[6], time:'6:00 – 8:00 AM' }
+  ];
+  const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-        // Request pickup
-        document.getElementById('requestPickupBtn').addEventListener('click', () =>
-            showToast('Pickup request submitted. Team will contact you shortly.')
-        );
+  function nextOccurrence(days, hour){
+    const now = new Date();
+    for(let add=0; add<14; add++){
+      const d = new Date(now);
+      d.setDate(now.getDate()+add);
+      if(days.includes(d.getDay())){
+        d.setHours(hour,0,0,0);
+        if(d.getTime() > now.getTime()) return d;
+      }
+    }
+    return null;
+  }
 
-        // Set reminder
-        document.getElementById('setReminderBtn').addEventListener('click', () =>
-            showToast('Reminder set for your next collection day.')
-        );
+  function getNextCollection(){
+    let best = null;
+    SCHEDULE.forEach(s=>{
+      const startHour = parseInt(s.time.split(':')[0]) === 6 ? 6 : (s.time.startsWith('7')?7:8);
+      const dt = nextOccurrence(s.days, startHour);
+      if(dt && (!best || dt < best.dt)) best = { dt, s };
+    });
+    return best;
+  }
 
-        // Set min date for date input
-        const dateInput = document.getElementById('pickupDate');
-        if (dateInput) {
-            dateInput.min = new Date().toISOString().split('T')[0];
-        }
+  /* ---------------- TOAST ---------------- */
+  function showToast(msg, icon){
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    document.getElementById('toastIcon').className = 'fas ' + (icon||'fa-check-circle');
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(()=>t.classList.remove('show'), 3200);
+  }
 
-        // Extra: quick actions (toast feedback)
-        document.querySelectorAll('.action-tile').forEach(tile => {
-            tile.addEventListener('click', function() {
-                const title = this.querySelector('.at-title')?.textContent || 'Action';
-                showToast(`${title} – request received.`);
-            });
-        });
-    })();
+  /* ---------------- ACTIVITY / NOTIFICATIONS ---------------- */
+  function addActivity(type, title, desc, status){
+    state.activity.unshift({ ts: Date.now(), type, title, desc, status: status||'done' });
+    state.activity = state.activity.slice(0, 60);
+  }
+  function addNotification(text){
+    state.notifications.unshift({ ts: Date.now(), text, read:false });
+    state.notifications = state.notifications.slice(0, 20);
+  }
+  function timeAgo(ts){
+    const diff = Math.max(0, Date.now()-ts);
+    const mins = Math.floor(diff/60000);
+    if(mins < 1) return 'just now';
+    if(mins < 60) return mins+'m ago';
+    const hrs = Math.floor(mins/60);
+    if(hrs < 24) return hrs+'h ago';
+    return Math.floor(hrs/24)+'d ago';
+  }
+  function fmtDateTime(ts){
+    const d = new Date(ts);
+    return d.toLocaleDateString('en-GB',{day:'numeric',month:'short'}) + ', ' + d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  }
+
+  /* ---------------- RENDER: SENSORS ---------------- */
+  function tierOf(pct){ return pct >= 80 ? 'high' : pct >= 50 ? 'med' : 'low'; }
+  function tagOf(pct){ return pct >= 80 ? {c:'tag-alert',t:'Attention needed'} : pct >= 50 ? {c:'tag-warn',t:'Filling up'} : {c:'tag-ok',t:'Recently emptied'}; }
+
+  function renderSensors(){
+    const grid = document.getElementById('sensorGrid');
+    grid.innerHTML = '';
+    Object.entries(state.bins).forEach(([key,bin])=>{
+      const tier = tierOf(bin.pct);
+      const tag = tagOf(bin.pct);
+      const el = document.createElement('div');
+      el.className = 'sensor-card fill-'+tier;
+      el.innerHTML = `
+        <div class="sensor-top">
+          <div class="sensor-emoji">${bin.emoji}</div>
+          <div class="sensor-live"><span class="dot"></span>LIVE</div>
+        </div>
+        <div class="sensor-name">${bin.name}</div>
+        <div class="sensor-updated">synced ${timeAgo(bin.updated)}</div>
+        <div class="fill-bar"><div class="fill-inner" style="width:${bin.pct}%"></div></div>
+        <div class="sensor-bottom">
+          <span class="fill-pct">${bin.pct}%</span>
+          <span class="sensor-tag ${tag.c}">${tag.t}</span>
+        </div>`;
+      grid.appendChild(el);
+    });
+  }
+
+  /* ---------------- RENDER: SCHEDULE ---------------- */
+  function renderScheduleLists(){
+    const mini = document.getElementById('schedListMini');
+    const full = document.getElementById('schedListFull');
+    mini.innerHTML = ''; full.innerHTML = '';
+    SCHEDULE.forEach(s=>{
+      const nextDay = s.days.map(d=>DAY_NAMES[d]).join(' & ');
+      const isDone = false;
+      const rowMini = document.createElement('div');
+      rowMini.className = 'sched-item';
+      rowMini.innerHTML = `
+        <div class="sched-left">
+          <div class="sched-icon ${s.icon}"><i class="fas ${s.emoji}"></i></div>
+          <div><div class="sched-label">${s.label}</div><div class="sched-day">${nextDay} · ${s.time}</div></div>
+        </div>
+        <span class="badge badge-upcoming"><i class="fas fa-clock"></i> Upcoming</span>`;
+      mini.appendChild(rowMini);
+
+      const rowFull = document.createElement('div');
+      rowFull.className = 'sched-item';
+      rowFull.innerHTML = `
+        <div class="sched-left">
+          <div class="sched-icon ${s.icon}"><i class="fas ${s.emoji}"></i></div>
+          <div><div class="sched-label">${s.label}</div><div class="sched-day">${nextDay} · ${s.time}</div></div>
+        </div>
+        <div class="sched-right">
+          <span style="font-family:var(--mono);font-size:.65rem;color:var(--text-dim);">Remind me</span>
+          <label class="toggle"><input type="checkbox" data-remind="${s.key}" ${state.reminders[s.key]?'checked':''}><span class="slide"></span></label>
+        </div>`;
+      full.appendChild(rowFull);
+    });
+    full.querySelectorAll('[data-remind]').forEach(cb=>{
+      cb.addEventListener('change', function(){
+        state.reminders[this.dataset.remind] = this.checked;
+        saveState();
+        showToast(this.checked ? 'Reminder enabled.' : 'Reminder disabled.', 'fa-bell');
+      });
+    });
+  }
+
+  function renderWeekGrid(){
+    const grid = document.getElementById('weekGrid');
+    grid.innerHTML = '';
+    const today = new Date().getDay();
+    for(let d=0; d<7; d++){
+      const col = document.createElement('div');
+      col.className = 'day-col' + (d===today?' today':'');
+      let html = `<div class="day-name">${DAY_NAMES[d]}</div>`;
+      const events = SCHEDULE.filter(s=>s.days.includes(d));
+      if(events.length){
+        events.forEach(ev=>{ html += `<div class="day-event ${ev.icon}"><i class="fas ${ev.emoji}"></i> ${ev.label.split(' ')[0]}</div>`; });
+      } else {
+        html += `<div class="day-empty">—</div>`;
+      }
+      col.innerHTML = html;
+      grid.appendChild(col);
+    }
+  }
+
+  /* ---------------- RENDER: COUNTDOWN ---------------- */
+  let countdownTimer = null;
+  function tickCountdown(){
+    const next = getNextCollection();
+    if(!next){ return; }
+    document.getElementById('nextCollectionLabel').textContent = next.s.label;
+    const diff = next.dt.getTime() - Date.now();
+    if(diff <= 0){
+      addActivity('collection', next.s.label+' Collected', 'Routine collection completed.', 'done');
+      addNotification(next.s.label+' has been collected.');
+      state.bins[next.s.key].pct = 8;
+      state.bins[next.s.key].updated = Date.now();
+      saveState();
+      renderAll();
+      return;
+    }
+    const h = Math.floor(diff/3600000);
+    const m = Math.floor((diff%3600000)/60000);
+    const sec = Math.floor((diff%60000)/1000);
+    document.getElementById('cdH').textContent = String(h).padStart(2,'0');
+    document.getElementById('cdM').textContent = String(m).padStart(2,'0');
+    document.getElementById('cdS').textContent = String(sec).padStart(2,'0');
+  }
+
+  /* ---------------- RENDER: ACTIVITY / HISTORY ---------------- */
+  const TYPE_META = {
+    collection: {icon:'fa-truck', color:'#5EC89A'},
+    pickup: {icon:'fa-calendar-plus', color:'var(--gold-light)'},
+    issue: {icon:'fa-triangle-exclamation', color:'#E07A72'},
+    alert: {icon:'fa-bell', color:'var(--gold-light)'},
+    replace: {icon:'fa-arrows-rotate', color:'var(--gold-light)'}
+  };
+
+  function renderActivityTimeline(){
+    const el = document.getElementById('activityTimeline');
+    const items = state.activity.slice(0,5);
+    if(!items.length){ el.innerHTML = '<div class="tl-empty">No activity yet. Actions you take will appear here.</div>'; return; }
+    el.innerHTML = items.map(a=>`
+      <div class="tl-item">
+        <div class="tl-date">${fmtDateTime(a.ts)}</div>
+        <div class="tl-card"><div class="tl-title">${a.title}</div><div class="tl-desc">${a.desc}</div></div>
+      </div>`).join('');
+  }
+
+  let histFilter = 'all';
+  function renderHistoryTable(){
+    const body = document.getElementById('histBody');
+    const rows = state.activity.filter(a=> histFilter==='all' || a.type===histFilter);
+    if(!rows.length){
+      body.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-faint);padding:26px;">No records for this filter.</td></tr>`;
+      return;
+    }
+    body.innerHTML = rows.map(a=>{
+      const statusTag = a.status === 'alert' ? `<span class="htag" style="background:var(--danger-soft);color:#E07A72;">Alert</span>` :
+                         a.status === 'pending' ? `<span class="htag" style="background:var(--warn-soft);color:var(--gold-light);">Pending</span>` :
+                         `<span class="htag" style="background:var(--success-soft);color:#5EC89A;">Done</span>`;
+      return `<tr><td>${fmtDateTime(a.ts)}</td><td style="text-transform:capitalize;">${a.type}</td><td>${a.title} — ${a.desc}</td><td>${statusTag}</td></tr>`;
+    }).join('');
+  }
+
+  /* ---------------- RENDER: NOTIFICATIONS ---------------- */
+  function renderNotifications(){
+    const list = document.getElementById('notifList');
+    const unread = state.notifications.filter(n=>!n.read).length;
+    document.getElementById('notifDot').style.display = unread ? 'block' : 'none';
+    if(!state.notifications.length){
+      list.innerHTML = '<div class="panel-empty">You\'re all caught up.</div>';
+      return;
+    }
+    list.innerHTML = state.notifications.map(n=>`
+      <div class="panel-item">
+        <i class="fas fa-bell"></i>
+        <div><div class="pt">${n.text}</div><div class="ps">${timeAgo(n.ts)}</div></div>
+      </div>`).join('');
+  }
+
+  /* ---------------- RENDER: ECO SCORE ---------------- */
+  function renderEco(){
+    const score = Math.max(0, Math.min(100, state.ecoScore));
+    document.getElementById('ecoNum').textContent = score;
+    const circumference = 226;
+    const offset = circumference - (score/100)*circumference;
+    document.getElementById('ecoArc').setAttribute('stroke-dashoffset', offset);
+    const gradeEl = document.getElementById('ecoGrade');
+    const subEl = document.getElementById('ecoSub');
+    if(score >= 85){ gradeEl.textContent='Excellent Standing'; subEl.textContent='top-tier recycler'; }
+    else if(score >= 65){ gradeEl.textContent='Good Standing'; subEl.textContent='recycle more to climb'; }
+    else { gradeEl.textContent='Needs Improvement'; subEl.textContent='sort waste to improve score'; }
+  }
+
+  /* ---------------- CHARTS ---------------- */
+  let wasteChart, categoryChart;
+  function renderCharts(){
+    const ctx1 = document.getElementById('wasteChart');
+    const ctx2 = document.getElementById('categoryChart');
+    if(!ctx1 || !ctx2) return;
+    const monthLabels = ['Feb','Mar','Apr','May','Jun','Jul'];
+    const totals = [410, 430, 395, 470, 440, 450];
+    const recycled = [140, 150, 160, 175, 170, 180];
+
+    if(wasteChart) wasteChart.destroy();
+    wasteChart = new Chart(ctx1, {
+      type:'line',
+      data:{ labels: monthLabels, datasets:[
+        { label:'Total (kg)', data: totals, borderColor:'#C9A84C', backgroundColor:'rgba(201,168,76,0.12)', tension:.35, fill:true, pointBackgroundColor:'#E6C878' },
+        { label:'Recycled (kg)', data: recycled, borderColor:'#5EC89A', backgroundColor:'rgba(79,174,132,0.1)', tension:.35, fill:true, pointBackgroundColor:'#5EC89A' }
+      ]},
+      options:{ responsive:true, plugins:{ legend:{ labels:{ color:'#F5EFE0', font:{family:'DM Sans'} } } },
+        scales:{ x:{ ticks:{ color:'rgba(245,239,224,0.55)' }, grid:{ color:'rgba(201,168,76,0.06)' } },
+                 y:{ ticks:{ color:'rgba(245,239,224,0.55)' }, grid:{ color:'rgba(201,168,76,0.06)' } } } }
+    });
+
+    if(categoryChart) categoryChart.destroy();
+    categoryChart = new Chart(ctx2, {
+      type:'doughnut',
+      data:{ labels:['General','Recyclables','Organic'], datasets:[{ data:[45,40,15], backgroundColor:['#C9A84C','#5EC89A','#8BC46A'], borderColor:'#122E22', borderWidth:3 }] },
+      options:{ responsive:true, plugins:{ legend:{ position:'bottom', labels:{ color:'#F5EFE0', font:{family:'DM Sans'} } } } }
+    });
+  }
+
+  /* ---------------- RENDER ALL ---------------- */
+  function renderAll(){
+    renderSensors();
+    renderScheduleLists();
+    renderWeekGrid();
+    renderActivityTimeline();
+    renderHistoryTable();
+    renderNotifications();
+    renderEco();
+    document.getElementById('statRecycled').textContent = Math.round((state.ecoScore/100)*220);
+  }
+
+  /* ---------------- VIEW NAV ---------------- */
+  function switchView(view){
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    document.getElementById('view-'+view).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.view===view));
+    document.querySelectorAll('.mnav-item').forEach(n=>n.classList.toggle('active', n.dataset.view===view));
+    if(view === 'reports') setTimeout(renderCharts, 40);
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  document.querySelectorAll('.nav-item, .mnav-item').forEach(item=>{
+    item.addEventListener('click', ()=> switchView(item.dataset.view));
+  });
+  document.querySelectorAll('[data-view-jump]').forEach(item=>{
+    item.addEventListener('click', ()=> switchView(item.dataset.viewJump));
+  });
+
+  /* ---------------- PROPERTY CHIPS ---------------- */
+  document.querySelectorAll('.prop-chip').forEach(c=>{
+    c.addEventListener('click', function(){
+      document.querySelectorAll('.prop-chip').forEach(x=>x.classList.remove('active'));
+      this.classList.add('active');
+      showToast('Showing data for ' + this.textContent.trim() + '.', 'fa-filter');
+    });
+  });
+
+  /* ---------------- NOTIF PANEL ---------------- */
+  const notifBtn = document.getElementById('notifBtn');
+  const notifPanel = document.getElementById('notifPanel');
+  notifBtn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    notifPanel.classList.toggle('open');
+  });
+  document.getElementById('clearNotifs').addEventListener('click', ()=>{
+    state.notifications = [];
+    saveState();
+    renderNotifications();
+  });
+  document.addEventListener('click', (e)=>{
+    if(!notifPanel.contains(e.target) && e.target !== notifBtn && !notifBtn.contains(e.target)){
+      notifPanel.classList.remove('open');
+    }
+  });
+
+  /* ---------------- MODALS ---------------- */
+  function openModal(id){ document.getElementById(id).classList.add('open'); }
+  function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+  document.querySelectorAll('[data-modal]').forEach(t=> t.addEventListener('click', ()=> openModal(t.dataset.modal)));
+  document.querySelectorAll('[data-close]').forEach(t=> t.addEventListener('click', ()=> closeModal(t.dataset.close)));
+  document.querySelectorAll('.modal-overlay').forEach(ov=>{
+    ov.addEventListener('click', e=>{ if(e.target === ov) ov.classList.remove('open'); });
+  });
+
+  // min date for pickup date input
+  const pickupDate = document.getElementById('pickupDate');
+  if(pickupDate) pickupDate.min = new Date().toISOString().split('T')[0];
+
+  function setError(groupId, show){
+    const g = document.getElementById(groupId);
+    if(g) g.classList.toggle('has-error', show);
+  }
+
+  /* Pickup form */
+  document.getElementById('pickupForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const type = document.getElementById('pickupType').value;
+    const date = document.getElementById('pickupDate').value;
+    let valid = true;
+    if(!type){ setError('fgType', true); valid=false; } else setError('fgType', false);
+    if(!date || new Date(date) < new Date(new Date().toDateString())){ setError('fgDate', true); valid=false; } else setError('fgDate', false);
+    if(!valid) return;
+    const slot = document.getElementById('pickupSlot').value || 'any available slot';
+    addActivity('pickup', 'Special Pickup Scheduled', `${type} on ${date} · ${slot}`, 'pending');
+    addNotification(`Your ${type.toLowerCase()} pickup is scheduled for ${date}.`);
+    saveState();
+    renderAll();
+    closeModal('schedModal');
+    this.reset();
+    showToast('Special pickup scheduled successfully.', 'fa-truck-fast');
+  });
+
+  /* Issue form */
+  const photoDrop = document.getElementById('photoDrop');
+  const photoInput = document.getElementById('photoInput');
+  const photoPreview = document.getElementById('photoPreview');
+  let attachedPhotos = [];
+  photoDrop.addEventListener('click', ()=> photoInput.click());
+  photoInput.addEventListener('change', function(){
+    const file = this.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = e=>{
+      attachedPhotos.push(e.target.result);
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      photoPreview.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById('issueForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const type = document.getElementById('issueType').value;
+    const desc = document.getElementById('issueDesc').value.trim();
+    let valid = true;
+    if(!type){ setError('fgIssueType', true); valid=false; } else setError('fgIssueType', false);
+    if(!desc){ setError('fgIssueDesc', true); valid=false; } else setError('fgIssueDesc', false);
+    if(!valid) return;
+    addActivity('issue', type, desc + (attachedPhotos.length? ' (photo attached)':''), 'pending');
+    addNotification(`Issue reported: ${type}. Our team will follow up.`);
+    saveState();
+    renderAll();
+    closeModal('issueModal');
+    this.reset();
+    photoPreview.innerHTML=''; attachedPhotos = [];
+    showToast('Issue reported. Our team will follow up.', 'fa-flag');
+  });
+
+  /* Replace bin form */
+  document.getElementById('replaceForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const bin = document.getElementById('replaceBin').value;
+    let valid = true;
+    if(!bin){ setError('fgReplaceBin', true); valid=false; } else setError('fgReplaceBin', false);
+    if(!valid) return;
+    const reason = document.getElementById('replaceReason').value;
+    addActivity('replace', 'Bin Replacement Requested', `${bin} — ${reason}`, 'pending');
+    addNotification(`Replacement requested for ${bin}.`);
+    saveState();
+    renderAll();
+    closeModal('replaceModal');
+    this.reset();
+    showToast('Replacement request submitted.', 'fa-arrows-rotate');
+  });
+
+  /* Request pickup (dashboard quick button) */
+  document.getElementById('requestPickupBtn').addEventListener('click', ()=>{
+    addActivity('pickup', 'Pickup Request Submitted', 'General collection team notified for an urgent pickup.', 'pending');
+    addNotification('Pickup request submitted — team will contact you shortly.');
+    saveState();
+    renderAll();
+    showToast('Pickup request submitted. Team will contact you shortly.', 'fa-truck-fast');
+  });
+
+  /* Set reminder (dashboard quick button) */
+  document.getElementById('setReminderBtn').addEventListener('click', ()=>{
+    Object.keys(state.reminders).forEach(k=> state.reminders[k]=true);
+    saveState();
+    renderAll();
+    showToast('Reminder set for your next collection day.', 'fa-bell');
+  });
+
+  /* Refresh bins */
+  document.getElementById('refreshBins').addEventListener('click', ()=>{
+    Object.values(state.bins).forEach(b=>{ b.updated = Date.now(); });
+    saveState();
+    renderSensors();
+    showToast('Sensor readings refreshed.', 'fa-rotate');
+  });
+
+  /* Settings */
+  document.getElementById('toggleReminders').checked = state.settings.reminders;
+  document.getElementById('toggleAlerts').checked = state.settings.alerts;
+  document.getElementById('toggleReports').checked = state.settings.reports;
+  document.getElementById('leadTime').value = state.settings.leadTime;
+  document.getElementById('saveSettingsBtn').addEventListener('click', ()=>{
+    state.settings.reminders = document.getElementById('toggleReminders').checked;
+    state.settings.alerts = document.getElementById('toggleAlerts').checked;
+    state.settings.reports = document.getElementById('toggleReports').checked;
+    state.settings.leadTime = document.getElementById('leadTime').value;
+    saveState();
+    showToast('Preferences saved.', 'fa-check');
+  });
+
+  /* Support */
+  document.getElementById('sendSupportBtn').addEventListener('click', ()=>{
+    const msg = document.getElementById('supportMsg').value.trim();
+    if(!msg){ showToast('Please write a message first.', 'fa-triangle-exclamation'); return; }
+    addActivity('issue', 'Support Message Sent', msg, 'pending');
+    addNotification('Your message has been sent to the facilities team.');
+    saveState();
+    renderAll();
+    document.getElementById('supportMsg').value = '';
+    showToast('Message sent to the facilities team.', 'fa-paper-plane');
+  });
+
+  /* History filters + export */
+  document.querySelectorAll('#histFilters .filter-chip').forEach(chip=>{
+    chip.addEventListener('click', function(){
+      document.querySelectorAll('#histFilters .filter-chip').forEach(c=>c.classList.remove('active'));
+      this.classList.add('active');
+      histFilter = this.dataset.f;
+      renderHistoryTable();
+    });
+  });
+  document.getElementById('exportHistoryBtn').addEventListener('click', ()=>{
+    const rows = state.activity.map(a=>`${fmtDateTime(a.ts)} | ${a.type} | ${a.title} — ${a.desc} | ${a.status}`).join('\n');
+    const blob = new Blob([rows], {type:'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'mwarokin-waste-history.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('History exported.', 'fa-file-export');
+  });
+
+  document.getElementById('downloadReportBtn').addEventListener('click', ()=>{
+    showToast('Preparing monthly summary…', 'fa-download');
+  });
+
+  /* ---------------- LIVE SENSOR SIMULATION ---------------- */
+  setInterval(()=>{
+    let changed = false;
+    Object.entries(state.bins).forEach(([key,bin])=>{
+      const before = bin.pct;
+      bin.pct = Math.min(100, bin.pct + Math.round(Math.random()*2));
+      bin.updated = Date.now();
+      if(bin.pct !== before) changed = true;
+      if(before < 80 && bin.pct >= 80 && state.settings.alerts){
+        addActivity('alert', bin.name+' Bin Alert', bin.name+' bin reached '+bin.pct+'% capacity.', 'alert');
+        addNotification(bin.name+' bin is at '+bin.pct+'% — request a pickup soon.');
+      }
+    });
+    if(changed){ saveState(); renderSensors(); renderActivityTimeline(); renderNotifications(); }
+  }, 15000);
+
+  /* ---------------- INIT ---------------- */
+  renderAll();
+  tickCountdown();
+  countdownTimer = setInterval(tickCountdown, 1000);
+
+})();
 </script>
 </body>
 </html>

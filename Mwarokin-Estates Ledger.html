@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<title>Mwarokin Estates — The Ledger</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Syne:wght@500;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/babel-standalone@7.22.9/babel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+  :root{
+    --obsidian:#070a08;
+    --obsidian-2:#0d1310;
+    --panel:#111812;
+    --panel-2:#151f18;
+    --hairline:#22301f;
+    --forest-deep:#0f2a1c;
+    --forest:#1b4d33;
+    --forest-light:#2d6b47;
+    --gold:#d4af37;
+    --gold-bright:#f3d989;
+    --gold-dim:#8a7220;
+    --cream:#f2eee2;
+    --cream-dim:#c9c4b3;
+    --moss:#7c9484;
+    --danger:#c1584f;
+    --danger-bg:#2a1614;
+    --success:#5aa27a;
+    --success-bg:#122019;
+    --pending-bg:#2a2314;
+    --pending:#d9a64a;
+    --radius:16px;
+    --radius-sm:10px;
+    --shadow:0 20px 60px rgba(0,0,0,0.45);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 700px at 85% -10%, rgba(212,175,55,0.06), transparent 60%),
+      radial-gradient(900px 600px at -5% 20%, rgba(45,107,71,0.10), transparent 55%),
+      var(--obsidian);
+    color:var(--cream);
+    font-family:'DM Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    position:relative;
+  }
+  /* premium grain texture */
+  body::after{
+    content:'';
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    opacity:.035; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  #root{position:relative; z-index:2;}
+  ::-webkit-scrollbar{width:7px;height:7px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--hairline);border-radius:20px;}
+
+  .font-display{font-family:'Cormorant Garamond', serif;}
+  .font-label{font-family:'Syne', sans-serif; letter-spacing:0.08em;}
+  .font-mono{font-family:'JetBrains Mono', monospace;}
+
+  .eyebrow{
+    font-family:'Syne', sans-serif;
+    font-size:0.68rem;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--gold);
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+  }
+  .eyebrow::before{
+    content:'';
+    width:16px;height:1px;
+    background:var(--gold);
+    display:inline-block;
+  }
+
+  .panel{
+    background:linear-gradient(180deg, var(--panel), var(--panel-2));
+    border:1px solid var(--hairline);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+  }
+  .panel-flat{
+    background:var(--panel);
+    border:1px solid var(--hairline);
+    border-radius:var(--radius-sm);
+  }
+
+  .btn-gold{
+    background:linear-gradient(135deg, var(--gold-bright), var(--gold));
+    color:#191305;
+    border:none;
+    font-family:'Syne', sans-serif;
+    font-weight:700;
+    font-size:0.82rem;
+    letter-spacing:0.03em;
+    padding:13px 26px;
+    border-radius:10px;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    transition:all .25s cubic-bezier(.22,1,.36,1);
+    box-shadow:0 6px 22px rgba(212,175,55,0.22);
+  }
+  .btn-gold:hover{ transform:translateY(-2px); box-shadow:0 10px 30px rgba(212,175,55,0.32); }
+  .btn-gold:disabled{ opacity:.55; cursor:not-allowed; transform:none; }
+
+  .btn-outline{
+    background:transparent;
+    color:var(--cream);
+    border:1px solid var(--hairline);
+    font-family:'Syne', sans-serif;
+    font-weight:600;
+    font-size:0.82rem;
+    padding:12px 22px;
+    border-radius:10px;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    transition:all .25s cubic-bezier(.22,1,.36,1);
+  }
+  .btn-outline:hover{ border-color:var(--gold-dim); background:rgba(212,175,55,0.06); }
+  .btn-outline:disabled{ opacity:.4; cursor:not-allowed; }
+
+  .btn-ghost{
+    background:transparent;
+    border:none;
+    color:var(--moss);
+    font-family:'Syne', sans-serif;
+    font-weight:600;
+    font-size:0.75rem;
+    padding:8px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:all .2s ease;
+  }
+  .btn-ghost:hover{ color:var(--cream); background:rgba(255,255,255,0.04); }
+
+  .icon-btn-sm{
+    width:30px; height:30px; border-radius:8px;
+    display:inline-flex; align-items:center; justify-content:center;
+    background:var(--panel-2); border:1px solid var(--hairline); color:var(--moss);
+    cursor:pointer; transition:all .2s ease; font-size:12px;
+  }
+  .icon-btn-sm:hover{ color:var(--gold-bright); border-color:var(--gold-dim); background:rgba(212,175,55,0.08); }
+
+  .input{
+    background:var(--obsidian-2);
+    border:1px solid var(--hairline);
+    border-radius:9px;
+    padding:11px 14px;
+    color:var(--cream);
+    font-family:'DM Sans', sans-serif;
+    font-size:0.9rem;
+    width:100%;
+    outline:none;
+    transition:all .2s ease;
+  }
+  .input:focus{ border-color:var(--gold-dim); box-shadow:0 0 0 3px rgba(212,175,55,0.12); }
+  .input::placeholder{ color:#5b6459; }
+  .input-mono{ font-family:'JetBrains Mono', monospace; }
+
+  select.input{ appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23d4af37'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 14px center; padding-right:32px; }
+
+  .badge{
+    padding:4px 12px;
+    border-radius:40px;
+    font-family:'Syne', sans-serif;
+    font-size:0.66rem;
+    font-weight:700;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+  }
+  .badge-paid{ background:var(--success-bg); color:var(--success); }
+  .badge-pending{ background:var(--pending-bg); color:var(--pending); }
+  .badge-overdue{ background:var(--danger-bg); color:var(--danger); }
+  .dot{ width:6px;height:6px;border-radius:50%; background:currentColor; }
+
+  @keyframes pulse-ring{ 0%{transform:scale(1); opacity:.9;} 100%{transform:scale(2.6); opacity:0;} }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes fadeIn{ from{opacity:0;} to{opacity:1;} }
+  @keyframes tickerScroll{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+  @keyframes shimmer{ 0%{background-position:-300% 0;} 100%{background-position:300% 0;} }
+  @keyframes softGlow{ 0%,100%{ opacity:.55; } 50%{ opacity:1; } }
+  @keyframes rowFlash{ 0%{ background:rgba(212,175,55,0.16); } 100%{ background:transparent; } }
+  @keyframes scaleIn{ from{opacity:0; transform:scale(.96) translateY(8px);} to{opacity:1; transform:scale(1) translateY(0);} }
+
+  .animate-fade-up{ animation:fadeUp .55s cubic-bezier(.22,1,.36,1) forwards; opacity:0; }
+  .stagger-1{ animation-delay:.05s; } .stagger-2{ animation-delay:.12s; }
+  .stagger-3{ animation-delay:.19s; } .stagger-4{ animation-delay:.26s; } .stagger-5{ animation-delay:.33s; }
+
+  .pulse-live{ position:relative; width:8px; height:8px; border-radius:50%; background:var(--success); flex-shrink:0; }
+  .pulse-live::after{ content:''; position:absolute; inset:0; border-radius:50%; background:var(--success); animation:pulse-ring 1.8s cubic-bezier(0,0,.2,1) infinite; }
+
+  .ticker-track{
+    display:inline-flex;
+    white-space:nowrap;
+    animation:tickerScroll 32s linear infinite;
+  }
+  .ticker-wrap:hover .ticker-track{ animation-play-state:paused; }
+
+  .toast{
+    position:fixed; bottom:26px; right:26px; z-index:9999;
+    padding:15px 20px; border-radius:12px;
+    background:var(--panel-2); border:1px solid var(--hairline);
+    box-shadow:var(--shadow);
+    display:flex; align-items:center; gap:12px;
+    animation:fadeUp .35s ease, fadeIn .3s ease;
+    max-width:380px;
+  }
+  .toast.success{ border-left:3px solid var(--gold); }
+  .toast.error{ border-left:3px solid var(--danger); }
+
+  .card-hover{ transition: all .3s cubic-bezier(.22,1,.36,1); }
+  .card-hover:hover{ border-color:var(--gold-dim); transform:translateY(-2px); }
+
+  .stat-icon{
+    width:42px;height:42px;border-radius:11px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.05rem;
+  }
+
+  .divider-gold{ height:1px; background:linear-gradient(90deg, var(--gold-dim), transparent); }
+
+  .feed-item{ animation:fadeUp .4s ease forwards; }
+
+  .table-row{ transition:background .3s ease; }
+  .table-row:hover{ background:rgba(212,175,55,0.035); }
+  .table-row.row-new{ animation:rowFlash 2.2s ease; }
+
+  .progress-track{ height:5px; background:var(--hairline); border-radius:6px; overflow:hidden; }
+  .progress-fill{ height:100%; background:linear-gradient(90deg, var(--forest-light), var(--gold)); border-radius:6px; transition:width .3s ease; }
+
+  .glow-line{ background:linear-gradient(90deg, transparent, var(--gold), transparent); height:1px; }
+
+  .sortable-th{ cursor:pointer; user-select:none; }
+  .sortable-th:hover{ color:var(--gold-bright) !important; }
+
+  .checkbox{
+    width:16px; height:16px; border-radius:4px; border:1px solid var(--hairline);
+    background:var(--obsidian-2); cursor:pointer; appearance:none; -webkit-appearance:none;
+    position:relative; flex-shrink:0;
+  }
+  .checkbox:checked{ background:linear-gradient(135deg, var(--gold-bright), var(--gold)); border-color:var(--gold); }
+  .checkbox:checked::after{
+    content:'\\2713'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:11px; color:#191305; font-weight:700;
+  }
+
+  .skeleton{
+    background:linear-gradient(90deg, var(--panel) 25%, var(--panel-2) 37%, var(--panel) 63%);
+    background-size:400% 100%;
+    animation:shimmer 1.6s ease-in-out infinite;
+    border-radius:10px;
+  }
+
+  .modal-backdrop{
+    position:fixed; inset:0; z-index:200; background:rgba(4,6,4,.72); backdrop-filter:blur(4px);
+    display:flex; align-items:center; justify-content:center; padding:20px;
+    animation:fadeIn .25s ease;
+  }
+  .modal-card{ animation:scaleIn .35s cubic-bezier(.22,1,.36,1); max-height:90vh; overflow-y:auto; }
+
+  .bulk-bar{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    background:linear-gradient(135deg, rgba(212,175,55,0.1), rgba(212,175,55,0.03));
+    border:1px solid var(--gold-dim); border-radius:10px; padding:10px 16px; margin-bottom:14px;
+    animation:fadeUp .3s ease;
+  }
+
+  @media print{
+    body *{ visibility:hidden; }
+    #printable, #printable *{ visibility:visible; }
+    #printable{ position:absolute; top:0; left:0; width:100%; background:#fff; color:#111; padding:40px; }
+  }
+
+  @media (max-width:768px){
+    .panel{ border-radius:14px; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useMemo, useCallback } = React;
+
+/* ============================= DATA ============================= */
+
+const africanCountries = [
+  "Kenya","Nigeria","South Africa","Egypt","Ghana","Morocco","Tanzania","Uganda",
+  "Ethiopia","Rwanda","Senegal","Zambia","Botswana","Namibia","Ivory Coast","Cameroon"
+];
+
+const currencyRates = {
+  "Kenya": { rate: 129.50, currency: "KES", symbol: "KSh" },
+  "Nigeria": { rate: 1512.30, currency: "NGN", symbol: "\u20a6" },
+  "South Africa": { rate: 18.22, currency: "ZAR", symbol: "R" },
+  "Egypt": { rate: 48.25, currency: "EGP", symbol: "E\u00a3" },
+  "Ghana": { rate: 14.80, currency: "GHS", symbol: "GH\u20b5" },
+  "Morocco": { rate: 9.95, currency: "MAD", symbol: "DH" },
+  "Tanzania": { rate: 2610.00, currency: "TZS", symbol: "TSh" },
+  "Uganda": { rate: 3800.50, currency: "UGX", symbol: "USh" },
+  "Ethiopia": { rate: 123.40, currency: "ETB", symbol: "Br" },
+  "Rwanda": { rate: 1385.00, currency: "RWF", symbol: "FRw" },
+  "Senegal": { rate: 605.50, currency: "XOF", symbol: "CFA" },
+  "Zambia": { rate: 26.80, currency: "ZMW", symbol: "ZK" },
+  "Botswana": { rate: 13.60, currency: "BWP", symbol: "P" },
+  "Namibia": { rate: 18.22, currency: "NAD", symbol: "N$" },
+  "Ivory Coast": { rate: 605.50, currency: "XOF", symbol: "CFA" },
+  "Cameroon": { rate: 605.50, currency: "XAF", symbol: "FCFA" },
+};
+
+const billCategories = [
+  { id:'monthlyRent', label:'Rent', icon:'fa-key', color:'#d4af37' },
+  { id:'electricity', label:'Electricity', icon:'fa-bolt', color:'#e0a94a' },
+  { id:'water', label:'Water', icon:'fa-droplet', color:'#5a9bb0' },
+  { id:'internet', label:'Internet', icon:'fa-wifi', color:'#6fa0d6' },
+  { id:'digitalTv', label:'Digital TV', icon:'fa-tv', color:'#a186c9' },
+  { id:'security', label:'Security', icon:'fa-shield-halved', color:'#5aa27a' },
+  { id:'parking', label:'Parking', icon:'fa-square-parking', color:'#8b978c' },
+  { id:'trash', label:'Refuse', icon:'fa-trash-can', color:'#c1584f' },
+];
+
+const synthBreakdown = (amount) => ({
+  monthlyRent: Math.round(amount * 0.70),
+  electricity: Math.round(amount * 0.12),
+  water: Math.round(amount * 0.06),
+  internet: Math.round(amount * 0.05),
+  security: Math.round(amount * 0.04),
+  trash: Math.round(amount * 0.03),
+});
+
+const seedBills = [
+  { id:'BL-2401', tenant:'Grace Muthoni', property:'Riverside 12A', amount:24500, due:'2026-07-05', status:'paid', method:'M-Pesa', breakdown: synthBreakdown(24500) },
+  { id:'BL-2402', tenant:'David Ochieng', property:'Kilimani 7B', amount:32000, due:'2026-07-12', status:'pending', method:'\u2014', breakdown: synthBreakdown(32000) },
+  { id:'BL-2403', tenant:'Sarah Wanjiru', property:'Westlands 4C', amount:18500, due:'2026-06-28', status:'overdue', method:'\u2014', breakdown: synthBreakdown(18500) },
+  { id:'BL-2404', tenant:'Michael Kamau', property:'Langata 9D', amount:41000, due:'2026-07-19', status:'pending', method:'\u2014', breakdown: synthBreakdown(41000) },
+  { id:'BL-2405', tenant:'Faith Akinyi', property:'Parklands 2E', amount:27500, due:'2026-07-02', status:'paid', method:'SylloPay', breakdown: synthBreakdown(27500) },
+  { id:'BL-2406', tenant:'Brian Kiptoo', property:'Riverside 3F', amount:29800, due:'2026-07-22', status:'pending', method:'\u2014', breakdown: synthBreakdown(29800) },
+];
+
+const feedVerbs = [
+  { v:'Payment received', icon:'fa-circle-check', tone:'success' },
+  { v:'Bill issued', icon:'fa-file-invoice', tone:'gold' },
+  { v:'Reminder sent', icon:'fa-paper-plane', tone:'moss' },
+  { v:'Marked overdue', icon:'fa-triangle-exclamation', tone:'danger' },
+];
+const feedTenants = ['Grace Muthoni','David Ochieng','Sarah Wanjiru','Michael Kamau','Faith Akinyi','Brian Kiptoo','Peter Mwangi','Alice Nyambura'];
+const feedProps = ['Riverside 12A','Kilimani 7B','Westlands 4C','Langata 9D','Parklands 2E','Riverside 3F'];
+
+const fmt = (n) => (Math.round(n*100)/100).toLocaleString('en-KE', { minimumFractionDigits:2, maximumFractionDigits:2 });
+const uid = () => Math.random().toString(36).slice(2,9);
+const downloadBlob = (content, filename, type) => {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+};
+
+/* ============================= TOAST ============================= */
+
+const ToastCtx = React.createContext();
+const ToastProvider = ({ children }) => {
+  const [toasts, setToasts] = useState([]);
+  const show = (message, type='success', duration=3800) => {
+    const id = uid();
+    setToasts(p => [...p, { id, message, type }]);
+    setTimeout(() => setToasts(p => p.filter(t => t.id !== id)), duration);
+  };
+  return (
+    <ToastCtx.Provider value={show}>
+      {children}
+      <div className="fixed bottom-0 right-0 z-[9999] p-4 flex flex-col gap-3 items-end pointer-events-none">
+        {toasts.map(t => (
+          <div key={t.id} className={`toast pointer-events-auto ${t.type}`}>
+            <i className={`fas ${t.type==='success' ? 'fa-check-circle' : 'fa-triangle-exclamation'}`} style={{color: t.type==='success' ? 'var(--gold)' : 'var(--danger)'}} />
+            <span className="text-sm" style={{color:'var(--cream)'}}>{t.message}</span>
+          </div>
+        ))}
+      </div>
+    </ToastCtx.Provider>
+  );
+};
+const useToast = () => React.useContext(ToastCtx);
+
+/* ============================= BROADCAST / SYNC ============================= */
+
+const channel = (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('mwarokin-ledger') : null;
+
+/* ============================= SPARKLINE ============================= */
+
+const Sparkline = ({ points, color }) => {
+  if (!points || points.length < 2) return <svg width="72" height="26" />;
+  const max = Math.max(...points), min = Math.min(...points);
+  const range = (max - min) || 1;
+  const step = 72 / (points.length - 1);
+  const coords = points.map((p,i) => `${(i*step).toFixed(1)},${(26 - ((p-min)/range)*22 - 2).toFixed(1)}`).join(' ');
+  const last = points[points.length-1];
+  const lastX = (72).toFixed(1), lastY = (26 - ((last-min)/range)*22 - 2).toFixed(1);
+  return (
+    <svg width="72" height="26" viewBox="0 0 72 26">
+      <polyline points={coords} fill="none" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" opacity="0.85" />
+      <circle cx={lastX} cy={lastY} r="2.2" fill={color} />
+    </svg>
+  );
+};
+
+/* ============================= SKELETON ============================= */
+
+const SkeletonBlock = ({ h='120px', className='' }) => (
+  <div className={`skeleton ${className}`} style={{ height:h }} />
+);
+
+/* ============================= NAVBAR ============================= */
+
+const Navbar = ({ liveFxLabel }) => {
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const h = () => setScrolled(window.scrollY > 12);
+    window.addEventListener('scroll', h);
+    return () => window.removeEventListener('scroll', h);
+  }, []);
+  const links = ['Dashboard','Ledger','Payments','Tenants','Properties','Reports'];
+  return (
+    <nav className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${scrolled ? 'py-2.5' : 'py-4'}`}
+      style={{ background: scrolled ? 'rgba(7,10,8,0.86)' : 'transparent', backdropFilter: scrolled ? 'blur(14px)' : 'none', borderBottom: scrolled ? '1px solid var(--hairline)' : '1px solid transparent' }}>
+      <div className="max-w-7xl mx-auto px-5 lg:px-8 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{background:'linear-gradient(135deg, var(--forest-light), var(--forest-deep))', border:'1px solid var(--gold-dim)'}}>
+            <i className="fas fa-vault text-sm" style={{color:'var(--gold)'}} />
+          </div>
+          <div>
+            <div className="font-display font-semibold text-xl leading-none" style={{color:'var(--cream)'}}>Mwarokin</div>
+            <div className="font-label text-[9px] tracking-[0.2em]" style={{color:'var(--gold-dim)'}}>THE LEDGER</div>
+          </div>
+        </div>
+
+        <div className="hidden md:flex items-center gap-1">
+          {links.map((l,i) => (
+            <a key={l} href="#" className="px-3.5 py-2 text-sm font-label rounded-lg transition-all" style={{color: i===1 ? 'var(--gold-bright)' : 'var(--moss)'}}>
+              {l}
+            </a>
+          ))}
+          <div className="w-px h-5 mx-2" style={{background:'var(--hairline)'}} />
+          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full" style={{background:'var(--panel-2)', border:'1px solid var(--hairline)'}}>
+            <span className="pulse-live" />
+            <span className="font-mono text-[11px]" style={{color:'var(--cream-dim)'}}>{liveFxLabel}</span>
+          </div>
+          <button className="ml-2 w-9 h-9 rounded-full flex items-center justify-center font-label text-xs font-bold" style={{background:'linear-gradient(135deg, var(--gold-bright), var(--gold))', color:'#191305'}}>RB</button>
+        </div>
+
+        <div className="flex items-center gap-2 md:hidden">
+          <button onClick={() => setOpen(!open)} className="text-xl" style={{color:'var(--cream)'}}>
+            <i className={`fas ${open ? 'fa-times' : 'fa-bars'}`} />
+          </button>
+        </div>
+      </div>
+      {open && (
+        <div className="md:hidden mx-5 mt-3 rounded-xl p-5 animate-fade-up panel-flat">
+          {links.map(l => <a key={l} href="#" className="block py-2.5 text-sm font-label" style={{color:'var(--cream-dim)', borderBottom:'1px solid var(--hairline)'}}>{l}</a>)}
+        </div>
+      )}
+    </nav>
+  );
+};
+
+/* ============================= HERO + PULSE TICKER ============================= */
+
+const Hero = ({ totalCollected, tickerEvents }) => (
+  <div className="relative pt-28 pb-8 px-5">
+    <div className="max-w-4xl mx-auto text-center">
+      <div className="eyebrow justify-center mb-5">Estate Financial Ledger</div>
+      <h1 className="font-display font-semibold text-5xl md:text-6xl lg:text-7xl leading-[1.05]" style={{color:'var(--cream)'}}>
+        Every bill,<br/>
+        <span style={{color:'var(--gold)'}}>every shilling,</span> tracked live.
+      </h1>
+      <p className="mt-5 text-base md:text-lg max-w-xl mx-auto" style={{color:'var(--cream-dim)'}}>
+        A single ledger for rent, utilities and levies across the estate — updating in real time as tenants pay.
+      </p>
+      <div className="mt-4 font-mono text-2xl" style={{color:'var(--gold-bright)'}}>KSh {fmt(totalCollected)}</div>
+      <div className="text-xs font-label tracking-widest" style={{color:'var(--moss)'}}>COLLECTED THIS MONTH</div>
+    </div>
+
+    <div className="max-w-5xl mx-auto mt-8 ticker-wrap panel-flat overflow-hidden" style={{padding:'12px 0'}}>
+      <div className="ticker-track">
+        {[...tickerEvents, ...tickerEvents].map((e, i) => (
+          <span key={i} className="inline-flex items-center gap-2 px-6 text-xs font-mono" style={{color:'var(--cream-dim)'}}>
+            <i className={`fas ${e.icon} text-[11px]`} style={{color: e.tone==='success' ? 'var(--success)' : e.tone==='danger' ? 'var(--danger)' : e.tone==='gold' ? 'var(--gold)' : 'var(--moss)'}} />
+            {e.text}
+          </span>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+/* ============================= COLLECTIONS TREND (Chart.js) — signature element ============================= */
+
+const CollectionsTrend = ({ history, outstanding, collected }) => {
+  const canvasRef = useRef(null);
+  const chartRef = useRef(null);
+
+  useEffect(() => {
+    if (!canvasRef.current || typeof Chart === 'undefined') return;
+    const ctx = canvasRef.current.getContext('2d');
+    const gradient = ctx.createLinearGradient(0, 0, 0, 220);
+    gradient.addColorStop(0, 'rgba(212,175,55,0.32)');
+    gradient.addColorStop(1, 'rgba(212,175,55,0.0)');
+
+    if (chartRef.current) {
+      chartRef.current.data.labels = history.map(h => h.label);
+      chartRef.current.data.datasets[0].data = history.map(h => h.collected);
+      chartRef.current.update('none');
+      return;
+    }
+
+    chartRef.current = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: history.map(h => h.label),
+        datasets: [{
+          data: history.map(h => h.collected),
+          borderColor: '#f3d989',
+          backgroundColor: gradient,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          pointHoverBackgroundColor: '#f3d989',
+          borderWidth: 2,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display:false }, tooltip: {
+          backgroundColor:'#111812', borderColor:'#22301f', borderWidth:1,
+          titleColor:'#c9c4b3', bodyColor:'#f3d989', titleFont:{ family:'JetBrains Mono', size:10 },
+          bodyFont:{ family:'JetBrains Mono', size:12 }, padding:10, displayColors:false,
+          callbacks: { label: (c) => `KSh ${fmt(c.parsed.y)}` }
+        }},
+        scales: {
+          x: { grid: { display:false }, ticks: { color:'#7c9484', font:{ family:'JetBrains Mono', size:9 }, maxRotation:0 } },
+          y: { display:false }
+        },
+        interaction: { intersect:false, mode:'index' }
+      }
+    });
+  }, [history]);
+
+  useEffect(() => () => { if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null; } }, []);
+
+  const pct = collected + outstanding > 0 ? Math.round((collected / (collected + outstanding)) * 100) : 0;
+
+  return (
+    <div className="panel p-5 md:p-6 animate-fade-up stagger-1">
+      <div className="flex items-center justify-between mb-1">
+        <div>
+          <h3 className="font-display font-semibold text-xl" style={{color:'var(--cream)'}}>Collections Trend</h3>
+          <p className="text-xs font-mono mt-0.5" style={{color:'var(--moss)'}}>Last {history.length} days · live-updating</p>
+        </div>
+        <div className="text-right">
+          <div className="font-mono text-2xl font-semibold" style={{color:'var(--gold-bright)'}}>{pct}%</div>
+          <div className="font-label text-[9px] tracking-widest" style={{color:'var(--moss)'}}>COLLECTION HEALTH</div>
+        </div>
+      </div>
+      <div style={{ height:220 }} className="mt-4">
+        <canvas ref={canvasRef} />
+      </div>
+    </div>
+  );
+};
+
+/* ============================= STAT CARDS ============================= */
+
+const StatCard = ({ icon, label, value, sub, color, delay, spark }) => (
+  <div className={`panel card-hover p-5 animate-fade-up stagger-${delay}`}>
+    <div className="flex items-start justify-between">
+      <div>
+        <p className="font-label text-[10px] tracking-widest" style={{color:'var(--moss)'}}>{label}</p>
+        <p className="font-display font-semibold text-3xl mt-1" style={{color:'var(--cream)'}}>{value}</p>
+        {sub && <p className="text-xs font-mono mt-1.5" style={{color:'var(--gold-dim)'}}>{sub}</p>}
+      </div>
+      <div className="flex flex-col items-end gap-2">
+        <div className="stat-icon" style={{ background:`${color}18`, color }}>
+          <i className={`fas ${icon}`} />
+        </div>
+        {spark && <Sparkline points={spark} color={color} />}
+      </div>
+    </div>
+  </div>
+);
+
+/* ============================= LIVE ACTIVITY FEED ============================= */
+
+const ActivityFeed = ({ events }) => (
+  <div className="panel p-5 animate-fade-up stagger-3">
+    <div className="flex items-center justify-between mb-4">
+      <h3 className="font-display font-semibold text-lg flex items-center gap-2" style={{color:'var(--cream)'}}>
+        <span className="pulse-live" /> Live Activity
+      </h3>
+      <span className="font-label text-[10px] tracking-widest" style={{color:'var(--moss)'}}>REAL-TIME</span>
+    </div>
+    <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+      {events.length === 0 && <p className="text-sm" style={{color:'var(--moss)'}}>Waiting for activity…</p>}
+      {events.map((e) => (
+        <div key={e.id} className="feed-item flex items-start gap-3 pb-3" style={{borderBottom:'1px solid var(--hairline)'}}>
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{
+              background: e.tone==='success' ? 'var(--success-bg)' : e.tone==='danger' ? 'var(--danger-bg)' : e.tone==='gold' ? 'rgba(212,175,55,0.12)' : 'rgba(124,148,132,0.12)',
+              color: e.tone==='success' ? 'var(--success)' : e.tone==='danger' ? 'var(--danger)' : e.tone==='gold' ? 'var(--gold)' : 'var(--moss)'
+            }}>
+            <i className={`fas ${e.icon} text-xs`} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm" style={{color:'var(--cream)'}}>
+              <span className="font-medium">{e.tenant}</span> — {e.verb}
+            </p>
+            <p className="text-xs font-mono mt-0.5" style={{color:'var(--moss)'}}>{e.property} · {e.time}</p>
+          </div>
+          {e.amount != null && (
+            <span className="font-mono text-xs whitespace-nowrap" style={{color:'var(--gold-bright)'}}>KSh {fmt(e.amount)}</span>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+/* ============================= BILL FORM ============================= */
+
+const BillForm = ({ onSave }) => {
+  const empty = { location:'', buildingId:'', tenantId:'', monthlyRent:'', electricity:'', water:'', internet:'', digitalTv:'', security:'', parking:'', trash:'' };
+  const [form, setForm] = useState(empty);
+  const [errors, setErrors] = useState({});
+  const [locationResult, setLocationResult] = useState('');
+  const [currencyInfo, setCurrencyInfo] = useState(null);
+  const toast = useToast();
+
+  const total = useMemo(() => billCategories.reduce((s,c) => s + (parseFloat(form[c.id]) || 0), 0), [form]);
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setForm(p => ({ ...p, [id]: value }));
+    setErrors(p => ({ ...p, [id]: '' }));
+  };
+
+  const validate = () => {
+    const errs = {};
+    if (!form.location) errs.location = 'Required';
+    if (!form.buildingId) errs.buildingId = 'Required';
+    if (!form.tenantId) errs.tenantId = 'Required';
+    billCategories.forEach(c => {
+      if (form[c.id] && (isNaN(form[c.id]) || parseFloat(form[c.id]) < 0)) errs[c.id] = 'Invalid';
+    });
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!validate()) { toast('Please fix the highlighted fields', 'error'); return; }
+    const breakdown = {};
+    billCategories.forEach(c => { breakdown[c.id] = parseFloat(form[c.id]) || 0; });
+    onSave({ ...form, total, breakdown });
+    setForm(empty);
+    toast('Bill issued to ledger', 'success');
+  };
+
+  const getLocation = () => {
+    if (!navigator.geolocation) { setLocationResult('Not supported on this device'); return; }
+    navigator.geolocation.getCurrentPosition(
+      pos => setLocationResult(`${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`),
+      () => setLocationResult('Location access denied')
+    );
+  };
+
+  const handleCountry = (e) => {
+    const c = e.target.value;
+    setCurrencyInfo(currencyRates[c] ? { country: c, ...currencyRates[c] } : null);
+  };
+
+  return (
+    <div className="panel p-5 md:p-7 animate-fade-up stagger-2">
+      <div className="flex items-center justify-between mb-5">
+        <h3 className="font-display font-semibold text-xl flex items-center gap-2" style={{color:'var(--cream)'}}>
+          <i className="fas fa-feather-pointed" style={{color:'var(--gold)'}} /> Issue a Bill
+        </h3>
+        <span className="font-mono text-xs" style={{color:'var(--moss)'}}>#BL-{2400 + Math.floor(Math.random()*90)}</span>
+      </div>
+
+      <div className="flex flex-wrap gap-3 mb-4">
+        <select className="input flex-1 min-w-[150px]" onChange={handleCountry} defaultValue="">
+          <option value="" disabled>Currency reference</option>
+          {africanCountries.map(c => <option key={c}>{c}</option>)}
+        </select>
+        <button type="button" onClick={getLocation} className="btn-outline">
+          <i className="fas fa-location-crosshairs" /> Pin property
+        </button>
+      </div>
+
+      {(locationResult || currencyInfo) && (
+        <div className="flex flex-wrap gap-3 mb-5">
+          {locationResult && (
+            <div className="text-xs font-mono px-3.5 py-2 rounded-lg flex items-center gap-2" style={{background:'var(--panel-2)', border:'1px solid var(--hairline)', color:'var(--cream-dim)'}}>
+              <i className="fas fa-map-pin" style={{color:'var(--gold)'}} /> {locationResult}
+            </div>
+          )}
+          {currencyInfo && (
+            <div className="text-xs font-mono px-3.5 py-2 rounded-lg flex items-center gap-2" style={{background:'var(--panel-2)', border:'1px solid var(--hairline)', color:'var(--cream-dim)'}}>
+              <i className="fas fa-coins" style={{color:'var(--gold)'}} /> {currencyInfo.country} · 1 USD = {currencyInfo.rate} {currencyInfo.currency} ({currencyInfo.symbol})
+            </div>
+          )}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mb-4">
+          {[
+            { id:'location', label:'Location', icon:'fa-map-marker-alt' },
+            { id:'buildingId', label:'Building ID', icon:'fa-building' },
+            { id:'tenantId', label:'Tenant name', icon:'fa-user' },
+          ].map(f => (
+            <div key={f.id}>
+              <label className="font-label text-[10px] tracking-widest block mb-1.5" style={{color:'var(--moss)'}}>{f.label.toUpperCase()}</label>
+              <input id={f.id} value={form[f.id]} onChange={handleChange} placeholder={f.label}
+                className="input" style={errors[f.id] ? {borderColor:'var(--danger)'} : {}} />
+              {errors[f.id] && <p className="text-xs mt-1" style={{color:'var(--danger)'}}>{errors[f.id]}</p>}
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+          {billCategories.map(c => (
+            <div key={c.id}>
+              <label className="font-label text-[9px] tracking-widest block mb-1 flex items-center gap-1.5" style={{color:'var(--moss)'}}>
+                <i className={`fas ${c.icon}`} style={{color:c.color, fontSize:'10px'}} /> {c.label.toUpperCase()}
+              </label>
+              <input id={c.id} type="number" step="0.01" value={form[c.id]} onChange={handleChange} placeholder="0.00"
+                className="input input-mono text-sm" style={errors[c.id] ? {borderColor:'var(--danger)'} : {}} />
+            </div>
+          ))}
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-4 pt-4" style={{borderTop:'1px solid var(--hairline)'}}>
+          <div className="flex items-baseline gap-3">
+            <span className="font-label text-xs tracking-widest" style={{color:'var(--moss)'}}>TOTAL</span>
+            <span className="font-mono text-2xl font-semibold" style={{color:'var(--gold-bright)'}}>KSh {fmt(total)}</span>
+          </div>
+          <div className="flex gap-3">
+            <button type="button" onClick={() => { setForm(empty); setErrors({}); }} className="btn-outline">
+              <i className="fas fa-rotate-left" /> Reset
+            </button>
+            <button type="submit" className="btn-gold">
+              <i className="fas fa-scroll" /> Issue bill
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+/* ============================= STATEMENT MODAL ============================= */
+
+const StatementModal = ({ bill, onClose }) => {
+  const toast = useToast();
+  if (!bill) return null;
+
+  const rows = billCategories
+    .map(c => ({ ...c, amount: (bill.breakdown && bill.breakdown[c.id]) || 0 }))
+    .filter(r => r.amount > 0);
+
+  const handleDownloadPdf = () => {
+    if (typeof window.jspdf === 'undefined') { toast('PDF engine unavailable', 'error'); return; }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(16);
+    doc.text('Mwarokin Estates — Statement', 20, 22);
+    doc.setFontSize(10); doc.setFont('helvetica', 'normal');
+    doc.text(`Reference: ${bill.id}`, 20, 32);
+    doc.text(`Tenant: ${bill.tenant}`, 20, 39);
+    doc.text(`Unit: ${bill.property}`, 20, 46);
+    doc.text(`Due: ${bill.due}`, 20, 53);
+    doc.text(`Status: ${bill.status.toUpperCase()}`, 20, 60);
+
+    let y = 74;
+    doc.setFont('helvetica', 'bold'); doc.text('Item', 20, y); doc.text('Amount (KSh)', 150, y);
+    doc.setFont('helvetica', 'normal'); y += 6;
+    doc.line(20, y - 4, 190, y - 4);
+    rows.forEach(r => { doc.text(r.label, 20, y); doc.text(fmt(r.amount), 150, y); y += 8; });
+    doc.line(20, y, 190, y); y += 8;
+    doc.setFont('helvetica', 'bold');
+    doc.text('Total', 20, y); doc.text(`KSh ${fmt(bill.amount)}`, 150, y);
+
+    doc.save(`${bill.id}-statement.pdf`);
+    toast('Statement downloaded as PDF', 'success');
+  };
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal-card panel p-6 md:p-8 w-full max-w-md" onClick={e => e.stopPropagation()}>
+        <div id="printable">
+          <div className="flex items-start justify-between mb-1">
+            <div>
+              <div className="eyebrow mb-2">Statement</div>
+              <h3 className="font-display font-semibold text-2xl" style={{color:'var(--cream)'}}>{bill.tenant}</h3>
+              <p className="font-mono text-xs mt-1" style={{color:'var(--moss)'}}>{bill.property} · {bill.id}</p>
+            </div>
+            <span className={`badge ${bill.status === 'paid' ? 'badge-paid' : bill.status === 'overdue' ? 'badge-overdue' : 'badge-pending'}`}>
+              <span className="dot" />{bill.status}
+            </span>
+          </div>
+
+          <div className="my-5" style={{borderTop:'1px solid var(--hairline)'}} />
+
+          <div className="space-y-2.5 mb-5">
+            {rows.length === 0 && <p className="text-sm" style={{color:'var(--moss)'}}>No itemized breakdown available.</p>}
+            {rows.map(r => (
+              <div key={r.id} className="flex items-center justify-between text-sm">
+                <span className="flex items-center gap-2" style={{color:'var(--cream-dim)'}}>
+                  <i className={`fas ${r.icon}`} style={{color:r.color, fontSize:'11px', width:'14px'}} /> {r.label}
+                </span>
+                <span className="font-mono" style={{color:'var(--cream)'}}>KSh {fmt(r.amount)}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex items-center justify-between pt-4" style={{borderTop:'1px solid var(--hairline)'}}>
+            <span className="font-label text-xs tracking-widest" style={{color:'var(--moss)'}}>TOTAL DUE</span>
+            <span className="font-mono text-2xl font-semibold" style={{color:'var(--gold-bright)'}}>KSh {fmt(bill.amount)}</span>
+          </div>
+          <p className="text-xs font-mono mt-3" style={{color:'var(--moss)'}}>Due {bill.due} · Paid via {bill.method}</p>
+        </div>
+
+        <div className="flex gap-3 mt-6">
+          <button onClick={() => window.print()} className="btn-outline flex-1 justify-center">
+            <i className="fas fa-print" /> Print
+          </button>
+          <button onClick={handleDownloadPdf} className="btn-gold flex-1 justify-center">
+            <i className="fas fa-file-arrow-down" /> Download PDF
+          </button>
+        </div>
+        <button onClick={onClose} className="btn-ghost w-full justify-center mt-2">Close</button>
+      </div>
+    </div>
+  );
+};
+
+/* ============================= BILLS TABLE (sortable + selectable) ============================= */
+
+const BillsTable = ({ bills, onMarkPaid, search, setSearch, onViewStatement, newIds }) => {
+  const [filter, setFilter] = useState('all');
+  const [propertyFilter, setPropertyFilter] = useState('all');
+  const [sort, setSort] = useState({ key:'due', dir:'asc' });
+  const [selected, setSelected] = useState(new Set());
+  const toast = useToast();
+
+  const properties = useMemo(() => ['all', ...new Set(bills.map(b => b.property))], [bills]);
+
+  const filtered = useMemo(() => {
+    let list = filter === 'all' ? bills : bills.filter(b => b.status === filter);
+    if (propertyFilter !== 'all') list = list.filter(b => b.property === propertyFilter);
+    if (search) {
+      const q = search.toLowerCase();
+      list = list.filter(b => b.tenant.toLowerCase().includes(q) || b.property.toLowerCase().includes(q) || b.id.toLowerCase().includes(q));
+    }
+    const sorted = [...list].sort((a,b) => {
+      let av = a[sort.key], bv = b[sort.key];
+      if (sort.key === 'due') { av = new Date(av).getTime(); bv = new Date(bv).getTime(); }
+      if (typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
+      if (av < bv) return sort.dir === 'asc' ? -1 : 1;
+      if (av > bv) return sort.dir === 'asc' ? 1 : -1;
+      return 0;
+    });
+    return sorted;
+  }, [bills, filter, propertyFilter, search, sort]);
+
+  const statusMap = {
+    paid: { label:'Paid', cls:'badge-paid' },
+    pending: { label:'Pending', cls:'badge-pending' },
+    overdue: { label:'Overdue', cls:'badge-overdue' },
+  };
+
+  const toggleSort = (key) => {
+    setSort(s => s.key === key ? { key, dir: s.dir === 'asc' ? 'desc' : 'asc' } : { key, dir:'asc' });
+  };
+  const sortIcon = (key) => sort.key !== key ? '' : (sort.dir === 'asc' ? ' \u25b2' : ' \u25bc');
+
+  const toggleSelect = (id) => setSelected(prev => {
+    const next = new Set(prev);
+    next.has(id) ? next.delete(id) : next.add(id);
+    return next;
+  });
+  const toggleSelectAll = () => setSelected(prev => prev.size === filtered.length ? new Set() : new Set(filtered.map(b => b.id)));
+
+  const bulkMarkPaid = () => {
+    const ids = [...selected].filter(id => bills.find(b => b.id === id)?.status !== 'paid');
+    if (ids.length === 0) { toast('Selected entries are already paid', 'error'); return; }
+    onMarkPaid(ids);
+    setSelected(new Set());
+  };
+
+  const exportCsv = (rows, label) => {
+    const header = 'ID,Tenant,Unit,Amount,Due,Status,Method\\n';
+    const body = rows.map(b => `${b.id},"${b.tenant}","${b.property}",${b.amount},${b.due},${b.status},${b.method}`).join('\\n');
+    downloadBlob(header + body, `mwarokin-ledger-${label}-${Date.now()}.csv`, 'text/csv');
+    toast('CSV exported');
+  };
+
+  return (
+    <div className="panel p-5 md:p-6 animate-fade-up stagger-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
+        <h3 className="font-display font-semibold text-xl" style={{color:'var(--cream)'}}>Ledger Entries</h3>
+        <div className="flex gap-2 flex-wrap items-center">
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search tenant, unit, ID…" className="input text-sm w-44" />
+          <select className="input text-xs w-36" value={propertyFilter} onChange={e => setPropertyFilter(e.target.value)}>
+            {properties.map(p => <option key={p} value={p}>{p === 'all' ? 'All units' : p}</option>)}
+          </select>
+          {['all','paid','pending','overdue'].map(f => (
+            <button key={f} onClick={() => setFilter(f)}
+              className="px-3.5 py-1.5 text-xs font-label rounded-full transition-all capitalize"
+              style={filter === f
+                ? { background:'linear-gradient(135deg, var(--gold-bright), var(--gold))', color:'#191305' }
+                : { background:'var(--panel-2)', color:'var(--moss)', border:'1px solid var(--hairline)' }}>
+              {f}
+            </button>
+          ))}
+          <button onClick={() => exportCsv(filtered, 'filtered')} className="icon-btn-sm" title="Export CSV">
+            <i className="fas fa-file-csv" />
+          </button>
+        </div>
+      </div>
+
+      {selected.size > 0 && (
+        <div className="bulk-bar">
+          <span className="text-sm font-medium" style={{color:'var(--gold-bright)'}}>
+            <i className="fas fa-check-circle mr-2" />{selected.size} selected
+          </span>
+          <div className="flex gap-2">
+            <button onClick={() => exportCsv(bills.filter(b => selected.has(b.id)), 'selected')} className="btn-ghost">
+              <i className="fas fa-download" /> Export
+            </button>
+            <button onClick={bulkMarkPaid} className="btn-gold" style={{padding:'8px 16px', fontSize:'0.75rem'}}>
+              <i className="fas fa-check" /> Mark paid
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div className="overflow-x-auto -mx-1">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-left" style={{color:'var(--moss)', borderBottom:'1px solid var(--hairline)'}}>
+              <th className="pb-3 pr-2 w-8">
+                <input type="checkbox" className="checkbox" checked={filtered.length > 0 && selected.size === filtered.length} onChange={toggleSelectAll} />
+              </th>
+              <th className="pb-3 pr-4 font-label text-[10px] tracking-widest font-semibold sortable-th" onClick={() => toggleSort('id')}>ID{sortIcon('id')}</th>
+              <th className="pb-3 pr-4 font-label text-[10px] tracking-widest font-semibold sortable-th" onClick={() => toggleSort('tenant')}>TENANT{sortIcon('tenant')}</th>
+              <th className="pb-3 pr-4 font-label text-[10px] tracking-widest font-semibold">UNIT</th>
+              <th className="pb-3 pr-4 font-label text-[10px] tracking-widest font-semibold sortable-th" onClick={() => toggleSort('amount')}>AMOUNT{sortIcon('amount')}</th>
+              <th className="pb-3 pr-4 font-label text-[10px] tracking-widest font-semibold sortable-th" onClick={() => toggleSort('due')}>DUE{sortIcon('due')}</th>
+              <th className="pb-3 pr-4 font-label text-[10px] tracking-widest font-semibold sortable-th" onClick={() => toggleSort('status')}>STATUS{sortIcon('status')}</th>
+              <th className="pb-3 font-label text-[10px] tracking-widest font-semibold text-right">ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.length === 0 ? (
+              <tr><td colSpan="8" className="py-10 text-center" style={{color:'var(--moss)'}}>
+                <i className="fas fa-inbox text-2xl block mb-2" /> No entries match
+              </td></tr>
+            ) : filtered.map(bill => {
+              const s = statusMap[bill.status] || statusMap.pending;
+              return (
+                <tr key={bill.id} className={`table-row ${newIds.has(bill.id) ? 'row-new' : ''}`} style={{borderBottom:'1px solid var(--hairline)'}}>
+                  <td className="py-3.5 pr-2">
+                    <input type="checkbox" className="checkbox" checked={selected.has(bill.id)} onChange={() => toggleSelect(bill.id)} />
+                  </td>
+                  <td className="py-3.5 pr-4 font-mono text-xs cursor-pointer" style={{color:'var(--moss)'}} onClick={() => onViewStatement(bill)}>{bill.id}</td>
+                  <td className="py-3.5 pr-4 font-medium cursor-pointer" style={{color:'var(--cream)'}} onClick={() => onViewStatement(bill)}>{bill.tenant}</td>
+                  <td className="py-3.5 pr-4" style={{color:'var(--cream-dim)'}}>{bill.property}</td>
+                  <td className="py-3.5 pr-4 font-mono" style={{color:'var(--gold-bright)'}}>KSh {fmt(bill.amount)}</td>
+                  <td className="py-3.5 pr-4 font-mono text-xs" style={{color:'var(--cream-dim)'}}>{bill.due}</td>
+                  <td className="py-3.5 pr-4">
+                    <span className={`badge ${s.cls}`}><span className="dot" />{s.label}</span>
+                  </td>
+                  <td className="py-3.5 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <button onClick={() => onViewStatement(bill)} className="icon-btn-sm" title="View statement"><i className="fas fa-receipt" /></button>
+                      {bill.status !== 'paid' ? (
+                        <button onClick={() => onMarkPaid([bill.id])} className="btn-ghost" style={{color:'var(--gold)'}}>Mark paid</button>
+                      ) : (
+                        <span className="font-mono text-xs" style={{color:'var(--moss)'}}>{bill.method}</span>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+/* ============================= PAYMENT / M-PESA STK ============================= */
+
+const PaymentPanel = ({ total }) => {
+  const [phone, setPhone] = useState('');
+  const [method, setMethod] = useState('mpesa');
+  const [stage, setStage] = useState('idle');
+  const [progress, setProgress] = useState(0);
+  const toast = useToast();
+
+  const validPhone = /^0[71]\d{8}$/.test(phone);
+
+  const handlePay = () => {
+    if (total <= 0) { toast('Add bill amounts before paying', 'error'); return; }
+    if (method === 'mpesa' && !validPhone) { toast('Enter a valid Safaricom number (07xx / 01xx)', 'error'); return; }
+    setStage('requesting');
+    setProgress(15);
+    setTimeout(() => {
+      setStage('waiting');
+      setProgress(55);
+      toast(method === 'mpesa' ? 'STK push sent — enter M-Pesa PIN on your phone' : 'Payment request sent', 'success');
+    }, 900);
+    setTimeout(() => {
+      setProgress(100);
+      setStage('done');
+      toast(`Payment of KSh ${fmt(total)} confirmed`, 'success');
+    }, 2600);
+    setTimeout(() => { setStage('idle'); setProgress(0); }, 5200);
+  };
+
+  return (
+    <div className="panel p-5 md:p-6 animate-fade-up stagger-5">
+      <h3 className="font-display font-semibold text-xl flex items-center gap-2 mb-4" style={{color:'var(--cream)'}}>
+        <i className="fas fa-wallet" style={{color:'var(--gold)'}} /> Settle Balance
+      </h3>
+
+      <div className="flex gap-2 mb-4">
+        {[{id:'mpesa', label:'M-Pesa', icon:'fa-mobile-screen'}, {id:'syllopay', label:'SylloPay', icon:'fa-bolt'}, {id:'bank', label:'Bank', icon:'fa-university'}].map(m => (
+          <button key={m.id} onClick={() => setMethod(m.id)}
+            className="flex-1 py-2.5 rounded-lg font-label text-xs flex flex-col items-center gap-1.5 transition-all"
+            style={method === m.id ? { background:'rgba(212,175,55,0.10)', border:'1px solid var(--gold-dim)', color:'var(--gold-bright)' } : { background:'var(--panel-2)', border:'1px solid var(--hairline)', color:'var(--moss)' }}>
+            <i className={`fas ${m.icon}`} /> {m.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="rounded-xl p-5 mb-4" style={{background:'linear-gradient(145deg, var(--forest-deep), var(--obsidian-2))', border:'1px solid var(--hairline)'}}>
+        <p className="font-label text-[10px] tracking-widest" style={{color:'var(--moss)'}}>AMOUNT DUE</p>
+        <p className="font-mono text-3xl font-semibold mt-1" style={{color:'var(--gold-bright)'}}>KSh {fmt(total)}</p>
+      </div>
+
+      {method === 'mpesa' && (
+        <div className="mb-4">
+          <label className="font-label text-[10px] tracking-widest block mb-1.5" style={{color:'var(--moss)'}}>SAFARICOM NUMBER</label>
+          <input value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g,'').slice(0,10))} placeholder="0712 345 678" className="input input-mono" />
+        </div>
+      )}
+
+      {progress > 0 && (
+        <div className="mb-4">
+          <div className="flex justify-between text-xs font-mono mb-1.5" style={{color:'var(--cream-dim)'}}>
+            <span>{stage === 'requesting' ? 'Requesting…' : stage === 'waiting' ? 'Awaiting confirmation…' : 'Confirmed'}</span>
+            <span>{progress}%</span>
+          </div>
+          <div className="progress-track"><div className="progress-fill" style={{width:`${progress}%`}} /></div>
+        </div>
+      )}
+
+      <button onClick={handlePay} disabled={stage !== 'idle'} className="w-full btn-gold justify-center !py-3.5 text-sm">
+        {stage === 'idle' && <><i className="fas fa-lock" /> Pay KSh {fmt(total)}</>}
+        {stage === 'requesting' && <><i className="fas fa-spinner fa-spin" /> Sending request</>}
+        {stage === 'waiting' && <><i className="fas fa-spinner fa-spin" /> Confirming</>}
+        {stage === 'done' && <><i className="fas fa-check" /> Payment confirmed</>}
+      </button>
+      <p className="text-center text-xs mt-3 flex items-center justify-center gap-1.5" style={{color:'var(--moss)'}}>
+        <i className="fas fa-shield-halved" style={{color:'var(--gold-dim)'}} /> Encrypted transaction · Demo simulation
+      </p>
+    </div>
+  );
+};
+
+/* ============================= FX TICKER STRIP ============================= */
+
+const FxStrip = ({ rates }) => (
+  <div className="max-w-7xl mx-auto px-5 mb-6">
+    <div className="panel-flat px-5 py-3 flex items-center gap-6 overflow-x-auto animate-fade-up">
+      <span className="font-label text-[10px] tracking-widest flex items-center gap-2 flex-shrink-0" style={{color:'var(--gold)'}}>
+        <span className="pulse-live" /> LIVE FX
+      </span>
+      {rates.map(r => (
+        <span key={r.country} className="font-mono text-xs flex-shrink-0" style={{color:'var(--cream-dim)'}}>
+          {r.symbol}/USD <span style={{color:'var(--gold-bright)'}}>{r.rate.toFixed(2)}</span>
+          <span style={{color: r.dir === 'up' ? 'var(--success)' : 'var(--danger)', marginLeft:'4px'}}>
+            <i className={`fas ${r.dir === 'up' ? 'fa-caret-up' : 'fa-caret-down'}`} />
+          </span>
+        </span>
+      ))}
+    </div>
+  </div>
+);
+
+/* ============================= FOOTER ============================= */
+
+const Footer = () => (
+  <footer className="mt-16 pt-12 pb-6" style={{borderTop:'1px solid var(--hairline)'}}>
+    <div className="max-w-7xl mx-auto px-5 grid grid-cols-2 md:grid-cols-4 gap-8">
+      <div className="col-span-2 md:col-span-1">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{background:'linear-gradient(135deg, var(--forest-light), var(--forest-deep))', border:'1px solid var(--gold-dim)'}}>
+            <i className="fas fa-vault text-xs" style={{color:'var(--gold)'}} />
+          </div>
+          <span className="font-display font-semibold text-lg" style={{color:'var(--cream)'}}>Mwarokin Estates</span>
+        </div>
+        <p className="text-sm max-w-xs" style={{color:'var(--moss)'}}>A living ledger for rent, utilities and levies — built for African estates.</p>
+      </div>
+      {[
+        { h:'Ledger', items:['Bills','Payments','Statements'] },
+        { h:'Estate', items:['Tenants','Properties','Maintenance'] },
+        { h:'Company', items:['About','Support','Contact'] },
+      ].map(col => (
+        <div key={col.h}>
+          <h4 className="font-label text-xs mb-3" style={{color:'var(--gold-dim)'}}>{col.h.toUpperCase()}</h4>
+          <ul className="space-y-2 text-sm" style={{color:'var(--moss)'}}>
+            {col.items.map(i => <li key={i}><a href="#" style={{color:'var(--moss)'}}>{i}</a></li>)}
+          </ul>
+        </div>
+      ))}
+    </div>
+    <div className="max-w-7xl mx-auto px-5 mt-8 pt-5 text-center text-xs" style={{borderTop:'1px solid var(--hairline)', color:'var(--moss)'}}>
+      © 2026 Mwarokin Estates — The Ledger. Syllogism Technology Africa.
+    </div>
+  </footer>
+);
+
+/* ============================= MAIN APP ============================= */
+
+const App = () => {
+  const [ready, setReady] = useState(false);
+  const [bills, setBills] = useState(() => {
+    try {
+      const saved = localStorage.getItem('mwarokin-ledger-bills');
+      return saved ? JSON.parse(saved) : seedBills;
+    } catch (_) { return seedBills; }
+  });
+  const [feed, setFeed] = useState([]);
+  const [search, setSearch] = useState('');
+  const [rates, setRates] = useState(() => Object.entries(currencyRates).slice(0,6).map(([country, r]) => ({ country, ...r, dir:'up' })));
+  const [statementBill, setStatementBill] = useState(null);
+  const [newIds, setNewIds] = useState(new Set());
+  const [history, setHistory] = useState(() => {
+    const days = [];
+    const base = 60000;
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date(Date.now() - i * 86400000);
+      days.push({ label: d.toLocaleDateString('en-GB', { day:'2-digit', month:'short' }), collected: Math.round(base + Math.random()*40000 + (13-i)*1800) });
+    }
+    return days;
+  });
+  const [collectedSpark, setCollectedSpark] = useState([]);
+  const [pendingSpark, setPendingSpark] = useState([]);
+
+  const toast = useToast();
+  const feedTimer = useRef(null);
+  const fxTimer = useRef(null);
+
+  useEffect(() => { const t = setTimeout(() => setReady(true), 650); return () => clearTimeout(t); }, []);
+
+  useEffect(() => {
+    localStorage.setItem('mwarokin-ledger-bills', JSON.stringify(bills));
+    if (channel) channel.postMessage({ type:'bills-update', bills });
+  }, [bills]);
+
+  useEffect(() => {
+    if (!channel) return;
+    const handler = (e) => { if (e.data?.type === 'bills-update') setBills(e.data.bills); };
+    channel.addEventListener('message', handler);
+    return () => channel.removeEventListener('message', handler);
+  }, []);
+
+  const flashNew = (id) => {
+    setNewIds(prev => new Set(prev).add(id));
+    setTimeout(() => setNewIds(prev => { const n = new Set(prev); n.delete(id); return n; }), 2300);
+  };
+
+  const pushFeedEvent = useCallback((custom) => {
+    const verb = custom?.verb || feedVerbs[Math.floor(Math.random()*feedVerbs.length)];
+    const tenant = custom?.tenant || feedTenants[Math.floor(Math.random()*feedTenants.length)];
+    const property = custom?.property || feedProps[Math.floor(Math.random()*feedProps.length)];
+    const amount = custom?.amount != null ? custom.amount : (verb.v.includes('Payment') ? Math.floor(15000 + Math.random()*30000) : null);
+    const item = {
+      id: uid(), verb: verb.v, icon: verb.icon, tone: verb.tone, tenant, property, amount,
+      time: new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit', second:'2-digit' }),
+    };
+    setFeed(p => [item, ...p].slice(0, 30));
+    if (amount) {
+      setHistory(h => {
+        const next = [...h];
+        next[next.length - 1] = { ...next[next.length - 1], collected: next[next.length - 1].collected + amount };
+        return next;
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    pushFeedEvent({ verb: feedVerbs[0], tenant:'Faith Akinyi', property:'Parklands 2E', amount: 27500 });
+    feedTimer.current = setInterval(() => pushFeedEvent(), 6500);
+    return () => clearInterval(feedTimer.current);
+  }, [pushFeedEvent]);
+
+  useEffect(() => {
+    fxTimer.current = setInterval(() => {
+      setRates(prev => prev.map(r => {
+        const delta = (Math.random() - 0.5) * (r.rate * 0.002);
+        return { ...r, rate: Math.max(0.01, r.rate + delta), dir: delta >= 0 ? 'up' : 'down' };
+      }));
+    }, 3200);
+    return () => clearInterval(fxTimer.current);
+  }, []);
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setCollectedSpark(prev => [...prev, bills.filter(b => b.status==='paid').reduce((s,b)=>s+b.amount,0)].slice(-8));
+      setPendingSpark(prev => [...prev, bills.filter(b => b.status==='pending').reduce((s,b)=>s+b.amount,0)].slice(-8));
+    }, 4000);
+    return () => clearInterval(t);
+  }, [bills]);
+
+  const handleSave = (data) => {
+    const newBill = {
+      id: `BL-${2400 + bills.length + Math.floor(Math.random()*90)}`,
+      tenant: data.tenantId || 'New Tenant',
+      property: data.buildingId || 'New Unit',
+      amount: data.total || 0,
+      due: new Date(Date.now() + 7*86400000).toISOString().slice(0,10),
+      status: 'pending',
+      method: '\u2014',
+      breakdown: data.breakdown || synthBreakdown(data.total || 0),
+    };
+    setBills(prev => [newBill, ...prev]);
+    flashNew(newBill.id);
+    pushFeedEvent({ verb: feedVerbs[1], tenant: newBill.tenant, property: newBill.property, amount: newBill.amount });
+  };
+
+  const handleMarkPaid = (ids) => {
+    setBills(prev => prev.map(b => ids.includes(b.id) ? { ...b, status:'paid', method:'M-Pesa' } : b));
+    ids.forEach(id => {
+      flashNew(id);
+      const b = bills.find(x => x.id === id);
+      if (b) pushFeedEvent({ verb: feedVerbs[0], tenant: b.tenant, property: b.property, amount: b.amount });
+    });
+    toast(ids.length > 1 ? `${ids.length} entries marked as paid` : 'Marked as paid', 'success');
+  };
+
+  const totalCollected = useMemo(() => bills.filter(b => b.status === 'paid').reduce((s,b) => s + b.amount, 0), [bills]);
+  const totalPending = useMemo(() => bills.filter(b => b.status === 'pending').reduce((s,b) => s + b.amount, 0), [bills]);
+  const totalOverdue = useMemo(() => bills.filter(b => b.status === 'overdue').reduce((s,b) => s + b.amount, 0), [bills]);
+  const totalOutstanding = totalPending + totalOverdue;
+
+  const tickerEvents = useMemo(() => feed.slice(0,8).map(e => ({
+    icon:e.icon, tone:e.tone,
+    text:`${e.tenant} · ${e.verb.toLowerCase()}${e.amount != null ? ' · KSh ' + fmt(e.amount) : ''}`
+  })), [feed]);
+
+  const liveFxLabel = rates[0] ? `KSh ${rates[0].rate.toFixed(2)} / USD` : '';
+
+  return (
+    <div className="min-h-screen">
+      <Navbar liveFxLabel={liveFxLabel} />
+      <Hero totalCollected={totalCollected} tickerEvents={tickerEvents.length ? tickerEvents : [{icon:'fa-circle-check', tone:'moss', text:'Awaiting live activity…'}]} />
+      <FxStrip rates={rates} />
+
+      <main className="max-w-7xl mx-auto px-5 pb-8">
+        {!ready ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            {[1,2,3,4].map(i => <SkeletonBlock key={i} h="108px" />)}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <StatCard icon="fa-sack-dollar" label="COLLECTED" value={`KSh ${fmt(totalCollected)}`} sub={`${bills.filter(b=>b.status==='paid').length} bills settled`} color="#5aa27a" delay="1" spark={collectedSpark} />
+            <StatCard icon="fa-hourglass-half" label="PENDING" value={`KSh ${fmt(totalPending)}`} sub={`${bills.filter(b=>b.status==='pending').length} awaiting payment`} color="#d9a64a" delay="2" spark={pendingSpark} />
+            <StatCard icon="fa-triangle-exclamation" label="OVERDUE" value={`KSh ${fmt(totalOverdue)}`} sub={`${bills.filter(b=>b.status==='overdue').length} need attention`} color="#c1584f" delay="3" />
+            <StatCard icon="fa-scale-balanced" label="OUTSTANDING" value={`KSh ${fmt(totalOutstanding)}`} sub="Rent, utilities & levies" color="#d4af37" delay="4" />
+          </div>
+        )}
+
+        {!ready ? (
+          <SkeletonBlock h="280px" className="mb-8" />
+        ) : (
+          <div className="mb-8">
+            <CollectionsTrend history={history} outstanding={totalOutstanding} collected={totalCollected} />
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            {!ready ? <SkeletonBlock h="360px" /> : <BillForm onSave={handleSave} />}
+            {!ready ? <SkeletonBlock h="420px" /> : (
+              <BillsTable bills={bills} onMarkPaid={handleMarkPaid} search={search} setSearch={setSearch} onViewStatement={setStatementBill} newIds={newIds} />
+            )}
+          </div>
+          <div className="space-y-6">
+            {!ready ? <SkeletonBlock h="320px" /> : <PaymentPanel total={totalOutstanding} />}
+            {!ready ? <SkeletonBlock h="300px" /> : <ActivityFeed events={feed} />}
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+
+      {statementBill && <StatementModal bill={statementBill} onClose={() => setStatementBill(null)} />}
+
+      <button onClick={() => window.scrollTo({top:0, behavior:'smooth'})}
+        className="fixed bottom-6 right-6 w-11 h-11 rounded-full flex items-center justify-center z-30"
+        style={{background:'linear-gradient(135deg, var(--gold-bright), var(--gold))', color:'#191305', boxShadow:'0 8px 24px rgba(212,175,55,0.3)'}}>
+        <i className="fas fa-arrow-up" />
+      </button>
+    </div>
+  );
+};
+
+const Root = () => (
+  <ToastProvider><App /></ToastProvider>
+);
+
+ReactDOM.render(<Root />, document.getElementById('root'));
+</script>
+</body>
+</html>

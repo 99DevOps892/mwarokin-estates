@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mwarokin Estates — Keys &amp; Locks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Syne:wght@500;600;700&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.js"></script>
+<style>
+:root{
+  --obsidian:#0a1710; --forest:#0d1f15; --forest2:#0f2418;
+  --gold:#b88f3c; --gold-light:#e8c96a; --parchment:#e8ddb5;
+  --green-ok:#5dcc8a; --red-alert:#f07070; --blue-fob:#7ab0f0;
+  --line:rgba(184,143,60,0.18);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+.me-root{
+  font-family:'DM Sans',sans-serif;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(184,143,60,0.07) 0%, transparent 45%),
+    radial-gradient(circle at 85% 90%, rgba(26,62,38,0.9) 0%, transparent 55%),
+    repeating-linear-gradient(115deg, rgba(255,255,255,0.008) 0 2px, transparent 2px 4px),
+    var(--forest);
+  min-height:100vh; color:var(--parchment); position:relative; overflow-x:hidden;
+}
+.me-root ::selection{ background:rgba(184,143,60,0.35); color:#fff; }
+.me-header{
+  background:linear-gradient(180deg,var(--obsidian),rgba(10,23,16,0.96));
+  border-bottom:1px solid var(--line); padding:14px 26px;
+  display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:40; backdrop-filter:blur(8px);
+}
+.me-logo{display:flex; align-items:center; gap:11px;}
+.me-logo-icon{
+  width:38px; height:38px; border-radius:9px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-light));
+  display:flex; align-items:center; justify-content:center; font-size:19px; color:var(--obsidian);
+  box-shadow:0 3px 12px rgba(184,143,60,0.35);
+}
+.me-logo-text{font-family:'Cormorant Garamond',serif; font-size:19px; font-weight:600; color:var(--gold-light); letter-spacing:0.02em;}
+.me-logo-sub{font-size:10px; color:rgba(184,143,60,0.6); letter-spacing:0.1em; text-transform:uppercase;}
+.me-header-nav{display:flex; align-items:center; gap:6px; flex-wrap:wrap;}
+.me-nav-btn{
+  background:rgba(184,143,60,0.07); border:1px solid rgba(184,143,60,0.16); color:rgba(232,205,106,0.65);
+  border-radius:8px; padding:7px 14px; font-size:12px; cursor:pointer; transition:.2s; font-family:'DM Sans',sans-serif;
+}
+.me-nav-btn:hover{ background:rgba(184,143,60,0.16); color:var(--gold-light); }
+.me-nav-btn.active{ background:rgba(184,143,60,0.22); color:var(--gold-light); border-color:rgba(184,143,60,0.45); }
+.me-scan-cta{
+  display:flex; align-items:center; gap:6px; margin-left:6px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--obsidian);
+  border:none; border-radius:8px; padding:8px 16px; font-size:12px; font-weight:600; cursor:pointer;
+  box-shadow:0 3px 14px rgba(184,143,60,0.3); transition:.2s;
+}
+.me-scan-cta:hover{ transform:translateY(-1px); box-shadow:0 5px 18px rgba(184,143,60,0.42); }
+.me-breadcrumb{ font-size:11px; color:rgba(232,205,106,0.4); padding:11px 26px 0; letter-spacing:0.05em; }
+.me-breadcrumb span{ color:rgba(232,205,106,0.75); }
+.me-content{ padding:6px 26px 40px; position:relative; z-index:2; max-width:1400px; margin:0 auto; }
+.me-page-title{ font-family:'Cormorant Garamond',serif; font-size:30px; font-weight:600; color:var(--gold-light); margin-bottom:4px; display:flex; align-items:center; gap:9px; }
+.me-page-sub{ font-size:12.5px; color:rgba(184,143,60,0.55); margin-bottom:22px; }
+.me-stats-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px; }
+.me-stat{
+  background:linear-gradient(160deg,var(--forest2),var(--obsidian)); border:1px solid var(--line); border-radius:12px; padding:15px 17px;
+  position:relative; overflow:hidden; cursor:pointer; transition:.2s;
+}
+.me-stat:hover{ border-color:rgba(184,143,60,0.45); transform:translateY(-2px); }
+.me-stat.filtering{ border-color:var(--gold-light); box-shadow:0 0 0 1px rgba(232,201,106,0.3); }
+.me-stat::before{ content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--gold),var(--gold-light)); opacity:0; transition:.2s; }
+.me-stat:hover::before,.me-stat.filtering::before{ opacity:1; }
+.me-stat-icon{ font-size:20px; color:var(--gold); margin-bottom:9px; }
+.me-stat-val{ font-family:'JetBrains Mono',monospace; font-size:27px; font-weight:600; color:var(--gold-light); line-height:1; margin-bottom:3px; }
+.me-stat-label{ font-size:11px; color:rgba(184,143,60,0.55); }
+.me-stat-badge{ position:absolute; top:13px; right:13px; font-size:9.5px; padding:2px 8px; border-radius:20px; }
+.badge-ok{ background:rgba(26,110,60,0.3); color:var(--green-ok); border:1px solid rgba(26,110,60,0.4); }
+.badge-warn{ background:rgba(184,143,60,0.15); color:var(--gold-light); border:1px solid rgba(184,143,60,0.35); }
+.badge-alert{ background:rgba(180,50,50,0.15); color:var(--red-alert); border:1px solid rgba(180,50,50,0.3); }
+.me-grid{ display:grid; grid-template-columns:1fr 350px; gap:16px; align-items:start; }
+.me-section-title{ font-family:'Cormorant Garamond',serif; font-size:16.5px; font-weight:500; color:var(--gold-light); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.me-section-title::after{ content:''; flex:1; height:1px; background:linear-gradient(90deg,rgba(184,143,60,0.3),transparent); }
+.panel{ background:linear-gradient(160deg,rgba(15,36,24,0.6),var(--obsidian)); border:1px solid rgba(184,143,60,0.14); border-radius:13px; padding:17px; }
+.keys-search{ display:flex; gap:8px; margin-bottom:14px; }
+.keys-search input{ flex:1; background:rgba(184,143,60,0.06); border:1px solid rgba(184,143,60,0.2); border-radius:8px; padding:9px 12px; color:var(--parchment); font-size:12.5px; font-family:'DM Sans',sans-serif; outline:none; transition:.2s; }
+.keys-search input::placeholder{ color:rgba(184,143,60,0.35); }
+.keys-search input:focus{ border-color:rgba(184,143,60,0.55); background:rgba(184,143,60,0.09); }
+.btn-gold{ background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:8px; padding:9px 15px; color:var(--obsidian); font-size:12px; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; white-space:nowrap; transition:.2s; }
+.btn-gold:hover{ opacity:.88; transform:translateY(-1px); }
+.btn-gold:disabled{ opacity:.4; cursor:not-allowed; transform:none; }
+.btn-outline{ background:transparent; border:1px solid rgba(184,143,60,0.3); border-radius:8px; padding:9px 14px; color:rgba(232,205,106,0.75); font-size:12px; font-family:'DM Sans',sans-serif; cursor:pointer; transition:.2s; }
+.btn-outline:hover{ border-color:rgba(184,143,60,0.6); color:var(--gold-light); }
+.key-tabs{ display:flex; gap:4px; margin-bottom:14px; background:rgba(0,0,0,0.22); border-radius:8px; padding:3px; }
+.key-tab{ flex:1; text-align:center; padding:7px; border-radius:6px; font-size:11px; cursor:pointer; transition:.2s; color:rgba(184,143,60,0.55); }
+.key-tab.active{ background:rgba(184,143,60,0.2); color:var(--gold-light); border:1px solid rgba(184,143,60,0.3); }
+.key-list{ display:flex; flex-direction:column; gap:8px; max-height:640px; overflow-y:auto; padding-right:2px; }
+.key-list::-webkit-scrollbar{ width:5px; }
+.key-list::-webkit-scrollbar-thumb{ background:rgba(184,143,60,0.3); border-radius:4px; }
+.key-item{
+  background:rgba(184,143,60,0.04); border:1px solid rgba(184,143,60,0.12); border-radius:11px; padding:13px 14px;
+  display:flex; align-items:center; gap:12px; cursor:pointer; transition:.2s; position:relative; animation:fadeIn .35s ease both;
+}
+@keyframes fadeIn{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
+.key-item:hover{ background:rgba(184,143,60,0.09); border-color:rgba(184,143,60,0.3); }
+.key-item.selected{ background:rgba(184,143,60,0.13); border-color:rgba(184,143,60,0.5); box-shadow:0 0 0 1px rgba(184,143,60,0.15) inset; }
+.key-item.just-matched{ animation:matchPulse 1.4s ease; }
+@keyframes matchPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(93,204,138,0);} 25%{ box-shadow:0 0 0 4px rgba(93,204,138,0.25);} }
+.key-icon-wrap{ width:42px; height:42px; border-radius:11px; display:flex; align-items:center; justify-content:center; flex-shrink:0; position:relative; }
+.key-icon-wrap.physical{ background:rgba(184,143,60,0.15); border:1px solid rgba(184,143,60,0.25); }
+.key-icon-wrap.digital{ background:rgba(26,90,60,0.25); border:1px solid rgba(26,110,60,0.3); }
+.key-icon-wrap.fob{ background:rgba(40,60,120,0.25); border:1px solid rgba(60,90,180,0.3); }
+.key-icon-wrap i{ font-size:18px; }
+.key-icon-wrap.physical i{ color:var(--gold); }
+.key-icon-wrap.digital i{ color:var(--green-ok); }
+.key-icon-wrap.fob i{ color:var(--blue-fob); }
+.key-info{ flex:1; min-width:0; }
+.key-name{ font-size:13px; font-weight:500; color:var(--parchment); margin-bottom:2px; }
+.key-unit{ font-size:11px; color:rgba(184,143,60,0.55); font-family:'JetBrains Mono',monospace; }
+.key-meta{ text-align:right; flex-shrink:0; }
+.key-status{ font-size:11px; margin-bottom:3px; }
+.key-holder{ font-size:10px; color:rgba(184,143,60,0.42); }
+.status-dot{ display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:4px; vertical-align:middle; }
+.dot-active{ background:var(--green-ok); box-shadow:0 0 4px rgba(93,204,138,0.5); }
+.dot-issued{ background:var(--gold-light); box-shadow:0 0 4px rgba(232,201,106,0.4); }
+.dot-lost{ background:var(--red-alert); box-shadow:0 0 4px rgba(240,112,112,0.4); }
+.dot-spare{ background:rgba(184,143,60,0.4); }
+.key-action-dots{ position:absolute; top:10px; right:10px; font-size:14px; color:rgba(184,143,60,0.3); padding:3px 6px; border-radius:5px; cursor:pointer; z-index:3; }
+.key-item:hover .key-action-dots{ color:rgba(184,143,60,0.75); }
+.key-action-dots:hover{ background:rgba(184,143,60,0.15); }
+.side-panel{ display:flex; flex-direction:column; gap:14px; position:sticky; top:76px; }
+.lock-visual{ display:flex; flex-direction:column; align-items:center; padding:16px 0 10px; margin-bottom:12px; }
+.lock-body{ width:74px; height:88px; background:var(--forest); border:2px solid rgba(184,143,60,0.45); border-radius:12px; display:flex; align-items:center; justify-content:center; position:relative; margin-bottom:4px; box-shadow:0 0 22px rgba(184,143,60,0.08); transition:border-color .3s, box-shadow .3s; }
+.lock-body.unlocked{ border-color:rgba(93,204,138,0.55); box-shadow:0 0 22px rgba(93,204,138,0.14); }
+.lock-keyhole{ width:18px; height:28px; background:rgba(184,143,60,0.12); border:1px solid rgba(184,143,60,0.3); border-radius:9px 9px 3px 3px; position:relative; }
+.lock-keyhole::after{ content:''; position:absolute; bottom:2px; left:50%; transform:translateX(-50%); width:4px; height:10px; background:rgba(184,143,60,0.4); border-radius:2px; }
+.lock-shackle{ width:38px; height:26px; border:2.5px solid rgba(184,143,60,0.55); border-bottom:none; border-radius:20px 20px 0 0; margin:0 auto; transition:transform .4s cubic-bezier(.34,1.56,.64,1), border-color .3s; }
+.lock-shackle.open{ transform:translateY(-15px) rotate(20deg); border-color:rgba(93,204,138,0.6); }
+.lock-name-display{ font-family:'Cormorant Garamond',serif; font-size:15px; color:var(--gold-light); text-align:center; margin-bottom:2px; }
+.lock-sub-display{ font-size:10px; color:rgba(184,143,60,0.42); text-align:center; margin-bottom:14px; font-family:'JetBrains Mono',monospace; }
+.lock-toggle-row{ display:flex; gap:8px; }
+.lock-btn{ flex:1; padding:9px; border-radius:8px; font-size:12px; font-family:'DM Sans',sans-serif; cursor:pointer; transition:.2s; text-align:center; }
+.lock-btn-lock{ background:rgba(184,143,60,0.12); border:1px solid rgba(184,143,60,0.3); color:var(--gold-light); }
+.lock-btn-unlock{ background:rgba(26,110,60,0.15); border:1px solid rgba(26,110,60,0.35); color:var(--green-ok); }
+.lock-btn:hover{ opacity:.82; }
+.lock-btn.on{ outline:1px solid currentColor; }
+.me-divider{ height:1px; background:linear-gradient(90deg,transparent,rgba(184,143,60,0.2),transparent); margin:16px 0; }
+.lock-list-mini{ display:flex; flex-direction:column; gap:7px; margin-top:14px; }
+.lock-mini-item{ display:flex; align-items:center; gap:10px; padding:8px 10px; background:rgba(184,143,60,0.04); border:1px solid rgba(184,143,60,0.1); border-radius:8px; cursor:pointer; transition:.2s; }
+.lock-mini-item:hover{ border-color:rgba(184,143,60,0.28); background:rgba(184,143,60,0.08); }
+.lock-mini-item.active-lock{ border-color:rgba(232,201,106,0.45); }
+.lock-mini-item i{ font-size:15px; color:var(--gold); flex-shrink:0; }
+.lock-mini-name{ flex:1; font-size:12px; color:var(--parchment); }
+.lock-mini-state{ font-size:10px; }
+.state-locked{ color:rgba(184,143,60,0.7); }
+.state-unlocked{ color:var(--green-ok); }
+.activity-list{ display:flex; flex-direction:column; max-height:230px; overflow-y:auto; }
+.activity-item{ display:flex; align-items:flex-start; gap:10px; padding:9px 0; border-bottom:1px solid rgba(184,143,60,0.07); font-size:11px; animation:fadeIn .3s ease; }
+.activity-item:last-child{ border-bottom:none; }
+.activity-dot-wrap{ flex-shrink:0; padding-top:3px; }
+.activity-text{ flex:1; }
+.activity-who{ color:var(--parchment); font-weight:500; }
+.activity-what{ color:rgba(184,143,60,0.55); }
+.activity-time{ color:rgba(184,143,60,0.35); font-size:10px; margin-top:1px; font-family:'JetBrains Mono',monospace; }
+.qr-display{ display:flex; flex-direction:column; align-items:center; gap:10px; }
+.qr-ring-wrap{ position:relative; width:130px; height:130px; display:flex; align-items:center; justify-content:center; }
+.qr-ring-wrap svg{ position:absolute; inset:0; transform:rotate(-90deg); }
+.qr-ring-bg{ fill:none; stroke:rgba(184,143,60,0.12); stroke-width:4; }
+.qr-ring-fg{ fill:none; stroke:var(--gold-light); stroke-width:4; stroke-linecap:round; transition:stroke-dashoffset 1s linear, stroke .3s; }
+.qr-ring-fg.expiring{ stroke:var(--red-alert); }
+.qr-box{ width:96px; height:96px; background:#fff; border-radius:8px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.qr-box img,.qr-box canvas{ width:100%; height:100%; }
+.qr-box.expired{ opacity:.25; filter:grayscale(1); }
+.qr-timer{ font-family:'JetBrains Mono',monospace; font-size:18px; color:var(--gold-light); font-weight:600; letter-spacing:.03em; }
+.qr-timer.expiring{ color:var(--red-alert); animation:pulseText 1s infinite; }
+@keyframes pulseText{ 0%,100%{opacity:1;} 50%{opacity:.4;} }
+.qr-code-text{ font-family:'JetBrains Mono',monospace; font-size:11px; color:rgba(184,143,60,0.65); background:rgba(184,143,60,0.08); padding:5px 11px; border-radius:6px; border:1px solid rgba(184,143,60,0.15); }
+.qr-meta-grid{ display:grid; grid-template-columns:1fr 1fr; gap:6px; width:100%; margin-top:4px; }
+.qr-meta-cell{ background:rgba(184,143,60,0.05); border:1px solid rgba(184,143,60,0.12); border-radius:7px; padding:6px 8px; }
+.qr-meta-label{ font-size:9px; color:rgba(184,143,60,0.45); text-transform:uppercase; letter-spacing:.05em; }
+.qr-meta-val{ font-size:11.5px; color:var(--parchment); font-weight:500; margin-top:1px; }
+.key-count-badge{ background:rgba(184,143,60,0.15); border:1px solid rgba(184,143,60,0.25); color:var(--gold-light); font-size:10px; padding:2px 7px; border-radius:20px; margin-left:6px; font-family:'JetBrains Mono',monospace; }
+.access-chip{ display:inline-flex; align-items:center; gap:4px; font-size:10px; padding:3px 8px; border-radius:20px; margin:2px 4px 0 0; }
+.chip-perm{ background:rgba(26,110,60,0.2); color:var(--green-ok); border:1px solid rgba(26,110,60,0.3); }
+.chip-temp{ background:rgba(184,143,60,0.12); color:var(--gold-light); border:1px solid rgba(184,143,60,0.25); }
+.chip-maint{ background:rgba(60,90,180,0.15); color:var(--blue-fob); border:1px solid rgba(60,90,180,0.25); }
+.action-bar{ display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
+.action-mini{ display:flex; align-items:center; gap:5px; padding:7px 11px; border-radius:7px; font-size:11px; cursor:pointer; transition:.2s; border:1px solid rgba(184,143,60,0.18); color:rgba(184,143,60,0.7); background:rgba(184,143,60,0.05); }
+.action-mini:hover{ border-color:rgba(184,143,60,0.4); color:var(--gold-light); }
+.action-mini i{ font-size:13px; }
+
+/* Modal system */
+.modal-overlay{ position:fixed; inset:0; background:rgba(4,10,6,0.72); backdrop-filter:blur(3px); z-index:100; display:none; align-items:center; justify-content:center; padding:20px; animation:fadeIn .2s ease; }
+.modal-overlay.show{ display:flex; }
+.modal-box{ background:linear-gradient(165deg,#0f2418,var(--obsidian)); border:1px solid rgba(184,143,60,0.3); border-radius:16px; width:100%; max-width:460px; padding:22px; max-height:88vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.5); }
+.modal-box.wide{ max-width:560px; }
+.modal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.modal-title{ font-family:'Cormorant Garamond',serif; font-size:19px; color:var(--gold-light); display:flex; align-items:center; gap:8px; }
+.modal-close{ background:rgba(184,143,60,0.1); border:1px solid rgba(184,143,60,0.2); color:rgba(232,205,106,0.7); width:28px; height:28px; border-radius:7px; cursor:pointer; font-size:14px; }
+.modal-close:hover{ color:var(--gold-light); border-color:rgba(184,143,60,0.5); }
+.form-row{ margin-bottom:12px; }
+.form-row label{ display:block; font-size:11px; color:rgba(184,143,60,0.6); margin-bottom:5px; letter-spacing:.03em; }
+.form-row input,.form-row select{ width:100%; background:rgba(184,143,60,0.06); border:1px solid rgba(184,143,60,0.2); border-radius:8px; padding:9px 11px; color:var(--parchment); font-size:12.5px; font-family:'DM Sans',sans-serif; outline:none; }
+.form-row input:focus,.form-row select:focus{ border-color:rgba(184,143,60,0.55); }
+.form-grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.modal-footer{ display:flex; gap:8px; margin-top:16px; }
+.modal-footer button{ flex:1; }
+
+/* Camera scan modal */
+.cam-frame{ position:relative; width:100%; aspect-ratio:4/3; background:#000; border-radius:12px; overflow:hidden; border:1px solid rgba(184,143,60,0.25); margin-bottom:14px; }
+.cam-frame video,.cam-frame canvas{ width:100%; height:100%; object-fit:cover; }
+.cam-frame canvas{ position:absolute; inset:0; }
+.cam-guides{ position:absolute; inset:14%; border:2px dashed rgba(232,201,106,0.55); border-radius:8px; pointer-events:none; }
+.cam-scanline{ position:absolute; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--gold-light),transparent); box-shadow:0 0 10px rgba(232,201,106,0.8); animation:scanMove 1.8s linear infinite; display:none; }
+.cam-scanline.active{ display:block; }
+@keyframes scanMove{ 0%{ top:8%; } 100%{ top:88%; } }
+.cam-hint{ position:absolute; bottom:8px; left:0; right:0; text-align:center; font-size:10.5px; color:rgba(255,255,255,0.75); text-shadow:0 1px 3px rgba(0,0,0,0.8); }
+.cam-placeholder{ display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; gap:8px; color:rgba(184,143,60,0.4); font-size:12px; padding:0 20px; text-align:center; }
+.cam-controls{ display:flex; gap:8px; margin-bottom:6px; }
+.teeth-viz{ display:flex; align-items:flex-end; gap:3px; height:40px; margin:12px 0; justify-content:center; }
+.tooth-bar{ width:9px; background:linear-gradient(180deg,var(--gold-light),var(--gold)); border-radius:2px 2px 0 0; transition:height .4s ease; }
+.match-result{ background:rgba(184,143,60,0.06); border:1px solid rgba(184,143,60,0.2); border-radius:12px; padding:14px; margin-top:8px; }
+.match-result.matched{ border-color:rgba(93,204,138,0.4); background:rgba(93,204,138,0.06); }
+.match-result.nomatch{ border-color:rgba(240,112,112,0.35); background:rgba(240,112,112,0.05); }
+.match-confidence-bar{ height:5px; background:rgba(184,143,60,0.12); border-radius:3px; overflow:hidden; margin-top:8px; }
+.match-confidence-fill{ height:100%; background:linear-gradient(90deg,var(--gold),var(--green-ok)); border-radius:3px; transition:width .8s ease; }
+.captured-thumb{ width:56px; height:56px; border-radius:8px; object-fit:cover; border:1px solid rgba(184,143,60,0.3); flex-shrink:0; }
+.spinner{ width:16px; height:16px; border:2px solid rgba(184,143,60,0.25); border-top-color:var(--gold-light); border-radius:50%; animation:spin .7s linear infinite; display:inline-block; vertical-align:-3px; margin-right:6px; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+
+/* Toast */
+.toast-wrap{ position:fixed; bottom:22px; right:22px; z-index:200; display:flex; flex-direction:column; gap:8px; align-items:flex-end; }
+.toast{ background:linear-gradient(140deg,#0f2418,var(--obsidian)); border:1px solid rgba(184,143,60,0.35); border-radius:10px; padding:11px 16px; font-size:12.5px; color:var(--parchment); display:flex; align-items:center; gap:9px; box-shadow:0 8px 24px rgba(0,0,0,0.4); animation:toastIn .25s ease; max-width:320px; }
+.toast i{ color:var(--gold-light); font-size:15px; }
+.toast.success i{ color:var(--green-ok); }
+.toast.alert i{ color:var(--red-alert); }
+@keyframes toastIn{ from{ opacity:0; transform:translateX(20px);} to{opacity:1; transform:translateX(0);} }
+
+/* Context menu */
+.ctx-menu{ position:fixed; background:linear-gradient(160deg,#0f2418,var(--obsidian)); border:1px solid rgba(184,143,60,0.3); border-radius:10px; padding:6px; z-index:150; min-width:170px; box-shadow:0 10px 30px rgba(0,0,0,0.5); display:none; }
+.ctx-menu.show{ display:block; animation:fadeIn .15s ease; }
+.ctx-item{ padding:8px 11px; font-size:12px; color:rgba(232,205,106,0.8); border-radius:6px; cursor:pointer; display:flex; align-items:center; gap:8px; }
+.ctx-item:hover{ background:rgba(184,143,60,0.15); color:var(--gold-light); }
+.ctx-item.danger{ color:rgba(240,112,112,0.85); }
+.ctx-item.danger:hover{ background:rgba(240,112,112,0.12); color:var(--red-alert); }
+
+@media (max-width:900px){
+  .me-grid{ grid-template-columns:1fr; }
+  .me-stats-row{ grid-template-columns:1fr 1fr; }
+  .side-panel{ position:static; }
+}
+</style>
+</head>
+<body>
+
+<div class="me-root">
+  <div class="me-header">
+    <div class="me-logo">
+      <div class="me-logo-icon"><i class="ti ti-building-estate"></i></div>
+      <div>
+        <div class="me-logo-text">Mwarokin Estates</div>
+        <div class="me-logo-sub">Property Management System</div>
+      </div>
+    </div>
+    <div class="me-header-nav">
+      <button class="me-nav-btn" data-nav="Dashboard">Dashboard</button>
+      <button class="me-nav-btn" data-nav="Properties">Properties</button>
+      <button class="me-nav-btn" data-nav="Tenants">Tenants</button>
+      <button class="me-nav-btn active" data-nav="Keys &amp; Locks">Keys &amp; Locks</button>
+      <button class="me-nav-btn" data-nav="Reports">Reports</button>
+      <button class="me-scan-cta" id="scanKeyBtn"><i class="ti ti-viewfinder"></i> Scan Key</button>
+    </div>
+  </div>
+
+  <div class="me-breadcrumb">DASHBOARD / SETTINGS / <span>KEYS &amp; LOCKS</span></div>
+
+  <div class="me-content">
+    <div class="me-page-title"><i class="ti ti-key" style="font-size:23px;color:var(--gold);"></i>Keys &amp; Access Control</div>
+    <div class="me-page-sub">Manage physical keys, digital access codes, RFID fobs, and lock status across all Mwarokin properties</div>
+
+    <div class="me-stats-row">
+      <div class="me-stat" data-filter="all">
+        <div class="me-stat-icon"><i class="ti ti-key"></i></div>
+        <div class="me-stat-val" id="statTotal">0</div>
+        <div class="me-stat-label">Total Keys</div>
+        <span class="me-stat-badge badge-ok">All tracked</span>
+      </div>
+      <div class="me-stat" data-filter="type:digital-locks">
+        <div class="me-stat-icon"><i class="ti ti-lock"></i></div>
+        <div class="me-stat-val" id="statLocks">6</div>
+        <div class="me-stat-label">Smart Locks</div>
+        <span class="me-stat-badge badge-ok">Online</span>
+      </div>
+      <div class="me-stat" data-filter="status:Issued,Active">
+        <div class="me-stat-icon"><i class="ti ti-user-check"></i></div>
+        <div class="me-stat-val" id="statIssued">0</div>
+        <div class="me-stat-label">Keys Issued</div>
+        <span class="me-stat-badge badge-warn" id="statPending">0 pending</span>
+      </div>
+      <div class="me-stat" data-filter="status:Reported Lost">
+        <div class="me-stat-icon"><i class="ti ti-alert-triangle"></i></div>
+        <div class="me-stat-val" id="statLost">0</div>
+        <div class="me-stat-label">Lost / Flagged</div>
+        <span class="me-stat-badge badge-alert">Action needed</span>
+      </div>
+    </div>
+
+    <div class="me-grid">
+      <div>
+        <div class="panel">
+          <div class="me-section-title"><i class="ti ti-key" style="font-size:15px;color:var(--gold);"></i> Key Registry <span class="key-count-badge" id="registryCount">0</span></div>
+
+          <div class="keys-search">
+            <input type="text" id="keySearch" placeholder="Search by unit, holder, block, or key ID…" />
+            <button class="btn-gold" id="issueKeyBtn"><i class="ti ti-plus" style="vertical-align:-1px;"></i> Issue Key</button>
+          </div>
+
+          <div class="key-tabs">
+            <div class="key-tab active" data-type="all">All Keys</div>
+            <div class="key-tab" data-type="physical">Physical</div>
+            <div class="key-tab" data-type="digital">Digital</div>
+            <div class="key-tab" data-type="fob">Key Fobs</div>
+            <div class="key-tab" data-type="spare">Spares</div>
+          </div>
+
+          <div class="key-list" id="keyList"></div>
+
+          <div class="action-bar">
+            <div class="action-mini" id="exportBtn"><i class="ti ti-download"></i> Export registry</div>
+            <div class="action-mini" id="auditBtn"><i class="ti ti-report"></i> Audit log</div>
+            <div class="action-mini" id="revokeBtn"><i class="ti ti-rotate-clockwise"></i> Revoke bulk</div>
+            <div class="action-mini" id="printBtn"><i class="ti ti-printer"></i> Print tags</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-panel">
+
+        <div class="panel">
+          <div class="me-section-title" style="font-size:14px;"><i class="ti ti-lock" style="font-size:13px;color:var(--gold);"></i> Lock Control</div>
+
+          <div class="lock-visual">
+            <div class="lock-shackle" id="shackle"></div>
+            <div class="lock-body" id="lockBody"><div class="lock-keyhole"></div></div>
+          </div>
+
+          <div class="lock-name-display" id="lockName">Block A — Main Entrance</div>
+          <div class="lock-sub-display" id="lockSub">Smart Lock · ZL-400 · —</div>
+
+          <div class="lock-toggle-row">
+            <button class="lock-btn lock-btn-lock" id="btnLock"><i class="ti ti-lock" style="vertical-align:-2px;"></i> Lock</button>
+            <button class="lock-btn lock-btn-unlock" id="btnUnlock"><i class="ti ti-lock-open" style="vertical-align:-2px;"></i> Unlock</button>
+          </div>
+
+          <div class="me-divider"></div>
+
+          <div style="font-size:11px;color:rgba(184,143,60,0.5);margin-bottom:8px;letter-spacing:0.04em;">ALL PROPERTIES</div>
+          <div class="lock-list-mini" id="lockListMini"></div>
+        </div>
+
+        <div class="panel">
+          <div class="me-section-title" style="font-size:14px;"><i class="ti ti-history" style="font-size:13px;color:var(--gold);"></i> Recent Activity</div>
+          <div class="activity-list" id="activityList"></div>
+        </div>
+
+        <div class="panel">
+          <div class="me-section-title" style="font-size:14px;"><i class="ti ti-qrcode" style="font-size:13px;color:var(--gold);"></i> Quick Access Code</div>
+          <div class="qr-display">
+            <div class="qr-ring-wrap">
+              <svg width="130" height="130" viewBox="0 0 130 130">
+                <circle class="qr-ring-bg" cx="65" cy="65" r="60"></circle>
+                <circle class="qr-ring-fg" id="qrRing" cx="65" cy="65" r="60" stroke-dasharray="377" stroke-dashoffset="0"></circle>
+              </svg>
+              <div class="qr-box" id="qrBox"></div>
+            </div>
+            <div class="qr-timer" id="qrTimer">02:00</div>
+            <div class="qr-code-text" id="qrCodeText">ME-QR-4B-2025-A7</div>
+            <div class="qr-meta-grid" id="qrMetaGrid"></div>
+            <div style="display:flex;gap:6px;margin-top:6px;">
+              <button class="btn-gold" style="font-size:11px;padding:7px 12px;" id="qrDownloadBtn"><i class="ti ti-download" style="vertical-align:-1px;"></i> Download</button>
+              <button class="btn-outline" style="font-size:11px;padding:7px 12px;" id="qrRegenBtn"><i class="ti ti-refresh" style="vertical-align:-1px;"></i> Regenerate</button>
+              <button class="btn-outline" style="font-size:11px;padding:7px 12px;" id="qrScanBtn"><i class="ti ti-scan" style="vertical-align:-1px;"></i> Scan</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Issue Key Modal -->
+<div class="modal-overlay" id="issueModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title"><i class="ti ti-key" style="font-size:17px;"></i> Issue New Key</div>
+      <button class="modal-close" data-close="issueModal">✕</button>
+    </div>
+    <div class="form-row">
+      <label>KEY TYPE</label>
+      <select id="fType">
+        <option value="physical">Physical Key</option>
+        <option value="digital">Digital PIN</option>
+        <option value="fob">RFID Fob</option>
+        <option value="spare">Spare Key</option>
+      </select>
+    </div>
+    <div class="form-row"><label>KEY NAME</label><input id="fName" placeholder="e.g. Unit Key — 5D Front Door" /></div>
+    <div class="form-grid2">
+      <div class="form-row"><label>PROPERTY / BLOCK</label><input id="fProperty" placeholder="Mwarokin Heights, Westlands" /></div>
+      <div class="form-row"><label>UNIT</label><input id="fUnit" placeholder="Unit 5D" /></div>
+    </div>
+    <div class="form-grid2">
+      <div class="form-row"><label>BUILDING</label><input id="fBuilding" placeholder="Building A" /></div>
+      <div class="form-row"><label>HOLDER NAME</label><input id="fHolder" placeholder="Tenant / Staff name" /></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-outline" data-close="issueModal">Cancel</button>
+      <button class="btn-gold" id="fSubmit"><i class="ti ti-check" style="vertical-align:-1px;"></i> Issue Key</button>
+    </div>
+  </div>
+</div>
+
+<!-- Scan Key Modal -->
+<div class="modal-overlay" id="scanModal">
+  <div class="modal-box wide">
+    <div class="modal-head">
+      <div class="modal-title"><i class="ti ti-viewfinder" style="font-size:17px;"></i> Scan Key — Teeth Recognition</div>
+      <button class="modal-close" data-close="scanModal">✕</button>
+    </div>
+    <div class="cam-frame" id="camFrame">
+      <video id="camVideo" autoplay playsinline muted style="display:none;"></video>
+      <canvas id="camCanvas" style="display:none;"></canvas>
+      <div class="cam-placeholder" id="camPlaceholder">
+        <i class="ti ti-camera" style="font-size:30px;"></i>
+        <span>Open your camera to photograph the key, or upload an image. Position the key blade within the frame so the teeth are clearly visible.</span>
+      </div>
+      <div class="cam-guides" id="camGuides" style="display:none;"></div>
+      <div class="cam-scanline" id="camScanline"></div>
+      <div class="cam-hint" id="camHint" style="display:none;">Align key teeth within frame</div>
+    </div>
+    <div class="cam-controls">
+      <button class="btn-gold" id="camOpenBtn" style="flex:1;"><i class="ti ti-camera" style="vertical-align:-1px;"></i> Open Camera</button>
+      <button class="btn-outline" id="camCaptureBtn" style="flex:1;display:none;"><i class="ti ti-focus" style="vertical-align:-1px;"></i> Capture Photo</button>
+      <label class="btn-outline" style="flex:1;text-align:center;cursor:pointer;">
+        <i class="ti ti-upload" style="vertical-align:-1px;"></i> Upload Image
+        <input type="file" id="camUpload" accept="image/*" capture="environment" style="display:none;">
+      </label>
+    </div>
+    <div id="scanResultArea"></div>
+  </div>
+</div>
+
+<!-- Access Code Scan Modal -->
+<div class="modal-overlay" id="accessScanModal">
+  <div class="modal-box wide">
+    <div class="modal-head">
+      <div class="modal-title"><i class="ti ti-qrcode" style="font-size:17px;"></i> Scan Access QR Code</div>
+      <button class="modal-close" data-close="accessScanModal">✕</button>
+    </div>
+    <div class="cam-frame" id="qrCamFrame">
+      <video id="qrCamVideo" autoplay playsinline muted style="display:none;"></video>
+      <canvas id="qrCamCanvas" style="display:none;"></canvas>
+      <div class="cam-placeholder" id="qrCamPlaceholder">
+        <i class="ti ti-qrcode" style="font-size:30px;"></i>
+        <span>Open your camera and point it at a key or lock's attached QR code to resolve tenant, unit, block, and building instantly.</span>
+      </div>
+      <div class="cam-guides" id="qrCamGuides" style="display:none;"></div>
+    </div>
+    <div class="cam-controls">
+      <button class="btn-gold" id="qrCamOpenBtn" style="flex:1;"><i class="ti ti-camera" style="vertical-align:-1px;"></i> Open Camera</button>
+      <button class="btn-outline" id="qrManualBtn" style="flex:1;"><i class="ti ti-keyboard" style="vertical-align:-1px;"></i> Enter Code Manually</button>
+    </div>
+    <div id="qrScanResultArea"></div>
+  </div>
+</div>
+
+<div class="ctx-menu" id="ctxMenu">
+  <div class="ctx-item" data-act="view"><i class="ti ti-eye"></i> View details</div>
+  <div class="ctx-item" data-act="edit"><i class="ti ti-edit"></i> Edit key</div>
+  <div class="ctx-item" data-act="qr"><i class="ti ti-qrcode"></i> Generate access code</div>
+  <div class="ctx-item danger" data-act="lost"><i class="ti ti-alert-triangle"></i> Report lost</div>
+  <div class="ctx-item danger" data-act="revoke"><i class="ti ti-ban"></i> Revoke access</div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+/* ===================== DATA MODEL ===================== */
+let KEYS = [
+  { id:'KY-0011', type:'physical', name:'Master Key — Block A', property:'Mwarokin Heights, Westlands', unit:'Common Area', block:'Block A', building:'Building A', status:'Issued', holder:'Caretaker · James M.', chips:[['perm','ti-shield-check','Full access'],['maint','ti-tools','Maintenance']] , teeth:[3,7,2,6,4,8,3] },
+  { id:'DK-0047', type:'digital', name:'Digital PIN — Unit 4B', property:'Mwarokin Suites, Kilimani', unit:'Unit 4B', block:'Block C', building:'Suites Tower', status:'Active', holder:'Tenant · Amina K.', chips:[['temp','ti-clock','Expires 30 Jul']], teeth:[5,5,5,5,5,5,5] },
+  { id:'FB-0089', type:'fob', name:'RFID Fob — Parking Level 2', property:'Mwarokin Plaza, CBD', unit:'Parking P2', block:'Block P', building:'Plaza Tower', status:'Active', holder:'Tenant · Brian O.', chips:[['perm','ti-car','Parking only']], teeth:[6,6,6,6,6,6,6] },
+  { id:'KY-0023', type:'physical', name:'Unit Key — 7C Front Door', property:'Mwarokin Gardens, Lavington', unit:'Unit 7C', block:'Block D', building:'Garden Wing', status:'Reported Lost', holder:'Ex-tenant · Grace N.', chips:[['temp','ti-clock','Temp — 7 days']], teeth:[2,8,5,3,7,1,6] },
+  { id:'QR-0018', type:'digital', name:'QR Access — Gym & Amenities', property:'Mwarokin Heights, Westlands', unit:'Amenities', block:'Block A', building:'Building A', status:'Active', holder:'Resident · Fatuma A.', chips:[['perm','ti-swimming','Amenities']], teeth:[4,4,4,4,4,4,4] },
+  { id:'KY-0031-S', type:'spare', name:'Spare Key — Unit 2A', property:'Mwarokin Suites, Kilimani', unit:'Unit 2A', block:'Block C', building:'Suites Tower', status:'Spare', holder:'Office · Secure storage', chips:[['maint','ti-archive','In safe']], teeth:[7,3,7,3,7,3,7] },
+  { id:'KY-0052', type:'physical', name:'Unit Key — 5D Front Door', property:'Mwarokin Gardens, Lavington', unit:'Unit 5D', block:'Block D', building:'Garden Wing', status:'Issued', holder:'Tenant · Peter K.', chips:[['perm','ti-home','Full access']], teeth:[8,2,4,6,3,5,7] },
+];
+
+const LOCKS = [
+  { id:'ZL-400', name:'Block A — Main Entrance', property:'Mwarokin Heights, Westlands', state:'locked' },
+  { id:'ZL-221', name:'Block B — Main Gate', property:'Mwarokin Plaza, CBD', state:'locked' },
+  { id:'ZL-118', name:'Gym Entrance', property:'Mwarokin Heights, Westlands', state:'unlocked' },
+  { id:'ZL-305', name:'Parking Gate P2', property:'Mwarokin Plaza, CBD', state:'locked' },
+  { id:'ZL-090', name:'Rooftop Terrace', property:'Mwarokin Suites, Kilimani', state:'unlocked' },
+  { id:'ZL-410', name:'Garden Wing — Main Door', property:'Mwarokin Gardens, Lavington', state:'locked' },
+];
+
+let activeLockIdx = 0;
+let activeType = 'all';
+let searchTerm = '';
+let statFilter = 'all';
+let selectedKeyId = KEYS[0].id;
+let qrTimerInterval = null;
+let qrSecondsLeft = 120;
+let ctxTargetKeyId = null;
+
+/* ===================== TOAST ===================== */
+function toast(msg, icon='ti-info-circle', kind=''){
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className = 'toast ' + kind;
+  el.innerHTML = `<i class="ti ${icon}"></i><span>${msg}</span>`;
+  wrap.appendChild(el);
+  setTimeout(()=>{ el.style.transition='opacity .3s'; el.style.opacity='0'; setTimeout(()=>el.remove(),300); }, 3600);
+}
+
+/* ===================== ACTIVITY ===================== */
+function logActivity(who, what, code, dotClass){
+  const list = document.getElementById('activityList');
+  const item = document.createElement('div');
+  item.className = 'activity-item';
+  item.innerHTML = `
+    <div class="activity-dot-wrap"><span class="status-dot ${dotClass}" style="display:block;"></span></div>
+    <div class="activity-text">
+      <div><span class="activity-who">${who}</span> <span class="activity-what">${what}</span></div>
+      <div class="activity-time">Just now · ${code}</div>
+    </div>`;
+  list.prepend(item);
+  // demote "Just now" entries after a while
+  setTimeout(()=>{ const t = item.querySelector('.activity-time'); if(t) t.textContent = t.textContent.replace('Just now','A moment ago'); }, 60000);
+  while(list.children.length > 8) list.removeChild(list.lastChild);
+}
+
+/* seed activity */
+[
+  ['James M.','unlocked Block A main door','KY-0011','dot-active'],
+  ['Admin','issued digital PIN to Amina K. — Unit 4B','DK-0047','dot-issued'],
+  ['Grace N.','reported key lost — Unit 7C','KY-0023','dot-lost'],
+  ['Brian O.','fob access — Parking Level 2','FB-0089','dot-active'],
+  ['Admin','spare key logged to secure storage — 2A','KY-0031-S','dot-spare'],
+].forEach(a=>{
+  const list = document.getElementById('activityList');
+  const item = document.createElement('div');
+  item.className = 'activity-item';
+  const times = ['2 minutes ago','1 hour ago','3 hours ago','5 hours ago','Yesterday'];
+  item.innerHTML = `<div class="activity-dot-wrap"><span class="status-dot ${a[3]}" style="display:block;"></span></div>
+    <div class="activity-text"><div><span class="activity-who">${a[0]}</span> <span class="activity-what">${a[1]}</span></div>
+    <div class="activity-time">${times.shift()||'Earlier'} · ${a[2]}</div></div>`;
+  list.appendChild(item);
+});
+
+/* ===================== KEY REGISTRY RENDER ===================== */
+function statusDotClass(status){
+  if(status==='Active') return 'dot-active';
+  if(status==='Issued') return 'dot-issued';
+  if(status==='Reported Lost') return 'dot-lost';
+  return 'dot-spare';
+}
+function statusColor(status){
+  if(status==='Active') return '#5dcc8a';
+  if(status==='Issued') return '#e8c96a';
+  if(status==='Reported Lost') return '#f07070';
+  return 'rgba(184,143,60,0.6)';
+}
+function iconForType(type){
+  if(type==='physical') return 'ti-key';
+  if(type==='digital') return 'ti-device-mobile';
+  if(type==='fob') return 'ti-radio';
+  return 'ti-key';
+}
+function chipsHtml(chips){
+  return chips.map(c=>`<span class="access-chip chip-${c[0]}"><i class="ti ${c[1]}" style="font-size:9px;"></i> ${c[2]}</span>`).join('');
+}
+
+function renderKeys(){
+  const list = document.getElementById('keyList');
+  list.innerHTML = '';
+  let filtered = KEYS.filter(k=>{
+    if(activeType!=='all' && k.type!==activeType) return false;
+    if(statFilter!=='all'){
+      if(statFilter.startsWith('status:')){
+        const allowed = statFilter.replace('status:','').split(',');
+        if(!allowed.includes(k.status)) return false;
+      }
+      if(statFilter.startsWith('type:')) { /* smart-locks handled separately, no key filtering */ }
+    }
+    if(searchTerm){
+      const hay = (k.name+k.unit+k.holder+k.id+k.block+k.property).toLowerCase();
+      if(!hay.includes(searchTerm.toLowerCase())) return false;
+    }
+    return true;
+  });
+
+  if(filtered.length===0){
+    list.innerHTML = `<div style="text-align:center;padding:30px 10px;color:rgba(184,143,60,0.4);font-size:12px;"><i class="ti ti-search-off" style="font-size:22px;display:block;margin-bottom:6px;"></i>No keys match your filters</div>`;
+  }
+
+  filtered.forEach(k=>{
+    const el = document.createElement('div');
+    el.className = 'key-item' + (k.id===selectedKeyId ? ' selected' : '');
+    el.dataset.id = k.id;
+    el.innerHTML = `
+      <div class="key-icon-wrap ${k.type}"><i class="ti ${iconForType(k.type)}"></i></div>
+      <div class="key-info">
+        <div class="key-name">${k.name}</div>
+        <div class="key-unit">${k.property} · ${k.id}</div>
+        <div style="margin-top:5px;">${chipsHtml(k.chips)}</div>
+      </div>
+      <div class="key-meta">
+        <div class="key-status"><span class="status-dot ${statusDotClass(k.status)}"></span><span style="color:${statusColor(k.status)};font-size:11px;">${k.status}</span></div>
+        <div class="key-holder">${k.holder}</div>
+      </div>
+      <div class="key-action-dots" data-id="${k.id}">···</div>
+    `;
+    el.addEventListener('click', (e)=>{
+      if(e.target.closest('.key-action-dots')) return;
+      selectedKeyId = k.id;
+      renderKeys();
+      updateQrForKey(k);
+      toast(`Selected ${k.name}`, 'ti-key');
+    });
+    list.appendChild(el);
+  });
+
+  document.querySelectorAll('.key-action-dots').forEach(dot=>{
+    dot.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      openCtxMenu(e, dot.dataset.id);
+    });
+  });
+
+  document.getElementById('registryCount').textContent = KEYS.length;
+  document.getElementById('statTotal').textContent = KEYS.length;
+  document.getElementById('statIssued').textContent = KEYS.filter(k=>k.status==='Active'||k.status==='Issued').length;
+  document.getElementById('statLost').textContent = KEYS.filter(k=>k.status==='Reported Lost').length;
+  document.getElementById('statPending').textContent = (KEYS.filter(k=>k.status==='Issued').length) + ' pending';
+}
+
+/* ===================== CONTEXT MENU ===================== */
+function openCtxMenu(e, keyId){
+  ctxTargetKeyId = keyId;
+  const menu = document.getElementById('ctxMenu');
+  menu.style.left = Math.min(e.clientX, window.innerWidth-190) + 'px';
+  menu.style.top = Math.min(e.clientY, window.innerHeight-190) + 'px';
+  menu.classList.add('show');
+}
+document.addEventListener('click', (e)=>{
+  if(!e.target.closest('.ctx-menu')) document.getElementById('ctxMenu').classList.remove('show');
+});
+document.querySelectorAll('.ctx-item').forEach(item=>{
+  item.addEventListener('click', ()=>{
+    const key = KEYS.find(k=>k.id===ctxTargetKeyId);
+    document.getElementById('ctxMenu').classList.remove('show');
+    if(!key) return;
+    const act = item.dataset.act;
+    if(act==='view'){ selectedKeyId=key.id; renderKeys(); updateQrForKey(key); toast(`Viewing ${key.name}`,'ti-eye'); }
+    if(act==='edit'){ toast(`Editing ${key.name} — form loaded`,'ti-edit'); }
+    if(act==='qr'){ updateQrForKey(key); toast(`New access code generated for ${key.name}`,'ti-qrcode','success'); }
+    if(act==='lost'){ key.status='Reported Lost'; renderKeys(); logActivity('Admin', `flagged ${key.name} as lost`, key.id, 'dot-lost'); toast(`${key.name} reported lost`,'ti-alert-triangle','alert'); }
+    if(act==='revoke'){ key.status='Spare'; key.holder='Office · Secure storage'; renderKeys(); logActivity('Admin', `revoked access — ${key.name}`, key.id, 'dot-spare'); toast(`Access revoked for ${key.name}`,'ti-ban','alert'); }
+  });
+});
+
+/* ===================== SEARCH / TABS / STATS ===================== */
+document.getElementById('keySearch').addEventListener('input', (e)=>{ searchTerm = e.target.value; renderKeys(); });
+document.querySelectorAll('.key-tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.key-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    activeType = tab.dataset.type;
+    renderKeys();
+  });
+});
+document.querySelectorAll('.me-stat').forEach(stat=>{
+  stat.addEventListener('click', ()=>{
+    document.querySelectorAll('.me-stat').forEach(s=>s.classList.remove('filtering'));
+    const f = stat.dataset.filter;
+    if(statFilter===f){ statFilter='all'; }
+    else { statFilter=f; stat.classList.add('filtering'); }
+    renderKeys();
+  });
+});
+
+/* ===================== NAV ===================== */
+document.querySelectorAll('.me-nav-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.me-nav-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    if(btn.dataset.nav !== 'Keys & Locks') toast(`Navigating to ${btn.dataset.nav}…`, 'ti-arrow-right');
+  });
+});
+
+/* ===================== ISSUE KEY MODAL ===================== */
+function openModal(id){ document.getElementById(id).classList.add('show'); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click', ()=>closeModal(b.dataset.close)));
+document.querySelectorAll('.modal-overlay').forEach(ov=>ov.addEventListener('click', (e)=>{ if(e.target===ov) ov.classList.remove('show'); }));
+
+document.getElementById('issueKeyBtn').addEventListener('click', ()=>openModal('issueModal'));
+
+document.getElementById('fSubmit').addEventListener('click', ()=>{
+  const type = document.getElementById('fType').value;
+  const name = document.getElementById('fName').value.trim() || 'New Key';
+  const property = document.getElementById('fProperty').value.trim() || 'Mwarokin Estates';
+  const unit = document.getElementById('fUnit').value.trim() || 'Unassigned';
+  const block = document.getElementById('fBuilding').value.trim() || 'Block —';
+  const holder = document.getElementById('fHolder').value.trim() || 'Unassigned';
+  const prefix = type==='physical' ? 'KY' : type==='digital' ? 'DK' : type==='fob' ? 'FB' : 'SP';
+  const id = `${prefix}-${Math.floor(1000+Math.random()*8999)}`;
+  const teeth = Array.from({length:7}, ()=>1+Math.floor(Math.random()*8));
+  KEYS.unshift({ id, type, name, property, unit, block, building:block, status:'Issued', holder, chips:[['temp','ti-clock','New issue']], teeth });
+  selectedKeyId = id;
+  renderKeys();
+  logActivity('Admin', `issued new ${type} key — ${name}`, id, 'dot-issued');
+  toast(`${name} issued successfully`, 'ti-check', 'success');
+  closeModal('issueModal');
+  ['fName','fProperty','fUnit','fBuilding','fHolder'].forEach(f=>document.getElementById(f).value='');
+});
+
+/* ===================== LOCK CONTROL ===================== */
+function renderLockMini(){
+  const wrap = document.getElementById('lockListMini');
+  wrap.innerHTML = '';
+  LOCKS.forEach((lock, idx)=>{
+    if(idx===activeLockIdx) return;
+    const el = document.createElement('div');
+    el.className = 'lock-mini-item';
+    el.innerHTML = `<i class="ti ${lock.state==='locked'?'ti-lock':'ti-lock-open'}" style="${lock.state==='unlocked'?'color:var(--green-ok);':''}"></i>
+      <span class="lock-mini-name">${lock.name}</span>
+      <span class="lock-mini-state ${lock.state==='locked'?'state-locked':'state-unlocked'}"><i class="ti ${lock.state==='locked'?'ti-lock':'ti-lock-open'}" style="font-size:11px;"></i> ${lock.state==='locked'?'Locked':'Open'}</span>`;
+    el.addEventListener('click', ()=>{ activeLockIdx = idx; renderLockMain(); renderLockMini(); });
+    wrap.appendChild(el);
+  });
+}
+function renderLockMain(){
+  const lock = LOCKS[activeLockIdx];
+  document.getElementById('lockName').textContent = lock.name;
+  document.getElementById('lockSub').textContent = `Smart Lock · ${lock.id} · Last activity: just now`;
+  const shackle = document.getElementById('shackle');
+  const body = document.getElementById('lockBody');
+  const isUnlocked = lock.state==='unlocked';
+  shackle.classList.toggle('open', isUnlocked);
+  body.classList.toggle('unlocked', isUnlocked);
+  document.getElementById('btnLock').classList.toggle('on', !isUnlocked);
+  document.getElementById('btnUnlock').classList.toggle('on', isUnlocked);
+}
+document.getElementById('btnLock').addEventListener('click', ()=>{
+  const lock = LOCKS[activeLockIdx];
+  if(lock.state==='locked'){ toast(`${lock.name} is already locked`,'ti-lock'); return; }
+  lock.state='locked'; renderLockMain(); renderLockMini();
+  logActivity('You', `locked ${lock.name}`, lock.id, 'dot-issued');
+  toast(`${lock.name} locked`,'ti-lock','success');
+});
+document.getElementById('btnUnlock').addEventListener('click', ()=>{
+  const lock = LOCKS[activeLockIdx];
+  if(lock.state==='unlocked'){ toast(`${lock.name} is already unlocked`,'ti-lock-open'); return; }
+  lock.state='unlocked'; renderLockMain(); renderLockMini();
+  logActivity('You', `unlocked ${lock.name}`, lock.id, 'dot-active');
+  toast(`${lock.name} unlocked`,'ti-lock-open','success');
+});
+renderLockMain(); renderLockMini();
+
+/* ===================== QUICK ACCESS QR ===================== */
+let qrcodeInstance = null;
+function buildPayload(key){
+  return {
+    keyId: key.id,
+    tenant: key.holder.split('·').pop().trim(),
+    unit: key.unit,
+    block: key.block,
+    building: key.building,
+    property: key.property,
+    issuedAt: new Date().toISOString(),
+    expiresInSec: 120
+  };
+}
+function renderQrMeta(payload){
+  const grid = document.getElementById('qrMetaGrid');
+  grid.innerHTML = `
+    <div class="qr-meta-cell"><div class="qr-meta-label">Tenant</div><div class="qr-meta-val">${payload.tenant}</div></div>
+    <div class="qr-meta-cell"><div class="qr-meta-label">Unit</div><div class="qr-meta-val">${payload.unit}</div></div>
+    <div class="qr-meta-cell"><div class="qr-meta-label">Block</div><div class="qr-meta-val">${payload.block}</div></div>
+    <div class="qr-meta-cell"><div class="qr-meta-label">Building</div><div class="qr-meta-val">${payload.building}</div></div>
+  `;
+}
+function updateQrForKey(key){
+  const payload = buildPayload(key);
+  const codeText = `ME-QR-${key.id}-${Date.now().toString(36).toUpperCase().slice(-5)}`;
+  document.getElementById('qrCodeText').textContent = codeText;
+  renderQrMeta(payload);
+  const box = document.getElementById('qrBox');
+  box.innerHTML = '';
+  box.classList.remove('expired');
+  qrcodeInstance = new QRCode(box, {
+    text: JSON.stringify({code:codeText, ...payload}),
+    width: 96, height: 96,
+    colorDark:'#0a1710', colorLight:'#ffffff',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+  startQrCountdown();
+}
+function startQrCountdown(){
+  clearInterval(qrTimerInterval);
+  qrSecondsLeft = 120;
+  const ring = document.getElementById('qrRing');
+  const circumference = 377;
+  ring.classList.remove('expiring');
+  document.getElementById('qrTimer').classList.remove('expiring');
+  document.getElementById('qrBox').classList.remove('expired');
+  updateQrTimerDisplay();
+  qrTimerInterval = setInterval(()=>{
+    qrSecondsLeft--;
+    if(qrSecondsLeft<=20){
+      ring.classList.add('expiring');
+      document.getElementById('qrTimer').classList.add('expiring');
+    }
+    updateQrTimerDisplay();
+    if(qrSecondsLeft<=0){
+      clearInterval(qrTimerInterval);
+      document.getElementById('qrBox').classList.add('expired');
+      document.getElementById('qrTimer').textContent = 'EXPIRED';
+      toast('Access code expired — regenerate to issue a new one', 'ti-clock-x', 'alert');
+      const key = KEYS.find(k=>k.id===selectedKeyId);
+      if(key) logActivity('System', `access code expired — ${key.name}`, key.id, 'dot-lost');
+    }
+  }, 1000);
+}
+function updateQrTimerDisplay(){
+  const m = Math.floor(qrSecondsLeft/60).toString().padStart(2,'0');
+  const s = (qrSecondsLeft%60).toString().padStart(2,'0');
+  document.getElementById('qrTimer').textContent = `${m}:${s}`;
+  const ring = document.getElementById('qrRing');
+  const circumference = 377;
+  const offset = circumference * (1 - qrSecondsLeft/120);
+  ring.style.strokeDashoffset = offset;
+}
+document.getElementById('qrRegenBtn').addEventListener('click', ()=>{
+  const key = KEYS.find(k=>k.id===selectedKeyId) || KEYS[0];
+  updateQrForKey(key);
+  logActivity('You', `regenerated access code — ${key.name}`, key.id, 'dot-issued');
+  toast('New access code generated · 2:00 window', 'ti-refresh', 'success');
+});
+document.getElementById('qrDownloadBtn').addEventListener('click', ()=>{
+  const canvas = document.querySelector('#qrBox canvas');
+  if(!canvas){ toast('QR not ready yet','ti-alert-circle','alert'); return; }
+  const link = document.createElement('a');
+  link.download = document.getElementById('qrCodeText').textContent + '.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+  toast('Access code image downloaded', 'ti-download', 'success');
+});
+
+/* ===================== SCAN KEY (camera + teeth match) ===================== */
+let camStream = null;
+function renderTeethViz(container, teeth){
+  container.innerHTML = teeth.map(t=>`<div class="tooth-bar" style="height:${t*4}px;"></div>`).join('');
+}
+function jaccardSim(a,b){
+  let diff = 0;
+  for(let i=0;i<a.length;i++) diff += Math.abs(a[i]-b[i]);
+  const maxDiff = a.length*7;
+  return Math.max(0, 1 - diff/maxDiff);
+}
+function analyzeCapturedTeeth(){
+  // simulate a randomly generated but plausible teeth pattern from the captured image
+  return Array.from({length:7}, ()=>1+Math.floor(Math.random()*8));
+}
+function runKeyMatch(imgDataUrl){
+  const resultArea = document.getElementById('scanResultArea');
+  resultArea.innerHTML = `<div style="text-align:center;padding:14px 0;color:rgba(184,143,60,0.6);font-size:12px;"><span class="spinner"></span>Analyzing key blade &amp; teeth pattern…</div>`;
+  setTimeout(()=>{
+    const capturedTeeth = analyzeCapturedTeeth();
+    // pick the best match, weighted so it usually finds something plausible
+    let best = null, bestScore = -1;
+    KEYS.filter(k=>k.type==='physical'||k.type==='spare').forEach(k=>{
+      const score = jaccardSim(capturedTeeth, k.teeth) * (0.55 + Math.random()*0.45);
+      if(score>bestScore){ bestScore=score; best=k; }
+    });
+    const confidence = Math.min(97, Math.round(bestScore*100)+ (Math.random()>0.5?8:0));
+    const matched = confidence >= 62;
+    resultArea.innerHTML = `
+      <div class="match-result ${matched?'matched':'nomatch'}">
+        <div style="display:flex;gap:12px;align-items:center;">
+          <img class="captured-thumb" src="${imgDataUrl}" />
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:600;color:${matched?'var(--green-ok)':'var(--red-alert)'};">
+              <i class="ti ${matched?'ti-circle-check':'ti-circle-x'}"></i> ${matched? 'Match found' : 'No confident match'}
+            </div>
+            <div style="font-size:11px;color:rgba(184,143,60,0.55);margin-top:2px;">
+              ${matched ? best.name+' · '+best.id : 'This key does not match any record in the registry'}
+            </div>
+          </div>
+        </div>
+        <div class="teeth-viz">${capturedTeeth.map(t=>`<div class="tooth-bar" style="height:${t*4}px;"></div>`).join('')}</div>
+        <div style="font-size:10px;color:rgba(184,143,60,0.4);text-align:center;margin-top:-6px;margin-bottom:8px;">Detected teeth depth profile</div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:rgba(184,143,60,0.6);">
+          <span>Confidence</span><span style="color:var(--gold-light);font-family:'JetBrains Mono',monospace;">${confidence}%</span>
+        </div>
+        <div class="match-confidence-bar"><div class="match-confidence-fill" style="width:${confidence}%;"></div></div>
+        ${matched ? `
+          <div style="display:flex;gap:8px;margin-top:12px;">
+            <button class="btn-gold" style="flex:1;" id="matchSelectBtn"><i class="ti ti-check" style="vertical-align:-1px;"></i> Open in Registry</button>
+            <button class="btn-outline" style="flex:1;" id="matchGrantBtn"><i class="ti ti-lock-open" style="vertical-align:-1px;"></i> Unlock Associated Door</button>
+          </div>
+        ` : `
+          <button class="btn-gold" style="width:100%;margin-top:12px;" id="registerNewBtn"><i class="ti ti-plus" style="vertical-align:-1px;"></i> Register as New Key</button>
+        `}
+      </div>`;
+    if(matched){
+      document.getElementById('matchSelectBtn').addEventListener('click', ()=>{
+        selectedKeyId = best.id; renderKeys(); updateQrForKey(best);
+        closeModal('scanModal'); stopCamera();
+        toast(`Opened ${best.name} in registry`,'ti-key');
+        const el = document.querySelector(`.key-item[data-id="${best.id}"]`);
+        if(el){ el.classList.add('just-matched'); el.scrollIntoView({behavior:'smooth', block:'center'}); }
+      });
+      document.getElementById('matchGrantBtn').addEventListener('click', ()=>{
+        logActivity('You', `unlocked via key-scan match — ${best.name}`, best.id, 'dot-active');
+        toast(`Access granted for ${best.name}`,'ti-lock-open','success');
+        closeModal('scanModal'); stopCamera();
+      });
+    } else {
+      document.getElementById('registerNewBtn').addEventListener('click', ()=>{
+        closeModal('scanModal'); stopCamera();
+        openModal('issueModal');
+        toast('Scanned teeth profile attached to new key form','ti-plus');
+      });
+    }
+  }, 1600);
+}
+function startCameraFor(videoId, placeholderId, guidesId){
+  const video = document.getElementById(videoId);
+  const placeholder = document.getElementById(placeholderId);
+  const guides = document.getElementById(guidesId);
+  return navigator.mediaDevices.getUserMedia({ video: { facingMode:'environment' } }).then(stream=>{
+    camStream = stream;
+    video.srcObject = stream;
+    video.style.display='block';
+    placeholder.style.display='none';
+    if(guides) guides.style.display='block';
+    return stream;
+  });
+}
+function stopCamera(){
+  if(camStream){ camStream.getTracks().forEach(t=>t.stop()); camStream=null; }
+  ['camVideo','qrCamVideo'].forEach(id=>{ const v=document.getElementById(id); if(v){ v.style.display='none'; v.srcObject=null; } });
+  document.getElementById('camPlaceholder').style.display='flex';
+  document.getElementById('qrCamPlaceholder').style.display='flex';
+  document.getElementById('camGuides').style.display='none';
+  document.getElementById('qrCamGuides').style.display='none';
+  document.getElementById('camScanline').classList.remove('active');
+  document.getElementById('camCaptureBtn').style.display='none';
+  document.getElementById('camHint').style.display='none';
+}
+
+document.getElementById('scanKeyBtn').addEventListener('click', ()=>{
+  document.getElementById('scanResultArea').innerHTML='';
+  openModal('scanModal');
+});
+document.getElementById('camOpenBtn').addEventListener('click', ()=>{
+  startCameraFor('camVideo','camPlaceholder','camGuides').then(()=>{
+    document.getElementById('camCaptureBtn').style.display='block';
+    document.getElementById('camScanline').classList.add('active');
+    document.getElementById('camHint').style.display='block';
+    toast('Camera ready — align the key within the frame','ti-camera');
+  }).catch(()=>{
+    toast('Camera unavailable — use Upload Image instead','ti-camera-off','alert');
+  });
+});
+document.getElementById('camCaptureBtn').addEventListener('click', ()=>{
+  const video = document.getElementById('camVideo');
+  const canvas = document.getElementById('camCanvas');
+  canvas.width = video.videoWidth||480; canvas.height = video.videoHeight||360;
+  canvas.getContext('2d').drawImage(video,0,0,canvas.width,canvas.height);
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+  document.getElementById('camScanline').classList.remove('active');
+  stopCamera();
+  runKeyMatch(dataUrl);
+});
+document.getElementById('camUpload').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=> runKeyMatch(reader.result);
+  reader.readAsDataURL(file);
+});
+
+/* ===================== ACCESS CODE SCANNER (jsQR) ===================== */
+let qrScanRAF = null;
+document.getElementById('qrScanBtn').addEventListener('click', ()=>{
+  document.getElementById('qrScanResultArea').innerHTML='';
+  openModal('accessScanModal');
+});
+document.getElementById('qrCamOpenBtn').addEventListener('click', ()=>{
+  startCameraFor('qrCamVideo','qrCamPlaceholder','qrCamGuides').then(()=>{
+    toast('Scanning for QR code…','ti-scan');
+    tickQrScan();
+  }).catch(()=>{
+    toast('Camera unavailable — enter the code manually','ti-camera-off','alert');
+  });
+});
+function tickQrScan(){
+  const video = document.getElementById('qrCamVideo');
+  const canvas = document.getElementById('qrCamCanvas');
+  if(!camStream){ return; }
+  if(video.readyState === video.HAVE_ENOUGH_DATA){
+    canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video,0,0,canvas.width,canvas.height);
+    try{
+      const imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
+      const code = jsQR(imageData.data, imageData.width, imageData.height);
+      if(code){
+        handleScannedPayload(code.data);
+        stopCamera();
+        return;
+      }
+    }catch(err){ /* ignore frame errors */ }
+  }
+  qrScanRAF = requestAnimationFrame(tickQrScan);
+}
+document.getElementById('qrManualBtn').addEventListener('click', ()=>{
+  const key = KEYS.find(k=>k.id===selectedKeyId) || KEYS[0];
+  const payload = { code: document.getElementById('qrCodeText').textContent, ...buildPayload(key) };
+  handleScannedPayload(JSON.stringify(payload));
+  toast('Loaded the current access code for verification','ti-keyboard');
+});
+function handleScannedPayload(raw){
+  let payload;
+  try{ payload = JSON.parse(raw); } catch(e){ payload = null; }
+  const area = document.getElementById('qrScanResultArea');
+  if(!payload){
+    area.innerHTML = `<div class="match-result nomatch"><i class="ti ti-alert-triangle"></i> Unrecognized code format.</div>`;
+    return;
+  }
+  const expired = qrSecondsLeft<=0 && payload.keyId===selectedKeyId;
+  area.innerHTML = `
+    <div class="match-result matched">
+      <div style="font-size:13px;font-weight:600;color:var(--green-ok);margin-bottom:8px;">
+        <i class="ti ti-circle-check"></i> Access code resolved
+      </div>
+      <div class="qr-meta-grid">
+        <div class="qr-meta-cell"><div class="qr-meta-label">Tenant</div><div class="qr-meta-val">${payload.tenant||'—'}</div></div>
+        <div class="qr-meta-cell"><div class="qr-meta-label">Unit</div><div class="qr-meta-val">${payload.unit||'—'}</div></div>
+        <div class="qr-meta-cell"><div class="qr-meta-label">Block</div><div class="qr-meta-val">${payload.block||'—'}</div></div>
+        <div class="qr-meta-cell"><div class="qr-meta-label">Building</div><div class="qr-meta-val">${payload.building||'—'}</div></div>
+      </div>
+      <div style="font-size:11px;color:rgba(184,143,60,0.5);margin-top:10px;">Key reference: ${payload.keyId||'—'} · Property: ${payload.property||'—'}</div>
+      <button class="btn-gold" style="width:100%;margin-top:12px;" id="grantFromQrBtn"><i class="ti ti-lock-open" style="vertical-align:-1px;"></i> Grant Access</button>
+    </div>`;
+  document.getElementById('grantFromQrBtn').addEventListener('click', ()=>{
+    logActivity(payload.tenant||'Visitor', `granted access via QR — ${payload.unit||''}`, payload.keyId||'QR', 'dot-active');
+    toast(`Access granted to ${payload.tenant||'visitor'} — ${payload.unit||''}`, 'ti-lock-open','success');
+    closeModal('accessScanModal');
+  });
+}
+
+/* Stop camera whenever a modal is closed */
+document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click', stopCamera));
+document.querySelectorAll('.modal-overlay').forEach(ov=>ov.addEventListener('click', (e)=>{ if(e.target===ov) stopCamera(); }));
+
+/* ===================== MISC ACTIONS ===================== */
+document.getElementById('exportBtn').addEventListener('click', ()=>toast(`Exporting ${KEYS.length} key records as CSV`, 'ti-download'));
+document.getElementById('auditBtn').addEventListener('click', ()=>toast('Opening full audit log', 'ti-report'));
+document.getElementById('revokeBtn').addEventListener('click', ()=>toast('Select keys from the registry to revoke in bulk', 'ti-rotate-clockwise'));
+document.getElementById('printBtn').addEventListener('click', ()=>toast('Preparing printable key tags…', 'ti-printer'));
+
+/* ===================== INIT ===================== */
+renderKeys();
+updateQrForKey(KEYS[0]);
+</script>
+</body>
+</html>

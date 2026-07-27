@@ -1,847 +1,592 @@
-```python
-import flet as ft
+"""
+Agent Dashboard.py
+Mwarokin Estates — Agent Console
+Modern, fully functional Streamlit implementation of the provided Agent Dashboard UI.
+Run:  streamlit run "Agent Dashboard.py"
+"""
+
+import streamlit as st
+import pandas as pd
+from datetime import datetime, timedelta
 import random
-from typing import List, Dict, Optional
 import time
 
-class Tier:
-    def __init__(self, key: str, name: str, req: str, color: str, glyph: str, bg: str):
-        self.key = key
-        self.name = name
-        self.req = req
-        self.color = color
-        self.glyph = glyph
-        self.bg = bg
+# ─────────────────────────────────────────────
+# Page config & global CSS
+# ─────────────────────────────────────────────
+st.set_page_config(
+    page_title="Mwarokin Estates · Agent Console",
+    page_icon="🏠",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
 
-class Agent:
-    def __init__(self, name: str, territory: str, tier: str, status: str, 
-                 deals: int, commission: int, kyc: str, conv: str, color: str):
-        self.name = name
-        self.territory = territory
-        self.tier = tier
-        self.status = status
-        self.deals = deals
-        self.commission = commission
-        self.kyc = kyc
-        self.conv = conv
-        self.color = color
+st.markdown("""
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+    .stApp { background: #F7F5F0; }
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #1C1508 0%, #2A2114 100%);
+        border-right: 1px solid #3D3220;
+    }
+    [data-testid="stSidebar"] * { color: #E8DFD0 !important; }
+    .brand-mark {
+        width: 42px; height: 42px; border-radius: 10px;
+        background: linear-gradient(135deg, #E9C876, #B9903B);
+        color: #1C1508; font-weight: 800; font-size: 1.1rem;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .kpi-card {
+        background: white; border-radius: 14px; padding: 1.25rem 1.4rem;
+        border: 1px solid #E8E0D4; box-shadow: 0 2px 8px rgba(28,21,8,0.04);
+    }
+    .kpi-label { font-size: 0.78rem; color: #8C93A6; font-weight: 500; }
+    .kpi-value { font-size: 1.65rem; font-weight: 700; color: #1C1508; margin: 0.25rem 0; }
+    .kpi-sub { font-size: 0.78rem; }
+    .up { color: #177A54; } .down { color: #BC3B3B; }
+    .tier-pill {
+        display: inline-block; padding: 0.2rem 0.65rem; border-radius: 999px;
+        font-size: 0.75rem; font-weight: 600;
+    }
+    .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+    .rung {
+        background: white; border-radius: 12px; padding: 1rem 1.2rem;
+        border: 1px solid #E8E0D4; margin-bottom: 0.6rem;
+        display: flex; align-items: center; gap: 1rem;
+    }
+    .tier-glyph {
+        width: 40px; height: 40px; border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 800; font-size: 1.1rem;
+    }
+    .activity-item {
+        display: flex; gap: 0.85rem; padding: 0.7rem 0;
+        border-bottom: 1px solid #F0EAE0;
+    }
+    .act-icon {
+        width: 36px; height: 36px; border-radius: 9px;
+        display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .payout-row, .viewing-row {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0.75rem 0; border-bottom: 1px solid #F0EAE0;
+    }
+    .terr-bar-track {
+        height: 6px; background: #F0EAE0; border-radius: 99px; margin-top: 0.35rem;
+    }
+    .terr-bar-fill {
+        height: 100%; border-radius: 99px;
+        background: linear-gradient(90deg, #C9A24B, #E9C876);
+    }
+    .pipe-track {
+        height: 28px; background: #F0EAE0; border-radius: 8px; overflow: hidden;
+    }
+    .pipe-fill {
+        height: 100%; display: flex; align-items: center; padding-left: 0.6rem;
+        color: white; font-size: 0.78rem; font-weight: 600; border-radius: 8px;
+    }
+    div[data-testid="stExpander"] { background: white; border-radius: 12px; border: 1px solid #E8E0D4; }
+    .stButton > button {
+        border-radius: 10px; font-weight: 600;
+    }
+    .bronze-btn {
+        background: linear-gradient(135deg, #C9A24B, #B9903B) !important;
+        color: #1C1508 !important; border: none !important;
+    }
+</style>
+""", unsafe_allow_html=True)
 
-class Territory:
-    def __init__(self, name: str, agents: int, listings: int, pct: int):
-        self.name = name
-        self.agents = agents
-        self.listings = listings
-        self.pct = pct
-
-class PipelineStage:
-    def __init__(self, stage: str, count: int, color: str):
-        self.stage = stage
-        self.count = count
-        self.color = color
-
-# Data
+# ─────────────────────────────────────────────
+# Data (mirrors original JS constants)
+# ─────────────────────────────────────────────
 TIERS = [
-    Tier('taifa', 'Taifa', '150+ deals · Nation-wide mandate', '#C9A24B', '#1C1508', 'linear-gradient(155deg,#E9C876,#B9903B)'),
-    Tier('milki', 'Milki', '80+ deals · Ownership tier', '#9C8CE0', '#1C1508', 'linear-gradient(155deg,#B9ADEE,#7A6BC9)'),
-    Tier('jengo', 'Jengo', '35+ deals · Building tier', '#6FB6A8', '#0B221C', 'linear-gradient(155deg,#8FD2C4,#4C9484)'),
-    Tier('msingi', 'Msingi', '0+ deals · Foundation tier', '#8C93A6', '#12141C', 'linear-gradient(155deg,#AAB1C4,#6B7286)'),
+    {"key": "taifa",  "name": "Taifa",  "req": "150+ deals · Nation-wide mandate",
+     "color": "#C9A24B", "glyph": "#1C1508", "bg": "linear-gradient(155deg,#E9C876,#B9903B)"},
+    {"key": "milki",  "name": "Milki",  "req": "80+ deals · Ownership tier",
+     "color": "#9C8CE0", "glyph": "#1C1508", "bg": "linear-gradient(155deg,#B9ADEE,#7A6BC9)"},
+    {"key": "jengo",  "name": "Jengo",  "req": "35+ deals · Building tier",
+     "color": "#6FB6A8", "glyph": "#0B221C", "bg": "linear-gradient(155deg,#8FD2C4,#4C9484)"},
+    {"key": "msingi", "name": "Msingi", "req": "0+ deals · Foundation tier",
+     "color": "#8C93A6", "glyph": "#12141C", "bg": "linear-gradient(155deg,#AAB1C4,#6B7286)"},
 ]
 
 AGENTS = [
-    Agent('Kevin Otieno', 'Kilimani', 'taifa', 'active', 162, 284500, 'verified', '34%', '#4F46E5'),
-    Agent('Amina Yusuf', 'Westlands', 'taifa', 'active', 158, 271200, 'verified', '31%', '#C9A24B'),
-    Agent('Brian Kiplagat', 'Karen', 'milki', 'active', 96, 168300, 'verified', '27%', '#177A54'),
-    Agent('Faith Njoroge', 'Ruaka', 'milki', 'active', 88, 151900, 'verified', '25%', '#BC3B3B'),
-    Agent('Dennis Mwangi', 'South B', 'milki', 'on leave', 81, 139800, 'verified', '22%', '#B4791A'),
-    Agent('Cynthia Wafula', 'Kasarani', 'jengo', 'active', 52, 88400, 'pending', '19%', '#4F46E5'),
-    Agent('Peter Kamau', 'South C', 'jengo', 'active', 47, 79600, 'verified', '21%', '#177A54'),
-    Agent('Grace Achieng', 'Westlands', 'jengo', 'active', 41, 71200, 'verified', '18%', '#C9A24B'),
-    Agent('Samuel Kiprono', 'Kilimani', 'jengo', 'suspended', 38, 64100, 'rejected', '14%', '#BC3B3B'),
-    Agent('Lucy Chebet', 'Ruaka', 'msingi', 'active', 19, 32800, 'pending', '16%', '#177A54'),
-    Agent('Hassan Ali', 'Karen', 'msingi', 'active', 14, 24100, 'verified', '12%', '#4F46E5'),
-    Agent('Mercy Wanjiru', 'South B', 'msingi', 'active', 9, 15600, 'pending', '10%', '#B4791A'),
+    {"name": "Kevin Otieno",    "territory": "Kilimani",  "tier": "taifa",  "status": "active",
+     "deals": 162, "commission": 284500, "kyc": "verified", "conv": "34%", "color": "#4F46E5"},
+    {"name": "Amina Yusuf",     "territory": "Westlands", "tier": "taifa",  "status": "active",
+     "deals": 158, "commission": 271200, "kyc": "verified", "conv": "31%", "color": "#C9A24B"},
+    {"name": "Brian Kiplagat",  "territory": "Karen",     "tier": "milki",  "status": "active",
+     "deals": 96,  "commission": 168300, "kyc": "verified", "conv": "27%", "color": "#177A54"},
+    {"name": "Faith Njoroge",   "territory": "Ruaka",     "tier": "milki",  "status": "active",
+     "deals": 88,  "commission": 151900, "kyc": "verified", "conv": "25%", "color": "#BC3B3B"},
+    {"name": "Dennis Mwangi",   "territory": "South B",   "tier": "milki",  "status": "on leave",
+     "deals": 81,  "commission": 139800, "kyc": "verified", "conv": "22%", "color": "#B4791A"},
+    {"name": "Cynthia Wafula",  "territory": "Kasarani",  "tier": "jengo",  "status": "active",
+     "deals": 52,  "commission": 88400,  "kyc": "pending",  "conv": "19%", "color": "#4F46E5"},
+    {"name": "Peter Kamau",     "territory": "South C",   "tier": "jengo",  "status": "active",
+     "deals": 47,  "commission": 79600,  "kyc": "verified", "conv": "21%", "color": "#177A54"},
+    {"name": "Grace Achieng",   "territory": "Westlands", "tier": "jengo",  "status": "active",
+     "deals": 41,  "commission": 71200,  "kyc": "verified", "conv": "18%", "color": "#C9A24B"},
+    {"name": "Samuel Kiprono",  "territory": "Kilimani",  "tier": "jengo",  "status": "suspended",
+     "deals": 38,  "commission": 64100,  "kyc": "rejected", "conv": "14%", "color": "#BC3B3B"},
+    {"name": "Lucy Chebet",     "territory": "Ruaka",     "tier": "msingi", "status": "active",
+     "deals": 19,  "commission": 32800,  "kyc": "pending",  "conv": "16%", "color": "#177A54"},
+    {"name": "Hassan Ali",      "territory": "Karen",     "tier": "msingi", "status": "active",
+     "deals": 14,  "commission": 24100,  "kyc": "verified", "conv": "12%", "color": "#4F46E5"},
+    {"name": "Mercy Wanjiru",   "territory": "South B",   "tier": "msingi", "status": "active",
+     "deals": 9,   "commission": 15600,  "kyc": "pending",  "conv": "10%", "color": "#B4791A"},
 ]
 
 TERRITORIES = [
-    Territory('Kilimani', 6, 84, 88),
-    Territory('Westlands', 5, 71, 76),
-    Territory('Ruaka', 4, 52, 63),
-    Territory('Karen', 4, 38, 54),
-    Territory('South B / C', 5, 46, 49),
-    Territory('Kasarani', 3, 29, 38),
+    {"name": "Kilimani",    "agents": 6, "listings": 84, "pct": 88},
+    {"name": "Westlands",   "agents": 5, "listings": 71, "pct": 76},
+    {"name": "Ruaka",       "agents": 4, "listings": 52, "pct": 63},
+    {"name": "Karen",       "agents": 4, "listings": 38, "pct": 54},
+    {"name": "South B / C", "agents": 5, "listings": 46, "pct": 49},
+    {"name": "Kasarani",    "agents": 3, "listings": 29, "pct": 38},
 ]
 
 PIPELINE = [
-    PipelineStage('New Lead', 58, '#8C93A6'),
-    PipelineStage('Contacted', 41, '#4F46E5'),
-    PipelineStage('Viewing', 26, '#B4791A'),
-    PipelineStage('Offer', 14, '#6FB6A8'),
-    PipelineStage('Closed', 9, '#177A54'),
+    {"stage": "New Lead",  "count": 58, "color": "#8C93A6"},
+    {"stage": "Contacted", "count": 41, "color": "#4F46E5"},
+    {"stage": "Viewing",   "count": 26, "color": "#B4791A"},
+    {"stage": "Offer",     "count": 14, "color": "#6FB6A8"},
+    {"stage": "Closed",    "count": 9,  "color": "#177A54"},
 ]
 
 PAYOUTS = [
-    {"name": "Kevin Otieno", "amount": 48200, "date": "Requested 2h ago", "status": "pending"},
-    {"name": "Amina Yusuf", "amount": 39600, "date": "Requested 5h ago", "status": "pending"},
-    {"name": "Brian Kiplagat", "amount": 22100, "date": "Requested yesterday", "status": "pending"},
-    {"name": "Grace Achieng", "amount": 14300, "date": "Approved · paid out", "status": "done"},
-    {"name": "Faith Njoroge", "amount": 27900, "date": "Approved · paid out", "status": "done"},
+    {"name": "Kevin Otieno",   "amount": 48200, "date": "Requested 2h ago",      "status": "pending"},
+    {"name": "Amina Yusuf",    "amount": 39600, "date": "Requested 5h ago",      "status": "pending"},
+    {"name": "Brian Kiplagat", "amount": 22100, "date": "Requested yesterday",   "status": "pending"},
+    {"name": "Grace Achieng",  "amount": 14300, "date": "Approved · paid out",   "status": "done"},
+    {"name": "Faith Njoroge",  "amount": 27900, "date": "Approved · paid out",   "status": "done"},
 ]
 
 VIEWINGS = [
-    {"title": "2BR Apartment — Kilimani Ridge", "agent": "Kevin Otieno", "time": "Today, 2:30 PM"},
-    {"title": "Office Suite — Westlands Square", "agent": "Amina Yusuf", "time": "Today, 4:00 PM"},
-    {"title": "Townhouse — Ruaka Greens", "agent": "Faith Njoroge", "time": "Tomorrow, 10:00 AM"},
-    {"title": "Studio — South B Court", "agent": "Cynthia Wafula", "time": "Tomorrow, 1:15 PM"},
+    {"title": "2BR Apartment — Kilimani Ridge", "agent": "Kevin Otieno",   "time": "Today, 2:30 PM"},
+    {"title": "Office Suite — Westlands Square","agent": "Amina Yusuf",    "time": "Today, 4:00 PM"},
+    {"title": "Townhouse — Ruaka Greens",       "agent": "Faith Njoroge",  "time": "Tomorrow, 10:00 AM"},
+    {"title": "Studio — South B Court",         "agent": "Cynthia Wafula", "time": "Tomorrow, 1:15 PM"},
 ]
 
-ACTIVITIES = [
-    {"icon": "handshake", "color": "#10b981", "bg": "#ecfdf5", "text": "<b>Brian Kiplagat</b> closed a deal on Karen Villa 12", "time": "12 minutes ago"},
-    {"icon": "person_add", "color": "#6366f1", "bg": "#eef2ff", "text": "<b>Lucy Chebet</b> submitted KYC documents", "time": "48 minutes ago"},
+ACTIVITY = [
+    {"icon": "🤝", "color": "#177A54", "bg": "#D1FAE5",
+     "text": "**Brian Kiplagat** closed a deal on Karen Villa 12", "time": "12 minutes ago"},
+    {"icon": "👤", "color": "#4F46E5", "bg": "#EEF2FF",
+     "text": "**Lucy Chebet** submitted KYC documents", "time": "48 minutes ago"},
+    {"icon": "💰", "color": "#B9903B", "bg": "#FEF3C7",
+     "text": "Payout of **KES 39,600** requested by Amina Yusuf", "time": "2 hours ago"},
+    {"icon": "👁", "color": "#B4791A", "bg": "#FEF3C7",
+     "text": "**Grace Achieng** scheduled a viewing in Westlands", "time": "3 hours ago"},
+    {"icon": "⚠", "color": "#BC3B3B", "bg": "#FEE2E2",
+     "text": "**Samuel Kiprono** flagged for KYC rejection", "time": "5 hours ago"},
+    {"icon": "🏅", "color": "#B9903B", "bg": "#FEF3C7",
+     "text": "**Kevin Otieno** promoted to Taifa tier", "time": "Yesterday"},
 ]
 
+# ─────────────────────────────────────────────
+# Helpers
+# ─────────────────────────────────────────────
 def initials(name: str) -> str:
-    parts = name.split()
-    return ''.join(p[0] for p in parts[:2]).upper()
+    return "".join(w[0] for w in name.split()[:2]).upper()
 
-def fmt_kes(n: int) -> str:
+def fmt(n: int) -> str:
     return f"KES {n:,}"
 
-class MwarokinApp:
-    def __init__(self, page: ft.Page):
-        self.page = page
-        self.page.title = "Mwarokin Estates - Agent Console"
-        self.page.theme_mode = ft.ThemeMode.LIGHT
-        self.page.bgcolor = "#f8f9fc"
-        self.page.padding = 0
-        self.page.spacing = 0
-        self.page.window_width = 1480
-        self.page.window_height = 920
-        self.page.window_resizable = True
-        self.page.fonts = {"inter": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"}
-        
-        self.current_filter = "all"
-        self.sort_key = "commission"
-        self.sort_dir = -1
-        self.selected_agent = None
-        
-        self.setup_ui()
+def tier_info(key: str) -> dict:
+    return next(t for t in TIERS if t["key"] == key)
 
-    def setup_ui(self):
-        # Sidebar
-        self.sidebar = self.build_sidebar()
-        
-        # Main Content
-        self.main_content = self.build_main_content()
-        
-        # Root layout
-        root = ft.Row(
-            controls=[
-                self.sidebar,
-                ft.VerticalDivider(width=1, color="#e5e7eb"),
-                self.main_content
-            ],
-            expand=True,
-            spacing=0
-        )
-        
-        self.page.add(root)
-        self.page.update()
-        
-        # Initial renders
-        self.render_ladder()
-        self.render_agents()
-        self.render_territories()
-        self.render_pipeline()
-        self.render_activity()
-        self.render_payouts()
-        self.render_viewings()
-        
-        # Simulate live activity
-        self.page.on_interval = self.live_activity_pulse
-        self.page.interval = 25000  # 25 seconds
+def status_meta(s: str) -> dict:
+    if s == "active":
+        return {"color": "#177A54", "label": "Active"}
+    if s == "on leave":
+        return {"color": "#B4791A", "label": "On Leave"}
+    return {"color": "#BC3B3B", "label": "Suspended"}
 
-    def build_sidebar(self) -> ft.Container:
-        return ft.Container(
-            width=280,
-            bgcolor="#0f172a",
-            padding=20,
-            content=ft.Column(
-                controls=[
-                    # Brand
-                    ft.Row(
-                        controls=[
-                            ft.Container(
-                                width=48, height=48, border_radius=12, bgcolor="#c9a24b",
-                                content=ft.Text("ME", size=22, weight="bold", color="#1c1508", text_align="center"),
-                                alignment=ft.alignment.center
-                            ),
-                            ft.Column(
-                                controls=[
-                                    ft.Text("Mwarokin Estates", size=18, weight="bold", color="white"),
-                                    ft.Text("Agent Console", size=12, color="#94a3b8")
-                                ],
-                                spacing=2
-                            )
-                        ],
-                        spacing=12
-                    ),
-                    ft.Divider(height=30, color="#334155"),
-                    
-                    # Navigation
-                    ft.Text("Overview", size=13, color="#64748b", weight="w500"),
-                    self.nav_item("Agent Dashboard", "pie_chart", active=True),
-                    self.nav_item("Properties", "home"),
-                    self.nav_item("Tenants", "people"),
-                    
-                    ft.Text("Agent Operations", size=13, color="#64748b", weight="w500", margin=ft.margin.only(top=20)),
-                    self.nav_item("Agent Directory", "badge", badge="32"),
-                    self.nav_item("Lead Pipeline", "filter_alt", badge="58"),
-                    self.nav_item("Territories", "map"),
-                    self.nav_item("Commissions", "monetization_on"),
-                    self.nav_item("Rank & Incentives", "military_tech"),
-                    self.nav_item("Viewings & Tasks", "calendar_month"),
-                    
-                    ft.Text("System", size=13, color="#64748b", weight="w500", margin=ft.margin.only(top=20)),
-                    self.nav_item("Payout Requests", "request_quote", badge="6"),
-                    self.nav_item("AI Agents", "smart_toy"),
-                    self.nav_item("Settings", "settings"),
-                    
-                    # Footer
-                    ft.Container(
-                        margin=ft.margin.only(top=40),
-                        content=ft.Row(
-                            controls=[
-                                ft.CircleAvatar(
-                                    content=ft.Text("RM", size=16, weight="bold"),
-                                    bgcolor="#c9a24b", color="#1c1508", radius=22
-                                ),
-                                ft.Column(
-                                    controls=[
-                                        ft.Text("Robin Mwarema", size=14, color="white", weight="w600"),
-                                        ft.Text("Estate Director", size=12, color="#94a3b8")
-                                    ],
-                                    spacing=1
-                                )
-                            ],
-                            spacing=12
-                        )
-                    )
-                ],
-                expand=True,
-                spacing=8
-            )
-        )
+def kyc_meta(k: str) -> dict:
+    if k == "verified":
+        return {"icon": "✅", "color": "#177A54", "label": "Verified"}
+    if k == "pending":
+        return {"icon": "⏳", "color": "#B4791A", "label": "Pending"}
+    return {"icon": "❌", "color": "#BC3B3B", "label": "Rejected"}
 
-    def nav_item(self, text: str, icon: str, active: bool = False, badge: str = None):
-        return ft.Container(
-            padding=12,
-            border_radius=8,
-            bgcolor="#1e2937" if active else None,
-            content=ft.Row(
-                controls=[
-                    ft.Icon(icon, color="#e2e8f0" if not active else "#fcd34d", size=20),
-                    ft.Text(text, color="#e2e8f0" if not active else "#fcd34d", size=14, expand=True),
-                    ft.Text(badge, size=11, color="#fcd34d", weight="bold") if badge else None
-                ],
-                alignment="space_between"
-            )
-        )
+# ─────────────────────────────────────────────
+# Session state
+# ─────────────────────────────────────────────
+if "payouts" not in st.session_state:
+    st.session_state.payouts = [p.copy() for p in PAYOUTS]
+if "activity" not in st.session_state:
+    st.session_state.activity = ACTIVITY.copy()
+if "agents" not in st.session_state:
+    st.session_state.agents = [a.copy() for a in AGENTS]
+if "show_invite" not in st.session_state:
+    st.session_state.show_invite = False
+if "selected_agent" not in st.session_state:
+    st.session_state.selected_agent = None
 
-    def build_main_content(self) -> ft.Container:
-        self.topbar = self.build_topbar()
-        
-        self.kpi_strip = self.build_kpi_strip()
-        
-        self.ladder_card = ft.Container(
-            content=ft.Column([
-                ft.Row([
-                    ft.Column([
-                        ft.Row([ft.Icon("layers", color="#c9a24b"), ft.Text("Agent Rank Ladder", size=18, weight="bold")]),
-                        ft.Text("Progression tiers from the Mwarokin agent incentive programme", size=13, color="#64748b")
-                    ]),
-                    ft.Text("Sorted by commission earned this quarter", size=13, color="#94a3b8")
-                ], alignment="space_between"),
-                ft.Container(id="ladder_container", expand=True, padding=10)
-            ]),
-            bgcolor="white",
-            border_radius=16,
-            padding=24,
-            margin=ft.margin.only(top=20, left=20, right=20)
-        )
-        
-        # Grid 1
-        grid1 = ft.Row(
-            controls=[
-                self.build_agent_directory(),
-                self.build_territory_panel()
-            ],
-            expand=True,
-            spacing=20
-        )
-        
-        # Grid 2
-        grid2 = ft.Row(
-            controls=[
-                self.build_pipeline_panel(),
-                self.build_activity_panel()
-            ],
-            expand=True,
-            spacing=20
-        )
-        
-        # Grid 3
-        grid3 = ft.Row(
-            controls=[
-                self.build_payout_panel(),
-                self.build_viewings_panel()
-            ],
-            expand=True,
-            spacing=20
-        )
-        
-        main_col = ft.Column(
-            controls=[
-                self.topbar,
-                self.kpi_strip,
-                self.ladder_card,
-                grid1,
-                grid2,
-                grid3
-            ],
-            expand=True,
-            scroll=ft.ScrollMode.AUTO,
-            spacing=10
-        )
-        
-        return ft.Container(
-            content=main_col,
-            expand=True,
-            padding=20,
-            bgcolor="#f8f9fc"
-        )
+# ─────────────────────────────────────────────
+# Sidebar
+# ─────────────────────────────────────────────
+with st.sidebar:
+    col_b1, col_b2 = st.columns([1, 4])
+    with col_b1:
+        st.markdown('<div class="brand-mark">ME</div>', unsafe_allow_html=True)
+    with col_b2:
+        st.markdown("### Mwarokin Estates")
+        st.caption("Agent Console")
 
-    def build_topbar(self) -> ft.Container:
-        self.search_field = ft.TextField(
-            hint_text="Search agents, phone, territory…",
-            prefix_icon=ft.Icon("search"),
-            width=360,
-            bgcolor="white",
-            border_radius=12,
-            border_color="#e2e8f0",
-            on_change=self.on_search_change
-        )
-        
-        return ft.Container(
-            content=ft.Row(
-                controls=[
-                    ft.Column([
-                        ft.Text("Agent Dashboard", size=26, weight="bold"),
-                        ft.Text("Performance, commissions and territory coverage across all Mwarokin agencies", 
-                               size=14, color="#64748b")
-                    ]),
-                    ft.Row([
-                        self.search_field,
-                        ft.Container(
-                            content=ft.Row([
-                                ft.Icon("location_on", color="#92400e"),
-                                ft.Text("All Nairobi zones", size=14),
-                                ft.Icon("arrow_drop_down", size=18)
-                            ]),
-                            padding=12,
-                            bgcolor="white",
-                            border_radius=999,
-                            border=ft.border.all(1, "#e2e8f0")
-                        ),
-                        ft.IconButton(icon=ft.Icons.NOTIFICATIONS, icon_size=22, 
-                                     on_click=lambda e: self.show_toast("6 new notifications")),
-                        ft.ElevatedButton(
-                            "Invite Agent",
-                            icon=ft.Icons.PERSON_ADD,
-                            style=ft.ButtonStyle(
-                                bgcolor="#92400e",
-                                color="white",
-                                shape=ft.RoundedRectangleBorder(radius=12)
-                            ),
-                            on_click=self.open_invite_modal
-                        )
-                    ], spacing=12)
-                ],
-                alignment="space_between"
-            ),
-            padding=ft.padding.only(bottom=20)
-        )
+    st.markdown("---")
+    st.markdown("**Overview**")
+    nav = st.radio(
+        "Navigation",
+        ["Agent Dashboard", "Properties", "Tenants"],
+        label_visibility="collapsed",
+        index=0,
+    )
 
-    def build_kpi_strip(self) -> ft.Row:
-        kpis = [
-            ("Commission Payable", "KES 1,842,300", "14.2% vs last month", "coins", "#92400e", True),
-            ("Active Agents", "32", "4 onboarded this month", "badge", "#4338ca", True),
-            ("Leads This Month", "318", "22% conversion to viewing", "target", "#10b981", True),
-            ("Avg Deal Close Time", "6.4 days", "1.1 days faster", "timer", "#d97706", False),
+    st.markdown("**Agent Operations**")
+    st.markdown("Agent Directory  ·  32")
+    st.markdown("Lead Pipeline  ·  58")
+    st.markdown("Territories")
+    st.markdown("Commissions")
+    st.markdown("Rank & Incentives")
+    st.markdown("Viewings & Tasks")
+
+    st.markdown("**System**")
+    st.markdown("Payout Requests  ·  6")
+    st.markdown("AI Agents")
+    st.markdown("Settings")
+
+    st.markdown("---")
+    st.markdown(
+        """
+        <div style="display:flex;align-items:center;gap:0.7rem;">
+            <div style="width:36px;height:36px;border-radius:50%;background:#C9A24B;
+                        color:#1C1508;display:flex;align-items:center;justify-content:center;
+                        font-weight:700;">RM</div>
+            <div>
+                <div style="font-weight:600;font-size:0.9rem;">Robin Mwarema</div>
+                <div style="font-size:0.75rem;opacity:0.7;">Estate Director</div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+# ─────────────────────────────────────────────
+# Main header
+# ─────────────────────────────────────────────
+st.markdown("## Agent Dashboard")
+st.caption("Performance, commissions and territory coverage across all Mwarokin agencies")
+
+# Top actions
+c1, c2, c3, c4 = st.columns([3, 2, 1, 1.5])
+with c1:
+    search = st.text_input("Search", placeholder="Search agents, phone, territory…", label_visibility="collapsed")
+with c2:
+    region = st.selectbox("Region", ["All Nairobi zones", "Kilimani", "Westlands", "Ruaka", "Karen", "South B / C", "Kasarani"], label_visibility="collapsed")
+with c3:
+    st.button("🔔 6", use_container_width=True)
+with c4:
+    if st.button("＋ Invite Agent", use_container_width=True, type="primary"):
+        st.session_state.show_invite = True
+
+# ─────────────────────────────────────────────
+# KPI Strip
+# ─────────────────────────────────────────────
+k1, k2, k3, k4 = st.columns(4)
+with k1:
+    st.markdown("""
+    <div class="kpi-card">
+        <div class="kpi-label">Commission Payable</div>
+        <div class="kpi-value">KES 1,842,300</div>
+        <div class="kpi-sub up">↑ 14.2% vs last month</div>
+    </div>
+    """, unsafe_allow_html=True)
+with k2:
+    st.markdown("""
+    <div class="kpi-card">
+        <div class="kpi-label">Active Agents</div>
+        <div class="kpi-value">32</div>
+        <div class="kpi-sub up">↑ 4 onboarded this month</div>
+    </div>
+    """, unsafe_allow_html=True)
+with k3:
+    st.markdown("""
+    <div class="kpi-card">
+        <div class="kpi-label">Leads This Month</div>
+        <div class="kpi-value">318</div>
+        <div class="kpi-sub up">↑ 22% conversion to viewing</div>
+    </div>
+    """, unsafe_allow_html=True)
+with k4:
+    st.markdown("""
+    <div class="kpi-card">
+        <div class="kpi-label">Avg Deal Close Time</div>
+        <div class="kpi-value">6.4 <span style="font-size:0.95rem;color:#8C93A6;">days</span></div>
+        <div class="kpi-sub down">↓ 1.1 days faster</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+# ─────────────────────────────────────────────
+# Rank Ladder
+# ─────────────────────────────────────────────
+st.markdown("### 🏅 Agent Rank Ladder")
+st.caption("Progression tiers from the Mwarokin agent incentive programme · Sorted by commission earned this quarter")
+
+for t in TIERS:
+    members = sorted(
+        [a for a in st.session_state.agents if a["tier"] == t["key"]],
+        key=lambda x: x["commission"],
+        reverse=True,
+    )
+    total_comm = sum(m["commission"] for m in members)
+    shown = members[:6]
+    extra = len(members) - len(shown)
+
+    avatars = " ".join(
+        f'<span title="{m["name"]} — {fmt(m["commission"])}" '
+        f'style="display:inline-flex;width:32px;height:32px;border-radius:50%;'
+        f'background:{m["color"]};color:white;font-size:0.7rem;font-weight:700;'
+        f'align-items:center;justify-content:center;margin-right:-6px;border:2px solid white;">'
+        f'{initials(m["name"])}</span>'
+        for m in shown
+    )
+    if extra > 0:
+        avatars += f' <span style="font-size:0.75rem;color:#8C93A6;">+{extra}</span>'
+
+    st.markdown(f"""
+    <div class="rung">
+        <div class="tier-glyph" style="background:{t['bg']};color:{t['glyph']};">{t['name'][0]}</div>
+        <div style="flex:1;">
+            <div style="font-weight:700;">{t['name']}</div>
+            <div style="font-size:0.75rem;color:#8C93A6;">{t['req']}</div>
+        </div>
+        <div style="display:flex;align-items:center;">{avatars}</div>
+        <div style="text-align:right;min-width:110px;">
+            <div style="font-weight:700;">{fmt(total_comm)}</div>
+            <div style="font-size:0.75rem;color:#8C93A6;">{len(members)} agents</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+# ─────────────────────────────────────────────
+# Agent Directory + Territory
+# ─────────────────────────────────────────────
+col_left, col_right = st.columns([1.6, 1])
+
+with col_left:
+    st.markdown("### 🪪 Agent Directory")
+    filter_tabs = st.radio("Filter", ["All", "Active", "Pending KYC"], horizontal=True, label_visibility="collapsed")
+
+    df = pd.DataFrame(st.session_state.agents)
+    if search:
+        q = search.lower()
+        df = df[df["name"].str.lower().str.contains(q) | df["territory"].str.lower().str.contains(q)]
+    if filter_tabs == "Active":
+        df = df[df["status"] == "active"]
+    elif filter_tabs == "Pending KYC":
+        df = df[df["kyc"] == "pending"]
+
+    # Display table with interactive rows
+    for _, row in df.iterrows():
+        t = tier_info(row["tier"])
+        s = status_meta(row["status"])
+        k = kyc_meta(row["kyc"])
+        with st.container():
+            c_a, c_b, c_c, c_d, c_e, c_f = st.columns([2.2, 1, 1, 0.7, 1.2, 1])
+            with c_a:
+                if st.button(f"{initials(row['name'])}  {row['name']}", key=f"agent_{row['name']}", use_container_width=True):
+                    st.session_state.selected_agent = row["name"]
+                st.caption(row["territory"])
+            with c_b:
+                st.markdown(f'<span class="tier-pill" style="background:{t["color"]}22;color:{t["color"]};">{t["name"]}</span>', unsafe_allow_html=True)
+            with c_c:
+                st.markdown(f'<span class="status-dot" style="background:{s["color"]};"></span><span style="color:{s["color"]};font-size:0.85rem;">{s["label"]}</span>', unsafe_allow_html=True)
+            with c_d:
+                st.markdown(f"**{row['deals']}**")
+            with c_e:
+                st.markdown(f"**{fmt(row['commission'])}**")
+            with c_f:
+                st.markdown(f'<span style="color:{k["color"]};font-size:0.8rem;">{k["icon"]} {k["label"]}</span>', unsafe_allow_html=True)
+            st.markdown("<hr style='margin:0.3rem 0;border-color:#F0EAE0;'>", unsafe_allow_html=True)
+
+with col_right:
+    st.markdown("### 🗺 Territory Coverage")
+    for t in TERRITORIES:
+        st.markdown(f"""
+        <div style="margin-bottom:0.9rem;">
+            <div style="display:flex;justify-content:space-between;">
+                <b>{t['name']}</b>
+                <span style="font-weight:700;">{t['pct']}%</span>
+            </div>
+            <div style="font-size:0.75rem;color:#8C93A6;">{t['agents']} agents · {t['listings']} listings</div>
+            <div class="terr-bar-track"><div class="terr-bar-fill" style="width:{t['pct']}%;"></div></div>
+        </div>
+        """, unsafe_allow_html=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+# ─────────────────────────────────────────────
+# Lead Pipeline + Live Activity
+# ─────────────────────────────────────────────
+col_p, col_a = st.columns(2)
+
+with col_p:
+    st.markdown("### 🎯 Lead Pipeline")
+    max_count = max(p["count"] for p in PIPELINE)
+    for p in PIPELINE:
+        pct = int(p["count"] / max_count * 100)
+        st.markdown(f"""
+        <div style="margin-bottom:0.7rem;">
+            <div style="font-size:0.82rem;font-weight:500;margin-bottom:0.25rem;">{p['stage']}</div>
+            <div class="pipe-track">
+                <div class="pipe-fill" style="width:{pct}%;background:{p['color']};">{p['count']}</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    if st.button("＋ New Lead", key="new_lead"):
+        st.toast("New lead form opened (demo)")
+
+with col_a:
+    st.markdown("### 📡 Live Activity")
+    # occasional live pulse
+    if random.random() < 0.15:
+        pool = [
+            {"icon": "👁", "color": "#4F46E5", "bg": "#EEF2FF", "text": "New lead assigned in **Kilimani**", "time": "Just now"},
+            {"icon": "💰", "color": "#B9903B", "bg": "#FEF3C7", "text": "Commission credited to **Peter Kamau**", "time": "Just now"},
         ]
-        
-        return ft.Row(
-            controls=[
-                self.kpi_card(label, value, sub, icon, color, up)
-                for label, value, sub, icon, color, up in kpis
-            ],
-            spacing=16
-        )
+        st.session_state.activity.insert(0, random.choice(pool))
+        if len(st.session_state.activity) > 8:
+            st.session_state.activity.pop()
 
-    def kpi_card(self, label: str, value: str, sub: str, icon: str, color: str, up: bool):
-        return ft.Container(
-            content=ft.Column([
-                ft.Row([
-                    ft.Text(label, size=13, color="#64748b"),
-                    ft.Container(
-                        content=ft.Icon(icon, color=color),
-                        width=36, height=36, border_radius=10,
-                        bgcolor=f"{color}22", alignment=ft.alignment.center
-                    )
-                ], alignment="space_between"),
-                ft.Text(value, size=28, weight="bold"),
-                ft.Row([
-                    ft.Icon("arrow_upward" if up else "arrow_downward", color="#10b981" if up else "#ef4444", size=16),
-                    ft.Text(sub, size=13, color="#10b981" if up else "#ef4444")
-                ])
-            ]),
-            bgcolor="white",
-            border_radius=16,
-            padding=20,
-            expand=True
-        )
+    for act in st.session_state.activity[:7]:
+        st.markdown(f"""
+        <div class="activity-item">
+            <div class="act-icon" style="background:{act['bg']};color:{act['color']};">{act['icon']}</div>
+            <div>
+                <div style="font-size:0.85rem;">{act['text']}</div>
+                <div style="font-size:0.72rem;color:#8C93A6;">{act['time']}</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    def build_agent_directory(self) -> ft.Container:
-        self.agent_table = ft.DataTable(
-            columns=[
-                ft.DataColumn(ft.Text("Agent")),
-                ft.DataColumn(ft.Text("Tier")),
-                ft.DataColumn(ft.Text("Status")),
-                ft.DataColumn(ft.Text("Deals")),
-                ft.DataColumn(ft.Text("Commission")),
-                ft.DataColumn(ft.Text("KYC")),
-            ],
-            rows=[],
-            expand=True,
-            border_radius=12
-        )
-        
-        tabs = ft.Row([
-            ft.Container(content=ft.Text("All", weight="w600"), 
-                        padding=ft.padding.symmetric(12, 20), 
-                        border_radius=999, bgcolor="#92400e22" if self.current_filter == "all" else None,
-                        on_click=lambda e: self.filter_agents("all")),
-            ft.Container(content=ft.Text("Active"), 
-                        padding=ft.padding.symmetric(12, 20), 
-                        border_radius=999,
-                        on_click=lambda e: self.filter_agents("active")),
-            ft.Container(content=ft.Text("Pending KYC"), 
-                        padding=ft.padding.symmetric(12, 20), 
-                        border_radius=999,
-                        on_click=lambda e: self.filter_agents("pending")),
-        ])
-        
-        return ft.Container(
-            content=ft.Column([
-                ft.Row([
-                    ft.Row([ft.Icon("badge"), ft.Text("Agent Directory", size=17, weight="w600")]),
-                    tabs
-                ], alignment="space_between"),
-                ft.Container(
-                    content=self.agent_table,
-                    expand=True,
-                    bgcolor="white",
-                    border_radius=12,
-                    padding=10
-                )
-            ]),
-            bgcolor="white",
-            border_radius=16,
-            padding=20,
-            expand=True
-        )
+st.markdown("<br>", unsafe_allow_html=True)
 
-    def build_territory_panel(self) -> ft.Container:
-        self.territory_list = ft.Column(spacing=12)
-        return ft.Container(
-            content=ft.Column([
-                ft.Row([ft.Icon("map"), ft.Text("Territory Coverage", size=17, weight="w600")]),
-                self.territory_list
-            ]),
-            bgcolor="white",
-            border_radius=16,
-            padding=20,
-            expand=True
-        )
+# ─────────────────────────────────────────────
+# Payouts + Upcoming Viewings
+# ─────────────────────────────────────────────
+col_pay, col_view = st.columns(2)
 
-    def build_pipeline_panel(self) -> ft.Container:
-        self.pipeline_container = ft.Column(spacing=18)
-        return ft.Container(
-            content=ft.Column([
-                ft.Row([
-                    ft.Row([ft.Icon("filter_alt"), ft.Text("Lead Pipeline", size=17, weight="w600")]),
-                    ft.ElevatedButton("New Lead", icon=ft.Icons.ADD, 
-                                    style=ft.ButtonStyle(bgcolor="#f3f4f6", color="#334155"))
-                ], alignment="space_between"),
-                self.pipeline_container
-            ]),
-            bgcolor="white",
-            border_radius=16,
-            padding=20,
-            expand=True
-        )
+with col_pay:
+    st.markdown("### 💸 Payout Requests")
+    st.markdown('<span style="background:#FEF3C7;color:#B4791A;padding:0.2rem 0.6rem;border-radius:999px;font-size:0.75rem;font-weight:600;">6 pending</span>', unsafe_allow_html=True)
+    for i, p in enumerate(st.session_state.payouts):
+        c1, c2, c3 = st.columns([2, 1.2, 1])
+        with c1:
+            st.markdown(f"**{p['name']}**")
+            st.caption(p["date"])
+        with c2:
+            st.markdown(f"**{fmt(p['amount'])}**")
+        with c3:
+            if p["status"] == "pending":
+                if st.button("Approve", key=f"approve_{i}"):
+                    st.session_state.payouts[i]["status"] = "done"
+                    st.session_state.payouts[i]["date"] = "Approved · paid out"
+                    st.toast("Payout approved and queued for disbursement")
+                    st.rerun()
+            else:
+                st.markdown('<span style="background:#D1FAE5;color:#177A54;padding:0.2rem 0.55rem;border-radius:999px;font-size:0.75rem;">Paid</span>', unsafe_allow_html=True)
 
-    def build_activity_panel(self) -> ft.Container:
-        self.activity_list = ft.Column(spacing=12, scroll=ft.ScrollMode.AUTO, height=280)
-        return ft.Container(
-            content=ft.Column([
-                ft.Text("Live Activity", size=17, weight="w600"),
-                self.activity_list
-            ]),
-            bgcolor="white",
-            border_radius=16,
-            padding=20,
-            expand=True
-        )
+with col_view:
+    st.markdown("### 📅 Upcoming Viewings")
+    for v in VIEWINGS:
+        st.markdown(f"""
+        <div class="viewing-row">
+            <div style="display:flex;align-items:center;gap:0.8rem;">
+                <div style="width:38px;height:38px;border-radius:9px;background:#EEF2FF;color:#4F46E5;
+                            display:flex;align-items:center;justify-content:center;">📅</div>
+                <div>
+                    <div style="font-size:0.85rem;font-weight:600;">{v['title']}</div>
+                    <div style="font-size:0.72rem;color:#8C93A6;">{v['agent']} · {v['time']}</div>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    def build_payout_panel(self) -> ft.Container:
-        self.payout_list = ft.Column(spacing=12)
-        return ft.Container(
-            content=ft.Column([
-                ft.Row([
-                    ft.Row([ft.Icon("request_quote"), ft.Text("Payout Requests", size=17, weight="w600")]),
-                    ft.Container(content=ft.Text("6 pending", size=13, color="#d97706", weight="w600"),
-                                padding=ft.padding.symmetric(4, 12), bgcolor="#fef3c7", border_radius=999)
-                ], alignment="space_between"),
-                self.payout_list
-            ]),
-            bgcolor="white",
-            border_radius=16,
-            padding=20,
-            expand=True
-        )
+# ─────────────────────────────────────────────
+# Agent Detail Drawer (expander style)
+# ─────────────────────────────────────────────
+if st.session_state.selected_agent:
+    agent = next(a for a in st.session_state.agents if a["name"] == st.session_state.selected_agent)
+    t = tier_info(agent["tier"])
+    with st.expander(f"Agent Profile — {agent['name']}", expanded=True):
+        col_av, col_info = st.columns([1, 4])
+        with col_av:
+            st.markdown(f"""
+            <div style="width:64px;height:64px;border-radius:14px;background:{agent['color']};
+                        color:white;font-size:1.4rem;font-weight:700;
+                        display:flex;align-items:center;justify-content:center;">
+                {initials(agent['name'])}
+            </div>
+            """, unsafe_allow_html=True)
+        with col_info:
+            st.markdown(f"### {agent['name']}")
+            st.caption(f"{agent['territory']} · {t['name']} tier")
 
-    def build_viewings_panel(self) -> ft.Container:
-        self.viewings_list = ft.Column(spacing=14)
-        return ft.Container(
-            content=ft.Column([
-                ft.Text("Upcoming Viewings", size=17, weight="w600"),
-                self.viewings_list
-            ]),
-            bgcolor="white",
-            border_radius=16,
-            padding=20,
-            expand=True
-        )
+        m1, m2, m3 = st.columns(3)
+        m1.metric("Deals Closed", agent["deals"])
+        m2.metric("Conversion", agent["conv"])
+        m3.metric("Commission", fmt(agent["commission"]))
 
-    # Render functions
-    def render_ladder(self):
-        container = self.page.get_control("ladder_container")
-        if not container:
-            return
-        container.controls.clear()
-        
-        for tier in TIERS:
-            members = [a for a in AGENTS if a.tier == tier.key]
-            members.sort(key=lambda x: x.commission, reverse=True)
-            total_comm = sum(m.commission for m in members)
-            shown = members[:6]
-            
-            avatars = ft.Row([
-                ft.Container(
-                    content=ft.Text(initials(a.name), size=11, weight="bold", color="white"),
-                    width=32, height=32, border_radius=999, bgcolor=a.color,
-                    alignment=ft.alignment.center,
-                    tooltip=f"{a.name} — {fmt_kes(a.commission)}"
-                ) for a in shown
-            ], spacing=-8)
-            
-            if len(members) > 6:
-                avatars.controls.append(
-                    ft.Container(
-                        content=ft.Text(f"+{len(members)-6}", size=11),
-                        width=32, height=32, border_radius=999, bgcolor="#e2e8f0",
-                        alignment=ft.alignment.center
-                    )
-                )
-            
-            rung = ft.Container(
-                content=ft.Row([
-                    ft.Row([
-                        ft.Container(
-                            content=ft.Text(tier.name[0], size=24, weight="bold", color=tier.glyph),
-                            width=52, height=52, border_radius=12,
-                            gradient=ft.LinearGradient(begin=ft.alignment.top_left, end=ft.alignment.bottom_right, 
-                                                     colors=[tier.bg.split(',')[0][18:], tier.bg.split(',')[1][:-1]]),
-                            alignment=ft.alignment.center
-                        ),
-                        ft.Column([
-                            ft.Text(tier.name, size=16, weight="bold"),
-                            ft.Text(tier.req, size=12, color="#64748b")
-                        ])
-                    ]),
-                    avatars,
-                    ft.Column([
-                        ft.Text(fmt_kes(total_comm), size=15, weight="bold"),
-                        ft.Text(f"{len(members)} agents", size=12, color="#64748b")
-                    ], horizontal_alignment="end")
-                ], alignment="space_between"),
-                padding=16,
-                margin=ft.margin.only(bottom=8),
-                bgcolor="#f8fafc",
-                border_radius=12
-            )
-            container.controls.append(rung)
-        self.page.update()
+        st.markdown("**Assigned Listings**")
+        st.markdown(f"- {agent['territory']} Heights, Unit 4B — Active · 2BR")
+        st.markdown(f"- {agent['territory']} Court, Unit 12 — Active · Studio")
 
-    def render_agents(self):
-        if not hasattr(self, 'agent_table'):
-            return
-        
-        filtered = [a for a in AGENTS]
-        
-        # Apply search
-        if hasattr(self, 'search_field') and self.search_field.value:
-            q = self.search_field.value.lower()
-            filtered = [a for a in filtered if q in a.name.lower() or q in a.territory.lower()]
-        
-        # Apply filter
-        if self.current_filter == "active":
-            filtered = [a for a in filtered if a.status == "active"]
-        elif self.current_filter == "pending":
-            filtered = [a for a in filtered if a.kyc == "pending"]
-        
-        # Sort
-        filtered.sort(key=lambda x: getattr(x, self.sort_key, 0), reverse=self.sort_dir == -1)
-        
-        self.agent_table.rows.clear()
-        
-        for agent in filtered:
-            tier_obj = next((t for t in TIERS if t.key == agent.tier), None)
-            
-            row = ft.DataRow(
-                cells=[
-                    ft.DataCell(
-                        ft.Row([
-                            ft.CircleAvatar(content=ft.Text(initials(agent.name), size=12), 
-                                          bgcolor=agent.color, radius=18),
-                            ft.Column([
-                                ft.Text(agent.name, weight="w600", size=14),
-                                ft.Text(agent.territory, size=12, color="#64748b")
-                            ])
-                        ])
-                    ),
-                    ft.DataCell(ft.Container(
-                        content=ft.Text(tier_obj.name if tier_obj else agent.tier, size=13, weight="w500"),
-                        padding=ft.padding.symmetric(6, 12),
-                        bgcolor=f"{tier_obj.color}22" if tier_obj else "#e2e8f0",
-                        border_radius=999
-                    )),
-                    ft.DataCell(ft.Row([
-                        ft.Container(width=8, height=8, border_radius=999, 
-                                   bgcolor="#10b981" if agent.status == "active" else "#f59e0b"),
-                        ft.Text(agent.status.title(), size=13)
-                    ])),
-                    ft.DataCell(ft.Text(str(agent.deals), size=14, weight="w600")),
-                    ft.DataCell(ft.Text(fmt_kes(agent.commission), size=14, weight="w600")),
-                    ft.DataCell(ft.Text("✓ Verified" if agent.kyc == "verified" else "Pending", 
-                                      color="#10b981" if agent.kyc == "verified" else "#f59e0b"))
-                ],
-                on_select_changed=lambda e, a=agent: self.open_drawer(a)
-            )
-            self.agent_table.rows.append(row)
-        self.page.update()
+        st.markdown("**Recent Deals**")
+        st.markdown(f"- Closed — Apt 304 · {fmt(int(agent['commission'] * 0.18))} commission")
+        st.markdown(f"- Closed — Suite 12B · {fmt(int(agent['commission'] * 0.14))} commission")
 
-    def filter_agents(self, filter_type: str):
-        self.current_filter = filter_type
-        self.render_agents()
+        b1, b2, b3 = st.columns(3)
+        with b1:
+            if st.button("✉ Message", use_container_width=True):
+                st.toast("Message sent to agent")
+        with b2:
+            if st.button("💰 Review Payout", use_container_width=True):
+                st.toast("Payout review opened")
+        with b3:
+            if st.button("Close", use_container_width=True):
+                st.session_state.selected_agent = None
+                st.rerun()
 
-    def on_search_change(self, e):
-        self.render_agents()
-
-    def render_territories(self):
-        self.territory_list.controls.clear()
-        for t in TERRITORIES:
-            item = ft.Row([
-                ft.Column([
-                    ft.Text(t.name, weight="bold"),
-                    ft.Text(f"{t.agents} agents · {t.listings} listings", size=12, color="#64748b"),
-                    ft.ProgressBar(value=t.pct/100, width=180, color="#92400e", bgcolor="#f3f4f6")
-                ]),
-                ft.Text(f"{t.pct}%", size=18, weight="bold", color="#92400e")
-            ], alignment="space_between")
-            self.territory_list.controls.append(item)
-        self.page.update()
-
-    def render_pipeline(self):
-        self.pipeline_container.controls.clear()
-        max_count = max(p.count for p in PIPELINE)
-        
-        for p in PIPELINE:
-            bar = ft.Row([
-                ft.Text(p.stage, width=90, size=13),
-                ft.Container(
-                    content=ft.Text(str(p.count), color="white", size=12, text_align="center"),
-                    width=max(60, int(p.count / max_count * 220)),
-                    height=32,
-                    bgcolor=p.color,
-                    border_radius=8,
-                    alignment=ft.alignment.center
-                )
-            ])
-            self.pipeline_container.controls.append(bar)
-        self.page.update()
-
-    def render_activity(self):
-        self.activity_list.controls.clear()
-        for act in ACTIVITIES:
-            item = ft.Row([
-                ft.Container(
-                    content=ft.Icon(act["icon"], color=act["color"]),
-                    width=36, height=36, border_radius=999, bgcolor=act["bg"],
-                    alignment=ft.alignment.center
-                ),
-                ft.Column([
-                    ft.Text(act["text"], size=13),
-                    ft.Text(act["time"], size=12, color="#94a3b8")
-                ], spacing=2)
-            ], spacing=16)
-            self.activity_list.controls.append(item)
-        self.page.update()
-
-    def render_payouts(self):
-        self.payout_list.controls.clear()
-        for p in PAYOUTS:
-            row = ft.Row([
-                ft.Column([
-                    ft.Text(p["name"], weight="w600"),
-                    ft.Text(p["date"], size=12, color="#64748b")
-                ]),
-                ft.Text(fmt_kes(p["amount"]), weight="w600", size=15),
-                ft.ElevatedButton(
-                    "Approve" if p["status"] == "pending" else "Paid",
-                    style=ft.ButtonStyle(bgcolor="#92400e" if p["status"] == "pending" else "#10b981", color="white"),
-                    on_click=lambda e, pay=p: self.approve_payout(pay)
-                ) if p["status"] == "pending" else 
-                ft.Container(content=ft.Text("Paid", color="#10b981"), padding=8)
-            ], alignment="space_between")
-            self.payout_list.controls.append(row)
-        self.page.update()
-
-    def approve_payout(self, payout):
-        self.show_toast(f"Payout of {fmt_kes(payout['amount'])} approved")
-        # Refresh
-        self.render_payouts()
-
-    def render_viewings(self):
-        self.viewings_list.controls.clear()
-        for v in VIEWINGS:
-            item = ft.Row([
-                ft.Container(
-                    content=ft.Icon("calendar_today", size=20, color="#4338ca"),
-                    width=42, height=42, border_radius=10, bgcolor="#e0e7ff",
-                    alignment=ft.alignment.center
-                ),
-                ft.Column([
-                    ft.Text(v["title"], size=14, weight="w600"),
-                    ft.Text(f"{v['agent']} · {v['time']}", size=12, color="#64748b")
-                ], spacing=2)
-            ], spacing=16)
-            self.viewings_list.controls.append(item)
-        self.page.update()
-
-    def open_drawer(self, agent: Agent):
-        # Simple modal drawer simulation using AlertDialog
-        dlg = ft.AlertDialog(
-            title=ft.Text(f"{agent.name} - {agent.territory}"),
-            content=ft.Column([
-                ft.Row([
-                    ft.CircleAvatar(content=ft.Text(initials(agent.name)), bgcolor=agent.color, radius=32),
-                    ft.Column([
-                        ft.Text(agent.name, size=18, weight="bold"),
-                        ft.Text(f"{tier.name} Tier", size=14) for tier in TIERS if tier.key == agent.tier
-                    ])
-                ]),
-                ft.Divider(),
-                ft.Row([ft.Text(f"Deals: {agent.deals}"), ft.Text(f"Conv: {agent.conv}")]),
-                ft.Text(f"Commission: {fmt_kes(agent.commission)}", weight="bold")
-            ], spacing=15, tight=True),
-            actions=[
-                ft.TextButton("Message", on_click=lambda e: self.show_toast("Message sent")),
-                ft.TextButton("Review Payout", on_click=lambda e: self.show_toast("Payout review opened")),
-                ft.TextButton("Close", on_click=lambda e: self.page.close(dlg))
-            ],
-            actions_alignment=ft.MainAxisAlignment.END
-        )
-        self.page.dialog = dlg
-        dlg.open = True
-        self.page.update()
-
-    def open_invite_modal(self, e):
-        def send_invite(e):
-            self.page.close(dlg)
-            self.show_toast("Invitation sent — agent will receive onboarding link via SMS & email")
-        
-        dlg = ft.AlertDialog(
-            title=ft.Text("Invite New Agent"),
-            content=ft.Column([
-                ft.TextField(label="Full Name", hint_text="e.g. Wanjiru Kamau"),
-                ft.TextField(label="Phone Number", hint_text="+254 7…"),
-                ft.TextField(label="Email Address", hint_text="agent@mwarokinestates.co.ke"),
-                ft.Row([
-                    ft.Dropdown(
-                        label="Assigned Territory",
-                        options=[ft.dropdown.Option(t) for t in ["Kilimani", "Westlands", "Ruaka", "Karen", "Kasarani"]]
-                    ),
-                    ft.Dropdown(
-                        label="Starting Tier",
-                        options=[ft.dropdown.Option(t.name) for t in TIERS]
-                    )
-                ])
-            ], width=500, height=320, scroll=ft.ScrollMode.AUTO),
-            actions=[
-                ft.TextButton("Cancel", on_click=lambda e: self.page.close(dlg)),
-                ft.ElevatedButton("Send Invite", icon=ft.Icons.SEND, bgcolor="#92400e", color="white", on_click=send_invite)
-            ]
-        )
-        self.page.dialog = dlg
-        dlg.open = True
-        self.page.update()
-
-    def show_toast(self, message: str):
-        self.page.show_snack_bar(
-            ft.SnackBar(
-                content=ft.Text(f"✓ {message}"),
-                bgcolor="#854d0e",
-                duration=4000
-            )
-        )
-
-    def live_activity_pulse(self):
-        new_act = random.choice([
-            {"icon": "visibility", "color": "#6366f1", "bg": "#eef2ff", "text": "New lead assigned in <b>Kilimani</b>"},
-            {"icon": "monetization_on", "color": "#92400e", "bg": "#fef3c7", "text": "Commission credited to <b>Peter Kamau</b>"}
-        ])
-        
-        item = ft.Row([
-            ft.Container(
-                content=ft.Icon(new_act["icon"], color=new_act["color"]),
-                width=36, height=36, border_radius=999, bgcolor=new_act["bg"],
-                alignment=ft.alignment.center
-            ),
-            ft.Column([
-                ft.Text(new_act["text"], size=13),
-                ft.Text("Just now", size=12, color="#94a3b8")
-            ])
-        ], spacing=16)
-        
-        self.activity_list.controls.insert(0, item)
-        if len(self.activity_list.controls) > 6:
-            self.activity_list.controls.pop()
-        self.page.update()
-
-
-def main(page: ft.Page):
-    MwarokinApp(page)
-
-ft.app(target=main, view=ft.AppView.WEB_BROWSER, port=8550)
-```
+# ─────────────────────────────────────────────
+# Invite Modal
+# ─────────────────────────────────────────────
+if st.session_state.show_invite:
+    with st.form("invite_form"):
+        st.markdown("### ＋ Invite New Agent")
+        c1, c2 = st.columns(2)
+        with c1:
+            full_name = st.text_input("Full Name", placeholder="e.g. Wanjiru Kamau")
+        with c2:
+            phone = st.text_input("Phone Number", placeholder="+254 7…")
+        email = st.text_input("Email Address", placeholder="agent@mwarokinestates.co.ke")
+        c3, c4 = st.columns(2)
+        with c3:
+            territory = st.selectbox("Assigned Territory", ["Kilimani", "Westlands", "Ruaka", "South B / C", "Kasarani", "Karen"])
+        with c4:
+            tier = st.selectbox("Starting Tier", ["Msingi (Foundation)", "Jengo (Builder)", "Milki (Owner)"])
+        submitted = st.form_submit_button("✉ Send Invite", type="primary")
+        cancel = st.form_submit_button("Cancel")
+        if submitted:
+            st.session_state.show_invite = False
+            st.toast("Invitation sent — agent will receive onboarding link via SMS & email")
+            st.rerun()
+        if cancel:
+            st.session_state.show_invite = False
+            st.rerun()
