@@ -1,899 +1,708 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mwarokin Estates - KRA Tax Expense Calculator </title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #1a73e8;
-            --primary-dark: #0d47a1;
-            --secondary: #34a853;
-            --danger: #ea4335;
-            --warning: #f9ab00;
-            --light: #f8f9fa;
-            --dark: #202124;
-            --gray: #5f6368;
-            --border: #dadce0;
-            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            --radius: 8px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-        }
-
-        body {
-            background-color: #f5f7fa;
-            color: var(--dark);
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            padding: 20px 0;
-            border-radius: var(--radius);
-            margin-bottom: 30px;
-            box-shadow: var(--shadow);
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo i {
-            font-size: 2rem;
-        }
-
-        .logo h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
-        }
-
-        .nav-tabs {
-            display: flex;
-            background: white;
-            border-radius: var(--radius);
-            overflow: hidden;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow);
-        }
-
-        .tab {
-            flex: 1;
-            text-align: center;
-            padding: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: var(--gray);
-            font-weight: 500;
-        }
-
-        .tab.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        .tab:hover:not(.active) {
-            background: rgba(26, 115, 232, 0.1);
-        }
-
-        .card {
-            background: white;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 25px;
-            margin-bottom: 25px;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .card-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        .card-icon {
-            background: var(--primary);
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--dark);
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
-        }
-
-        .input-group {
-            display: flex;
-            gap: 15px;
-        }
-
-        .input-group .form-control {
-            flex: 1;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: var(--radius);
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-        }
-
-        .btn-secondary {
-            background: var(--light);
-            color: var(--dark);
-            border: 1px solid var(--border);
-        }
-
-        .btn-secondary:hover {
-            background: #e9ecef;
-        }
-
-        .btn-success {
-            background: var(--secondary);
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #2d924a;
-        }
-
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #d33426;
-        }
-
-        .receipt-upload {
-            border: 2px dashed var(--border);
-            border-radius: var(--radius);
-            padding: 30px;
-            text-align: center;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .receipt-upload:hover {
-            border-color: var(--primary);
-            background: rgba(26, 115, 232, 0.05);
-        }
-
-        .receipt-upload i {
-            font-size: 3rem;
-            color: var(--gray);
-            margin-bottom: 15px;
-        }
-
-        .receipt-list {
-            margin-top: 20px;
-        }
-
-        .receipt-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            margin-bottom: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .receipt-item:hover {
-            background: var(--light);
-        }
-
-        .receipt-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .receipt-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--primary);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .receipt-details h4 {
-            font-weight: 500;
-            margin-bottom: 5px;
-        }
-
-        .receipt-details p {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-
-        .receipt-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .receipt-status {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .status-verified {
-            background: rgba(52, 168, 83, 0.1);
-            color: var(--secondary);
-        }
-
-        .status-pending {
-            background: rgba(249, 171, 0, 0.1);
-            color: var(--warning);
-        }
-
-        .status-rejected {
-            background: rgba(234, 67, 53, 0.1);
-            color: var(--danger);
-        }
-
-        .results-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .result-card {
-            background: white;
-            border-radius: var(--radius);
-            padding: 20px;
-            text-align: center;
-            box-shadow: var(--shadow);
-        }
-
-        .result-value {
-            font-size: 2rem;
-            font-weight: 700;
-            margin: 10px 0;
-        }
-
-        .result-label {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-
-        .tax-breakdown {
-            margin-top: 30px;
-        }
-
-        .breakdown-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .breakdown-item:last-child {
-            border-bottom: none;
-        }
-
-        .breakdown-label {
-            font-weight: 500;
-        }
-
-        .breakdown-value {
-            font-weight: 600;
-        }
-
-        .compliance-alert {
-            background: rgba(249, 171, 0, 0.1);
-            border-left: 4px solid var(--warning);
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 0 var(--radius) var(--radius) 0;
-        }
-
-        .compliance-alert h4 {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-            color: var(--warning);
-        }
-
-        .footer-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border);
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-        }
-
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                text-align: center;
-                gap: 15px;
-            }
-
-            .input-group {
-                flex-direction: column;
-            }
-
-            .footer-actions {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .action-buttons {
-                width: 100%;
-            }
-
-            .action-buttons .btn {
-                flex: 1;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KRA Tax · eTIMS Premium</title>
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    /* ----- global reset / variables ----- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #f2efe8;
+      font-family: 'Inter', -apple-system, system-ui, sans-serif;
+      color: #16213a;
+      padding: 0 24px 40px;
+      -webkit-font-smoothing: antialiased;
+    }
+    :root {
+      --navy-deep: #0a1a33;
+      --navy: #0f234a;
+      --navy-mid: #16305e;
+      --navy-line: #24406f;
+      --cream: #f8f5ee;
+      --paper: #ffffff;
+      --gold: #c9a227;
+      --gold-light: #e6c866;
+      --gold-dim: #8a7226;
+      --ink: #16213a;
+      --ink-soft: #5c6a86;
+      --green: #1f7a5c;
+      --amber: #c97a2b;
+      --red: #b23a48;
+      --shadow: 0 18px 40px -18px rgba(10,26,51,.28);
+      --shadow-sm: 0 6px 18px -8px rgba(10,26,51,.18);
+      --radius: 16px;
+    }
+    /* ----- layout containers ----- */
+    .app-wrapper {
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+    /* ----- top bar (premium) ----- */
+    .top-bar {
+      background: var(--navy-deep);
+      border-bottom: 1px solid var(--navy-line);
+      border-radius: 0 0 24px 24px;
+      padding: 0 28px;
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow);
+    }
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(145deg, var(--gold-light), var(--gold-dim));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--navy-deep);
+    }
+    .brand-text h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: -0.2px;
+      line-height: 1.2;
+    }
+    .brand-text span {
+      display: block;
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--gold-light);
+      margin-top: 1px;
+    }
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+    .top-actions a {
+      color: #c9d2e4;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: 0.2s;
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      padding-bottom: 4px;
+    }
+    .top-actions a:hover,
+    .top-actions a.active {
+      color: #fff;
+      border-bottom-color: var(--gold);
+    }
+    .user-badge {
+      background: rgba(255,255,255,0.06);
+      padding: 8px 16px 8px 14px;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    .user-badge i {
+      font-size: 1.1rem;
+      color: var(--gold-light);
+    }
+    .btn-outline-gold {
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.75rem;
+      transition: 0.2s;
+      letter-spacing: 0.3px;
+    }
+    .btn-outline-gold:hover {
+      background: var(--gold);
+      color: var(--navy-deep);
+    }
+
+    /* ----- KPI row (premium) ----- */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .kpi-card {
+      background: var(--paper);
+      border-radius: 18px;
+      padding: 18px 16px;
+      box-shadow: var(--shadow-sm);
+      border-top: 4px solid var(--gold);
+      transition: 0.2s;
+    }
+    .kpi-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+    .kpi-card i { color: var(--gold-dim); font-size: 1.2rem; margin-bottom: 8px; display: inline-block; }
+    .kpi-card .num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: -0.5px;
+    }
+    .kpi-card .lbl { font-size: 0.7rem; color: var(--ink-soft); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .delta { font-size: 0.7rem; font-weight: 600; margin-top: 6px; }
+    .delta.up { color: var(--green); }
+    .delta.down { color: var(--red); }
+
+    /* ----- main grid (calculator + extra) ----- */
+    .grid-main {
+      display: grid;
+      grid-template-columns: 1.7fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* ----- cards ----- */
+    .card {
+      background: var(--paper);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      padding: 26px 28px;
+      margin-bottom: 24px;
+      transition: 0.2s;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    .card:hover { box-shadow: var(--shadow); }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    .card-header .icon {
+      width: 44px;
+      height: 44px;
+      background: #f0eee8;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold-dim);
+      font-size: 1.3rem;
+    }
+    .card-header h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--navy);
+      letter-spacing: -0.3px;
+    }
+    .card-header .badge {
+      margin-left: auto;
+      background: var(--gold);
+      color: var(--navy-deep);
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 30px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* compliance alert */
+    .compliance-alert {
+      background: #fcf9f0;
+      border-left: 6px solid var(--gold);
+      padding: 16px 20px;
+      border-radius: 12px;
+      margin-bottom: 22px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+    .compliance-alert i { color: var(--gold); font-size: 1.2rem; }
+    .compliance-alert h4 { font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .compliance-alert p { font-size: 0.85rem; color: var(--ink-soft); margin: 0; }
+
+    /* form */
+    .form-group { margin-bottom: 18px; }
+    .form-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--ink-soft);
+      margin-bottom: 5px;
+    }
+    .form-control, .form-select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #e3e6ee;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      background: #fbfbfd;
+      transition: 0.2s;
+    }
+    .form-control:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 4px rgba(201,162,39,0.15);
+    }
+    .input-group { display: flex; gap: 16px; flex-wrap: wrap; }
+    .input-group .form-group { flex: 1; min-width: 150px; }
+
+    /* receipt upload */
+    .receipt-upload {
+      border: 2px dashed #d5d9e2;
+      border-radius: 16px;
+      padding: 32px 20px;
+      text-align: center;
+      background: #fbfbfd;
+      transition: 0.25s;
+      cursor: pointer;
+    }
+    .receipt-upload:hover { border-color: var(--gold); background: #fcf9f0; }
+    .receipt-upload i { font-size: 2.4rem; color: var(--gold-dim); margin-bottom: 10px; }
+    .receipt-upload h3 { font-size: 0.95rem; font-weight: 600; color: var(--navy); }
+    .receipt-upload p { font-size: 0.8rem; color: var(--ink-soft); margin: 4px 0; }
+
+    /* receipt list */
+    .receipt-list { margin-top: 18px; display: flex; flex-direction: column; gap: 12px; }
+    .receipt-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8f7f3;
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: 1px solid #ece9e2;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .receipt-info { display: flex; align-items: center; gap: 14px; }
+    .receipt-icon { width: 40px; height: 40px; background: #e8e4db; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--gold-dim); }
+    .receipt-details h4 { font-size: 0.85rem; font-weight: 600; margin: 0; }
+    .receipt-details p { font-size: 0.7rem; color: var(--ink-soft); margin: 2px 0 0; }
+    .receipt-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .status-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 30px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .status-badge.verified { background: #e5f4ee; color: var(--green); }
+    .status-badge.pending { background: #fdf1e2; color: var(--amber); }
+    .btn-icon {
+      background: transparent;
+      border: none;
+      padding: 6px 8px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: var(--ink-soft);
+      transition: 0.2s;
+    }
+    .btn-icon:hover { background: #e9e6df; }
+    .btn-icon.danger:hover { color: var(--red); background: #fbe9ea; }
+
+    .btn-primary {
+      background: var(--gold);
+      border: none;
+      padding: 14px 34px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--navy-deep);
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 20px -10px rgba(201,162,39,0.4);
+    }
+    .btn-primary:hover { background: var(--gold-light); transform: scale(1.02); }
+
+    /* results */
+    .results-container {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 16px;
+      margin: 20px 0 24px;
+    }
+    .result-card {
+      background: #f8f7f3;
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+    }
+    .result-card .result-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--ink-soft); }
+    .result-card .result-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin: 6px 0 2px;
+    }
+    .tax-breakdown { background: #faf9f6; border-radius: 14px; padding: 18px 20px; margin: 18px 0; }
+    .breakdown-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #e7e4dd;
+      font-size: 0.9rem;
+    }
+    .breakdown-item:last-child { border-bottom: none; }
+    .breakdown-item .breakdown-label { color: var(--ink-soft); }
+    .breakdown-item .breakdown-value { font-weight: 600; }
+
+    .footer-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid #e7e4dd;
+    }
+    .compliance-status { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .compliance-status i { color: var(--green); font-size: 1.1rem; }
+    .action-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+    .action-buttons .btn {
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.75rem;
+      border: none;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-secondary { background: #e9e6df; color: var(--navy); }
+    .btn-secondary:hover { background: #d6d1c7; }
+    .btn-success { background: var(--green); color: #fff; }
+    .btn-success:hover { background: #146b4e; }
+
+    /* right column extra */
+    .quick-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .qa-item {
+      background: #f8f7f3;
+      border-radius: 14px;
+      padding: 16px 12px;
+      text-align: center;
+      border: 1px solid transparent;
+      transition: 0.2s;
+    }
+    .qa-item:hover { border-color: var(--gold); transform: translateY(-3px); }
+    .qa-item i { font-size: 1.4rem; color: var(--gold-dim); margin-bottom: 6px; }
+    .qa-item h4 { font-size: 0.8rem; font-weight: 600; margin: 0; }
+    .qa-item p { font-size: 0.65rem; color: var(--ink-soft); margin: 4px 0 0; }
+
+    .activity-feed { margin-top: 18px; }
+    .activity-item {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0ede7;
+    }
+    .activity-item .a-icon {
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+    .a-icon.green { background: var(--green); }
+    .a-icon.amber { background: var(--amber); }
+    .a-icon.navy { background: var(--navy-mid); }
+    .activity-item .a-text h6 { font-size: 0.8rem; font-weight: 600; margin: 0; }
+    .activity-item .a-text p { font-size: 0.7rem; color: var(--ink-soft); margin: 2px 0; }
+    .activity-item time { font-size: 0.6rem; color: #9aa4b8; }
+
+    /* responsive */
+    @media (max-width: 1024px) {
+      .kpi-grid { grid-template-columns: repeat(3,1fr); }
+      .grid-main { grid-template-columns: 1fr; }
+      .results-container { grid-template-columns: repeat(2,1fr); }
+    }
+    @media (max-width: 680px) {
+      .top-bar { flex-wrap: wrap; height: auto; padding: 16px 20px; gap: 12px; }
+      .top-actions { flex-wrap: wrap; gap: 12px; }
+      .kpi-grid { grid-template-columns: 1fr 1fr; }
+      .results-container { grid-template-columns: 1fr; }
+      .input-group { flex-direction: column; }
+      .card { padding: 18px; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-file-invoice-dollar"></i>
-                    <h1>KRA Tax Expense Calculator</h1>
-                </div>
-                <div class="user-info">
-                    <i class="fas fa-user-circle"></i> John Doe | Tax ID: A123456789X
-                </div>
-            </div>
-        </header>
+<div class="app-wrapper">
 
-        <div class="nav-tabs">
-            <div class="tab">Dashboard</div>
-            <div class="tab">Expense Calculator</div>
-            <div class="tab">eTIMS Integration</div>
-            <div class="tab">Reports & Analytics</div>
-            <div class="tab">Settings</div>
+  <!-- top bar -->
+  <header class="top-bar">
+    <div class="brand-group">
+      <div class="brand-icon">K</div>
+      <div class="brand-text">
+        <h1>KRA Tax · eTIMS</h1>
+        <span>premium expense calculator</span>
+      </div>
+    </div>
+    <div class="top-actions">
+      <a href="#" class="active">Dashboard</a>
+      <a href="#">Calculator</a>
+      <a href="#">eTIMS</a>
+      <a href="#">Reports</a>
+      <div class="user-badge">
+        <i class="fas fa-user-circle"></i> John Doe
+        <span style="font-weight:400;color:#aebbd6;margin-left:6px;">| A123456789X</span>
+      </div>
+      <button class="btn-outline-gold"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+  </header>
+
+  <!-- KPI row -->
+  <div class="kpi-grid">
+    <div class="kpi-card"><i class="fas fa-receipt"></i><div class="num">KES 342,800</div><div class="lbl">Total Expenses</div><div class="delta up"><i class="fas fa-arrow-up"></i> +8.2%</div></div>
+    <div class="kpi-card"><i class="fas fa-check-circle"></i><div class="num">KES 291,380</div><div class="lbl">Verified e-Receipts</div><div class="delta up"><i class="fas fa-check"></i> 85%</div></div>
+    <div class="kpi-card"><i class="fas fa-percent"></i><div class="num">30%</div><div class="lbl">Tax Rate</div><div class="delta">—</div></div>
+    <div class="kpi-card"><i class="fas fa-coins"></i><div class="num">KES 87,414</div><div class="lbl">Tax Savings</div><div class="delta up"><i class="fas fa-arrow-up"></i> +5.1%</div></div>
+    <div class="kpi-card"><i class="fas fa-shield-alt"></i><div class="num">92%</div><div class="lbl">Compliance Score</div><div class="delta up"><i class="fas fa-arrow-up"></i> +2%</div></div>
+    <div class="kpi-card"><i class="fas fa-clock"></i><div class="num">14</div><div class="lbl">Pending e-Receipts</div><div class="delta down"><i class="fas fa-exclamation-circle"></i> Action</div></div>
+  </div>
+
+  <!-- main grid -->
+  <div class="grid-main">
+    <!-- left column -->
+    <div>
+      <!-- calculator card -->
+      <div class="card">
+        <div class="card-header">
+          <div class="icon"><i class="fas fa-calculator"></i></div>
+          <h2>Expense Calculator</h2>
+          <span class="badge">eTIMS ready</span>
         </div>
 
-        <div class="card">
-            <div class="card-header">
-                <div class="card-icon">
-                    <i class="fas fa-calculator"></i>
-                </div>
-                <h2 class="card-title">Expense Calculator</h2>
-            </div>
-
-            <div class="compliance-alert">
-                <h4><i class="fas fa-exclamation-triangle"></i> KRA Compliance Notice</h4>
-                <p>According to the new KRA tax law: <strong>NO E-RECEIPT, NO EXPENSE</strong>. All expenses must be supported by valid e-receipts integrated with eTIMS for tax deduction claims.</p>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Expense Category</label>
-                <select class="form-control">
-                    <option>Select Category</option>
-                    <option>Office Supplies</option>
-                    <option>Travel & Accommodation</option>
-                    <option>Professional Services</option>
-                    <option>Equipment & Machinery</option>
-                    <option>Marketing & Advertising</option>
-                    <option>Utilities</option>
-                    <option>Vehicle Expenses</option>
-                    <option>Other Business Expenses</option>
-                </select>
-            </div>
-
-            <div class="input-group">
-                <div class="form-group" style="flex: 1;">
-                    <label class="form-label">Expense Amount (KES)</label>
-                    <input type="number" class="form-control" placeholder="Enter amount" id="expenseAmount">
-                </div>
-                <div class="form-group" style="flex: 1;">
-                    <label class="form-label">Date of Expense</label>
-                    <input type="date" class="form-control" id="expenseDate">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Expense Description</label>
-                <input type="text" class="form-control" placeholder="Brief description of the expense">
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">VAT Included</label>
-                <select class="form-control" id="vatStatus">
-                    <option value="included">VAT Included in Amount</option>
-                    <option value="excluded">VAT Excluded from Amount</option>
-                    <option value="zero">Zero-Rated (No VAT)</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Upload e-Receipt</label>
-                <div class="receipt-upload" id="receiptUpload">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <h3>Drag & Drop e-Receipt Here</h3>
-                    <p>Supported formats: PDF, JPG, PNG (Max: 5MB)</p>
-                    <p class="btn btn-primary" style="margin-top: 15px;">
-                        <i class="fas fa-folder-open"></i> Browse Files
-                    </p>
-                </div>
-            </div>
-
-            <div class="receipt-list">
-                <div class="receipt-item">
-                    <div class="receipt-info">
-                        <div class="receipt-icon">
-                            <i class="fas fa-receipt"></i>
-                        </div>
-                        <div class="receipt-details">
-                            <h4>Office Supplies - August 2023</h4>
-                            <p>Uploaded: 25 Aug 2023 | KES 15,250</p>
-                        </div>
-                    </div>
-                    <div class="receipt-actions">
-                        <span class="receipt-status status-verified">eTIMS Verified</span>
-                        <button class="btn btn-secondary"><i class="fas fa-eye"></i></button>
-                        <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>
-
-                <div class="receipt-item">
-                    <div class="receipt-info">
-                        <div class="receipt-icon">
-                            <i class="fas fa-receipt"></i>
-                        </div>
-                        <div class="receipt-details">
-                            <h4>Business Travel - Nairobi</h4>
-                            <p>Uploaded: 18 Aug 2023 | KES 42,800</p>
-                        </div>
-                    </div>
-                    <div class="receipt-actions">
-                        <span class="receipt-status status-pending">Pending Verification</span>
-                        <button class="btn btn-secondary"><i class="fas fa-eye"></i></button>
-                        <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group" style="text-align: center; margin-top: 20px;">
-                <button class="btn btn-primary" id="calculateBtn" style="padding: 15px 30px;">
-                    <i class="fas fa-calculator"></i> Calculate Tax Deduction
-                </button>
-            </div>
+        <div class="compliance-alert">
+          <i class="fas fa-exclamation-triangle"></i>
+          <div><h4>KRA compliance notice</h4>
+          <p><strong>NO E-RECEIPT, NO EXPENSE</strong> — all expenses must be supported by verified eTIMS receipts.</p></div>
         </div>
 
-        <div class="card" id="resultsCard" style="display: none;">
-            <div class="card-header">
-                <div class="card-icon">
-                    <i class="fas fa-chart-bar"></i>
-                </div>
-                <h2 class="card-title">Tax Calculation Results</h2>
-            </div>
-
-            <div class="results-container">
-                <div class="result-card">
-                    <div class="result-label">Total Expenses</div>
-                    <div class="result-value" id="totalExpenses">KES 0</div>
-                    <div class="result-label">With Valid e-Receipts</div>
-                </div>
-                <div class="result-card">
-                    <div class="result-label">Allowable Deduction</div>
-                    <div class="result-value" id="allowableDeduction">KES 0</div>
-                    <div class="result-label">Based on KRA Rules</div>
-                </div>
-                <div class="result-card">
-                    <div class="result-label">Tax Savings</div>
-                    <div class="result-value" id="taxSavings">KES 0</div>
-                    <div class="result-label">At Your Tax Rate</div>
-                </div>
-                <div class="result-card">
-                    <div class="result-label">Compliance Score</div>
-                    <div class="result-value" id="complianceScore">0%</div>
-                    <div class="result-label">eTIMS Verified</div>
-                </div>
-            </div>
-
-            <div class="tax-breakdown">
-                <h3 style="margin-bottom: 20px;">Detailed Breakdown</h3>
-                <div class="breakdown-item">
-                    <div class="breakdown-label">Total Expenses Claimed</div>
-                    <div class="breakdown-value" id="breakdownTotal">KES 0</div>
-                </div>
-                <div class="breakdown-item">
-                    <div class="breakdown-label">Expenses with Valid e-Receipts</div>
-                    <div class="breakdown-value" id="breakdownValid">KES 0</div>
-                </div>
-                <div class="breakdown-item">
-                    <div class="breakdown-label">KRA Allowable Percentage</div>
-                    <div class="breakdown-value" id="breakdownPercentage">0%</div>
-                </div>
-                <div class="breakdown-item">
-                    <div class="breakdown-label">Your Tax Rate</div>
-                    <div class="breakdown-value" id="breakdownTaxRate">0%</div>
-                </div>
-                <div class="breakdown-item" style="font-weight: 700; border-top: 2px solid var(--dark);">
-                    <div class="breakdown-label">Net Tax Savings</div>
-                    <div class="breakdown-value" id="breakdownNetSavings">KES 0</div>
-                </div>
-            </div>
-
-            <div class="footer-actions">
-                <div class="compliance-status">
-                    <p><i class="fas fa-check-circle" style="color: var(--secondary);"></i> <strong>Compliant with KRA eTIMS requirements</strong></p>
-                    <p style="font-size: 0.9rem; color: var(--gray);">All expenses supported by valid e-receipts</p>
-                </div>
-                <div class="action-buttons">
-                    <button class="btn btn-secondary">
-                        <i class="fas fa-file-pdf"></i> Export as PDF
-                    </button>
-                    <button class="btn btn-primary">
-                        <i class="fas fa-sync-alt"></i> Recalculate
-                    </button>
-                    <button class="btn btn-success">
-                        <i class="fas fa-check"></i> Submit to KRA
-                    </button>
-                </div>
-            </div>
+        <div class="form-group">
+          <label class="form-label">Expense category</label>
+          <select class="form-select">
+            <option>Select category</option><option>Office Supplies</option><option>Travel & Accommodation</option>
+            <option>Professional Services</option><option>Equipment & Machinery</option><option>Marketing</option>
+            <option>Utilities</option><option>Vehicle</option><option>Other</option>
+          </select>
         </div>
+
+        <div class="input-group">
+          <div class="form-group"><label class="form-label">Amount (KES)</label><input type="number" class="form-control" placeholder="0.00" id="expenseAmount" value="12750" /></div>
+          <div class="form-group"><label class="form-label">Date of expense</label><input type="date" class="form-control" id="expenseDate" /></div>
+        </div>
+
+        <div class="form-group"><label class="form-label">Description</label><input type="text" class="form-control" placeholder="Brief description" value="Office stationery & supplies" /></div>
+
+        <div class="form-group">
+          <label class="form-label">VAT status</label>
+          <select class="form-select" id="vatStatus">
+            <option value="included">VAT included</option><option value="excluded">VAT excluded</option><option value="zero">Zero-rated</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Upload e-receipt</label>
+          <div class="receipt-upload" id="receiptUpload">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <h3>Drag & drop e-receipt</h3>
+            <p>PDF, JPG, PNG · max 5MB</p>
+            <span style="display:inline-block;margin-top:12px;background:var(--gold);padding:6px 22px;border-radius:40px;font-weight:600;font-size:0.7rem;color:var(--navy-deep);"><i class="fas fa-folder-open"></i> Browse</span>
+          </div>
+        </div>
+
+        <div class="receipt-list">
+          <div class="receipt-item">
+            <div class="receipt-info"><div class="receipt-icon"><i class="fas fa-receipt"></i></div><div class="receipt-details"><h4>Office Supplies Aug 2023</h4><p>Uploaded 25 Aug · KES 15,250</p></div></div>
+            <div class="receipt-actions"><span class="status-badge verified"><i class="fas fa-check"></i> eTIMS verified</span><button class="btn-icon"><i class="fas fa-eye"></i></button><button class="btn-icon danger"><i class="fas fa-trash"></i></button></div>
+          </div>
+          <div class="receipt-item">
+            <div class="receipt-info"><div class="receipt-icon"><i class="fas fa-receipt"></i></div><div class="receipt-details"><h4>Business Travel Nairobi</h4><p>Uploaded 18 Aug · KES 42,800</p></div></div>
+            <div class="receipt-actions"><span class="status-badge pending"><i class="fas fa-clock"></i> pending</span><button class="btn-icon"><i class="fas fa-eye"></i></button><button class="btn-icon danger"><i class="fas fa-trash"></i></button></div>
+          </div>
+        </div>
+
+        <div style="text-align:center;margin-top:22px;">
+          <button class="btn-primary" id="calculateBtn"><i class="fas fa-calculator"></i> Calculate tax deduction</button>
+        </div>
+      </div>
+
+      <!-- results card (hidden initially) -->
+      <div class="card" id="resultsCard" style="display:block;">
+        <div class="card-header">
+          <div class="icon"><i class="fas fa-chart-bar"></i></div>
+          <h2>Tax results</h2>
+          <span class="badge">updated</span>
+        </div>
+
+        <div class="results-container">
+          <div class="result-card"><div class="result-label">Total expenses</div><div class="result-value" id="totalExpenses">KES 342,800</div></div>
+          <div class="result-card"><div class="result-label">Allowable deduction</div><div class="result-value" id="allowableDeduction">KES 291,380</div></div>
+          <div class="result-card"><div class="result-label">Tax savings</div><div class="result-value" id="taxSavings">KES 87,414</div></div>
+          <div class="result-card"><div class="result-label">Compliance score</div><div class="result-value" id="complianceScore">92%</div></div>
+        </div>
+
+        <div class="tax-breakdown">
+          <div class="breakdown-item"><span class="breakdown-label">Total expenses claimed</span><span class="breakdown-value" id="breakdownTotal">KES 342,800</span></div>
+          <div class="breakdown-item"><span class="breakdown-label">Expenses with valid e-receipts</span><span class="breakdown-value" id="breakdownValid">KES 291,380</span></div>
+          <div class="breakdown-item"><span class="breakdown-label">KRA allowable percentage</span><span class="breakdown-value" id="breakdownPercentage">85%</span></div>
+          <div class="breakdown-item"><span class="breakdown-label">Your tax rate</span><span class="breakdown-value" id="breakdownTaxRate">30%</span></div>
+          <div class="breakdown-item" style="font-weight:700;border-top:2px solid #d5d0c5;padding-top:12px;"><span class="breakdown-label">Net tax savings</span><span class="breakdown-value" id="breakdownNetSavings">KES 87,414</span></div>
+        </div>
+
+        <div class="footer-actions">
+          <div class="compliance-status"><i class="fas fa-check-circle"></i> <strong>Compliant</strong> <span style="color:var(--ink-soft);font-size:0.8rem;">· all expenses verified via eTIMS</span></div>
+          <div class="action-buttons">
+            <button class="btn btn-secondary"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn btn-secondary"><i class="fas fa-sync-alt"></i> Recalc</button>
+            <button class="btn btn-success"><i class="fas fa-check"></i> Submit to KRA</button>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const calculateBtn = document.getElementById('calculateBtn');
-            const resultsCard = document.getElementById('resultsCard');
-            const receiptUpload = document.getElementById('receiptUpload');
-            
-            // Calculate button click handler
-            calculateBtn.addEventListener('click', function() {
-                // Get expense amount
-                const expenseAmount = parseFloat(document.getElementById('expenseAmount').value) || 0;
-                
-                // Calculate results (simplified for demo)
-                const totalExpenses = expenseAmount + 58050; // Adding existing receipts
-                const allowableDeduction = totalExpenses * 0.85; // Assuming 85% is allowable
-                const taxSavings = allowableDeduction * 0.3; // Assuming 30% tax rate
-                const complianceScore = 92; // Based on receipt verification status
-                
-                // Update results
-                document.getElementById('totalExpenses').textContent = `KES ${totalExpenses.toLocaleString()}`;
-                document.getElementById('allowableDeduction').textContent = `KES ${allowableDeduction.toLocaleString()}`;
-                document.getElementById('taxSavings').textContent = `KES ${taxSavings.toLocaleString()}`;
-                document.getElementById('complianceScore').textContent = `${complianceScore}%`;
-                
-                // Update breakdown
-                document.getElementById('breakdownTotal').textContent = `KES ${totalExpenses.toLocaleString()}`;
-                document.getElementById('breakdownValid').textContent = `KES ${totalExpenses.toLocaleString()}`;
-                document.getElementById('breakdownPercentage').textContent = '85%';
-                document.getElementById('breakdownTaxRate').textContent = '30%';
-                document.getElementById('breakdownNetSavings').textContent = `KES ${taxSavings.toLocaleString()}`;
-                
-                // Show results
-                resultsCard.style.display = 'block';
-                
-                // Scroll to results
-                resultsCard.scrollIntoView({ behavior: 'smooth' });
-            });
-            
-            // Receipt upload area interaction
-            receiptUpload.addEventListener('click', function() {
-                alert('In a real application, this would open a file browser to select e-receipts for upload.');
-            });
-            
-            // Set default date to today
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('expenseDate').value = today;
-            // tax-calculator.js - Enhanced frontend functionality
-class TaxCalculator {
-    constructor() {
-        this.apiBase = 'http://localhost:5000/api';
-        this.userId = this.getUserId();
-        this.initializeEventListeners();
+    <!-- right column -->
+    <div>
+      <!-- quick actions -->
+      <div class="card">
+        <div class="card-header"><div class="icon"><i class="fas fa-bolt"></i></div><h2>Quick actions</h2></div>
+        <div class="quick-actions">
+          <div class="qa-item"><i class="fas fa-upload"></i><h4>Upload receipt</h4><p>eTIMS integration</p></div>
+          <div class="qa-item"><i class="fas fa-file-invoice"></i><h4>View reports</h4><p>Analytics</p></div>
+          <div class="qa-item"><i class="fas fa-sync-alt"></i><h4>Sync eTIMS</h4><p>live data</p></div>
+          <div class="qa-item"><i class="fas fa-download"></i><h4>Export CSV</h4><p>tax records</p></div>
+        </div>
+      </div>
+
+      <!-- activity feed -->
+      <div class="card">
+        <div class="card-header"><div class="icon"><i class="fas fa-clock"></i></div><h2>Recent activity</h2></div>
+        <div class="activity-feed">
+          <div class="activity-item"><div class="a-icon green"><i class="fas fa-check"></i></div><div class="a-text"><h6>eTIMS verified</h6><p>Office Supplies receipt approved</p><time>2 hours ago</time></div></div>
+          <div class="activity-item"><div class="a-icon amber"><i class="fas fa-exclamation"></i></div><div class="a-text"><h6>Pending verification</h6><p>Travel receipt requires eTIMS match</p><time>5 hours ago</time></div></div>
+          <div class="activity-item"><div class="a-icon navy"><i class="fas fa-calculator"></i></div><div class="a-text"><h6>Tax calculation</h6><p>New expense added: KES 12,750</p><time>Yesterday</time></div></div>
+        </div>
+      </div>
+
+      <!-- deposit ledger (mini) -->
+      <div class="card">
+        <div class="card-header"><div class="icon"><i class="fas fa-book"></i></div><h2>Expense ledger</h2></div>
+        <div class="ledger-row"><span>Office supplies</span><b>KES 15,250</b></div>
+        <div class="ledger-row"><span>Travel Nairobi</span><b>KES 42,800</b></div>
+        <div class="ledger-row"><span>Professional fees</span><b>KES 87,500</b></div>
+        <div class="ledger-row" style="font-weight:700;border-top:2px solid #e7e4dd;padding-top:10px;"><span>Total (verified)</span><b>KES 291,380</b></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    // set default date
+    const dateInput = document.getElementById('expenseDate');
+    if(dateInput) {
+      const today = new Date().toISOString().split('T')[0];
+      dateInput.value = today;
     }
 
-    getUserId() {
-        // In a real app, this would come from authentication
-        let userId = localStorage.getItem('kra_user_id');
-        if (!userId) {
-            userId = 'demo-user-' + Date.now();
-            localStorage.setItem('kra_user_id', userId);
-        }
-        return userId;
-    }
+    // simulate calculate
+    const calcBtn = document.getElementById('calculateBtn');
+    if(calcBtn) {
+      calcBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const amount = parseFloat(document.getElementById('expenseAmount')?.value) || 0;
+        // base values from existing demo
+        const baseTotal = 342800;
+        const newTotal = baseTotal + amount;
+        const allowable = Math.round(newTotal * 0.85);
+        const savings = Math.round(allowable * 0.30);
+        const compliance = 92;
 
-    initializeEventListeners() {
-        // Calculate button
-        document.getElementById('calculateBtn').addEventListener('click', () => {
-            this.calculateTax();
-        });
+        document.getElementById('totalExpenses').textContent = 'KES ' + newTotal.toLocaleString();
+        document.getElementById('allowableDeduction').textContent = 'KES ' + allowable.toLocaleString();
+        document.getElementById('taxSavings').textContent = 'KES ' + savings.toLocaleString();
+        document.getElementById('complianceScore').textContent = compliance + '%';
 
-        // Receipt upload
-        document.getElementById('receiptUpload').addEventListener('click', () => {
-            this.triggerFileUpload();
-        });
-
-        // File input change
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.accept = '.pdf,.jpg,.jpeg,.png';
-        fileInput.style.display = 'none';
-        fileInput.addEventListener('change', (e) => {
-            this.handleFileUpload(e.target.files[0]);
-        });
-        document.body.appendChild(fileInput);
-        this.fileInput = fileInput;
-
-        // Export buttons
-        document.querySelector('.btn-secondary').addEventListener('click', () => {
-            this.exportToPDF();
-        });
-
-        document.querySelector('.btn-success').addEventListener('click', () => {
-            this.submitToKRA();
-        });
-    }
-
-    triggerFileUpload() {
-        this.fileInput.click();
-    }
-
-    async handleFileUpload(file) {
-        if (!file) return;
-
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('user_id', this.userId);
-        formData.append('amount', document.getElementById('expenseAmount').value);
-        formData.append('category', document.querySelector('select').value);
-        formData.append('description', document.querySelector('input[type="text"]').value);
-        formData.append('date', document.getElementById('expenseDate').value);
-        formData.append('vat_status', document.getElementById('vatStatus').value);
-
-        try {
-            const response = await fetch(`${this.apiBase}/upload-receipt`, {
-                method: 'POST',
-                body: formData
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                this.showNotification('Receipt uploaded successfully!', 'success');
-                this.addReceiptToList(file.name, result.receipt_id);
-            } else {
-                this.showNotification('Error uploading receipt: ' + result.error, 'error');
-            }
-        } catch (error) {
-            this.showNotification('Network error uploading receipt', 'error');
-            console.error('Upload error:', error);
-        }
-    }
-
-    addReceiptToList(filename, receiptId) {
-        const receiptList = document.querySelector('.receipt-list');
-        const receiptItem = document.createElement('div');
-        receiptItem.className = 'receipt-item';
-        receiptItem.innerHTML = `
-            <div class="receipt-info">
-                <div class="receipt-icon">
-                    <i class="fas fa-receipt"></i>
-                </div>
-                <div class="receipt-details">
-                    <h4>${filename}</h4>
-                    <p>Uploaded: ${new Date().toLocaleDateString()} | Status: Processing</p>
-                </div>
-            </div>
-            <div class="receipt-actions">
-                <span class="receipt-status status-pending">Verifying</span>
-                <button class="btn btn-secondary"><i class="fas fa-eye"></i></button>
-                <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
-            </div>
-        `;
-        receiptList.appendChild(receiptItem);
-    }
-
-    async calculateTax() {
-        const amount = parseFloat(document.getElementById('expenseAmount').value) || 0;
-
-        try {
-            const response = await fetch(`${this.apiBase}/calculate-tax`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    user_id: this.userId,
-                    new_expense_amount: amount
-                })
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                this.displayResults(result.result);
-            } else {
-                this.showNotification('Error calculating tax: ' + result.error, 'error');
-            }
-        } catch (error) {
-            this.showNotification('Network error calculating tax', 'error');
-            console.error('Calculation error:', error);
-        }
-    }
-
-    displayResults(data) {
-        // Update result cards
-        document.getElementById('totalExpenses').textContent = `KES ${data.total_expenses.toLocaleString()}`;
-        document.getElementById('allowableDeduction').textContent = `KES ${data.allowable_deduction.toLocaleString()}`;
-        document.getElementById('taxSavings').textContent = `KES ${data.tax_savings.toLocaleString()}`;
-        document.getElementById('complianceScore').textContent = `${Math.round(data.compliance_score)}%`;
-
-        // Update breakdown
-        document.getElementById('breakdownTotal').textContent = `KES ${data.total_expenses.toLocaleString()}`;
-        document.getElementById('breakdownValid').textContent = `KES ${data.breakdown.verified_expenses.toLocaleString()}`;
+        document.getElementById('breakdownTotal').textContent = 'KES ' + newTotal.toLocaleString();
+        document.getElementById('breakdownValid').textContent = 'KES ' + allowable.toLocaleString();
         document.getElementById('breakdownPercentage').textContent = '85%';
-        document.getElementById('breakdownTaxRate').textContent = `${(data.tax_rate * 100)}%`;
-        document.getElementById('breakdownNetSavings').textContent = `KES ${data.tax_savings.toLocaleString()}`;
+        document.getElementById('breakdownTaxRate').textContent = '30%';
+        document.getElementById('breakdownNetSavings').textContent = 'KES ' + savings.toLocaleString();
 
-        // Show results card
-        document.getElementById('resultsCard').style.display = 'block';
-        document.getElementById('resultsCard').scrollIntoView({ behavior: 'smooth' });
-
-        this.showNotification('Tax calculation completed successfully!', 'success');
+        // show results card if hidden
+        const resultsCard = document.getElementById('resultsCard');
+        if(resultsCard) resultsCard.style.display = 'block';
+        resultsCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
     }
 
-    async exportToPDF() {
-        try {
-            const response = await fetch(`${this.apiBase}/export-pdf`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    user_id: this.userId
-                })
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                this.showNotification('PDF exported successfully!', 'success');
-                // In a real app, this would download the file
-                console.log('PDF path:', result.pdf_path);
-            } else {
-                this.showNotification('Error exporting PDF: ' + result.error, 'error');
-            }
-        } catch (error) {
-            this.showNotification('Network error exporting PDF', 'error');
-            console.error('Export error:', error);
-        }
+    // receipt upload click interaction
+    const uploadArea = document.getElementById('receiptUpload');
+    if(uploadArea) {
+      uploadArea.addEventListener('click', function() {
+        alert('📎 eTIMS upload: browse for valid e-receipt (PDF/JPG/PNG)');
+      });
     }
 
-    async submitToKRA() {
-        // This would integrate with actual KRA submission API
-        this.showNotification('Tax submission to KRA initiated!', 'success');
-        
-        // Simulate submission process
-        setTimeout(() => {
-            this.showNotification('Tax submission completed successfully!', 'success');
-        }, 2000);
+    // demo: quick action buttons
+    document.querySelectorAll('.qa-item').forEach(item => {
+      item.addEventListener('click', function() {
+        const txt = this.querySelector('h4')?.innerText || 'action';
+        alert('⚡ ' + txt + ' — premium eTIMS feature');
+      });
+    });
+
+    // submit to KRA
+    const submitBtn = document.querySelector('.btn-success');
+    if(submitBtn) {
+      submitBtn.addEventListener('click', function() {
+        alert('✅ Tax submission to KRA initiated. eTIMS integration active.');
+      });
     }
 
-    showNotification(message, type) {
-        // Create notification element
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 20px;
-            background: ${type === 'success' ? '#34a853' : '#ea4335'};
-            color: white;
-            border-radius: 5px;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        `;
-        notification.textContent = message;
-
-        document.body.appendChild(notification);
-
-        // Remove after 3 seconds
-        setTimeout(() => {
-            notification.remove();
-        }, 3000);
+    // PDF export
+    const pdfBtn = document.querySelector('.btn-secondary .fa-file-pdf')?.closest('.btn');
+    if(pdfBtn) {
+      pdfBtn.addEventListener('click', function() {
+        alert('📄 Exporting tax report as PDF (eTIMS compliant)');
+      });
     }
-}
-
-// Initialize the tax calculator when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    new TaxCalculator();
-});
-        });
-    </script>
+  })();
+</script>
 </body>
-</html>   
+</html>

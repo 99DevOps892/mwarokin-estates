@@ -1,929 +1,952 @@
-import os
+python
+# Storage Garage - Mwarokin Self-Storage
+# Modern premium professional storage management system
+
 import json
-import logging
-import uuid
-import asyncio
-from datetime import datetime, timedelta
-from typing import Dict, List, Any, Optional, Tuple, Union
-from enum import Enum
-from functools import wraps
-import re
+import os
 import hashlib
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional, Tuple
+from dataclasses import dataclass, asdict, field
+from enum import Enum
+import re
 
-from flask import Flask, request, jsonify, render_template, session, Response
-from flask_cors import CORS
-import jwt
-from werkzeug.security import generate_password_hash, check_password_hash
-import numpy as np
-from pydantic import BaseModel, Field, validator
-import redis
+# ===================== DATA MODELS =====================
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger('mwarokin')
+class UnitStatus(Enum):
+    AVAILABLE = "available"
+    RESERVED = "reserved"
+    OCCUPIED = "occupied"
+    MAINTENANCE = "maintenance"
 
-# Initialize Flask application
-app = Flask(__name__, template_folder='templates', static_folder='static')
-app.secret_key = os.environ.get('SECRET_KEY', 'mwarokin-secure-key-2024')
-CORS(app)
+class PaymentStatus(Enum):
+    PENDING = "pending"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    REFUNDED = "refunded"
 
-# Redis for caching and session management
-redis_client = redis.Redis(
-    host=os.environ.get('REDIS_HOST', 'localhost'),
-    port=int(os.environ.get('REDIS_PORT', 6379)),
-    db=0,
-    decode_responses=True
-)
+class PaymentMethod(Enum):
+    MPESA = "mpesa"
+    CARD = "card"
+    BANK_TRANSFER = "bank_transfer"
 
-# Database simulation (in production, use PostgreSQL/MongoDB)
-class Database:
-    def __init__(self):
-        self.users = {}
-        self.properties = {}
-        self.listings = {}
-        self.tenants = {}
-        self.leads = {}
-        self.leases = {}
-        self.transactions = {}
-        self.audit_logs = []
-        
-    def log_audit(self, action: str, user_id: str, tenant_id: str, details: Dict):
-        log_entry = {
-            'id': str(uuid.uuid4()),
-            'timestamp': datetime.utcnow().isoformat(),
-            'action': action,
-            'user_id': user_id,
-            'tenant_id': tenant_id,
-            'details': details
-        }
-        self.audit_logs.append(log_entry)
-        return log_entry
-
-db = Database()
-
-# Pydantic models for type validation
-class ListingData(BaseModel):
-    title: str
-    description: str
-    property_type: str
-    location: str
-    price: float
-    currency: str = "USD"
-    status: str  # "for rent", "for sale", "for buy"
-    bedrooms: Optional[int] = None
-    bathrooms: Optional[int] = None
-    area: Optional[float] = None
-    features: List[str] = []
-    images: List[str] = []
-    coordinates: Optional[Dict[str, float]] = None
-
-class ValuationRequest(BaseModel):
-    listing_id: Optional[str] = None
-    address: Optional[str] = None
-    property_type: str
-    location: str
-    bedrooms: Optional[int] = None
-    bathrooms: Optional[int] = None
-    area: Optional[float] = None
-    features: List[str] = []
-
-class MatchmakingProfile(BaseModel):
-    budget_min: float
-    budget_max: float
-    preferred_locations: List[str]
-    property_types: List[str]
-    min_bedrooms: Optional[int] = None
-    min_bathrooms: Optional[int] = None
-    min_area: Optional[float] = None
-    must_have_features: List[str] = []
-    preferred_features: List[str] = []
-
-class LeaseTerms(BaseModel):
-    start_date: str
-    duration_months: int
-    monthly_rent: float
-    security_deposit: float
-    utilities_included: bool
-    special_terms: List[str] = []
-
-# Authentication and authorization decorators
-def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = request.headers.get('Authorization')
-        if not token or not token.startswith('Bearer '):
-            return jsonify({'message': 'Bearer token is missing'}), 401
-        
-        try:
-            token = token.split(' ')[1]
-            payload = jwt.decode(token, app.secret_key, algorithms=['HS256'])
-            current_user = db.users.get(payload['user_id'])
-            if not current_user:
-                return jsonify({'message': 'User not found'}), 401
-        except jwt.ExpiredSignatureError:
-            return jsonify({'message': 'Token has expired'}), 401
-        except jwt.InvalidTokenError:
-            return jsonify({'message': 'Invalid token'), 401
-        
-        return f(current_user, *args, **kwargs)
-    return decorated
-
-def tenant_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        tenant_id = request.headers.get('X-Tenant-ID') or request.args.get('tenant_id')
-        if not tenant_id or tenant_id not in db.tenants:
-            return jsonify({'message': 'Valid tenant ID required'}), 400
-        return f(tenant_id, *args, **kwargs)
-    return decorated
-
-def role_required(required_roles: List[str]):
-    def decorator(f):
-        @wraps(f)
-        def decorated(current_user, *args, **kwargs):
-            if current_user.get('role') not in required_roles:
-                return jsonify({'message': 'Insufficient permissions'}), 403
-            return f(current_user, *args, **kwargs)
-        return decorated
-    return decorator
-
-# Utility functions
-def validate_listing_data(data: Dict) -> Tuple[bool, List[str]]:
-    errors = []
-    required_fields = ['title', 'property_type', 'location', 'price', 'status']
+@dataclass
+class StorageUnit:
+    unit_id: str
+    unit_type: str  # Small, Medium, Large
+    floor: str  # Ground Floor, Second Floor, Third Floor, Fourth Floor
+    level: str  # Upper, Lower
+    size_sq_m: float  # floor area in square meters
+    monthly_price_kes: int
+    max_availability: int
+    current_availability: int
+    status: UnitStatus = UnitStatus.AVAILABLE
+    location: str = "SC-Mombasa Road"
+    features: List[str] = field(default_factory=list)
     
-    for field in required_fields:
-        if field not in data or not data[field]:
-            errors.append(f"Missing required field: {field}")
-    
-    valid_property_types = ['apartment', 'villa', 'house', 'office', 'building', 
-                           'townhouse', 'shop', 'flat', 'land', 'estate', 'garage']
-    if data.get('property_type') not in valid_property_types:
-        errors.append(f"Invalid property type. Must be one of: {', '.join(valid_property_types)}")
-    
-    valid_statuses = ['for rent', 'for sale', 'for buy']
-    if data.get('status') not in valid_statuses:
-        errors.append(f"Invalid status. Must be one of: {', '.join(valid_statuses)}")
-    
-    return len(errors) == 0, errors
-
-def get_tenant_context(tenant_id: str) -> Dict:
-    tenant = db.tenants.get(tenant_id, {})
-    return {
-        'tenant_id': tenant_id,
-        'branding': tenant.get('settings', {}),
-        'features': tenant.get('features', []),
-        'locale': tenant.get('settings', {}).get('locale', 'en-US'),
-        'currency': tenant.get('settings', {}).get('currency', 'USD'),
-        'compliance_rules': tenant.get('compliance_rules', {})
-    }
-
-def redact_pii(data: Dict) -> Dict:
-    """Redact personally identifiable information for logging"""
-    redacted = data.copy()
-    pii_fields = ['email', 'phone', 'ssn', 'password', 'credit_card', 'address']
-    
-    for field in pii_fields:
-        if field in redacted:
-            redacted[field] = '***REDACTED***'
-    
-    return redacted
-
-# Agent Base Class
-class BaseAgent:
-    def __init__(self, agent_name: str):
-        self.agent_name = agent_name
-        self.redis = redis_client
-    
-    def log_activity(self, action: str, tenant_id: str, details: Dict):
-        """Log agent activity for audit purposes"""
-        log_entry = {
-            'agent': self.agent_name,
-            'action': action,
-            'timestamp': datetime.utcnow().isoformat(),
-            'tenant_id': tenant_id,
-            'details': redact_pii(details)
-        }
-        self.redis.rpush(f'agent_logs:{tenant_id}', json.dumps(log_entry))
-    
-    def plan_execute_reflect(self, task: str, tenant_context: Dict, *args, **kwargs):
-        """ReAct-style planning and execution loop"""
-        # Plan phase
-        plan = self._create_plan(task, tenant_context, *args, **kwargs)
-        self.log_activity('plan_created', tenant_context['tenant_id'], {'plan': plan})
-        
-        # Execute phase
-        result = self._execute_plan(plan, tenant_context, *args, **kwargs)
-        
-        # Reflect phase
-        reflection = self._reflect_on_execution(plan, result, tenant_context)
-        self.log_activity('execution_reflection', tenant_context['tenant_id'], {'reflection': reflection})
-        
-        return result
-    
-    def _create_plan(self, task: str, tenant_context: Dict, *args, **kwargs) -> List[Dict]:
-        """Create execution plan for a task"""
-        # This would be implemented with LLM planning in a real system
-        return [{'step': 1, 'action': 'process_task', 'parameters': kwargs}]
-    
-    def _execute_plan(self, plan: List[Dict], tenant_context: Dict, *args, **kwargs) -> Any:
-        """Execute the planned steps"""
-        # Simplified implementation - real system would execute each step
-        try:
-            return self.process_task(tenant_context, *args, **kwargs)
-        except Exception as e:
-            logger.error(f"Execution failed: {str(e)}")
-            raise
-    
-    def _reflect_on_execution(self, plan: List[Dict], result: Any, tenant_context: Dict) -> Dict:
-        """Reflect on execution results and improve future plans"""
+    def to_dict(self) -> Dict:
         return {
-            'success': True,
-            'improvements': [],
-            'lessons_learned': []
+            **asdict(self),
+            "status": self.status.value
         }
     
-    def process_task(self, tenant_context: Dict, *args, **kwargs):
-        """To be implemented by specific agents"""
-        raise NotImplementedError("Subclasses must implement process_task")
+    @classmethod
+    def from_dict(cls, data: Dict) -> 'StorageUnit':
+        data = data.copy()
+        data["status"] = UnitStatus(data["status"])
+        return cls(**data)
 
-# Specialized Agents
-class ListingAgent(BaseAgent):
-    def __init__(self):
-        super().__init__('ListingAgent')
+@dataclass
+class Customer:
+    customer_id: str
+    first_name: str
+    last_name: str
+    email: str
+    phone: str
+    national_id: str
+    created_at: datetime = field(default_factory=datetime.now)
     
-    def intake(self, payload: Dict, tenant_context: Dict) -> Dict:
-        """Process property listing intake"""
-        self.log_activity('listing_intake_start', tenant_context['tenant_id'], {'payload': payload})
-        
-        # Validate input
-        is_valid, errors = validate_listing_data(payload)
-        if not is_valid:
-            return {'status': 'error', 'errors': errors}
-        
-        # Normalize and enrich data
-        normalized = self._normalize_listing_data(payload, tenant_context)
-        enriched = self._enrich_listing_data(normalized, tenant_context)
-        
-        # Validate media
-        media_report = self._validate_media(enriched.get('images', []))
-        
-        result = {
-            'status': 'success',
-            'warnings': media_report.get('warnings', []),
-            'normalized_fields': enriched,
-            'media_report': media_report
-        }
-        
-        self.log_activity('listing_intake_complete', tenant_context['tenant_id'], {'result': result})
-        return result
+    def to_dict(self) -> Dict:
+        data = asdict(self)
+        data["created_at"] = self.created_at.isoformat()
+        return data
     
-    def _normalize_listing_data(self, data: Dict, tenant_context: Dict) -> Dict:
-        """Normalize listing data to standard format"""
-        normalized = data.copy()
+    @classmethod
+    def from_dict(cls, data: Dict) -> 'Customer':
+        data = data.copy()
+        data["created_at"] = datetime.fromisoformat(data["created_at"])
+        return cls(**data)
+
+@dataclass
+class Reservation:
+    reservation_id: str
+    unit_id: str
+    customer_id: str
+    start_date: datetime
+    end_date: datetime
+    total_amount: int
+    deposit_amount: int
+    status: PaymentStatus = PaymentStatus.PENDING
+    payment_method: Optional[PaymentMethod] = None
+    created_at: datetime = field(default_factory=datetime.now)
+    
+    def to_dict(self) -> Dict:
+        data = asdict(self)
+        data["start_date"] = self.start_date.isoformat()
+        data["end_date"] = self.end_date.isoformat()
+        data["created_at"] = self.created_at.isoformat()
+        data["status"] = self.status.value
+        data["payment_method"] = self.payment_method.value if self.payment_method else None
+        return data
+    
+    @classmethod
+    def from_dict(cls, data: Dict) -> 'Reservation':
+        data = data.copy()
+        data["start_date"] = datetime.fromisoformat(data["start_date"])
+        data["end_date"] = datetime.fromisoformat(data["end_date"])
+        data["created_at"] = datetime.fromisoformat(data["created_at"])
+        data["status"] = PaymentStatus(data["status"])
+        data["payment_method"] = PaymentMethod(data["payment_method"]) if data.get("payment_method") else None
+        return cls(**data)
+
+@dataclass
+class Payment:
+    payment_id: str
+    reservation_id: str
+    amount: int
+    method: PaymentMethod
+    status: PaymentStatus
+    transaction_reference: str
+    paid_at: Optional[datetime] = None
+    created_at: datetime = field(default_factory=datetime.now)
+    
+    def to_dict(self) -> Dict:
+        data = asdict(self)
+        data["method"] = self.method.value
+        data["status"] = self.status.value
+        data["paid_at"] = self.paid_at.isoformat() if self.paid_at else None
+        data["created_at"] = self.created_at.isoformat()
+        return data
+    
+    @classmethod
+    def from_dict(cls, data: Dict) -> 'Payment':
+        data = data.copy()
+        data["method"] = PaymentMethod(data["method"])
+        data["status"] = PaymentStatus(data["status"])
+        data["paid_at"] = datetime.fromisoformat(data["paid_at"]) if data.get("paid_at") else None
+        data["created_at"] = datetime.fromisoformat(data["created_at"])
+        return cls(**data)
+
+@dataclass
+class SpaceCalculatorItem:
+    name: str
+    area_sq_m: float
+    category: str
+
+@dataclass
+class SpaceCalculatorResult:
+    total_area: float
+    recommended_unit_type: str
+    recommended_unit_size: float
+    recommended_price: int
+    items_count: Dict[str, int] = field(default_factory=dict)
+    units_matching: List[StorageUnit] = field(default_factory=list)
+
+# ===================== STORAGE MANAGER =====================
+
+class StorageGarage:
+    """Main storage management system for Mwarokin Self-Storage"""
+    
+    def __init__(self, data_dir: str = "data"):
+        self.data_dir = data_dir
+        self.units: Dict[str, StorageUnit] = {}
+        self.customers: Dict[str, Customer] = {}
+        self.reservations: Dict[str, Reservation] = {}
+        self.payments: Dict[str, Payment] = {}
         
-        # Standardize property type
-        property_type_map = {
-            'apt': 'apartment', 'flat': 'apartment', 'condo': 'apartment',
-            'villa': 'villa', 'house': 'house', 'home': 'house',
-            'office': 'office', 'commercial': 'office',
-            'land': 'land', 'plot': 'land'
+        # Room item catalog for calculator
+        self.item_catalog: Dict[str, List[SpaceCalculatorItem]] = self._init_item_catalog()
+        
+        # Ensure data directory exists
+        os.makedirs(data_dir, exist_ok=True)
+        
+        # Load existing data
+        self._load_all_data()
+        
+        # If no data, initialize with sample units
+        if not self.units:
+            self._initialize_sample_units()
+            self._save_units()
+    
+    def _init_item_catalog(self) -> Dict[str, List[SpaceCalculatorItem]]:
+        """Initialize the item catalog for space calculator"""
+        return {
+            "Living Room": [
+                SpaceCalculatorItem("Single chair", 0.6, "Living Room"),
+                SpaceCalculatorItem("Chaise", 1.4, "Living Room"),
+                SpaceCalculatorItem("Coffee table", 0.8, "Living Room"),
+                SpaceCalculatorItem("Loveseat", 1.6, "Living Room"),
+                SpaceCalculatorItem("Sofa", 2.4, "Living Room"),
+                SpaceCalculatorItem("L-shaped sofa", 3.6, "Living Room"),
+                SpaceCalculatorItem("Footstool", 0.3, "Living Room"),
+            ],
+            "Bedroom": [
+                SpaceCalculatorItem("Single bed", 2.0, "Bedroom"),
+                SpaceCalculatorItem("Double bed", 3.2, "Bedroom"),
+                SpaceCalculatorItem("Wardrobe", 1.8, "Bedroom"),
+                SpaceCalculatorItem("Chest of drawers", 1.0, "Bedroom"),
+                SpaceCalculatorItem("Bedside table", 0.3, "Bedroom"),
+                SpaceCalculatorItem("Dressing table", 1.2, "Bedroom"),
+            ],
+            "Kitchen and Dining": [
+                SpaceCalculatorItem("Dining table", 2.2, "Kitchen and Dining"),
+                SpaceCalculatorItem("Dining chair", 0.4, "Kitchen and Dining"),
+                SpaceCalculatorItem("Fridge", 1.1, "Kitchen and Dining"),
+                SpaceCalculatorItem("Cooker", 0.9, "Kitchen and Dining"),
+                SpaceCalculatorItem("Microwave", 0.3, "Kitchen and Dining"),
+                SpaceCalculatorItem("Kitchen cabinet", 1.4, "Kitchen and Dining"),
+            ],
+            "Childrens Room": [
+                SpaceCalculatorItem("Cot", 1.6, "Childrens Room"),
+                SpaceCalculatorItem("Kids bed", 1.8, "Childrens Room"),
+                SpaceCalculatorItem("Toy chest", 0.6, "Childrens Room"),
+                SpaceCalculatorItem("Study desk", 0.9, "Childrens Room"),
+                SpaceCalculatorItem("Bookshelf", 0.7, "Childrens Room"),
+            ],
+            "Home Office": [
+                SpaceCalculatorItem("Office desk", 1.2, "Home Office"),
+                SpaceCalculatorItem("Office chair", 0.5, "Home Office"),
+                SpaceCalculatorItem("Filing cabinet", 0.6, "Home Office"),
+                SpaceCalculatorItem("Bookshelf", 0.9, "Home Office"),
+                SpaceCalculatorItem("Printer stand", 0.4, "Home Office"),
+            ],
+            "Utility Room": [
+                SpaceCalculatorItem("Washing machine", 0.7, "Utility Room"),
+                SpaceCalculatorItem("Dryer", 0.7, "Utility Room"),
+                SpaceCalculatorItem("Storage shelving", 1.0, "Utility Room"),
+                SpaceCalculatorItem("Ironing board", 0.5, "Utility Room"),
+            ],
+            "Garden": [
+                SpaceCalculatorItem("Lawn mower", 1.0, "Garden"),
+                SpaceCalculatorItem("Garden table", 1.8, "Garden"),
+                SpaceCalculatorItem("Garden chair", 0.5, "Garden"),
+                SpaceCalculatorItem("Tool shed items", 1.4, "Garden"),
+                SpaceCalculatorItem("BBQ grill", 1.1, "Garden"),
+            ],
+            "Others": [
+                SpaceCalculatorItem("Boxes (medium)", 0.4, "Others"),
+                SpaceCalculatorItem("Boxes (large)", 0.6, "Others"),
+                SpaceCalculatorItem("Bicycle", 1.0, "Others"),
+                SpaceCalculatorItem("Suitcase", 0.3, "Others"),
+                SpaceCalculatorItem("Mattress", 1.9, "Others"),
+            ]
         }
-        normalized['property_type'] = property_type_map.get(
-            data['property_type'].lower(), data['property_type']
+    
+    def _initialize_sample_units(self):
+        """Initialize the storage facility with sample units"""
+        sample_units = [
+            # Small Units
+            StorageUnit("U-001", "Small Unit", "Second Floor", "Upper", 3.0, 8860, 2, 2),
+            StorageUnit("U-002", "Small Unit", "Second Floor", "Lower", 3.0, 11310, 2, 2),
+            StorageUnit("U-003", "Small Unit", "Ground Floor", "Upper", 4.0, 11813, 1, 1),
+            StorageUnit("U-004", "Small Unit", "Third Floor", "Upper", 4.0, 11813, 5, 5),
+            StorageUnit("U-005", "Small Unit", "Second Floor", "Upper", 5.0, 14766, 2, 2),
+            StorageUnit("U-006", "Small Unit", "Third Floor", "Upper", 5.0, 14766, 15, 15),
+            StorageUnit("U-007", "Small Unit", "Ground Floor", "Lower", 4.0, 15080, 2, 2),
+            StorageUnit("U-008", "Small Unit", "Second Floor", "Lower", 4.0, 15080, 1, 1),
+            StorageUnit("U-009", "Small Unit", "Third Floor", "Lower", 5.0, 18850, 5, 5),
+            StorageUnit("U-010", "Small Unit", "Fourth Floor", "Lower", 5.0, 18850, 3, 3),
+            # Medium Units
+            StorageUnit("U-011", "Medium Unit", "Second Floor", "Upper", 6.0, 17719, 1, 1),
+            StorageUnit("U-012", "Medium Unit", "Third Floor", "Upper", 6.0, 17719, 1, 1),
+            StorageUnit("U-013", "Medium Unit", "Ground Floor", "Upper", 8.0, 23600, 2, 2),
+            StorageUnit("U-014", "Medium Unit", "Second Floor", "Upper", 8.0, 23600, 1, 1),
+            StorageUnit("U-015", "Medium Unit", "Fourth Floor", "Upper", 8.0, 23600, 3, 3),
+            # Large Units
+            StorageUnit("U-016", "Large Unit", "Ground Floor", "Upper", 12.0, 35400, 2, 2),
+            StorageUnit("U-017", "Large Unit", "Second Floor", "Upper", 12.0, 35400, 1, 1),
+            StorageUnit("U-018", "Large Unit", "Third Floor", "Upper", 12.0, 35400, 3, 3),
+            StorageUnit("U-019", "Large Unit", "Ground Floor", "Upper", 16.0, 47200, 1, 1),
+            StorageUnit("U-020", "Large Unit", "Fourth Floor", "Upper", 16.0, 47200, 2, 2),
+        ]
+        
+        for unit in sample_units:
+            self.units[unit.unit_id] = unit
+    
+    # ===================== DATA PERSISTENCE =====================
+    
+    def _get_file_path(self, name: str) -> str:
+        return os.path.join(self.data_dir, f"{name}.json")
+    
+    def _save_data(self, name: str, data: Dict):
+        with open(self._get_file_path(name), "w") as f:
+            json.dump(data, f, indent=2, default=str)
+    
+    def _load_data(self, name: str) -> Dict:
+        filepath = self._get_file_path(name)
+        if os.path.exists(filepath):
+            with open(filepath, "r") as f:
+                return json.load(f)
+        return {}
+    
+    def _save_units(self):
+        data = {uid: unit.to_dict() for uid, unit in self.units.items()}
+        self._save_data("units", data)
+    
+    def _load_units(self):
+        data = self._load_data("units")
+        for uid, unit_data in data.items():
+            self.units[uid] = StorageUnit.from_dict(unit_data)
+    
+    def _save_customers(self):
+        data = {cid: customer.to_dict() for cid, customer in self.customers.items()}
+        self._save_data("customers", data)
+    
+    def _load_customers(self):
+        data = self._load_data("customers")
+        for cid, customer_data in data.items():
+            self.customers[cid] = Customer.from_dict(customer_data)
+    
+    def _save_reservations(self):
+        data = {rid: reservation.to_dict() for rid, reservation in self.reservations.items()}
+        self._save_data("reservations", data)
+    
+    def _load_reservations(self):
+        data = self._load_data("reservations")
+        for rid, reservation_data in data.items():
+            self.reservations[rid] = Reservation.from_dict(reservation_data)
+    
+    def _save_payments(self):
+        data = {pid: payment.to_dict() for pid, payment in self.payments.items()}
+        self._save_data("payments", data)
+    
+    def _load_payments(self):
+        data = self._load_data("payments")
+        for pid, payment_data in data.items():
+            self.payments[pid] = Payment.from_dict(payment_data)
+    
+    def _load_all_data(self):
+        self._load_units()
+        self._load_customers()
+        self._load_reservations()
+        self._load_payments()
+    
+    def save_all_data(self):
+        self._save_units()
+        self._save_customers()
+        self._save_reservations()
+        self._save_payments()
+    
+    # ===================== CUSTOMER MANAGEMENT =====================
+    
+    def create_customer(self, first_name: str, last_name: str, email: str, 
+                        phone: str, national_id: str) -> Customer:
+        """Create a new customer"""
+        customer_id = f"C-{datetime.now().strftime('%Y%m%d')}-{len(self.customers) + 1:04d}"
+        customer = Customer(
+            customer_id=customer_id,
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            phone=phone,
+            national_id=national_id
+        )
+        self.customers[customer_id] = customer
+        self._save_customers()
+        return customer
+    
+    def get_customer(self, customer_id: str) -> Optional[Customer]:
+        return self.customers.get(customer_id)
+    
+    def get_customer_by_email(self, email: str) -> Optional[Customer]:
+        for customer in self.customers.values():
+            if customer.email.lower() == email.lower():
+                return customer
+        return None
+    
+    def get_customer_by_phone(self, phone: str) -> Optional[Customer]:
+        for customer in self.customers.values():
+            if customer.phone == phone:
+                return customer
+        return None
+    
+    def update_customer(self, customer_id: str, **kwargs) -> Optional[Customer]:
+        customer = self.get_customer(customer_id)
+        if not customer:
+            return None
+        
+        for key, value in kwargs.items():
+            if hasattr(customer, key):
+                setattr(customer, key, value)
+        
+        self._save_customers()
+        return customer
+    
+    # ===================== UNIT MANAGEMENT =====================
+    
+    def get_available_units(self, floor: Optional[str] = None, 
+                           size_range: Optional[Tuple[float, float]] = None,
+                           unit_type: Optional[str] = None) -> List[StorageUnit]:
+        """Get available units with optional filters"""
+        available = []
+        for unit in self.units.values():
+            if unit.current_availability <= 0:
+                continue
+            if unit.status != UnitStatus.AVAILABLE:
+                continue
+            
+            if floor and unit.floor != floor:
+                continue
+            
+            if size_range:
+                min_size, max_size = size_range
+                if not (min_size <= unit.size_sq_m <= max_size):
+                    continue
+            
+            if unit_type and unit.unit_type != unit_type:
+                continue
+            
+            available.append(unit)
+        
+        # Sort by price
+        return sorted(available, key=lambda u: u.monthly_price_kes)
+    
+    def get_unit(self, unit_id: str) -> Optional[StorageUnit]:
+        return self.units.get(unit_id)
+    
+    def update_unit_availability(self, unit_id: str, delta: int) -> Optional[StorageUnit]:
+        """Update availability count by delta (positive to increase, negative to decrease)"""
+        unit = self.get_unit(unit_id)
+        if not unit:
+            return None
+        
+        new_availability = unit.current_availability + delta
+        if new_availability < 0:
+            raise ValueError(f"Not enough availability for unit {unit_id}")
+        
+        unit.current_availability = new_availability
+        if new_availability == 0:
+            unit.status = UnitStatus.OCCUPIED
+        else:
+            unit.status = UnitStatus.AVAILABLE
+        
+        self._save_units()
+        return unit
+    
+    def reserve_unit(self, unit_id: str, customer_id: str, months: int = 1) -> Optional[Reservation]:
+        """Reserve a unit for a customer"""
+        unit = self.get_unit(unit_id)
+        if not unit:
+            return None
+        
+        if unit.current_availability <= 0:
+            raise ValueError(f"Unit {unit_id} is not available")
+        
+        customer = self.get_customer(customer_id)
+        if not customer:
+            raise ValueError(f"Customer {customer_id} not found")
+        
+        # Create reservation
+        reservation_id = f"RES-{datetime.now().strftime('%Y%m%d')}-{len(self.reservations) + 1:04d}"
+        start_date = datetime.now()
+        end_date = start_date + timedelta(days=30 * months)
+        total_amount = unit.monthly_price_kes * months
+        deposit_amount = int(total_amount * 0.5)  # 50% deposit
+        
+        reservation = Reservation(
+            reservation_id=reservation_id,
+            unit_id=unit_id,
+            customer_id=customer_id,
+            start_date=start_date,
+            end_date=end_date,
+            total_amount=total_amount,
+            deposit_amount=deposit_amount,
+            status=PaymentStatus.PENDING
         )
         
-        # Standardize currency
-        normalized['currency'] = tenant_context['currency']
+        # Reduce availability
+        self.update_unit_availability(unit_id, -1)
         
-        return normalized
+        self.reservations[reservation_id] = reservation
+        self._save_reservations()
+        return reservation
     
-    def _enrich_listing_data(self, data: Dict, tenant_context: Dict) -> Dict:
-        """Enrich listing data with additional information"""
-        enriched = data.copy()
+    def cancel_reservation(self, reservation_id: str) -> bool:
+        """Cancel a reservation and restore unit availability"""
+        reservation = self.reservations.get(reservation_id)
+        if not reservation:
+            return False
         
-        # Geocoding (simplified)
-        if 'location' in data and not data.get('coordinates'):
-            enriched['coordinates'] = self._geocode_address(data['location'])
+        if reservation.status == PaymentStatus.COMPLETED:
+            raise ValueError("Cannot cancel a completed reservation")
         
-        # Add proximity scores (simplified)
-        enriched['proximity_scores'] = {
-            'transit': self._calculate_transit_score(data['location']),
-            'schools': self._calculate_school_score(data['location']),
-            'amenities': self._calculate_amenities_score(data['location'])
-        }
+        # Restore unit availability
+        self.update_unit_availability(reservation.unit_id, 1)
         
-        # Energy/green score if available
-        if data.get('features'):
-            enriched['energy_score'] = self._calculate_energy_score(data['features'])
-        
-        return enriched
+        # Update reservation status
+        reservation.status = PaymentStatus.REFUNDED
+        self._save_reservations()
+        return True
     
-    def _validate_media(self, images: List[str]) -> Dict:
-        """Validate listing images"""
-        # Simplified implementation - real system would analyze image quality
-        return {
-            'total_images': len(images),
-            'valid_images': len(images),
-            'warnings': [] if len(images) >= 3 else ['Recommend adding more images'],
-            'quality_score': 0.8  # Placeholder
-        }
+    # ===================== PAYMENT MANAGEMENT =====================
     
-    def _geocode_address(self, address: str) -> Dict[str, float]:
-        """Simulated geocoding"""
-        return {'lat': 40.7128, 'lng': -74.0060}  # Default to NYC
-    
-    def _calculate_transit_score(self, location: str) -> float:
-        """Calculate transit accessibility score"""
-        return round(np.random.uniform(0.5, 1.0), 2)
-    
-    def _calculate_school_score(self, location: str) -> float:
-        """Calculate school proximity score"""
-        return round(np.random.uniform(0.5, 1.0), 2)
-    
-    def _calculate_amenities_score(self, location: str) -> float:
-        """Calculate amenities proximity score"""
-        return round(np.random.uniform(0.5, 1.0), 2)
-    
-    def _calculate_energy_score(self, features: List[str]) -> float:
-        """Calculate energy efficiency score"""
-        green_features = ['solar_panels', 'energy_star', 'double_pane_windows', 'smart_thermostat']
-        green_count = sum(1 for feature in features if feature in green_features)
-        return round(green_count / len(green_features), 2) if green_features else 0.5
-
-class ValuationAgent(BaseAgent):
-    def __init__(self):
-        super().__init__('ValuationAgent')
-        self.comps_cache = {}
-    
-    def request(self, listing_id: Optional[str] = None, address: Optional[str] = None, 
-                tenant_context: Dict = None) -> Dict:
-        """Generate property valuation"""
-        self.log_activity('valuation_request', tenant_context['tenant_id'], 
-                         {'listing_id': listing_id, 'address': address})
+    def process_payment(self, reservation_id: str, method: PaymentMethod, 
+                       transaction_reference: str, amount: Optional[int] = None) -> Optional[Payment]:
+        """Process payment for a reservation"""
+        reservation = self.reservations.get(reservation_id)
+        if not reservation:
+            return None
         
-        # Get property data
-        property_data = self._get_property_data(listing_id, address, tenant_context)
+        if reservation.status == PaymentStatus.COMPLETED:
+            raise ValueError("Reservation already paid")
         
-        # Find comparable properties
-        comps = self._find_comparables(property_data, tenant_context)
+        payment_amount = amount or reservation.deposit_amount
+        if payment_amount > reservation.total_amount:
+            raise ValueError("Payment amount exceeds total")
         
-        # Calculate valuation
-        valuation = self._calculate_valuation(property_data, comps, tenant_context)
+        payment_id = f"PAY-{datetime.now().strftime('%Y%m%d')}-{len(self.payments) + 1:04d}"
         
-        result = {
-            'range_low': valuation['low'],
-            'range_high': valuation['high'],
-            'confidence': valuation['confidence'],
-            'comp_ids': [comp['id'] for comp in comps],
-            'reasoning': valuation['reasoning'],
-            'sources': valuation['sources']
-        }
+        payment = Payment(
+            payment_id=payment_id,
+            reservation_id=reservation_id,
+            amount=payment_amount,
+            method=method,
+            status=PaymentStatus.COMPLETED,
+            transaction_reference=transaction_reference,
+            paid_at=datetime.now()
+        )
         
-        self.log_activity('valuation_complete', tenant_context['tenant_id'], {'result': result})
+        self.payments[payment_id] = payment
+        
+        # Update reservation status
+        if payment_amount >= reservation.total_amount:
+            reservation.status = PaymentStatus.COMPLETED
+        else:
+            reservation.status = PaymentStatus.PENDING
+        
+        self._save_payments()
+        self._save_reservations()
+        return payment
+    
+    def get_payment(self, payment_id: str) -> Optional[Payment]:
+        return self.payments.get(payment_id)
+    
+    def get_reservation_payments(self, reservation_id: str) -> List[Payment]:
+        return [p for p in self.payments.values() if p.reservation_id == reservation_id]
+    
+    # ===================== SPACE CALCULATOR =====================
+    
+    def calculate_space_needed(self, items: Dict[str, int], 
+                              category: Optional[str] = None) -> SpaceCalculatorResult:
+        """
+        Calculate space needed based on selected items
+        items: Dict of item_name -> quantity
+        """
+        total_area = 0.0
+        items_count = {}
+        items_used = []
+        
+        # Filter items by category if specified
+        for cat, item_list in self.item_catalog.items():
+            if category and cat != category:
+                continue
+            
+            for item in item_list:
+                quantity = items.get(item.name, 0)
+                if quantity > 0:
+                    total_area += quantity * item.area_sq_m
+                    items_count[item.name] = quantity
+                    items_used.append(item)
+        
+        # Add 15% circulation allowance
+        total_area_with_allowance = total_area * 1.15
+        
+        # Find matching units
+        matching_units = []
+        recommended_unit = None
+        
+        for unit in self.units.values():
+            if unit.current_availability > 0 and unit.size_sq_m >= total_area_with_allowance:
+                matching_units.append(unit)
+        
+        if matching_units:
+            matching_units.sort(key=lambda u: u.size_sq_m)
+            recommended_unit = matching_units[0]
+        
+        result = SpaceCalculatorResult(
+            total_area=round(total_area_with_allowance, 1),
+            recommended_unit_type=recommended_unit.unit_type if recommended_unit else "None",
+            recommended_unit_size=recommended_unit.size_sq_m if recommended_unit else 0,
+            recommended_price=recommended_unit.monthly_price_kes if recommended_unit else 0,
+            items_count=items_count,
+            units_matching=matching_units[:5]  # Top 5 matches
+        )
+        
         return result
     
-    def _get_property_data(self, listing_id: Optional[str], address: Optional[str], 
-                          tenant_context: Dict) -> Dict:
-        """Retrieve property data from database or external sources"""
-        if listing_id and listing_id in db.listings:
-            return db.listings[listing_id]
-        elif address:
-            # Simulate property data lookup by address
-            return {
-                'property_type': 'apartment',
-                'location': address,
-                'bedrooms': 2,
-                'bathrooms': 1,
-                'area': 1000,
-                'features': ['parking', 'laundry']
+    def get_item_categories(self) -> List[str]:
+        """Get all available item categories for the calculator"""
+        return list(self.item_catalog.keys())
+    
+    def get_items_for_category(self, category: str) -> List[SpaceCalculatorItem]:
+        """Get items for a specific category"""
+        return self.item_catalog.get(category, [])
+    
+    # ===================== REPORTS AND STATISTICS =====================
+    
+    def get_facility_stats(self) -> Dict:
+        """Get overall facility statistics"""
+        total_units = len(self.units)
+        total_available = sum(1 for u in self.units.values() if u.current_availability > 0)
+        total_occupied = sum(1 for u in self.units.values() if u.current_availability == 0)
+        
+        occupied_capacity = 0
+        total_capacity = 0
+        for unit in self.units.values():
+            total_capacity += unit.max_availability
+            occupied_capacity += unit.max_availability - unit.current_availability
+        
+        occupancy_rate = (occupied_capacity / total_capacity * 100) if total_capacity > 0 else 0
+        
+        return {
+            "total_units": total_units,
+            "available_units": total_available,
+            "occupied_units": total_occupied,
+            "occupancy_rate": round(occupancy_rate, 1),
+            "total_capacity": total_capacity,
+            "occupied_capacity": occupied_capacity
+        }
+    
+    def get_revenue_report(self, start_date: Optional[datetime] = None, 
+                           end_date: Optional[datetime] = None) -> Dict:
+        """Generate revenue report for a period"""
+        if not start_date:
+            start_date = datetime.now() - timedelta(days=30)
+        if not end_date:
+            end_date = datetime.now()
+        
+        total_revenue = 0
+        completed_payments = []
+        
+        for payment in self.payments.values():
+            if payment.status == PaymentStatus.COMPLETED:
+                if payment.paid_at and start_date <= payment.paid_at <= end_date:
+                    total_revenue += payment.amount
+                    completed_payments.append(payment)
+        
+        return {
+            "period_start": start_date.isoformat(),
+            "period_end": end_date.isoformat(),
+            "total_revenue_kes": total_revenue,
+            "payment_count": len(completed_payments),
+            "average_payment": round(total_revenue / len(completed_payments), 2) if completed_payments else 0
+        }
+    
+    def get_unit_report(self) -> List[Dict]:
+        """Get detailed report on all units"""
+        report = []
+        for unit in self.units.values():
+            report.append({
+                "unit_id": unit.unit_id,
+                "type": unit.unit_type,
+                "floor": unit.floor,
+                "size_sq_m": unit.size_sq_m,
+                "monthly_price_kes": unit.monthly_price_kes,
+                "available": unit.current_availability,
+                "max_capacity": unit.max_availability,
+                "status": unit.status.value
+            })
+        return sorted(report, key=lambda x: x["monthly_price_kes"])
+    
+    # ===================== SEARCH AND FILTER =====================
+    
+    def search_units(self, query: str) -> List[StorageUnit]:
+        """Search units by type, floor, or features"""
+        query = query.lower()
+        results = []
+        for unit in self.units.values():
+            if (query in unit.unit_type.lower() or 
+                query in unit.floor.lower() or
+                query in unit.level.lower() or
+                str(unit.size_sq_m) in query):
+                results.append(unit)
+        return results
+    
+    def get_units_by_price_range(self, min_price: int, max_price: int) -> List[StorageUnit]:
+        """Get units within a price range"""
+        return [u for u in self.units.values() if min_price <= u.monthly_price_kes <= max_price]
+    
+    def get_units_by_size_range(self, min_size: float, max_size: float) -> List[StorageUnit]:
+        """Get units within a size range"""
+        return [u for u in self.units.values() if min_size <= u.size_sq_m <= max_size]
+    
+    # ===================== ADMIN FUNCTIONS =====================
+    
+    def add_unit(self, unit: StorageUnit) -> None:
+        """Add a new unit to the inventory"""
+        self.units[unit.unit_id] = unit
+        self._save_units()
+    
+    def remove_unit(self, unit_id: str) -> bool:
+        """Remove a unit from the inventory"""
+        if unit_id in self.units:
+            del self.units[unit_id]
+            self._save_units()
+            return True
+        return False
+    
+    def update_unit_price(self, unit_id: str, new_price: int) -> Optional[StorageUnit]:
+        """Update the price of a unit"""
+        unit = self.get_unit(unit_id)
+        if not unit:
+            return None
+        unit.monthly_price_kes = new_price
+        self._save_units()
+        return unit
+    
+    def update_unit_features(self, unit_id: str, features: List[str]) -> Optional[StorageUnit]:
+        """Update features of a unit"""
+        unit = self.get_unit(unit_id)
+        if not unit:
+            return None
+        unit.features = features
+        self._save_units()
+        return unit
+    
+    def get_all_customers(self) -> List[Customer]:
+        """Get all registered customers"""
+        return list(self.customers.values())
+    
+    def get_all_reservations(self) -> List[Reservation]:
+        """Get all reservations"""
+        return list(self.reservations.values())
+    
+    def get_all_payments(self) -> List[Payment]:
+        """Get all payments"""
+        return list(self.payments.values())
+    
+    def get_customer_reservations(self, customer_id: str) -> List[Reservation]:
+        """Get all reservations for a customer"""
+        return [r for r in self.reservations.values() if r.customer_id == customer_id]
+    
+    def get_customer_payments(self, customer_id: str) -> List[Payment]:
+        """Get all payments for a customer"""
+        customer_reservations = self.get_customer_reservations(customer_id)
+        reservation_ids = {r.reservation_id for r in customer_reservations}
+        return [p for p in self.payments.values() if p.reservation_id in reservation_ids]
+
+# ===================== COMMAND LINE INTERFACE =====================
+
+def main():
+    """Command line interface for Storage Garage"""
+    storage = StorageGarage()
+    
+    while True:
+        print("\n" + "=" * 50)
+        print("STORAGE GARAGE - Mwarokin Self-Storage")
+        print("=" * 50)
+        print("1. View available units")
+        print("2. Create customer")
+        print("3. Reserve unit")
+        print("4. Process payment")
+        print("5. View facility statistics")
+        print("6. Space calculator")
+        print("7. View revenue report")
+        print("8. Search units")
+        print("9. Exit")
+        print("-" * 50)
+        
+        choice = input("Enter your choice: ").strip()
+        
+        if choice == "1":
+            # View available units
+            floor = input("Filter by floor (or press Enter for all): ").strip() or None
+            units = storage.get_available_units(floor=floor)
+            if not units:
+                print("\nNo available units found.")
+            else:
+                print(f"\n{'Unit ID':<10} {'Type':<15} {'Floor':<15} {'Size':<8} {'Price':<12} {'Available':<10}")
+                print("-" * 80)
+                for u in units[:20]:
+                    print(f"{u.unit_id:<10} {u.unit_type:<15} {u.floor:<15} {u.size_sq_m:<8.1f} KES {u.monthly_price_kes:<8} {u.current_availability:<10}")
+        
+        elif choice == "2":
+            # Create customer
+            print("\n--- Create New Customer ---")
+            first_name = input("First name: ").strip()
+            last_name = input("Last name: ").strip()
+            email = input("Email: ").strip()
+            phone = input("Phone: ").strip()
+            national_id = input("National ID: ").strip()
+            
+            try:
+                customer = storage.create_customer(first_name, last_name, email, phone, national_id)
+                print(f"\n✅ Customer created successfully!")
+                print(f"Customer ID: {customer.customer_id}")
+                print(f"Name: {customer.first_name} {customer.last_name}")
+            except Exception as e:
+                print(f"\n❌ Error: {e}")
+        
+        elif choice == "3":
+            # Reserve unit
+            print("\n--- Reserve a Unit ---")
+            customer_id = input("Customer ID: ").strip()
+            customer = storage.get_customer(customer_id)
+            if not customer:
+                print("❌ Customer not found.")
+                continue
+            
+            unit_id = input("Unit ID: ").strip()
+            unit = storage.get_unit(unit_id)
+            if not unit:
+                print("❌ Unit not found.")
+                continue
+            
+            months = input("Number of months (default 1): ").strip()
+            months = int(months) if months else 1
+            
+            try:
+                reservation = storage.reserve_unit(unit_id, customer_id, months)
+                if reservation:
+                    print(f"\n✅ Reservation created successfully!")
+                    print(f"Reservation ID: {reservation.reservation_id}")
+                    print(f"Unit: {unit.unit_type} ({unit.size_sq_m}m²)")
+                    print(f"Total: KES {reservation.total_amount:,}")
+                    print(f"Deposit: KES {reservation.deposit_amount:,}")
+                    print(f"Payment Status: {reservation.status.value}")
+            except Exception as e:
+                print(f"\n❌ Error: {e}")
+        
+        elif choice == "4":
+            # Process payment
+            print("\n--- Process Payment ---")
+            reservation_id = input("Reservation ID: ").strip()
+            reservation = storage.reservations.get(reservation_id)
+            if not reservation:
+                print("❌ Reservation not found.")
+                continue
+            
+            print(f"\nReservation: {reservation.reservation_id}")
+            print(f"Unit: {storage.get_unit(reservation.unit_id).unit_type}")
+            print(f"Total Amount: KES {reservation.total_amount:,}")
+            print(f"Deposit: KES {reservation.deposit_amount:,}")
+            
+            method_input = input("Payment Method (mpesa/card/bank_transfer): ").strip().lower()
+            method_map = {
+                "mpesa": PaymentMethod.MPESA,
+                "card": PaymentMethod.CARD,
+                "bank_transfer": PaymentMethod.BANK_TRANSFER
             }
+            method = method_map.get(method_input)
+            if not method:
+                print("❌ Invalid payment method.")
+                continue
+            
+            amount_input = input("Amount to pay (or press Enter for deposit amount): ").strip()
+            amount = int(amount_input) if amount_input else reservation.deposit_amount
+            
+            transaction_ref = input("Transaction reference: ").strip()
+            if not transaction_ref:
+                print("❌ Transaction reference required.")
+                continue
+            
+            try:
+                payment = storage.process_payment(reservation_id, method, transaction_ref, amount)
+                if payment:
+                    print(f"\n✅ Payment processed successfully!")
+                    print(f"Payment ID: {payment.payment_id}")
+                    print(f"Amount: KES {payment.amount:,}")
+                    print(f"Status: {payment.status.value}")
+            except Exception as e:
+                print(f"\n❌ Error: {e}")
+        
+        elif choice == "5":
+            # Facility statistics
+            stats = storage.get_facility_stats()
+            print("\n--- Facility Statistics ---")
+            print(f"Total Units: {stats['total_units']}")
+            print(f"Available Units: {stats['available_units']}")
+            print(f"Occupied Units: {stats['occupied_units']}")
+            print(f"Occupancy Rate: {stats['occupancy_rate']}%")
+            print(f"Total Capacity: {stats['total_capacity']}")
+            print(f"Occupied Capacity: {stats['occupied_capacity']}")
+        
+        elif choice == "6":
+            # Space calculator
+            print("\n--- Space Calculator ---")
+            print("Available categories:")
+            categories = storage.get_item_categories()
+            for i, cat in enumerate(categories, 1):
+                print(f"{i}. {cat}")
+            
+            cat_choice = input("Select category (number or press Enter for all): ").strip()
+            if cat_choice:
+                try:
+                    idx = int(cat_choice) - 1
+                    category = categories[idx]
+                except:
+                    category = None
+            else:
+                category = None
+            
+            if category:
+                items = storage.get_items_for_category(category)
+                print(f"\nItems in {category}:")
+                for item in items:
+                    print(f"  - {item.name} ({item.area_sq_m}m²)")
+            else:
+                print("\nAll categories will be searched.")
+            
+            item_selections = {}
+            print("\nEnter quantities for items (press Enter to finish):")
+            while True:
+                item_name = input("Item name (or 'done' to finish): ").strip()
+                if item_name.lower() == 'done' or not item_name:
+                    break
+                qty = input(f"Quantity for {item_name}: ").strip()
+                if qty and qty.isdigit():
+                    item_selections[item_name] = int(qty)
+            
+            if item_selections:
+                result = storage.calculate_space_needed(item_selections, category)
+                print(f"\n--- Space Calculator Results ---")
+                print(f"Total area needed: {result.total_area}m²")
+                print(f"Recommended unit: {result.recommended_unit_type}")
+                print(f"Unit size: {result.recommended_unit_size}m²")
+                print(f"Monthly price: KES {result.recommended_price:,}")
+                if result.units_matching:
+                    print("\nMatching units:")
+                    for u in result.units_matching[:3]:
+                        print(f"  - {u.unit_id}: {u.unit_type} ({u.size_sq_m}m²) - KES {u.monthly_price_kes:,}/month")
+        
+        elif choice == "7":
+            # Revenue report
+            print("\n--- Revenue Report ---")
+            days = input("Number of days to look back (default 30): ").strip()
+            days = int(days) if days else 30
+            start_date = datetime.now() - timedelta(days=days)
+            
+            report = storage.get_revenue_report(start_date)
+            print(f"\nPeriod: {report['period_start']} to {report['period_end']}")
+            print(f"Total Revenue: KES {report['total_revenue_kes']:,}")
+            print(f"Payment Count: {report['payment_count']}")
+            print(f"Average Payment: KES {report['average_payment']:,.2f}")
+        
+        elif choice == "8":
+            # Search units
+            query = input("Search query: ").strip()
+            if query:
+                results = storage.search_units(query)
+                print(f"\nFound {len(results)} matching units:")
+                for u in results[:10]:
+                    print(f"  - {u.unit_id}: {u.unit_type} ({u.size_sq_m}m²) - Floor: {u.floor} - KES {u.monthly_price_kes:,}")
+        
+        elif choice == "9":
+            print("\nThank you for using Storage Garage!")
+            break
+        
         else:
-            raise ValueError("Either listing_id or address must be provided")
-    
-    def _find_comparables(self, property_data: Dict, tenant_context: Dict) -> List[Dict]:
-        """Find comparable properties using RAG and similarity search"""
-        cache_key = f"comps:{hashlib.md5(json.dumps(property_data).encode()).hexdigest()}"
-        
-        if cache_key in self.comps_cache:
-            return self.comps_cache[cache_key]
-        
-        # Simulated comparable search
-        comps = []
-        for i in range(3):
-            comps.append({
-                'id': f"comp_{i}",
-                'price': property_data.get('price', 100000) * (0.8 + 0.4 * np.random.random()),
-                'location': property_data['location'],
-                'property_type': property_data['property_type'],
-                'bedrooms': property_data.get('bedrooms', 2),
-                'bathrooms': property_data.get('bathrooms', 1),
-                'area': property_data.get('area', 1000) * (0.9 + 0.2 * np.random.random()),
-                'similarity_score': round(0.7 + 0.3 * np.random.random(), 2)
-            })
-        
-        self.comps_cache[cache_key] = comps
-        return comps
-    
-    def _calculate_valuation(self, property_data: Dict, comps: List[Dict], 
-                           tenant_context: Dict) -> Dict:
-        """Calculate property valuation based on comparables"""
-        if not comps:
-            return {
-                'low': property_data.get('price', 100000) * 0.8,
-                'high': property_data.get('price', 100000) * 1.2,
-                'confidence': 0.5,
-                'reasoning': 'Limited comparable data available',
-                'sources': ['internal_estimation']
-            }
-        
-        prices = [comp['price'] for comp in comps]
-        avg_price = sum(prices) / len(prices)
-        
-        # Adjust based on property features
-        adjustment = self._calculate_feature_adjustment(property_data, comps)
-        adjusted_price = avg_price * adjustment
-        
-        confidence = min(0.9, 0.5 + 0.1 * len(comps))  # Higher confidence with more comps
-        
-        return {
-            'low': adjusted_price * 0.9,
-            'high': adjusted_price * 1.1,
-            'confidence': confidence,
-            'reasoning': f'Based on {len(comps)} comparable properties with adjustment for features',
-            'sources': [f'comp_{i}' for i in range(len(comps))]
-        }
-    
-    def _calculate_feature_adjustment(self, property_data: Dict, comps: List[Dict]) -> float:
-        """Calculate price adjustment based on features"""
-        base_adjustment = 1.0
-        feature_values = {
-            'parking': 1.05,
-            'laundry': 1.02,
-            'garden': 1.08,
-            'pool': 1.15,
-            'gym': 1.07
-        }
-        
-        for feature in property_data.get('features', []):
-            if feature in feature_values:
-                base_adjustment *= feature_values[feature]
-        
-        return base_adjustment
+            print("Invalid choice. Please try again.")
 
-class MatchmakingAgent(BaseAgent):
-    def __init__(self):
-        super().__init__('MatchmakingAgent')
-    
-    def request(self, profile: Dict, tenant_context: Dict) -> List[Dict]:
-        """Match properties to user profile"""
-        self.log_activity('matchmaking_request', tenant_context['tenant_id'], {'profile': profile})
-        
-        # Get available listings
-        available_listings = [
-            listing for listing in db.listings.values() 
-            if listing.get('tenant_id') == tenant_context['tenant_id'] 
-            and listing.get('status') in ['for rent', 'for sale']
-        ]
-        
-        # Calculate matches
-        matches = []
-        for listing in available_listings:
-            score = self._calculate_match_score(profile, listing)
-            if score > 0.5:  # Minimum threshold
-                matches.append({
-                    'listing_id': listing['id'],
-                    'score': score,
-                    'explanation': self._generate_explanation(profile, listing, score)
-                })
-        
-        # Sort by score and deduplicate
-        matches.sort(key=lambda x: x['score'], reverse=True)
-        matches = self._deduplicate_matches(matches)
-        
-        self.log_activity('matchmaking_complete', tenant_context['tenant_id'], 
-                         {'matches_count': len(matches)})
-        return matches
-    
-    def _calculate_match_score(self, profile: Dict, listing: Dict) -> float:
-        """Calculate match score between profile and listing"""
-        score = 0.0
-        total_weight = 0
-        
-        # Budget match
-        if 'budget_min' in profile and 'budget_max' in profile:
-            price = listing.get('price', 0)
-            if profile['budget_min'] <= price <= profile['budget_max']:
-                score += 0.4
-            total_weight += 0.4
-        
-        # Location match
-        if 'preferred_locations' in profile and listing.get('location'):
-            if listing['location'] in profile['preferred_locations']:
-                score += 0.3
-            total_weight += 0.3
-        
-        # Property type match
-        if 'property_types' in profile and listing.get('property_type'):
-            if listing['property_type'] in profile['property_types']:
-                score += 0.2
-            total_weight += 0.2
-        
-        # Features match
-        if 'must_have_features' in profile and listing.get('features'):
-            must_have_matches = sum(1 for feature in profile['must_have_features'] 
-                                  if feature in listing['features'])
-            if must_have_matches == len(profile['must_have_features']):
-                score += 0.1
-            total_weight += 0.1
-        
-        return score / total_weight if total_weight > 0 else 0
-    
-    def _generate_explanation(self, profile: Dict, listing: Dict, score: float) -> str:
-        """Generate human-readable explanation for the match"""
-        explanations = []
-        
-        if 'budget_min' in profile and 'budget_max' in profile:
-            price = listing.get('price', 0)
-            if profile['budget_min'] <= price <= profile['budget_max']:
-                explanations.append("Within your budget range")
-        
-        if 'preferred_locations' in profile and listing.get('location'):
-            if listing['location'] in profile['preferred_locations']:
-                explanations.append("In your preferred location")
-        
-        return "; ".join(explanations) if explanations else "Basic match based on available criteria"
-    
-    def _deduplicate_matches(self, matches: List[Dict]) -> List[Dict]:
-        """Remove duplicate matches for the same property"""
-        seen = set()
-        deduped = []
-        for match in matches:
-            if match['listing_id'] not in seen:
-                seen.add(match['listing_id'])
-                deduped.append(match)
-        return deduped
-
-class LeadCRMAgent(BaseAgent):
-    def __init__(self):
-        super().__init__('LeadCRMAgent')
-    
-    def capture_lead(self, lead_data: Dict, tenant_context: Dict) -> Dict:
-        """Capture and process new lead"""
-        self.log_activity('lead_capture', tenant_context['tenant_id'], {'lead_data': lead_data})
-        
-        # Validate lead data
-        validation_result = self._validate_lead_data(lead_data, tenant_context)
-        if not validation_result['valid']:
-            return {'status': 'error', 'errors': validation_result['errors']}
-        
-        # Score lead (BANT-like methodology)
-        score = self._score_lead(lead_data, tenant_context)
-        
-        # Route lead to appropriate agent/broker
-        routing = self._route_lead(lead_data, score, tenant_context)
-        
-        # Handle GDPR compliance if applicable
-        compliance = self._handle_compliance(lead_data, tenant_context)
-        
-        result = {
-            'lead_id': str(uuid.uuid4()),
-            'score': score,
-            'routing': routing,
-            'compliance_status': compliance,
-            'next_steps': self._generate_next_steps(score, routing)
-        }
-        
-        # Store lead
-        db.leads[result['lead_id']] = {
-            **lead_data,
-            **result,
-            'tenant_id': tenant_context['tenant_id'],
-            'created_at': datetime.utcnow().isoformat()
-        }
-        
-        self.log_activity('lead_processed', tenant_context['tenant_id'], {'result': result})
-        return result
-    
-    def _validate_lead_data(self, lead_data: Dict, tenant_context: Dict) -> Dict:
-        """Validate lead information"""
-        errors = []
-        required_fields = ['contact_info', 'name']
-        
-        for field in required_fields:
-            if field not in lead_data or not lead_data[field]:
-                errors.append(f"Missing required field: {field}")
-        
-        return {'valid': len(errors) == 0, 'errors': errors}
-    
-    def _score_lead(self, lead_data: Dict, tenant_context: Dict) -> float:
-        """Score lead using BANT-like methodology"""
-        score = 0.0
-        
-        # Budget (30%)
-        if lead_data.get('budget'):
-            score += 0.3
-        
-        # Authority (25%)
-        if lead_data.get('decision_maker', False):
-            score += 0.25
-        
-        # Need (25%)
-        if lead_data.get('urgency') == 'high':
-            score += 0.25
-        
-        # Timeline (20%)
-        if lead_data.get('timeline') == 'immediate':
-            score += 0.2
-        
-        return round(score, 2)
-    
-    def _route_lead(self, lead_data: Dict, score: float, tenant_context: Dict) -> Dict:
-        """Route lead to appropriate agent or broker"""
-        # Simplified routing logic
-        if score >= 0.7:
-            route_to = 'top_agent'
-        elif score >= 0.4:
-            route_to = 'regular_agent'
-        else:
-            route_to = 'automated_followup'
-        
-        return {
-            'assigned_to': route_to,
-            'priority': 'high' if score >= 0.7 else 'medium' if score >= 0.4 else 'low',
-            'sla_hours': 4 if score >= 0.7 else 24 if score >= 0.4 else 72
-        }
-    
-    def _handle_compliance(self, lead_data: Dict, tenant_context: Dict) -> Dict:
-        """Handle GDPR and other compliance requirements"""
-        compliance_rules = tenant_context.get('compliance_rules', {})
-        status = {'gdpr_compliant': False, 'opt_in_verified': False}
-        
-        if compliance_rules.get('gdpr_enabled', False):
-            status['gdpr_compliant'] = lead_data.get('gdpr_consent', False)
-        
-        if compliance_rules.get('require_opt_in', False):
-            status['opt_in_verified'] = lead_data.get('opt_in', False)
-        
-        return status
-    
-    def _generate_next_steps(self, score: float, routing: Dict) -> List[str]:
-        """Generate recommended next steps"""
-        steps = []
-        
-        if score >= 0.7:
-            steps.extend(['Immediate phone call', 'Schedule viewing within 24 hours'])
-        elif score >= 0.4:
-            steps.extend(['Email follow-up', 'Send property recommendations'])
-        else:
-            steps.extend(['Add to newsletter', 'Nurture campaign'])
-        
-        steps.append(f"SLA: {routing['sla_hours']} hours")
-        return steps
-
-class LeaseAgent(BaseAgent):
-    def __init__(self):
-        super().__init__('LeaseAgent')
-    
-    def create_draft(self, listing_id: str, applicant_id: str, terms: Dict, 
-                    tenant_context: Dict) -> Dict:
-        """Create lease draft document"""
-        self.log_activity('lease_draft_start', tenant_context['tenant_id'], 
-                         {'listing_id': listing_id, 'applicant_id': applicant_id})
-        
-        # Validate inputs
-        if listing_id not in db.listings:
-            return {'status': 'error', 'message': 'Listing not found'}
-        
-        # Generate lease clauses
-        clauses = self._generate_lease_clauses(terms, tenant_context)
-        
-        # Create payment schedule
-        schedule = self._create_payment_schedule(terms, tenant_context)
-        
-        # Assess risks
-        risks = self._assess_lease_risks(applicant_id, terms, tenant_context)
-        
-        result = {
-            'clauses': clauses,
-            'schedule': schedule,
-            'risks': risks,
-            'document_id': str(uuid.uuid4()),
-            'status': 'draft'
-        }
-        
-        # Store lease draft
-        db.leases[result['document_id']] = {
-            **result,
-            'listing_id': listing_id,
-            'applicant_id': applicant_id,
-            'tenant_id': tenant_context['tenant_id'],
-            'created_at': datetime.utcnow().isoformat()
-        }
-        
-        self.log_activity('lease_draft_complete', tenant_context['tenant_id'], {'result': result})
-        return result
-    
-    def _generate_lease_clauses(self, terms: Dict, tenant_context: Dict) -> List[Dict]:
-        """Generate standard and custom lease clauses"""
-        clauses = []
-        
-        # Standard clauses
-        standard_clauses = [
-            {'type': 'rent', 'content': f'Monthly rent: {terms.get("monthly_rent", 0)}'},
-            {'type': 'duration', 'content': f'Lease term: {terms.get("duration_months", 12)} months'},
-            {'type': 'security_deposit', 'content': f'Security deposit: {terms.get("security_deposit", 0)}'},
-            {'type': 'utilities', 'content': 'Utilities included: ' + 
-             ('Yes' if terms.get('utilities_included', False) else 'No')}
-        ]
-        
-        clauses.extend(standard_clauses)
-        
-        # Custom clauses based on special terms
-        for special_term in terms.get('special_terms', []):
-            clauses.append({'type': 'custom', 'content': special_term})
-        
-        return clauses
-    
-    def _create_payment_schedule(self, terms: Dict, tenant_context: Dict) -> List[Dict]:
-        """Create payment schedule for the lease"""
-        schedule = []
-        start_date = datetime.strptime(terms['start_date'], '%Y-%m-%d')
-        monthly_rent = terms.get('monthly_rent', 0)
-        
-        for month in range(terms.get('duration_months', 12)):
-            due_date = start_date + timedelta(days=30 * month)
-            schedule.append({
-                'due_date': due_date.strftime('%Y-%m-%d'),
-                'amount': monthly_rent,
-                'type': 'rent',
-                'status': 'pending'
-            })
-        
-        # Add security deposit as first payment
-        schedule.insert(0, {
-            'due_date': start_date.strftime('%Y-%m-%d'),
-            'amount': terms.get('security_deposit', 0),
-            'type': 'security_deposit',
-            'status': 'pending'
-        })
-        
-        return schedule
-    
-    def _assess_lease_risks(self, applicant_id: str, terms: Dict, tenant_context: Dict) -> List[Dict]:
-        """Assess potential risks for the lease agreement"""
-        risks = []
-        
-        # Financial risk assessment
-        if terms.get('monthly_rent', 0) > 0.3 * 50000:  # Simplified income assumption
-            risks.append({
-                'type': 'financial',
-                'severity': 'medium',
-                'description': 'Rent may be high relative to typical income levels',
-                'mitigation': 'Request income verification'
-            })
-        
-        # Lease term risk
-        if terms.get('duration_months', 12) < 6:
-            risks.append({
-                'type': 'term',
-                'severity': 'low',
-                'description': 'Short lease term may lead to quick turnover',
-                'mitigation': 'Consider longer term or renewal incentives'
-            })
-        
-        return risks
-
-# Initialize agent instances
-agents = {
-    'listing': ListingAgent(),
-    'valuation': ValuationAgent(),
-    'matchmaking': MatchmakingAgent(),
-    'lead_crm': LeadCRMAgent(),
-    'lease': LeaseAgent()
-}
-
-# API Routes
-@app.route('/')
-def index():
-    """Serve the main landing page"""
-    return render_template('index.html')
-
-@app.route('/api/auth/register', methods=['POST'])
-def register():
-    """User registration endpoint"""
-    try:
-        data = request.get_json()
-        
-        if not data or not data.get('email') or not data.get('password'):
-            return jsonify({'message': 'Email and password required'}), 400
-        
-        if data['email'] in db.users:
-            return jsonify({'message': 'User already exists'}), 409
-        
-        # Create new user
-        user_id = str(uuid.uuid4())
-        db.users[data['email']] = {
-            'id': user_id,
-            'email': data['email'],
-            'password': generate_password_hash(data['password']),
-            'role': data.get('role', 'user'),
-            'tenant_id': data.get('tenant_id', 'default'),
-            'created_at': datetime.utcnow().isoformat()
-        }
-        
-        # Generate JWT token
-        token = jwt.encode({
-            'user_id': user_id,
-            'exp': datetime.utcnow() + timedelta(hours=24)
-        }, app.secret_key, algorithm='HS256')
-        
-        # Log audit event
-        db.log_audit('user_registration', user_id, data.get('tenant_id', 'default'), 
-                    {'action': 'new_user_created'})
-        
-        return jsonify({
-            'message': 'User created successfully',
-            'token': token,
-            'user_id': user_id
-        }), 201
-        
-    except Exception as e:
-        logger.error(f"Registration error: {str(e)}")
-        return jsonify({'message': 'Internal server error'}), 500
-
-@app.route('/api/auth/login', methods['POST'])
-def login():
-    """User login endpoint"""
-    try:
-        data = request.get_json()
-        
-        if not data or not data.get('email') or not data.get('password'):
-            return jsonify({'message': 'Email and password required'}), 400
-        
-        user = db.users.get(data['email'])
-        if not user or not check_password_hash(user['password'], data['password']):
-            return jsonify({'message': 'Invalid credentials'}), 401
-        
-        # Generate JWT token
-        token = jwt.encode({
-            'user_id': user['id'],
-            'exp': datetime.utcnow() + timedelta(hours=24)
-        }, app.secret_key, algorithm='HS256')
-        
-        # Log audit event
-        db.log_audit('user_login', user['id'], user.get('tenant_id', 'default'), 
-                    {'action': 'user_logged_in'})
-        
-        return jsonify({
-            'message': 'Login successful',
-            'token': token,
-            'user_id': user['id'],
-            'role': user['role']
-        }), 200
-        
-    except Exception as e:
-        logger.error(f"Login error: {str(e)}")
-        return jsonify({'message': 'Internal server error'}), 500
-
-@app.route('/api/listings', methods=['POST'])
-@token_required
-@tenant_required
-def create_listing(current_user, tenant_id):
-    """Create a new property listing"""
-    try:
-        data = request.get_json()
-        
-        # Validate listing data
-        is_valid, errors = validate_listing_data(data)
-        if not is_valid:
-            return jsonify({'message': 'Validation failed', 'errors': errors}), 400
-        
-        # Create listing with ListingAgent
-        tenant_context = get_tenant_context(tenant_id)
-        listing_result = agents['listing'].intake(data, tenant_context)
-        
-        if listing_result['status'] != 'success':
-            return jsonify({
-                'message': 'Listing creation failed',
-                'warnings': listing_result.get('warnings', [])
-            }), 400
-        
-        # Store the listing
-        listing_id = str(uuid.uuid4())
-        listing_data = {
-            'id': listing_id,
-            'tenant_id': tenant_id,
-            'created_by': current_user['id'],
-            'created_at': datetime.utcnow().isoformat(),
-            **listing_result['normalized_fields']
-        }
-        db.listings[listing_id] = listing_data
-        db.log_audit('listing_created', current_user['id'], tenant_id, 
-                    {'listing_id': listing_id})
-        return jsonify({'message': 'Listing created successfully', 'listing_id': listing_id}), 201  
-    except Exception as e:
-        logger.error(f"Create listing error: {str(e)}")
-        return jsonify({'message': 'Internal server error'}), 500
-@app.route('/api/valuation', methods=['POST'])
-@token_required
+if __name__ == "__main__":
+    main()

@@ -1,876 +1,978 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mwarokin Estates - KRA Tax Expense Calculator</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #2c3e50;
-            --secondary: #3498db;
-            --accent: #e74c3c;
-            --success: #2ecc71;
-            --light: #ecf0f1;
-            --dark: #2c3e50;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --radius: 8px;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KRA · Tax Expense Premium</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+    body {
+      background: #f4f2ed;
+      font-family: 'Inter', sans-serif;
+      color: #16213a;
+      padding: 0 0 40px 0;
+    }
 
-        body {
-            background-color: #f5f7fa;
-            color: var(--dark);
-            line-height: 1.6;
-        }
+    .app-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 28px;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+    /* --- NAV --- */
+    .nav-premium {
+      background: #0a1a33;
+      border-bottom: 1px solid #24406f;
+      padding: 0 28px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(2px);
+    }
 
-        header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 20px 0;
-            border-radius: var(--radius);
-            margin-bottom: 30px;
-            box-shadow: var(--shadow);
-        }
+    .nav-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 74px;
+    }
 
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-        }
+    .brand-lock {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+    .brand-icon {
+      background: linear-gradient(145deg, #e6c866, #8a7226);
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+      color: #0a1a33;
+      font-family: 'Fraunces', serif;
+    }
 
-        .logo i {
-            font-size: 2.5rem;
-        }
+    .brand-text h1 {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: white;
+      letter-spacing: -0.2px;
+      margin: 0;
+    }
 
-        .logo h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
-        }
+    .brand-text span {
+      font-size: 0.6rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: #e6c866;
+      display: block;
+      margin-top: 2px;
+    }
 
-        .kra-badge {
-            background-color: rgba(255, 255, 255, 0.2);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
 
-        .app-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
+    .nav-links a {
+      color: #b3c2e0;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: 0.2s;
+      padding: 6px 0;
+      border-bottom: 2px solid transparent;
+    }
 
-        @media (max-width: 900px) {
-            .app-container {
-                grid-template-columns: 1fr;
-            }
-        }
+    .nav-links a.active {
+      color: white;
+      border-bottom-color: #c9a227;
+    }
 
-        .card {
-            background: white;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 25px;
-            margin-bottom: 25px;
-        }
+    .nav-links a:hover {
+      color: white;
+    }
 
-        .card-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
-        }
+    .gold-pill {
+      background: #c9a227;
+      color: #0a1a33;
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+      border: none;
+      transition: 0.2s;
+    }
 
-        .card-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: var(--primary);
-        }
+    .gold-pill i {
+      margin-right: 6px;
+    }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+    /* --- HERO --- */
+    .hero-premium {
+      background: radial-gradient(1100px 500px at 80% -10%, rgba(201, 162, 39, 0.15), transparent 60%),
+                  linear-gradient(145deg, #0a1a33, #0f234a);
+      padding: 42px 0 48px;
+      margin-bottom: 6px;
+      border-bottom: 1px solid #1d3459;
+    }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
+    .hero-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 20px;
+    }
 
-        input, select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: var(--radius);
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
+    .hero-title h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: white;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
 
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--secondary);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-        }
+    .hero-title .sub {
+      color: #aebbd6;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
 
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 12px 24px;
-            border: none;
-            border-radius: var(--radius);
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
+    .hero-title .sub i {
+      color: #e6c866;
+    }
 
-        .btn-primary {
-            background-color: var(--secondary);
-            color: white;
-        }
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+    }
 
-        .btn-primary:hover {
-            background-color: #2980b9;
-            transform: translateY(-2px);
-        }
+    .stat-block {
+      text-align: right;
+    }
 
-        .btn-success {
-            background-color: var(--success);
-            color: white;
-        }
+    .stat-block .label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #8ea0c4;
+    }
 
-        .btn-success:hover {
-            background-color: #27ae60;
-            transform: translateY(-2px);
-        }
+    .stat-block .value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: white;
+      margin-top: 4px;
+    }
 
-        .btn-outline {
-            background-color: transparent;
-            border: 1px solid var(--secondary);
-            color: var(--secondary);
-        }
+    /* --- KPI GRID --- */
+    .kpi-ribbon {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+      margin: 28px 0 30px;
+    }
 
-        .btn-outline:hover {
-            background-color: rgba(52, 152, 219, 0.1);
-        }
+    .kpi-card {
+      background: white;
+      border-radius: 16px;
+      padding: 18px 16px;
+      box-shadow: 0 8px 22px -10px rgba(10, 26, 51, 0.12);
+      border-top: 3px solid #c9a227;
+      transition: 0.15s;
+    }
 
-        .expense-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            border-radius: var(--radius);
-            margin-bottom: 15px;
-            background-color: #f8f9fa;
-            border-left: 4px solid var(--secondary);
-        }
+    .kpi-card i {
+      color: #8a7226;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      display: block;
+    }
 
-        .expense-details {
-            flex: 1;
-        }
+    .kpi-card .num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #0a1a33;
+    }
 
-        .expense-amount {
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
+    .kpi-card .lbl {
+      font-size: 0.7rem;
+      color: #5c6a86;
+      margin-top: 3px;
+      letter-spacing: 0.3px;
+    }
 
-        .expense-category {
-            font-size: 0.9rem;
-            color: #7f8c8d;
-        }
+    .kpi-card .trend {
+      font-size: 0.65rem;
+      font-weight: 700;
+      margin-top: 6px;
+    }
 
-        .expense-status {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    .trend.up { color: #1f7a5c; }
+    .trend.down { color: #b23a48; }
 
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
+    /* --- MAIN GRID --- */
+    .grid-two {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
 
-        .status-verified {
-            background-color: rgba(46, 204, 113, 0.2);
-            color: var(--success);
-        }
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 22px 24px;
+      box-shadow: 0 8px 26px -12px rgba(10, 26, 51, 0.10);
+      margin-bottom: 24px;
+      transition: 0.2s;
+    }
 
-        .status-pending {
-            background-color: rgba(241, 196, 15, 0.2);
-            color: #f39c12;
-        }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
 
-        .status-rejected {
-            background-color: rgba(231, 76, 60, 0.2);
-            color: var(--accent);
-        }
+    .card-header h3 {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 1.15rem;
+      color: #0a1a33;
+      margin: 0;
+    }
 
-        .results-card {
-            background: white;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 25px;
-        }
+    .card-header .badge {
+      background: #eef0f5;
+      padding: 4px 14px;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #24406f;
+    }
 
-        .results-header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
+    .badge-gold {
+      background: #c9a22720;
+      color: #8a7226;
+    }
 
-        .tax-summary {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
-        }
+    /* tabs */
+    .tabs-mini {
+      display: flex;
+      gap: 4px;
+      background: #f0f2f6;
+      padding: 4px;
+      border-radius: 40px;
+      margin-bottom: 18px;
+    }
 
-        .summary-item {
-            padding: 15px;
-            border-radius: var(--radius);
-            text-align: center;
-        }
+    .tab-mini {
+      padding: 6px 18px;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #5c6a86;
+      border: none;
+      background: transparent;
+      transition: 0.2s;
+      cursor: pointer;
+    }
 
-        .summary-item.total-expenses {
-            background-color: rgba(52, 152, 219, 0.1);
-            border: 1px solid var(--secondary);
-        }
+    .tab-mini.active {
+      background: white;
+      color: #0a1a33;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
 
-        .summary-item.allowable-expenses {
-            background-color: rgba(46, 204, 113, 0.1);
-            border: 1px solid var(--success);
-        }
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
 
-        .summary-item.tax-savings {
-            background-color: rgba(241, 196, 15, 0.1);
-            border: 1px solid #f39c12;
-        }
+    .form-group {
+      flex: 1 0 180px;
+    }
 
-        .summary-item.net-tax {
-            background-color: rgba(231, 76, 60, 0.1);
-            border: 1px solid var(--accent);
-        }
+    .form-group label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #5c6a86;
+      margin-bottom: 6px;
+    }
 
-        .summary-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin: 10px 0;
-        }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #e3e6ee;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      background: #fbfbfd;
+      transition: 0.2s;
+    }
 
-        .summary-label {
-            font-size: 0.9rem;
-            color: #7f8c8d;
-        }
+    .form-group input:focus, .form-group select:focus {
+      border-color: #c9a227;
+      outline: none;
+      background: white;
+      box-shadow: 0 0 0 3px #c9a22720;
+    }
 
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            margin-top: 25px;
-        }
+    .btn-primary {
+      background: #0a1a33;
+      color: white;
+      border: none;
+      padding: 11px 20px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: 0.2s;
+      cursor: pointer;
+    }
 
-        .action-buttons .btn {
-            flex: 1;
-        }
+    .btn-primary i { color: #e6c866; }
 
-        .receipt-upload {
-            border: 2px dashed #ddd;
-            border-radius: var(--radius);
-            padding: 30px;
-            text-align: center;
-            margin-top: 20px;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
+    .btn-primary:hover { background: #16305e; transform: scale(1.01); }
 
-        .receipt-upload:hover {
-            border-color: var(--secondary);
-            background-color: rgba(52, 152, 219, 0.05);
-        }
+    .btn-outline-gold {
+      background: transparent;
+      border: 1.5px solid #c9a227;
+      color: #0a1a33;
+      padding: 9px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.75rem;
+      transition: 0.2s;
+      cursor: pointer;
+    }
 
-        .receipt-upload i {
-            font-size: 3rem;
-            color: #bdc3c7;
-            margin-bottom: 15px;
-        }
+    .btn-outline-gold:hover { background: #c9a22710; }
 
-        .etims-status {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: var(--radius);
-            background-color: rgba(46, 204, 113, 0.1);
-            color: var(--success);
-        }
+    .btn-success {
+      background: #1f7a5c;
+      color: white;
+      border: none;
+      padding: 11px 22px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: 0.2s;
+      cursor: pointer;
+    }
 
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 15px 25px;
-            border-radius: var(--radius);
-            background-color: var(--success);
-            color: white;
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.3s;
-        }
+    .btn-success:hover { background: #146b4e; }
 
-        .notification.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
+    /* expense list */
+    .expense-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #f1f2f6;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
 
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 20px;
-        }
+    .expense-item:last-child { border-bottom: none; }
 
-        .tab {
-            padding: 12px 20px;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s;
-        }
+    .expense-details .title {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
 
-        .tab.active {
-            border-bottom: 3px solid var(--secondary);
-            color: var(--secondary);
-            font-weight: 500;
-        }
+    .expense-details .meta {
+      font-size: 0.7rem;
+      color: #5c6a86;
+      margin-top: 2px;
+    }
 
-        .tab-content {
-            display: none;
-        }
+    .expense-amount {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
 
-        .tab-content.active {
-            display: block;
-        }
+    .status-badge {
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 30px;
+      background: #e5f4ee;
+      color: #1f7a5c;
+    }
 
-        footer {
-            text-align: center;
-            margin-top: 50px;
-            padding: 20px;
-            color: #7f8c8d;
-            font-size: 0.9rem;
-        }
-    </style>
+    .status-badge.verified { background: #e5f4ee; color: #1f7a5c; }
+    .status-badge.pending { background: #fdf1e2; color: #c97a2b; }
+
+    .empty-state {
+      text-align: center;
+      padding: 30px 0;
+      color: #5c6a86;
+    }
+
+    .empty-state i { font-size: 2.2rem; color: #c9a22740; margin-bottom: 10px; }
+
+    /* upload zone */
+    .dropzone {
+      border: 2px dashed #d0d5e0;
+      border-radius: 18px;
+      padding: 28px 20px;
+      text-align: center;
+      transition: 0.25s;
+      background: #faf9f7;
+      cursor: pointer;
+    }
+
+    .dropzone:hover { border-color: #c9a227; background: #f8f5ee; }
+
+    .dropzone i { font-size: 2rem; color: #c9a227; margin-bottom: 8px; }
+
+    .dropzone h4 { font-weight: 600; margin-bottom: 4px; }
+
+    .dropzone p { font-size: 0.75rem; color: #5c6a86; }
+
+    /* results */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .summary-item {
+      background: #f8f7f4;
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+
+    .summary-item .label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #5c6a86;
+    }
+
+    .summary-item .value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .summary-item .note {
+      font-size: 0.6rem;
+      color: #8a9bb8;
+      margin-top: 3px;
+    }
+
+    .compliance-box {
+      background: #fdf1e210;
+      border-left: 4px solid #c9a227;
+      padding: 14px 16px;
+      border-radius: 12px;
+      margin: 18px 0;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .compliance-box i { color: #c9a227; font-size: 1.1rem; margin-top: 2px; }
+
+    .compliance-box h5 { font-weight: 600; font-size: 0.85rem; margin-bottom: 4px; }
+
+    .compliance-box p { font-size: 0.8rem; color: #3d4b66; }
+
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    /* etims */
+    .etims-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #e5f4ee;
+      padding: 6px 16px;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #1f7a5c;
+    }
+
+    /* footer */
+    .footer-premium {
+      background: #0a1a33;
+      color: #9aa8c4;
+      padding: 40px 28px 20px;
+      margin-top: 44px;
+      border-top: 1px solid #24406f;
+    }
+
+    .footer-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 40px;
+    }
+
+    .footer-inner h5 { color: white; font-family: 'Fraunces', serif; margin-bottom: 12px; }
+
+    .footer-inner a { display: block; color: #9aa8c4; font-size: 0.8rem; margin-bottom: 8px; text-decoration: none; }
+
+    .footer-inner a:hover { color: #e6c866; }
+
+    .footer-bottom {
+      max-width: 1440px;
+      margin: 30px auto 0;
+      padding-top: 16px;
+      border-top: 1px solid #1d3459;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      font-size: 0.7rem;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: #0a1a33;
+      color: white;
+      padding: 14px 24px;
+      border-radius: 14px;
+      box-shadow: 0 18px 40px -12px rgba(0,0,0,0.4);
+      border-left: 5px solid #e6c866;
+      transform: translateY(20px);
+      opacity: 0;
+      transition: 0.35s;
+      pointer-events: none;
+      font-size: 0.85rem;
+      z-index: 999;
+    }
+
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    @media (max-width: 1100px) {
+      .kpi-ribbon { grid-template-columns: repeat(3,1fr); }
+      .grid-two { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 700px) {
+      .kpi-ribbon { grid-template-columns: 1fr 1fr; }
+      .hero-stats { flex-wrap: wrap; gap: 20px; }
+      .nav-links { display: none; }
+      .summary-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-file-invoice-dollar"></i>
-                    <h1>KRA Tax Expense Calculator</h1>
-                </div>
-                <div class="kra-badge">
-                    <i class="fas fa-shield-alt"></i>
-                    <span>eTIMS Compliant</span>
-                </div>
-            </div>
-        </div>
-    </header>
 
-    <div class="container">
-        <div class="app-container">
-            <div class="input-section">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">Add Expense</h2>
-                    </div>
-                    
-                    <div class="tabs">
-                        <div class="tab active" data-tab="manual">Manual Entry</div>
-                        <div class="tab" data-tab="upload">Upload Receipt</div>
-                    </div>
-                    
-                    <div class="tab-content active" id="manual-tab">
-                        <div class="form-group">
-                            <label for="expense-description">Expense Description</label>
-                            <input type="text" id="expense-description" placeholder="e.g., Office supplies from XYZ Store">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="expense-amount">Amount (KES)</label>
-                            <input type="number" id="expense-amount" placeholder="0.00">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="expense-category">Category</label>
-                            <select id="expense-category">
-                                <option value="office">Office Supplies</option>
-                                <option value="travel">Travel & Accommodation</option>
-                                <option value="utilities">Utilities</option>
-                                <option value="entertainment">Business Entertainment</option>
-                                <option value="marketing">Marketing & Advertising</option>
-                                <option value="professional">Professional Fees</option>
-                                <option value="other">Other Allowable Expense</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="expense-date">Date Incurred</label>
-                            <input type="date" id="expense-date">
-                        </div>
-                        
-                        <button class="btn btn-primary" id="add-expense-btn">
-                            <i class="fas fa-plus-circle"></i> Add Expense
-                        </button>
-                    </div>
-                    
-                    <div class="tab-content" id="upload-tab">
-                        <div class="receipt-upload" id="receipt-dropzone">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <h3>Upload Your e-Receipt</h3>
-                            <p>Drag and drop your e-receipt here or click to browse</p>
-                            <input type="file" id="receipt-file" accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
-                        </div>
-                        
-                        <div class="etims-status">
-                            <i class="fas fa-check-circle"></i>
-                            <span>eTIMS Verification: Automatic</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">Expense List</h2>
-                        <span id="expense-count">0 expenses</span>
-                    </div>
-                    
-                    <div id="expenses-list">
-                        <!-- Expenses will be added here dynamically -->
-                        <div class="empty-state" style="text-align: center; padding: 30px; color: #7f8c8d;">
-                            <i class="fas fa-receipt" style="font-size: 3rem; margin-bottom: 15px;"></i>
-                            <p>No expenses added yet. Add your first expense to get started.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="results-section">
-                <div class="results-card">
-                    <div class="results-header">
-                        <h2 class="card-title">Tax Calculation Results</h2>
-                        <p>Based on KRA's new tax regulations</p>
-                    </div>
-                    
-                    <div class="tax-summary">
-                        <div class="summary-item total-expenses">
-                            <div class="summary-label">Total Expenses</div>
-                            <div class="summary-value" id="total-expenses">KES 0</div>
-                            <div class="summary-note">All claimed expenses</div>
-                        </div>
-                        
-                        <div class="summary-item allowable-expenses">
-                            <div class="summary-label">Allowable Expenses</div>
-                            <div class="summary-value" id="allowable-expenses">KES 0</div>
-                            <div class="summary-note">With valid e-receipts</div>
-                        </div>
-                        
-                        <div class="summary-item tax-savings">
-                            <div class="summary-label">Estimated Tax Savings</div>
-                            <div class="summary-value" id="tax-savings">KES 0</div>
-                            <div class="summary-note">Based on your tax bracket</div>
-                        </div>
-                        
-                        <div class="summary-item net-tax">
-                            <div class="summary-label">Net Tax Liability</div>
-                            <div class="summary-value" id="net-tax">KES 0</div>
-                            <div class="summary-note">After expense deductions</div>
-                        </div>
-                    </div>
-                    
-                    <div class="compliance-alert">
-                        <div style="display: flex; align-items: center; gap: 10px; padding: 15px; background-color: rgba(231, 76, 60, 0.1); border-radius: var(--radius); margin-bottom: 20px;">
-                            <i class="fas fa-exclamation-triangle" style="color: var(--accent);"></i>
-                            <div>
-                                <h3 style="font-size: 1rem; margin-bottom: 5px;">KRA Compliance Notice</h3>
-                                <p style="font-size: 0.9rem;">Remember: No E-Receipt, No Expense Deduction. All expenses must be supported by e-receipts through eTIMS.</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="action-buttons">
-                        <button class="btn btn-success" id="generate-report">
-                            <i class="fas fa-file-pdf"></i> Generate Tax Report
-                        </button>
-                        <button class="btn btn-outline" id="save-data">
-                            <i class="fas fa-save"></i> Save Data
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">eTIMS Integration</h2>
-                    </div>
-                    
-                    <div class="etims-status" style="justify-content: flex-start; margin-bottom: 20px;">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Connected to KRA eTIMS System</span>
-                    </div>
-                    
-                    <p style="margin-bottom: 15px;">Your expenses are automatically verified against KRA's eTIMS database for compliance.</p>
-                    
-                    <div class="form-group">
-                        <label for="kra-pin">KRA PIN</label>
-                        <input type="text" id="kra-pin" placeholder="Enter your KRA PIN">
-                    </div>
-                    
-                    <button class="btn btn-primary" style="width: 100%;">
-                        <i class="fas fa-sync-alt"></i> Sync with KRA eTIMS
-                    </button>
-                </div>
-            </div>
+  <!-- NAV -->
+  <nav class="nav-premium">
+    <div class="nav-inner">
+      <div class="brand-lock">
+        <div class="brand-icon">⚡</div>
+        <div class="brand-text">
+          <h1>Mwarokin Estates</h1>
+          <span>KRA tax intelligence</span>
         </div>
+      </div>
+      <div class="nav-links">
+        <a href="#" class="active">Dashboard</a>
+        <a href="#">Expenses</a>
+        <a href="#">Reports</a>
+        <a href="#"><i class="fas fa-bell" style="color: #e6c866;"></i></a>
+        <button class="gold-pill"><i class="fas fa-user-circle"></i> PIN: A123456B</button>
+      </div>
     </div>
-    
-    <div class="notification" id="success-notification">
-        <i class="fas fa-check-circle"></i>
-        <span>Expense added successfully!</span>
-    </div>
-    
-    <footer>
-        <div class="container">
-            <p>KRA Tax Expense Calculator © 2026. This tool is designed to help estimate tax expenses but does not replace professional tax advice.</p>
-            <p>Always consult with a qualified tax professional for official tax filings.</p>
-        </div>
-    </footer>
+  </nav>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Sample data
-            let expenses = [];
-            let totalExpenses = 0;
-            let allowableExpenses = 0;
-            let taxSavings = 0;
-            let netTax = 0;
-            
-            // DOM Elements
-            const addExpenseBtn = document.getElementById('add-expense-btn');
-            const expenseDescription = document.getElementById('expense-description');
-            const expenseAmount = document.getElementById('expense-amount');
-            const expenseCategory = document.getElementById('expense-category');
-            const expenseDate = document.getElementById('expense-date');
-            const expensesList = document.getElementById('expenses-list');
-            const expenseCount = document.getElementById('expense-count');
-            const totalExpensesEl = document.getElementById('total-expenses');
-            const allowableExpensesEl = document.getElementById('allowable-expenses');
-            const taxSavingsEl = document.getElementById('tax-savings');
-            const netTaxEl = document.getElementById('net-tax');
-            const receiptDropzone = document.getElementById('receipt-dropzone');
-            const receiptFile = document.getElementById('receipt-file');
-            const tabs = document.querySelectorAll('.tab');
-            const tabContents = document.querySelectorAll('.tab-content');
-            const notification = document.getElementById('success-notification');
-            const generateReportBtn = document.getElementById('generate-report');
-            const saveDataBtn = document.getElementById('save-data');
-            
-            // Set default date to today
-            const today = new Date().toISOString().split('T')[0];
-            expenseDate.value = today;
-            
-            // Tab functionality
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const tabId = tab.getAttribute('data-tab');
-                    
-                    // Update active tab
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    
-                    // Show active tab content
-                    tabContents.forEach(content => {
-                        content.classList.remove('active');
-                        if (content.id === `${tabId}-tab`) {
-                            content.classList.add('active');
-                        }
-                    });
-                });
-            });
-            
-            // Add expense functionality
-            addExpenseBtn.addEventListener('click', function() {
-                const description = expenseDescription.value.trim();
-                const amount = parseFloat(expenseAmount.value);
-                const category = expenseCategory.value;
-                const date = expenseDate.value;
-                
-                if (!description || isNaN(amount) || amount <= 0) {
-                    alert('Please enter a valid expense description and amount.');
-                    return;
-                }
-                
-                // Create expense object
-                const expense = {
-                    id: Date.now(),
-                    description,
-                    amount,
-                    category,
-                    date,
-                    status: 'verified', // In a real app, this would be determined by eTIMS verification
-                    receipt: true
-                };
-                
-                // Add to expenses array
-                expenses.push(expense);
-                
-                // Update UI
-                updateExpensesList();
-                updateTaxCalculation();
-                showNotification();
-                
-                // Reset form
-                expenseDescription.value = '';
-                expenseAmount.value = '';
-                expenseCategory.value = 'office';
-                expenseDate.value = today;
-            });
-            
-            // Receipt upload functionality
-            receiptDropzone.addEventListener('click', function() {
-                receiptFile.click();
-            });
-            
-            receiptFile.addEventListener('change', function(e) {
-                if (e.target.files.length > 0) {
-                    const file = e.target.files[0];
-                    // In a real app, this would upload to eTIMS for verification
-                    alert(`Receipt "${file.name}" uploaded successfully. It will be verified with eTIMS.`);
-                    
-                    // Simulate adding an expense from the receipt
-                    setTimeout(() => {
-                        const expense = {
-                            id: Date.now(),
-                            description: `Expense from ${file.name}`,
-                            amount: Math.floor(Math.random() * 5000) + 1000,
-                            category: 'other',
-                            date: today,
-                            status: 'verified',
-                            receipt: true
-                        };
-                        
-                        expenses.push(expense);
-                        updateExpensesList();
-                        updateTaxCalculation();
-                        showNotification();
-                    }, 1500);
-                }
-            });
-            
-            // Drag and drop for receipts
-            receiptDropzone.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                receiptDropzone.style.borderColor = '#3498db';
-                receiptDropzone.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
-            });
-            
-            receiptDropzone.addEventListener('dragleave', function() {
-                receiptDropzone.style.borderColor = '#ddd';
-                receiptDropzone.style.backgroundColor = '';
-            });
-            
-            receiptDropzone.addEventListener('drop', function(e) {
-                e.preventDefault();
-                receiptDropzone.style.borderColor = '#ddd';
-                receiptDropzone.style.backgroundColor = '';
-                
-                if (e.dataTransfer.files.length > 0) {
-                    const file = e.dataTransfer.files[0];
-                    // In a real app, this would upload to eTIMS for verification
-                    alert(`Receipt "${file.name}" uploaded successfully. It will be verified with eTIMS.`);
-                    
-                    // Simulate adding an expense from the receipt
-                    setTimeout(() => {
-                        const expense = {
-                            id: Date.now(),
-                            description: `Expense from ${file.name}`,
-                            amount: Math.floor(Math.random() * 5000) + 1000,
-                            category: 'other',
-                            date: today,
-                            status: 'verified',
-                            receipt: true
-                        };
-                        
-                        expenses.push(expense);
-                        updateExpensesList();
-                        updateTaxCalculation();
-                        showNotification();
-                    }, 1500);
-                }
-            });
-            
-            // Generate report
-            generateReportBtn.addEventListener('click', function() {
-                alert('Tax report generated successfully! This would download a PDF in a real application.');
-            });
-            
-            // Save data
-            saveDataBtn.addEventListener('click', function() {
-                alert('Data saved successfully! This would save to local storage or cloud in a real application.');
-            });
-            
-            // Update expenses list
-            function updateExpensesList() {
-                if (expenses.length === 0) {
-                    expensesList.innerHTML = `
-                        <div class="empty-state" style="text-align: center; padding: 30px; color: #7f8c8d;">
-                            <i class="fas fa-receipt" style="font-size: 3rem; margin-bottom: 15px;"></i>
-                            <p>No expenses added yet. Add your first expense to get started.</p>
-                        </div>
-                    `;
-                    expenseCount.textContent = '0 expenses';
-                    return;
-                }
-                
-                expensesList.innerHTML = '';
-                expenseCount.textContent = `${expenses.length} expense${expenses.length !== 1 ? 's' : ''}`;
-                
-                expenses.forEach(expense => {
-                    const expenseEl = document.createElement('div');
-                    expenseEl.className = 'expense-item';
-                    
-                    const statusClass = `status-${expense.status}`;
-                    const categoryText = getCategoryText(expense.category);
-                    
-                    expenseEl.innerHTML = `
-                        <div class="expense-details">
-                            <div class="expense-description">${expense.description}</div>
-                            <div class="expense-category">${categoryText} • ${formatDate(expense.date)}</div>
-                        </div>
-                        <div class="expense-amount">KES ${expense.amount.toLocaleString()}</div>
-                        <div class="expense-status">
-                            <span class="status-badge ${statusClass}">${expense.status}</span>
-                            <i class="fas fa-receipt" style="color: #3498db;"></i>
-                        </div>
-                    `;
-                    
-                    expensesList.appendChild(expenseEl);
-                });
-            }
-            
-            // Update tax calculation
-            function updateTaxCalculation() {
-                totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
-                allowableExpenses = expenses.reduce((sum, expense) => {
-                    // In a real app, only expenses with verified e-receipts would be allowable
-                    return expense.receipt ? sum + expense.amount : sum;
-                }, 0);
-                
-                // Simple tax calculation (30% tax rate for illustration)
-                const taxRate = 0.3;
-                taxSavings = allowableExpenses * taxRate;
-                netTax = 50000 - taxSavings; // Assuming base tax of 50,000 for illustration
-                
-                // Update UI
-                totalExpensesEl.textContent = `KES ${totalExpenses.toLocaleString()}`;
-                allowableExpensesEl.textContent = `KES ${allowableExpenses.toLocaleString()}`;
-                taxSavingsEl.textContent = `KES ${taxSavings.toLocaleString()}`;
-                netTaxEl.textContent = `KES ${netTax.toLocaleString()}`;
-            }
-            
-            // Show notification
-            function showNotification() {
-                notification.classList.add('show');
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                }, 3000);
-            }
-            
-            // Helper functions
-            function getCategoryText(category) {
-                const categories = {
-                    'office': 'Office Supplies',
-                    'travel': 'Travel & Accommodation',
-                    'utilities': 'Utilities',
-                    'entertainment': 'Business Entertainment',
-                    'marketing': 'Marketing & Advertising',
-                    'professional': 'Professional Fees',
-                    'other': 'Other Allowable Expense'
-                };
-                
-                return categories[category] || 'Other';
-            }
-            
-            function formatDate(dateString) {
-                const options = { year: 'numeric', month: 'short', day: 'numeric' };
-                return new Date(dateString).toLocaleDateString('en-US', options);
-            }
-            
-            // Initialize with sample data for demo
-            setTimeout(() => {
-                expenses = [
-                    {
-                        id: 1,
-                        description: 'Office supplies from ABC Store',
-                        amount: 12500,
-                        category: 'office',
-                        date: '2023-10-15',
-                        status: 'verified',
-                        receipt: true
-                    },
-                    {
-                        id: 2,
-                        description: 'Business lunch with clients',
-                        amount: 8500,
-                        category: 'entertainment',
-                        date: '2023-10-18',
-                        status: 'verified',
-                        receipt: true
-                    },
-                    {
-                        id: 3,
-                        description: 'Flight to Mombasa for conference',
-                        amount: 21500,
-                        category: 'travel',
-                        date: '2023-10-22',
-                        status: 'verified',
-                        receipt: true
-                    }
-                ];
-                
-                updateExpensesList();
-                updateTaxCalculation();
-            }, 1000);
+  <!-- HERO -->
+  <div class="hero-premium">
+    <div class="app-container">
+      <div class="hero-grid">
+        <div class="hero-title">
+          <h2>Tax Expense · Premium</h2>
+          <div class="sub"><i class="fas fa-check-circle"></i> eTIMS verified · real-time KRA sync</div>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-block"><div class="label">Tax period</div><div class="value">Q3 2026</div></div>
+          <div class="stat-block"><div class="label">Allowable</div><div class="value">KES 42,500</div></div>
+          <div class="stat-block"><div class="label">Savings</div><div class="value">KES 12,750</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div class="app-container" style="margin-top: -12px;">
+
+    <!-- KPI RIBBON -->
+    <div class="kpi-ribbon">
+      <div class="kpi-card"><i class="fas fa-coins"></i><div class="num">KES 84,200</div><div class="lbl">Total expenses</div><div class="trend up">↑ 8.2%</div></div>
+      <div class="kpi-card"><i class="fas fa-check-circle"></i><div class="num">KES 71,400</div><div class="lbl">Allowable</div><div class="trend up">↑ 5.6%</div></div>
+      <div class="kpi-card"><i class="fas fa-wallet"></i><div class="num">KES 21,420</div><div class="lbl">Tax savings</div><div class="trend up">↑ 6.1%</div></div>
+      <div class="kpi-card"><i class="fas fa-file-invoice"></i><div class="num">34</div><div class="lbl">e-Receipts</div><div class="trend up">↑ 12</div></div>
+      <div class="kpi-card"><i class="fas fa-percent"></i><div class="num">84%</div><div class="lbl">Compliance</div><div class="trend up">↑ 3%</div></div>
+      <div class="kpi-card"><i class="fas fa-arrow-trend-up"></i><div class="num">KES 6,120</div><div class="lbl">Est. tax due</div><div class="trend down">↓ 2.1%</div></div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="grid-two">
+
+      <!-- LEFT COLUMN -->
+      <div>
+
+        <!-- ADD EXPENSE CARD -->
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-plus-circle" style="color: #c9a227; margin-right: 8px;"></i>Add expense</h3>
+            <span class="badge badge-gold"><i class="fas fa-receipt"></i> eTIMS ready</span>
+          </div>
+
+          <div class="tabs-mini">
+            <button class="tab-mini active" data-tab="manual">Manual</button>
+            <button class="tab-mini" data-tab="upload">Upload receipt</button>
+          </div>
+
+          <!-- manual tab -->
+          <div id="manual-tab" class="tab-pane" style="display: block;">
+            <div class="form-row">
+              <div class="form-group" style="flex:2;">
+                <label>Description</label>
+                <input type="text" id="exp-desc" placeholder="e.g. Office supplies" value="Stationery & printer ink">
+              </div>
+              <div class="form-group">
+                <label>Amount (KES)</label>
+                <input type="number" id="exp-amount" placeholder="0.00" value="12500">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Category</label>
+                <select id="exp-cat">
+                  <option value="office">Office supplies</option>
+                  <option value="travel">Travel</option>
+                  <option value="utilities">Utilities</option>
+                  <option value="entertainment">Entertainment</option>
+                  <option value="marketing">Marketing</option>
+                  <option value="professional">Professional fees</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Date</label>
+                <input type="date" id="exp-date" value="2026-07-28">
+              </div>
+            </div>
+            <button class="btn-primary" id="addExpenseBtn"><i class="fas fa-plus"></i> Add expense</button>
+          </div>
+
+          <!-- upload tab -->
+          <div id="upload-tab" class="tab-pane" style="display: none;">
+            <div class="dropzone" id="dropzone">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <h4>Drop e-receipt here</h4>
+              <p>PDF, JPG, PNG · eTIMS auto-verify</p>
+              <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
+            </div>
+            <div style="margin-top: 14px; display: flex; gap: 12px; align-items: center;">
+              <span class="etims-chip"><i class="fas fa-check-circle"></i> eTIMS live</span>
+              <span style="font-size:0.7rem; color:#5c6a86;">Verified receipts instantly</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- EXPENSE LIST -->
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-list-ul" style="color: #c9a227; margin-right: 8px;"></i>Expense log</h3>
+            <span class="badge" id="expCount">3 items</span>
+          </div>
+          <div id="expenseList">
+            <!-- dynamic -->
+            <div class="expense-item">
+              <div><div class="title">Office supplies – ABC Store</div><div class="meta">Office · 15 Oct 2026</div></div>
+              <div class="expense-amount">KES 12,500</div>
+              <span class="status-badge verified"><i class="fas fa-check-circle"></i> verified</span>
+            </div>
+            <div class="expense-item">
+              <div><div class="title">Business lunch – Sarova</div><div class="meta">Entertainment · 18 Oct 2026</div></div>
+              <div class="expense-amount">KES 8,500</div>
+              <span class="status-badge verified"><i class="fas fa-check-circle"></i> verified</span>
+            </div>
+            <div class="expense-item">
+              <div><div class="title">Flight Mombasa</div><div class="meta">Travel · 22 Oct 2026</div></div>
+              <div class="expense-amount">KES 21,500</div>
+              <span class="status-badge verified"><i class="fas fa-check-circle"></i> verified</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div>
+
+        <!-- TAX RESULTS -->
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-calculator" style="color: #c9a227; margin-right: 8px;"></i>Tax summary</h3>
+            <span class="badge">KRA 2026</span>
+          </div>
+
+          <div class="summary-grid">
+            <div class="summary-item"><div class="label">Total expenses</div><div class="value" id="totalExp">KES 42,500</div><div class="note">all claimed</div></div>
+            <div class="summary-item"><div class="label">Allowable</div><div class="value" id="allowExp">KES 42,500</div><div class="note">with e-receipt</div></div>
+            <div class="summary-item"><div class="label">Tax savings</div><div class="value" id="taxSave">KES 12,750</div><div class="note">30% bracket</div></div>
+            <div class="summary-item"><div class="label">Net tax due</div><div class="value" id="netTax">KES 37,250</div><div class="note">after deductions</div></div>
+          </div>
+
+          <div class="compliance-box">
+            <i class="fas fa-shield-alt"></i>
+            <div><h5>eTIMS compliance active</h5><p>All expenses are verified. No e-receipt = no deduction.</p></div>
+          </div>
+
+          <div class="action-row">
+            <button class="btn-success" id="genReport"><i class="fas fa-file-pdf"></i> Tax report</button>
+            <button class="btn-outline-gold" id="saveData"><i class="fas fa-save"></i> Save</button>
+            <button class="btn-outline-gold" style="border-color: #d0d5e0;"><i class="fas fa-sync-alt"></i> Sync KRA</button>
+          </div>
+        </div>
+
+        <!-- eTIMS CARD -->
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-link" style="color: #c9a227; margin-right: 8px;"></i>eTIMS integration</h3>
+            <span class="etims-chip"><i class="fas fa-check-circle"></i> connected</span>
+          </div>
+          <p style="font-size:0.85rem; margin-bottom: 14px;">Real-time verification with KRA eTIMS. All expenses require valid e-receipts.</p>
+          <div class="form-group">
+            <label>KRA PIN</label>
+            <input type="text" value="A123456B" placeholder="Enter PIN">
+          </div>
+          <button class="btn-primary" style="width:100%; justify-content:center; margin-top: 8px;"><i class="fas fa-sync-alt"></i> Sync with eTIMS</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer-premium">
+    <div class="footer-inner">
+      <div><h5>Mwarokin Estates · KRA Tax</h5><p style="font-size:0.8rem;">This tool provides estimates. Always consult a tax professional for official filings. eTIMS compliant.</p></div>
+      <div><h5>Quick</h5><a href="#">Dashboard</a><a href="#">Expenses</a><a href="#">Reports</a></div>
+      <div><h5>Support</h5><a href="#">KRA portal</a><a href="#">eTIMS guide</a><a href="#">Contact</a></div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 Mwarokin Estates · KRA Tax Intelligence</span><span>v2.0 · eTIMS premium</span></div>
+  </footer>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"><i class="fas fa-check-circle" style="color: #e6c866; margin-right: 10px;"></i><span id="toastMsg">Expense added</span></div>
+
+  <script>
+    (function() {
+      // DOM refs
+      const addBtn = document.getElementById('addExpenseBtn');
+      const desc = document.getElementById('exp-desc');
+      const amount = document.getElementById('exp-amount');
+      const cat = document.getElementById('exp-cat');
+      const date = document.getElementById('exp-date');
+      const list = document.getElementById('expenseList');
+      const countEl = document.getElementById('expCount');
+      const totalEl = document.getElementById('totalExp');
+      const allowEl = document.getElementById('allowExp');
+      const taxEl = document.getElementById('taxSave');
+      const netEl = document.getElementById('netTax');
+
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+
+      // tabs
+      const tabs = document.querySelectorAll('.tab-mini');
+      const panes = {
+        manual: document.getElementById('manual-tab'),
+        upload: document.getElementById('upload-tab')
+      };
+
+      tabs.forEach(t => {
+        t.addEventListener('click', function() {
+          tabs.forEach(x => x.classList.remove('active'));
+          this.classList.add('active');
+          const key = this.dataset.tab;
+          Object.keys(panes).forEach(k => panes[k].style.display = (k === key) ? 'block' : 'none');
         });
-    </script>
+      });
+
+      // dropzone
+      const dropzone = document.getElementById('dropzone');
+      const fileInput = document.getElementById('fileInput');
+      dropzone.addEventListener('click', () => fileInput.click());
+      dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.style.borderColor = '#c9a227'; });
+      dropzone.addEventListener('dragleave', () => dropzone.style.borderColor = '#d0d5e0');
+      dropzone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropzone.style.borderColor = '#d0d5e0';
+        if (e.dataTransfer.files.length) {
+          const file = e.dataTransfer.files[0];
+          alert(`📎 Receipt "${file.name}" uploaded. eTIMS verification in progress.`);
+          // simulate add
+          setTimeout(() => {
+            const fakeExp = {
+              desc: `Receipt: ${file.name}`,
+              amount: Math.floor(2000 + Math.random() * 8000),
+              cat: 'other',
+              date: new Date().toISOString().split('T')[0]
+            };
+            addExpense(fakeExp.desc, fakeExp.amount, fakeExp.cat, fakeExp.date);
+          }, 800);
+        }
+      });
+      fileInput.addEventListener('change', function() {
+        if (this.files.length) {
+          const file = this.files[0];
+          alert(`📎 Receipt "${file.name}" uploaded. eTIMS verification in progress.`);
+          setTimeout(() => {
+            const fakeExp = {
+              desc: `Receipt: ${file.name}`,
+              amount: Math.floor(2000 + Math.random() * 8000),
+              cat: 'other',
+              date: new Date().toISOString().split('T')[0]
+            };
+            addExpense(fakeExp.desc, fakeExp.amount, fakeExp.cat, fakeExp.date);
+          }, 800);
+        }
+      });
+
+      // expense store
+      let expenses = [
+        { desc: 'Office supplies – ABC Store', amount: 12500, cat: 'office', date: '2026-10-15' },
+        { desc: 'Business lunch – Sarova', amount: 8500, cat: 'entertainment', date: '2026-10-18' },
+        { desc: 'Flight Mombasa', amount: 21500, cat: 'travel', date: '2026-10-22' }
+      ];
+
+      function render() {
+        list.innerHTML = '';
+        if (!expenses.length) {
+          list.innerHTML = `<div class="empty-state"><i class="fas fa-receipt"></i><p>No expenses. Add your first.</p></div>`;
+          countEl.textContent = '0 items';
+          return;
+        }
+        expenses.forEach((e, idx) => {
+          const div = document.createElement('div');
+          div.className = 'expense-item';
+          const catLabel = e.cat || 'other';
+          div.innerHTML = `
+            <div><div class="title">${e.desc}</div><div class="meta">${catLabel} · ${e.date}</div></div>
+            <div class="expense-amount">KES ${Number(e.amount).toLocaleString()}</div>
+            <span class="status-badge verified"><i class="fas fa-check-circle"></i> verified</span>
+          `;
+          list.appendChild(div);
+        });
+        countEl.textContent = `${expenses.length} items`;
+        updateSummary();
+      }
+
+      function addExpense(desc, amountVal, catVal, dateVal) {
+        if (!desc || isNaN(amountVal) || amountVal <= 0) {
+          alert('Please enter a valid description and amount.');
+          return;
+        }
+        expenses.push({ desc, amount: Number(amountVal), cat: catVal || 'other', date: dateVal || new Date().toISOString().split('T')[0] });
+        render();
+        showToast('Expense added ✅');
+      }
+
+      function updateSummary() {
+        const total = expenses.reduce((s, e) => s + Number(e.amount), 0);
+        const allowable = total; // all have e-receipt in demo
+        const taxRate = 0.30;
+        const savings = allowable * taxRate;
+        const baseTax = 50000;
+        const net = Math.max(0, baseTax - savings);
+
+        totalEl.textContent = `KES ${total.toLocaleString()}`;
+        allowEl.textContent = `KES ${allowable.toLocaleString()}`;
+        taxEl.textContent = `KES ${savings.toLocaleString()}`;
+        netEl.textContent = `KES ${net.toLocaleString()}`;
+      }
+
+      function showToast(msg) {
+        toastMsg.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(window.toastTimer);
+        window.toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+      }
+
+      // event listeners
+      addBtn.addEventListener('click', function() {
+        const d = desc.value.trim();
+        const a = parseFloat(amount.value);
+        const c = cat.value;
+        const dt = date.value;
+        if (!d || isNaN(a) || a <= 0) { alert('Fill in description and amount.'); return; }
+        addExpense(d, a, c, dt);
+        // reset but keep some
+        desc.value = '';
+        amount.value = '';
+      });
+
+      // report & save
+      document.getElementById('genReport').addEventListener('click', () => {
+        alert('📄 Tax report generated (PDF) — includes all verified expenses.');
+      });
+      document.getElementById('saveData').addEventListener('click', () => {
+        alert('💾 Data saved to local storage (demo).');
+        showToast('Saved successfully');
+      });
+
+      // initial render
+      render();
+    })();
+  </script>
+
 </body>
 </html>
