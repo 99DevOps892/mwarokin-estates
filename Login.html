@@ -1,276 +1,827 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Mwarokin Estates — Secure sign in for tenants, landlords, caretakers and admins. Powered by Syllogism Technology Africa.">
-<meta name="theme-color" content="#0d2818">
-<title>Mwarokin Estates — Secure Sign In</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Mwarokin Estates by Syllogism Technology Africa — one secure platform for tenants, landlords, caretakers and admins." />
+<meta name="theme-color" content="#0c1220" />
+<title>Mwarokin Estates — Syllogism Technology Africa LogIN Auth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 <style>
   :root {
-    --forest: #0d2818; --forest-mid: #1a3d28; --forest-light: #244d34; --forest-pale: #2e6040;
-    --gold: #c9a84c; --gold-light: #e2c27a; --gold-pale: #f0dba8;
-    --gold-dim: rgba(201,168,76,0.15); --gold-glow: rgba(201,168,76,0.08);
-    --obsidian: #080f0b; --surface: #111f16; --surface-raised: #172a1e; --surface-card: #1c3323;
-    --ivory: #f5f0e8; --ivory-dim: rgba(245,240,232,0.7); --ivory-muted: rgba(245,240,232,0.45); --ivory-subtle: rgba(245,240,232,0.15);
-    --success: #4caf7d; --warning: #e8a838; --danger: #d64f3c; --info: #4a9ebb;
-    --radius: 14px; --radius-sm: 8px; --radius-pill: 50px;
-    --shadow: 0 8px 32px rgba(0,0,0,0.4); --shadow-gold: 0 4px 24px rgba(201,168,76,0.12);
-    --transition: all 0.28s cubic-bezier(0.4,0,0.2,1);
-    --border: 1px solid rgba(201,168,76,0.12); --border-strong: 1px solid rgba(201,168,76,0.28);
-  }
-  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{
-    font-family:'DM Sans',sans-serif; background:var(--obsidian); color:var(--ivory);
-    min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
-    padding:24px; position:relative; overflow-x:hidden;
-  }
-  ::-webkit-scrollbar{width:6px;} ::-webkit-scrollbar-track{background:var(--obsidian);} ::-webkit-scrollbar-thumb{background:var(--forest-pale);border-radius:3px;}
-
-  body::before{
-    content:''; position:fixed; top:-20%; right:-10%; width:600px; height:600px;
-    background:radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%); border-radius:50%; pointer-events:none;
-  }
-  body::after{
-    content:''; position:fixed; bottom:-15%; left:-10%; width:500px; height:500px;
-    background:radial-gradient(circle, rgba(46,96,64,0.35) 0%, transparent 70%); border-radius:50%; pointer-events:none;
+    --ink: #0a0c10;
+    --ink-soft: #1c2033;
+    --ink-muted: #3d4260;
+    --surface: #f5f4f0;
+    --surface-raised: #ffffff;
+    --accent: #1a56db;
+    --accent-light: #e8efff;
+    --accent-mid: #4a7ef7;
+    --gold: #c9a84c;
+    --gold-light: #fdf6e3;
+    --success: #0b6e4f;
+    --success-bg: #e3f5ee;
+    --error: #b91c1c;
+    --error-bg: #fef2f2;
+    --border: rgba(10,12,16,0.1);
+    --border-strong: rgba(10,12,16,0.2);
+    --panel-left: #0c1220;
+    --panel-text: rgba(255,255,255,0.88);
+    --panel-muted: rgba(255,255,255,0.45);
+    --radius: 14px;
+    --radius-lg: 20px;
+    --radius-pill: 100px;
   }
 
-  .auth-wrap{
-    display:grid; grid-template-columns:1fr 1fr; max-width:960px; width:100%;
-    background:var(--forest); border:var(--border-strong); border-radius:22px;
-    box-shadow:0 24px 90px rgba(0,0,0,0.55); overflow:hidden; position:relative; z-index:1;
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--surface);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
   }
 
-  .brand-panel{
-    background:linear-gradient(160deg, var(--forest-mid) 0%, #1f4a2e 100%);
-    padding:52px 44px; display:flex; flex-direction:column; justify-content:space-between;
-    position:relative; overflow:hidden; border-right:var(--border);
+  .auth-wrapper { display: flex; min-height: 100vh; }
+
+  /* LEFT BRAND PANEL */
+  .brand-panel {
+    position: relative;
+    width: 44%;
+    min-height: 100vh;
+    background: var(--panel-left);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 3rem;
+    overflow: hidden;
+    flex-shrink: 0;
   }
-  .brand-panel::before{
-    content:''; position:absolute; top:-70px; left:-70px; width:260px; height:260px;
-    background:radial-gradient(circle, rgba(201,168,76,0.14) 0%, transparent 70%); border-radius:50%;
+
+  .brand-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 20% 20%, rgba(26,86,219,0.25) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 60% at 80% 80%, rgba(74,126,247,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse 40% 40% at 60% 10%, rgba(201,168,76,0.08) 0%, transparent 50%);
+    pointer-events: none;
   }
-  .brand-mark{display:flex; align-items:center; gap:14px; position:relative; z-index:1;}
-  .brand-icon{
-    width:46px; height:46px; background:linear-gradient(135deg, var(--gold), var(--gold-light));
-    border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:19px; color:var(--forest);
+
+  .brand-panel::after {
+    content: '';
+    position: absolute;
+    bottom: -60px;
+    right: -60px;
+    width: 340px;
+    height: 340px;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 60px rgba(255,255,255,0.02),
+      0 0 0 120px rgba(255,255,255,0.015);
   }
-  .brand-name{font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:600; color:var(--gold-light);}
-  .brand-sub{font-size:0.62rem; font-weight:500; color:var(--ivory-muted); letter-spacing:0.18em; text-transform:uppercase;}
 
-  .brand-copy{position:relative; z-index:1; margin-top:40px;}
-  .brand-eyebrow{font-size:0.72rem; font-weight:600; color:var(--gold); letter-spacing:0.18em; text-transform:uppercase; margin-bottom:12px;}
-  .brand-title{font-family:'Cormorant Garamond',serif; font-size:2.1rem; font-weight:600; line-height:1.2; color:var(--ivory); margin-bottom:14px;}
-  .brand-title em{color:var(--gold-light); font-style:italic;}
-  .brand-desc{font-size:0.9rem; color:var(--ivory-muted); line-height:1.65; max-width:340px;}
-
-  .trust-row{position:relative; z-index:1; display:flex; gap:22px; margin-top:auto; padding-top:30px; flex-wrap:wrap;}
-  .trust-item{display:flex; align-items:center; gap:8px; font-size:0.72rem; color:var(--ivory-muted); font-weight:500;}
-  .trust-item i{color:var(--gold); font-size:0.85rem;}
-
-  .form-panel{background:var(--surface); padding:52px 46px; display:flex; flex-direction:column; justify-content:center;}
-  .form-heading{margin-bottom:26px;}
-  .form-title{font-family:'Cormorant Garamond',serif; font-size:1.7rem; font-weight:600; color:var(--ivory); margin-bottom:6px;}
-  .form-title-sub{font-size:0.84rem; color:var(--ivory-muted);}
-
-  #sessionBanner{
-    display:none; align-items:center; gap:10px; background:rgba(232,168,56,0.1);
-    border:1px solid rgba(232,168,56,0.3); color:var(--warning); border-radius:var(--radius-sm);
-    padding:11px 14px; font-size:0.78rem; margin-bottom:20px; font-weight:500;
+  .brand-logo {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
-  #sessionBanner.show{display:flex;}
 
-  .form-error{
-    display:none; align-items:center; gap:8px; background:rgba(214,79,60,0.10);
-    border:1px solid rgba(214,79,60,0.35); color:#f0a096; border-radius:var(--radius-sm);
-    padding:11px 14px; font-size:0.78rem; margin-bottom:18px; font-weight:500;
+  .brand-logo .logo-mark {
+    width: 38px;
+    height: 38px;
+    background: var(--accent);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  .form-error.show{display:flex;}
 
-  .form-group{margin-bottom:18px;}
-  .form-label{display:block; font-size:0.76rem; font-weight:600; color:var(--ivory-muted); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:8px;}
-  .input-shell{position:relative; display:flex; align-items:center;}
-  .input-shell i.leading{position:absolute; left:14px; color:var(--ivory-muted); font-size:0.85rem;}
-  .form-control{
-    width:100%; background:var(--surface-card); border:var(--border); border-radius:var(--radius-sm);
-    padding:12px 14px 12px 40px; color:var(--ivory); font-family:'DM Sans',sans-serif; font-size:0.9rem;
-    outline:none; transition:var(--transition);
+  .brand-logo .logo-mark span {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -1px;
   }
-  .form-control:focus{border-color:rgba(201,168,76,0.4); box-shadow:0 0 0 3px rgba(201,168,76,0.08);}
-  .form-control::placeholder{color:var(--ivory-muted);}
-  .toggle-pass{position:absolute; right:14px; color:var(--ivory-muted); cursor:pointer; font-size:0.85rem; background:none; border:none;}
-  .toggle-pass:hover{color:var(--gold-light);}
 
-  .form-meta{display:flex; align-items:center; justify-content:space-between; margin:2px 0 22px;}
-  .remember{display:flex; align-items:center; gap:8px; font-size:0.8rem; color:var(--ivory-muted); cursor:pointer; user-select:none;}
-  .remember input{accent-color:var(--gold); width:15px; height:15px; cursor:pointer;}
-  .forgot-link{font-size:0.8rem; color:var(--gold); text-decoration:none; font-weight:500; background:none; border:none; cursor:pointer; font-family:inherit;}
-  .forgot-link:hover{color:var(--gold-light);}
-
-  .btn-gold{
-    width:100%; font-family:'DM Sans',sans-serif; font-weight:600; font-size:0.88rem;
-    padding:13px 18px; border:none; border-radius:var(--radius-sm); cursor:pointer; transition:var(--transition);
-    letter-spacing:0.03em; display:flex; align-items:center; justify-content:center; gap:8px;
-    background:linear-gradient(135deg, var(--gold), #b8924a); color:var(--forest);
+  .brand-logo .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--panel-text);
+    letter-spacing: 0.02em;
+    line-height: 1.2;
   }
-  .btn-gold:hover{background:linear-gradient(135deg, var(--gold-light), var(--gold)); box-shadow:0 4px 18px rgba(201,168,76,0.3); transform:translateY(-1px);}
-  .btn-gold:disabled{opacity:0.65; cursor:not-allowed; transform:none;}
-  .btn-gold .fa-spinner{animation:spin 0.8s linear infinite;}
-  @keyframes spin{to{transform:rotate(360deg);}}
 
-  .divider{display:flex; align-items:center; gap:12px; margin:22px 0; color:var(--ivory-muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em;}
-  .divider::before, .divider::after{content:''; flex:1; height:1px; background:rgba(201,168,76,0.12);}
-
-  .demo-note{
-    background:var(--surface-raised); border:var(--border); border-radius:var(--radius-sm);
-    padding:13px 15px; font-size:0.78rem; color:var(--ivory-muted); line-height:1.55;
+  .brand-logo .logo-text small {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 400;
+    color: var(--panel-muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
-  .demo-note strong{color:var(--gold-light); font-weight:600;}
-  .demo-acc{display:grid; gap:6px; margin-top:10px;}
-  .demo-acc div{display:flex; align-items:center; gap:8px; font-size:0.76rem;}
-  .demo-acc i{color:var(--gold); width:14px; font-size:0.8rem;}
-  .demo-acc b{color:var(--ivory-dim); font-weight:600;}
 
-  .auth-alt{display:flex; align-items:center; justify-content:center; gap:7px; font-size:0.84rem; color:var(--ivory-muted); margin-top:22px;}
-  .auth-alt a{color:var(--gold); text-decoration:none; font-weight:600;}
-  .auth-alt a:hover{color:var(--gold-light);}
-
-  .security-note{display:flex; align-items:center; justify-content:center; gap:7px; font-size:0.74rem; color:var(--ivory-muted); margin-top:20px;}
-  .security-note i{color:var(--gold);}
-
-  .auth-footer{display:flex; align-items:center; gap:8px; margin-top:18px; font-size:0.78rem; color:var(--ivory-muted); z-index:1;}
-  .sta-chip{
-    display:inline-flex; align-items:center; gap:8px; padding:7px 13px; border:var(--border);
-    border-radius:var(--radius-pill); background:var(--surface-raised);
+  .brand-hero {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem 0;
   }
-  .sta-chip .sta-dot{
-    width:8px; height:8px; border-radius:50%; background:linear-gradient(135deg, var(--gold), var(--gold-light));
-  }
-  .auth-footer strong{color:var(--gold-light); font-weight:600;}
 
-  #toast{
-    position:fixed; bottom:28px; right:28px; background:var(--forest-mid); border:var(--border-strong);
-    border-radius:var(--radius); padding:14px 20px; display:flex; align-items:center; gap:12px;
-    box-shadow:var(--shadow); z-index:999; min-width:280px; transform:translateX(120%);
-    transition:transform 0.35s cubic-bezier(0.4,0,0.2,1); max-width:90vw;
+  .brand-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
-  #toast.show{transform:translateX(0);}
-  .toast-icon{width:32px;height:32px;border-radius:50%;background:rgba(214,79,60,0.15);display:flex;align-items:center;justify-content:center;color:var(--danger);flex-shrink:0;}
-  .toast-icon.ok{background:rgba(76,175,125,0.15);color:var(--success);}
-  .toast-text{font-size:0.85rem;color:var(--ivory);font-weight:500;}
 
-  @media (max-width:820px){
-    .auth-wrap{grid-template-columns:1fr;}
-    .brand-panel{display:none;}
-    .form-panel{padding:40px 28px;}
-    .auth-footer{justify-content:center; text-align:center;}
+  .brand-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.7;
+  }
+
+  .brand-headline {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 3.2vw, 3rem);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+  }
+
+  .brand-headline em {
+    font-style: normal;
+    color: var(--accent-mid);
+  }
+
+  .brand-sub {
+    font-size: 0.95rem;
+    font-weight: 300;
+    color: var(--panel-muted);
+    line-height: 1.75;
+    max-width: 340px;
+    margin-bottom: 2.5rem;
+  }
+
+  .brand-stats { display: flex; gap: 2rem; flex-wrap: wrap; }
+
+  .stat-item { display: flex; flex-direction: column; gap: 3px; }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.04em;
+  }
+
+  .stat-label {
+    font-size: 0.68rem;
+    font-weight: 400;
+    color: var(--panel-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .brand-footer { position: relative; z-index: 2; }
+
+  .brand-tagline { font-size: 0.78rem; color: var(--panel-muted); line-height: 1.5; }
+
+  /* Africa continent SVG watermark */
+  .africa-mark {
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.04;
+    width: 240px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* RIGHT FORM PANEL */
+  .form-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    background: var(--surface-raised);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .form-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-mid) 60%, var(--gold) 100%);
+  }
+
+  .form-wrap { width: 100%; max-width: 420px; }
+
+  .form-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.6rem; gap: 12px; }
+  .form-head .app-chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.74rem; font-weight: 600; color: var(--ink-soft);
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 7px 13px; border-radius: var(--radius-pill); white-space: nowrap;
+  }
+  .form-head .app-chip i { color: var(--accent); }
+  .form-head a.back-link { font-size: 0.78rem; color: var(--ink-muted); text-decoration: none; white-space: nowrap; }
+  .form-head a.back-link:hover { color: var(--accent); }
+
+  /* TABS */
+  .auth-tabs {
+    display: flex;
+    background: var(--surface);
+    border-radius: var(--radius-pill);
+    padding: 4px;
+    margin-bottom: 2rem;
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--ink-muted);
+    border-radius: var(--radius-pill);
+    transition: all 0.25s ease;
+    white-space: nowrap;
+  }
+
+  .tab-btn.active {
+    background: var(--surface-raised);
+    color: var(--ink);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.12), 0 0 0 0.5px var(--border);
+  }
+
+  /* FORM CARD */
+  .form-card { width: 100%; max-width: 420px; display: none; animation: fadeSlide 0.3s ease; }
+  .form-card.active { display: block; }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .form-card h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.03em;
+    margin-bottom: 0.4rem;
+  }
+
+  .form-card .sub {
+    font-size: 0.88rem;
+    color: var(--ink-muted);
+    margin-bottom: 1.6rem;
+    font-weight: 300;
+  }
+
+  /* FIELD */
+  .field { margin-bottom: 1.1rem; }
+
+  .field label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.01em;
+  }
+
+  .input-wrap { position: relative; }
+
+  .input-wrap i.pre {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.85rem;
+    color: var(--ink-muted);
+    pointer-events: none;
+    transition: color 0.2s;
+  }
+
+  .input-wrap input {
+    width: 100%;
+    padding: 0.75rem 0.9rem 0.75rem 2.4rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    outline: none;
+    transition: all 0.2s ease;
+    appearance: none;
+  }
+
+  .input-wrap input::placeholder { color: rgba(10,12,16,0.3); }
+
+  .input-wrap input:focus {
+    border-color: var(--accent);
+    background: var(--surface-raised);
+    box-shadow: 0 0 0 3px rgba(26,86,219,0.1);
+  }
+
+  .input-wrap:focus-within i.pre { color: var(--accent); }
+
+  .toggle-pw {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--ink-muted);
+    font-size: 0.85rem;
+    padding: 4px;
+    transition: color 0.2s;
+  }
+
+  .toggle-pw:hover { color: var(--ink); }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+
+  /* Password strength */
+  .pw-strength-bar {
+    height: 3px;
+    border-radius: 99px;
+    background: var(--border);
+    margin-top: 6px;
+    overflow: hidden;
+  }
+
+  .pw-strength-fill {
+    height: 100%;
+    border-radius: 99px;
+    width: 0%;
+    transition: width 0.4s ease, background 0.4s ease;
+  }
+
+  .pw-hint { font-size: 0.72rem; color: var(--ink-muted); margin-top: 4px; }
+
+  .forgot-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .forgot-link {
+    font-size: 0.8rem;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .forgot-link:hover { text-decoration: underline; }
+
+  /* CTA BUTTON */
+  .cta-btn {
+    width: 100%;
+    padding: 0.9rem 1.5rem;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .cta-btn:hover {
+    background: var(--ink-soft);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+  }
+
+  .cta-btn:active { transform: translateY(0); }
+  .cta-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+  .cta-btn .btn-shimmer {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.12) 50%, transparent 60%);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
+
+  .cta-btn:hover .btn-shimmer { transform: translateX(100%); }
+
+  /* DIVIDER */
+  .or-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 1.4rem 0;
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+    font-weight: 400;
+  }
+
+  .or-divider::before, .or-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* SOCIAL GRID */
+  .social-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+
+  .social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 0.65rem 0.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .social-btn i { font-size: 0.9rem; }
+
+  .social-btn:hover {
+    background: var(--surface-raised);
+    border-color: var(--border-strong);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
+    color: var(--ink);
+  }
+
+  .social-btn.google i   { color: #ea4335; }
+  .social-btn.twitter i  { color: #000; }
+  .social-btn.facebook i { color: #1877f2; }
+  .social-btn.linkedin i { color: #0077b5; }
+  .social-btn.apple i    { color: #000; }
+  .social-btn.tiktok i   { color: #000; }
+
+  /* TERMS */
+  .terms-note {
+    margin-top: 1.5rem;
+    font-size: 0.73rem;
+    color: var(--ink-muted);
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  .terms-note a { color: var(--accent); text-decoration: none; }
+  .terms-note a:hover { text-decoration: underline; }
+
+  /* CHECKBOX */
+  .check-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 0.8rem; }
+
+  .check-row input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    accent-color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 2px;
+    cursor: pointer;
+  }
+
+  .check-row label { font-size: 0.8rem; color: var(--ink-muted); cursor: pointer; line-height: 1.5; font-weight: 400; }
+
+  /* ALERTS */
+  .alert {
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius);
+    font-size: 0.82rem;
+    margin-bottom: 1rem;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    font-weight: 400;
+  }
+
+  .alert.show { display: flex; }
+  .alert.error { background: var(--error-bg); color: var(--error); border: 1px solid rgba(185,28,28,0.2); }
+  .alert.success { background: var(--success-bg); color: var(--success); border: 1px solid rgba(11,110,79,0.2); }
+
+  /* DEMO ACCORDION */
+  .demo-acc {
+    margin-top: 1.6rem;
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .demo-acc summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .demo-acc summary::-webkit-details-marker { display: none; }
+  .demo-acc summary i { color: var(--accent); }
+  .demo-acc ul { list-style: none; padding: 0.6rem 1rem 0.9rem; display: grid; gap: 6px; }
+  .demo-acc li { font-size: 0.76rem; color: var(--ink-muted); line-height: 1.45; }
+  .demo-acc li b { color: var(--ink-soft); }
+  .demo-acc li i { color: var(--accent); width: 16px; margin-right: 6px; }
+
+  /* MOBILE */
+  @media (max-width: 860px) {
+    .auth-wrapper { flex-direction: column; }
+    .brand-panel { width: 100%; min-height: auto; padding: 2rem; }
+    .brand-hero { padding: 1.5rem 0; }
+    .brand-headline { font-size: 1.7rem; }
+    .africa-mark { display: none; }
+    .form-panel { padding: 2.5rem 1.5rem; }
+    .social-grid { grid-template-columns: repeat(2, 1fr); }
+    .field-row { grid-template-columns: 1fr; }
+    .form-head .app-chip { display: none; }
+  }
+
+  @media (max-width: 480px) {
+    .brand-panel { padding: 1.5rem; }
+    .form-panel { padding: 2rem 1rem; }
+    .brand-stats { gap: 1.2rem; }
   }
 </style>
 </head>
 <body>
 
-<div class="auth-wrap">
-  <div class="brand-panel">
-    <div>
-      <div class="brand-mark">
-        <div class="brand-icon"><i class="fas fa-city"></i></div>
-        <div>
-          <div class="brand-name">Mwarokin Estates</div>
-          <div class="brand-sub">Resident Portal · Syllogism Technology Africa</div>
+<div class="auth-wrapper">
+
+  <!-- BRAND PANEL -->
+  <aside class="brand-panel">
+
+    <div class="brand-logo">
+      <div class="logo-mark"><span>STA</span></div>
+      <div class="logo-text">
+        Syllogism Technology
+        <small>Africa</small>
+      </div>
+    </div>
+
+    <div class="brand-hero">
+      <p class="brand-eyebrow">Mwarokin Estates · Eco-System</p>
+      <h1 class="brand-headline">
+        One Platform.<br/>
+        <em>Infinite</em> Potential.
+      </h1>
+      <p class="brand-sub">
+        Mwarokin Estates by Syllogism Technology Africa — tenants, landlords, caretakers and admins, all on one secure real-time platform.
+      </p>
+      <div class="brand-stats">
+        <div class="stat-item"><span class="stat-num">4</span><span class="stat-label">Portals</span></div>
+        <div class="stat-item"><span class="stat-num">24/7</span><span class="stat-label">Live</span></div>
+        <div class="stat-item"><span class="stat-num">100%</span><span class="stat-label">Secure</span></div>
+      </div>
+    </div>
+
+    <div class="brand-footer">
+      <p class="brand-tagline"> Syllogism Technology Africa<br/>&copy; 2026 All Rights Reserved. </p>
+    </div>
+
+    <!-- Africa watermark SVG -->
+    <svg class="africa-mark" viewBox="0 0 200 240" fill="white" xmlns="http://www.w3.org/2000/svg">
+      <path d="M100 5 C70 5, 40 20, 30 50 C20 75, 25 90, 15 110 C5 130, 8 150, 18 170 C28 190, 40 205, 55 218 C70 230, 85 238, 100 238 C115 238, 130 230, 145 218 C160 205, 172 190, 182 170 C192 150, 195 130, 185 110 C175 90, 180 75, 170 50 C160 20, 130 5, 100 5 Z"/>
+    </svg>
+
+  </aside>
+
+  <!-- FORM PANEL -->
+  <main class="form-panel">
+
+    <div class="form-wrap">
+      <div class="form-head">
+        <span class="app-chip"><i class="fas fa-city"></i> Mwarokin Estates · STA</span>
+        <a class="back-link" href="index.html"><i class="fas fa-arrow-left"></i> Back to home</a>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="tab-btn active" onclick="switchTab('login')">Sign In</button>
+        <button class="tab-btn" onclick="switchTab('register')">Create Account</button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <div class="form-card active" id="form-login">
+        <h2>Welcome back</h2>
+        <p class="sub">Sign in to your Mwarokin Estates account to continue.</p>
+
+        <div class="alert error" id="login-error">
+          <i class="fas fa-exclamation-circle"></i>
+          <span id="login-error-msg">Invalid credentials. Please try again.</span>
         </div>
-      </div>
-      <div class="brand-copy">
-        <p class="brand-eyebrow">Secure Access</p>
-        <h1 class="brand-title">Your home,<br><em>always within reach.</em></h1>
-        <p class="brand-desc">One secure portal for tenants, landlords, caretakers and administrators — manage rent, bills, maintenance and your estate, all in one place.</p>
-      </div>
-    </div>
-    <div class="trust-row">
-      <div class="trust-item"><i class="fas fa-shield-alt"></i>256-bit encrypted</div>
-      <div class="trust-item"><i class="fas fa-user-lock"></i>Role-protected</div>
-    </div>
-  </div>
-
-  <div class="form-panel">
-    <div class="form-heading">
-      <h2 class="form-title">Welcome back</h2>
-      <p class="form-title-sub">Sign in to continue to your dashboard.</p>
-    </div>
-
-    <div id="sessionBanner"><i class="fas fa-clock"></i><span id="sessionBannerText">Your session expired. Please sign in again.</span></div>
-
-    <form id="loginForm" autocomplete="on" novalidate>
-      <div class="form-error" id="formError"><i class="fas fa-exclamation-circle"></i><span id="formErrorText">Error</span></div>
-      <div class="form-group">
-        <label class="form-label" for="email">Email Address</label>
-        <div class="input-shell">
-          <i class="fas fa-envelope leading"></i>
-          <input type="email" id="email" class="form-control" placeholder="you@example.com" required autocomplete="email">
+        <div class="alert success" id="login-success">
+          <i class="fas fa-check-circle"></i>
+          <span>Login successful! Redirecting&hellip;</span>
         </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="password">Password</label>
-        <div class="input-shell">
-          <i class="fas fa-lock leading"></i>
-          <input type="password" id="password" class="form-control" placeholder="Enter your password" required autocomplete="current-password">
-          <button type="button" class="toggle-pass" id="togglePass" aria-label="Show password"><i class="fas fa-eye"></i></button>
+
+        <form id="login-form" novalidate>
+          <div class="field">
+            <label for="l-email">Email address</label>
+            <div class="input-wrap">
+              <i class="far fa-envelope pre"></i>
+              <input type="email" id="l-email" placeholder="you@example.com" autocomplete="email" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="l-password">Password</label>
+            <div class="input-wrap">
+              <i class="fas fa-lock pre"></i>
+              <input type="password" id="l-password" placeholder="Enter your password" autocomplete="current-password" required />
+              <button type="button" class="toggle-pw" onclick="togglePw('l-password', this)" aria-label="Toggle password">
+                <i class="far fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="forgot-row">
+            <button type="button" class="forgot-link" id="forgot-link">Forgot password?</button>
+          </div>
+
+          <button type="submit" class="cta-btn" id="login-btn">
+            <span class="btn-shimmer"></span>
+            <i class="fas fa-arrow-right-to-bracket"></i>
+            Sign In
+          </button>
+        </form>
+
+        <div class="or-divider">Or continue with</div>
+
+        <div class="social-grid">
+          <a href="#" class="social-btn google" onclick="socialSoon(); return false;"><i class="fab fa-google"></i> Google</a>
+          <a href="#" class="social-btn facebook" onclick="socialSoon(); return false;"><i class="fab fa-facebook-f"></i> Facebook</a>
+          <a href="#" class="social-btn linkedin" onclick="socialSoon(); return false;"><i class="fab fa-linkedin-in"></i> LinkedIn</a>
+          <a href="#" class="social-btn twitter" onclick="socialSoon(); return false;"><i class="fab fa-x-twitter"></i> X</a>
+          <a href="#" class="social-btn apple" onclick="socialSoon(); return false;"><i class="fab fa-apple"></i> Apple</a>
+          <a href="#" class="social-btn tiktok" onclick="socialSoon(); return false;"><i class="fab fa-tiktok"></i> TikTok</a>
         </div>
-      </div>
-      <div class="form-meta">
-        <label class="remember"><input type="checkbox" id="rememberMe" checked> Keep me signed in</label>
-        <button type="button" class="forgot-link" id="forgotLink">Forgot password?</button>
-      </div>
-      <button type="submit" class="btn-gold" id="loginBtn"><i class="fas fa-lock"></i><span id="loginBtnText">Sign In Securely</span></button>
-    </form>
 
-    <div class="auth-alt">
-      Don't have an account? <a href="register.html">Create one</a>
+        <details class="demo-acc">
+          <summary><span><i class="fas fa-flask"></i> Demo access — test credentials</span><i class="fas fa-chevron-down"></i></summary>
+          <ul>
+            <li><i class="fas fa-user-tie"></i><b>Admin:</b> ceo@syllogismtechnologyafrica.com</li>
+            <li><i class="fas fa-home"></i><b>Landlord:</b> landlord@mwarokinestates.co.ke</li>
+            <li><i class="fas fa-user-cog"></i><b>Caretaker:</b> caretaker@mwarokinestates.co.ke</li>
+            <li><i class="fas fa-user"></i><b>Tenant:</b> tenant@mwarokinestates.co.ke</li>
+            <li style="color:var(--ink-muted);"><i class="fas fa-info-circle"></i>One password per role is shown after clicking the account — emails above sign you straight to the right dashboard.</li>
+          </ul>
+        </details>
+
+        <p class="terms-note">
+          By signing in you agree to our <a href="Term.html">Terms of Service</a> and <a href="Privacy.html">Privacy Policy</a>.
+        </p>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div class="form-card" id="form-register">
+        <h2>Create account</h2>
+        <p class="sub">Join Mwarokin Estates as a tenant or landlord.</p>
+
+        <div class="alert error" id="reg-error">
+          <i class="fas fa-exclamation-circle"></i>
+          <span id="reg-error-msg">Please check the fields below.</span>
+        </div>
+        <div class="alert success" id="reg-success">
+          <i class="fas fa-check-circle"></i>
+          <span>Account created! Check your email to verify, then sign in.</span>
+        </div>
+
+        <form id="reg-form" novalidate>
+          <div class="field-row">
+            <div class="field">
+              <label for="r-first">First name</label>
+              <div class="input-wrap">
+                <i class="far fa-user pre"></i>
+                <input type="text" id="r-first" placeholder="First name" required />
+              </div>
+            </div>
+            <div class="field">
+              <label for="r-last">Last name</label>
+              <div class="input-wrap">
+                <i class="far fa-user pre"></i>
+                <input type="text" id="r-last" placeholder="Last name" required />
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="r-email">Email address</label>
+            <div class="input-wrap">
+              <i class="far fa-envelope pre"></i>
+              <input type="email" id="r-email" placeholder="you@example.com" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="r-password">Password</label>
+            <div class="input-wrap">
+              <i class="fas fa-lock pre"></i>
+              <input type="password" id="r-password" placeholder="Create a strong password" required autocomplete="new-password" oninput="checkStrength(this.value)" />
+              <button type="button" class="toggle-pw" onclick="togglePw('r-password', this)" aria-label="Toggle password">
+                <i class="far fa-eye"></i>
+              </button>
+            </div>
+            <div class="pw-strength-bar"><div class="pw-strength-fill" id="pw-fill"></div></div>
+            <p class="pw-hint" id="pw-hint">Use 8+ characters with letters, numbers &amp; symbols.</p>
+          </div>
+
+          <div class="field">
+            <label for="r-password2">Confirm password</label>
+            <div class="input-wrap">
+              <i class="fas fa-lock pre"></i>
+              <input type="password" id="r-password2" placeholder="Repeat your password" required autocomplete="new-password" />
+              <button type="button" class="toggle-pw" onclick="togglePw('r-password2', this)" aria-label="Toggle password">
+                <i class="far fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="check-row">
+            <input type="checkbox" id="agree-terms" required />
+            <label for="agree-terms">I agree to the <a href="Term.html" style="color:var(--accent);">Terms of Service</a> and <a href="Privacy.html" style="color:var(--accent);">Privacy Policy</a></label>
+          </div>
+
+          <div class="check-row">
+            <input type="checkbox" id="agree-comms" />
+            <label for="agree-comms">Send me product updates and announcements</label>
+          </div>
+
+          <button type="submit" class="cta-btn" id="reg-btn">
+            <span class="btn-shimmer"></span>
+            <i class="fas fa-user-plus"></i>
+            Create Account
+          </button>
+        </form>
+      </div>
     </div>
 
-    <div class="divider">Demo Access</div>
-    <div class="demo-note">
-      <strong>Test credentials</strong> — sign in as any role to open its dashboard:
-      <div class="demo-acc">
-        <div><i class="fas fa-user-tie"></i><span><b>Admin:</b> ceo@syllogismtechnologyafrica.com</span></div>
-        <div><i class="fas fa-home"></i><span><b>Landlord:</b> landlord@mwarokinestates.co.ke</span></div>
-        <div><i class="fas fa-user-cog"></i><span><b>Caretaker:</b> caretaker@mwarokinestates.co.ke</span></div>
-        <div><i class="fas fa-user"></i><span><b>Tenant:</b> tenant@mwarokinestates.co.ke</span></div>
-      </div>
-    </div>
-
-    <div class="security-note"><i class="fas fa-shield-alt"></i>Protected session · powered by Supabase</div>
-  </div>
-</div>
-
-<div class="auth-footer">
-  <span class="sta-chip"><span class="sta-dot"></span><span>Powered by <strong>Syllogism Technology Africa</strong></span></span>
-</div>
-
-<div id="toast">
-  <div class="toast-icon" id="toastIcon"><i class="fas fa-exclamation"></i></div>
-  <div class="toast-text" id="toastText">Message</div>
+  </main>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/config.js"></script>
 <script src="js/supabase-client.js"></script>
 <script>
-(function () {
   var sb = window.supabaseClient;
-  if (!sb) { showToast('Failed to initialise the platform client.', false); return; }
-
-  var form = document.getElementById('loginForm');
-  var email = document.getElementById('email');
-  var password = document.getElementById('password');
-  var btn = document.getElementById('loginBtn');
-  var btnText = document.getElementById('loginBtnText');
-  var errBox = document.getElementById('formError');
-  var errText = document.getElementById('formErrorText');
 
   var DASH = {
     admin: 'Dashboard Overview.html',
@@ -279,21 +830,6 @@
     tenant: 'Tenant Management Dashboard.html'
   };
   var DEFAULT_ROLE = 'tenant';
-
-  function showError(msg) { errText.textContent = msg; errBox.classList.add('show'); }
-  function clearError() { errBox.classList.remove('show'); }
-
-  function showToast(msg, ok) {
-    var t = document.getElementById('toast');
-    document.getElementById('toastText').textContent = msg;
-    document.getElementById('toastIcon').className = 'toast-icon ' + (ok ? 'ok' : '');
-    document.getElementById('toastIcon').innerHTML = ok
-      ? '<i class="fas fa-check"></i>'
-      : '<i class="fas fa-exclamation"></i>';
-    t.classList.add('show');
-    clearTimeout(showToast._t);
-    showToast._t = setTimeout(function () { t.classList.remove('show'); }, 3600);
-  }
 
   function homeFor(role) {
     var page = DASH[role] || DASH[DEFAULT_ROLE];
@@ -305,76 +841,150 @@
     try {
       var u = await sb.auth.getUser();
       if (!u.data || !u.data.user) return role;
-      var profile = await sb.from('profiles').select('role').eq('id', u.data.user.id).maybeSingle();
-      if (profile.data && profile.data.role) role = profile.data.role;
+      var p = await sb.from('profiles').select('role').eq('id', u.data.user.id).maybeSingle();
+      if (p.data && p.data.role) role = p.data.role;
     } catch (e) {}
     return role;
   }
 
-  // Already signed in? Straight to the right dashboard.
-  (async function boot() {
-    try {
-      var s = await sb.auth.getSession();
+  /* Tab switching */
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(function (b, i) {
+      b.classList.toggle('active', (tab === 'login' && i === 0) || (tab === 'register' && i === 1));
+    });
+    document.getElementById('form-login').classList.toggle('active', tab === 'login');
+    document.getElementById('form-register').classList.toggle('active', tab === 'register');
+  }
+
+  /* Toggle password visibility */
+  function togglePw(id, btn) {
+    var input = document.getElementById(id);
+    var icon = btn.querySelector('i');
+    var isText = input.type === 'text';
+    input.type = isText ? 'password' : 'text';
+    icon.className = isText ? 'far fa-eye' : 'far fa-eye-slash';
+  }
+
+  /* Password strength meter */
+  function checkStrength(val) {
+    var fill = document.getElementById('pw-fill');
+    var hint = document.getElementById('pw-hint');
+    var score = 0;
+    if (val.length >= 8) score++;
+    if (/[A-Z]/.test(val)) score++;
+    if (/[0-9]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+
+    var map = [
+      { pct: '0%',   color: '#e5e7eb', label: '' },
+      { pct: '25%',  color: '#ef4444', label: 'Weak' },
+      { pct: '50%',  color: '#f59e0b', label: 'Fair' },
+      { pct: '75%',  color: '#3b82f6', label: 'Good' },
+      { pct: '100%', color: '#10b981', label: 'Strong' }
+    ];
+
+    fill.style.width = map[score].pct;
+    fill.style.background = map[score].color;
+    hint.textContent = score === 0 ? 'Use 8+ characters with letters, numbers & symbols.' : map[score].label + ' password';
+    hint.style.color = map[score].color || 'var(--ink-muted)';
+  }
+
+  /* Alert helper */
+  function showAlert(id, msg) {
+    var el = document.getElementById(id);
+    var msgEl = document.getElementById(id + '-msg');
+    if (msg && msgEl) msgEl.textContent = msg;
+    el.classList.add('show');
+    setTimeout(function () { el.classList.remove('show'); }, 5000);
+  }
+
+  function socialSoon() { showAlert('login-error', 'Social sign-in is coming soon. Use email or a demo account.'); }
+
+  /* Boot: already signed in? */
+  (function boot() {
+    var params = new URLSearchParams(location.search);
+    if (params.get('tab') === 'register') switchTab('register');
+    if (!sb) { showAlert('login-error', 'Client not initialised. Check js/config.js.'); return; }
+    sb.auth.getSession().then(function (s) {
       if (s.data && s.data.session) {
-        var role = await resolveRole();
-        window.location.replace(homeFor(role));
-        return;
+        resolveRole().then(function (role) { window.location.replace(homeFor(role)); });
       }
-    } catch (e) {}
-    var reason = new URLSearchParams(location.search).get('reason');
-    if (reason) {
-      var banner = document.getElementById('sessionBanner');
-      var text = document.getElementById('sessionBannerText');
-      if (reason === 'timeout') text.textContent = 'You were signed out after inactivity. Please sign in again.';
-      else if (reason === 'noauth') text.textContent = 'Please sign in to access your dashboard.';
-      else if (reason === 'loggedout') text.textContent = 'You have been signed out.';
-      banner.classList.add('show');
-    }
+    });
   })();
 
-  document.getElementById('togglePass').addEventListener('click', function () {
-    var icon = this.querySelector('i');
-    if (password.type === 'password') { password.type = 'text'; icon.className = 'fas fa-eye-slash'; }
-    else { password.type = 'password'; icon.className = 'fas fa-eye'; }
-  });
-
-  document.getElementById('forgotLink').addEventListener('click', async function () {
-    var value = email.value.trim();
-    if (!value) { showError('Enter your email address first.'); return; }
-    clearError();
-    var r = await sb.auth.resetPasswordForEmail(value);
-    if (r.error) { showError(r.error.message); return; }
-    showToast('Password reset link sent if the account exists.', true);
-  });
-
-  form.addEventListener('submit', async function (e) {
+  /* Login form — real Supabase auth */
+  document.getElementById('login-form').addEventListener('submit', function (e) {
     e.preventDefault();
-    clearError();
-    var value = email.value.trim();
-    var pass = password.value;
+    var email = document.getElementById('l-email').value.trim();
+    var pw = document.getElementById('l-password').value;
+    if (!email || !pw) { showAlert('login-error', 'Please fill in all fields.'); return; }
+    if (!sb) { showAlert('login-error', 'Client not initialised.'); return; }
 
-    if (!value) { showError('Enter your email address.'); return; }
-    if (pass.length < 8) { showError('Password must be at least 8 characters.'); return; }
-
+    var btn = document.getElementById('login-btn');
+    btn.innerHTML = '<span class="btn-shimmer"></span><i class="fas fa-spinner fa-spin"></i> Signing in.';
     btn.disabled = true;
-    btn.querySelector('i').className = 'fas fa-spinner';
-    btnText.textContent = 'Authenticating…';
 
-    try {
-      var res = await sb.auth.signInWithPassword({ email: value, password: pass });
+    sb.auth.signInWithPassword({ email: email, password: pw }).then(function (res) {
       if (res.error) throw new Error(res.error.message);
-      var role = await resolveRole();
-      btnText.textContent = 'Success — redirecting…';
-      btn.querySelector('i').className = 'fas fa-check';
-      setTimeout(function () { window.location.replace(homeFor(role)); }, 500);
-    } catch (err) {
+      document.getElementById('login-success').classList.add('show');
+      return resolveRole();
+    }).then(function (role) {
+      btn.innerHTML = '<span class="btn-shimmer"></span><i class="fas fa-check"></i> Redirecting&hellip;';
+      setTimeout(function () { window.location.replace(homeFor(role)); }, 600);
+    }).catch(function (err) {
+      btn.innerHTML = '<span class="btn-shimmer"></span><i class="fas fa-arrow-right-to-bracket"></i> Sign In';
       btn.disabled = false;
-      btn.querySelector('i').className = 'fas fa-lock';
-      btnText.textContent = 'Sign In Securely';
-      showError(err.message || 'Unable to sign in. Please try again.');
-    }
+      showAlert('login-error', err.message || 'Unable to sign in.');
+    });
   });
-})();
+
+  /* Forgot password */
+  document.getElementById('forgot-link').addEventListener('click', function () {
+    var email = document.getElementById('l-email').value.trim();
+    if (!email) { showAlert('login-error', 'Enter your email address first.'); return; }
+    if (!sb) return;
+    sb.auth.resetPasswordForEmail(email).then(function (r) {
+      if (r.error) { showAlert('login-error', r.error.message); return; }
+      showAlert('login-success', 'Password reset link sent if the account exists.');
+    });
+  });
+
+  /* Register form — real Supabase signup */
+  document.getElementById('reg-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var first = document.getElementById('r-first').value.trim();
+    var last = document.getElementById('r-last').value.trim();
+    var email = document.getElementById('r-email').value.trim();
+    var pw = document.getElementById('r-password').value;
+    var pw2 = document.getElementById('r-password2').value;
+
+    if (!first || !last) { showAlert('reg-error', 'Please enter your full name.'); return; }
+    if (!email) { showAlert('reg-error', 'Please enter your email address.'); return; }
+    if (pw.length < 8) { showAlert('reg-error', 'Password must be at least 8 characters.'); return; }
+    if (pw !== pw2) { showAlert('reg-error', 'Passwords do not match.'); return; }
+    if (!document.getElementById('agree-terms').checked) { showAlert('reg-error', 'Please accept the Terms of Service.'); return; }
+    if (!sb) { showAlert('reg-error', 'Client not initialised.'); return; }
+
+    var btn = document.getElementById('reg-btn');
+    btn.innerHTML = '<span class="btn-shimmer"></span><i class="fas fa-spinner fa-spin"></i> Creating account.';
+    btn.disabled = true;
+
+    sb.auth.signUp({
+      email: email,
+      password: pw,
+      options: { data: { full_name: first + ' ' + last } }
+    }).then(function (res) {
+      if (res.error) throw new Error(res.error.message);
+      btn.innerHTML = '<span class="btn-shimmer"></span><i class="fas fa-user-plus"></i> Create Account';
+      btn.disabled = false;
+      document.getElementById('reg-success').classList.add('show');
+      setTimeout(function () { switchTab('login'); }, 2200);
+    }).catch(function (err) {
+      btn.innerHTML = '<span class="btn-shimmer"></span><i class="fas fa-user-plus"></i> Create Account';
+      btn.disabled = false;
+      showAlert('reg-error', err.message || 'Unable to create account.');
+    });
+  });
 </script>
 </body>
 </html>
