@@ -16,6 +16,7 @@
     await Promise.all([
       loadProperties(),
       loadPayments(),
+      loadFinancials(),
       loadLeads(),
       loadAudit()
     ]);
@@ -215,6 +216,45 @@
         loadPayments();
       });
     });
+  }
+
+  // ---------- Financials ----------
+  async function loadFinancials() {
+    if (!document.getElementById('fin-salary')) return;
+
+    // CEO salary distribution from platform_settings
+    const { data: settings } = await sb.from('platform_settings').select('key,value').eq('key', 'financial_distribution').maybeSingle();
+    const fin = settings ? settings.value : null;
+    if (fin) {
+      const set = function (id, val) {
+        const el = document.getElementById(id);
+        if (el && val != null) el.textContent = val;
+      };
+      set('fin-salary', Number(fin.monthly_salary || 0).toLocaleString());
+      set('fin-day', fin.payout_day);
+      set('fin-bank', fin.bank);
+      set('fin-acct-type', fin.account_type);
+      set('fin-acct', fin.account_number);
+      set('fin-benef', fin.beneficiary);
+      set('fin-phone', fin.phone);
+      set('fin-salary-cap', window.fmtMoney(fin.monthly_salary || 0));
+    }
+
+    // Live revenue metrics
+    const stats = await window.MWAROKIN_PAYMENTS.getPaymentStats();
+    const set2 = function (id, val) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    };
+    set2('fin-revenue', window.fmtMoney(stats.totalRevenue));
+    set2('fin-fees', window.fmtMoney(stats.platformFees));
+
+    // Next payout day this month
+    const today = new Date();
+    const day = (fin && fin.payout_day) || 25;
+    const next = new Date(today.getFullYear(), today.getMonth(), day);
+    if (next < today) next.setMonth(next.getMonth() + 1);
+    set2('fin-next', next.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }));
   }
 
   // ---------- Leads (AI onboarding) ----------
