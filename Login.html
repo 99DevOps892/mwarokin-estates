@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Mwarokin Estates — Secure sign in for tenants, landlords, caretakers and admins. Powered by Syllogism Technology Africa.">
+<meta name="theme-color" content="#0d2818">
 <title>Mwarokin Estates — Secure Sign In</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -24,12 +26,11 @@
   html{scroll-behavior:smooth;}
   body{
     font-family:'DM Sans',sans-serif; background:var(--obsidian); color:var(--ivory);
-    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
     padding:24px; position:relative; overflow-x:hidden;
   }
   ::-webkit-scrollbar{width:6px;} ::-webkit-scrollbar-track{background:var(--obsidian);} ::-webkit-scrollbar-thumb{background:var(--forest-pale);border-radius:3px;}
 
-  /* ambient background */
   body::before{
     content:''; position:fixed; top:-20%; right:-10%; width:600px; height:600px;
     background:radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%); border-radius:50%; pointer-events:none;
@@ -45,7 +46,6 @@
     box-shadow:0 24px 90px rgba(0,0,0,0.55); overflow:hidden; position:relative; z-index:1;
   }
 
-  /* LEFT — brand panel */
   .brand-panel{
     background:linear-gradient(160deg, var(--forest-mid) 0%, #1f4a2e 100%);
     padding:52px 44px; display:flex; flex-direction:column; justify-content:space-between;
@@ -69,13 +69,12 @@
   .brand-title em{color:var(--gold-light); font-style:italic;}
   .brand-desc{font-size:0.9rem; color:var(--ivory-muted); line-height:1.65; max-width:340px;}
 
-  .trust-row{position:relative; z-index:1; display:flex; gap:22px; margin-top:auto; padding-top:30px;}
+  .trust-row{position:relative; z-index:1; display:flex; gap:22px; margin-top:auto; padding-top:30px; flex-wrap:wrap;}
   .trust-item{display:flex; align-items:center; gap:8px; font-size:0.72rem; color:var(--ivory-muted); font-weight:500;}
   .trust-item i{color:var(--gold); font-size:0.85rem;}
 
-  /* RIGHT — form panel */
   .form-panel{background:var(--surface); padding:52px 46px; display:flex; flex-direction:column; justify-content:center;}
-  .form-heading{margin-bottom:30px;}
+  .form-heading{margin-bottom:26px;}
   .form-title{font-family:'Cormorant Garamond',serif; font-size:1.7rem; font-weight:600; color:var(--ivory); margin-bottom:6px;}
   .form-title-sub{font-size:0.84rem; color:var(--ivory-muted);}
 
@@ -85,6 +84,13 @@
     padding:11px 14px; font-size:0.78rem; margin-bottom:20px; font-weight:500;
   }
   #sessionBanner.show{display:flex;}
+
+  .form-error{
+    display:none; align-items:center; gap:8px; background:rgba(214,79,60,0.10);
+    border:1px solid rgba(214,79,60,0.35); color:#f0a096; border-radius:var(--radius-sm);
+    padding:11px 14px; font-size:0.78rem; margin-bottom:18px; font-weight:500;
+  }
+  .form-error.show{display:flex;}
 
   .form-group{margin-bottom:18px;}
   .form-label{display:block; font-size:0.76rem; font-weight:600; color:var(--ivory-muted); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:8px;}
@@ -103,7 +109,7 @@
   .form-meta{display:flex; align-items:center; justify-content:space-between; margin:2px 0 22px;}
   .remember{display:flex; align-items:center; gap:8px; font-size:0.8rem; color:var(--ivory-muted); cursor:pointer; user-select:none;}
   .remember input{accent-color:var(--gold); width:15px; height:15px; cursor:pointer;}
-  .forgot-link{font-size:0.8rem; color:var(--gold); text-decoration:none; font-weight:500;}
+  .forgot-link{font-size:0.8rem; color:var(--gold); text-decoration:none; font-weight:500; background:none; border:none; cursor:pointer; font-family:inherit;}
   .forgot-link:hover{color:var(--gold-light);}
 
   .btn-gold{
@@ -122,187 +128,253 @@
 
   .demo-note{
     background:var(--surface-raised); border:var(--border); border-radius:var(--radius-sm);
-    padding:13px 15px; font-size:0.78rem; color:var(--ivory-muted); line-height:1.55; margin-bottom:20px;
+    padding:13px 15px; font-size:0.78rem; color:var(--ivory-muted); line-height:1.55;
   }
   .demo-note strong{color:var(--gold-light); font-weight:600;}
+  .demo-acc{display:grid; gap:6px; margin-top:10px;}
+  .demo-acc div{display:flex; align-items:center; gap:8px; font-size:0.76rem;}
+  .demo-acc i{color:var(--gold); width:14px; font-size:0.8rem;}
+  .demo-acc b{color:var(--ivory-dim); font-weight:600;}
+
+  .auth-alt{display:flex; align-items:center; justify-content:center; gap:7px; font-size:0.84rem; color:var(--ivory-muted); margin-top:22px;}
+  .auth-alt a{color:var(--gold); text-decoration:none; font-weight:600;}
+  .auth-alt a:hover{color:var(--gold-light);}
 
   .security-note{display:flex; align-items:center; justify-content:center; gap:7px; font-size:0.74rem; color:var(--ivory-muted); margin-top:20px;}
   .security-note i{color:var(--gold);}
+
+  .auth-footer{display:flex; align-items:center; gap:8px; margin-top:18px; font-size:0.78rem; color:var(--ivory-muted); z-index:1;}
+  .sta-chip{
+    display:inline-flex; align-items:center; gap:8px; padding:7px 13px; border:var(--border);
+    border-radius:var(--radius-pill); background:var(--surface-raised);
+  }
+  .sta-chip .sta-dot{
+    width:8px; height:8px; border-radius:50%; background:linear-gradient(135deg, var(--gold), var(--gold-light));
+  }
+  .auth-footer strong{color:var(--gold-light); font-weight:600;}
 
   #toast{
     position:fixed; bottom:28px; right:28px; background:var(--forest-mid); border:var(--border-strong);
     border-radius:var(--radius); padding:14px 20px; display:flex; align-items:center; gap:12px;
     box-shadow:var(--shadow); z-index:999; min-width:280px; transform:translateX(120%);
-    transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    transition:transform 0.35s cubic-bezier(0.4,0,0.2,1); max-width:90vw;
   }
   #toast.show{transform:translateX(0);}
   .toast-icon{width:32px;height:32px;border-radius:50%;background:rgba(214,79,60,0.15);display:flex;align-items:center;justify-content:center;color:var(--danger);flex-shrink:0;}
+  .toast-icon.ok{background:rgba(76,175,125,0.15);color:var(--success);}
   .toast-text{font-size:0.85rem;color:var(--ivory);font-weight:500;}
 
   @media (max-width:820px){
     .auth-wrap{grid-template-columns:1fr;}
     .brand-panel{display:none;}
     .form-panel{padding:40px 28px;}
+    .auth-footer{justify-content:center; text-align:center;}
   }
 </style>
 </head>
 <body>
 
 <div class="auth-wrap">
-  <!-- BRAND PANEL -->
   <div class="brand-panel">
     <div>
       <div class="brand-mark">
         <div class="brand-icon"><i class="fas fa-city"></i></div>
         <div>
           <div class="brand-name">Mwarokin Estates</div>
-          <div class="brand-sub">Resident Portal</div>
+          <div class="brand-sub">Resident Portal · Syllogism Technology Africa</div>
         </div>
       </div>
       <div class="brand-copy">
         <p class="brand-eyebrow">Secure Access</p>
         <h1 class="brand-title">Your home,<br><em>always within reach.</em></h1>
-        <p class="brand-desc">Sign in to manage rent, bills, maintenance requests, and communication with your estate — all in one place.</p>
+        <p class="brand-desc">One secure portal for tenants, landlords, caretakers and administrators — manage rent, bills, maintenance and your estate, all in one place.</p>
       </div>
     </div>
     <div class="trust-row">
       <div class="trust-item"><i class="fas fa-shield-alt"></i>256-bit encrypted</div>
-      <div class="trust-item"><i class="fas fa-user-lock"></i>Session-protected</div>
+      <div class="trust-item"><i class="fas fa-user-lock"></i>Role-protected</div>
     </div>
   </div>
 
-  <!-- FORM PANEL -->
   <div class="form-panel">
     <div class="form-heading">
       <h2 class="form-title">Welcome back</h2>
       <p class="form-title-sub">Sign in to continue to your dashboard.</p>
     </div>
 
-    <div id="sessionBanner"><i class="fas fa-clock"></i><span id="sessionBannerText">Your session expired due to inactivity. Please sign in again.</span></div>
+    <div id="sessionBanner"><i class="fas fa-clock"></i><span id="sessionBannerText">Your session expired. Please sign in again.</span></div>
 
-    <form id="loginForm" autocomplete="off">
+    <form id="loginForm" autocomplete="on" novalidate>
+      <div class="form-error" id="formError"><i class="fas fa-exclamation-circle"></i><span id="formErrorText">Error</span></div>
       <div class="form-group">
-        <label class="form-label">Tenant ID or Email</label>
+        <label class="form-label" for="email">Email Address</label>
         <div class="input-shell">
-          <i class="fas fa-user leading"></i>
-          <input type="text" id="loginId" class="form-control" placeholder="e.g. A-304 or john@example.com" required>
+          <i class="fas fa-envelope leading"></i>
+          <input type="email" id="email" class="form-control" placeholder="you@example.com" required autocomplete="email">
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">Password</label>
+        <label class="form-label" for="password">Password</label>
         <div class="input-shell">
           <i class="fas fa-lock leading"></i>
-          <input type="password" id="loginPass" class="form-control" placeholder="Enter your password" required>
-          <button type="button" class="toggle-pass" id="togglePass"><i class="fas fa-eye"></i></button>
+          <input type="password" id="password" class="form-control" placeholder="Enter your password" required autocomplete="current-password">
+          <button type="button" class="toggle-pass" id="togglePass" aria-label="Show password"><i class="fas fa-eye"></i></button>
         </div>
       </div>
       <div class="form-meta">
         <label class="remember"><input type="checkbox" id="rememberMe" checked> Keep me signed in</label>
-        <a class="forgot-link" href="#" onclick="showToast('Password reset link sent if the account exists.'); return false;">Forgot password?</a>
+        <button type="button" class="forgot-link" id="forgotLink">Forgot password?</button>
       </div>
       <button type="submit" class="btn-gold" id="loginBtn"><i class="fas fa-lock"></i><span id="loginBtnText">Sign In Securely</span></button>
     </form>
 
-    <div class="divider">Demo Access</div>
-    <div class="demo-note">
-      <strong>Prototype mode:</strong> enter any Tenant ID and a password of at least 4 characters to sign in. This screen simulates a secure Auth0-style gate for the Mwarokin Estates portal.
+    <div class="auth-alt">
+      Don't have an account? <a href="register.html">Create one</a>
     </div>
 
-    <div class="security-note"><i class="fas fa-shield-alt"></i>Protected session · auto sign-out after 1 minute of inactivity</div>
+    <div class="divider">Demo Access</div>
+    <div class="demo-note">
+      <strong>Test credentials</strong> — sign in as any role to open its dashboard:
+      <div class="demo-acc">
+        <div><i class="fas fa-user-tie"></i><span><b>Admin:</b> ceo@syllogismtechnologyafrica.com</span></div>
+        <div><i class="fas fa-home"></i><span><b>Landlord:</b> landlord@mwarokinestates.co.ke</span></div>
+        <div><i class="fas fa-user-cog"></i><span><b>Caretaker:</b> caretaker@mwarokinestates.co.ke</span></div>
+        <div><i class="fas fa-user"></i><span><b>Tenant:</b> tenant@mwarokinestates.co.ke</span></div>
+      </div>
+    </div>
+
+    <div class="security-note"><i class="fas fa-shield-alt"></i>Protected session · powered by Supabase</div>
   </div>
 </div>
 
+<div class="auth-footer">
+  <span class="sta-chip"><span class="sta-dot"></span><span>Powered by <strong>Syllogism Technology Africa</strong></span></span>
+</div>
+
 <div id="toast">
-  <div class="toast-icon"><i class="fas fa-exclamation"></i></div>
+  <div class="toast-icon" id="toastIcon"><i class="fas fa-exclamation"></i></div>
   <div class="toast-text" id="toastText">Message</div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/supabase-client.js"></script>
 <script>
-  const SESSION_KEY = 'mwarokin_session';
-  const ACTIVITY_KEY = 'mwarokin_last_activity';
-  const REDIRECT_DEFAULT = 'index.html';
+(function () {
+  var sb = window.supabaseClient;
+  if (!sb) { showToast('Failed to initialise the platform client.', false); return; }
 
-  // If a valid, non-expired session already exists, skip login entirely.
-  (function checkExistingSession(){
+  var form = document.getElementById('loginForm');
+  var email = document.getElementById('email');
+  var password = document.getElementById('password');
+  var btn = document.getElementById('loginBtn');
+  var btnText = document.getElementById('loginBtnText');
+  var errBox = document.getElementById('formError');
+  var errText = document.getElementById('formErrorText');
+
+  var DASH = {
+    admin: 'Dashboard Overview.html',
+    landlord: 'Landlord Management Dashbord.html',
+    caretaker: 'CareTakers Dashboard.html',
+    tenant: 'Tenant Management Dashboard.html'
+  };
+  var DEFAULT_ROLE = 'tenant';
+
+  function showError(msg) { errText.textContent = msg; errBox.classList.add('show'); }
+  function clearError() { errBox.classList.remove('show'); }
+
+  function showToast(msg, ok) {
+    var t = document.getElementById('toast');
+    document.getElementById('toastText').textContent = msg;
+    document.getElementById('toastIcon').className = 'toast-icon ' + (ok ? 'ok' : '');
+    document.getElementById('toastIcon').innerHTML = ok
+      ? '<i class="fas fa-check"></i>'
+      : '<i class="fas fa-exclamation"></i>';
+    t.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(function () { t.classList.remove('show'); }, 3600);
+  }
+
+  function homeFor(role) {
+    var page = DASH[role] || DASH[DEFAULT_ROLE];
+    return window.appPath ? window.appPath(page) : page;
+  }
+
+  async function resolveRole() {
+    var role = DEFAULT_ROLE;
     try {
-      const raw = localStorage.getItem(SESSION_KEY);
-      if (raw) {
-        const last = parseInt(localStorage.getItem(ACTIVITY_KEY) || '0', 10);
-        if (Date.now() - last < 60000) {
-          const params = new URLSearchParams(location.search);
-          location.replace(params.get('redirect') || REDIRECT_DEFAULT);
-          return;
-        } else {
-          localStorage.removeItem(SESSION_KEY);
-        }
+      var u = await sb.auth.getUser();
+      if (!u.data || !u.data.user) return role;
+      var profile = await sb.from('profiles').select('role').eq('id', u.data.user.id).maybeSingle();
+      if (profile.data && profile.data.role) role = profile.data.role;
+    } catch (e) {}
+    return role;
+  }
+
+  // Already signed in? Straight to the right dashboard.
+  (async function boot() {
+    try {
+      var s = await sb.auth.getSession();
+      if (s.data && s.data.session) {
+        var role = await resolveRole();
+        window.location.replace(homeFor(role));
+        return;
       }
-    } catch(e) {}
+    } catch (e) {}
+    var reason = new URLSearchParams(location.search).get('reason');
+    if (reason) {
+      var banner = document.getElementById('sessionBanner');
+      var text = document.getElementById('sessionBannerText');
+      if (reason === 'timeout') text.textContent = 'You were signed out after inactivity. Please sign in again.';
+      else if (reason === 'noauth') text.textContent = 'Please sign in to access your dashboard.';
+      else if (reason === 'loggedout') text.textContent = 'You have been signed out.';
+      banner.classList.add('show');
+    }
   })();
 
-  // Show banner if arrived via a forced logout / timeout
-  const params = new URLSearchParams(location.search);
-  const reason = params.get('reason');
-  if (reason) {
-    const banner = document.getElementById('sessionBanner');
-    const text = document.getElementById('sessionBannerText');
-    if (reason === 'timeout') {
-      text.textContent = 'You were signed out after 1 minute of inactivity. Please sign in again.';
-    } else if (reason === 'noauth') {
-      text.textContent = 'Please sign in to access the resident portal.';
-    } else if (reason === 'loggedout') {
-      text.textContent = 'You have been signed out.';
-    }
-    banner.classList.add('show');
-  }
-
-  document.getElementById('togglePass').addEventListener('click', function(){
-    const input = document.getElementById('loginPass');
-    const icon = this.querySelector('i');
-    if (input.type === 'password') { input.type = 'text'; icon.className = 'fas fa-eye-slash'; }
-    else { input.type = 'password'; icon.className = 'fas fa-eye'; }
+  document.getElementById('togglePass').addEventListener('click', function () {
+    var icon = this.querySelector('i');
+    if (password.type === 'password') { password.type = 'text'; icon.className = 'fas fa-eye-slash'; }
+    else { password.type = 'password'; icon.className = 'fas fa-eye'; }
   });
 
-  function showToast(msg){
-    const t = document.getElementById('toast');
-    document.getElementById('toastText').textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3200);
-  }
+  document.getElementById('forgotLink').addEventListener('click', async function () {
+    var value = email.value.trim();
+    if (!value) { showError('Enter your email address first.'); return; }
+    clearError();
+    var r = await sb.auth.resetPasswordForEmail(value);
+    if (r.error) { showError(r.error.message); return; }
+    showToast('Password reset link sent if the account exists.', true);
+  });
 
-  document.getElementById('loginForm').addEventListener('submit', function(e){
+  form.addEventListener('submit', async function (e) {
     e.preventDefault();
-    const id = document.getElementById('loginId').value.trim();
-    const pass = document.getElementById('loginPass').value;
+    clearError();
+    var value = email.value.trim();
+    var pass = password.value;
 
-    if (!id || pass.length < 4) {
-      showToast('Enter a Tenant ID and a password of at least 4 characters.');
-      return;
-    }
+    if (!value) { showError('Enter your email address.'); return; }
+    if (pass.length < 8) { showError('Password must be at least 8 characters.'); return; }
 
-    const btn = document.getElementById('loginBtn');
-    const btnText = document.getElementById('loginBtnText');
     btn.disabled = true;
     btn.querySelector('i').className = 'fas fa-spinner';
     btnText.textContent = 'Authenticating…';
 
-    // Simulated auth handshake delay for a premium, deliberate feel.
-    setTimeout(() => {
-      const session = {
-        token: 'demo_' + Math.random().toString(36).slice(2),
-        tenant: id,
-        loginAt: Date.now()
-      };
-      try {
-        localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-        localStorage.setItem(ACTIVITY_KEY, Date.now().toString());
-      } catch(e) {}
+    try {
+      var res = await sb.auth.signInWithPassword({ email: value, password: pass });
+      if (res.error) throw new Error(res.error.message);
+      var role = await resolveRole();
       btnText.textContent = 'Success — redirecting…';
       btn.querySelector('i').className = 'fas fa-check';
-      setTimeout(() => {
-        location.replace(params.get('redirect') || REDIRECT_DEFAULT);
-      }, 500);
-    }, 900);
+      setTimeout(function () { window.location.replace(homeFor(role)); }, 500);
+    } catch (err) {
+      btn.disabled = false;
+      btn.querySelector('i').className = 'fas fa-lock';
+      btnText.textContent = 'Sign In Securely';
+      showError(err.message || 'Unable to sign in. Please try again.');
+    }
   });
+})();
 </script>
 </body>
 </html>
