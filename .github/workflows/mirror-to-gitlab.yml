@@ -1,0 +1,29 @@
+name: Mirror to GitLab (2nd Brain)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push to GitLab mirror
+        env:
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+          GITLAB_URL: ${{ secrets.GITLAB_URL }}
+        run: |
+          set -e
+          if [ -z "$GITLAB_TOKEN" ] || [ -z "$GITLAB_URL" ]; then
+            echo "::warning::GITLAB_TOKEN or GITLAB_URL secrets not set — skipping mirror."
+            exit 0
+          fi
+          git remote add gitlab "https://oauth2:${GITLAB_TOKEN}@${GITLAB_URL}" >/dev/null 2>&1 || \
+            git remote set-url gitlab "https://oauth2:${GITLAB_TOKEN}@${GITLAB_URL}"
+          git push gitlab HEAD:refs/heads/main --force-with-lease

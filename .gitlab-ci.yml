@@ -1,0 +1,46 @@
+# GitLab CI — failsafe build & lint for the GitLab "2nd brain" mirror.
+# Runs on every push to main in GitLab (mirrored from GitHub). It only
+# validates the static site; actual hosting stays on GitHub Pages + Supabase.
+
+stages:
+  - validate
+
+validate:
+  stage: validate
+  image: node:20-alpine
+  script:
+    - echo "==> Validating static assets"
+    - test -f index.html
+    - test -f css/style.css
+    - test -f js/config.js
+    - test -f js/supabase-client.js
+    - test -f js/i18n.js
+    - test -f js/currency.js
+    - test -f js/auth.js
+    - test -f js/properties.js
+    - test -f js/realtime.js
+    - test -f js/payments.js
+    - test -f js/dashboard.js
+    - test -f js/admin.js
+    - test -f js/profile.js
+    - test -f js/home.js
+    - test -f js/property.js
+    - echo "==> All required files present"
+
+  # Optional: expose static site on GitLab Pages as a failsafe
+  artifacts:
+    paths:
+      - ./
+    expire_in: 7 days
+
+pages:
+  stage: validate
+  script:
+    - mkdir -p public
+    - cp -r css js index.html login.html register.html dashboard.html admin.html profile.html property.html 404.html public/
+  artifacts:
+    paths:
+      - public
+    expire_in: never
+  only:
+    - main

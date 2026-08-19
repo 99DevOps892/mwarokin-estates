@@ -1,0 +1,64 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Inject Supabase config from secrets
+        run: |
+          python - <<'EOF'
+          import os, re
+          path = "js/config.js"
+          src = open(path, encoding="utf-8").read()
+          src = re.sub(
+            r"supabaseUrl:\s*'[^']*'",
+            "supabaseUrl: '" + os.environ["SUPABASE_URL"] + "'",
+            src,
+          )
+          src = re.sub(
+            r"supabaseAnonKey:\s*'[^']*'",
+            "supabaseAnonKey: '" + os.environ["SUPABASE_ANON_KEY"] + "'",
+            src,
+          )
+          open(path, "w", encoding="utf-8").write(src)
+          print("config.js updated")
+          EOF
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Validate placeholders were replaced
+        run: |
+          ! grep -q "YOUR_SUPABASE_ANON_PUBLIC_KEY_HERE" js/config.js
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
