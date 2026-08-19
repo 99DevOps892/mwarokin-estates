@@ -204,6 +204,8 @@
   window.MWAROKIN = window.MWAROKIN || {};
 
   document.addEventListener('DOMContentLoaded', function () {
+    const yearEl = document.getElementById('year');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
     bindLogoutLinks();
     setupBurger();
     if (typeof window.MWAROKIN_I18N !== 'undefined') {
