@@ -28,23 +28,28 @@ jobs:
         run: |
           python - <<'EOF'
           import os, re
-          path = "js/config.js"
-          if not os.path.exists(path):
-              print("js/config.js not present — skipping injection (legacy build)")
-              raise SystemExit(0)
-          src = open(path, encoding="utf-8").read()
-          src = re.sub(
-            r"const SUPABASE_URL = '[^']*'",
-            "const SUPABASE_URL = '" + os.environ["SUPABASE_URL"] + "'",
-            src,
-          )
-          src = re.sub(
-            r"const SUPABASE_ANON_KEY = '[^']*'",
-            "const SUPABASE_ANON_KEY = '" + os.environ["SUPABASE_ANON_KEY"] + "'",
-            src,
-          )
-          open(path, "w", encoding="utf-8").write(src)
-          print("config.js updated")
+          paths = ["js/config.js", "app/js/config.js"]
+          done = False
+          for path in paths:
+              if not os.path.exists(path):
+                  print(path + " not present — skipping")
+                  continue
+              src = open(path, encoding="utf-8").read()
+              src = re.sub(
+                r"const SUPABASE_URL = '[^']*'",
+                "const SUPABASE_URL = '" + os.environ["SUPABASE_URL"] + "'",
+                src,
+              )
+              src = re.sub(
+                r"const SUPABASE_ANON_KEY = '[^']*'",
+                "const SUPABASE_ANON_KEY = '" + os.environ["SUPABASE_ANON_KEY"] + "'",
+                src,
+              )
+              open(path, "w", encoding="utf-8").write(src)
+              print(path + " updated")
+              done = True
+          if not done:
+              print("no config.js found — skipping injection")
           EOF
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}

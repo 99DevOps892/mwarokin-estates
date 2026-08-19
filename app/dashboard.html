@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Mwarokin Estates — tenant & landlord dashboard.">
+  <title>Dashboard — Mwarokin Estates</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app-page">
+  <header class="navbar app-nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="brand"><span class="brand-mark">M</span><span class="brand-text">Mwarokin <em>Estates</em></span></a>
+      <nav class="nav-links" id="nav-links">
+        <a href="index.html" data-i18n="common.browse_properties">Browse Properties</a>
+        <a href="profile.html" data-i18n="common.profile">Profile</a>
+        <a href="admin.html" id="admin-link" class="hidden">Admin</a>
+        <a href="logout" id="nav-logout" class="btn btn-ghost btn-sm" data-i18n="common.logout">Logout</a>
+      </nav>
+      <button class="nav-burger" id="nav-burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <main class="container app-main">
+    <div class="page-head">
+      <div>
+        <h1>Dashboard</h1>
+        <p id="welcome-user">Loading...</p>
+      </div>
+      <div class="page-actions">
+        <a href="profile.html" class="btn btn-ghost" data-i18n="common.profile">Profile</a>
+        <button class="btn btn-primary" id="btn-pay-rent" data-i18n="common.pay_rent">Pay Rent</button>
+      </div>
+    </div>
+
+    <!-- ===== STATS ===== -->
+    <section class="stats-grid" id="stats-grid">
+      <div class="stat-card"><span class="stat-label">Total Properties</span><span class="stat-value" id="stat-properties">—</span></div>
+      <div class="stat-card"><span class="stat-label">Available</span><span class="stat-value" id="stat-available">—</span></div>
+      <div class="stat-card"><span class="stat-label">Active Leases</span><span class="stat-value" id="stat-leases">—</span></div>
+      <div class="stat-card"><span class="stat-label">Monthly Revenue</span><span class="stat-value" id="stat-revenue">—</span></div>
+      <div class="stat-card"><span class="stat-label">Platform Fees (5%)</span><span class="stat-value" id="stat-fees">—</span></div>
+      <div class="stat-card"><span class="stat-label">Pending Maintenance</span><span class="stat-value" id="stat-maintenance">—</span></div>
+    </section>
+
+    <!-- ===== TABBED CONTENT ===== -->
+    <nav class="tabs" id="dash-tabs">
+      <button class="tab active" data-tab="properties">Properties</button>
+      <button class="tab" data-tab="payments">Payments</button>
+      <button class="tab" data-tab="maintenance">Maintenance</button>
+      <button class="tab" data-tab="notifications">Notifications</button>
+    </nav>
+
+    <!-- Properties tab -->
+    <section id="tab-properties" class="tab-panel active">
+      <div class="properties-grid compact" id="dash-properties"></div>
+      <p id="dash-props-empty" class="empty hidden">No properties available yet.</p>
+    </section>
+
+    <!-- Payments tab -->
+    <section id="tab-payments" class="tab-panel">
+      <div id="payment-list" class="list-stack"></div>
+      <p id="payments-empty" class="empty hidden">No payments yet.</p>
+    </section>
+
+    <!-- Maintenance tab -->
+    <section id="tab-maintenance" class="tab-panel">
+      <div class="panel-actions">
+        <button class="btn btn-primary btn-sm" id="btn-new-maintenance" data-i18n="common.report_issue">Report an Issue</button>
+      </div>
+      <div id="maintenance-list" class="list-stack"></div>
+    </section>
+
+    <!-- Notifications tab -->
+    <section id="tab-notifications" class="tab-panel">
+      <div id="notification-list" class="list-stack"></div>
+      <p id="notifications-empty" class="empty hidden">No notifications.</p>
+    </section>
+  </main>
+
+  <!-- ===== PAY RENT MODAL ===== -->
+  <div class="modal-overlay hidden" id="pay-modal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 data-i18n="common.make_payment">Make Payment</h3>
+        <button class="modal-close" data-close="pay-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label>Amount (KES)</label>
+          <input type="number" id="pay-amount" min="10" placeholder="e.g. 45000">
+        </div>
+        <div class="field">
+          <label>Payment Method</label>
+          <select id="pay-method">
+            <option value="mpesa">M-Pesa</option>
+            <option value="airtel-money">Airtel Money</option>
+            <option value="bank-transfer">Bank Transfer</option>
+          </select>
+        </div>
+        <div class="field hidden" id="phone-field">
+          <label>Phone Number</label>
+          <input type="tel" id="pay-phone" placeholder="2547XXXXXXXX">
+        </div>
+        <div class="split-summary">
+          <div class="split-row"><span>Total</span><strong id="split-total">KES 0</strong></div>
+          <div class="split-row muted"><span>Landlord receives (95%)</span><span id="split-landlord">KES 0</span></div>
+          <div class="split-row muted"><span>Platform fee (5%)</span><span id="split-fee">KES 0</span></div>
+        </div>
+        <p class="field-hint">For M-Pesa/Airtel, an STK push is sent to your phone. For bank transfer, record your payment for admin verification.</p>
+        <button class="btn btn-primary btn-block btn-lg" id="pay-submit">Initiate Payment</button>
+        <p class="form-error hidden" id="pay-error"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MAINTENANCE MODAL ===== -->
+  <div class="modal-overlay hidden" id="maintenance-modal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 data-i18n="common.report_issue">Report an Issue</h3>
+        <button class="modal-close" data-close="maintenance-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="maintenance-form">
+          <div class="field">
+            <label>Issue Type</label>
+            <select id="m-type">
+              <option value="plumbing">Plumbing</option>
+              <option value="electrical">Electrical</option>
+              <option value="structural">Structural</option>
+              <option value="appliance">Appliance</option>
+              <option value="pest">Pest</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Priority</label>
+            <select id="m-priority">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="emergency">Emergency</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Description</label>
+            <textarea id="m-description" rows="3" required placeholder="Describe the issue..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" data-i18n="common.report_issue">Submit Request</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/currency.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/properties.js"></script>
+  <script src="js/payments.js"></script>
+  <script src="js/realtime.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
