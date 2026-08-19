@@ -175,13 +175,29 @@
     });
   }
 
-  /** Wire mobile burger menu. */
+  /** Wire mobile burger menu: toggle, scroll-lock, auto-close on link click. */
   function setupBurger() {
     const burger = document.getElementById('nav-burger');
     const links = document.getElementById('nav-links');
-    if (burger && links) {
-      burger.addEventListener('click', function () { links.classList.toggle('open'); });
-    }
+    if (!burger || !links) return;
+
+    const setOpen = function (open) {
+      links.classList.toggle('open', open);
+      document.body.classList.toggle('nav-open', open);
+      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+
+    burger.addEventListener('click', function () {
+      setOpen(!links.classList.contains('open'));
+    });
+
+    links.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', function () { setOpen(false); });
+    });
+
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 860) setOpen(false);
+    });
   }
 
   // ---------- Bootstraps ----------
