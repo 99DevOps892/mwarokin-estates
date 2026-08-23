@@ -1,0 +1,767 @@
+{
+  "_description": "Mwarokin Estates Role-Based Configuration (RBC) Templates",
+  "_version": "1.0",
+  "_lastUpdated": "2024-09-23",
+  
+  "roleDefinitions": {
+    "tenant": {
+      "displayName": "Tenant / Residential Occupant",
+      "icon": "fas fa-home",
+      "color": "#22c55e",
+      "description": "Living in property • Managing rent & maintenance",
+      "priority": 1
+    },
+    "landlord": {
+      "displayName": "Landlord / Property Owner",
+      "icon": "fas fa-building",
+      "color": "#3b82f6",
+      "description": "Owning properties • Managing tenants & payments",
+      "priority": 2
+    },
+    "caretaker": {
+      "displayName": "Caretaker / Maintenance Manager",
+      "icon": "fas fa-tools",
+      "color": "#f59e0b",
+      "description": "Managing property maintenance • Utilities & repairs",
+      "priority": 3
+    },
+    "management": {
+      "displayName": "Management / Administrator",
+      "icon": "fas fa-chart-line",
+      "color": "#8b5cf6",
+      "description": "System oversight • All operations monitoring",
+      "priority": 4
+    }
+  },
+
+  "onboardingSteps": {
+    "step0": {
+      "name": "Role Selection",
+      "description": "Choose your role type",
+      "requiredFields": ["role"],
+      "timeEstimate": "1-2 minutes"
+    },
+    "step1": {
+      "name": "Profile Information",
+      "description": "Personal & professional details (role-specific)",
+      "requiredFields": [],
+      "timeEstimate": "3-5 minutes"
+    },
+    "step2": {
+      "name": "Configuration & Preferences",
+      "description": "Role-Based Configuration (RBC) setup",
+      "requiredFields": [],
+      "timeEstimate": "2-4 minutes"
+    },
+    "step3": {
+      "name": "Identity Verification",
+      "description": "OTP, Email, Terms & Agreements",
+      "requiredFields": ["otp_verified", "email_verified", "terms_accepted"],
+      "timeEstimate": "2-3 minutes"
+    },
+    "step4": {
+      "name": "Completion & Dashboard",
+      "description": "Summary & redirect to role-specific dashboard",
+      "requiredFields": [],
+      "timeEstimate": "Auto-redirect"
+    }
+  },
+
+  "tenant": {
+    "profileFields": {
+      "basicInfo": {
+        "fullName": {
+          "type": "text",
+          "required": true,
+          "placeholder": "John Mwangi",
+          "validation": "minLength:2, maxLength:100"
+        },
+        "email": {
+          "type": "email",
+          "required": true,
+          "placeholder": "john@example.com",
+          "validation": "isEmail"
+        },
+        "phone": {
+          "type": "tel",
+          "required": true,
+          "placeholder": "+254 7XX XXX XXX",
+          "validation": "isPhone"
+        }
+      },
+      "residentialInfo": {
+        "currentAddress": {
+          "type": "text",
+          "required": true,
+          "placeholder": "Apartment number & street",
+          "validation": "minLength:5"
+        },
+        "moveInDate": {
+          "type": "date",
+          "required": true,
+          "validation": "isDateInFuture"
+        },
+        "occupants": {
+          "type": "select",
+          "required": true,
+          "options": ["1", "2", "3", "4+"]
+        }
+      },
+      "identification": {
+        "nationalID": {
+          "type": "text",
+          "required": true,
+          "placeholder": "ID number",
+          "validation": "minLength:6"
+        }
+      }
+    },
+
+    "rbcConfiguration": {
+      "paymentMethods": {
+        "name": "Preferred Payment Method",
+        "type": "single_select",
+        "required": true,
+        "options": {
+          "mpesa": {
+            "label": "M-Pesa",
+            "icon": "fas fa-mobile-alt",
+            "description": "STK Push to your phone",
+            "features": ["instant", "low_fees", "widely_used"]
+          },
+          "airtel": {
+            "label": "Airtel Money",
+            "icon": "fas fa-phone",
+            "description": "Direct Airtel money deduction",
+            "features": ["instant", "airtel_users", "quick"]
+          },
+          "syllopay": {
+            "label": "SylloPay",
+            "icon": "fas fa-wallet",
+            "description": "Mwarokin integrated payment",
+            "features": ["integrated", "rewards", "fast"]
+          },
+          "bank": {
+            "label": "Bank Transfer",
+            "icon": "fas fa-university",
+            "description": "Direct bank account transfer",
+            "features": ["secure", "record_keeping", "traditional"]
+          }
+        }
+      },
+
+      "notifications": {
+        "name": "Communication Preferences",
+        "type": "multi_select",
+        "options": {
+          "sms": {
+            "label": "SMS Notifications",
+            "default": true,
+            "description": "Payment reminders and updates"
+          },
+          "email": {
+            "label": "Email Notifications",
+            "default": true,
+            "description": "Receipts and important updates"
+          },
+          "push": {
+            "label": "Push Notifications",
+            "default": true,
+            "description": "Real-time alerts in mobile app"
+          }
+        }
+      }
+    },
+
+    "dashboardFeatures": [
+      {
+        "feature": "Rent Payment Portal",
+        "access": true,
+        "description": "Pay monthly rent via M-Pesa, Airtel, SylloPay, or Bank",
+        "icon": "fas fa-credit-card"
+      },
+      {
+        "feature": "Payment History",
+        "access": true,
+        "description": "Track all rent payments with dates and receipts",
+        "icon": "fas fa-history"
+      },
+      {
+        "feature": "Lease Documents",
+        "access": true,
+        "description": "Digital lease with e-signature capability",
+        "icon": "fas fa-file-contract"
+      },
+      {
+        "feature": "Maintenance Requests",
+        "access": true,
+        "description": "Submit repairs and maintenance issues to caretaker",
+        "icon": "fas fa-tools"
+      },
+      {
+        "feature": "Announcements & Messages",
+        "access": true,
+        "description": "Receive community updates and landlord messages",
+        "icon": "fas fa-bell"
+      }
+    ],
+
+    "dashboardUrl": "mwarokin_tenant_dashboard.html",
+    "averageOnboardingTime": "8-12 minutes"
+  },
+
+  "landlord": {
+    "profileFields": {
+      "personalInfo": {
+        "fullName": {
+          "type": "text",
+          "required": true,
+          "placeholder": "Jane Kipchoge"
+        },
+        "email": {
+          "type": "email",
+          "required": true,
+          "placeholder": "jane@example.com"
+        },
+        "phone": {
+          "type": "tel",
+          "required": true,
+          "placeholder": "+254 7XX XXX XXX"
+        }
+      },
+      "businessInfo": {
+        "companyName": {
+          "type": "text",
+          "required": false,
+          "placeholder": "Your property management company"
+        },
+        "propertyCount": {
+          "type": "select",
+          "required": true,
+          "options": ["1", "2-5", "6-10", "10+"]
+        },
+        "primaryAddress": {
+          "type": "text",
+          "required": true,
+          "placeholder": "Main property location"
+        },
+        "businessRegistration": {
+          "type": "text",
+          "required": true,
+          "placeholder": "ID or registration number"
+        }
+      }
+    },
+
+    "rbcConfiguration": {
+      "paymentReceiving": {
+        "name": "Rent Payment Account Setup",
+        "type": "single_select",
+        "required": true,
+        "options": {
+          "mpesa": {
+            "label": "M-Pesa Paybill",
+            "icon": "fas fa-mobile-alt",
+            "description": "Tenants pay via M-Pesa paybill",
+            "requiresField": "paybillNumber"
+          },
+          "syllopay": {
+            "label": "SylloPay Direct",
+            "icon": "fas fa-wallet",
+            "description": "Integrated payment collection",
+            "requiresField": "syllopayAccount"
+          },
+          "bank": {
+            "label": "Bank Account Transfer",
+            "icon": "fas fa-university",
+            "description": "Direct bank deposit",
+            "requiresField": "bankDetails"
+          },
+          "multiple": {
+            "label": "Accept Multiple Methods",
+            "icon": "fas fa-shuffle",
+            "description": "Accept all payment types",
+            "requiresField": null
+          }
+        }
+      },
+
+      "latePaymentSettings": {
+        "name": "Late Payment & Reminders",
+        "type": "multi_select",
+        "options": {
+          "enableReminders": {
+            "label": "Enable Late Payment Reminders",
+            "default": true,
+            "description": "Auto-notify tenants of overdue rent"
+          },
+          "notifyCaretaker": {
+            "label": "Auto-Notify Caretaker",
+            "default": true,
+            "description": "Caretaker alerted of unpaid rent"
+          },
+          "escalation": {
+            "label": "Enable Payment Escalation",
+            "default": false,
+            "description": "Progressive notification over time"
+          }
+        }
+      }
+    },
+
+    "dashboardFeatures": [
+      {
+        "feature": "Property Portfolio",
+        "access": true,
+        "description": "Manage all properties with occupancy status",
+        "icon": "fas fa-building"
+      },
+      {
+        "feature": "Rent Collection Dashboard",
+        "access": true,
+        "description": "Real-time tracking of payments, overdue status",
+        "icon": "fas fa-chart-pie"
+      },
+      {
+        "feature": "Tenant Management",
+        "access": true,
+        "description": "Tenant directory, lease tracking, complaints",
+        "icon": "fas fa-users"
+      },
+      {
+        "feature": "Financial Reports",
+        "access": true,
+        "description": "Revenue trends, collection rate analytics",
+        "icon": "fas fa-file-invoice-dollar"
+      },
+      {
+        "feature": "Communication Hub",
+        "access": true,
+        "description": "Message tenants, coordinate with caretakers",
+        "icon": "fas fa-comments"
+      },
+      {
+        "feature": "Vacant Property Tracking",
+        "access": true,
+        "description": "Monitor empty units and readiness",
+        "icon": "fas fa-house-user"
+      }
+    ],
+
+    "dashboardUrl": "mwarokin_landlord_dashboard.html",
+    "averageOnboardingTime": "10-15 minutes"
+  },
+
+  "caretaker": {
+    "profileFields": {
+      "personalInfo": {
+        "fullName": {
+          "type": "text",
+          "required": true,
+          "placeholder": "David Karanja"
+        },
+        "email": {
+          "type": "email",
+          "required": true,
+          "placeholder": "david@example.com"
+        },
+        "phone": {
+          "type": "tel",
+          "required": true,
+          "placeholder": "+254 7XX XXX XXX"
+        }
+      },
+      "professionalInfo": {
+        "propertyAssigned": {
+          "type": "text",
+          "required": true,
+          "placeholder": "Property name or address"
+        },
+        "experience": {
+          "type": "select",
+          "required": true,
+          "options": ["0-2", "2-5", "5-10", "10+"],
+          "displayAs": "Years"
+        },
+        "skillFocus": {
+          "type": "select",
+          "required": true,
+          "options": [
+            {"value": "electrical", "label": "Electrical"},
+            {"value": "plumbing", "label": "Plumbing"},
+            {"value": "general", "label": "General Maintenance"},
+            {"value": "mixed", "label": "Mixed Skills"}
+          ]
+        },
+        "nationalID": {
+          "type": "text",
+          "required": true,
+          "placeholder": "ID number"
+        }
+      }
+    },
+
+    "rbcConfiguration": {
+      "taskManagement": {
+        "name": "Task Management Access",
+        "type": "multi_select",
+        "options": {
+          "repairs": {
+            "label": "Handle Repair Requests",
+            "default": true,
+            "description": "Receive and track maintenance requests"
+          },
+          "waste": {
+            "label": "Manage Waste Collection",
+            "default": true,
+            "description": "Schedule and monitor waste management"
+          },
+          "water": {
+            "label": "Monitor Water Systems",
+            "default": true,
+            "description": "Track water usage and tank levels"
+          },
+          "security": {
+            "label": "Manage Security & Access",
+            "default": true,
+            "description": "Lock/unlock access, security incidents"
+          }
+        }
+      },
+
+      "communicationChannel": {
+        "name": "Preferred Communication Method",
+        "type": "single_select",
+        "required": true,
+        "options": {
+          "sms": {
+            "label": "Phone/SMS",
+            "icon": "fas fa-phone",
+            "description": "Receive alerts via text message"
+          },
+          "email": {
+            "label": "Email",
+            "icon": "fas fa-envelope",
+            "description": "Detailed notifications via email"
+          },
+          "app": {
+            "label": "Mobile App",
+            "icon": "fas fa-mobile-alt",
+            "description": "In-app notifications (requires download)"
+          }
+        }
+      }
+    },
+
+    "dashboardFeatures": [
+      {
+        "feature": "Task Queue",
+        "access": true,
+        "description": "Urgent repairs, scheduled maintenance, tenant requests",
+        "icon": "fas fa-tasks"
+      },
+      {
+        "feature": "Work Orders",
+        "access": true,
+        "description": "Track status of repairs and maintenance jobs",
+        "icon": "fas fa-wrench"
+      },
+      {
+        "feature": "Utilities Management",
+        "access": true,
+        "description": "Water tank monitoring, electricity readings, waste",
+        "icon": "fas fa-water"
+      },
+      {
+        "feature": "Security & Access",
+        "access": true,
+        "description": "Lock/unlock requests, access logs, incidents",
+        "icon": "fas fa-lock"
+      },
+      {
+        "feature": "Work Reports",
+        "access": true,
+        "description": "Document completed tasks with photos",
+        "icon": "fas fa-file-alt"
+      },
+      {
+        "feature": "Communication",
+        "access": true,
+        "description": "Receive complaints, landlord instructions",
+        "icon": "fas fa-comments"
+      }
+    ],
+
+    "dashboardUrl": "mwarokin_caretaker_dashboard.html",
+    "averageOnboardingTime": "8-12 minutes"
+  },
+
+  "management": {
+    "profileFields": {
+      "staffInfo": {
+        "fullName": {
+          "type": "text",
+          "required": true,
+          "placeholder": "Alice Omondi"
+        },
+        "email": {
+          "type": "email",
+          "required": true,
+          "placeholder": "alice@mwarokin.com"
+        },
+        "phone": {
+          "type": "tel",
+          "required": true,
+          "placeholder": "+254 7XX XXX XXX"
+        }
+      },
+      "departmentInfo": {
+        "department": {
+          "type": "select",
+          "required": true,
+          "options": [
+            "Operations Manager",
+            "Finance Manager",
+            "Administrator",
+            "Customer Support",
+            "Super Admin"
+          ]
+        },
+        "staffID": {
+          "type": "text",
+          "required": true,
+          "placeholder": "Internal staff ID"
+        }
+      }
+    },
+
+    "rbcConfiguration": {
+      "accessLevel": {
+        "name": "Access Level",
+        "type": "single_select",
+        "required": true,
+        "options": {
+          "view_only": {
+            "label": "View Only (Reports)",
+            "description": "Read-only access to dashboards and reports",
+            "permissions": ["view_reports", "view_analytics"]
+          },
+          "limited": {
+            "label": "Limited (Department Specific)",
+            "description": "Department-specific access and operations",
+            "permissions": ["view_department", "manage_department"]
+          },
+          "full": {
+            "label": "Full Access (All Operations)",
+            "description": "Complete system access and administration",
+            "permissions": [
+              "view_all",
+              "manage_all",
+              "user_management",
+              "system_settings"
+            ]
+          }
+        }
+      },
+
+      "moduleAccess": {
+        "name": "Module Access Control",
+        "type": "multi_select",
+        "options": {
+          "tenantManagement": {
+            "label": "Tenant Management",
+            "description": "View/manage all tenants"
+          },
+          "landlordManagement": {
+            "label": "Landlord Management",
+            "description": "View/manage landlord accounts"
+          },
+          "financePayments": {
+            "label": "Finance & Payments",
+            "description": "Payment tracking and financial operations"
+          },
+          "reportsAnalytics": {
+            "label": "Reports & Analytics",
+            "description": "Access to system analytics and reporting"
+          },
+          "userManagement": {
+            "label": "User Management",
+            "description": "Create/manage user accounts and roles"
+          },
+          "systemSettings": {
+            "label": "System Settings",
+            "description": "Configure system parameters and settings"
+          }
+        }
+      }
+    },
+
+    "dashboardFeatures": [
+      {
+        "feature": "System Overview",
+        "access": "full",
+        "description": "Active users, payment summary, system health",
+        "icon": "fas fa-chart-line"
+      },
+      {
+        "feature": "Tenant Management",
+        "access": "full",
+        "description": "Complete tenant registry and tracking",
+        "icon": "fas fa-users"
+      },
+      {
+        "feature": "Landlord Operations",
+        "access": "full",
+        "description": "Portfolio overview, payment status",
+        "icon": "fas fa-building"
+      },
+      {
+        "feature": "Financial Analytics",
+        "access": "full",
+        "description": "Revenue dashboard, collection metrics",
+        "icon": "fas fa-chart-bar"
+      },
+      {
+        "feature": "User & Access Control",
+        "access": "conditional",
+        "description": "User management (if access permitted)",
+        "icon": "fas fa-user-shield"
+      }
+    ],
+
+    "dashboardUrl": "mwarokin_management_dashboard.html",
+    "averageOnboardingTime": "7-10 minutes"
+  },
+
+  "paymentMethods": {
+    "mpesa": {
+      "name": "M-Pesa",
+      "supportedRoles": ["tenant", "landlord"],
+      "features": ["instant", "low_fees", "widely_available"],
+      "provider": "Safaricom",
+      "costPerTransaction": "1.5%",
+      "processingTime": "instant"
+    },
+    "airtel": {
+      "name": "Airtel Money",
+      "supportedRoles": ["tenant", "landlord"],
+      "features": ["instant", "customer_base"],
+      "provider": "Airtel",
+      "costPerTransaction": "1.5%",
+      "processingTime": "instant"
+    },
+    "syllopay": {
+      "name": "SylloPay",
+      "supportedRoles": ["tenant", "landlord"],
+      "features": ["integrated", "rewards", "api_first"],
+      "provider": "Syllogism Tech Africa",
+      "costPerTransaction": "1.0%",
+      "processingTime": "instant"
+    },
+    "bank": {
+      "name": "Bank Transfer",
+      "supportedRoles": ["tenant", "landlord"],
+      "features": ["secure", "record_keeping", "formal"],
+      "provider": "Local Banks",
+      "costPerTransaction": "0.5%",
+      "processingTime": "1-2 business days"
+    }
+  },
+
+  "verificationMethods": {
+    "phone": {
+      "method": "OTP via SMS",
+      "provider": "Africa's Talking / Twilio",
+      "requiredForRoles": ["tenant", "landlord", "caretaker", "management"],
+      "otpLength": 6,
+      "otpExpiry": "10 minutes",
+      "resendWait": "30 seconds"
+    },
+    "email": {
+      "method": "Verification Link",
+      "provider": "SendGrid / resend / Mailgun",
+      "requiredForRoles": ["tenant", "landlord", "caretaker", "management"],
+      "linkExpiry": "24 hours"
+    },
+    "agreements": {
+      "termsOfService": true,
+      "privacyPolicy": true,
+      "dataProcessingConsent": true
+    }
+  },
+
+  "notifications": {
+    "channels": {
+      "sms": {
+        "provider": "Africa's Talking / Twilio",
+        "cost": "2-4 KES per SMS",
+        "deliveryTime": "instant"
+      },
+      "email": {
+        "provider": "SendGrid / Mailgun",
+        "cost": "free",
+        "deliveryTime": "seconds"
+      },
+      "push": {
+        "provider": "Firebase / OneSignal",
+        "cost": "free",
+        "deliveryTime": "seconds"
+      }
+    },
+    "tenantNotifications": {
+      "paymentReminder": {
+        "trigger": "7 days before due date",
+        "channels": ["sms", "email", "push"]
+      },
+      "paymentConfirmation": {
+        "trigger": "after successful payment",
+        "channels": ["sms", "email"]
+      },
+      "maintenanceUpdate": {
+        "trigger": "status change",
+        "channels": ["sms", "email", "push"]
+      }
+    }
+  },
+
+  "sessionManagement": {
+    "sessionTimeout": "30 minutes",
+    "sessionRefresh": "5 minutes before timeout",
+    "rememberMe": "30 days",
+    "maxConcurrentSessions": 3,
+    "passwordPolicy": {
+      "minLength": 12,
+      "requireUppercase": true,
+      "requireNumbers": true,
+      "requireSpecialChars": true,
+      "expiryDays": 90
+    }
+  },
+
+  "dataMapping": {
+    "tenant": {
+      "storageKey": "mwarokin_tenant_",
+      "apiEndpoint": "/api/tenant",
+      "dashboardComponent": "TenantPortal",
+      "primaryIdentifier": "email"
+    },
+    "landlord": {
+      "storageKey": "mwarokin_landlord_",
+      "apiEndpoint": "/api/landlord",
+      "dashboardComponent": "LandlordPortal",
+      "primaryIdentifier": "email"
+    },
+    "caretaker": {
+      "storageKey": "mwarokin_caretaker_",
+      "apiEndpoint": "/api/caretaker",
+      "dashboardComponent": "CaretakerPortal",
+      "primaryIdentifier": "phone"
+    },
+    "management": {
+      "storageKey": "mwarokin_mgmt_",
+      "apiEndpoint": "/api/management",
+      "dashboardComponent": "ManagementPortal",
+      "primaryIdentifier": "staffID"
+    }
+  }
+}
