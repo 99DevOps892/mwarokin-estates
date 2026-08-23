@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Mwarokin Stays - Premium short-term rentals across Nairobi's finest neighborhoods">
-    <title>Mwarokin Stays – Premium Accommodations in Nairobi</title>
+    <meta name="description" content="Mwarokin Stays - Premium luxury short-term rentals across Nairobi's finest neighborhoods">
+    <meta name="theme-color" content="#1F4D3D">
+    <title>Mwarokin Estates -Stays Accommodations </title>
     
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/react.min.js"></script>
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/react-dom.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/latest/umd/lucide.min.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&family=Syne:wght@400;500;700&display=swap" rel="stylesheet">
     
     <style>
         * {
@@ -19,129 +22,228 @@
         }
         
         :root {
-            --color-green: #1F4D3D;
-            --color-green-light: #2A6B5C;
-            --color-green-dark: #0F2B24;
+            --color-obsidian: #0F1419;
+            --color-forest: #1F4D3D;
+            --color-forest-light: #2A6B5C;
+            --color-forest-dark: #0F2B24;
             --color-gold: #D4AF37;
             --color-gold-dark: #C49A2E;
+            --color-text: #1A1A1A;
+            --color-text-light: #6B7280;
+            --color-border: #E5E7EB;
+            --color-bg-light: #F9FAFB;
         }
         
         html {
             scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
         body {
             font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: #ffffff;
-            color: #1f2937;
+            color: var(--color-text);
             line-height: 1.6;
         }
         
         h1, h2, h3, h4, h5, h6 {
             font-family: 'Cormorant Garamond', serif;
             font-weight: 600;
+            letter-spacing: -0.01em;
         }
         
-        /* Utility Classes */
-        .accent-green { color: var(--color-green); }
-        .bg-accent-green { background-color: var(--color-green); }
-        .accent-gold { color: var(--color-gold); }
-        .bg-accent-gold { background-color: var(--color-gold); }
-        .text-gold { color: var(--color-gold); }
+        .font-sans-display {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+        }
         
+        .text-overflow-ellipsis {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        
+        /* Smooth transitions */
         .smooth-transition {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        /* Cards */
-        .property-card {
+        .smooth-transition-fast {
+            transition: all 0.15s ease-out;
+        }
+        
+        /* Color utilities */
+        .text-forest { color: var(--color-forest); }
+        .text-gold { color: var(--color-gold); }
+        .bg-forest { background-color: var(--color-forest); }
+        .bg-gold { background-color: var(--color-gold); }
+        .border-forest { border-color: var(--color-forest); }
+        
+        /* Premium Cards */
+        .card-premium {
+            background: white;
+            border: 1px solid var(--color-border);
             border-radius: 0.75rem;
             overflow: hidden;
-            background: white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
         }
         
-        .property-card:hover {
-            box-shadow: 0 20px 35px rgba(31, 77, 61, 0.15);
-            transform: translateY(-6px);
+        .card-premium:hover {
+            box-shadow: 0 12px 24px rgba(31, 77, 61, 0.12);
+            border-color: var(--color-forest);
         }
         
-        /* Hero Gradient */
-        .hero-gradient {
-            background: linear-gradient(135deg, var(--color-green-dark) 0%, var(--color-green) 50%, var(--color-green-light) 100%);
+        /* Image Gallery */
+        .gallery-main {
+            border-radius: 0.875rem;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, var(--color-forest-dark) 0%, var(--color-forest) 100%);
+            position: relative;
+        }
+        
+        .gallery-thumbnail {
+            border-radius: 0.5rem;
+            cursor: pointer;
+            border: 2px solid transparent;
+            overflow: hidden;
+            aspect-ratio: 1;
+        }
+        
+        .gallery-thumbnail.active {
+            border-color: var(--color-gold);
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+        }
+        
+        /* Hero Section */
+        .hero-premium {
+            background: linear-gradient(180deg, rgba(15, 43, 36, 0.95) 0%, rgba(31, 77, 61, 0.9) 100%);
             position: relative;
             overflow: hidden;
         }
         
-        .hero-gradient::before {
+        .hero-premium::before {
             content: '';
             position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
-            background-size: 50px 50px;
-            opacity: 0.5;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(42, 107, 92, 0.08) 0%, transparent 50%);
+            pointer-events: none;
         }
         
-        /* Input Focus */
-        .input-focus:focus {
+        /* Input Enhancement */
+        .input-premium {
+            border: 1px solid var(--color-border);
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.9375rem;
+            transition: all 0.2s ease;
+            background: white;
+        }
+        
+        .input-premium:focus {
             outline: none;
-            border-color: var(--color-green);
+            border-color: var(--color-forest);
             box-shadow: 0 0 0 3px rgba(31, 77, 61, 0.1);
+            background: white;
         }
         
-        /* Badge */
-        .badge {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            border-radius: 9999px;
-            font-size: 0.875rem;
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-forest) 0%, var(--color-forest-light) 100%);
+            color: white;
+            padding: 0.875rem 1.75rem;
+            border-radius: 0.5rem;
             font-weight: 600;
+            font-size: 0.9375rem;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            smooth-transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(31, 77, 61, 0.2);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(31, 77, 61, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--color-forest);
+            padding: 0.875rem 1.75rem;
+            border: 1.5px solid var(--color-forest);
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9375rem;
+            cursor: pointer;
+            smooth-transition: all 0.2s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(31, 77, 61, 0.04);
+        }
+        
+        /* Badges */
+        .badge-premium {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.875rem;
+            border-radius: 9999px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            background: var(--color-forest);
+            color: white;
             backdrop-filter: blur(10px);
         }
         
-        /* Stars */
+        .badge-gold {
+            background: var(--color-gold);
+            color: white;
+        }
+        
+        /* Star Rating */
         .star {
             color: #FBBF24;
             fill: #FBBF24;
         }
         
-        /* Buttons */
-        .btn-primary {
-            background: linear-gradient(135deg, var(--color-green) 0%, var(--color-green-light) 100%);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            smooth-transition: all 0.3s ease;
+        .star-empty {
+            color: #E5E7EB;
+            fill: #E5E7EB;
         }
         
-        .btn-primary:hover {
-            box-shadow: 0 8px 16px rgba(31, 77, 61, 0.3);
-            transform: translateY(-2px);
-        }
-        
-        /* Modal Backdrop */
-        .modal-backdrop {
-            background: rgba(0, 0, 0, 0.5);
+        /* Modal Enhancement */
+        .modal-backdrop-premium {
+            background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(4px);
         }
         
-        /* Animations */
-        @keyframes fadeIn {
+        .modal-content-premium {
+            border-radius: 1rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            animation: modalSlideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes modalSlideUp {
             from {
                 opacity: 0;
-                transform: translateY(10px);
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         
         .animate-fade-in {
@@ -151,21 +253,22 @@
         /* Responsive */
         @media (max-width: 768px) {
             h1 {
-                font-size: 2rem;
+                font-size: 1.875rem;
             }
             
-            .hero-gradient {
-                padding: 2rem 1rem;
+            h2 {
+                font-size: 1.5rem;
             }
             
-            .grid-responsive {
-                grid-template-columns: 1fr;
+            .gallery-main {
+                aspect-ratio: 4/3;
             }
         }
         
-        /* Scrollbar */
+        /* Scrollbar Enhancement */
         ::-webkit-scrollbar {
             width: 8px;
+            height: 8px;
         }
         
         ::-webkit-scrollbar-track {
@@ -173,12 +276,24 @@
         }
         
         ::-webkit-scrollbar-thumb {
-            background: var(--color-green);
+            background: var(--color-forest);
             border-radius: 4px;
         }
         
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--color-green-light);
+            background: var(--color-forest-light);
+        }
+        
+        /* Loading skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
     </style>
 </head>
@@ -186,151 +301,244 @@
     <div id="root"></div>
 
     <script>
-        const { useState, useMemo, useEffect } = React;
+        const { useState, useMemo, useEffect, useRef } = React;
 
-        const MwarokinStays = () => {
+        const MwarokinStaysPremium = () => {
             const [searchQuery, setSearchQuery] = useState('');
             const [selectedProperty, setSelectedProperty] = useState(null);
             const [showBooking, setShowBooking] = useState(false);
+            const [activeImageIndex, setActiveImageIndex] = useState(0);
             const [bookingDates, setBookingDates] = useState({ checkIn: '', checkOut: '', guests: 1 });
-            const [priceRange, setPriceRange] = useState([2000, 15000]);
+            const [priceRange, setPriceRange] = useState([3000, 15000]);
             const [selectedAmenities, setSelectedAmenities] = useState([]);
             const [selectedLocation, setSelectedLocation] = useState('all');
             const [favoriteProperties, setFavoriteProperties] = useState([]);
-            const [sortBy, setSortBy] = useState('rating');
+            const [sortBy, setSortBy] = useState('recommended');
+            const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+            const [propertyType, setPropertyType] = useState('all');
+            const [minRating, setMinRating] = useState(4.0);
 
             const properties = [
                 {
                     id: 1,
                     name: 'Westlands Luxury Studio',
                     location: 'Westlands',
+                    neighborhood: 'Business District',
                     price: 8500,
-                    rating: 4.9,
-                    reviews: 127,
-                    image: 'linear-gradient(135deg, #1F4D3D 0%, #2A6B5C 100%)',
-                    description: 'Contemporary studio with premium finishes in the heart of Westlands business district. Perfect for business travelers with modern workspace and high-speed connectivity.',
+                    rating: 4.92,
+                    reviews: 156,
+                    images: [
+                        'linear-gradient(135deg, #1F4D3D 0%, #2A6B5C 100%)',
+                        'linear-gradient(135deg, #2A6B5C 0%, #1F4D3D 100%)',
+                        'linear-gradient(135deg, #D4AF37 0%, #1F4D3D 50%)',
+                    ],
+                    description: 'Contemporary studio with premium finishes in the heart of Westlands business district. Floor-to-ceiling windows, high-speed connectivity, and modern workspace.',
                     bedrooms: 0,
                     beds: 1,
                     bathrooms: 1,
                     occupancy: 82,
-                    amenities: ['WiFi', 'TV', 'Coffee Maker', 'AC', 'Security', 'Workspace', 'Smart Lock'],
-                    highlights: ['Fast reliable internet (50Mbps)', 'Business traveller favourite', 'Walk to restaurants', '24hr security'],
-                    bookings: 24,
+                    amenities: ['WiFi (100Mbps)', 'Smart TV', 'Coffee Machine', 'Air Conditioning', '24h Security', 'Workspace', 'Smart Lock', 'Elevator', 'Gym Access'],
+                    highlights: ['Perfect for business travelers', 'High-speed reliable internet', '5-minute walk to cafes & restaurants', '24-hour security with CCTV', 'Modern design with natural light'],
+                    type: 'studio',
+                    hostName: 'Amara Okafor',
+                    hostImage: 'linear-gradient(135deg, #1F4D3D 0%, #D4AF37 100%)',
+                    hostRating: 4.95,
+                    hostReviews: 243,
+                    hostSuperhost: true,
+                    bookings: 34,
+                    pricePerNight: 8500,
+                    cleaningFee: 1500,
+                    serviceFee: 0.15,
                 },
                 {
                     id: 2,
                     name: 'Kilimani Executive 1-Bedroom',
                     location: 'Kilimani',
+                    neighborhood: 'Residential Haven',
                     price: 6200,
-                    rating: 4.8,
-                    reviews: 94,
-                    image: 'linear-gradient(135deg, #D4AF37 0%, #B8941C 100%)',
-                    description: 'Spacious 1-bedroom apartment with stunning city views. Perfect for families and professionals seeking comfort and style in a vibrant neighborhood.',
+                    rating: 4.88,
+                    reviews: 127,
+                    images: [
+                        'linear-gradient(135deg, #D4AF37 0%, #C49A2E 100%)',
+                        'linear-gradient(135deg, #C49A2E 0%, #D4AF37 50%, #1F4D3D 100%)',
+                        'linear-gradient(135deg, #1F4D3D 0%, #2A6B5C 100%)',
+                    ],
+                    description: 'Spacious 1-bedroom apartment with stunning city views. Full kitchen, comfortable living area, and balcony overlooking green spaces.',
                     bedrooms: 1,
                     beds: 1,
                     bathrooms: 1,
                     occupancy: 71,
-                    amenities: ['WiFi', 'Full Kitchen', 'Washing Machine', 'Balcony', 'AC', 'Security', 'Parking'],
-                    highlights: ['City views', 'Full kitchen', 'Washer/dryer', 'Tranquil setting', 'Green neighborhood'],
-                    bookings: 19,
+                    amenities: ['WiFi', 'Full Kitchen', 'Washer/Dryer', 'Balcony', 'AC', '24h Security', 'Parking', 'Hot Water', 'Safe'],
+                    highlights: ['City views from balcony', 'Fully equipped kitchen', 'In-unit washer/dryer', 'Tranquil neighborhood', 'Green spaces nearby', 'Popular with families'],
+                    type: 'apartment',
+                    hostName: 'Tendai Mbeki',
+                    hostImage: 'linear-gradient(135deg, #2A6B5C 0%, #1F4D3D 100%)',
+                    hostRating: 4.90,
+                    hostReviews: 198,
+                    hostSuperhost: true,
+                    bookings: 29,
+                    pricePerNight: 6200,
+                    cleaningFee: 1200,
+                    serviceFee: 0.15,
                 },
                 {
                     id: 3,
                     name: 'Karen Garden Villa',
                     location: 'Karen',
+                    neighborhood: 'Exclusive Enclave',
                     price: 12800,
-                    rating: 4.95,
-                    reviews: 156,
-                    image: 'linear-gradient(135deg, #1F4D3D 0%, #0F2B24 100%)',
-                    description: 'Exclusive villa with private garden, perfect for families seeking luxury and privacy. Ideal for extended stays and group gatherings with premium amenities.',
+                    rating: 4.97,
+                    reviews: 203,
+                    images: [
+                        'linear-gradient(135deg, #1F4D3D 0%, #0F2B24 100%)',
+                        'linear-gradient(135deg, #2A6B5C 0%, #D4AF37 100%)',
+                        'linear-gradient(135deg, #D4AF37 0%, #1F4D3D 50%)',
+                    ],
+                    description: 'Exclusive villa with private garden and swimming pool. Multiple bedrooms, fully staffed kitchen, entertainment spaces ideal for families and groups.',
                     bedrooms: 2,
                     beds: 3,
                     bathrooms: 2,
                     occupancy: 68,
-                    amenities: ['WiFi', 'Full Kitchen', 'Pool', 'Garden', 'Workspace', 'Security', 'Parking', 'Entertainment'],
-                    highlights: ['Private pool', 'Garden setting', 'Multiple bedrooms', 'Secure compound', 'Nature proximity'],
-                    bookings: 31,
+                    amenities: ['WiFi', 'Full Kitchen', 'Private Pool', 'Garden', 'Workspace', '24h Security', 'Parking (2)', 'Entertainment System', 'Laundry'],
+                    highlights: ['Private infinity pool', 'Manicured garden setting', 'Multiple en-suite bedrooms', 'Secure gated compound', 'Nature proximity with city access'],
+                    type: 'villa',
+                    hostName: 'Zuri Chen',
+                    hostImage: 'linear-gradient(135deg, #D4AF37 0%, #2A6B5C 100%)',
+                    hostRating: 4.98,
+                    hostReviews: 289,
+                    hostSuperhost: true,
+                    bookings: 41,
+                    pricePerNight: 12800,
+                    cleaningFee: 3000,
+                    serviceFee: 0.15,
                 },
                 {
                     id: 4,
                     name: 'CBD Premium Two-Bedroom',
                     location: 'CBD',
+                    neighborhood: 'Downtown Hub',
                     price: 7400,
-                    rating: 4.7,
-                    reviews: 82,
-                    image: 'linear-gradient(135deg, #2A6B5C 0%, #1F4D3D 100%)',
-                    description: 'Central downtown apartment with walkable access to offices and conference venues. Modern amenities in the heart of Nairobi\'s business district.',
+                    rating: 4.85,
+                    reviews: 114,
+                    images: [
+                        'linear-gradient(135deg, #2A6B5C 0%, #1F4D3D 100%)',
+                        'linear-gradient(135deg, #1F4D3D 0%, #2A6B5C 50%, #D4AF37 100%)',
+                        'linear-gradient(135deg, #D4AF37 0%, #C49A2E 100%)',
+                    ],
+                    description: 'Central downtown apartment with walkable access to offices, conference venues, and entertainment. Modern amenities in a secure high-rise building.',
                     bedrooms: 2,
                     beds: 2,
                     bathrooms: 1,
                     occupancy: 75,
-                    amenities: ['WiFi', 'Lift', 'Security', 'Parking', 'AC', 'Workspace', 'Coffee Maker'],
-                    highlights: ['City centre location', 'Walking distance to offices', 'Modern amenities', 'Secure building', 'Restaurant district'],
-                    bookings: 22,
+                    amenities: ['WiFi', 'Elevator', '24h Security', 'Parking', 'AC', 'Workspace', 'Coffee Maker', 'Kitchenette'],
+                    highlights: ['Heart of business district', 'Walking distance to offices', 'Modern high-rise building', 'Secure 24/7 security', 'Restaurant & retail district'],
+                    type: 'apartment',
+                    hostName: 'Lerato Ndlovu',
+                    hostImage: 'linear-gradient(135deg, #1F4D3D 0%, #D4AF37 100%)',
+                    hostRating: 4.83,
+                    hostReviews: 167,
+                    hostSuperhost: false,
+                    bookings: 27,
+                    pricePerNight: 7400,
+                    cleaningFee: 1800,
+                    serviceFee: 0.15,
                 },
                 {
                     id: 5,
                     name: 'Lavington Boutique Apartment',
                     location: 'Lavington',
+                    neighborhood: 'Quiet Residential',
                     price: 5800,
-                    rating: 4.85,
-                    reviews: 109,
-                    image: 'linear-gradient(135deg, #D4AF37 0%, #C49A2E 100%)',
-                    description: 'Charming 1-bedroom with modern touches in quiet residential area. Peaceful neighborhood perfect for relaxation with excellent local restaurants nearby.',
+                    rating: 4.91,
+                    reviews: 142,
+                    images: [
+                        'linear-gradient(135deg, #D4AF37 0%, #C49A2E 100%)',
+                        'linear-gradient(135deg, #1F4D3D 0%, #D4AF37 100%)',
+                        'linear-gradient(135deg, #2A6B5C 0%, #1F4D3D 100%)',
+                    ],
+                    description: 'Charming 1-bedroom boutique apartment with modern touches in a quiet, tree-lined residential area. Peaceful neighborhood with excellent local dining.',
                     bedrooms: 1,
                     beds: 1,
                     bathrooms: 1,
                     occupancy: 79,
-                    amenities: ['WiFi', 'Kitchen', 'AC', 'Security', 'Parking', 'Workspace', 'Balcony'],
-                    highlights: ['Quiet neighbourhood', 'Friendly hosts', 'Safe area', 'Local restaurants nearby', 'Tree-lined streets'],
-                    bookings: 18,
+                    amenities: ['WiFi', 'Full Kitchen', 'AC', '24h Security', 'Parking', 'Workspace', 'Balcony', 'Laundry'],
+                    highlights: ['Quiet tree-lined street', 'Friendly neighborhood', 'Safe residential area', 'Local restaurants nearby', 'Walking distance to shops'],
+                    type: 'apartment',
+                    hostName: 'Kwame Asante',
+                    hostImage: 'linear-gradient(135deg, #2A6B5C 0%, #D4AF37 100%)',
+                    hostRating: 4.92,
+                    hostReviews: 156,
+                    hostSuperhost: true,
+                    bookings: 24,
+                    pricePerNight: 5800,
+                    cleaningFee: 1000,
+                    serviceFee: 0.15,
                 },
                 {
                     id: 6,
                     name: 'Parklands Family Home',
                     location: 'Parklands',
+                    neighborhood: 'Family-Friendly',
                     price: 9200,
-                    rating: 4.88,
-                    reviews: 118,
-                    image: 'linear-gradient(135deg, #2A6B5C 0%, #1F4D3D 100%)',
-                    description: 'Spacious 3-bedroom home with full amenities for family gatherings and group stays. Multiple living areas and entertainment spaces.',
+                    rating: 4.94,
+                    reviews: 189,
+                    images: [
+                        'linear-gradient(135deg, #2A6B5C 0%, #1F4D3D 100%)',
+                        'linear-gradient(135deg, #D4AF37 0%, #1F4D3D 100%)',
+                        'linear-gradient(135deg, #1F4D3D 0%, #2A6B5C 50%, #D4AF37 100%)',
+                    ],
+                    description: 'Spacious 3-bedroom home with full amenities for families and group stays. Multiple living areas, entertainment spaces, and secure garden compound.',
                     bedrooms: 3,
                     beds: 4,
                     bathrooms: 2,
                     occupancy: 73,
-                    amenities: ['WiFi', 'Full Kitchen', 'Garden', 'AC', 'Security', 'Parking', 'Entertainment', 'Workspace'],
-                    highlights: ['Family-friendly', 'Large open spaces', 'Secure compound', 'Great value', 'Multiple TV areas'],
-                    bookings: 26,
+                    amenities: ['WiFi', 'Full Kitchen', 'Garden', 'AC', '24h Security', 'Parking (2)', 'Entertainment', 'Workspace', 'Laundry'],
+                    highlights: ['Family-friendly layout', 'Large open spaces', 'Secure compound', 'Exceptional value', 'Multiple TV & relaxation areas'],
+                    type: 'house',
+                    hostName: 'Naledi Dube',
+                    hostImage: 'linear-gradient(135deg, #D4AF37 0%, #1F4D3D 100%)',
+                    hostRating: 4.93,
+                    hostReviews: 221,
+                    hostSuperhost: true,
+                    bookings: 38,
+                    pricePerNight: 9200,
+                    cleaningFee: 2000,
+                    serviceFee: 0.15,
                 },
             ];
 
-            const amenitiesOptions = ['WiFi', 'Full Kitchen', 'Pool', 'AC', 'Security', 'Parking', 'TV', 'Workspace', 'Garden', 'Washing Machine'];
-
+            const amenitiesOptions = ['WiFi', 'Full Kitchen', 'Pool', 'AC', '24h Security', 'Parking', 'TV', 'Workspace', 'Garden', 'Washer/Dryer', 'Hot Water', 'Elevator'];
             const locations = ['all', ...new Set(properties.map(p => p.location))].sort();
 
             const filteredProperties = useMemo(() => {
                 let filtered = properties.filter(prop => {
                     const matchesSearch = prop.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                                         prop.description.toLowerCase().includes(searchQuery.toLowerCase());
+                                         prop.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                         prop.location.toLowerCase().includes(searchQuery.toLowerCase());
                     const matchesLocation = selectedLocation === 'all' || prop.location === selectedLocation;
                     const matchesPrice = prop.price >= priceRange[0] && prop.price <= priceRange[1];
                     const matchesAmenities = selectedAmenities.length === 0 || 
-                                          selectedAmenities.every(a => prop.amenities.includes(a));
-                    return matchesSearch && matchesLocation && matchesPrice && matchesAmenities;
+                                          selectedAmenities.every(a => prop.amenities.some(am => am.includes(a)));
+                    const matchesType = propertyType === 'all' || prop.type === propertyType;
+                    const matchesRating = prop.rating >= minRating;
+                    
+                    return matchesSearch && matchesLocation && matchesPrice && matchesAmenities && matchesType && matchesRating;
                 });
 
-                if (sortBy === 'rating') {
+                if (sortBy === 'recommended') {
+                    filtered.sort((a, b) => (b.rating * b.reviews) - (a.rating * a.reviews));
+                } else if (sortBy === 'rating') {
                     filtered.sort((a, b) => b.rating - a.rating);
                 } else if (sortBy === 'price-low') {
                     filtered.sort((a, b) => a.price - b.price);
                 } else if (sortBy === 'price-high') {
                     filtered.sort((a, b) => b.price - a.price);
-                } else if (sortBy === 'occupancy') {
-                    filtered.sort((a, b) => b.occupancy - a.occupancy);
+                } else if (sortBy === 'newest') {
+                    filtered.sort((a, b) => b.bookings - a.bookings);
                 }
 
                 return filtered;
-            }, [searchQuery, selectedLocation, priceRange, selectedAmenities, sortBy]);
+            }, [searchQuery, selectedLocation, priceRange, selectedAmenities, sortBy, propertyType, minRating]);
 
             const toggleFavorite = (propId) => {
                 setFavoriteProperties(prev => 
@@ -342,162 +550,245 @@
                 const isFavorite = favoriteProperties.includes(prop.id);
                 return (
                     <div 
-                        onClick={() => setSelectedProperty(prop)}
-                        className="property-card cursor-pointer bg-white smooth-transition"
+                        onClick={() => {
+                            setSelectedProperty(prop);
+                            setActiveImageIndex(0);
+                        }}
+                        className="card-premium cursor-pointer group overflow-hidden"
                     >
-                        <div className="relative h-56 overflow-hidden bg-gradient-to-br from-slate-200 to-slate-300">
+                        {/* Image Gallery */}
+                        <div className="relative h-64 bg-gray-200 overflow-hidden">
                             <div 
-                                className="w-full h-full hover:scale-110 smooth-transition"
-                                style={{ background: prop.image }}
+                                className="w-full h-full group-hover:scale-105 smooth-transition"
+                                style={{ background: prop.images[0] }}
                             />
-                            <div className="absolute top-3 right-3 bg-white/95 backdrop-blur px-3 py-1 rounded-full text-sm font-semibold text-slate-800">
-                                KSh {prop.price.toLocaleString()}
+                            
+                            {/* Image Badge Count */}
+                            <div className="absolute bottom-3 right-3 bg-black/70 backdrop-blur px-2.5 py-1.5 rounded-lg text-white text-xs font-semibold flex items-center gap-1">
+                                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"/></svg>
+                                {prop.images.length}
                             </div>
-                            <div className="absolute top-3 left-3 badge bg-accent-green text-white">
-                                {prop.occupancy}% booked
+                            
+                            {/* Price Badge */}
+                            <div className="absolute top-3 left-3 badge-premium">
+                                <span>KSh {prop.price.toLocaleString()}/night</span>
                             </div>
+                            
+                            {/* Occupancy Badge */}
+                            {prop.occupancy > 70 && (
+                                <div className="absolute top-3 right-3 bg-orange-500 text-white px-2.5 py-1 rounded-lg text-xs font-semibold">
+                                    {prop.occupancy}% booked
+                                </div>
+                            )}
+                            
+                            {/* Favorite Button */}
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     toggleFavorite(prop.id);
                                 }}
-                                className="absolute bottom-3 right-3 bg-white/90 hover:bg-white p-2 rounded-full smooth-transition"
+                                className="absolute bottom-3 left-3 bg-white/95 hover:bg-white p-2.5 rounded-full smooth-transition shadow-lg backdrop-blur"
                             >
-                                <svg className={`w-5 h-5 ${isFavorite ? 'text-red-500 fill-red-500' : 'text-slate-400'}`} fill={isFavorite ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                <svg className={`w-5 h-5 ${isFavorite ? 'text-red-500 fill-red-500' : 'text-gray-600'}`} fill={isFavorite ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24" strokeWidth={isFavorite ? 0 : 2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                 </svg>
                             </button>
                         </div>
+
+                        {/* Card Content */}
                         <div className="p-4">
-                            <div className="flex justify-between items-start mb-2">
-                                <h3 className="text-lg font-semibold text-slate-900 leading-tight flex-1">{prop.name}</h3>
+                            <div className="mb-2">
+                                <div className="flex justify-between items-start gap-2">
+                                    <div className="flex-1">
+                                        <h3 className="text-base font-semibold text-gray-900 leading-snug line-clamp-2">{prop.name}</h3>
+                                        <p className="text-xs text-gray-600 mt-1">{prop.neighborhood}</p>
+                                    </div>
+                                    {prop.hostSuperhost && (
+                                        <span className="badge-gold text-xs py-1 px-2 whitespace-nowrap">🏆 Superhost</span>
+                                    )}
+                                </div>
                             </div>
-                            <div className="flex items-center text-sm text-slate-600 mb-3">
-                                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
+
+                            {/* Location */}
+                            <div className="flex items-center text-xs text-gray-600 mb-3">
+                                <svg className="w-3.5 h-3.5 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
                                 {prop.location}
                             </div>
-                            <div className="flex items-center text-sm mb-3">
-                                <div className="flex items-center text-amber-500 mr-2">
-                                    <svg className="w-4 h-4 star" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                                    <span className="font-semibold ml-1">{prop.rating}</span>
+
+                            {/* Rating & Reviews */}
+                            <div className="flex items-center gap-3 mb-3 pb-3 border-b border-gray-100">
+                                <div className="flex items-center">
+                                    <svg className="w-3.5 h-3.5 star" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                                    <span className="text-xs font-semibold ml-1 text-gray-900">{prop.rating}</span>
                                 </div>
-                                <span className="text-slate-500">({prop.reviews})</span>
+                                <span className="text-xs text-gray-600">({prop.reviews})</span>
                             </div>
-                            <div className="grid grid-cols-3 gap-2 mb-3">
-                                {prop.bedrooms > 0 && <div className="text-xs text-slate-600 text-center"><div className="font-semibold">{prop.bedrooms}</div>Bedrooms</div>}
-                                <div className="text-xs text-slate-600 text-center"><div className="font-semibold">{prop.bathrooms}</div>Bathrooms</div>
-                                <div className="text-xs text-slate-600 text-center"><div className="font-semibold">{prop.beds}</div>Beds</div>
-                            </div>
-                            <div className="flex flex-wrap gap-1">
-                                {prop.amenities.slice(0, 3).map((a, i) => (
-                                    <span key={i} className="text-xs bg-slate-100 text-slate-700 px-2 py-1 rounded">{a}</span>
-                                ))}
-                                {prop.amenities.length > 3 && <span className="text-xs text-slate-600 px-2 py-1">+{prop.amenities.length - 3}</span>}
+
+                            {/* Room Details */}
+                            <div className="grid grid-cols-3 gap-3 text-xs text-center">
+                                {prop.bedrooms > 0 && (
+                                    <div>
+                                        <div className="font-semibold text-gray-900">{prop.bedrooms}</div>
+                                        <div className="text-gray-600">Bed{prop.bedrooms > 1 ? 's' : ''}</div>
+                                    </div>
+                                )}
+                                <div>
+                                    <div className="font-semibold text-gray-900">{prop.bathrooms}</div>
+                                    <div className="text-gray-600">Bath{prop.bathrooms > 1 ? 's' : ''}</div>
+                                </div>
+                                <div>
+                                    <div className="font-semibold text-gray-900 capitalize">{prop.type}</div>
+                                    <div className="text-gray-600">Type</div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 );
             };
 
-            const PropertyModal = () => {
+            const PropertyDetailsModal = () => {
                 if (!selectedProperty) return null;
-
-                const netPerNight = selectedProperty.price * 0.85;
-                const perNightCost = 65000 / 30;
-                const breakEvenOccupancy = (perNightCost / (selectedProperty.price - (selectedProperty.price * 0.15))) * 100;
+                const prop = selectedProperty;
 
                 return (
-                    <div className="fixed inset-0 modal-backdrop z-50 overflow-y-auto">
-                        <div className="min-h-screen flex items-center justify-center p-4">
-                            <div className="bg-white rounded-2xl w-full max-w-4xl shadow-2xl animate-fade-in">
-                                <div className="sticky top-0 bg-white border-b border-slate-200 p-6 flex justify-between items-center rounded-t-2xl">
-                                    <h2 className="text-2xl font-bold text-slate-900">{selectedProperty.name}</h2>
-                                    <button 
-                                        onClick={() => setSelectedProperty(null)}
-                                        className="text-slate-400 hover:text-slate-600 text-2xl font-light"
-                                    >
-                                        ✕
-                                    </button>
+                    <div className="fixed inset-0 modal-backdrop-premium z-50 overflow-y-auto">
+                        <div className="min-h-screen flex items-center justify-center p-4 py-8">
+                            <div className="modal-content-premium bg-white w-full max-w-5xl">
+                                {/* Close Button */}
+                                <button 
+                                    onClick={() => setSelectedProperty(null)}
+                                    className="absolute top-6 right-6 z-10 bg-white/95 hover:bg-white p-2 rounded-full shadow-lg smooth-transition"
+                                >
+                                    <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                                </button>
+
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6 max-h-96 overflow-y-auto">
+                                    {/* Image Gallery */}
+                                    <div className="lg:col-span-2 space-y-3">
+                                        <div className="gallery-main" style={{ background: prop.images[activeImageIndex] }} />
+                                        <div className="grid grid-cols-4 gap-2">
+                                            {prop.images.map((img, idx) => (
+                                                <div 
+                                                    key={idx}
+                                                    onClick={() => setActiveImageIndex(idx)}
+                                                    className={`gallery-thumbnail ${activeImageIndex === idx ? 'active' : ''}`}
+                                                    style={{ background: img }}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Quick Info */}
+                                    <div className="space-y-4">
+                                        <div>
+                                            <h1 className="text-3xl font-bold text-gray-900 mb-1">{prop.name}</h1>
+                                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
+                                                {prop.neighborhood}
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                            <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Price</div>
+                                            <div className="flex items-baseline gap-2 mb-1">
+                                                <span className="text-3xl font-bold text-forest">KSh {prop.price.toLocaleString()}</span>
+                                                <span className="text-gray-600">/night</span>
+                                            </div>
+                                            <p className="text-xs text-gray-600">+ KSh {prop.cleaningFee.toLocaleString()} cleaning fee</p>
+                                        </div>
+
+                                        <div className="flex items-center gap-4">
+                                            <div className="flex items-center">
+                                                <svg className="w-4 h-4 star" fill="currentColor" viewBox="0 0 20 20"></svg>
+                                                <span className="font-bold ml-1 text-sm">{prop.rating}</span>
+                                            </div>
+                                            <span className="text-xs text-gray-600">({prop.reviews} reviews)</span>
+                                        </div>
+
+                                        <button
+                                            onClick={() => setShowBooking(true)}
+                                            className="w-full btn-primary text-center justify-center"
+                                        >
+                                            Reserve
+                                        </button>
+                                    </div>
                                 </div>
 
-                                <div className="p-6 space-y-6 max-h-96 overflow-y-auto">
-                                    <div className="h-64 rounded-xl" style={{ background: selectedProperty.image }} />
-
-                                    <div className="grid grid-cols-4 gap-4">
-                                        <div className="text-center">
-                                            <div className="text-2xl font-bold accent-green">{selectedProperty.bedrooms}</div>
-                                            <div className="text-sm text-slate-600">Bedrooms</div>
-                                        </div>
-                                        <div className="text-center">
-                                            <div className="text-2xl font-bold accent-green">{selectedProperty.beds}</div>
-                                            <div className="text-sm text-slate-600">Beds</div>
-                                        </div>
-                                        <div className="text-center">
-                                            <div className="text-2xl font-bold accent-green">{selectedProperty.bathrooms}</div>
-                                            <div className="text-sm text-slate-600">Bathrooms</div>
-                                        </div>
-                                        <div className="text-center">
-                                            <div className="flex items-center justify-center">
-                                                <svg className="w-5 h-5 star" fill="currentColor" viewBox="0 0 20 20"></svg>
-                                                <span className="font-bold ml-1">{selectedProperty.rating}</span>
-                                            </div>
-                                            <div className="text-sm text-slate-600">{selectedProperty.reviews} reviews</div>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <h3 className="font-semibold text-slate-900 mb-2 text-lg">About this property</h3>
-                                        <p className="text-slate-600 text-sm leading-relaxed">{selectedProperty.description}</p>
-                                    </div>
-
-                                    <div>
-                                        <h3 className="font-semibold text-slate-900 mb-3 text-lg">Amenities & Features</h3>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            {selectedProperty.amenities.map((a, i) => (
-                                                <div key={i} className="flex items-center text-sm text-slate-600">
-                                                    <svg className="w-4 h-4 accent-green mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                                                    {a}
+                                {/* Details Tabs */}
+                                <div className="border-t border-gray-200 p-6 max-h-96 overflow-y-auto">
+                                    <div className="space-y-8">
+                                        {/* About */}
+                                        <div>
+                                            <h2 className="text-2xl font-semibold text-gray-900 mb-4">About this place</h2>
+                                            <p className="text-gray-700 leading-relaxed mb-4">{prop.description}</p>
+                                            <div className="grid grid-cols-4 gap-4">
+                                                <div>
+                                                    <div className="text-2xl font-bold text-forest">{prop.bedrooms || 'Studio'}</div>
+                                                    <div className="text-sm text-gray-600">Bedroom{prop.bedrooms > 1 ? 's' : ''}</div>
                                                 </div>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <h3 className="font-semibold text-slate-900 mb-3 text-lg">Why guests love this place</h3>
-                                        <div className="space-y-2">
-                                            {selectedProperty.highlights.map((h, i) => (
-                                                <div key={i} className="flex items-center text-sm text-slate-600 bg-slate-50 p-3 rounded-lg">
-                                                    <svg className="w-4 h-4 star mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"></svg>
-                                                    {h}
+                                                <div>
+                                                    <div className="text-2xl font-bold text-forest">{prop.beds}</div>
+                                                    <div className="text-sm text-gray-600">Bed{prop.beds > 1 ? 's' : ''}</div>
                                                 </div>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div className="bg-gradient-to-r from-slate-50 to-slate-100 p-4 rounded-xl border border-slate-200">
-                                        <h4 className="font-semibold text-slate-900 mb-3 text-sm">📊 Performance Metrics</h4>
-                                        <div className="grid grid-cols-3 gap-4 text-sm">
-                                            <div>
-                                                <div className="text-xs text-slate-600 mb-1">Nightly Rate</div>
-                                                <div className="text-lg font-bold accent-green">KSh {selectedProperty.price.toLocaleString()}</div>
-                                            </div>
-                                            <div>
-                                                <div className="text-xs text-slate-600 mb-1">Current Occupancy</div>
-                                                <div className="text-lg font-bold accent-green">{selectedProperty.occupancy}%</div>
-                                            </div>
-                                            <div>
-                                                <div className="text-xs text-slate-600 mb-1">Monthly Bookings</div>
-                                                <div className="text-lg font-bold accent-green">{selectedProperty.bookings}</div>
+                                                <div>
+                                                    <div className="text-2xl font-bold text-forest">{prop.bathrooms}</div>
+                                                    <div className="text-sm text-gray-600">Bathroom{prop.bathrooms > 1 ? 's' : ''}</div>
+                                                </div>
+                                                <div>
+                                                    <div className="text-2xl font-bold text-forest capitalize">{prop.type}</div>
+                                                    <div className="text-sm text-gray-600">Property</div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <button
-                                        onClick={() => setShowBooking(true)}
-                                        className="w-full bg-gradient-to-r from-slate-900 to-slate-800 text-white py-4 rounded-xl font-semibold hover:shadow-lg smooth-transition text-lg"
-                                    >
-                                        Reserve Now
-                                    </button>
+                                        {/* Amenities */}
+                                        <div>
+                                            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Amenities</h2>
+                                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                                {prop.amenities.map((amenity, i) => (
+                                                    <div key={i} className="flex items-center gap-3 text-sm text-gray-700">
+                                                        <svg className="w-5 h-5 text-forest flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                                                        {amenity}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {/* Highlights */}
+                                        <div>
+                                            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Why guests love this place</h2>
+                                            <div className="space-y-2">
+                                                {prop.highlights.map((highlight, i) => (
+                                                    <div key={i} className="flex items-start gap-3 p-3 bg-green-50 rounded-lg border border-green-100">
+                                                        <svg className="w-5 h-5 text-gold mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                                        <span className="text-sm text-gray-700">{highlight}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {/* Host Profile */}
+                                        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                                            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Hosted by {prop.hostName}</h2>
+                                            <div className="flex items-start gap-4">
+                                                <div className="w-16 h-16 rounded-full flex-shrink-0" style={{ background: prop.hostImage }} />
+                                                <div className="flex-1">
+                                                    <div className="font-semibold text-gray-900 mb-1">{prop.hostName}</div>
+                                                    {prop.hostSuperhost && (
+                                                        <div className="badge-gold text-xs py-1 px-2 inline-block mb-2">🏆 Superhost</div>
+                                                    )}
+                                                    <div className="flex items-center gap-3 text-sm mb-2">
+                                                        <div className="flex items-center">
+                                                            <svg className="w-4 h-4 star" fill="currentColor" viewBox="0 0 20 20"></svg>
+                                                            <span className="ml-1 font-semibold">{prop.hostRating}</span>
+                                                        </div>
+                                                        <span className="text-gray-600">({prop.hostReviews} reviews)</span>
+                                                    </div>
+                                                    <p className="text-sm text-gray-600">Hosting {prop.bookings} guests monthly • Verified host with Syllogism Technology Africa</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -505,90 +796,141 @@
                 );
             };
 
-            const BookingModal = () => {
+            const BookingDetailsModal = () => {
                 if (!selectedProperty || !showBooking) return null;
+                const prop = selectedProperty;
 
                 const nights = bookingDates.checkOut && bookingDates.checkIn 
                     ? Math.ceil((new Date(bookingDates.checkOut) - new Date(bookingDates.checkIn)) / (1000 * 60 * 60 * 24))
                     : 1;
-                const subtotal = selectedProperty.price * nights;
+                
+                const subtotal = prop.price * nights;
+                const cleaningFee = prop.cleaningFee;
                 const platformFee = Math.round(subtotal * 0.15);
-                const total = subtotal + platformFee;
+                const taxes = Math.round((subtotal + cleaningFee) * 0.16); // 16% VAT
+                const total = subtotal + cleaningFee + platformFee + taxes;
 
                 return (
-                    <div className="fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4">
-                        <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl animate-fade-in">
-                            <div className="border-b border-slate-200 p-6 flex justify-between items-center">
-                                <h2 className="text-xl font-bold text-slate-900">Complete Your Booking</h2>
+                    <div className="fixed inset-0 modal-backdrop-premium z-50 flex items-center justify-center p-4">
+                        <div className="modal-content-premium bg-white w-full max-w-2xl">
+                            <div className="border-b border-gray-200 p-6 flex justify-between items-center">
+                                <h2 className="text-2xl font-bold text-gray-900">Confirm and pay</h2>
                                 <button 
                                     onClick={() => setShowBooking(false)}
-                                    className="text-slate-400 hover:text-slate-600 text-2xl font-light"
+                                    className="text-gray-400 hover:text-gray-600 text-2xl font-light"
                                 >
                                     ✕
                                 </button>
                             </div>
 
-                            <div className="p-6 space-y-4">
-                                <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
-                                    <div className="font-semibold text-slate-900 mb-1">{selectedProperty.name}</div>
-                                    <div className="text-sm text-slate-600">{selectedProperty.location}</div>
+                            <div className="p-6 space-y-6 max-h-96 overflow-y-auto">
+                                {/* Property Summary */}
+                                <div className="flex gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                    <div className="w-24 h-24 rounded-lg flex-shrink-0" style={{ background: selectedProperty.images[0] }} />
+                                    <div className="flex-1">
+                                        <h3 className="font-semibold text-gray-900">{selectedProperty.name}</h3>
+                                        <p className="text-sm text-gray-600">{selectedProperty.neighborhood}</p>
+                                        <div className="flex items-center gap-2 mt-2">
+                                            <svg className="w-4 h-4 star" fill="currentColor" viewBox="0 0 20 20"></svg>
+                                            <span className="text-sm font-semibold">{selectedProperty.rating}</span>
+                                            <span className="text-xs text-gray-600">({selectedProperty.reviews})</span>
+                                        </div>
+                                    </div>
                                 </div>
 
+                                {/* Booking Details */}
                                 <div className="space-y-3">
-                                    <div>
-                                        <label className="block text-sm font-medium text-slate-900 mb-1">Check-in</label>
-                                        <input 
-                                            type="date"
-                                            value={bookingDates.checkIn}
-                                            onChange={(e) => setBookingDates({...bookingDates, checkIn: e.target.value})}
-                                            className="w-full px-3 py-2 border border-slate-300 rounded-lg input-focus"
-                                        />
+                                    <h3 className="font-semibold text-gray-900">Your stay</h3>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-xs font-semibold text-gray-600 mb-2 uppercase">Check-in</label>
+                                            <input 
+                                                type="date"
+                                                value={bookingDates.checkIn}
+                                                onChange={(e) => setBookingDates({...bookingDates, checkIn: e.target.value})}
+                                                className="input-premium w-full"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-semibold text-gray-600 mb-2 uppercase">Check-out</label>
+                                            <input 
+                                                type="date"
+                                                value={bookingDates.checkOut}
+                                                onChange={(e) => setBookingDates({...bookingDates, checkOut: e.target.value})}
+                                                className="input-premium w-full"
+                                            />
+                                        </div>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-900 mb-1">Check-out</label>
-                                        <input 
-                                            type="date"
-                                            value={bookingDates.checkOut}
-                                            onChange={(e) => setBookingDates({...bookingDates, checkOut: e.target.value})}
-                                            className="w-full px-3 py-2 border border-slate-300 rounded-lg input-focus"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-slate-900 mb-1">Guests</label>
+                                        <label className="block text-xs font-semibold text-gray-600 mb-2 uppercase">Guests</label>
                                         <select 
                                             value={bookingDates.guests}
                                             onChange={(e) => setBookingDates({...bookingDates, guests: parseInt(e.target.value)})}
-                                            className="w-full px-3 py-2 border border-slate-300 rounded-lg input-focus"
+                                            className="input-premium w-full"
                                         >
-                                            {[1,2,3,4,5,6].map(n => <option key={n} value={n}>{n} Guest{n > 1 ? 's' : ''}</option>)}
+                                            {[1,2,3,4,5,6,8,10].map(n => <option key={n} value={n}>{n} Guest{n > 1 ? 's' : ''}</option>)}
                                         </select>
                                     </div>
                                 </div>
 
-                                <div className="border-t border-slate-200 pt-4 space-y-2">
+                                {/* Price Breakdown */}
+                                <div className="border-t border-gray-200 pt-4 space-y-2">
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-slate-600">KSh {selectedProperty.price.toLocaleString()} × {nights} night{nights > 1 ? 's' : ''}</span>
-                                        <span className="font-semibold text-slate-900">KSh {subtotal.toLocaleString()}</span>
+                                        <span className="text-gray-700">KSh {prop.price.toLocaleString()} × {nights} night{nights > 1 ? 's' : ''}</span>
+                                        <span className="font-semibold text-gray-900">KSh {subtotal.toLocaleString()}</span>
                                     </div>
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-slate-600">Mwarokin Service Fee (15%)</span>
-                                        <span className="font-semibold text-slate-900">KSh {platformFee.toLocaleString()}</span>
+                                        <span className="text-gray-700">Cleaning fee</span>
+                                        <span className="font-semibold text-gray-900">KSh {cleaningFee.toLocaleString()}</span>
                                     </div>
-                                    <div className="flex justify-between border-t border-slate-200 pt-2 mt-2">
-                                        <span className="font-semibold text-slate-900">Total Amount</span>
-                                        <span className="text-lg font-bold accent-green">KSh {total.toLocaleString()}</span>
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-gray-700">Service fee (15%)</span>
+                                        <span className="font-semibold text-gray-900">KSh {platformFee.toLocaleString()}</span>
+                                    </div>
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-gray-700">Taxes & VAT (16%)</span>
+                                        <span className="font-semibold text-gray-900">KSh {taxes.toLocaleString()}</span>
+                                    </div>
+                                    
+                                    <div className="border-t border-gray-200 pt-3 mt-3 flex justify-between items-center">
+                                        <span className="font-semibold text-gray-900">Total Amount</span>
+                                        <div className="text-right">
+                                            <div className="text-2xl font-bold text-forest">KSh {total.toLocaleString()}</div>
+                                            <div className="text-xs text-gray-600">For {nights} night{nights > 1 ? 's' : ''}</div>
+                                        </div>
                                     </div>
                                 </div>
 
+                                {/* Payment Methods */}
+                                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                    <div className="text-xs font-semibold text-blue-900 uppercase tracking-wide mb-3">Payment Methods</div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {['M-Pesa', 'Airtel Money', 'SylloPay', 'Bank Transfer', 'Credit Card', 'Crypto'].map(method => (
+                                            <label key={method} className="flex items-center gap-2 p-2 bg-white rounded border border-blue-200 cursor-pointer hover:bg-blue-50">
+                                                <input type="radio" name="payment" className="w-4 h-4" defaultChecked={method === 'M-Pesa'} />
+                                                <span className="text-sm text-gray-700">{method}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Terms */}
+                                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 text-xs text-gray-600">
+                                    <input type="checkbox" id="terms" className="mr-2" defaultChecked />
+                                    <label htmlFor="terms" className="cursor-pointer">
+                                        I agree to Mwarokin's house rules, cancellation policy, and terms of service
+                                    </label>
+                                </div>
+
                                 <button
-                                    onClick={() => alert(`✅ Booking Confirmed!\n\nTotal: KSh ${total.toLocaleString()}\n\n💳 Payment Options:\n• M-Pesa\n• Airtel Money\n• Credit/Debit Card\n• SylloPay\n• Bank Transfer`)}
-                                    className="w-full bg-gradient-to-r from-slate-900 to-slate-800 text-white py-3 rounded-lg font-semibold hover:shadow-lg smooth-transition"
+                                    onClick={() => alert(`✅ Booking Confirmed!\n\nProperty: ${selectedProperty.name}\nTotal: KSh ${total.toLocaleString()}\n\nConfirmation sent to your email.\n💳 Redirecting to payment gateway...`)}
+                                    className="w-full btn-primary text-center justify-center text-base py-4 font-semibold"
                                 >
-                                    Proceed to Payment
+                                    Confirm and Pay
                                 </button>
                                 <button
                                     onClick={() => setShowBooking(false)}
-                                    className="w-full text-slate-600 py-2 font-medium hover:bg-slate-50 rounded-lg smooth-transition"
+                                    className="w-full btn-secondary text-center justify-center py-3"
                                 >
                                     Cancel
                                 </button>
@@ -601,157 +943,201 @@
             return (
                 <div className="min-h-screen bg-white">
                     {/* Navigation */}
-                    <div className="sticky top-0 z-40 bg-white border-b border-slate-200 backdrop-blur-sm">
-                        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-gradient-to-br from-slate-900 to-slate-700 rounded-lg flex items-center justify-center shadow-lg">
-                                    <span className="text-white font-bold text-base">M</span>
+                    <nav className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-gradient-to-br from-forest to-forest-dark rounded-lg flex items-center justify-center shadow-lg">
+                                        <span className="text-white font-bold text-base font-sans-display">M</span>
+                                    </div>
+                                    <div>
+                                        <div className="font-bold text-gray-900 text-lg font-sans-display">Mwarokin</div>
+                                        <div className="text-xs text-gray-600">Stays</div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <div className="font-bold text-slate-900 text-lg">Mwarokin Stays</div>
-                                    <div className="text-xs text-slate-600">Syllogism Technology Africa</div>
+                                <div className="hidden md:flex items-center gap-4 text-sm text-gray-600">
+                                    <span>🌍 Nairobi's Premier Rentals</span>
                                 </div>
-                            </div>
-                            <div className="hidden md:flex items-center gap-4 text-sm">
-                                <span className="text-slate-600">🌍 Nairobi's Premier Rentals</span>
-                                <span className="text-slate-300">•</span>
-                                <span className="text-slate-600">{filteredProperties.length} Properties</span>
+                                <div className="hidden md:flex items-center gap-3">
+                                    <span className="text-xs text-gray-600">{filteredProperties.length} Available</span>
+                                    {favoriteProperties.length > 0 && (
+                                        <span className="text-xs font-semibold text-gold">❤️ {favoriteProperties.length}</span>
+                                    )}
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </nav>
 
                     {/* Hero Section */}
-                    <div className="hero-gradient text-white py-16 md:py-20">
-                        <div className="max-w-7xl mx-auto px-6 relative z-10">
-                            <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
-                                Stay Anywhere in Nairobi
-                            </h1>
-                            <p className="text-lg md:text-xl text-white/85 max-w-2xl mb-8">
-                                Discover premium apartments, villas, and furnished homes across Nairobi's finest neighborhoods. Professional management. Transparent pricing. African excellence.
-                            </p>
+                    <section className="hero-premium text-white py-16 md:py-24 relative">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                            <div className="max-w-3xl mx-auto text-center mb-10">
+                                <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                                    Stay in Nairobi<br /><span className="text-gold">Your Way</span>
+                                </h1>
+                                <p className="text-lg md:text-xl text-white/90 mb-8">
+                                    Discover handpicked apartments, villas, and homes across Nairobi's most desirable neighborhoods. Professional management. Transparent pricing. African hospitality.
+                                </p>
+                            </div>
 
                             {/* Search Bar */}
-                            <div className="bg-white rounded-xl shadow-2xl p-1 flex flex-col md:flex-row items-stretch gap-2">
+                            <div className="bg-white rounded-xl shadow-2xl p-1 flex flex-col md:flex-row items-stretch gap-2 max-w-2xl mx-auto">
                                 <div className="flex-1 flex items-center px-4">
-                                    <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                    <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                                     <input
                                         type="text"
-                                        placeholder="Search properties, neighborhoods..."
+                                        placeholder="Search properties, neighborhoods, or locations..."
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="flex-1 ml-3 py-3 outline-none text-slate-900 bg-transparent text-sm md:text-base"
+                                        className="flex-1 ml-3 py-3 outline-none text-gray-900 bg-transparent text-sm md:text-base placeholder-gray-500"
                                     />
                                 </div>
-                                <button className="bg-gradient-to-r from-slate-900 to-slate-800 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg smooth-transition mr-1 whitespace-nowrap">
+                                <button className="btn-primary mr-1 whitespace-nowrap">
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                                     Search
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
-                    <div className="max-w-7xl mx-auto px-6 py-12">
-                        {/* Filters Section */}
-                        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-12 bg-slate-50 p-6 rounded-xl border border-slate-200">
-                            {/* Location Filter */}
-                            <div>
-                                <label className="block text-sm font-semibold text-slate-900 mb-3">📍 Neighborhood</label>
-                                <div className="space-y-2 max-h-40 overflow-y-auto">
-                                    {locations.map(loc => (
-                                        <label key={loc} className="flex items-center gap-2 cursor-pointer hover:bg-white p-2 rounded">
-                                            <input
-                                                type="radio"
-                                                name="location"
-                                                value={loc}
-                                                checked={selectedLocation === loc}
-                                                onChange={(e) => setSelectedLocation(e.target.value)}
-                                                className="w-4 h-4 rounded-full accent-slate-900"
-                                            />
-                                            <span className="text-sm text-slate-600 capitalize">{loc === 'all' ? 'All Locations' : loc}</span>
-                                        </label>
-                                    ))}
+                    {/* Filters Section */}
+                    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                        <div className="bg-gray-50 rounded-xl border border-gray-200 p-6">
+                            <div className="flex items-center justify-between mb-6">
+                                <h2 className="text-lg font-semibold text-gray-900">Refine your search</h2>
+                                <button
+                                    onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                                    className="text-sm text-forest font-medium hover:underline"
+                                >
+                                    {showAdvancedFilters ? '△ Hide' : '▽ Show'} advanced filters
+                                </button>
+                            </div>
+
+                            {/* Basic Filters */}
+                            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+                                {/* Location */}
+                                <div>
+                                    <label className="block text-xs font-semibold text-gray-600 mb-2 uppercase">📍 Location</label>
+                                    <select 
+                                        value={selectedLocation}
+                                        onChange={(e) => setSelectedLocation(e.target.value)}
+                                        className="input-premium w-full text-sm"
+                                    >
+                                        {locations.map(loc => (
+                                            <option key={loc} value={loc}>{loc === 'all' ? 'All Neighborhoods' : loc}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                {/* Price Range */}
+                                <div>
+                                    <label className="block text-xs font-semibold text-gray-600 mb-2 uppercase">💰 Price</label>
+                                    <select 
+                                        onChange={(e) => {
+                                            const [min, max] = e.target.value.split('-').map(Number);
+                                            setPriceRange([min, max]);
+                                        }}
+                                        className="input-premium w-full text-sm"
+                                    >
+                                        <option value="3000-15000">Any price</option>
+                                        <option value="3000-5000">Under KSh 5,000</option>
+                                        <option value="5000-8000">KSh 5,000 - 8,000</option>
+                                        <option value="8000-12000">KSh 8,000 - 12,000</option>
+                                        <option value="12000-15000">KSh 12,000+</option>
+                                    </select>
+                                </div>
+
+                                {/* Sort */}
+                                <div>
+                                    <label className="block text-xs font-semibold text-gray-600 mb-2 uppercase">⭐ Sort</label>
+                                    <select 
+                                        value={sortBy}
+                                        onChange={(e) => setSortBy(e.target.value)}
+                                        className="input-premium w-full text-sm"
+                                    >
+                                        <option value="recommended">Recommended</option>
+                                        <option value="rating">Top Rated</option>
+                                        <option value="price-low">Price: Low to High</option>
+                                        <option value="price-high">Price: High to Low</option>
+                                        <option value="newest">Most Popular</option>
+                                    </select>
+                                </div>
+
+                                {/* Property Type */}
+                                <div>
+                                    <label className="block text-xs font-semibold text-gray-600 mb-2 uppercase">🏠 Type</label>
+                                    <select 
+                                        value={propertyType}
+                                        onChange={(e) => setPropertyType(e.target.value)}
+                                        className="input-premium w-full text-sm"
+                                    >
+                                        <option value="all">All Types</option>
+                                        <option value="studio">Studio</option>
+                                        <option value="apartment">Apartment</option>
+                                        <option value="villa">Villa</option>
+                                        <option value="house">House</option>
+                                    </select>
+                                </div>
+
+                                {/* Min Rating */}
+                                <div>
+                                    <label className="block text-xs font-semibold text-gray-600 mb-2 uppercase">⭐ Rating</label>
+                                    <select 
+                                        value={minRating}
+                                        onChange={(e) => setMinRating(parseFloat(e.target.value))}
+                                        className="input-premium w-full text-sm"
+                                    >
+                                        <option value={0}>Any rating</option>
+                                        <option value={4.5}>4.5+</option>
+                                        <option value={4.7}>4.7+</option>
+                                        <option value={4.9}>4.9+</option>
+                                    </select>
                                 </div>
                             </div>
 
-                            {/* Price Range */}
-                            <div>
-                                <label className="block text-sm font-semibold text-slate-900 mb-3">💰 Price Range</label>
-                                <div className="space-y-3">
-                                    <input
-                                        type="range"
-                                        min="2000"
-                                        max="15000"
-                                        step="1000"
-                                        value={priceRange[0]}
-                                        onChange={(e) => setPriceRange([parseInt(e.target.value), priceRange[1]])}
-                                        className="w-full"
-                                    />
-                                    <input
-                                        type="range"
-                                        min="2000"
-                                        max="15000"
-                                        step="1000"
-                                        value={priceRange[1]}
-                                        onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                                        className="w-full"
-                                    />
-                                    <div className="text-xs font-semibold text-slate-900 bg-white p-2 rounded">
-                                        KSh {priceRange[0].toLocaleString()} — {priceRange[1].toLocaleString()}
+                            {/* Advanced Filters */}
+                            {showAdvancedFilters && (
+                                <div>
+                                    <div className="border-t border-gray-300 pt-6">
+                                        <label className="block text-sm font-semibold text-gray-900 mb-4">🏠 Amenities</label>
+                                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                                            {amenitiesOptions.map(amenity => (
+                                                <label key={amenity} className="flex items-center gap-2 cursor-pointer hover:bg-white p-2 rounded smooth-transition-fast">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedAmenities.includes(amenity.split(' ')[0])}
+                                                        onChange={(e) => {
+                                                            const key = amenity.split(' ')[0];
+                                                            if (e.target.checked) {
+                                                                setSelectedAmenities([...selectedAmenities, key]);
+                                                            } else {
+                                                                setSelectedAmenities(selectedAmenities.filter(a => a !== key));
+                                                            }
+                                                        }}
+                                                        className="w-4 h-4 rounded border-gray-300"
+                                                    />
+                                                    <span className="text-sm text-gray-700">{amenity}</span>
+                                                </label>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            {/* Sort By */}
-                            <div>
-                                <label className="block text-sm font-semibold text-slate-900 mb-3">⭐ Sort By</label>
-                                <select 
-                                    value={sortBy}
-                                    onChange={(e) => setSortBy(e.target.value)}
-                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-                                >
-                                    <option value="rating">Top Rated</option>
-                                    <option value="price-low">Price: Low to High</option>
-                                    <option value="price-high">Price: High to Low</option>
-                                    <option value="occupancy">Most Popular</option>
-                                </select>
-                            </div>
-
-                            {/* Amenities */}
-                            <div className="md:col-span-2">
-                                <label className="block text-sm font-semibold text-slate-900 mb-3">🏠 Amenities</label>
-                                <div className="grid grid-cols-2 gap-2">
-                                    {amenitiesOptions.map(amenity => (
-                                        <label key={amenity} className="flex items-center gap-2 cursor-pointer hover:bg-white p-2 rounded transition">
-                                            <input
-                                                type="checkbox"
-                                                checked={selectedAmenities.includes(amenity)}
-                                                onChange={(e) => {
-                                                    if (e.target.checked) {
-                                                        setSelectedAmenities([...selectedAmenities, amenity]);
-                                                    } else {
-                                                        setSelectedAmenities(selectedAmenities.filter(a => a !== amenity));
-                                                    }
-                                                }}
-                                                className="w-4 h-4 rounded"
-                                            />
-                                            <span className="text-xs text-slate-600">{amenity}</span>
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
+                            )}
                         </div>
+                    </section>
 
-                        {/* Results Header */}
+                    {/* Results */}
+                    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                         <div className="mb-8">
-                            <h2 className="text-3xl font-bold text-slate-900 mb-2">
+                            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
                                 {filteredProperties.length} Properties Available
                             </h2>
-                            <p className="text-slate-600 text-sm">
-                                {favoriteProperties.length > 0 && `${favoriteProperties.length} liked • `}
-                                Showing {filteredProperties.length} of {properties.length} premium accommodations
+                            <p className="text-gray-600">
+                                {favoriteProperties.length > 0 && `${favoriteProperties.length} in your wishlist • `}
+                                Showing {filteredProperties.length} of {properties.length} premium accommodations in Nairobi
                             </p>
                         </div>
 
-                        {/* Properties Grid */}
                         {filteredProperties.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {filteredProperties.map(prop => (
@@ -760,78 +1146,88 @@
                             </div>
                         ) : (
                             <div className="text-center py-24">
-                                <div className="text-6xl mb-4">🔍</div>
-                                <h3 className="text-2xl font-semibold text-slate-900 mb-2">No properties found</h3>
-                                <p className="text-slate-600">Try adjusting your filters or search terms</p>
+                                <div className="text-7xl mb-4">🔍</div>
+                                <h3 className="text-3xl font-semibold text-gray-900 mb-3">No properties found</h3>
+                                <p className="text-gray-600 mb-8 max-w-md mx-auto">Try adjusting your filters, expanding your budget, or searching a different neighborhood</p>
                                 <button
                                     onClick={() => {
                                         setSearchQuery('');
                                         setSelectedLocation('all');
-                                        setPriceRange([2000, 15000]);
+                                        setPriceRange([3000, 15000]);
                                         setSelectedAmenities([]);
-                                        setSortBy('rating');
+                                        setSortBy('recommended');
+                                        setPropertyType('all');
+                                        setMinRating(0);
                                     }}
-                                    className="mt-6 px-6 py-2 bg-slate-900 text-white rounded-lg font-medium hover:bg-slate-800"
+                                    className="btn-primary"
                                 >
-                                    Reset Filters
+                                    Reset All Filters
                                 </button>
                             </div>
                         )}
-                    </div>
+                    </section>
 
                     {/* Footer */}
-                    <div className="border-t border-slate-200 bg-slate-900 text-white mt-20 py-12">
-                        <div className="max-w-7xl mx-auto px-6">
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+                    <footer className="border-t border-gray-200 bg-gray-900 text-white mt-20 py-16">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
                                 <div>
                                     <h4 className="font-bold mb-4">Explore</h4>
-                                    <ul className="space-y-2 text-sm text-slate-300">
+                                    <ul className="space-y-2 text-sm text-gray-400">
                                         <li><a href="#" className="hover:text-white transition">Neighborhoods</a></li>
-                                        <li><a href="#" className="hover:text-white transition">Properties</a></li>
+                                        <li><a href="#" className="hover:text-white transition">All Properties</a></li>
                                         <li><a href="#" className="hover:text-white transition">Wishlist</a></li>
                                     </ul>
                                 </div>
                                 <div>
-                                    <h4 className="font-bold mb-4">Host</h4>
-                                    <ul className="space-y-2 text-sm text-slate-300">
-                                        <li><a href="#" className="hover:text-white transition">List Property</a></li>
-                                        <li><a href="#" className="hover:text-white transition">Host Guide</a></li>
+                                    <h4 className="font-bold mb-4">Host with us</h4>
+                                    <ul className="space-y-2 text-sm text-gray-400">
+                                        <li><a href="#" className="hover:text-white transition">List Your Property</a></li>
+                                        <li><a href="#" className="hover:text-white transition">Hosting Guide</a></li>
                                         <li><a href="#" className="hover:text-white transition">Dashboard</a></li>
                                     </ul>
                                 </div>
                                 <div>
                                     <h4 className="font-bold mb-4">Support</h4>
-                                    <ul className="space-y-2 text-sm text-slate-300">
-                                        <li><a href="#" className="hover:text-white transition">Help</a></li>
-                                        <li><a href="#" className="hover:text-white transition">Contact</a></li>
+                                    <ul className="space-y-2 text-sm text-gray-400">
+                                        <li><a href="#" className="hover:text-white transition">Help Center</a></li>
+                                        <li><a href="#" className="hover:text-white transition">Contact Us</a></li>
                                         <li><a href="#" className="hover:text-white transition">Safety</a></li>
                                     </ul>
                                 </div>
                                 <div>
+                                    <h4 className="font-bold mb-4">Company</h4>
+                                    <ul className="space-y-2 text-sm text-gray-400">
+                                        <li><a href="#" className="hover:text-white transition">About</a></li>
+                                        <li><a href="#" className="hover:text-white transition">Press</a></li>
+                                        <li><a href="#" className="hover:text-white transition">Careers</a></li>
+                                    </ul>
+                                </div>
+                                <div>
                                     <h4 className="font-bold mb-4">Legal</h4>
-                                    <ul className="space-y-2 text-sm text-slate-300">
+                                    <ul className="space-y-2 text-sm text-gray-400">
                                         <li><a href="#" className="hover:text-white transition">Privacy</a></li>
-                                        <li><a href="#" className="hover:text-white transition">Terms</a></li>
+                                        <li><a href="#" className="hover:text-white transition">Terms of Service</a></li>
                                         <li><a href="#" className="hover:text-white transition">Cookies</a></li>
                                     </ul>
                                 </div>
                             </div>
-                            <div className="border-t border-slate-700 pt-8 text-center text-sm text-slate-400">
-                                <p>© 2024 Mwarokin Stays. Part of Syllogism Technology Africa.</p>
-                                <p className="mt-2">🇰🇪 Built in Nairobi • 💚 For Africa</p>
+                            <div className="border-t border-gray-800 pt-8 text-center text-sm text-gray-400">
+                                <p className="mb-2">© 2024 Mwarokin Stays. Powered by Syllogism Technology Africa.</p>
+                                <p>🇰🇪 Built in Nairobi • 💚 For Africa • 🌍 By Africans</p>
                             </div>
                         </div>
-                    </div>
+                    </footer>
 
                     {/* Modals */}
-                    <PropertyModal />
-                    <BookingModal />
+                    <PropertyDetailsModal />
+                    <BookingDetailsModal />
                 </div>
             );
         };
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<MwarokinStays />);
+        root.render(<MwarokinStaysPremium />);
     </script>
 </body>
 </html>
