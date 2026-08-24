@@ -88,12 +88,12 @@ serve(async (req: Request) => {
           email: p.email ?? null,
           source: p.source ?? 'ai-orchestrator',
           lead_score: leadScore,
-          status,
-          metadata: { reasons, scored_by: 'ai-lead-orchestrator' },
+          qualification_status: status,
+          intent_signals: { reasons, scored_by: 'ai-lead-orchestrator' },
         })
-        .select('id, lead_score, status')
+        .select('id, lead_score, qualification_status')
         .single();
-      if (!insErr && data) results.push(data);
+      if (!insErr && data) results.push({ ...data, status: data.qualification_status });
     }
 
     const qualified = results.filter((r) => r.status === 'qualified').length;

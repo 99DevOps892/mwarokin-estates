@@ -38,10 +38,18 @@ serve(async (req: Request) => {
           for (const target of wanted) {
             const rate = live?.rates?.[target];
             if (typeof rate === 'number' && rate > 0) {
-              await admin.from('exchange_rates').upsert(
-                { base_currency: base, target_currency: target, rate },
-                { onConflict: 'base_currency,target_currency' },
-              );
+              // Live table has no guaranteed unique pair — update-or-insert.
+              const { data: existing } = await admin
+                .from('exchange_rates')
+                .select('id')
+                .eq('base_currency', base)
+                .eq('target_currency', target)
+                .maybeSingle();
+              if (existing?.id) {
+                await admin.from('exchange_rates').update({ rate, last_updated: new Date().toISOString() }).eq('id', existing.id);
+              } else {
+                await admin.from('exchange_rates').insert({ base_currency: base, target_currency: target, rate });
+              }
             }
           }
           const { data: fresh } = await admin

@@ -66,8 +66,8 @@ serve(async (req: Request) => {
       landlord_id: body.landlord_id ?? null,
       transaction_id: transactionId,
       status: method === 'bank-transfer' ? 'pending' : 'processing',
-      phone: body.phone ?? null,
-      metadata: body.metadata ?? {},
+      // Live schema has no phone column — payer phone lives in metadata.
+      metadata: { ...(body.metadata ?? {}), phone: body.phone ?? null },
     };
 
     const { data: payment, error: payErr } = await admin
@@ -80,9 +80,9 @@ serve(async (req: Request) => {
     await admin.from('audit_logs').insert({
       user_id: user.id,
       action: 'payment.created',
-      entity_type: 'payments',
-      entity_id: payment.id,
-      details: { amount, method, via: 'edge-function' },
+      table_name: 'payments',
+      record_id: payment.id,
+      new_data: { amount, method, via: 'edge-function' },
     });
 
     // Mobile money: fire STK push when a phone is present.

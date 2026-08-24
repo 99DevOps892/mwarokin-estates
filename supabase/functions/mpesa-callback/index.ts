@@ -54,9 +54,9 @@ serve(async (req: Request) => {
 
     const updates = success
       ? {
-          status: 'paid',
+          status: 'completed',
           paid_at: new Date().toISOString(),
-          mpesa_receipt: mpesaReceipt,
+          provider_reference: mpesaReceipt,
           metadata: { resultDesc: cb?.ResultDesc, callbackAmount: amount },
         }
       : {
@@ -84,7 +84,7 @@ serve(async (req: Request) => {
             user_id: t.user_id,
             type: 'payment',
             title: success ? 'Payment received' : 'Payment failed',
-            message: success
+            body: success
               ? `Payment of ${payment.amount} confirmed. M-Pesa receipt ${mpesaReceipt}.`
               : `Payment of ${payment.amount} failed: ${cb?.ResultDesc ?? 'unknown reason'}.`,
           });
@@ -103,8 +103,8 @@ serve(async (req: Request) => {
             user_id: l.user_id,
             type: 'payment',
             title: success ? 'Rent received' : 'Tenant payment failed',
-            message: success
-              ? `Payment ${payment.transaction_id} settled. Your share is credited after the 5% platform fee.`
+            body: success
+              ? `Payment ${payment.transaction_id} settled. Your share is credited after the platform fee.`
               : `Payment ${payment.transaction_id} failed at M-Pesa.`,
           });
         }
@@ -112,9 +112,9 @@ serve(async (req: Request) => {
 
       await admin.from('audit_logs').insert({
         action: success ? 'payment.mpesa_confirmed' : 'payment.mpesa_failed',
-        entity_type: 'payments',
-        entity_id: payment.id,
-        details: { checkoutId, mpesaReceipt },
+        table_name: 'payments',
+        record_id: payment.id,
+        new_data: { checkoutId, mpesaReceipt },
       });
     }
 
