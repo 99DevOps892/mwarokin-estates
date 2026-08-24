@@ -1,0 +1,33 @@
+# ============================================================
+# Mwarokin Estates — Netlify configuration
+# Static app lives in /app. The /mwarokin-estates/* rewrite keeps
+# the GitHub Pages basePath (app/js/config.js) working on Netlify.
+# ============================================================
+
+[build]
+  publish = "app"
+  command = "echo 'Static site — no build step required'"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# GitHub-Pages-style base path compatibility
+[[redirects]]
+  from = "/mwarokin-estates/*"
+  to = "/:splat"
+  status = 200
+
+# Pretty URL for the tenant portal
+[[redirects]]
+  from = "/tenant"
+  to = "/dashboard.html"
+  status = 200
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
