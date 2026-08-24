@@ -1,287 +1,352 @@
-```python
-import streamlit as st
-from streamlit_drawable_canvas import st_canvas
-import datetime
-import base64
-from PIL import Image
-import io
+# esignature_backend.py
+# Mwarokin E-Signature Backend (Flask-based API)
+# Run: pip install flask flask-cors
+# python esignature_backend.py
+
+import json
 import uuid
+import hashlib
+import hmac
+import base64
+import logging
+from datetime import datetime
+from functools import wraps
+from typing import Dict, Any, Optional, Tuple
 
-# Page configuration
-st.set_page_config(
-    page_title="Mwarokin Rent E-Signature",
-    page_icon="✍️",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+from flask import Flask, request, jsonify, send_file, session
+from flask_cors import CORS
+import io
+import os
 
-# Custom CSS for premium look
-st.markdown("""
-<style>
-    .main-header {
-        font-size: 2.8rem;
-        font-weight: 800;
-        background: linear-gradient(90deg, #1e3a8a, #3b82f6);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-    .premium-card {
-        background: white;
-        border-radius: 16px;
-        padding: 24px;
-        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-        border: 1px solid #f1f5f9;
-    }
-    .role-badge {
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .role-badge.active {
-        background-color: #dbeafe !important;
-        color: #1e40af !important;
-        border: 2px solid #3b82f6;
-    }
-    .signature-canvas {
-        border: 2px solid #e2e8f0;
-        border-radius: 12px;
-        background: #ffffff;
-    }
-</style>
-""", unsafe_allow_html=True)
+# ----------------------------------------------------------------------
+# CONFIGURATION
+# ----------------------------------------------------------------------
+SECRET_KEY = os.environ.get("MWAROKIN_SECRET", "dev-secret-change-in-production")
+JWT_SECRET = os.environ.get("MWAROKIN_JWT_SECRET", "jwt-dev-secret")
+DOCUMENT_STORE = {}  # In-memory store (replace with DB in production)
+SIGNATURE_STORE = {}  # In-memory store for signature blobs
 
-# Header
-col1, col2 = st.columns([4, 1])
-with col1:
-    st.markdown('<h1 class="main-header"><i class="fas fa-file-signature"></i> Mwarokin Rent E‑Signature</h1>', unsafe_allow_html=True)
-    st.markdown("**Securely sign rental agreements & lease documents — legally binding**")
-with col2:
-    current_time = datetime.datetime.now().strftime("%B %d, %Y • %I:%M %p")
-    st.markdown(f"""
-    <div style="background: rgba(255,255,255,0.7); backdrop-filter: blur(8px); border-radius: 9999px; padding: 12px 20px; 
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1); text-align: center; font-weight: 500;">
-        🕒 {current_time}
-    </div>
-    """, unsafe_allow_html=True)
+app = Flask(__name__)
+app.secret_key = SECRET_KEY
+CORS(app, supports_credentials=True, origins=["http://localhost:5000", "http://127.0.0.1:5000"])
 
-# Role selector
-st.markdown("### Signing as")
-role_cols = st.columns(3)
-roles = {
-    "tenant": {"label": "🏠 Tenant", "key": "tenant"},
-    "landlord": {"label": "🏢 Landlord/Landlady", "key": "landlord"},
-    "agency": {"label": "📊 Property Agency", "key": "agency"}
-}
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("MwarokinBackend")
 
-role_key = None
-if 'current_role' not in st.session_state:
-    st.session_state.current_role = "tenant"
-
-for i, (rkey, rdata) in enumerate(roles.items()):
-    with role_cols[i]:
-        active_class = "active" if st.session_state.current_role == rkey else ""
-        if st.button(rdata["label"], key=f"role_{rkey}", use_container_width=True):
-            st.session_state.current_role = rkey
-            st.rerun()
-
-# Role data
-role_data = {
+# ----------------------------------------------------------------------
+# MOCK USER / ROLE DATA (matches frontend roles)
+# ----------------------------------------------------------------------
+ROLE_DATA = {
     "tenant": {
+        "id": "usr_tenant_001",
         "name": "Robin Mwarema",
+        "role": "Tenant",
         "email": "robin.m@mwarokin.co.ke",
         "phone": "+254 712 345 678",
-        "role_label": "Tenant · Verified",
         "avatar": "RM",
-        "property": "Mwarokin Heights, Block C, Unit 12B",
-        "lease_id": "MWK-2425-001",
-        "period": "June 2025 – May 2026",
-        "rent": 1450,
-        "agreement": lambda name, rent: f"I, <strong>{name}</strong> (Tenant), agree to pay a monthly rent of <strong>${rent:,.2f}</strong> for the property at <strong>Mwarokin Heights, Block C, Unit 12B</strong>. Rent is due on the 5th of each month."
+        "property": "Unit 12B, Block C",
+        "leaseId": "MWK-2425-001",
+        "rent": 22064
     },
     "landlord": {
+        "id": "usr_landlord_002",
         "name": "Esther Mwangi",
+        "role": "Landlord",
         "email": "esther.mwangi@mwarokin.com",
         "phone": "+254 722 456 789",
-        "role_label": "Landlord · Premium Owner",
         "avatar": "EM",
-        "property": "Mwarokin Towers, Unit 4A & 7C",
-        "lease_id": "MWK-LD-9823",
-        "period": "July 2025 – June 2026",
-        "rent": 1890,
-        "agreement": lambda name, rent: f"I, <strong>{name}</strong> (Landlord/Landlady), hereby affirm the lease agreement..."
+        "property": "Mwarokin Towers, Units 4A & 7C",
+        "leaseId": "MWK-LD-9823",
+        "rent": 45000
     },
     "agency": {
+        "id": "usr_agency_003",
         "name": "PrimeLet Property Mgmt",
+        "role": "Agency",
         "email": "clients@primelet.co.ke",
         "phone": "+254 700 123 456",
-        "role_label": "Agency · Authorised",
         "avatar": "PM",
-        "property": "Mwarokin Business Park, Suite 101",
-        "lease_id": "MWK-AG-4451",
-        "period": "August 2025 – July 2026",
-        "rent": 2450,
-        "agreement": lambda name, rent: f"On behalf of <strong>{name}</strong> (Property Management Agency)..."
+        "property": "Mwarokin Business Park",
+        "leaseId": "MWK-AG-4451",
+        "rent": 85000
     }
 }
 
-data = role_data[st.session_state.current_role]
+# Agreement templates (matches frontend)
+AGREEMENT_TEMPLATES = {
+    "tenant": "I, [NAME], as Tenant, hereby agree to the rental terms outlined by Mwarokin Estates for the property at [PROPERTY]. Monthly rent payment of KES [RENT] is due on the 5th of each month. Late payments incur penalties per Mwarokin policy. This lease is valid from June 2025 to May 2026. I accept Mwarokin Estates' community guidelines and agree to maintain the property in good condition. By signing, I confirm acceptance of all terms.",
+    "landlord": "I, [NAME], as Landlord, hereby affirm the lease agreement for properties managed by Mwarokin Estates. I authorize monthly rent collection of KES [RENT] due on the 5th. I accept Mwarokin's management services and community policies. This agreement is valid from July 2025 to June 2026. By signing, I confirm my commitment to property ownership responsibilities and lease terms.",
+    "agency": "On behalf of [NAME], as Property Management Agency, we confirm the commercial lease agreement. Monthly rent: KES [RENT], due on the 5th. We confirm Mwarokin's authorized management responsibilities from August 2025 to July 2026. By e-signing, the agency binds itself to all management obligations and community guidelines."
+}
 
-# Layout: Two columns
-left_col, right_col = st.columns([1, 1.8])
+# ----------------------------------------------------------------------
+# UTILITIES
+# ----------------------------------------------------------------------
+def generate_document_id() -> str:
+    """Generate a unique document ID with prefix."""
+    return f"MWK-{datetime.now().strftime('%y')}-{uuid.uuid4().hex[:6].upper()}"
 
-with left_col:
-    st.markdown('<div class="premium-card">', unsafe_allow_html=True)
+def generate_signature_hash(signature_data: str, role: str) -> str:
+    """Generate HMAC-SHA256 hash for signature verification."""
+    message = f"{role}:{signature_data}:{datetime.now().isoformat()}"
+    h = hmac.new(JWT_SECRET.encode(), message.encode(), hashlib.sha256)
+    return h.hexdigest()
+
+def create_signed_document(role: str, signature_blob: str, timestamp: str) -> Dict[str, Any]:
+    """Build a document record with metadata."""
+    user = ROLE_DATA.get(role, {})
+    if not user:
+        raise ValueError("Invalid role")
     
-    # Profile
-    st.subheader("👤 Profile")
-    avatar_col, info_col = st.columns([1, 3])
-    with avatar_col:
-        st.markdown(f"""
-        <div style="width: 80px; height: 80px; border-radius: 16px; background: linear-gradient(135deg, #1e40af, #3b82f6); 
-                    display: flex; align-items: center; justify-content: center; color: white; font-size: 28px; font-weight: bold;">
-            {data['avatar']}
+    doc_id = generate_document_id()
+    agreement = AGREEMENT_TEMPLATES.get(role, "").replace("[NAME]", user["name"]).replace("[PROPERTY]", user["property"]).replace("[RENT]", str(user["rent"]))
+    
+    doc = {
+        "documentId": doc_id,
+        "role": role,
+        "signerName": user["name"],
+        "signerRole": user["role"],
+        "property": user["property"],
+        "leaseId": user["leaseId"],
+        "rent": user["rent"],
+        "agreementText": agreement,
+        "signatureBlob": signature_blob,  # Base64 encoded signature
+        "signatureHash": generate_signature_hash(signature_blob, role),
+        "timestamp": timestamp,
+        "status": "signed",
+        "createdAt": datetime.now().isoformat()
+    }
+    DOCUMENT_STORE[doc_id] = doc
+    SIGNATURE_STORE[doc_id] = signature_blob
+    return doc
+
+# ----------------------------------------------------------------------
+# DECORATORS
+# ----------------------------------------------------------------------
+def require_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        # Simple session-based auth (in production use JWT)
+        if "user_role" not in session:
+            # For demo, default to tenant
+            session["user_role"] = "tenant"
+        return f(*args, **kwargs)
+    return decorated
+
+# ----------------------------------------------------------------------
+# API ENDPOINTS
+# ----------------------------------------------------------------------
+
+@app.route("/api/health", methods=["GET"])
+def health():
+    return jsonify({"status": "ok", "service": "Mwarokin E-Signature Backend"}), 200
+
+@app.route("/api/role/<role>", methods=["GET"])
+@require_auth
+def get_role_data(role: str):
+    """Get profile data for a given role."""
+    if role not in ROLE_DATA:
+        return jsonify({"error": "Invalid role"}), 400
+    session["user_role"] = role
+    return jsonify(ROLE_DATA[role]), 200
+
+@app.route("/api/agreement/<role>", methods=["GET"])
+@require_auth
+def get_agreement(role: str):
+    """Get rendered agreement text for a role."""
+    if role not in ROLE_DATA:
+        return jsonify({"error": "Invalid role"}), 400
+    user = ROLE_DATA[role]
+    template = AGREEMENT_TEMPLATES.get(role, "")
+    rendered = template.replace("[NAME]", user["name"]).replace("[PROPERTY]", user["property"]).replace("[RENT]", str(user["rent"]))
+    return jsonify({
+        "agreement": rendered,
+        "role": role,
+        "signer": user["name"]
+    }), 200
+
+@app.route("/api/sign", methods=["POST"])
+@require_auth
+def sign_document():
+    """
+    Submit a signature.
+    Expected JSON: { "role": "tenant", "signature": "base64data", "timestamp": "..." }
+    """
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Invalid request body"}), 400
+
+    role = data.get("role")
+    signature_blob = data.get("signature")
+    timestamp = data.get("timestamp", datetime.now().isoformat())
+
+    if not role or role not in ROLE_DATA:
+        return jsonify({"error": "Invalid or missing role"}), 400
+
+    if not signature_blob:
+        return jsonify({"error": "Signature data required"}), 400
+
+    try:
+        # Validate base64
+        base64.b64decode(signature_blob)
+    except Exception:
+        return jsonify({"error": "Invalid signature encoding"}), 400
+
+    # Create signed document
+    doc = create_signed_document(role, signature_blob, timestamp)
+
+    logger.info(f"Document signed: {doc['documentId']} by {doc['signerName']}")
+    return jsonify({
+        "success": True,
+        "document": doc,
+        "message": f"Agreement signed by {doc['signerName']} ({doc['signerRole']})"
+    }), 201
+
+@app.route("/api/document/<doc_id>", methods=["GET"])
+@require_auth
+def get_document(doc_id: str):
+    """Retrieve a signed document by ID."""
+    doc = DOCUMENT_STORE.get(doc_id)
+    if not doc:
+        return jsonify({"error": "Document not found"}), 404
+    # Return a copy without signature blob if sensitive
+    safe_doc = {k: v for k, v in doc.items() if k != "signatureBlob"}
+    safe_doc["hasSignature"] = True
+    return jsonify(safe_doc), 200
+
+@app.route("/api/document/<doc_id>/signature", methods=["GET"])
+@require_auth
+def get_signature_blob(doc_id: str):
+    """Get raw signature image data for a document."""
+    blob = SIGNATURE_STORE.get(doc_id)
+    if not blob:
+        return jsonify({"error": "Signature not found"}), 404
+    return jsonify({"signature": blob}), 200
+
+@app.route("/api/document/<doc_id>/download", methods=["GET"])
+@require_auth
+def download_document_html(doc_id: str):
+    """Generate an HTML version of the signed document."""
+    doc = DOCUMENT_STORE.get(doc_id)
+    if not doc:
+        return jsonify({"error": "Document not found"}), 404
+
+    signature_img = f"<img src='data:image/png;base64,{doc['signatureBlob']}' style='max-width:300px; border:1px solid #ccc; padding:0.5rem;' />"
+    
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head><meta charset="UTF-8"><title>Mwarokin Rental Agreement - {doc['documentId']}</title>
+    <style>
+        body {{ font-family: 'Inter', sans-serif; max-width: 900px; margin: 40px auto; padding: 2rem; color: #1B1B1B; background: #FAFAFA; }}
+        .header {{ background: #1B4D3E; color: #FFF; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; }}
+        .header h1 {{ margin: 0; font-weight: 600; }}
+        .meta {{ display: flex; gap: 2rem; flex-wrap: wrap; background: #F0F0F0; padding: 1rem; border-radius: 8px; margin: 1rem 0; }}
+        .content {{ background: #FFF; padding: 2rem; border-radius: 12px; border-left: 6px solid #D4AF37; line-height: 1.8; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }}
+        .signature-box {{ margin-top: 2rem; border-top: 2px solid #D4AF37; padding-top: 1.5rem; }}
+        .footer {{ margin-top: 2rem; color: #777; font-size: 0.85rem; }}
+    </style>
+    </head>
+    <body>
+        <div class="header">
+            <h1>🏛️ Mwarokin Estates — Rental Agreement</h1>
         </div>
-        """, unsafe_allow_html=True)
-    with info_col:
-        st.markdown(f"**{data['name']}**")
-        st.markdown(f"<span style='color: #10b981;'>✓ {data['role_label']}</span>", unsafe_allow_html=True)
-        st.caption(f"✉️ {data['email']}")
-        st.caption(f"📞 {data['phone']}")
-    
-    st.divider()
-    
-    # Lease details
-    st.markdown("**Property / Unit**")
-    st.info(data["property"])
-    st.markdown(f"**Lease ID**: `{data['lease_id']}`")
-    st.markdown(f"**Contract Period**: {data['period']}")
-    
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    # Rent Summary
-    st.markdown('<div class="premium-card" style="background: linear-gradient(135deg, #f8fafc, #eff6ff);">', unsafe_allow_html=True)
-    st.subheader("💰 Monthly Rent Summary")
-    st.metric("Base Rent", f"${data['rent']:,.2f}")
-    st.caption("Due on the 5th of every month")
-    st.caption("Late fee: 5% flat + 0.5% daily")
-    st.success("E-signature confirms rent obligation")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-with right_col:
-    st.markdown('<div class="premium-card">', unsafe_allow_html=True)
-    st.subheader("📜 Rental Agreement · E-Signature")
-    st.caption("Mwarokin Estates Standard Lease Addendum (v3.2)")
-    
-    # Agreement text
-    agreement_text = data["agreement"](data["name"], data["rent"])
-    st.markdown(f"""
-    <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; max-height: 180px; overflow-y: auto;">
-        {agreement_text}
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("#### ✍️ Draw your signature")
-    
-    # Canvas
-    canvas_result = st_canvas(
-        stroke_width=3,
-        stroke_color="#1e2937",
-        background_color="#ffffff",
-        height=180,
-        width=700,
-        drawing_mode="freedraw",
-        key="signature_canvas",
-    )
-    
-    # Signature tools
-    tool_cols = st.columns([1, 1, 1])
-    with tool_cols[0]:
-        if st.button("🗑️ Clear", use_container_width=True):
-            st.session_state.signature = None
-            st.rerun()
-    with tool_cols[1]:
-        typed_name = st.text_input("Or type name", placeholder="Full legal name", key="typed_name")
-        if st.button("✅ Use Typed", use_container_width=True) and typed_name.strip():
-            st.session_state.signature = typed_name.strip()
-            st.success("Typed signature applied")
-    with tool_cols[2]:
-        if st.button("🔄 Reset All", use_container_width=True):
-            st.session_state.signature = None
-            st.rerun()
-    
-    # Preview
-    st.markdown("**Signature Preview**")
-    preview_col1, preview_col2 = st.columns([1, 3])
-    with preview_col1:
-        if canvas_result.image_data is not None and canvas_result.image_data.sum() > 0:
-            img = Image.fromarray(canvas_result.image_data.astype("uint8"))
-            buf = io.BytesIO()
-            img.save(buf, format="PNG")
-            st.session_state.signature_data = base64.b64encode(buf.getvalue()).decode()
-            st.image(img, width=180)
-        elif 'signature' in st.session_state and st.session_state.signature:
-            st.markdown(f"**{st.session_state.signature}**")
-        else:
-            st.markdown("*No signature yet*")
-    
-    # Finalize
-    if st.button("🚀 Sign & Submit Agreement", type="primary", use_container_width=True):
-        if (canvas_result.image_data is not None and canvas_result.image_data.sum() > 0) or ('signature' in st.session_state and st.session_state.signature):
-            st.session_state.is_signed = True
-            st.session_state.sign_time = datetime.datetime.now()
-            st.success("✅ Agreement successfully signed!")
-            st.balloons()
-        else:
-            st.error("Please provide a signature (draw or type)")
-    
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    # Confirmation panel
-    if st.session_state.get('is_signed', False):
-        st.markdown("""
-        <div style="background: white; padding: 24px; border-radius: 16px; border: 1px solid #86efac;">
-            <h3 style="color: #166534;">✅ Agreement Electronically Signed</h3>
-            <p>Signed by <strong>{}</strong> on {}</p>
+        <div class="meta">
+            <div><strong>Document ID:</strong> {doc['documentId']}</div>
+            <div><strong>Signer:</strong> {doc['signerName']}</div>
+            <div><strong>Role:</strong> {doc['signerRole']}</div>
+            <div><strong>Signed:</strong> {doc['timestamp']}</div>
         </div>
-        """.format(data["name"], st.session_state.sign_time.strftime("%B %d, %Y at %I:%M %p")), unsafe_allow_html=True)
-        
-        if st.button("📥 Download Signed Copy"):
-            # Generate simple signed HTML/PDF simulation
-            signed_html = f"""
-            <h1>Mwarokin Estates - Signed Rental Agreement</h1>
-            <p><strong>Lease ID:</strong> {data['lease_id']}</p>
-            <p><strong>Signer:</strong> {data['name']} ({st.session_state.current_role.title()})</p>
-            <p><strong>Date:</strong> {st.session_state.sign_time}</p>
-            <hr>
-            <p>{agreement_text}</p>
-            <div style="margin-top: 40px; border-top: 3px solid #166534; padding-top: 15px;">
-                <strong>Signature:</strong><br>
-                {st.session_state.get('signature', 'Drawn Signature')}
-            </div>
-            """
-            st.download_button(
-                "Download HTML Copy",
-                signed_html,
-                file_name=f"Mwarokin_Signed_{data['lease_id']}.html",
-                mime="text/html"
-            )
+        <div class="content">
+            {doc['agreementText'].replace('\n', '<br>')}
+        </div>
+        <div class="signature-box">
+            <h3>✍️ Electronic Signature</h3>
+            <div>{signature_img}</div>
+            <p style="font-size:0.9rem;color:#555;">This document is legally binding under Kenya Electronic Transactions Act. Securely stored in Mwarokin vault.</p>
+        </div>
+        <div class="footer">
+            <p>🔐 Verified document · Lease ID: {doc['leaseId']} · Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+        </div>
+    </body>
+    </html>
+    """
+    return html_content, 200, {"Content-Type": "text/html"}
 
-# Footer note
-st.markdown("---")
-st.caption("🔒 This electronic signature is legally binding under the Kenya Electronic Transactions Act. All documents are stored securely.")
-```
+@app.route("/api/documents", methods=["GET"])
+@require_auth
+def list_documents():
+    """List all signed documents (basic info)."""
+    docs = []
+    for doc_id, doc in DOCUMENT_STORE.items():
+        docs.append({
+            "documentId": doc["documentId"],
+            "signerName": doc["signerName"],
+            "role": doc["role"],
+            "timestamp": doc["timestamp"],
+            "status": doc.get("status", "signed"),
+            "leaseId": doc["leaseId"]
+        })
+    return jsonify({"documents": docs, "count": len(docs)}), 200
 
-**Features Included:**
-- Modern premium UI using Streamlit
-- Role switching (Tenant/Landlord/Agency) with dynamic data
-- Interactive signature canvas (`streamlit-drawable-canvas`)
-- Typed signature support
-- Real-time preview and download of signed document
-- Responsive layout matching the original design
-- Professional styling with gradients and cards
+@app.route("/api/verify/<doc_id>", methods=["GET"])
+@require_auth
+def verify_document(doc_id: str):
+    """Verify document integrity using signature hash."""
+    doc = DOCUMENT_STORE.get(doc_id)
+    if not doc:
+        return jsonify({"error": "Document not found"}), 404
+    
+    # Recompute hash
+    sig = SIGNATURE_STORE.get(doc_id, "")
+    recomputed = generate_signature_hash(sig, doc.get("role", ""))
+    valid = recomputed == doc.get("signatureHash", "")
+    
+    return jsonify({
+        "documentId": doc_id,
+        "verified": valid,
+        "signer": doc["signerName"],
+        "timestamp": doc["timestamp"],
+        "status": "valid" if valid else "tampered"
+    }), 200
 
-**Installation:**
-```bash
-pip install streamlit streamlit-drawable-canvas pillow
-streamlit run app.py
-```
+@app.route("/api/reset", methods=["POST"])
+@require_auth
+def reset_session():
+    """Reset session state (for testing)."""
+    session.clear()
+    return jsonify({"message": "Session reset"}), 200
 
-This is a complete, ready-to-run Python application that closely replicates the provided UI with advanced interactive features.
+# ----------------------------------------------------------------------
+# ERROR HANDLING
+# ----------------------------------------------------------------------
+@app.errorhandler(404)
+def not_found(e):
+    return jsonify({"error": "Resource not found"}), 404
+
+@app.errorhandler(500)
+def internal_error(e):
+    logger.error(f"Internal server error: {e}")
+    return jsonify({"error": "Internal server error"}), 500
+
+# ----------------------------------------------------------------------
+# MAIN
+# ----------------------------------------------------------------------
+if __name__ == "__main__":
+    print("=" * 60)
+    print("🏛️ Mwarokin E-Signature Backend")
+    print(f"📅 Started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print("🔗 Server: http://localhost:5000")
+    print("📚 API Endpoints:")
+    print("   GET  /api/health")
+    print("   GET  /api/role/<role>")
+    print("   GET  /api/agreement/<role>")
+    print("   POST /api/sign")
+    print("   GET  /api/document/<doc_id>")
+    print("   GET  /api/document/<doc_id>/signature")
+    print("   GET  /api/document/<doc_id>/download")
+    print("   GET  /api/documents")
+    print("   GET  /api/verify/<doc_id>")
+    print("   POST /api/reset")
+    print("=" * 60)
+    app.run(host="0.0.0.0", port=5000, debug=True)
