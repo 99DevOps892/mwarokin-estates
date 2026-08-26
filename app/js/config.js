@@ -46,7 +46,40 @@ window.MWAROKIN_CONFIG = (function () {
       i18n: true,              // multi-language
       currency: true,          // multi-currency
       messaging: true,         // in-app + channel preferences
-      aiLeads: false           // AI lead-generation agents (requires keys)
+      aiLeads: true,           // AI lead-generation agents (SAICOS)
+      agenticOrchestration: true,  // Central brain for all agents
+      ceoDashboard: true,      // Executive real-time monitoring
+      agentMemory: true,       // Persistent agent memory
+      agentEvents: true,       // Inter-agent communication bus
+      ceoBriefings: true,      // Auto-generated executive summaries
+      autoScaling: true        // Agent auto-scaling rules
+    },
+
+    // CEO Configuration
+    ceo: {
+      name: 'Robin Bina Mwarema Donald',
+      whatsapp: '+254704919388',
+      email: 'robin@syllogismtechnologyafrica.com',
+      monthlyPay: 300000,
+      payBank: 'Equity Bank',
+      payAccount: '0730178466611',
+      revenueBank: 'Co-op Bank',
+      revenueAccount: '01192643932500',
+      revenueAccountHolder: 'Robin B. Mwarema',
+      dashboardUrl: 'agent-dashboard.html'
+    },
+
+    // Agentic Brain Configuration
+    brain: {
+      hubAgentId: 'sta-hub-001',
+      ceoAgentId: 'ceo-001',
+      notificationAgentId: 'ceo-002',
+      modelPrimary: 'qwen3:8b',
+      modelSecondary: 'gemma3:4b',
+      modelLight: 'llama3.2:3b',
+      ollamaUrl: 'http://127.0.0.1:11434',
+      taskTimeout: 30000,
+      maxRetries: 3
     },
 
     // Auth pages

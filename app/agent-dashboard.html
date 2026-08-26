@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STA Executive Dashboard — CEO Command Center</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --navy: #0a1628;
+      --dark: #0f1d32;
+      --card: #142236;
+      --border: #1e3a5f;
+      --accent: #f0b429;
+      --accent2: #3b82f6;
+      --green: #10b981;
+      --red: #ef4444;
+      --orange: #f59e0b;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--navy); color: var(--text); min-height: 100vh; }
+    
+    .header { background: var(--dark); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { font-size: 20px; font-weight: 700; }
+    .header h1 span { color: var(--accent); }
+    .header .status { display: flex; gap: 12px; align-items: center; font-size: 13px; }
+    .header .status .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .header .status .dot.green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+    .header .status .dot.red { background: var(--red); }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; padding: 20px 24px; }
+    
+    .kpi-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .kpi-card .label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .kpi-card .value { font-size: 28px; font-weight: 700; }
+    .kpi-card .sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+    .kpi-card.accent .value { color: var(--accent); }
+    .kpi-card.green .value { color: var(--green); }
+    .kpi-card.blue .value { color: var(--accent2); }
+    .kpi-card.red .value { color: var(--red); }
+
+    .section { padding: 0 24px 20px; }
+    .section h2 { font-size: 16px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .section h2 .badge { background: var(--accent); color: var(--navy); font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 700; }
+
+    .agents-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+    .agent-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+    .agent-card .agent-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .agent-card .agent-name { font-size: 13px; font-weight: 600; }
+    .agent-card .agent-status { font-size: 11px; padding: 2px 8px; border-radius: 8px; text-transform: uppercase; font-weight: 600; }
+    .agent-card .agent-status.idle { background: rgba(16,185,129,0.15); color: var(--green); }
+    .agent-card .agent-status.busy { background: rgba(59,130,246,0.15); color: var(--accent2); }
+    .agent-card .agent-status.offline { background: rgba(239,68,68,0.15); color: var(--red); }
+    .agent-card .agent-status.error { background: rgba(239,68,68,0.15); color: var(--red); }
+    .agent-card .agent-meta { font-size: 11px; color: var(--muted); display: flex; gap: 8px; }
+
+    .briefing-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 12px; }
+    .briefing-card .briefing-title { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+    .briefing-card .briefing-time { font-size: 11px; color: var(--muted); }
+    .briefing-card .briefing-summary { font-size: 13px; line-height: 1.6; color: var(--text); }
+    .briefing-card .alerts { margin-top: 12px; }
+    .briefing-card .alert-item { font-size: 12px; padding: 6px 10px; border-radius: 6px; margin-bottom: 6px; }
+    .briefing-card .alert-item.critical { background: rgba(239,68,68,0.15); color: var(--red); border-left: 3px solid var(--red); }
+    .briefing-card .alert-item.high { background: rgba(245,158,11,0.15); color: var(--orange); border-left: 3px solid var(--orange); }
+    .briefing-card .alert-item.medium { background: rgba(59,130,246,0.15); color: var(--accent2); border-left: 3px solid var(--accent2); }
+
+    .events-feed { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; max-height: 400px; overflow-y: auto; }
+    .event-item { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(30,58,95,0.5); font-size: 12px; }
+    .event-item:last-child { border-bottom: none; }
+    .event-item .event-time { color: var(--muted); white-space: nowrap; min-width: 60px; }
+    .event-item .event-type { color: var(--accent); font-weight: 600; min-width: 120px; }
+    .event-item .event-source { color: var(--accent2); }
+    .event-item .event-detail { color: var(--text); flex: 1; }
+
+    .bank-bar { background: var(--dark); border: 1px solid var(--border); border-radius: 10px; padding: 14px 20px; margin: 0 24px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+    .bank-bar .bank-item { display: flex; align-items: center; gap: 6px; }
+    .bank-bar .bank-label { color: var(--muted); }
+    .bank-bar .bank-value { font-weight: 600; color: var(--accent); }
+
+    .refresh-btn { background: var(--accent); color: var(--navy); border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; }
+    .refresh-btn:hover { opacity: 0.9; }
+
+    @media (max-width: 768px) {
+      .grid { grid-template-columns: 1fr 1fr; padding: 12px; }
+      .agents-grid { grid-template-columns: 1fr; }
+      .bank-bar { flex-direction: column; gap: 8px; margin: 0 12px 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1><span>STA</span> Executive Dashboard</h1>
+    <div class="status">
+      <span id="connection-status"><span class="dot green"></span> Connected</span>
+      <span id="last-update" style="color: var(--muted);">—</span>
+      <button class="refresh-btn" onclick="loadDashboard()">Refresh</button>
+    </div>
+  </div>
+
+  <div class="bank-bar">
+    <div class="bank-item"><span class="bank-label">Revenue:</span> <span class="bank-value">Co-op Bank 01192643932500</span></div>
+    <div class="bank-item"><span class="bank-label">CEO Pay:</span> <span class="bank-value">Equity Bank 0730178466611</span></div>
+    <div class="bank-item"><span class="bank-label">Monthly:</span> <span class="bank-value">KSh 300,000</span></div>
+    <div class="bank-item"><span class="bank-label">CEO:</span> <span class="bank-value">Robin Bina Mwarema Donald</span></div>
+  </div>
+
+  <div class="grid" id="kpi-grid">
+    <div class="kpi-card accent"><div class="label">Total Revenue</div><div class="value" id="kpi-revenue">—</div><div class="sub" id="kpi-revenue-sub">Loading...</div></div>
+    <div class="kpi-card green"><div class="label">Platform Fees</div><div class="value" id="kpi-fees">—</div><div class="sub" id="kpi-fees-sub">Co-op Bank settlement</div></div>
+    <div class="kpi-card blue"><div class="label">Active Agents</div><div class="value" id="kpi-agents">—</div><div class="sub" id="kpi-agents-sub">Loading...</div></div>
+    <div class="kpi-card"><div class="label">Tasks Today</div><div class="value" id="kpi-tasks">—</div><div class="sub" id="kpi-tasks-sub">Loading...</div></div>
+    <div class="kpi-card"><div class="label">Active Properties</div><div class="value" id="kpi-properties">—</div><div class="sub" id="kpi-properties-sub">Loading...</div></div>
+    <div class="kpi-card"><div class="label">Total Tenants</div><div class="value" id="kpi-tenants">—</div><div class="sub" id="kpi-tenants-sub">Loading...</div></div>
+    <div class="kpi-card green"><div class="label">AI Success Rate</div><div class="value" id="kpi-success">—</div><div class="sub" id="kpi-success-sub">Task completion rate</div></div>
+    <div class="kpi-card"><div class="label">AI Cost Today</div><div class="value" id="kpi-cost">—</div><div class="sub" id="kpi-cost-sub">Tokens: —</div></div>
+  </div>
+
+  <div class="section">
+    <h2>Agent Fleet <span class="badge" id="agent-count">0</span></h2>
+    <div class="agents-grid" id="agents-grid">Loading...</div>
+  </div>
+
+  <div class="section" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+    <div>
+      <h2>Latest Briefings</h2>
+      <div id="briefings-container">Loading...</div>
+    </div>
+    <div>
+      <h2>Live Event Feed</h2>
+      <div class="events-feed" id="events-feed">Loading...</div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://spnerrqumefbuuscumhw.supabase.co';
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_PUBLIC_KEY_HERE';
+    let supabase;
+
+    try {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } catch (e) {
+      console.error('Supabase init failed:', e);
+    }
+
+    async function loadDashboard() {
+      document.getElementById('last-update').textContent = 'Updating...';
+
+      try {
+        const [agentsRes, tasksRes, briefingsRes, eventsRes, propertiesRes, tenantsRes, paymentsRes] = await Promise.all([
+          supabase.from('agent_registry').select('*'),
+          supabase.from('agent_tasks').select('*').gte('created_at', new Date(Date.now() - 86400000).toISOString()),
+          supabase.from('ceo_briefings').select('*').order('created_at', { ascending: false }).limit(5),
+          supabase.from('agent_events').select('*').order('created_at', { ascending: false }).limit(30),
+          supabase.from('properties').select('id, status'),
+          supabase.from('tenants').select('id'),
+          supabase.from('payments').select('id, amount, status, platform_fee').gte('created_at', new Date(Date.now() - 86400000).toISOString()),
+        ]);
+
+        const agents = agentsRes.data || [];
+        const tasks = tasksRes.data || [];
+        const briefings = briefingsRes.data || [];
+        const events = eventsRes.data || [];
+
+        // KPIs
+        const totalRevenue = paymentsRes.data?.filter(p => p.status === 'confirmed').reduce((s, p) => s + p.amount, 0) || 0;
+        const platformFees = paymentsRes.data?.filter(p => p.status === 'confirmed').reduce((s, p) => s + (p.platform_fee || 0), 0) || 0;
+        const pendingPayments = paymentsRes.data?.filter(p => p.status === 'pending').length || 0;
+        const activeAgents = agents.filter(a => a.status !== 'offline').length;
+        const completedTasks = tasks.filter(t => t.status === 'completed').length;
+        const failedTasks = tasks.filter(t => t.status === 'failed').length;
+        const totalTokens = tasks.reduce((s, t) => s + (t.tokens_used || 0), 0);
+        const totalCost = tasks.reduce((s, t) => s + (t.cost_ksh || 0), 0);
+
+        document.getElementById('kpi-revenue').textContent = 'KSh ' + totalRevenue.toLocaleString();
+        document.getElementById('kpi-revenue-sub').textContent = pendingPayments + ' pending payments';
+        document.getElementById('kpi-fees').textContent = 'KSh ' + platformFees.toLocaleString();
+        document.getElementById('kpi-agents').textContent = activeAgents + ' / ' + agents.length;
+        document.getElementById('kpi-agents-sub').textContent = (agents.length - activeAgents) + ' offline';
+        document.getElementById('kpi-tasks').textContent = tasks.length;
+        document.getElementById('kpi-tasks-sub').textContent = completedTasks + ' completed, ' + failedTasks + ' failed';
+        document.getElementById('kpi-properties').textContent = propertiesRes.data?.filter(p => p.status === 'active').length || 0;
+        document.getElementById('kpi-properties-sub').textContent = propertiesRes.data?.length || 0 + ' total';
+        document.getElementById('kpi-tenants').textContent = tenantsRes.data?.length || 0;
+        document.getElementById('kpi-success').textContent = tasks.length > 0 ? ((completedTasks / tasks.length) * 100).toFixed(1) + '%' : '100%';
+        document.getElementById('kpi-cost').textContent = 'KSh ' + totalCost.toFixed(2);
+        document.getElementById('kpi-cost-sub').textContent = 'Tokens: ' + totalTokens.toLocaleString();
+
+        // Agent cards
+        document.getElementById('agent-count').textContent = agents.length;
+        document.getElementById('agents-grid').innerHTML = agents.map(a => `
+          <div class="agent-card">
+            <div class="agent-header">
+              <span class="agent-name">${a.agent_name}</span>
+              <span class="agent-status ${a.status}">${a.status}</span>
+            </div>
+            <div class="agent-meta">
+              <span>${a.domain}</span>
+              <span>${a.model_used || '—'}</span>
+              <span>${a.total_tasks_completed || 0} tasks</span>
+            </div>
+          </div>
+        `).join('');
+
+        // Briefings
+        document.getElementById('briefings-container').innerHTML = briefings.length === 0
+          ? '<div style="color: var(--muted); font-size: 13px;">No briefings yet</div>'
+          : briefings.map(b => `
+            <div class="briefing-card">
+              <div class="briefing-title">${b.title}</div>
+              <div class="briefing-time">${new Date(b.created_at).toLocaleString()}</div>
+              <div class="briefing-summary">${b.summary}</div>
+              ${(b.alerts || []).length > 0 ? '<div class="alerts">' + b.alerts.map(a => `<div class="alert-item ${a.severity}">${a.message}</div>`).join('') + '</div>' : ''}
+            </div>
+          `).join('');
+
+        // Events feed
+        document.getElementById('events-feed').innerHTML = events.length === 0
+          ? '<div style="color: var(--muted); font-size: 13px;">No events yet</div>'
+          : events.map(e => `
+            <div class="event-item">
+              <span class="event-time">${new Date(e.created_at).toLocaleTimeString('en-KE', {hour:'2-digit', minute:'2-digit'})}</span>
+              <span class="event-type">${e.event_type}</span>
+              <span class="event-source">${e.source_agent_id}</span>
+              <span class="event-detail">${e.target_agent_id ? '→ ' + e.target_agent_id : 'broadcast'}</span>
+            </div>
+          `).join('');
+
+        document.getElementById('last-update').textContent = 'Updated: ' + new Date().toLocaleTimeString('en-KE');
+        document.getElementById('connection-status').innerHTML = '<span class="dot green"></span> Live';
+      } catch (err) {
+        console.error('Dashboard load failed:', err);
+        document.getElementById('connection-status').innerHTML = '<span class="dot red"></span> Error';
+      }
+    }
+
+    // Real-time subscription for live events
+    if (supabase) {
+      supabase
+        .channel('agent-events')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'agent_events' }, payload => {
+          const feed = document.getElementById('events-feed');
+          const e = payload.new;
+          const div = document.createElement('div');
+          div.className = 'event-item';
+          div.innerHTML = `
+            <span class="event-time">${new Date(e.created_at).toLocaleTimeString('en-KE', {hour:'2-digit', minute:'2-digit'})}</span>
+            <span class="event-type">${e.event_type}</span>
+            <span class="event-source">${e.source_agent_id}</span>
+            <span class="event-detail">${e.target_agent_id ? '→ ' + e.target_agent_id : 'broadcast'}</span>
+          `;
+          feed.insertBefore(div, feed.firstChild);
+        })
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'agent_tasks' }, () => {
+          // Auto-refresh on new tasks
+          loadDashboard();
+        })
+        .subscribe();
+    }
+
+    // Load on page ready
+    loadDashboard();
+    // Auto-refresh every 30 seconds
+    setInterval(loadDashboard, 30000);
+  </script>
+</body>
+</html>
