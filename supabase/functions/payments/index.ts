@@ -85,9 +85,11 @@ serve(async (req: Request) => {
       new_data: { amount, method, via: 'edge-function' },
     });
 
-    // Mobile money: fire STK push when a phone is present.
+    // M-Pesa: fire Daraja STK push when a phone is present.
+    // Airtel Money is handled by the dedicated airtel-money function
+    // (Airtel Collection API) — it must NOT use the Safaricom Daraja rail.
     let stk: unknown = null;
-    if ((method === 'mpesa' || method === 'airtel-money') && body.phone) {
+    if (method === 'mpesa' && body.phone) {
       try {
         const result = await stkPush({
           phone: body.phone,

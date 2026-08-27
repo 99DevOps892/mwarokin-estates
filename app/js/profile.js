@@ -91,5 +91,22 @@
         window.toast('Account deletion requires administrator approval. Our team will contact you.', 'info');
       });
     }
+
+    // --- Reset password by email ---
+    const resetBtn = document.getElementById('btn-reset-pw');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', async function () {
+        const res = await window.MWAROKIN_AUTH.resetPassword(auth.email);
+        window.toast(res.success ? 'Password reset email sent.' : res.error, res.success ? 'success' : 'error');
+      });
+    }
+
+    // --- Sign out ---
+    const signoutBtn = document.getElementById('btn-signout');
+    if (signoutBtn) {
+      signoutBtn.addEventListener('click', function () {
+        window.MWAROKIN_AUTH.signOut();
+      });
+    }
   });
 })();

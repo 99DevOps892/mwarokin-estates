@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pay — M-Pesa / Airtel Money</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface-hover: #1a1a26;
+    --border: #222233;
+    --text: #eeeef0;
+    --text-dim: #888899;
+    --accent-mpesa: #e3002b;
+    --accent-mpesa-glow: rgba(227, 0, 43, 0.25);
+    --accent-airtel: #ed1c24;
+    --accent-airtel-alt: #ff6b35;
+    --success: #00d67e;
+    --success-glow: rgba(0, 214, 126, 0.2);
+    --error: #ff4466;
+    --radius: 14px;
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .payment-card {
+    width: 100%;
+    max-width: 440px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+  }
+
+  /* ── Tab Selector ─────────────────────────────────── */
+  .provider-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .provider-tab {
+    flex: 1;
+    padding: 16px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    color: var(--text-dim);
+    background: transparent;
+    border: none;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+
+  .provider-tab:hover { color: var(--text); background: var(--surface-hover); }
+
+  .provider-tab.active {
+    color: var(--text);
+  }
+
+  .provider-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 20%; right: 20%;
+    height: 2px;
+    border-radius: 2px;
+  }
+
+  .provider-tab[data-provider="mpesa"].active::after {
+    background: var(--accent-mpesa);
+    box-shadow: 0 0 12px var(--accent-mpesa-glow);
+  }
+
+  .provider-tab[data-provider="airtel"].active::after {
+    background: var(--accent-airtel-alt);
+    box-shadow: 0 0 12px rgba(255, 107, 53, 0.3);
+  }
+
+  .tab-icon {
+    display: block;
+    font-size: 22px;
+    margin-bottom: 4px;
+  }
+
+  /* ── Form ─────────────────────────────────────────── */
+  .payment-form { padding: 28px 24px; }
+
+  .form-group { margin-bottom: 20px; }
+
+  .form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .input-wrapper {
+    position: relative;
+  }
+
+  .input-prefix {
+    position: absolute;
+    left: 16px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    font-size: 15px;
+    font-weight: 500;
+    pointer-events: none;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 14px 16px 14px 42px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 16px;
+    font-family: var(--font);
+    font-weight: 500;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .form-input:focus {
+    border-color: var(--accent-mpesa);
+    box-shadow: 0 0 0 3px var(--accent-mpesa-glow);
+  }
+
+  .form-input::placeholder { color: #555566; }
+
+  .amount-input-group {
+    display: flex;
+    align-items: stretch;
+  }
+
+  .currency-badge {
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    background: var(--surface-hover);
+    border: 1px solid var(--border);
+    border-right: none;
+    border-radius: 10px 0 0 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  .amount-input-group .form-input {
+    border-radius: 0 10px 10px 0;
+    padding-left: 14px;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  /* ── Preset Amounts ─────────────────────────────── */
+  .amount-presets {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  .preset-btn {
+    padding: 6px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--text-dim);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .preset-btn:hover {
+    border-color: var(--accent-mpesa);
+    color: var(--text);
+    background: rgba(227,0,43,0.08);
+  }
+
+  /* ── Submit Button ────────────────────────────────── */
+  .pay-btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pay-btn.mpesa {
+    background: var(--accent-mpesa);
+    color: #fff;
+    box-shadow: 0 4px 20px var(--accent-mpesa-glow);
+  }
+
+  .pay-btn.mpesa:hover:not(:disabled) {
+    box-shadow: 0 6px 30px rgba(227,0,43,0.4);
+    transform: translateY(-1px);
+  }
+
+  .pay-btn.airtel {
+    background: linear-gradient(135deg, var(--accent-airtel), var(--accent-airtel-alt));
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(255,107,53,0.25);
+  }
+
+  .pay-btn.airtel:hover:not(:disabled) {
+    box-shadow: 0 6px 30px rgba(255,107,53,0.4);
+    transform: translateY(-1px);
+  }
+
+  .pay-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* ── Status Overlay ─────────────────────────────── */
+  .status-overlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: var(--surface);
+    z-index: 10;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    text-align: center;
+  }
+
+  .status-overlay.active { display: flex; }
+
+  .spinner {
+    width: 56px; height: 56px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent-mpesa);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 24px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .status-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .status-subtitle {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    max-width: 280px;
+  }
+
+  .status-icon {
+    font-size: 56px;
+    margin-bottom: 20px;
+  }
+
+  .status-icon.success { color: var(--success); }
+  .status-icon.failed { color: var(--error); }
+
+  .receipt-box {
+    margin-top: 20px;
+    padding: 12px 20px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .receipt-box strong {
+    color: var(--success);
+    font-size: 15px;
+    display: block;
+    margin-top: 4px;
+  }
+
+  .dismiss-btn {
+    margin-top: 24px;
+    padding: 10px 32px;
+    background: var(--surface-hover);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .dismiss-btn:hover { background: var(--border); }
+
+  /* ── Security Footer ────────────────────────────── */
+  .security-footer {
+    padding: 14px 24px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: 11px;
+    color: #555566;
+  }
+
+  .security-footer span {
+    margin: 0 4px;
+  }
+
+  /* ── Pulse animation ────────────────────────────── */
+  @keyframes pulse-ring {
+    0% { transform: scale(0.9); opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; }
+  }
+
+  .pulse-ring {
+    position: absolute;
+    width: 56px; height: 56px;
+    border: 2px solid var(--accent-mpesa);
+    border-radius: 50%;
+    animation: pulse-ring 1.5s ease-out infinite;
+  }
+</style>
+</head>
+<body>
+
+<div class="payment-card" id="paymentCard">
+  <!-- Status Overlay -->
+  <div class="status-overlay" id="statusOverlay">
+    <div class="spinner" id="statusSpinner"></div>
+    <div class="status-icon" id="statusIcon"></div>
+    <div class="status-title" id="statusTitle"></div>
+    <div class="status-subtitle" id="statusSubtitle"></div>
+    <div class="receipt-box" id="receiptBox" style="display:none;">
+      <span>Receipt</span>
+      <strong id="receiptNumber"></strong>
+    </div>
+    <button class="dismiss-btn" id="dismissBtn" onclick="resetPaymentForm()">Done</button>
+  </div>
+
+  <!-- Provider Tabs -->
+  <div class="provider-tabs">
+    <button class="provider-tab active" data-provider="mpesa" onclick="switchProvider('mpesa')">
+      <span class="tab-icon">📱</span>
+      M-Pesa
+    </button>
+    <button class="provider-tab" data-provider="airtel" onclick="switchProvider('airtel')">
+      <span class="tab-icon">📶</span>
+      Airtel Money
+    </button>
+  </div>
+
+  <!-- Payment Form -->
+  <form class="payment-form" id="paymentForm" onsubmit="handlePayment(event)">
+    <div class="form-group">
+      <label class="form-label">Phone Number</label>
+      <div class="input-wrapper">
+        <span class="input-prefix">+254</span>
+        <input
+          type="tel"
+          class="form-input"
+          id="phoneInput"
+          placeholder="7XX XXX XXX"
+          pattern="^(?:0)?7\d{8,9}$"
+          required
+          autocomplete="tel"
+        >
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Amount</label>
+      <div class="amount-input-group">
+        <span class="currency-badge">KES</span>
+        <input
+          type="number"
+          class="form-input"
+          id="amountInput"
+          placeholder="0"
+          min="1"
+          max="150000"
+          required
+        >
+      </div>
+      <div class="amount-presets">
+        <button type="button" class="preset-btn" onclick="setAmount(100)">100</button>
+        <button type="button" class="preset-btn" onclick="setAmount(500)">500</button>
+        <button type="button" class="preset-btn" onclick="setAmount(1000)">1,000</button>
+        <button type="button" class="preset-btn" onclick="setAmount(2500)">2,500</button>
+        <button type="button" class="preset-btn" onclick="setAmount(5000)">5,000</button>
+      </div>
+    </div>
+
+    <button type="submit" class="pay-btn mpesa" id="payBtn">
+      Pay with M-Pesa
+    </button>
+  </form>
+
+  <!-- Security Footer -->
+  <div class="security-footer">
+    <span>🔒</span> Secured by Safaricom Daraja API
+    <span>·</span> PCI-DSS Compliant
+  </div>
+</div>
+
+<!-- Payment Client -->
+<script src="payment-client.js"></script>
+
+<script>
+  let activeProvider = 'mpesa';
+
+  function switchProvider(provider) {
+    activeProvider = provider;
+    document.querySelectorAll('.provider-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`.provider-tab[data-provider="${provider}"]`).classList.add('active');
+
+    const btn = document.getElementById('payBtn');
+    const footer = document.querySelector('.security-footer');
+
+    if (provider === 'mpesa') {
+      btn.textContent = 'Pay with M-Pesa';
+      btn.className = 'pay-btn mpesa';
+      footer.innerHTML = '<span>🔒</span> Secured by Safaricom Daraja API <span>·</span> PCI-DSS Compliant';
+    } else {
+      btn.textContent = 'Pay with Airtel Money';
+      btn.className = 'pay-btn airtel';
+      footer.innerHTML = '<span>🔒</span> Secured by Airtel Open API <span>·</span> PCI-DSS Compliant';
+    }
+  }
+
+  function setAmount(val) {
+    document.getElementById('amountInput').value = val;
+  }
+
+  function showStatus(type, title, subtitle, receipt = null) {
+    const overlay = document.getElementById('statusOverlay');
+    const spinner = document.getElementById('statusSpinner');
+    const icon = document.getElementById('statusIcon');
+    const receiptBox = document.getElementById('receiptBox');
+
+    spinner.style.display = type === 'loading' ? 'block' : 'none';
+
+    icon.className = 'status-icon';
+    if (type === 'success') { icon.textContent = '✅'; icon.classList.add('success'); }
+    else if (type === 'failed') { icon.textContent = '❌'; icon.classList.add('failed'); }
+    else if (type === 'cancelled') { icon.textContent = '🚫'; icon.classList.add('failed'); }
+    else if (type === 'timeout') { icon.textContent = '⏱️'; icon.classList.add('failed'); }
+
+    document.getElementById('statusTitle').textContent = title;
+    document.getElementById('statusSubtitle').textContent = subtitle;
+
+    if (receipt) {
+      receiptBox.style.display = 'block';
+      document.getElementById('receiptNumber').textContent = receipt;
+    } else {
+      receiptBox.style.display = 'none';
+    }
+
+    overlay.classList.add('active');
+  }
+
+  function resetPaymentForm() {
+    document.getElementById('statusOverlay').classList.remove('active');
+    document.getElementById('payBtn').disabled = false;
+    document.getElementById('paymentForm').reset();
+  }
+
+  async function handlePayment(e) {
+    e.preventDefault();
+
+    const phone = document.getElementById('phoneInput').value.trim();
+    const amount = document.getElementById('amountInput').value;
+
+    if (!phone || !amount) return;
+
+    const btn = document.getElementById('payBtn');
+    btn.disabled = true;
+
+    showStatus('loading', 'Sending payment request...', 'Please wait while we connect to ' + (activeProvider === 'mpesa' ? 'Safaricom' : 'Airtel'));
+
+    try {
+      let result;
+
+      if (activeProvider === 'mpesa') {
+        result = await MpesaPayment.initiate({ phone, amount: Number(amount) });
+      } else {
+        result = await AirtelPayment.initiate({ phone, amount: Number(amount) });
+      }
+
+      showStatus('loading', 'Check your phone', 'Enter your M-Pesa PIN when prompted to complete the payment.', null);
+
+      // Poll for result
+      const ref = result.checkoutRequestId || result.transactionId;
+      MpesaPayment.pollStatus(ref, null, {
+        onSuccess: (data) => {
+          showStatus('success', 'Payment Successful', 'Your payment has been confirmed.', data.mpesa_receipt);
+        },
+        onFailure: (data) => {
+          showStatus('failed', 'Payment Failed', data.status_reason || 'The payment could not be completed.');
+        },
+        onTimeout: () => {
+          showStatus('timeout', 'Payment Timeout', 'We could not confirm the payment. Please check your M-Pesa messages or try again.');
+        },
+      });
+
+    } catch (err) {
+      showStatus('failed', 'Error', err.message);
+    }
+  }
+</script>
+</body>
+</html>

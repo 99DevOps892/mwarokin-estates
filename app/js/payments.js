@@ -41,10 +41,12 @@
     const amount = Number(opts.amount);
     if (!amount || amount <= 0) return { success: false, error: 'Enter a valid amount' };
 
-    // Build payment row — split columns are auto-filled by DB trigger
+    const method = (opts.method || 'mpesa').toLowerCase();
+
+    // Payment row (DB columns) — split columns are auto-filled by DB trigger.
     const paymentPayload = {
       amount: amount,
-      payment_method: opts.method || 'mpesa',
+      payment_method: method,
       payment_date: new Date().toISOString().slice(0, 10),
       due_date: opts.due_date || new Date().toISOString().slice(0, 10),
       tenant_id: opts.tenant_id || null,
@@ -52,20 +54,26 @@
       lease_id: opts.lease_id || null,
       landlord_id: opts.landlord_id || null,
       transaction_id: opts.transaction_id || ('ME-' + Date.now()),
-      status: opts.method === 'bank-transfer' ? 'pending' : 'processing',
+      status: method === 'bank-transfer' ? 'pending' : 'processing',
       metadata: opts.metadata || {}
     };
 
-    // Prefer Edge Function when a live callback is configured.
-    // We attempt the function first; on any failure we fall back to direct insert.
+    // Edge function payload also carries the payer phone (for STK/collection).
+    // The live table has no phone column; the function stores it in metadata.
+    const apiPayload = Object.assign({}, paymentPayload, { phone: opts.phone || null });
+
+    // Airtel Money goes through the dedicated Airtel Collection API function;
+    // M-Pesa and bank transfer go through the generic payments function.
+    const target = method === 'airtel-money' ? 'airtel-money' : 'payments';
+
     try {
-      const url = functionUrl('payments');
+      const url = functionUrl(target);
       const authHeader = (await sb.auth.getSession()).data.session
         ? 'Bearer ' + (await sb.auth.getSession()).data.session.access_token : '';
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(authHeader ? { Authorization: authHeader } : {}) },
-        body: JSON.stringify(paymentPayload)
+        body: JSON.stringify(apiPayload)
       });
       if (res.ok) {
         const body = await res.json();

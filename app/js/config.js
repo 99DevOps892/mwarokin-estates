@@ -42,7 +42,10 @@ window.MWAROKIN_CONFIG = (function () {
     // Feature flags — flip as integrations are provisioned
     features: {
       realtime: true,          // Supabase Realtime subscriptions
-      payments: true,          // M-Pesa / Airtel / Bank UI
+      payments: true,          // M-Pesa / Airtel / Bank / Card UI
+      paymentsPolling: true,   // Real-time payment status via Realtime + polling fallback
+      airtelMoney: true,       // Airtel Money integration
+      flutterwave: true,       // Bank transfer + card via Flutterwave
       i18n: true,              // multi-language
       currency: true,          // multi-currency
       messaging: true,         // in-app + channel preferences
@@ -55,17 +58,11 @@ window.MWAROKIN_CONFIG = (function () {
       autoScaling: true        // Agent auto-scaling rules
     },
 
-    // CEO Configuration
+    // CEO Configuration (presentation only — financial details live in backend/secrets)
     ceo: {
       name: 'Robin Bina Mwarema Donald',
       whatsapp: '+254704919388',
       email: 'robin@syllogismtechnologyafrica.com',
-      monthlyPay: 300000,
-      payBank: 'Equity Bank',
-      payAccount: '0730178466611',
-      revenueBank: 'Co-op Bank',
-      revenueAccount: '01192643932500',
-      revenueAccountHolder: 'Robin B. Mwarema',
       dashboardUrl: 'agent-dashboard.html'
     },
 

@@ -1,26 +1,59 @@
 /**
  * Mwarokin Estates — Home Page Module
- * Renders featured properties + search/filter on index.html.
+ * Renders properties + search/filter on index.html.
+ * Wired to the live index.html DOM ids:
+ *   grid: properties-grid · stat: stat-properties
+ *   filters: search-input / filter-type / filter-status · button: search-btn
  */
 (function () {
   const sb = window.supabaseClient;
   if (!sb) return;
 
   document.addEventListener('DOMContentLoaded', async function () {
-    const grid = document.getElementById('featured-grid');
+    const grid = document.getElementById('properties-grid');
     if (!grid) return; // not index.html
 
-    const stats = await window.MWAROKIN_PROPERTIES.getFeaturedCount();
-    const stat = document.getElementById('stat-count');
-    if (stat) stat.textContent = stats;
+    // Hero stats
+    const featured = await window.MWAROKIN_PROPERTIES.getFeaturedCount();
+    const statProps = document.getElementById('stat-properties');
+    const statFeatured = document.getElementById('stat-featured');
+    if (statProps) statProps.textContent = '0';
+    if (statFeatured) statFeatured.textContent = featured;
+    try {
+      const { count: total } = await sb.from('properties').select('id', { count: 'exact', head: true });
+      if (statProps) statProps.textContent = total || 0;
+    } catch (e) { /* ignore */ }
 
+    await loadAndRender(grid);
+  });
+
+  function collectFilters() {
+    const search = document.getElementById('search-input')?.value;
+    const type = document.getElementById('filter-type')?.value;
+    const status = document.getElementById('filter-status')?.value;
+    const filters = {};
+    if (search) filters.search = search;
+    if (type && type !== 'all') filters.type = type;
+    if (status) filters.status = status;
+    return filters;
+  }
+
+  async function loadAndRender(grid) {
     const filters = collectFilters();
+    grid.innerHTML = '<div class="loading">Loading properties…</div>';
     const props = await window.MWAROKIN_PROPERTIES.getProperties(filters);
+
+    const countEl = document.getElementById('result-count');
+    const noResults = document.getElementById('no-results');
+
     grid.innerHTML = '';
     if (!props.length) {
-      grid.innerHTML = '<p class="empty" style="grid-column:1/-1;text-align:center">No properties match your search. Try widening filters.</p>';
+      if (noResults) noResults.classList.remove('hidden');
+      if (countEl) countEl.textContent = '0 properties';
       return;
     }
+    if (noResults) noResults.classList.add('hidden');
+    if (countEl) countEl.textContent = props.length + ' propert' + (props.length === 1 ? 'y' : 'ies');
     props.forEach(function (p) { grid.appendChild(window.MWAROKIN_PROPERTIES.renderCard(p)); });
 
     // Re-render in the selected currency
@@ -38,40 +71,22 @@
         });
       });
     }
-  });
-
-  function collectFilters() {
-    const search = document.getElementById('home-search')?.value;
-    const type = document.getElementById('home-type')?.value;
-    const status = document.getElementById('home-status')?.value;
-    const filters = {};
-    if (search) filters.search = search;
-    if (type) filters.type = type;
-    if (status) filters.status = status;
-    return filters;
   }
 
-  // Re-run search on filter change
+  // Wire search + filter controls
   function bindSearch() {
-    ['home-search', 'home-type', 'home-status'].forEach(function (id) {
+    const grid = document.getElementById('properties-grid');
+    if (!grid) return;
+    const run = function () { loadAndRender(grid); };
+
+    const btn = document.getElementById('search-btn');
+    if (btn) btn.addEventListener('click', function (e) { e.preventDefault(); run(); });
+    ['filter-type', 'filter-status'].forEach(function (id) {
       const el = document.getElementById(id);
-      if (el) {
-        el.addEventListener('change', function () {
-          const grid = document.getElementById('featured-grid');
-          grid.innerHTML = '<div class="loading">Loading properties…</div>';
-          document.dispatchEvent(new CustomEvent('mw:home-reload'));
-          // Reuse the full bootstrapped handler by reloading page data without nav flash
-          window.MWAROKIN_PROPERTIES.getProperties(collectFilters()).then(function (props) {
-            grid.innerHTML = '';
-            if (!props.length) {
-              grid.innerHTML = '<p class="empty" style="grid-column:1/-1;text-align:center">No properties match your search.</p>';
-              return;
-            }
-            props.forEach(function (p) { grid.appendChild(window.MWAROKIN_PROPERTIES.renderCard(p)); });
-          });
-        });
-      }
+      if (el) el.addEventListener('change', run);
     });
+    const input = document.getElementById('search-input');
+    if (input) input.addEventListener('keydown', function (e) { if (e.key === 'Enter') run(); });
   }
   document.addEventListener('DOMContentLoaded', bindSearch);
 })();

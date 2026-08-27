@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>STA Executive Dashboard — CEO Command Center</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       --navy: #0a1628;
@@ -99,13 +98,6 @@
     </div>
   </div>
 
-  <div class="bank-bar">
-    <div class="bank-item"><span class="bank-label">Revenue:</span> <span class="bank-value">Co-op Bank 01192643932500</span></div>
-    <div class="bank-item"><span class="bank-label">CEO Pay:</span> <span class="bank-value">Equity Bank 0730178466611</span></div>
-    <div class="bank-item"><span class="bank-label">Monthly:</span> <span class="bank-value">KSh 300,000</span></div>
-    <div class="bank-item"><span class="bank-label">CEO:</span> <span class="bank-value">Robin Bina Mwarema Donald</span></div>
-  </div>
-
   <div class="grid" id="kpi-grid">
     <div class="kpi-card accent"><div class="label">Total Revenue</div><div class="value" id="kpi-revenue">—</div><div class="sub" id="kpi-revenue-sub">Loading...</div></div>
     <div class="kpi-card green"><div class="label">Platform Fees</div><div class="value" id="kpi-fees">—</div><div class="sub" id="kpi-fees-sub">Co-op Bank settlement</div></div>
@@ -133,15 +125,18 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
   <script>
-    const SUPABASE_URL = 'https://spnerrqumefbuuscumhw.supabase.co';
-    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_PUBLIC_KEY_HERE';
-    let supabase;
+    let supabase = window.supabaseClient;
 
-    try {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    } catch (e) {
-      console.error('Supabase init failed:', e);
+    if (!supabase) {
+      console.error('Supabase init failed');
+      try {
+        const cfg = window.MWAROKIN_CONFIG || {};
+        supabase = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+      } catch (e) { console.error('Supabase init failed:', e); }
     }
 
     async function loadDashboard() {

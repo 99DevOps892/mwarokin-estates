@@ -26,11 +26,17 @@
 
   // ---------- Auth operations ----------
   async function signUp({ email, password, full_name, phone, role }) {
+    // SECURITY: Never persist a privileged role from the client. Only
+    // non-admin self-declared roles are honoured; anything privileged
+    // ('agent','admin' etc.) is forced to 'tenant'. Elevation happens
+    // server-side (admin-promotion RPC) only.
+    const ALLOWED_SELF_ROLES = ['tenant', 'landlord', 'caretaker'];
+    const safeRole = ALLOWED_SELF_ROLES.includes(role) ? role : 'tenant';
     const { data, error } = await sb.auth.signUp({
       email,
       password,
       options: {
-        data: { full_name, phone, role },
+        data: { full_name, phone, role: safeRole },
         emailRedirectTo: window.location.origin + cfg.basePath + 'dashboard.html'
       }
     });
@@ -42,7 +48,7 @@
         id: data.user.id,
         full_name: full_name || '',
         phone: phone || '',
-        role: role || 'tenant'
+        role: safeRole
       }, { onConflict: 'id' });
     }
     return { success: true, data };
