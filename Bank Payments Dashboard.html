@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Payments Dashboard - Mwarokin Estates</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --obsidian: #1a1f36;
+            --forest-green: #2d5a3d;
+            --forest-light: #3d7a4d;
+            --gold: #d4af37;
+            --gold-light: #e8c547;
+            --white: #ffffff;
+            --light-gray: #f8f9fa;
+            --medium-gray: #e9ecef;
+            --dark-gray: #6c757d;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --pending: #8b5cf6;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--light-gray) 0%, #f0f2f5 100%);
+            color: var(--obsidian);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-title h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--obsidian);
+            letter-spacing: -0.5px;
+        }
+
+        .header-title .icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--forest-green) 0%, var(--forest-light) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            font-size: 1.8rem;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--forest-green) 0%, var(--forest-light) 100%);
+            color: var(--white);
+            border: 2px solid transparent;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(45, 90, 61, 0.2);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--forest-green);
+            border: 2px solid var(--forest-green);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light-gray);
+        }
+
+        .btn-refresh {
+            background: var(--gold);
+            color: var(--obsidian);
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-refresh:hover {
+            background: var(--gold-light);
+            transform: rotate(180deg);
+        }
+
+        .btn-refresh i {
+            transition: transform 0.6s ease;
+        }
+
+        .btn-refresh.spinning i {
+            animation: spin 0.6s linear;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Summary Cards */
+        .summary-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .summary-card {
+            background: var(--white);
+            padding: 1.75rem;
+            border-radius: 12px;
+            border: 1px solid var(--medium-gray);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+        }
+
+        .summary-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            border-color: var(--gold-light);
+        }
+
+        .summary-label {
+            font-size: 0.85rem;
+            color: var(--dark-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .summary-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--obsidian);
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-sublabel {
+            font-size: 0.8rem;
+            color: var(--dark-gray);
+        }
+
+        .summary-card.completed .summary-value {
+            color: var(--success);
+        }
+
+        .summary-card.pending .summary-value {
+            color: var(--pending);
+        }
+
+        .summary-card.failed .summary-value {
+            color: var(--danger);
+        }
+
+        .summary-card.total .summary-value {
+            color: var(--forest-green);
+        }
+
+        /* Search and Filter Section */
+        .controls-section {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--medium-gray);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 2px solid var(--medium-gray);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .search-container input:focus {
+            outline: none;
+            border-color: var(--forest-green);
+            box-shadow: 0 0 0 3px rgba(45, 90, 61, 0.1);
+        }
+
+        .search-container .fa-search {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dark-gray);
+            pointer-events: none;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            color: var(--obsidian);
+            font-size: 0.9rem;
+        }
+
+        .filter-group select {
+            padding: 0.6rem 1rem;
+            border: 2px solid var(--medium-gray);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--white);
+            color: var(--obsidian);
+        }
+
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--forest-green);
+            box-shadow: 0 0 0 3px rgba(45, 90, 61, 0.1);
+        }
+
+        /* Table Section */
+        .table-wrapper {
+            background: var(--white);
+            border-radius: 12px;
+            border: 1px solid var(--medium-gray);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        thead {
+            background: linear-gradient(135deg, var(--obsidian) 0%, #252d42 100%);
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        th {
+            padding: 1.25rem;
+            text-align: left;
+            border-bottom: 2px solid var(--gold);
+            font-family: 'DM Sans', sans-serif;
+            letter-spacing: 0.3px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+
+        tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: var(--light-gray);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .payment-id {
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            color: var(--forest-green);
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: var(--obsidian);
+        }
+
+        .amount {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--obsidian);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .status-completed {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        .status-pending {
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--pending);
+        }
+
+        .status-failed {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        .bank-name {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .bank-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .bank-kcb { background: rgba(255, 0, 0, 0.15); color: #cc0000; }
+        .bank-equity { background: rgba(0, 102, 0, 0.15); color: #006600; }
+        .bank-coop { background: rgba(0, 51, 153, 0.15); color: #003399; }
+        .bank-ncba { background: rgba(255, 102, 0, 0.15); color: #ff6600; }
+        .bank-absa { background: rgba(255, 0, 0, 0.15); color: #cc0000; }
+        .bank-mpesa { background: rgba(0, 150, 0, 0.15); color: #009600; }
+        .bank-airtel { background: rgba(255, 0, 0, 0.15); color: #ff0000; }
+
+        /* Pagination */
+        .pagination-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-top: 1px solid var(--medium-gray);
+            background: var(--light-gray);
+            border-radius: 0 0 12px 12px;
+        }
+
+        .pagination-info {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            font-weight: 500;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .pagination-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--medium-gray);
+            background: var(--white);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            color: var(--obsidian);
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            border-color: var(--forest-green);
+            background: var(--light-gray);
+        }
+
+        .pagination-btn.active {
+            background: var(--forest-green);
+            color: var(--white);
+            border-color: var(--forest-green);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--dark-gray);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--success);
+            color: var(--white);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-title h1 {
+                font-size: 1.8rem;
+            }
+
+            .summary-section {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group select {
+                width: 100%;
+            }
+
+            th, td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.85rem;
+            }
+
+            .pagination-section {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .toast {
+                left: 1rem;
+                right: 1rem;
+                bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="header-title">
+                <div class="icon">
+                    <i class="fas fa-university"></i>
+                </div>
+                <div>
+                    <h1>Bank Payments</h1>
+                    <p style="color: var(--dark-gray); margin: 0; font-size: 0.9rem;">Mwarokin Estates Payment Hub</p>
+                </div>
+            </div>
+            <div class="header-controls">
+                <button class="btn btn-secondary">
+                    <i class="fas fa-download"></i> Export
+                </button>
+                <button class="btn-refresh" id="refreshBtn" title="Refresh data">
+                    <i class="fas fa-sync"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Summary Cards -->
+        <div class="summary-section">
+            <div class="summary-card total">
+                <div class="summary-label">Total Payments</div>
+                <div class="summary-value" id="totalPayments">0</div>
+                <div class="summary-sublabel">All transactions</div>
+            </div>
+            <div class="summary-card total">
+                <div class="summary-label">Total Amount</div>
+                <div class="summary-value">KES <span id="totalAmount">0</span></div>
+                <div class="summary-sublabel">Cumulative value</div>
+            </div>
+            <div class="summary-card completed">
+                <div class="summary-label">Completed</div>
+                <div class="summary-value" id="completedCount">0</div>
+                <div class="summary-sublabel">Successful transactions</div>
+            </div>
+            <div class="summary-card pending">
+                <div class="summary-label">Pending</div>
+                <div class="summary-value" id="pendingCount">0</div>
+                <div class="summary-sublabel">Awaiting processing</div>
+            </div>
+            <div class="summary-card failed">
+                <div class="summary-label">Failed</div>
+                <div class="summary-value" id="failedCount">0</div>
+                <div class="summary-sublabel">Failed transactions</div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls-section">
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search by User ID, User Name, Status, or Bank Name...">
+            </div>
+            <div class="filter-group">
+                <label for="statusFilter">Filter by Status:</label>
+                <select id="statusFilter">
+                    <option value="">All Statuses</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Failed">Failed</option>
+                </select>
+                <label for="bankFilter">Filter by Bank:</label>
+                <select id="bankFilter">
+                    <option value="">All Banks</option>
+                    <option value="KCB Bank">KCB Bank</option>
+                    <option value="Equity Bank">Equity Bank</option>
+                    <option value="Co-operative Bank">Co-operative Bank</option>
+                    <option value="NCBA Bank">NCBA Bank</option>
+                    <option value="Absa Bank">Absa Bank</option>
+                    <option value="M-PESA">M-PESA</option>
+                    <option value="Airtel Money">Airtel Money</option>
+                    <option value="Stanbic Bank">Stanbic Bank</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-wrapper">
+            <div class="table-responsive">
+                <table id="paymentsTable">
+                    <thead>
+                        <tr>
+                            <th>Payment ID</th>
+                            <th>User ID</th>
+                            <th>User Name</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Bank</th>
+                            <th>Reference #</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-section">
+                <div class="pagination-info">
+                    Showing <span id="showingStart">1</span>-<span id="showingEnd">10</span> of <span id="totalRecords">0</span>
+                </div>
+                <div class="pagination-controls">
+                    <button class="pagination-btn" id="prevBtn">&lt;</button>
+                    <div id="pageButtons"></div>
+                    <button class="pagination-btn" id="nextBtn">&gt;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample Data
+        const banks = [
+            'KCB Bank', 'Equity Bank', 'Co-operative Bank', 'NCBA Bank', 
+            'Absa Bank', 'M-PESA', 'Airtel Money', 'Stanbic Bank',
+            'I&M Bank', 'Family Bank', 'DTB', 'Standard Chartered'
+        ];
+
+        const statuses = ['Completed', 'Pending', 'Failed'];
+        const names = [
+            'John Kimani', 'Mary Njeri', 'Peter Mwangi', 'Grace Wanjiru',
+            'Samuel Kipchoge', 'Alice Ndungu', 'David Ochieng', 'Sarah Kamau',
+            'Michael Kiplagat', 'Jane Wafula', 'Robert Mutua', 'Helen Otieno',
+            'James Kipkemboi', 'Lucy Kipchoge', 'Charles Mwaura', 'Rebecca Samba',
+            'Daniel Kiplagat', 'Patricia Mwelu', 'Stephen Kiprotich', 'Victoria Koech'
+        ];
+
+        // Generate sample data
+        function generatePaymentData() {
+            const payments = [];
+            const now = new Date();
+            
+            for (let i = 1; i <= 247; i++) {
+                const date = new Date(now.getTime() - Math.random() * 30 * 24 * 60 * 60 * 1000);
+                payments.push({
+                    id: `PAY${String(i).padStart(6, '0')}`,
+                    userId: `USR${String(1000 + Math.floor(Math.random() * 500)).padStart(4, '0')}`,
+                    userName: names[Math.floor(Math.random() * names.length)],
+                    amount: Math.floor(Math.random() * 50000) + 5000,
+                    date: date.toLocaleDateString('en-KE'),
+                    time: date.toLocaleTimeString('en-KE', { hour: '2-digit', minute: '2-digit' }),
+                    status: statuses[Math.floor(Math.random() * statuses.length)],
+                    bank: banks[Math.floor(Math.random() * banks.length)],
+                    reference: `TXN${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+                });
+            }
+            return payments.sort((a, b) => new Date(b.date) - new Date(a.date));
+        }
+
+        let allPayments = generatePaymentData();
+        let filteredPayments = [...allPayments];
+        let currentPage = 1;
+        const itemsPerPage = 10;
+
+        // Get bank icon emoji
+        function getBankIcon(bankName) {
+            const iconMap = {
+                'KCB Bank': '🏦',
+                'Equity Bank': '🏦',
+                'Co-operative Bank': '🏦',
+                'NCBA Bank': '🏦',
+                'Absa Bank': '🏦',
+                'M-PESA': '📱',
+                'Airtel Money': '📱',
+                'Stanbic Bank': '🏦',
+                'I&M Bank': '🏦',
+                'Family Bank': '🏦',
+                'DTB': '🏦',
+                'Standard Chartered': '🏦'
+            };
+            return iconMap[bankName] || '💳';
+        }
+
+        // Get bank class
+        function getBankClass(bankName) {
+            const classMap = {
+                'KCB Bank': 'bank-kcb',
+                'Equity Bank': 'bank-equity',
+                'Co-operative Bank': 'bank-coop',
+                'NCBA Bank': 'bank-ncba',
+                'Absa Bank': 'bank-absa',
+                'M-PESA': 'bank-mpesa',
+                'Airtel Money': 'bank-airtel'
+            };
+            return classMap[bankName] || 'bank-kcb';
+        }
+
+        // Update summary cards
+        function updateSummary() {
+            const total = filteredPayments.length;
+            const totalAmount = filteredPayments.reduce((sum, p) => sum + p.amount, 0);
+            const completed = filteredPayments.filter(p => p.status === 'Completed').length;
+            const pending = filteredPayments.filter(p => p.status === 'Pending').length;
+            const failed = filteredPayments.filter(p => p.status === 'Failed').length;
+
+            document.getElementById('totalPayments').textContent = total.toLocaleString();
+            document.getElementById('totalAmount').textContent = totalAmount.toLocaleString();
+            document.getElementById('completedCount').textContent = completed.toLocaleString();
+            document.getElementById('pendingCount').textContent = pending.toLocaleString();
+            document.getElementById('failedCount').textContent = failed.toLocaleString();
+        }
+
+        // Render table
+        function renderTable() {
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageData = filteredPayments.slice(start, end);
+            const tableBody = document.getElementById('tableBody');
+
+            if (pageData.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <i class="fas fa-inbox"></i>
+                                <p>No payments found matching your filters</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tableBody.innerHTML = pageData.map(payment => `
+                <tr>
+                    <td class="payment-id">${payment.id}</td>
+                    <td>${payment.userId}</td>
+                    <td class="user-name">${payment.userName}</td>
+                    <td class="amount">KES ${payment.amount.toLocaleString()}</td>
+                    <td><small>${payment.date} ${payment.time}</small></td>
+                    <td>
+                        <span class="status-badge status-${payment.status.toLowerCase()}">
+                            ${payment.status}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="bank-name">
+                            <div class="bank-icon ${getBankClass(payment.bank)}">
+                                ${getBankIcon(payment.bank)}
+                            </div>
+                            <span>${payment.bank}</span>
+                        </div>
+                    </td>
+                    <td><small>${payment.reference}</small></td>
+                </tr>
+            `).join('');
+
+            // Update pagination info
+            document.getElementById('showingStart').textContent = start + 1;
+            document.getElementById('showingEnd').textContent = Math.min(end, filteredPayments.length);
+            document.getElementById('totalRecords').textContent = filteredPayments.length;
+        }
+
+        // Update pagination buttons
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredPayments.length / itemsPerPage);
+            const pageButtons = document.getElementById('pageButtons');
+            pageButtons.innerHTML = '';
+
+            for (let i = 1; i <= Math.min(5, totalPages); i++) {
+                const btn = document.createElement('button');
+                btn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
+                btn.textContent = i;
+                btn.onclick = () => {
+                    currentPage = i;
+                    renderTable();
+                    updatePagination();
+                };
+                pageButtons.appendChild(btn);
+            }
+
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages;
+            document.getElementById('prevBtn').onclick = () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderTable();
+                    updatePagination();
+                }
+            };
+            document.getElementById('nextBtn').onclick = () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderTable();
+                    updatePagination();
+                }
+            };
+        }
+
+        // Filter and search
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const bankFilter = document.getElementById('bankFilter').value;
+
+            filteredPayments = allPayments.filter(payment => {
+                const matchesSearch = !searchTerm || 
+                    payment.userId.toLowerCase().includes(searchTerm) ||
+                    payment.userName.toLowerCase().includes(searchTerm) ||
+                    payment.status.toLowerCase().includes(searchTerm) ||
+                    payment.bank.toLowerCase().includes(searchTerm);
+
+                const matchesStatus = !statusFilter || payment.status === statusFilter;
+                const matchesBank = !bankFilter || payment.bank === bankFilter;
+
+                return matchesSearch && matchesStatus && matchesBank;
+            });
+
+            currentPage = 1;
+            updateSummary();
+            renderTable();
+            updatePagination();
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
+        document.getElementById('statusFilter').addEventListener('change', applyFilters);
+        document.getElementById('bankFilter').addEventListener('change', applyFilters);
+
+        // Refresh button
+        document.getElementById('refreshBtn').addEventListener('click', function() {
+            this.classList.add('spinning');
+            allPayments = generatePaymentData();
+            applyFilters();
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = '<i class="fas fa-check-circle"></i> Data refreshed successfully';
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                this.classList.remove('spinning');
+                toast.remove();
+            }, 1500);
+        });
+
+        // Initial render
+        updateSummary();
+        renderTable();
+        updatePagination();
+
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            // Simulate real-time updates by adding new payments randomly
+            if (Math.random() > 0.7) {
+                const newPayment = {
+                    id: `PAY${String(Math.floor(Math.random() * 1000000)).padStart(6, '0')}`,
+                    userId: `USR${String(1000 + Math.floor(Math.random() * 500)).padStart(4, '0')}`,
+                    userName: names[Math.floor(Math.random() * names.length)],
+                    amount: Math.floor(Math.random() * 50000) + 5000,
+                    date: new Date().toLocaleDateString('en-KE'),
+                    time: new Date().toLocaleTimeString('en-KE', { hour: '2-digit', minute: '2-digit' }),
+                    status: statuses[Math.floor(Math.random() * statuses.length)],
+                    bank: banks[Math.floor(Math.random() * banks.length)],
+                    reference: `TXN${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+                };
+                allPayments.unshift(newPayment);
+                applyFilters();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates - Services Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --obsidian: #0f1419;
+            --forest-green: #2d5016;
+            --gold: #d4af37;
+            --light-bg: #f8f9fa;
+            --border-light: #e1e8f0;
+            --text-dark: #1a1f2e;
+            --text-light: #6b7280;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--light-bg);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        /* ===== HEADER & NAV ===== */
+        .header {
+            background: var(--obsidian);
+            color: white;
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid var(--gold);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, var(--gold), #e5c158);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .page-counter {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--gold);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .nav-btn {
+            background: var(--forest-green);
+            border: 2px solid var(--gold);
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .nav-btn:hover {
+            background: var(--gold);
+            color: var(--obsidian);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            background: linear-gradient(135deg, var(--obsidian), var(--forest-green));
+            color: white;
+            padding: 4rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1), transparent);
+            border-radius: 50%;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .hero-desc {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--gold);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+
+        /* ===== SERVICE CARD LAYOUT ===== */
+        .service-container {
+            display: none;
+            animation: fadeIn 0.4s ease-in;
+        }
+
+        .service-container.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid var(--border-light);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--gold), var(--forest-green));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+            border-color: var(--gold);
+        }
+
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .service-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--forest-green), var(--obsidian));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .service-card p {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .service-features {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-features li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .service-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .service-btn {
+            background: linear-gradient(135deg, var(--forest-green), var(--obsidian));
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            width: 100%;
+            font-size: 0.95rem;
+        }
+
+        .service-btn:hover {
+            box-shadow: 0 8px 20px rgba(45, 80, 22, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* ===== TAB NAVIGATION ===== */
+        .tab-nav {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+        }
+
+        .tab-btn {
+            padding: 0.7rem 1.2rem;
+            border: 2px solid var(--border-light);
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .tab-btn.active {
+            background: var(--forest-green);
+            color: white;
+            border-color: var(--forest-green);
+        }
+
+        /* ===== FEATURE DETAILS MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: var(--light-bg);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: var(--border-light);
+            color: var(--gold);
+        }
+
+        .modal h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--obsidian);
+        }
+
+        .modal-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-badge {
+            background: var(--light-bg);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            border-left: 3px solid var(--gold);
+        }
+
+        .modal-section {
+            margin-bottom: 2rem;
+        }
+
+        .modal-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--forest-green);
+            border-bottom: 2px solid var(--border-light);
+            padding-bottom: 0.5rem;
+        }
+
+        .modal-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .modal-section li {
+            padding: 0.7rem 0;
+            padding-left: 1.8rem;
+            position: relative;
+            color: var(--text-light);
+        }
+
+        .modal-section li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        /* ===== ACTION BUTTONS ===== */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--forest-green), var(--obsidian));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition);
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(45, 80, 22, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--forest-green);
+            border: 2px solid var(--forest-green);
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-secondary:hover {
+            background: var(--forest-green);
+            color: white;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--obsidian);
+            color: white;
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+            border-top: 2px solid var(--gold);
+        }
+
+        .footer-content {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: var(--gold);
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: var(--transition);
+            display: block;
+            padding: 0.5rem 0;
+        }
+
+        .footer-section a:hover {
+            color: var(--gold);
+            padding-left: 0.5rem;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .hero {
+                padding: 2rem 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .service-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tab-nav {
+                overflow-x: auto;
+                gap: 0.3rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .modal-content {
+                margin: 0;
+                border-radius: 12px 12px 0 0;
+            }
+        }
+
+        /* ===== UTILITIES ===== */
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .badge-premium {
+            background: linear-gradient(135deg, var(--gold), #e5c158);
+            color: var(--obsidian);
+        }
+
+        .badge-new {
+            background: var(--info);
+            color: white;
+        }
+
+        .badge-popular {
+            background: var(--success);
+            color: white;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--gold);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">🦁 Mwarokin Estates</div>
+            <div class="nav-controls">
+                <div class="page-counter"><span id="pageIndicator">1</span> / 25</div>
+                <button class="nav-btn" id="prevBtn" onclick="previousPage()">← Previous</button>
+                <button class="nav-btn" id="nextBtn" onclick="nextPage()">Next →</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <div class="container">
+        <!-- HERO SECTION -->
+        <div class="hero">
+            <div class="hero-content">
+                <h1>Premium Property Management Suite</h1>
+                <p class="hero-desc">Comprehensive digital infrastructure for East African real estate. Advanced intelligence, automation, and ecosystem integration.</p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">25</div>
+                        <div class="stat-label">Feature Modules</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">1000+</div>
+                        <div class="stat-label">Capabilities</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Integrated</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">AI Monitoring</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB NAVIGATION -->
+        <div class="tab-nav" id="tabNav"></div>
+
+        <!-- SERVICE PAGES (1-25) -->
+        <div id="pagesContainer"></div>
+    </div>
+
+    <!-- FEATURE DETAILS MODAL -->
+    <div class="modal" id="featureModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <div id="modalBody"></div>
+            <div class="action-buttons">
+                <button class="btn-primary" onclick="setupFeature()">Setup & Configure</button>
+                <button class="btn-secondary" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Mwarokin</h3>
+                <ul>
+                    <li><a href="#">Our Platform</a></li>
+                    <li><a href="#">Technology</a></li>
+                    <li><a href="#">Innovation Lab</a></li>
+                    <li><a href="#">Partnerships</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="#">Property Management</a></li>
+                    <li><a href="#">Payment Processing</a></li>
+                    <li><a href="#">Analytics & Reports</a></li>
+                    <li><a href="#">Integration APIs</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">Contact Support</a></li>
+                    <li><a href="#">Community Forum</a></li>
+                    <li><a href="#">Status Page</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Compliance</a></li>
+                    <li><a href="#">Security</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Syllogism Technology Africa. Building infrastructure for 1.5B Africans.</p>
+        </div>
+    </footer>
+
+    <script>
+        // SERVICE DATA STRUCTURE
+        const services = [
+            {
+                id: 1,
+                title: "Property Financial Intelligence",
+                category: "Finance",
+                icon: "📊",
+                badge: "premium",
+                description: "Advanced property-level financial analytics and forecasting",
+                features: [
+                    "Property P&L statements",
+                    "Cash-flow forecasting",
+                    "Net operating income",
+                    "Vacancy-cost calculation",
+                    "ROI analytics",
+                    "Reserve-fund management"
+                ],
+                keyCapabilities: [
+                    "Budget forecasting with ML predictions",
+                    "Expected vs actual income tracking",
+                    "Expense categorization & trends",
+                    "Capital-expenditure tracking",
+                    "Portfolio performance scoring",
+                    "Break-even analysis"
+                ],
+                integration: ["Bank APIs", "Accounting Software", "Analytics Dashboard"],
+                useCases: [
+                    "Multi-property portfolio analysis",
+                    "Investment decision support",
+                    "Tax planning optimization",
+                    "Financial health reporting"
+                ]
+            },
+            {
+                id: 2,
+                title: "Escrow & Trust Management",
+                category: "Compliance",
+                icon: "🔐",
+                badge: "premium",
+                description: "Secure management of deposits and trust accounts with dual authorization",
+                features: [
+                    "Security-deposit ledger",
+                    "Deposit release workflow",
+                    "Partial deposit release",
+                    "Dispute resolution workflow",
+                    "Dual authorization",
+                    "Automated release conditions"
+                ],
+                keyCapabilities: [
+                    "Escrow status real-time tracking",
+                    "Beneficiary approval system",
+                    "Holding-account reconciliation",
+                    "Deposit aging reports",
+                    "Liability calculation",
+                    "Audit trail logging"
+                ],
+                integration: ["Bank Escrow", "Legal Platforms", "Payment Processors"],
+                useCases: [
+                    "Tenant deposit management",
+                    "Liability tracking",
+                    "Dispute resolution",
+                    "Regulatory compliance"
+                ]
+            },
+            {
+                id: 3,
+                title: "Tenant Risk & Reliability",
+                category: "Risk",
+                icon: "🎯",
+                description: "Comprehensive tenant verification and risk scoring",
+                features: [
+                    "Payment reliability score",
+                    "Lease compliance score",
+                    "Tenant verification workflow",
+                    "Reference verification",
+                    "Application scoring",
+                    "Risk-based approval"
+                ],
+                keyCapabilities: [
+                    "Payment-pattern analytics",
+                    "Early-warning alerts",
+                    "Renewal probability prediction",
+                    "Outstanding-obligation tracking",
+                    "Credit-check integration",
+                    "Behavioral scoring"
+                ],
+                integration: ["Credit Bureau APIs", "Employment Verification", "Identity Services"],
+                useCases: [
+                    "Tenant screening",
+                    "Credit risk assessment",
+                    "Renewal prediction",
+                    "Payment default prevention"
+                ]
+            },
+            {
+                id: 4,
+                title: "Landlord Intelligence",
+                category: "Analytics",
+                icon: "👥",
+                badge: "popular",
+                description: "Comprehensive portfolio management and performance analytics",
+                features: [
+                    "Portfolio health score",
+                    "Income concentration analysis",
+                    "Vacancy exposure tracking",
+                    "Property risk ranking",
+                    "Maintenance-cost trends",
+                    "Tenant concentration analysis"
+                ],
+                keyCapabilities: [
+                    "Portfolio comparison tools",
+                    "Investment-performance dashboard",
+                    "Automated owner reports",
+                    "Competitive benchmarking",
+                    "Market intelligence",
+                    "Predictive analytics"
+                ],
+                integration: ["Market Data APIs", "Reporting Tools", "Email Systems"],
+                useCases: [
+                    "Portfolio optimization",
+                    "Investment strategy",
+                    "Market positioning",
+                    "Performance monitoring"
+                ]
+            },
+            {
+                id: 5,
+                title: "Digital Lease Infrastructure",
+                category: "Contracts",
+                icon: "📄",
+                badge: "popular",
+                description: "Complete digital lease management with versioning and automation",
+                features: [
+                    "Digital lease templates",
+                    "Lease version control",
+                    "Electronic signatures",
+                    "Lease amendment workflow",
+                    "Renewal workflow",
+                    "Expiration countdown"
+                ],
+                keyCapabilities: [
+                    "Notice-period tracking",
+                    "Break-clause management",
+                    "Rent-escalation schedules",
+                    "Special-condition tracking",
+                    "Document vault",
+                    "Automated reminders"
+                ],
+                integration: ["E-Signature Platforms", "Legal Templates", "Calendar Services"],
+                useCases: [
+                    "Lease lifecycle management",
+                    "Automated renewals",
+                    "Rent escalation",
+                    "Compliance tracking"
+                ]
+            },
+            {
+                id: 6,
+                title: "Property Operations",
+                category: "Operations",
+                icon: "🔧",
+                description: "Comprehensive maintenance and facility management",
+                features: [
+                    "Maintenance work orders",
+                    "Contractor assignment",
+                    "Contractor ratings",
+                    "Preventive-maintenance schedules",
+                    "Equipment registers",
+                    "Asset lifecycle tracking"
+                ],
+                keyCapabilities: [
+                    "Utility-meter registry",
+                    "Meter-reading history",
+                    "Building inspection scheduling",
+                    "Cleaning schedules",
+                    "Security schedules",
+                    "Facility workflows"
+                ],
+                integration: ["Maintenance Apps", "Contractor Networks", "Scheduling Tools"],
+                useCases: [
+                    "Preventive maintenance",
+                    "Contractor management",
+                    "Cost reduction",
+                    "Regulatory compliance"
+                ]
+            },
+            {
+                id: 7,
+                title: "Smart Building Layer",
+                category: "IoT",
+                icon: "🏗️",
+                description: "IoT sensor integration for real-time building monitoring",
+                features: [
+                    "IoT sensor integration",
+                    "Water-level sensors",
+                    "Electricity monitoring",
+                    "Generator monitoring",
+                    "Solar monitoring",
+                    "Pump monitoring"
+                ],
+                keyCapabilities: [
+                    "Lift/elevator monitoring",
+                    "Temperature monitoring",
+                    "Leak detection",
+                    "Smoke/fire alerts",
+                    "Access-control integration",
+                    "Smart-meter integration"
+                ],
+                integration: ["IoT Platforms", "MQTT Brokers", "Cloud Analytics"],
+                useCases: [
+                    "Predictive maintenance",
+                    "Energy optimization",
+                    "Safety monitoring",
+                    "Utility tracking"
+                ]
+            },
+            {
+                id: 8,
+                title: "Tenant Experience",
+                category: "Engagement",
+                icon: "😊",
+                badge: "new",
+                description: "Comprehensive tenant portal and community engagement",
+                features: [
+                    "Tenant mobile app",
+                    "Tenant web portal",
+                    "Digital noticeboard",
+                    "Community announcements",
+                    "Visitor management",
+                    "Amenity booking"
+                ],
+                keyCapabilities: [
+                    "Parking allocation",
+                    "Package-delivery management",
+                    "Move-in/out checklists",
+                    "Complaint escalation",
+                    "Community polls",
+                    "Service ratings"
+                ],
+                integration: ["Mobile Platforms", "Communication APIs", "Booking Systems"],
+                useCases: [
+                    "Tenant satisfaction",
+                    "Community building",
+                    "Service delivery",
+                    "Issue resolution"
+                ]
+            },
+            {
+                id: 9,
+                title: "Landlord-Tenant Communication",
+                category: "Communication",
+                icon: "💬",
+                description: "Multi-channel communication with automated notifications",
+                features: [
+                    "In-app messaging",
+                    "Announcement targeting",
+                    "Automated notices",
+                    "Lease reminders",
+                    "Maintenance notifications",
+                    "Emergency broadcasts"
+                ],
+                keyCapabilities: [
+                    "Read receipts",
+                    "Communication history",
+                    "Multi-channel notifications",
+                    "Notification preferences",
+                    "Template management",
+                    "Archive & compliance"
+                ],
+                integration: ["SMS APIs", "Email Services", "Push Notifications"],
+                useCases: [
+                    "Important notices",
+                    "Maintenance scheduling",
+                    "Emergency alerts",
+                    "Community updates"
+                ]
+            },
+            {
+                id: 10,
+                title: "Property Marketplace",
+                category: "Marketplace",
+                icon: "🏪",
+                description: "Digital marketplace for property listings and tenant applications",
+                features: [
+                    "Property listing engine",
+                    "Unit availability marketplace",
+                    "Virtual tours",
+                    "Floor plans",
+                    "Property comparison",
+                    "Tenant applications"
+                ],
+                keyCapabilities: [
+                    "Viewing management",
+                    "Viewing attendance tracking",
+                    "Applicant pipeline",
+                    "Waiting lists",
+                    "Digital offer letters",
+                    "Application workflow"
+                ],
+                integration: ["VR/3D Tour Platforms", "Document Management", "Video Services"],
+                useCases: [
+                    "Unit marketing",
+                    "Tenant acquisition",
+                    "Viewing scheduling",
+                    "Application processing"
+                ]
+            },
+            {
+                id: 11,
+                title: "Geospatial Intelligence",
+                category: "Analytics",
+                icon: "🗺️",
+                description: "Location-based property analytics and market intelligence",
+                features: [
+                    "Property GIS map",
+                    "Nearby infrastructure",
+                    "Schools proximity",
+                    "Hospitals proximity",
+                    "Transport proximity",
+                    "Security-risk mapping"
+                ],
+                keyCapabilities: [
+                    "Flood-risk mapping",
+                    "Land-use information",
+                    "Development-zone mapping",
+                    "Neighborhood price intelligence",
+                    "Property heat maps",
+                    "Competitor analysis"
+                ],
+                integration: ["Google Maps APIs", "GIS Platforms", "Weather Data"],
+                useCases: [
+                    "Risk assessment",
+                    "Investment analysis",
+                    "Market positioning",
+                    "Property valuation"
+                ]
+            },
+            {
+                id: 12,
+                title: "Utility Management",
+                category: "Operations",
+                icon: "⚡",
+                description: "Comprehensive utility tracking and consumption analytics",
+                features: [
+                    "Individual meter allocation",
+                    "Shared-meter allocation",
+                    "Utility bill splitting",
+                    "Water consumption analytics",
+                    "Electricity consumption analytics",
+                    "Prepaid-meter monitoring"
+                ],
+                keyCapabilities: [
+                    "Utility anomaly detection",
+                    "Utility debt tracking",
+                    "Common-area consumption",
+                    "Solar-energy allocation",
+                    "Usage forecasting",
+                    "Consumption alerts"
+                ],
+                integration: ["Meter APIs", "Utility Providers", "Analytics Dashboards"],
+                useCases: [
+                    "Cost reduction",
+                    "Conservation monitoring",
+                    "Tenant billing",
+                    "Sustainability tracking"
+                ]
+            },
+            {
+                id: 13,
+                title: "Security Management",
+                category: "Security",
+                icon: "🚨",
+                description: "Integrated security operations and incident management",
+                features: [
+                    "Visitor QR codes",
+                    "Guard dashboard",
+                    "Digital visitor log",
+                    "Vehicle registration",
+                    "Emergency contacts",
+                    "Incident reporting"
+                ],
+                keyCapabilities: [
+                    "Incident evidence management",
+                    "Access logs",
+                    "Restricted-area management",
+                    "Security patrol checkpoints",
+                    "CCTV integration",
+                    "Alert escalation"
+                ],
+                integration: ["CCTV Systems", "Access Control", "Emergency Services"],
+                useCases: [
+                    "Visitor management",
+                    "Incident tracking",
+                    "Security monitoring",
+                    "Emergency response"
+                ]
+            },
+            {
+                id: 14,
+                title: "AI Property Manager",
+                category: "AI",
+                icon: "🤖",
+                badge: "premium",
+                description: "Autonomous AI agent monitoring all property dimensions",
+                features: [
+                    "Continuous monitoring",
+                    "Rent tracking",
+                    "Lease analytics",
+                    "Tenant insights",
+                    "Property health",
+                    "Maintenance predictions"
+                ],
+                keyCapabilities: [
+                    "Utility monitoring",
+                    "Expense analysis",
+                    "Cash-flow predictions",
+                    "Risk detection",
+                    "Alert generation",
+                    "Autonomous actions"
+                ],
+                integration: ["AI/ML Platform", "Data Lake", "Notification Systems"],
+                useCases: [
+                    "Proactive issue detection",
+                    "Efficiency optimization",
+                    "Predictive maintenance",
+                    "Autonomous management"
+                ]
+            },
+            {
+                id: 15,
+                title: "Fraud & Financial Controls",
+                category: "Compliance",
+                icon: "🛡️",
+                description: "Advanced fraud detection and financial oversight",
+                features: [
+                    "Duplicate-payment detection",
+                    "Duplicate-invoice detection",
+                    "Suspicious refund detection",
+                    "Account-change verification",
+                    "Settlement anomaly detection",
+                    "Payment-source monitoring"
+                ],
+                keyCapabilities: [
+                    "Unusual withdrawal detection",
+                    "Staff activity monitoring",
+                    "Four-eyes approval",
+                    "Transaction risk scoring",
+                    "Immutable audit history",
+                    "Real-time alerts"
+                ],
+                integration: ["Fraud Detection Engines", "Banking Systems", "Audit Tools"],
+                useCases: [
+                    "Fraud prevention",
+                    "Compliance enforcement",
+                    "Risk mitigation",
+                    "Audit readiness"
+                ]
+            },
+            {
+                id: 16,
+                title: "Accounting & Compliance",
+                category: "Finance",
+                icon: "📐",
+                description: "Complete accounting infrastructure and compliance automation",
+                features: [
+                    "General ledger",
+                    "Chart of accounts",
+                    "Journal entries",
+                    "Accounts receivable",
+                    "Accounts payable",
+                    "Vendor management"
+                ],
+                keyCapabilities: [
+                    "Expense approvals",
+                    "Financial-period closing",
+                    "Accountant access",
+                    "Audit exports",
+                    "Tax-report preparation",
+                    "Automated statements"
+                ],
+                integration: ["Accounting Software", "Tax Systems", "Bank Feeds"],
+                useCases: [
+                    "Monthly closing",
+                    "Tax compliance",
+                    "Financial reporting",
+                    "Audit preparation"
+                ]
+            },
+            {
+                id: 17,
+                title: "Multi-Property / Enterprise",
+                category: "Scale",
+                icon: "🏢",
+                description: "Enterprise-grade multi-property and multi-tenant management",
+                features: [
+                    "Multiple companies",
+                    "Multiple landlords",
+                    "Multiple property managers",
+                    "Multiple buildings",
+                    "Multiple estates",
+                    "Multiple currencies"
+                ],
+                keyCapabilities: [
+                    "Multiple countries",
+                    "Branch management",
+                    "Role-based access",
+                    "Organization hierarchy",
+                    "Franchise management",
+                    "White-label portals"
+                ],
+                integration: ["SSO/SAML", "Multi-tenancy Platform", "Enterprise APIs"],
+                useCases: [
+                    "Portfolio scaling",
+                    "Multi-market expansion",
+                    "Franchise deployment",
+                    "Enterprise governance"
+                ]
+            },
+            {
+                id: 18,
+                title: "Marketplace Ecosystem",
+                category: "Marketplace",
+                icon: "🔗",
+                description: "Connected marketplace for service providers",
+                features: [
+                    "Plumber discovery",
+                    "Electrician network",
+                    "Painter connections",
+                    "Security companies",
+                    "Cleaning services",
+                    "Moving companies"
+                ],
+                keyCapabilities: [
+                    "Internet providers",
+                    "Insurance brokers",
+                    "Solar installers",
+                    "Appliance technicians",
+                    "Property valuers",
+                    "Legal professionals"
+                ],
+                integration: ["Service Provider APIs", "Payment Systems", "Review Platforms"],
+                useCases: [
+                    "Service discovery",
+                    "Vendor management",
+                    "Cost reduction",
+                    "Quality assurance"
+                ]
+            },
+            {
+                id: 19,
+                title: "Insurance Management",
+                category: "Risk",
+                icon: "📋",
+                description: "Integrated insurance management and claims workflow",
+                features: [
+                    "Property-insurance registry",
+                    "Policy-expiry alerts",
+                    "Claims management",
+                    "Incident-to-claim workflow",
+                    "Asset insurance tracking",
+                    "Tenant insurance tracking"
+                ],
+                keyCapabilities: [
+                    "Insurance document vault",
+                    "Claim-status dashboard",
+                    "Automated renewals",
+                    "Coverage analysis",
+                    "Premium optimization",
+                    "Risk assessment"
+                ],
+                integration: ["Insurance APIs", "Document Management", "Email Systems"],
+                useCases: [
+                    "Policy management",
+                    "Claims processing",
+                    "Risk coverage",
+                    "Compliance tracking"
+                ]
+            },
+            {
+                id: 20,
+                title: "Emergency & Disaster Management",
+                category: "Safety",
+                icon: "🚑",
+                description: "Comprehensive emergency response and business continuity",
+                features: [
+                    "Fire incident workflow",
+                    "Flood alerts",
+                    "Water-leak escalation",
+                    "Power-outage reporting",
+                    "Generator activation workflow",
+                    "Emergency broadcast"
+                ],
+                keyCapabilities: [
+                    "Evacuation management",
+                    "Emergency contact tree",
+                    "Incident postmortems",
+                    "Business-continuity planning",
+                    "Recovery procedures",
+                    "Drill scheduling"
+                ],
+                integration: ["Alert Systems", "Emergency Services", "Communication Platforms"],
+                useCases: [
+                    "Emergency response",
+                    "Disaster recovery",
+                    "Continuity planning",
+                    "Incident review"
+                ]
+            },
+            {
+                id: 21,
+                title: "Developer / Construction Layer",
+                category: "Projects",
+                icon: "👷",
+                description: "Project management for development and construction",
+                features: [
+                    "Development projects",
+                    "Construction budgets",
+                    "Contractor management",
+                    "Material tracking",
+                    "Project milestones",
+                    "Site inspections"
+                ],
+                keyCapabilities: [
+                    "Construction progress",
+                    "Variation orders",
+                    "Defect management",
+                    "Practical-completion workflow",
+                    "Handover management",
+                    "Project analytics"
+                ],
+                integration: ["Project Management Apps", "Document Systems", "Photo Tools"],
+                useCases: [
+                    "Project execution",
+                    "Budget control",
+                    "Quality assurance",
+                    "Handover management"
+                ]
+            },
+            {
+                id: 22,
+                title: "API & Developer Platform",
+                category: "Integration",
+                icon: "⚙️",
+                badge: "premium",
+                description: "Comprehensive API suite for ecosystem integration",
+                features: [
+                    "Property API",
+                    "Tenant API",
+                    "Lease API",
+                    "Payment API",
+                    "Utility API",
+                    "Maintenance API"
+                ],
+                keyCapabilities: [
+                    "Accounting API",
+                    "Identity API",
+                    "Notification API",
+                    "Analytics API",
+                    "Webhook Engine",
+                    "Rate limiting & auth"
+                ],
+                integration: ["REST APIs", "GraphQL", "Webhooks", "SDK Libraries"],
+                useCases: [
+                    "Third-party integration",
+                    "System interoperability",
+                    "Data synchronization",
+                    "Custom applications"
+                ]
+            },
+            {
+                id: 23,
+                title: "Advanced Automation",
+                category: "AI",
+                icon: "🔄",
+                description: "Event-driven automation with AI decision-making",
+                features: [
+                    "Event triggers",
+                    "Rule engine",
+                    "AI decision logic",
+                    "Approval workflows",
+                    "Action execution",
+                    "Verification layer"
+                ],
+                keyCapabilities: [
+                    "Audit logging",
+                    "Exception handling",
+                    "Conditional logic",
+                    "Time-based triggers",
+                    "Custom workflows",
+                    "Integration actions"
+                ],
+                integration: ["AI/ML Engine", "Workflow Platform", "Notification Systems"],
+                useCases: [
+                    "Lease renewal automation",
+                    "Maintenance escalation",
+                    "Payment matching",
+                    "Risk alerting"
+                ]
+            },
+            {
+                id: 24,
+                title: "Data Ownership & Governance",
+                category: "Compliance",
+                icon: "🔒",
+                description: "Privacy, consent, and data governance framework",
+                features: [
+                    "Tenant-data permissions",
+                    "Landlord-data permissions",
+                    "Consent management",
+                    "Data-retention policies",
+                    "Audit trails",
+                    "Data-export requests"
+                ],
+                keyCapabilities: [
+                    "Account deletion workflows",
+                    "API access controls",
+                    "Encryption-key management",
+                    "Backup policies",
+                    "Disaster recovery",
+                    "Data residency controls"
+                ],
+                integration: ["Identity Platforms", "Compliance Tools", "Encryption Services"],
+                useCases: [
+                    "GDPR compliance",
+                    "Data privacy",
+                    "Regulatory compliance",
+                    "Audit readiness"
+                ]
+            },
+            {
+                id: 25,
+                title: "Property Digital Twin",
+                category: "Innovation",
+                icon: "🌐",
+                badge: "premium",
+                description: "Complete digital replica of physical property",
+                features: [
+                    "Building model",
+                    "Unit configuration",
+                    "Asset registry",
+                    "Utility networks",
+                    "Financial model",
+                    "Tenant profiles"
+                ],
+                keyCapabilities: [
+                    "Staff & contractor data",
+                    "Visitor tracking",
+                    "AI Property OS",
+                    "Predictive capabilities",
+                    "Optimization engine",
+                    "Real-time updates"
+                ],
+                integration: ["3D Modeling", "IoT Platform", "AI Engine", "Data Lakes"],
+                useCases: [
+                    "Predictive analytics",
+                    "Optimization",
+                    "Scenario planning",
+                    "Decision support"
+                ]
+            }
+        ];
+
+        let currentPage = 1;
+
+        // INITIALIZE APPLICATION
+        function initApp() {
+            renderPages();
+            renderTabs();
+            updateNavigation();
+        }
+
+        // RENDER SERVICE PAGES
+        function renderPages() {
+            const container = document.getElementById('pagesContainer');
+            container.innerHTML = '';
+
+            // Group services by 5 per page (25 services = 5 pages of 5 services each)
+            const servicesPerPage = 5;
+            const pages = [];
+
+            for (let i = 0; i < services.length; i += servicesPerPage) {
+                pages.push(services.slice(i, i + servicesPerPage));
+            }
+
+            pages.forEach((pageServices, pageIndex) => {
+                const pageDiv = document.createElement('div');
+                pageDiv.className = `service-container ${pageIndex + 1 === currentPage ? 'active' : ''}`;
+                pageDiv.id = `page-${pageIndex + 1}`;
+
+                const grid = document.createElement('div');
+                grid.className = 'service-grid';
+
+                pageServices.forEach(service => {
+                    const card = createServiceCard(service);
+                    grid.appendChild(card);
+                });
+
+                pageDiv.appendChild(grid);
+                container.appendChild(pageDiv);
+            });
+        }
+
+        // CREATE SERVICE CARD
+        function createServiceCard(service) {
+            const card = document.createElement('div');
+            card.className = 'service-card';
+
+            let badgeHTML = '';
+            if (service.badge === 'premium') {
+                badgeHTML = '<span class="badge badge-premium">⭐ Premium</span>';
+            } else if (service.badge === 'popular') {
+                badgeHTML = '<span class="badge badge-popular">🔥 Popular</span>';
+            } else if (service.badge === 'new') {
+                badgeHTML = '<span class="badge badge-new">✨ New</span>';
+            }
+
+            card.innerHTML = `
+                ${badgeHTML}
+                <div class="service-icon">${service.icon}</div>
+                <h3>${service.title}</h3>
+                <p>${service.description}</p>
+                <ul class="service-features">
+                    ${service.features.slice(0, 3).map(f => `<li>${f}</li>`).join('')}
+                    ${service.features.length > 3 ? `<li>+ ${service.features.length - 3} more...</li>` : ''}
+                </ul>
+                <button class="service-btn" onclick="openFeatureModal(${service.id})">Learn More →</button>
+            `;
+
+            return card;
+        }
+
+        // RENDER TAB NAVIGATION
+        function renderTabs() {
+            const tabNav = document.getElementById('tabNav');
+            tabNav.innerHTML = '';
+
+            const servicesPerPage = 5;
+            const totalPages = Math.ceil(services.length / servicesPerPage);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.className = `tab-btn ${i === currentPage ? 'active' : ''}`;
+                btn.textContent = `Page ${i}`;
+                btn.onclick = () => goToPage(i);
+                tabNav.appendChild(btn);
+            }
+        }
+
+        // OPEN FEATURE MODAL
+        function openFeatureModal(serviceId) {
+            const service = services.find(s => s.id === serviceId);
+            if (!service) return;
+
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = `
+                <h2>${service.title}</h2>
+                <div class="modal-meta">
+                    <span class="meta-badge">Category: ${service.category}</span>
+                    <span class="meta-badge">Service ID: MWK-${String(service.id).padStart(3, '0')}</span>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Overview</h3>
+                    <p>${service.description}</p>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Key Features</h3>
+                    <ul>
+                        ${service.features.map(f => `<li>${f}</li>`).join('')}
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Capabilities</h3>
+                    <ul>
+                        ${service.keyCapabilities.map(c => `<li>${c}</li>`).join('')}
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Integration Points</h3>
+                    <ul>
+                        ${service.integration.map(i => `<li>${i}</li>`).join('')}
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Use Cases</h3>
+                    <ul>
+                        ${service.useCases.map(u => `<li>${u}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+
+            document.getElementById('featureModal').classList.add('active');
+        }
+
+        // CLOSE MODAL
+        function closeModal() {
+            document.getElementById('featureModal').classList.remove('active');
+        }
+
+        // SETUP FEATURE
+        function setupFeature() {
+            alert('Feature setup initiated. Redirecting to configuration panel...');
+            closeModal();
+        }
+
+        // NAVIGATION
+        function goToPage(page) {
+            const servicesPerPage = 5;
+            const totalPages = Math.ceil(services.length / servicesPerPage);
+
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                updateDisplay();
+            }
+        }
+
+        function nextPage() {
+            const servicesPerPage = 5;
+            const totalPages = Math.ceil(services.length / servicesPerPage);
+
+            if (currentPage < totalPages) {
+                currentPage++;
+                updateDisplay();
+            }
+        }
+
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                updateDisplay();
+            }
+        }
+
+        function updateDisplay() {
+            // Update active service container
+            document.querySelectorAll('.service-container').forEach((el, i) => {
+                el.classList.toggle('active', i + 1 === currentPage);
+            });
+
+            // Update active tab
+            document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i + 1 === currentPage);
+            });
+
+            // Update navigation buttons
+            updateNavigation();
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateNavigation() {
+            const servicesPerPage = 5;
+            const totalPages = Math.ceil(services.length / servicesPerPage);
+
+            document.getElementById('pageIndicator').textContent = currentPage;
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages;
+        }
+
+        // Close modal on outside click
+        document.getElementById('featureModal').addEventListener('click', (e) => {
+            if (e.target.id === 'featureModal') closeModal();
+        });
+
+        // Initialize
+        initApp();
+    </script>
+</body>
+</html>
