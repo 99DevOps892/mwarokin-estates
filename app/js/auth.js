@@ -265,8 +265,13 @@
 
     const registerForm = document.getElementById('register-form');
     if (registerForm) {
+      if (window.STA_BOT_PROTECT) window.STA_BOT_PROTECT.inject(registerForm);
       registerForm.addEventListener('submit', async function (e) {
         e.preventDefault();
+        if (window.STA_BOT_PROTECT) {
+          const bot = await window.STA_BOT_PROTECT.guard(registerForm);
+          if (!bot.ok) { window.toast(bot.message, 'error'); return; }
+        }
         const btn = document.getElementById('register-btn');
         const err = document.getElementById('form-error');
         btn.disabled = true;

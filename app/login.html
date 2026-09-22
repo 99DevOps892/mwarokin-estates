@@ -223,6 +223,7 @@
         <label class="remember"><input type="checkbox" id="rememberMe" checked> Keep me signed in</label>
         <button type="button" class="forgot-link" id="forgotLink">Forgot password?</button>
       </div>
+      <div id="sta-turnstile"></div>
       <button type="submit" class="btn-gold" id="loginBtn"><i class="fas fa-lock"></i><span id="loginBtnText">Sign In Securely</span></button>
     </form>
 
@@ -246,6 +247,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/config.js"></script>
 <script src="js/supabase-client.js"></script>
+<script src="js/bot-protection.js"></script>
 <script>
 (function () {
   const sb = window.supabaseClient;
@@ -261,6 +263,8 @@
   const btnText = document.getElementById('loginBtnText');
   const errBox = document.getElementById('formError');
   const errText = document.getElementById('formErrorText');
+
+  window.STA_BOT_PROTECT.inject(form);
 
   function showError(msg) {
     errText.textContent = msg;
@@ -334,6 +338,9 @@
 
     if (!value) { showError('Enter your email address.'); return; }
     if (pass.length < 8) { showError('Password must be at least 8 characters.'); return; }
+
+    const bot = await window.STA_BOT_PROTECT.guard(form);
+    if (!bot.ok) { showError(bot.message); return; }
 
     btn.disabled = true;
     btn.querySelector('i').className = 'fas fa-spinner';
