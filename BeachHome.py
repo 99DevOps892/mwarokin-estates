@@ -370,7 +370,7 @@ async def main():
         "price": 750000,
         "type": "beach_house",
         "status": "for sale",
-        "media": ["http://example.com/beach_house1.jpg", "http://example.com/beach_house2.png"],
+        "media": ["https://example.com/beach_house1.jpg", "https://example.com/beach_house2.png"],
         "features": {"sqft": 2500, "bedrooms": 4, "bathrooms": 3, "beach_access": True}
     }
     tenant_id = "tenant_123"

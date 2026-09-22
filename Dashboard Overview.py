@@ -591,7 +591,7 @@ python automation_framework.py --url "file:///path/to/dashboard.html" --headless
 
 2. **Run specific test:**
 ```bash
-python automation_framework.py --url "http://yourapp.com" --test payment
+python automation_framework.py --url "https://yourapp.com" --test payment
 ```
 
 3. **Run with pytest:**

@@ -490,7 +490,7 @@ async def main():
         # Additional: Web automation example
         web_automator = WebInterfaceAutomator()
         web_automator.automate_brochure_download(
-            url="http://yourapp.com/brochure",
+            url="https://yourapp.com/brochure",
             properties=selected_properties,
             user_data={
                 'name': user_preferences.name,

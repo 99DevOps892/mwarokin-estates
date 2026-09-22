@@ -326,7 +326,7 @@ if __name__ == "__main__":
         "sqft": 1000,
         "bedrooms": 3,
         "bathrooms": 2,
-        "images": ["http://example.com/property-1.jpg"]
+        "images": ["https://example.com/property-1.jpg"]
     }
 
     user = User(id="user123", tenant_id="tenant1", role="agent", preferences={})
