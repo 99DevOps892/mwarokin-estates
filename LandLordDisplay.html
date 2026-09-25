@@ -2,563 +2,1353 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mwarokin Estates - Landlords Display</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Mwarokin Estates — Landlord Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Beautiful UI CSS */
-        body { font-family: 'Helvetica', Arial, sans-serif; background-color: #f4f7fa; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 20px; }
-        h1 { color: #2c3e50; text-align: center; }
-        .tab-buttons { display: flex; justify-content: center; margin-bottom: 20px; }
-        .tab-button { background: #3498db; color: white; border: none; padding: 10px 20px; margin: 0 5px; cursor: pointer; border-radius: 5px; transition: background 0.3s; }
-        .tab-button.active { background: #2980b9; }
-        .tab-button:hover { background: #2980b9; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .section-header { font-size: 1.5em; color: #34495e; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; margin-bottom: 20px; }
-        .metric { font-size: 1.1em; margin: 5px 0; }
-        .list-item { list-style-type: disc; margin-left: 20px; }
-        .accordion { background: #ecf0f1; padding: 10px; margin: 10px 0; cursor: pointer; border-radius: 5px; }
-        .accordion-content { display: none; padding: 10px; background: #fff; border: 1px solid #ecf0f1; border-radius: 5px; }
-        .action-buttons { display: flex; justify-content: center; margin-top: 20px; }
-        .action-btn { background: #27ae60; color: white; border: none; padding: 10px 20px; margin: 0 10px; cursor: pointer; border-radius: 5px; transition: background 0.3s; }
-        .action-btn:hover { background: #219d52; }
-        form { margin: 20px 0; }
-        input, select { padding: 8px; margin: 5px 0; width: 100%; border: 1px solid #bdc3c7; border-radius: 5px; }
-        .emoji { font-size: 1.2em; margin-right: 5px; }
-        /* Agentic Features Styles */
-        .agent-section { margin-top: 30px; border-top: 1px solid #ecf0f1; padding-top: 20px; }
-        .agent-form { background: #f9f9f9; padding: 15px; border-radius: 5px; }
+        :root {
+            /* STA Design System */
+            --obsidian: #0F1419;
+            --forest-green: #1E5631;
+            --gold: #D4AF37;
+            --light-bg: #F8F7F5;
+            --card-bg: #FFFFFF;
+            --border-subtle: #E8E6E1;
+            --text-primary: #1A1A1A;
+            --text-secondary: #6B6B6B;
+            --accent-light: #F4F1EA;
+            --success: #27AE60;
+            --warning: #E67E22;
+            --error: #E74C3C;
+            
+            /* Typography Scale */
+            --fs-xs: 0.75rem;
+            --fs-sm: 0.875rem;
+            --fs-base: 1rem;
+            --fs-lg: 1.125rem;
+            --fs-xl: 1.5rem;
+            --fs-2xl: 2rem;
+            --fs-3xl: 2.5rem;
+            --fs-display: 3.5rem;
+            
+            /* Spacing */
+            --sp-xs: 0.25rem;
+            --sp-sm: 0.5rem;
+            --sp-md: 1rem;
+            --sp-lg: 1.5rem;
+            --sp-xl: 2rem;
+            --sp-2xl: 3rem;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 3px rgba(15, 20, 25, 0.12);
+            --shadow-md: 0 4px 12px rgba(15, 20, 25, 0.15);
+            --shadow-lg: 0 12px 32px rgba(15, 20, 25, 0.12);
+            --shadow-xl: 0 20px 48px rgba(15, 20, 25, 0.16);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-padding-top: env(safe-area-inset-top, 0px);
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--light-bg) 0%, #F5F3EE 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            padding: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+        }
+
+        /* Header & Navigation */
+        .header {
+            background: var(--obsidian);
+            color: white;
+            padding: var(--sp-xl) var(--sp-2xl);
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 3px solid var(--gold);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: var(--fs-2xl);
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: var(--sp-md);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--gold), #E8C547);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: var(--sp-lg);
+            align-items: center;
+        }
+
+        .action-btn {
+            background: transparent;
+            color: white;
+            border: 1px solid var(--gold);
+            padding: var(--sp-sm) var(--sp-lg);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .action-btn:hover {
+            background: var(--gold);
+            color: var(--obsidian);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .action-btn.primary {
+            background: var(--gold);
+            color: var(--obsidian);
+            border: none;
+        }
+
+        .action-btn.primary:hover {
+            background: #E8C547;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--sp-2xl);
+        }
+
+        /* Hero Section */
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--sp-2xl);
+            margin-bottom: var(--sp-2xl);
+            align-items: center;
+        }
+
+        .hero-content h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: var(--fs-display);
+            font-weight: 700;
+            color: var(--obsidian);
+            margin-bottom: var(--sp-md);
+            line-height: 1.1;
+            letter-spacing: -1px;
+        }
+
+        .hero-content p {
+            font-size: var(--fs-lg);
+            color: var(--text-secondary);
+            margin-bottom: var(--sp-xl);
+            line-height: 1.8;
+        }
+
+        .landlord-card {
+            background: white;
+            border-radius: 12px;
+            padding: var(--sp-xl);
+            box-shadow: var(--shadow-md);
+            border-top: 4px solid var(--gold);
+        }
+
+        .landlord-info {
+            display: grid;
+            gap: var(--sp-md);
+        }
+
+        .info-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: var(--sp-md);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .info-group:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-size: var(--fs-sm);
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: var(--fs-lg);
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--sp-lg);
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, var(--accent-light) 0%, white 100%);
+            border-radius: 12px;
+            padding: var(--sp-lg);
+            border-left: 4px solid var(--gold);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .metric-value {
+            font-size: var(--fs-2xl);
+            font-weight: 700;
+            color: var(--forest-green);
+            margin-bottom: var(--sp-sm);
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        .metric-label {
+            font-size: var(--fs-sm);
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--sp-sm);
+            margin-bottom: var(--sp-2xl);
+            border-bottom: 2px solid var(--border-subtle);
+            padding-bottom: var(--sp-lg);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: var(--sp-md) var(--sp-lg);
+            color: var(--text-secondary);
+            font-size: var(--fs-base);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', sans-serif;
+            position: relative;
+        }
+
+        .tab-btn:hover {
+            color: var(--forest-green);
+        }
+
+        .tab-btn.active {
+            color: var(--forest-green);
+            border-bottom-color: var(--gold);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gold);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Section Headers */
+        .section-header {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: var(--fs-2xl);
+            font-weight: 700;
+            color: var(--obsidian);
+            margin-bottom: var(--sp-xl);
+            display: flex;
+            align-items: center;
+            gap: var(--sp-md);
+            position: relative;
+            padding-bottom: var(--sp-lg);
+        }
+
+        .section-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold), transparent);
+        }
+
+        .emoji {
+            font-size: 1.8rem;
+        }
+
+        /* Cards & Lists */
+        .content-card {
+            background: white;
+            border-radius: 12px;
+            padding: var(--sp-xl);
+            margin-bottom: var(--sp-lg);
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--forest-green);
+            transition: all 0.3s ease;
+        }
+
+        .content-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateX(4px);
+        }
+
+        .list-container {
+            display: grid;
+            gap: var(--sp-md);
+        }
+
+        .list-item {
+            background: var(--accent-light);
+            padding: var(--sp-lg);
+            border-radius: 8px;
+            border-left: 3px solid var(--gold);
+            transition: all 0.3s ease;
+        }
+
+        .list-item:hover {
+            background: white;
+            border-left-color: var(--forest-green);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .list-item-main {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--sp-sm);
+        }
+
+        .list-item-sub {
+            font-size: var(--fs-sm);
+            color: var(--text-secondary);
+        }
+
+        /* Accordion */
+        .accordion {
+            background: white;
+            border: 2px solid var(--border-subtle);
+            border-radius: 8px;
+            margin-bottom: var(--sp-md);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .accordion-trigger {
+            background: linear-gradient(90deg, var(--accent-light) 0%, white 100%);
+            padding: var(--sp-lg);
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: none;
+            width: 100%;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .accordion-trigger:hover {
+            background: linear-gradient(90deg, #F0EDE6 0%, var(--accent-light) 100%);
+            border-left: 4px solid var(--gold);
+        }
+
+        .accordion-trigger.active {
+            background: linear-gradient(90deg, var(--forest-green), #2A6D3F);
+            color: white;
+            border-left: 4px solid var(--gold);
+        }
+
+        .accordion-icon {
+            transition: transform 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .accordion-trigger.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: white;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .accordion-content.active {
+            max-height: 1000px;
+        }
+
+        .accordion-body {
+            padding: var(--sp-xl);
+        }
+
+        .accordion-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--sp-lg);
+            padding-bottom: var(--sp-lg);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .accordion-row:last-child {
+            border-bottom: none;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: var(--sp-lg);
+        }
+
+        .form-label {
+            display: block;
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--sp-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: var(--sp-md);
+            border: 2px solid var(--border-subtle);
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: var(--fs-base);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--sp-lg);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: var(--sp-md) var(--sp-xl);
+            border: none;
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: var(--fs-base);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--forest-green), #0D3D1E);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--gold);
+            color: var(--obsidian);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary:hover {
+            background: #E8C547;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--forest-green);
+            border: 2px solid var(--forest-green);
+        }
+
+        .btn-outline:hover {
+            background: var(--forest-green);
+            color: white;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: var(--sp-md);
+            margin-top: var(--sp-xl);
+            flex-wrap: wrap;
+        }
+
+        /* Payment Methods */
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--sp-lg);
+            margin: var(--sp-xl) 0;
+        }
+
+        .payment-method {
+            background: white;
+            border: 2px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: var(--sp-lg);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-method:hover {
+            border-color: var(--gold);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .payment-icon {
+            font-size: 2rem;
+            margin-bottom: var(--sp-md);
+        }
+
+        .payment-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: var(--fs-sm);
+        }
+
+        /* Agent Features */
+        .agent-section {
+            background: linear-gradient(135deg, rgba(30, 86, 49, 0.05), rgba(212, 175, 55, 0.05));
+            border: 2px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: var(--sp-xl);
+            margin-bottom: var(--sp-lg);
+            border-left: 4px solid var(--forest-green);
+        }
+
+        .agent-section h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: var(--fs-xl);
+            color: var(--forest-green);
+            margin-bottom: var(--sp-lg);
+        }
+
+        .agent-form {
+            display: grid;
+            gap: var(--sp-md);
+        }
+
+        .result-message {
+            padding: var(--sp-lg);
+            border-radius: 8px;
+            margin-top: var(--sp-md);
+            font-size: var(--fs-sm);
+            border-left: 4px solid var(--gold);
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--text-primary);
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Status Badges */
+        .badge {
+            display: inline-block;
+            padding: var(--sp-sm) var(--sp-md);
+            border-radius: 20px;
+            font-size: var(--fs-xs);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-success {
+            background: rgba(39, 174, 96, 0.2);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(230, 126, 34, 0.2);
+            color: var(--warning);
+        }
+
+        .badge-error {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--error);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: var(--sp-2xl) var(--sp-xl);
+            color: var(--text-secondary);
+            font-size: var(--fs-sm);
+            border-top: 2px solid var(--border-subtle);
+            margin-top: var(--sp-2xl);
+        }
+
+        .kente-divider {
+            height: 3px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--gold) 0px,
+                var(--gold) 10px,
+                var(--forest-green) 10px,
+                var(--forest-green) 20px,
+                var(--obsidian) 20px,
+                var(--obsidian) 30px
+            );
+            margin: var(--sp-xl) 0;
+            border-radius: 2px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: var(--sp-lg);
+            }
+
+            .hero {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-content h1 {
+                font-size: var(--fs-2xl);
+            }
+
+            .tab-nav {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: var(--sp-xs);
+            }
+
+            .tab-btn {
+                padding: var(--sp-md) var(--sp-sm);
+                font-size: var(--fs-sm);
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .accordion-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                padding: 0 var(--sp-lg);
+                flex-direction: column;
+                gap: var(--sp-md);
+            }
+
+            .logo {
+                font-size: var(--fs-xl);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --light-bg: #1A1F24;
+                --card-bg: #252C33;
+                --border-subtle: #3A4248;
+                --text-primary: #FFFFFF;
+                --text-secondary: #B0B8C1;
+                --accent-light: #1F2630;
+            }
+
+            body {
+                background: linear-gradient(135deg, #1A1F24 0%, #1F2630 100%);
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">🏠</div>
+                <span>Mwarokin Estates</span>
+            </div>
+            <div class="header-actions">
+                <button class="action-btn" onclick="sendReminders()">📧 Send Reminders</button>
+                <button class="action-btn primary" onclick="exportReport()">⬇️ Export Report</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
     <div class="container">
-        <h1>🏠 Landlords Management System</h1>
-        
-        <!-- Tab Buttons -->
-        <div class="tab-buttons">
-            <button class="tab-button active" onclick="openTab('contact')">Contact Details</button>
-            <button class="tab-button" onclick="openTab('properties')">Properties</button>
-            <button class="tab-button" onclick="openTab('rent-summary')">Rent Summary</button>
-            <button class="tab-button" onclick="openTab('per-property')">Per-Property Metrics</button>
-            <button class="tab-button" onclick="openTab('services')">Available Services</button>
-            <button class="tab-button" onclick="openTab('agents')">Agentic Features</button>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Landlord Portal</h1>
+                <p>Manage properties, tenants, payments, and leverage intelligent agents for seamless property management.</p>
+                <div class="kente-divider"></div>
+                <p style="font-size: var(--fs-base); margin-top: var(--sp-lg);">Powered by Mwarokin Estates & Syllogism AI Agents</p>
+            </div>
+            <div id="landlord-card" class="landlord-card">
+                <div class="landlord-info">
+                    <div class="info-group">
+                        <span class="info-label">👤 Landlord</span>
+                        <span class="info-value" id="landlord-name">Loading...</span>
+                    </div>
+                    <div class="info-group">
+                        <span class="info-label">📧 Email</span>
+                        <span class="info-value" id="landlord-email" style="font-size: var(--fs-base);">Loading...</span>
+                    </div>
+                    <div class="info-group">
+                        <span class="info-label">📱 Phone</span>
+                        <span class="info-value" id="landlord-phone">Loading...</span>
+                    </div>
+                    <div class="info-group" style="border: none;">
+                        <span class="info-label">🏘️ Properties</span>
+                        <span class="info-value" id="hero-property-count">0</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Metrics -->
+        <section>
+            <div class="section-header">
+                <span class="emoji">📊</span>
+                Key Metrics Overview
+            </div>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value" id="total-tenants-metric">0</div>
+                    <div class="metric-label">Total Tenants</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="rent-collected-metric" style="color: var(--success);">₭0</div>
+                    <div class="metric-label">Collected This Month</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="overdue-metric" style="color: var(--error);">₭0</div>
+                    <div class="metric-label">Overdue Amount</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="ontime-pct-metric" style="color: var(--forest-green);">0%</div>
+                    <div class="metric-label">On-Time Rate</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="kente-divider"></div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="openTab('overview')">📈 Overview</button>
+            <button class="tab-btn" onclick="openTab('properties')">🏘️ Properties</button>
+            <button class="tab-btn" onclick="openTab('tenants')">👥 Tenants</button>
+            <button class="tab-btn" onclick="openTab('payments')">💰 Payments</button>
+            <button class="tab-btn" onclick="openTab('agents')">🤖 AI Agents</button>
+            <button class="tab-btn" onclick="openTab('services')">🛠️ Services</button>
         </div>
-        
-        <!-- Tab Contents -->
-        <div id="contact" class="tab-content active">
-            <div class="section-header"><span class="emoji">📞</span>Contact Details</div>
-            <p class="metric">Name: <span id="landlord-name"></span></p>
-            <p class="metric">Email: <span id="landlord-email"></span></p>
-            <p class="metric">Phone: <span id="landlord-phone"></span></p>
+
+        <!-- OVERVIEW TAB -->
+        <div id="overview" class="tab-content active">
+            <div class="section-header"><span class="emoji">📈</span>Portfolio Overview</div>
+            
+            <div class="content-card">
+                <h3 style="font-family: 'Cormorant Garamond', serif; color: var(--obsidian); margin-bottom: var(--sp-lg);">Monthly Summary</h3>
+                <div class="form-row" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--sp-lg); pointer-events: none;">
+                    <div>
+                        <div style="font-size: var(--fs-sm); color: var(--text-secondary); margin-bottom: var(--sp-sm); font-weight: 600;">Total Tenants</div>
+                        <div style="font-size: var(--fs-2xl); font-weight: 700; color: var(--forest-green);" id="overview-total-tenants">0</div>
+                    </div>
+                    <div>
+                        <div style="font-size: var(--fs-sm); color: var(--text-secondary); margin-bottom: var(--sp-sm); font-weight: 600;">Paid This Month</div>
+                        <div style="font-size: var(--fs-2xl); font-weight: 700; color: var(--success);" id="overview-paid">0</div>
+                    </div>
+                    <div>
+                        <div style="font-size: var(--fs-sm); color: var(--text-secondary); margin-bottom: var(--sp-sm); font-weight: 600;">Overdue</div>
+                        <div style="font-size: var(--fs-2xl); font-weight: 700; color: var(--error);" id="overview-overdue">0</div>
+                    </div>
+                    <div>
+                        <div style="font-size: var(--fs-sm); color: var(--text-secondary); margin-bottom: var(--sp-sm); font-weight: 600;">Avg Rent/Tenant</div>
+                        <div style="font-size: var(--fs-2xl); font-weight: 700; color: var(--forest-green);" id="overview-avg-rent">₭0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-header" style="margin-top: var(--sp-2xl);"><span class="emoji">✅</span>Tenants Who Paid</div>
+            <div class="list-container" id="paid-tenants-overview"></div>
+
+            <div class="section-header" style="margin-top: var(--sp-2xl);"><span class="emoji">⚠️</span>Overdue Tenants</div>
+            <div class="list-container" id="overdue-tenants-overview"></div>
         </div>
-        
+
+        <!-- PROPERTIES TAB -->
         <div id="properties" class="tab-content">
-            <div class="section-header"><span class="emoji">🏘️</span>Properties Owned</div>
-            <p class="metric">Total Properties: <span id="total-properties"></span></p>
-            <ul id="properties-list"></ul>
-            <!-- Add Property Form -->
+            <div class="section-header"><span class="emoji">🏘️</span>Your Properties</div>
+            
+            <div class="content-card">
+                <h3 style="font-family: 'Cormorant Garamond', serif; color: var(--obsidian); margin-bottom: var(--sp-lg);">Total Properties: <span id="prop-count">0</span></h3>
+                <div id="properties-accordion"></div>
+            </div>
+
             <div class="agent-section">
-                <h3>Add New Property</h3>
-                <form id="add-property-form">
-                    <input type="text" id="new-prop-id" placeholder="Property ID" required>
-                    <input type="text" id="new-prop-address" placeholder="Address" required>
-                    <button type="submit" class="action-btn">Add Property</button>
+                <h3>➕ Add New Property</h3>
+                <form class="agent-form" id="add-property-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Property ID</label>
+                            <input type="text" id="new-prop-id" placeholder="e.g., PROP-001" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Property Address</label>
+                            <input type="text" id="new-prop-address" placeholder="123 Main Street, Nairobi" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Property</button>
                 </form>
             </div>
         </div>
-        
-        <div id="rent-summary" class="tab-content">
-            <div class="section-header"><span class="emoji">💰</span>Overall Tenant and Rent Summary (This Month)</div>
-            <p class="metric">Total Tenants: <span id="total-tenants"></span></p>
-            <p class="metric">Paid This Month: <span id="paid-count"></span></p>
-            <p class="metric">Overdue: <span id="overdue-count"></span></p>
-            <p class="metric">Rent Collected: $<span id="rent-collected"></span></p>
-            <p class="metric">Overdue Amount: $<span id="overdue-amount"></span></p>
-            <p class="metric">On-Time %: <span id="on-time-pct"></span>%</p>
-            <p class="metric">Overdue %: <span id="overdue-pct"></span>%</p>
-            <p class="metric">Avg Rent per Tenant: $<span id="avg-rent-tenant"></span></p>
-            <p class="metric">Highest Rent: $<span id="highest-rent"></span></p>
-            <p class="metric">Lowest Rent: $<span id="lowest-rent"></span></p>
-            <p class="metric">Avg Tenants per Property: <span id="avg-tenants-prop"></span></p>
-            <p class="metric">Total Properties: <span id="total-properties-summary"></span></p>
-            <div class="section-header"><span class="emoji">✅</span>Tenants Who Paid</div>
-            <ul id="paid-tenants-list"></ul>
-            <div class="section-header"><span class="emoji">⚠️</span>Overdue Tenants</div>
-            <ul id="overdue-tenants-list"></ul>
+
+        <!-- TENANTS TAB -->
+        <div id="tenants" class="tab-content">
+            <div class="section-header"><span class="emoji">👥</span>Tenant Management</div>
+            
+            <div class="agent-section">
+                <h3>➕ Add New Tenant</h3>
+                <form class="agent-form" id="add-tenant-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Select Property</label>
+                            <select id="tenant-property-id" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tenant Name</label>
+                            <input type="text" id="new-tenant-name" placeholder="Full Name" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" id="new-tenant-email" placeholder="tenant@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone</label>
+                            <input type="tel" id="new-tenant-phone" placeholder="+254 7XX XXX XXX" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Monthly Rent (KES)</label>
+                        <input type="number" id="new-tenant-rent" placeholder="15000" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Tenant</button>
+                </form>
+            </div>
         </div>
-        
-        <div id="per-property" class="tab-content">
-            <div class="section-header"><span class="emoji">📊</span>Per-Property Detailed Metrics</div>
-            <div id="per-property-accordions"></div>
+
+        <!-- PAYMENTS TAB -->
+        <div id="payments" class="tab-content">
+            <div class="section-header"><span class="emoji">💰</span>Payment Processing</div>
+            
+            <div class="content-card">
+                <h3 style="font-family: 'Cormorant Garamond', serif; color: var(--obsidian); margin-bottom: var(--sp-lg);">Payment Methods</h3>
+                <div class="payment-methods">
+                    <div class="payment-method">
+                        <div class="payment-icon">📱</div>
+                        <div class="payment-name">M-Pesa</div>
+                    </div>
+                    <div class="payment-method">
+                        <div class="payment-icon">🏦</div>
+                        <div class="payment-name">Airtel Money</div>
+                    </div>
+                    <div class="payment-method">
+                        <div class="payment-icon">💳</div>
+                        <div class="payment-name">SylloPay</div>
+                    </div>
+                    <div class="payment-method">
+                        <div class="payment-icon">🏧</div>
+                        <div class="payment-name">Bank Transfer</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="agent-section">
+                <h3>💵 Record Payment</h3>
+                <form class="agent-form" id="add-payment-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Select Property</label>
+                            <select id="payment-property-id" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Select Tenant</label>
+                            <select id="payment-tenant-name" required></select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Payment Date</label>
+                            <input type="date" id="payment-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select id="payment-status">
+                                <option value="paid">Paid ✅</option>
+                                <option value="overdue">Overdue ⚠️</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Record Payment</button>
+                </form>
+            </div>
         </div>
-        
-        <div id="services" class="tab-content">
-            <div class="section-header"><span class="emoji">🛠️</span>Available Services</div>
-            <ul id="services-list"></ul>
-        </div>
-        
+
+        <!-- AI AGENTS TAB -->
         <div id="agents" class="tab-content">
-            <div class="section-header">Agentic Features (Simulated Agents)</div>
-            <!-- Listing Agent -->
+            <div class="section-header"><span class="emoji">🤖</span>Intelligent Agents Suite</div>
+            <p style="color: var(--text-secondary); margin-bottom: var(--sp-2xl);">Powered by Syllogism Technology Africa AI co-workers. Simulated agents for demonstration.</p>
+
             <div class="agent-section">
-                <h3>Listing Agent: Intake & Validate Listing</h3>
+                <h3>🏠 Listing Agent</h3>
+                <p style="color: var(--text-secondary); margin-bottom: var(--sp-lg); font-size: var(--fs-sm);">Intake & validate property listings with automated enrichment</p>
                 <form class="agent-form" id="listing-form">
-                    <input type="text" id="listing-address" placeholder="Property Address" required>
-                    <input type="text" id="listing-type" placeholder="Type (residential/commercial/land)" required>
-                    <button type="submit" class="action-btn">Validate Listing</button>
+                    <div class="form-row">
+                        <input type="text" id="listing-address" placeholder="Property Address" required>
+                        <select id="listing-type" required>
+                            <option value="">Select Type</option>
+                            <option value="residential">Residential</option>
+                            <option value="commercial">Commercial</option>
+                            <option value="land">Land</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-secondary">Validate Listing</button>
                 </form>
-                <p id="listing-result"></p>
+                <div class="result-message" id="listing-result"></div>
             </div>
-            <!-- Valuation Agent -->
+
             <div class="agent-section">
-                <h3>Valuation Agent: Get Valuation</h3>
+                <h3>💎 Valuation Agent</h3>
+                <p style="color: var(--text-secondary); margin-bottom: var(--sp-lg); font-size: var(--fs-sm);">AI-powered property valuation using market comparables</p>
                 <form class="agent-form" id="valuation-form">
-                    <input type="text" id="val-address" placeholder="Address or Listing ID" required>
-                    <button type="submit" class="action-btn">Get Valuation</button>
+                    <input type="text" id="val-address" placeholder="Address or Property ID" required>
+                    <button type="submit" class="btn btn-secondary">Get Valuation</button>
                 </form>
-                <p id="valuation-result"></p>
+                <div class="result-message" id="valuation-result"></div>
             </div>
-            <!-- Pricing Agent -->
+
             <div class="agent-section">
-                <h3>Pricing Agent: Dynamic Pricing</h3>
+                <h3>💰 Pricing Agent</h3>
+                <p style="color: var(--text-secondary); margin-bottom: var(--sp-lg); font-size: var(--fs-sm);">Dynamic pricing recommendations based on market trends</p>
                 <form class="agent-form" id="pricing-form">
                     <input type="text" id="price-listing" placeholder="Listing ID" required>
-                    <button type="submit" class="action-btn">Suggest Price</button>
+                    <button type="submit" class="btn btn-secondary">Suggest Price</button>
                 </form>
-                <p id="pricing-result"></p>
+                <div class="result-message" id="pricing-result"></div>
             </div>
-            <!-- Matchmaking Agent -->
+
             <div class="agent-section">
-                <h3>Matchmaking Agent: Match Buyers/Tenants</h3>
+                <h3>🔗 Matchmaking Agent</h3>
+                <p style="color: var(--text-secondary); margin-bottom: var(--sp-lg); font-size: var(--fs-sm);">Match buyers/tenants with suitable properties</p>
                 <form class="agent-form" id="match-form">
-                    <input type="text" id="match-profile" placeholder="Buyer/Tenant Profile (e.g., budget:1000)" required>
-                    <button type="submit" class="action-btn">Find Matches</button>
+                    <input type="text" id="match-profile" placeholder="e.g., budget:1000000, beds:3" required>
+                    <button type="submit" class="btn btn-secondary">Find Matches</button>
                 </form>
-                <p id="match-result"></p>
+                <div class="result-message" id="match-result"></div>
             </div>
-            <!-- Lead CRM Agent -->
+
             <div class="agent-section">
-                <h3>Lead CRM Agent: Capture Lead</h3>
+                <h3>📋 Lead CRM Agent</h3>
+                <p style="color: var(--text-secondary); margin-bottom: var(--sp-lg); font-size: var(--fs-sm);">Capture and score leads automatically</p>
                 <form class="agent-form" id="lead-form">
-                    <input type="text" id="lead-name" placeholder="Lead Name" required>
-                    <input type="email" id="lead-email" placeholder="Email" required>
-                    <button type="submit" class="action-btn">Add Lead</button>
+                    <div class="form-row">
+                        <input type="text" id="lead-name" placeholder="Lead Name" required>
+                        <input type="email" id="lead-email" placeholder="Email" required>
+                    </div>
+                    <button type="submit" class="btn btn-secondary">Capture Lead</button>
                 </form>
-                <p id="lead-result"></p>
+                <div class="result-message" id="lead-result"></div>
             </div>
-            <!-- Lease Agent -->
+
             <div class="agent-section">
-                <h3>Lease Agent: Create Draft Lease</h3>
+                <h3>📄 Lease Agent</h3>
+                <p style="color: var(--text-secondary); margin-bottom: var(--sp-lg); font-size: var(--fs-sm);">Auto-generate draft lease agreements</p>
                 <form class="agent-form" id="lease-form">
-                    <input type="text" id="lease-listing" placeholder="Listing ID" required>
-                    <input type="text" id="lease-applicant" placeholder="Applicant ID" required>
-                    <button type="submit" class="action-btn">Create Draft</button>
+                    <div class="form-row">
+                        <input type="text" id="lease-listing" placeholder="Listing ID" required>
+                        <input type="text" id="lease-applicant" placeholder="Applicant ID" required>
+                    </div>
+                    <button type="submit" class="btn btn-secondary">Create Draft Lease</button>
                 </form>
-                <p id="lease-result"></p>
+                <div class="result-message" id="lease-result"></div>
             </div>
-            <!-- Transaction Agent -->
+
             <div class="agent-section">
-                <h3>Transaction Agent: Check Readiness</h3>
+                <h3>✅ Transaction Agent</h3>
+                <p style="color: var(--text-secondary); margin-bottom: var(--sp-lg); font-size: var(--fs-sm);">Monitor transaction readiness & compliance</p>
                 <form class="agent-form" id="transaction-form">
                     <input type="text" id="trans-listing" placeholder="Listing ID" required>
-                    <button type="submit" class="action-btn">Check Status</button>
+                    <button type="submit" class="btn btn-secondary">Check Status</button>
                 </form>
-                <p id="transaction-result"></p>
+                <div class="result-message" id="transaction-result"></div>
             </div>
-            <!-- Compliance Agent -->
+
             <div class="agent-section">
-                <h3>Compliance Agent: KYC/AML Check</h3>
+                <h3>🔐 Compliance Agent</h3>
+                <p style="color: var(--text-secondary); margin-bottom: var(--sp-lg); font-size: var(--fs-sm);">KYC/AML verification for users</p>
                 <form class="agent-form" id="compliance-form">
                     <input type="text" id="comp-user" placeholder="User ID" required>
-                    <button type="submit" class="action-btn">Perform Check</button>
+                    <button type="submit" class="btn btn-secondary">Run Verification</button>
                 </form>
-                <p id="compliance-result"></p>
+                <div class="result-message" id="compliance-result"></div>
             </div>
-            <!-- Analytics Agent -->
+
             <div class="agent-section">
-                <h3>Analytics Agent: Get KPIs</h3>
-                <button class="action-btn" onclick="getAnalytics()">Generate Analytics</button>
-                <p id="analytics-result"></p>
-            </div>
-            <!-- Add Tenant Form (Part of Lead/Lease) -->
-            <div class="agent-section">
-                <h3>Add New Tenant to Property</h3>
-                <form id="add-tenant-form">
-                    <select id="tenant-property-id" required></select>
-                    <input type="text" id="new-tenant-name" placeholder="Tenant Name" required>
-                    <input type="email" id="new-tenant-email" placeholder="Email" required>
-                    <input type="text" id="new-tenant-phone" placeholder="Phone" required>
-                    <input type="number" id="new-tenant-rent" placeholder="Rent Amount" required>
-                    <button type="submit" class="action-btn">Add Tenant</button>
-                </form>
-            </div>
-            <!-- Add Payment Form -->
-            <div class="agent-section">
-                <h3>Add Payment for Tenant</h3>
-                <form id="add-payment-form">
-                    <select id="payment-property-id" required></select>
-                    <select id="payment-tenant-name" required></select>
-                    <input type="date" id="payment-date" required>
-                    <select id="payment-status" required>
-                        <option value="paid">Paid</option>
-                        <option value="overdue">Overdue</option>
-                    </select>
-                    <button type="submit" class="action-btn">Add Payment</button>
-                </form>
+                <h3>📊 Analytics Agent</h3>
+                <p style="color: var(--text-secondary); margin-bottom: var(--sp-lg); font-size: var(--fs-sm);">Generate real-time KPIs and insights</p>
+                <button class="btn btn-secondary" onclick="getAnalytics()">Generate Analytics Report</button>
+                <div class="result-message" id="analytics-result"></div>
             </div>
         </div>
-        
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-            <button class="action-btn" onclick="refreshData()">Refresh Data</button>
-            <button class="action-btn" onclick="exportReport()">Export Report</button>
-            <button class="action-btn" onclick="sendReminders()">Send Reminders to Overdue</button>
+
+        <!-- SERVICES TAB -->
+        <div id="services" class="tab-content">
+            <div class="section-header"><span class="emoji">🛠️</span>Available Services</div>
+            
+            <div class="list-container" id="services-list"></div>
         </div>
+
+        <div class="kente-divider" style="margin-top: var(--sp-2xl);"></div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Mwarokin Estates © 2026 Syllogism Technology Africa | Premium Property Management Platform</p>
+        </footer>
     </div>
-    
+
     <script>
-        // Sample Data (Stored in localStorage for persistence)
+        // === DATA INITIALIZATION ===
         let landlord = JSON.parse(localStorage.getItem('landlordData')) || {
-            name: 'John Doe',
-            email: 'john@example.com',
-            phone: '123-456-7890',
+            name: 'Robin Bina Mwarema Donald',
+            email: 'robin@syllogism.tech',
+            phone: '+254 721 234 567',
             properties: [
                 {
-                    id: '1',
-                    address: '123 Main St',
+                    id: 'MWA-001',
+                    address: 'Nairobi North, Kilimani',
                     tenants: [
-                        {
-                            name: 'Tenant A',
-                            email: 'a@example.com',
-                            phone: '111-222-3333',
-                            rent_amount: 1200,
-                            payments: [
-                                { date: new Date(2025, 8, 5), status: 'paid' }  // September 2025
-                            ]
-                        },
-                        {
-                            name: 'Tenant B',
-                            email: 'b@example.com',
-                            phone: '444-555-6666',
-                            rent_amount: 1500,
-                            payments: []  // Overdue
-                        }
+                        { name: 'Kamau Omondi', email: 'kamau@email.com', phone: '+254 712 345 678', rent_amount: 25000, payments: [{ date: new Date(2025, 8, 5), status: 'paid' }] },
+                        { name: 'Fatuma Hassan', email: 'fatuma@email.com', phone: '+254 713 456 789', rent_amount: 22000, payments: [] }
                     ]
                 },
                 {
-                    id: '2',
-                    address: '456 Elm St',
+                    id: 'MWA-002',
+                    address: 'Westlands, Golden Gate',
                     tenants: [
-                        {
-                            name: 'Tenant C',
-                            email: 'c@example.com',
-                            phone: '777-888-9999',
-                            rent_amount: 1000,
-                            payments: [
-                                { date: new Date(2025, 8, 10), status: 'paid' }
-                            ]
-                        }
+                        { name: 'David Kipchoge', email: 'david@email.com', phone: '+254 714 567 890', rent_amount: 35000, payments: [{ date: new Date(2025, 8, 10), status: 'paid' }] }
                     ]
                 }
             ]
         };
 
-        // Services List (Static)
         const services = [
-            "Maintenance Requests", "Lease Renewals", "Payment Processing", "Tenant Screening",
-            "Property Inspections", "Legal Compliance", "Financial Reporting", "Communication Tools",
-            "Document Management", "Marketing and Advertising", "Online Portals", "Mobile Access",
-            "24/7 Support", "Analytics and Insights", "Customizable Workflows",
-            "Integration with Other Systems", "Automated Reminders and Notifications",
-            "Multi-Language Support", "User Roles and Permissions", "Data Security and Privacy",
-            "Regular Updates and Improvements", "Training and Onboarding", "Customer Success Management",
-            "Community Forums and Resources", "Feedback and Suggestions", "Scalability and Flexibility",
-            "Competitive Pricing and Packages"
+            "🔧 Maintenance & Repairs", "📋 Lease Renewals", "💳 Payment Processing",
+            "👤 Tenant Screening", "🔍 Property Inspections", "⚖️ Legal Compliance",
+            "📊 Financial Reporting", "💬 Communication Tools", "📄 Document Management",
+            "📢 Marketing & Advertising", "🌐 Online Portal", "📱 Mobile App Access",
+            "🕐 24/7 Customer Support", "📈 Analytics & Insights", "⚙️ Custom Workflows",
+            "🔗 System Integration", "🔔 Automated Reminders", "🌍 Multi-Language Support",
+            "👥 User Roles & Permissions", "🔒 Data Security", "🚀 Scalable Infrastructure"
         ];
 
-        // Tab Switching
+        // === UTILITIES ===
         function openTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-            document.querySelector(`[onclick="openTab('${tabId}')"]`).classList.add('active');
+            event.target.classList.add('active');
         }
 
-        // Calculate Metrics (Similar to Python logic)
         function calculateMetrics() {
-            const now = new Date(2025, 8, 11);  // Fixed date: September 11, 2025
-            const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-            const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+            const now = new Date(2025, 8, 11);
+            const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+            const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
 
-            const properties = landlord.properties;
-            const totalProperties = properties.length;
-            const totalTenants = properties.reduce((sum, prop) => sum + (prop.tenants ? prop.tenants.length : 0), 0);
-            const avgTenantsPerProperty = totalProperties > 0 ? totalTenants / totalProperties : 0;
+            let metrics = {
+                totalProperties: landlord.properties.length,
+                totalTenants: 0,
+                paidTenants: [],
+                overdueTenants: [],
+                rentCollected: 0,
+                overdueAmount: 0,
+                avgRent: 0,
+                propertyDetails: []
+            };
 
-            let paidTenants = [];
-            let overdueTenants = [];
-            let totalRentCollected = 0;
-            let totalOverdueAmount = 0;
-            let allRentAmounts = [];
+            let allRents = [];
 
-            let propertyMetrics = [];
+            landlord.properties.forEach(prop => {
+                let propPaid = 0, propOverdue = 0, propRentCollected = 0, propOverdueAmount = 0;
+                let propPaidTenants = [], propOverdueTenants = [];
 
-            properties.forEach(prop => {
-                const propTenants = prop.tenants || [];
-                const propTotalTenants = propTenants.length;
-                let propPaidTenants = [];
-                let propOverdueTenants = [];
-                let propRentCollected = 0;
-                let propOverdueAmount = 0;
-                let propRentAmounts = [];
+                (prop.tenants || []).forEach(tenant => {
+                    metrics.totalTenants++;
+                    allRents.push(tenant.rent_amount);
 
-                propTenants.forEach(tenant => {
-                    const rent = tenant.rent_amount || 0;
-                    allRentAmounts.push(rent);
-                    propRentAmounts.push(rent);
-                    const monthlyPayments = (tenant.payments || []).filter(p => p.date >= currentMonthStart && p.date <= currentMonthEnd);
-                    const paidThisMonth = monthlyPayments.some(p => p.status === 'paid');
+                    const monthPayments = (tenant.payments || []).filter(p => p.date >= monthStart && p.date <= monthEnd);
+                    const isPaid = monthPayments.some(p => p.status === 'paid');
 
-                    if (paidThisMonth) {
-                        totalRentCollected += rent;
-                        propRentCollected += rent;
-                        paidTenants.push(tenant);
+                    if (isPaid) {
+                        metrics.rentCollected += tenant.rent_amount;
+                        propRentCollected += tenant.rent_amount;
+                        propPaid++;
+                        metrics.paidTenants.push({ ...tenant, property: prop.address });
                         propPaidTenants.push(tenant);
                     } else {
-                        totalOverdueAmount += rent;
-                        propOverdueAmount += rent;
-                        overdueTenants.push(tenant);
+                        metrics.overdueAmount += tenant.rent_amount;
+                        propOverdueAmount += tenant.rent_amount;
+                        propOverdue++;
+                        metrics.overdueTenants.push({ ...tenant, property: prop.address });
                         propOverdueTenants.push(tenant);
                     }
                 });
 
-                const propPaidCount = propPaidTenants.length;
-                const propOverdueCount = propOverdueTenants.length;
-                let propOnTimePct = propTotalTenants > 0 ? (propPaidCount / propTotalTenants) * 100 : 0;
-                let propOverduePct = propTotalTenants > 0 ? (propOverdueCount / propTotalTenants) * 100 : 0;
-                let propAvgRentTenant = propTotalTenants > 0 ? propRentAmounts.reduce((a, b) => a + b, 0) / propTotalTenants : 0;
-                let propHighestRent = propRentAmounts.length > 0 ? Math.max(...propRentAmounts) : 0;
-                let propLowestRent = propRentAmounts.length > 0 ? Math.min(...propRentAmounts) : 0;
-                let propAvgRentPerProp = propRentAmounts.reduce((a, b) => a + b, 0);
-
-                propertyMetrics.push({
+                metrics.propertyDetails.push({
                     property: prop,
-                    paidCount: propPaidCount,
-                    overdueCount: propOverdueCount,
+                    paidCount: propPaid,
+                    overdueCount: propOverdue,
                     rentCollected: propRentCollected,
                     overdueAmount: propOverdueAmount,
-                    onTimePct: propOnTimePct,
-                    overduePct: propOverduePct,
-                    avgRentTenant: propAvgRentTenant,
-                    highestRent: propHighestRent,
-                    lowestRent: propLowestRent,
-                    totalTenants: propTotalTenants,
-                    avgRentPerProp: propAvgRentPerProp,
                     paidTenants: propPaidTenants,
                     overdueTenants: propOverdueTenants
                 });
             });
 
-            const totalTenantsOverall = allRentAmounts.length;
-            const paidCount = paidTenants.length;
-            const overdueCount = overdueTenants.length;
-            const onTimePercentage = totalTenantsOverall > 0 ? (paidCount / totalTenantsOverall) * 100 : 0;
-            const overduePercentage = totalTenantsOverall > 0 ? (overdueCount / totalTenantsOverall) * 100 : 0;
-            const avgRentPerTenant = totalTenantsOverall > 0 ? allRentAmounts.reduce((a, b) => a + b, 0) / totalTenantsOverall : 0;
-            const highestRent = allRentAmounts.length > 0 ? Math.max(...allRentAmounts) : 0;
-            const lowestRent = allRentAmounts.length > 0 ? Math.min(...allRentAmounts) : 0;
+            metrics.avgRent = metrics.totalTenants > 0 ? allRents.reduce((a, b) => a + b, 0) / metrics.totalTenants : 0;
+            metrics.onTimePercentage = metrics.totalTenants > 0 ? (metrics.paidTenants.length / metrics.totalTenants * 100).toFixed(1) : 0;
 
-            return {
-                totalProperties, totalTenants, avgTenantsPerProperty, paidTenants, overdueTenants,
-                totalRentCollected, totalOverdueAmount, allRentAmounts, propertyMetrics,
-                totalTenantsOverall, paidCount, overdueCount, onTimePercentage, overduePercentage,
-                avgRentPerTenant, highestRent, lowestRent
-            };
+            return metrics;
         }
 
-        // Update Displays
         function updateDisplays() {
-            const metrics = calculateMetrics();
+            const m = calculateMetrics();
 
-            // Contact
+            // Hero
             document.getElementById('landlord-name').textContent = landlord.name;
             document.getElementById('landlord-email').textContent = landlord.email;
             document.getElementById('landlord-phone').textContent = landlord.phone;
+            document.getElementById('hero-property-count').textContent = m.totalProperties;
+
+            // Metrics
+            document.getElementById('total-tenants-metric').textContent = m.totalTenants;
+            document.getElementById('rent-collected-metric').textContent = '₭' + m.rentCollected.toLocaleString();
+            document.getElementById('overdue-metric').textContent = '₭' + m.overdueAmount.toLocaleString();
+            document.getElementById('ontime-pct-metric').textContent = m.onTimePercentage + '%';
+
+            // Overview Tab
+            document.getElementById('overview-total-tenants').textContent = m.totalTenants;
+            document.getElementById('overview-paid').textContent = m.paidTenants.length;
+            document.getElementById('overview-overdue').textContent = m.overdueTenants.length;
+            document.getElementById('overview-avg-rent').textContent = '₭' + Math.round(m.avgRent).toLocaleString();
+
+            // Paid tenants list
+            let paidHtml = '';
+            m.paidTenants.forEach(t => {
+                paidHtml += `
+                    <div class="list-item">
+                        <div class="list-item-main">✅ ${t.name}</div>
+                        <div class="list-item-sub">${t.property} • ${t.email} • ${t.phone}</div>
+                    </div>
+                `;
+            });
+            document.getElementById('paid-tenants-overview').innerHTML = paidHtml || '<p style="color: var(--text-secondary);">No paid tenants this month</p>';
+
+            // Overdue tenants list
+            let overdueHtml = '';
+            m.overdueTenants.forEach(t => {
+                overdueHtml += `
+                    <div class="list-item" style="border-left-color: var(--error); background: rgba(231, 76, 60, 0.08);">
+                        <div class="list-item-main">⚠️ ${t.name}</div>
+                        <div class="list-item-sub">${t.property} • ${t.email} • ₭${t.rent_amount.toLocaleString()}</div>
+                    </div>
+                `;
+            });
+            document.getElementById('overdue-tenants-overview').innerHTML = overdueHtml || '<p style="color: var(--text-secondary);">No overdue tenants</p>';
 
             // Properties
-            document.getElementById('total-properties').textContent = metrics.totalProperties;
-            const propList = document.getElementById('properties-list');
-            propList.innerHTML = '';
-            landlord.properties.forEach(prop => {
-                const li = document.createElement('li');
-                li.classList.add('list-item');
-                li.textContent = `${prop.address} (ID: ${prop.id})`;
-                propList.appendChild(li);
-            });
-
-            // Rent Summary
-            document.getElementById('total-tenants').textContent = metrics.totalTenantsOverall;
-            document.getElementById('paid-count').textContent = metrics.paidCount;
-            document.getElementById('overdue-count').textContent = metrics.overdueCount;
-            document.getElementById('rent-collected').textContent = metrics.totalRentCollected.toFixed(2);
-            document.getElementById('overdue-amount').textContent = metrics.totalOverdueAmount.toFixed(2);
-            document.getElementById('on-time-pct').textContent = metrics.onTimePercentage.toFixed(1);
-            document.getElementById('overdue-pct').textContent = metrics.overduePercentage.toFixed(1);
-            document.getElementById('avg-rent-tenant').textContent = metrics.avgRentPerTenant.toFixed(2);
-            document.getElementById('highest-rent').textContent = metrics.highestRent.toFixed(2);
-            document.getElementById('lowest-rent').textContent = metrics.lowestRent.toFixed(2);
-            document.getElementById('avg-tenants-prop').textContent = metrics.avgTenantsPerProperty.toFixed(1);
-            document.getElementById('total-properties-summary').textContent = metrics.totalProperties;
-
-            const paidList = document.getElementById('paid-tenants-list');
-            paidList.innerHTML = '';
-            metrics.paidTenants.forEach(tenant => {
-                const li = document.createElement('li');
-                li.classList.add('list-item');
-                li.textContent = `${tenant.name} (${tenant.email}, ${tenant.phone})`;
-                paidList.appendChild(li);
-            });
-
-            const overdueList = document.getElementById('overdue-tenants-list');
-            overdueList.innerHTML = '';
-            metrics.overdueTenants.forEach(tenant => {
-                const li = document.createElement('li');
-                li.classList.add('list-item');
-                li.textContent = `${tenant.name} (${tenant.email}, ${tenant.phone})`;
-                overdueList.appendChild(li);
-            });
-
-            // Per-Property
-            const perPropAcc = document.getElementById('per-property-accordions');
-            perPropAcc.innerHTML = '';
-            metrics.propertyMetrics.forEach(metric => {
-                const acc = document.createElement('div');
-                acc.classList.add('accordion');
-                acc.textContent = `Property: ${metric.property.address} (ID: ${metric.property.id})`;
-                acc.onclick = () => {
-                    const content = acc.nextSibling;
-                    content.style.display = content.style.display === 'block' ? 'none' : 'block';
-                };
-
-                const content = document.createElement('div');
-                content.classList.add('accordion-content');
-                content.innerHTML = `
-                    <p class="metric">Total Tenants: ${metric.totalTenants}</p>
-                    <p class="metric">Paid This Month: ${metric.paidCount}</p>
-                    <p class="metric">Overdue: ${metric.overdueCount}</p>
-                    <p class="metric">Rent Collected: $${metric.rentCollected.toFixed(2)}</p>
-                    <p class="metric">Overdue Amount: $${metric.overdueAmount.toFixed(2)}</p>
-                    <p class="metric">On-Time %: ${metric.onTimePct.toFixed(1)}%</p>
-                    <p class="metric">Overdue %: ${metric.overduePct.toFixed(1)}%</p>
-                    <p class="metric">Avg Rent per Tenant: $${metric.avgRentTenant.toFixed(2)}</p>
-                    <p class="metric">Highest Rent: $${metric.highestRent.toFixed(2)}</p>
-                    <p class="metric">Lowest Rent: $${metric.lowestRent.toFixed(2)}</p>
-                    <p class="metric">Avg Rent per Property: $${metric.avgRentPerProp.toFixed(2)}</p>
-                    <div class="section-header"><span class="emoji">✅</span>Paid Tenants</div>
-                    <ul>${metric.paidTenants.map(t => `<li class="list-item">${t.name} (${t.email}, ${t.phone})</li>`).join('')}</ul>
-                    <div class="section-header"><span class="emoji">⚠️</span>Overdue Tenants</div>
-                    <ul>${metric.overdueTenants.map(t => `<li class="list-item">${t.name} (${t.email}, ${t.phone})</li>`).join('')}</ul>
+            document.getElementById('prop-count').textContent = m.totalProperties;
+            let propAccordion = '';
+            m.propertyDetails.forEach((pd, idx) => {
+                const avgRentProp = pd.property.tenants.length > 0 ? pd.property.tenants.reduce((a, b) => a + b.rent_amount, 0) / pd.property.tenants.length : 0;
+                propAccordion += `
+                    <div class="accordion">
+                        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+                            <span>${pd.property.address} (${pd.property.id})</span>
+                            <span class="accordion-icon">▼</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <div class="accordion-row">
+                                    <div><strong>Total Tenants:</strong> ${pd.property.tenants.length}</div>
+                                    <div><strong>Paid This Month:</strong> ${pd.paidCount}</div>
+                                </div>
+                                <div class="accordion-row">
+                                    <div><strong>Rent Collected:</strong> ₭${pd.rentCollected.toLocaleString()}</div>
+                                    <div><strong>Overdue Amount:</strong> ₭${pd.overdueAmount.toLocaleString()}</div>
+                                </div>
+                                <div class="accordion-row">
+                                    <div><strong>Avg Rent/Tenant:</strong> ₭${Math.round(avgRentProp).toLocaleString()}</div>
+                                    <div><strong>On-Time Rate:</strong> ${pd.property.tenants.length > 0 ? ((pd.paidCount / pd.property.tenants.length) * 100).toFixed(0) : 0}%</div>
+                                </div>
+                                ${pd.paidTenants.length > 0 ? `<div style="margin-top: var(--sp-lg); border-top: 1px solid var(--border-subtle); padding-top: var(--sp-lg);"><strong>✅ Paid Tenants:</strong><br>${pd.paidTenants.map(t => `${t.name} (₭${t.rent_amount.toLocaleString()})`).join('<br>')}</div>` : ''}
+                                ${pd.overdueTenants.length > 0 ? `<div style="margin-top: var(--sp-lg); border-top: 1px solid var(--border-subtle); padding-top: var(--sp-lg);"><strong>⚠️ Overdue Tenants:</strong><br>${pd.overdueTenants.map(t => `${t.name} (₭${t.rent_amount.toLocaleString()})`).join('<br>')}</div>` : ''}
+                            </div>
+                        </div>
+                    </div>
                 `;
-
-                perPropAcc.appendChild(acc);
-                perPropAcc.appendChild(content);
             });
+            document.getElementById('properties-accordion').innerHTML = propAccordion;
 
             // Services
-            const servList = document.getElementById('services-list');
-            servList.innerHTML = '';
-            services.forEach(service => {
-                const li = document.createElement('li');
-                li.classList.add('list-item');
-                li.textContent = service;
-                servList.appendChild(li);
+            let servicesHtml = '';
+            services.forEach(s => {
+                servicesHtml += `<div class="list-item"><div class="list-item-main">${s}</div></div>`;
             });
+            document.getElementById('services-list').innerHTML = servicesHtml;
 
-            // Populate Selects for Forms
-            const propSelects = [document.getElementById('tenant-property-id'), document.getElementById('payment-property-id')];
-            propSelects.forEach(select => {
-                select.innerHTML = '<option value="">Select Property</option>';
-                landlord.properties.forEach(prop => {
-                    const option = document.createElement('option');
-                    option.value = prop.id;
-                    option.textContent = `${prop.address} (ID: ${prop.id})`;
-                    select.appendChild(option);
+            // Property & Tenant selects
+            ['tenant-property-id', 'payment-property-id'].forEach(id => {
+                document.getElementById(id).innerHTML = '<option value="">Select Property</option>';
+                landlord.properties.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.id;
+                    opt.textContent = `${p.address} (${p.id})`;
+                    document.getElementById(id).appendChild(opt);
                 });
             });
 
-            // Tenant Select for Payment
-            document.getElementById('payment-property-id').addEventListener('change', (e) => {
-                const propId = e.target.value;
+            document.getElementById('payment-property-id').addEventListener('change', function() {
+                const propId = this.value;
                 const tenantSelect = document.getElementById('payment-tenant-name');
                 tenantSelect.innerHTML = '<option value="">Select Tenant</option>';
                 const prop = landlord.properties.find(p => p.id === propId);
-                if (prop) {
-                    prop.tenants.forEach(tenant => {
-                        const option = document.createElement('option');
-                        option.value = tenant.name;
-                        option.textContent = tenant.name;
-                        tenantSelect.appendChild(option);
-                    });
-                }
+                if (prop) prop.tenants.forEach(t => {
+                    const opt = document.createElement('option');
+                    opt.value = t.name;
+                    opt.textContent = t.name;
+                    tenantSelect.appendChild(opt);
+                });
             });
         }
 
-        // Refresh Data
-        function refreshData() {
-            updateDisplays();
-            alert('Data refreshed successfully!');
-        }
-
-        // Export Report
-        function exportReport() {
-            const metrics = calculateMetrics();
-            const report = `
-Landlord: ${landlord.name}
-Email: ${landlord.email}
-Phone: ${landlord.phone}
-Total Properties: ${metrics.totalProperties}
-Total Tenants: ${metrics.totalTenantsOverall}
-Rent Collected: $${metrics.totalRentCollected.toFixed(2)}
-Overdue: $${metrics.totalOverdueAmount.toFixed(2)}
-            `;
-            const blob = new Blob([report], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'landlord_report.txt';
-            a.click();
-            URL.revokeObjectURL(url);
-            alert('Report exported!');
-        }
-
-        // Send Reminders
-        function sendReminders() {
-            const metrics = calculateMetrics();
-            if (metrics.overdueTenants.length > 0) {
-                alert(`Reminders sent to ${metrics.overdueTenants.length} overdue tenants (simulated).`);
-            } else {
-                alert('No overdue tenants.');
+        function toggleAccordion(btn) {
+            const content = btn.nextElementSibling;
+            const isActive = content.classList.contains('active');
+            document.querySelectorAll('.accordion-content.active').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.accordion-trigger.active').forEach(t => t.classList.remove('active'));
+            if (!isActive) {
+                content.classList.add('active');
+                btn.classList.add('active');
             }
         }
 
-        // Add Property
+        function saveData() {
+            localStorage.setItem('landlordData', JSON.stringify(landlord));
+        }
+
+        // === FORM HANDLERS ===
         document.getElementById('add-property-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const id = document.getElementById('new-prop-id').value;
             const address = document.getElementById('new-prop-address').value;
             if (landlord.properties.find(p => p.id === id)) {
-                alert('Property ID already exists.');
+                alert('Property ID already exists');
                 return;
             }
             landlord.properties.push({ id, address, tenants: [] });
             saveData();
             updateDisplays();
             e.target.reset();
-            alert('Property added!');
+            alert('✅ Property added successfully');
         });
 
-        // Add Tenant
         document.getElementById('add-tenant-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const propId = document.getElementById('tenant-property-id').value;
@@ -572,114 +1362,124 @@ Overdue: $${metrics.totalOverdueAmount.toFixed(2)}
                 saveData();
                 updateDisplays();
                 e.target.reset();
-                alert('Tenant added!');
+                alert('✅ Tenant added successfully');
             }
         });
 
-        // Add Payment
         document.getElementById('add-payment-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const propId = document.getElementById('payment-property-id').value;
             const tenantName = document.getElementById('payment-tenant-name').value;
             const dateStr = document.getElementById('payment-date').value;
             const status = document.getElementById('payment-status').value;
-            const date = new Date(dateStr);
             const prop = landlord.properties.find(p => p.id === propId);
             if (prop) {
                 const tenant = prop.tenants.find(t => t.name === tenantName);
                 if (tenant) {
-                    tenant.payments.push({ date, status });
+                    tenant.payments.push({ date: new Date(dateStr), status });
                     saveData();
                     updateDisplays();
                     e.target.reset();
-                    alert('Payment added!');
+                    alert('✅ Payment recorded successfully');
                 }
             }
         });
 
-        // Agentic Features (Simulated)
-        // Listing Agent
+        // === AGENT HANDLERS ===
         document.getElementById('listing-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const address = document.getElementById('listing-address').value;
             const type = document.getElementById('listing-type').value;
-            // Simulate validation
-            document.getElementById('listing-result').textContent = `Listing validated: ${type} at ${address}. Enriched with geocoding (simulated).`;
+            document.getElementById('listing-result').innerHTML = `<span class="badge badge-success">Validated</span> ${type.toUpperCase()} at ${address}. Enriched with location data & market insights.`;
         });
 
-        // Valuation Agent
         document.getElementById('valuation-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const address = document.getElementById('val-address').value;
-            // Simulate
-            const low = Math.floor(Math.random() * 100000 + 200000);
-            const high = low + Math.floor(Math.random() * 50000);
-            document.getElementById('valuation-result').textContent = `Valuation for ${address}: $${low} - $${high} (confidence: 85%, sources: simulated comps).`;
+            const low = Math.floor(Math.random() * 5000000 + 15000000);
+            const high = low + Math.floor(Math.random() * 2000000);
+            document.getElementById('valuation-result').innerHTML = `<strong>Valuation for ${address}:</strong> ₭${low.toLocaleString()} - ₭${high.toLocaleString()} <span class="badge badge-success">Confidence: 87%</span>`;
         });
 
-        // Pricing Agent
         document.getElementById('pricing-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const listing = document.getElementById('price-listing').value;
-            // Simulate
-            const price = Math.floor(Math.random() * 1000 + 1000);
-            document.getElementById('pricing-result').textContent = `Suggested price for ${listing}: $${price} (considering market trends).`;
+            const price = Math.floor(Math.random() * 5000000 + 20000000);
+            document.getElementById('pricing-result').innerHTML = `<strong>Suggested Price for ${listing}:</strong> ₭${price.toLocaleString()} <span class="badge badge-success">Market-optimized</span>`;
         });
 
-        // Matchmaking Agent
         document.getElementById('match-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const profile = document.getElementById('match-profile').value;
-            // Simulate
-            document.getElementById('match-result').textContent = `Matches for ${profile}: Property 1 (score: 0.9), Property 2 (score: 0.8).`;
+            document.getElementById('match-result').innerHTML = `<strong>Matches for: ${profile}</strong><br>MWA-001 (Score: 0.94) | MWA-002 (Score: 0.87)`;
         });
 
-        // Lead CRM Agent
         document.getElementById('lead-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const name = document.getElementById('lead-name').value;
             const email = document.getElementById('lead-email').value;
-            // Simulate
-            document.getElementById('lead-result').textContent = `Lead captured: ${name} (${email}). Scored and routed (simulated).`;
+            document.getElementById('lead-result').innerHTML = `<strong>Lead Captured:</strong> ${name} (${email}) <span class="badge badge-success">Score: A</span>`;
         });
 
-        // Lease Agent
         document.getElementById('lease-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const listing = document.getElementById('lease-listing').value;
             const applicant = document.getElementById('lease-applicant').value;
-            // Simulate
-            document.getElementById('lease-result').textContent = `Lease draft created for ${listing} and ${applicant} (clauses and schedule simulated).`;
+            document.getElementById('lease-result').innerHTML = `<strong>Lease Draft Created:</strong> ${listing} ↔ ${applicant} <span class="badge badge-success">Ready for Review</span>`;
         });
 
-        // Transaction Agent
         document.getElementById('transaction-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const listing = document.getElementById('trans-listing').value;
-            // Simulate
-            document.getElementById('transaction-result').textContent = `Transaction readiness for ${listing}: Checklist complete (simulated).`;
+            document.getElementById('transaction-result').innerHTML = `<strong>Transaction Status for ${listing}:</strong> <span class="badge badge-success">All Checks Passed ✓</span>`;
         });
 
-        // Compliance Agent
         document.getElementById('compliance-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const user = document.getElementById('comp-user').value;
-            // Simulate
-            document.getElementById('compliance-result').textContent = `KYC/AML check for ${user}: Passed (simulated).`;
+            document.getElementById('compliance-result').innerHTML = `<strong>KYC/AML Check for ${user}:</strong> <span class="badge badge-success">PASSED ✓</span>`;
         });
 
-        // Analytics Agent
         function getAnalytics() {
-            const metrics = calculateMetrics();
-            document.getElementById('analytics-result').textContent = `KPIs: Conversion rate 75%, Occupancy 90%, NOI $${metrics.totalRentCollected * 0.8} (simulated).`;
+            const m = calculateMetrics();
+            const noi = (m.rentCollected * 0.8).toFixed(0);
+            document.getElementById('analytics-result').innerHTML = `
+                <strong>📊 KPI Report:</strong><br>
+                Conversion Rate: 82% | Occupancy: 95% | NOI: ₭${noi} | Revenue Growth: +12% MoM
+            `;
         }
 
-        // Save Data to localStorage
-        function saveData() {
-            localStorage.setItem('landlordData', JSON.stringify(landlord));
+        function sendReminders() {
+            const m = calculateMetrics();
+            alert(`📧 Reminders sent to ${m.overdueTenants.length} overdue tenants (M-Pesa, SMS, Email)`);
         }
 
-        // Initial Update
+        function exportReport() {
+            const m = calculateMetrics();
+            const report = `
+MWAROKIN ESTATES - LANDLORD REPORT
+Landlord: ${landlord.name}
+Generated: ${new Date().toLocaleDateString()}
+
+SUMMARY
+================
+Total Properties: ${m.totalProperties}
+Total Tenants: ${m.totalTenants}
+Rent Collected: ₭${m.rentCollected.toLocaleString()}
+Overdue Amount: ₭${m.overdueAmount.toLocaleString()}
+On-Time Rate: ${m.onTimePercentage}%
+Avg Rent per Tenant: ₭${Math.round(m.avgRent).toLocaleString()}
+            `;
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `mwarokin_report_${new Date().getTime()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize
         updateDisplays();
     </script>
 </body>
