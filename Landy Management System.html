@@ -3,725 +3,1327 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mwarokin Estates - Landlords Management</title>
+    <title>Mwarokin Estates — Property Management Suite</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Syne:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Consistent Beautiful UI CSS */
-        body {
-            font-family: 'Helvetica', Arial, sans-serif;
-            background-color: #f4f7fa;
-            color: #333;
+        :root {
+            /* STA Design System */
+            --obsidian: #0F1419;
+            --obsidian-light: #1A1F2E;
+            --forest-green: #1B5E3E;
+            --forest-green-light: #2E8B57;
+            --forest-green-pale: #E8F3EE;
+            --gold: #D4AF37;
+            --gold-light: #F5E6D3;
+            --gold-dark: #9B8C3A;
+            
+            /* Neutrals */
+            --white: #FFFFFF;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-400: #9CA3AF;
+            --gray-500: #6B7280;
+            --gray-600: #4B5563;
+            --gray-700: #374151;
+            
+            /* Status Colors */
+            --success: #10B981;
+            --success-bg: #ECFDF5;
+            --warning: #F59E0B;
+            --warning-bg: #FEF3C7;
+            --danger: #EF4444;
+            --danger-bg: #FEF2F2;
+            --info: #0EA5E9;
+            --info-bg: #F0F9FF;
+            
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            
+            /* Border Radius */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 18px;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(15, 20, 25, 0.05);
+            --shadow-md: 0 4px 12px rgba(15, 20, 25, 0.08);
+            --shadow-lg: 0 12px 32px rgba(15, 20, 25, 0.12);
+            --shadow-xl: 0 20px 50px rgba(15, 20, 25, 0.15);
+            
+            /* Typography */
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'DM Sans', sans-serif;
+            --font-display: 'Syne', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .container {
-            max-width: 1200px;
+
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--gray-50);
+            color: var(--gray-700);
+            line-height: 1.6;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* HEADER & NAVIGATION */
+        /* ═══════════════════════════════════════════════════════════════ */
+
+        .site-header {
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-inner {
+            max-width: 1600px;
             margin: 0 auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            padding: 20px;
-        }
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-        }
-        .tab-buttons {
+            padding: var(--spacing-md) var(--spacing-lg);
             display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            text-decoration: none;
+        }
+
+        .brand-logo {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--gold), var(--forest-green));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
             justify-content: center;
-            margin-bottom: 20px;
+            color: var(--white);
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
         }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .brand-name {
+            font-family: var(--font-serif);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--obsidian);
+            letter-spacing: -0.5px;
+        }
+
+        .brand-tagline {
+            font-family: var(--font-sans);
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--forest-green);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding-right: var(--spacing-lg);
+            border-right: 1px solid var(--gray-200);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--forest-green), var(--gold));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-info small {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            font-weight: 500;
+        }
+
+        .user-info strong {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--obsidian);
+            font-weight: 600;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* TAB NAVIGATION */
+        /* ═══════════════════════════════════════════════════════════════ */
+
+        .tab-nav {
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 0;
+            display: flex;
+            align-items: center;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+        }
+
+        .tab-nav::-webkit-scrollbar {
+            height: 3px;
+        }
+
+        .tab-nav::-webkit-scrollbar-track {
+            background: var(--gray-100);
+        }
+
+        .tab-nav::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 3px;
+        }
+
         .tab-button {
-            background: #3498db;
-            color: white;
+            background: none;
             border: none;
-            padding: 10px 20px;
-            margin: 0 5px;
+            padding: 1rem 1.5rem;
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--gray-600);
             cursor: pointer;
-            border-radius: 5px;
-            transition: background 0.3s;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+            position: relative;
         }
-        .tab-button.active {
-            background: #2980b9;
-        }
+
         .tab-button:hover {
-            background: #2980b9;
+            color: var(--forest-green);
+            background: rgba(27, 94, 62, 0.04);
         }
+
+        .tab-button.active {
+            color: var(--forest-green);
+            border-bottom-color: var(--forest-green);
+            font-weight: 600;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* MAIN LAYOUT */
+        /* ═══════════════════════════════════════════════════════════════ */
+
+        .main-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: var(--spacing-xl) var(--spacing-lg);
+        }
+
         .tab-content {
             display: none;
+            animation: fadeIn 0.3s ease;
         }
+
         .tab-content.active {
             display: block;
         }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* SECTION HEADERS */
+        /* ═══════════════════════════════════════════════════════════════ */
+
         .section-header {
-            font-size: 1.5em;
-            color: #34495e;
-            border-bottom: 2px solid #ecf0f1;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        .metric {
-            font-size: 1.1em;
-            margin: 5px 0;
-        }
-        .list-item {
-            list-style-type: disc;
-            margin-left: 20px;
-        }
-        .accordion {
-            background: #ecf0f1;
-            padding: 10px;
-            margin: 10px 0;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .accordion-content {
-            display: none;
-            padding: 10px;
-            background: #fff;
-            border: 1px solid #ecf0f1;
-            border-radius: 5px;
-        }
-        .action-buttons {
             display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+            padding-bottom: var(--spacing-lg);
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .section-header .emoji {
+            font-size: 1.8rem;
+        }
+
+        .section-header h2 {
+            font-family: var(--font-serif);
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--obsidian);
+            letter-spacing: -0.5px;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* CARDS & PANELS */
+        /* ═══════════════════════════════════════════════════════════════ */
+
+        .card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--gold);
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-lg);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .card-header h3 {
+            font-family: var(--font-serif);
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--obsidian);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* FORMS */
+        /* ═══════════════════════════════════════════════════════════════ */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--obsidian);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-label .required {
+            color: var(--danger);
+        }
+
+        .form-input,
+        .form-select {
+            padding: var(--spacing-md) var(--spacing-md);
+            border: 1.5px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            color: var(--obsidian);
+            background: var(--white);
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            border-color: var(--forest-green);
+            box-shadow: 0 0 0 3px rgba(27, 94, 62, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: var(--gray-400);
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+            background-position: right var(--spacing-md) center;
+            background-repeat: no-repeat;
+            background-size: 1.2em;
+            padding-right: 2.5rem;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* BUTTONS */
+        /* ═══════════════════════════════════════════════════════════════ */
+
+        .button-group {
+            display: flex;
+            gap: var(--spacing-md);
+            flex-wrap: wrap;
+            margin-top: var(--spacing-xl);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
             justify-content: center;
-            margin-top: 20px;
-        }
-        .action-btn {
-            background: #27ae60;
-            color: white;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md) var(--spacing-lg);
             border: none;
-            padding: 10px 20px;
-            margin: 0 10px;
+            border-radius: var(--radius-md);
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            font-weight: 600;
             cursor: pointer;
-            border-radius: 5px;
-            transition: background 0.3s;
+            transition: all 0.2s ease;
+            text-decoration: none;
         }
-        .action-btn:hover {
-            background: #219d52;
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--forest-green), var(--forest-green-light));
+            color: var(--white);
+            box-shadow: 0 4px 12px rgba(27, 94, 62, 0.25);
         }
-        form {
-            margin: 20px 0;
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(27, 94, 62, 0.35);
         }
-        input, select, textarea {
-            padding: 8px;
-            margin: 5px 0;
+
+        .btn-secondary {
+            background: var(--gold);
+            color: var(--obsidian);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gold-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid var(--gray-300);
+            color: var(--obsidian);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--forest-green);
+            color: var(--forest-green);
+            background: rgba(27, 94, 62, 0.05);
+        }
+
+        .btn-sm {
+            padding: var(--spacing-sm) var(--spacing-md);
+            font-size: 0.8rem;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* METRICS & STATS */
+        /* ═══════════════════════════════════════════════════════════════ */
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .metric-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            border-color: var(--forest-green);
+            box-shadow: var(--shadow-md);
+        }
+
+        .metric-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .metric-icon.gold {
+            background: var(--gold-light);
+        }
+
+        .metric-icon.green {
+            background: var(--forest-green-pale);
+        }
+
+        .metric-value {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--obsidian);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* TABLES */
+        /* ═══════════════════════════════════════════════════════════════ */
+
+        .table-container {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        table {
             width: 100%;
-            border: 1px solid #bdc3c7;
-            border-radius: 5px;
+            border-collapse: collapse;
         }
-        .emoji {
-            font-size: 1.2em;
-            margin-right: 5px;
+
+        th {
+            background: var(--gray-100);
+            padding: var(--spacing-md) var(--spacing-lg);
+            text-align: left;
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--obsidian);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--gray-200);
         }
-        .agent-section {
-            margin-top: 30px;
-            border-top: 1px solid #ecf0f1;
-            padding-top: 20px;
+
+        td {
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-bottom: 1px solid var(--gray-200);
+            font-size: 0.9rem;
+            color: var(--gray-700);
         }
-        .agent-form {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 5px;
+
+        tr:hover {
+            background: var(--gray-50);
         }
-        /* Chart Container */
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* BADGES & STATUS */
+        /* ═══════════════════════════════════════════════════════════════ */
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-success {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: var(--warning-bg);
+            color: var(--warning);
+        }
+
+        .badge-danger {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        .badge-info {
+            background: var(--info-bg);
+            color: var(--info);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* MODALS */
+        /* ═══════════════════════════════════════════════════════════════ */
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 20, 25, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-lg);
+        }
+
+        .modal.open {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: var(--spacing-xl);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-family: var(--font-serif);
+            font-size: 1.3rem;
+            color: var(--obsidian);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray-500);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--obsidian);
+        }
+
+        .modal-body {
+            padding: var(--spacing-xl);
+        }
+
+        .modal-footer {
+            padding: var(--spacing-lg) var(--spacing-xl);
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: flex-end;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* CHARTS */
+        /* ═══════════════════════════════════════════════════════════════ */
+
         .chart-container {
-            margin: 20px 0;
-            width: 100%;
-            max-width: 600px;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            height: 400px;
         }
-        /* Timeline Styles */
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* MAP */
+        /* ═══════════════════════════════════════════════════════════════ */
+
+        .map-container {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            height: 500px;
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* TIMELINE */
+        /* ═══════════════════════════════════════════════════════════════ */
+
         .timeline {
             position: relative;
-            margin: 20px 0;
-            padding-left: 30px;
+            padding-left: 2rem;
         }
-        .timeline-item {
-            margin-bottom: 20px;
-            position: relative;
-        }
-        .timeline-item::before {
+
+        .timeline::before {
             content: '';
             position: absolute;
-            left: -20px;
+            left: 0;
             top: 0;
-            width: 10px;
-            height: 10px;
-            background: #3498db;
-            border-radius: 50%;
-        }
-        .timeline-item::after {
-            content: '';
-            position: absolute;
-            left: -16px;
-            top: 10px;
+            bottom: 0;
             width: 2px;
-            height: 100%;
-            background: #ecf0f1;
+            background: linear-gradient(to bottom, var(--forest-green), transparent);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: var(--spacing-xl);
+            padding-bottom: var(--spacing-lg);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -1rem;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--forest-green);
+            border: 3px solid var(--white);
+            box-shadow: 0 0 0 2px var(--forest-green);
+        }
+
+        .timeline-content {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            color: var(--obsidian);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .timeline-date {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* RESPONSIVE */
+        /* ═══════════════════════════════════════════════════════════════ */
+
+        @media (max-width: 768px) {
+            .header-inner {
+                flex-direction: column;
+                gap: var(--spacing-lg);
+            }
+
+            .tab-button {
+                padding: 0.75rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: var(--spacing-lg);
+            }
+
+            .main-container {
+                padding: var(--spacing-lg) var(--spacing-md);
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Landlords 🏠  Management System</h1>
-
-        <!-- Tab Buttons -->
-        <div class="tab-buttons">
-            <button class="tab-button active" onclick="openTab('maintenance')">Maintenance Requests</button>
-            <button class="tab-button" onclick="openTab('renewals')">Lease Renewals</button>
-            <button class="tab-button" onclick="openTab('inspections')">Property Inspections</button>
-            <button class="tab-button" onclick="openTab('documents')">Document Management</button>
-            <button class="tab-button" onclick="openTab('analytics')">Advanced Analytics</button>
-            <button class="tab-button" onclick="openTab('communication')">Communication</button>
-        </div>
-
-        <!-- Tab Contents -->
-        <div id="maintenance" class="tab-content active">
-            <div class="section-header"><span class="emoji">🛠️</span>Maintenance Requests</div>
-            <form id="maintenance-form" class="agent-form">
-                <select id="maint-property-id" required></select>
-                <textarea id="maint-description" placeholder="Describe the maintenance issue" required></textarea>
-                <select id="maint-priority" required>
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                </select>
-                <button type="submit" class="action-btn">Submit Maintenance Request</button>
-            </form>
-            <div class="section-header">Open Maintenance Requests</div>
-            <div id="maintenance-list"></div>
-        </div>
-
-        <div id="renewals" class="tab-content">
-            <div class="section-header"><span class="emoji">📝</span>Lease Renewals</div>
-            <form id="renewal-form" class="agent-form">
-                <select id="renew-property-id" required></select>
-                <select id="renew-tenant-name" required></select>
-                <input type="date" id="renew-end-date" required>
-                <input type="number" id="renew-rent" placeholder="New Rent Amount" required>
-                <button type="submit" class="action-btn">Propose Renewal</button>
-            </form>
-            <div class="section-header">Pending Renewals</div>
-            <div id="renewal-list"></div>
-        </div>
-
-        <div id="inspections" class="tab-content">
-            <div class="section-header"><span class="emoji">🔍</span>Property Inspections</div>
-            <form id="inspection-form" class="agent-form">
-                <select id="insp-property-id" required></select>
-                <input type="date" id="insp-date" required>
-                <textarea id="insp-notes" placeholder="Inspection Notes" required></textarea>
-                <button type="submit" class="action-btn">Schedule Inspection</button>
-            </form>
-            <div class="section-header">Inspection History</div>
-            <div id="inspection-list" class="timeline"></div>
-        </div>
-
-        <div id="documents" class="tab-content">
-            <div class="section-header"><span class="emoji">📂</span>Document Management</div>
-            <form id="document-form" class="agent-form">
-                <select id="doc-property-id" required></select>
-                <input type="text" id="doc-title" placeholder="Document Title" required>
-                <input type="file" id="doc-file" accept=".pdf,.doc,.docx" required>
-                <button type="submit" class="action-btn">Upload Document</button>
-            </form>
-            <div class="section-header">Stored Documents</div>
-            <ul id="document-list"></ul>
-        </div>
-
-        <div id="analytics" class="tab-content">
-            <div class="section-header"><span class="emoji">📊</span>Advanced Analytics</div>
-            <div class="chart-container">
-                <canvas id="rent-trend-chart"></canvas>
+    <!-- HEADER -->
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="#" class="brand">
+                <div class="brand-logo">🏠</div>
+                <div class="brand-text">
+                    <div class="brand-name">Mwarokin Estates</div>
+                    <div class="brand-tagline">Property Management</div>
+                </div>
+            </a>
+            <div class="header-actions">
+                <div class="user-profile">
+                    <div class="user-avatar">JD</div>
+                    <div class="user-info">
+                        <small>Landlord</small>
+                        <strong>John Doe</strong>
+                    </div>
+                </div>
             </div>
-            <div class="chart-container">
-                <canvas id="occupancy-chart"></canvas>
+        </div>
+    </header>
+
+    <!-- TAB NAVIGATION -->
+    <nav class="tab-nav">
+        <button class="tab-button active" onclick="openTab('dashboard')">📊 Dashboard</button>
+        <button class="tab-button" onclick="openTab('market')">📈 Market Analysis</button>
+        <button class="tab-button" onclick="openTab('portfolio')">🏘️ Portfolio</button>
+        <button class="tab-button" onclick="openTab('forecast')">💼 Forecasting</button>
+        <button class="tab-button" onclick="openTab('tenants')">👥 Tenants</button>
+        <button class="tab-button" onclick="openTab('compliance')">⚖️ Compliance</button>
+        <button class="tab-button" onclick="openTab('payments')">💰 Payments</button>
+        <button class="tab-button" onclick="openTab('map')">🗺️ Map</button>
+    </nav>
+
+    <!-- MAIN CONTAINER -->
+    <main class="main-container">
+
+        <!-- DASHBOARD TAB -->
+        <div id="dashboard" class="tab-content active">
+            <div class="section-header">
+                <span class="emoji">📊</span>
+                <h2>Dashboard Overview</h2>
             </div>
-            <button class="action-btn" onclick="updateAnalytics()">Refresh Analytics</button>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon gold">🏢</div>
+                    <div class="metric-value">12</div>
+                    <div class="metric-label">Properties</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon green">👥</div>
+                    <div class="metric-value">48</div>
+                    <div class="metric-label">Active Tenants</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon gold">💵</div>
+                    <div class="metric-value">KES 125K</div>
+                    <div class="metric-label">This Month</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon green">✅</div>
+                    <div class="metric-value">92%</div>
+                    <div class="metric-label">Payment Rate</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="dashboard-chart"></canvas>
+            </div>
         </div>
 
-        <div id="communication" class="tab-content">
-            <div class="section-header"><span class="emoji">📧</span>Communication Tools</div>
-            <form id="communication-form" class="agent-form">
-                <select id="comm-recipient" required>
-                    <option value="all">All Tenants</option>
-                    <option value="overdue">Overdue Tenants</option>
-                    <option value="select">Select Tenant</option>
-                </select>
-                <select id="comm-tenant-name" style="display: none;"></select>
-                <input type="text" id="comm-subject" placeholder="Subject" required>
-                <textarea id="comm-message" placeholder="Message" required></textarea>
-                <button type="submit" class="action-btn">Send Message</button>
-            </form>
-            <div class="section-header">Communication History</div>
-            <div id="communication-list" class="timeline"></div>
+        <!-- MARKET ANALYSIS TAB -->
+        <div id="market" class="tab-content">
+            <div class="section-header">
+                <span class="emoji">📈</span>
+                <h2>Market Analysis</h2>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Search Market Data</h3>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Location <span class="required">*</span></label>
+                        <input type="text" class="form-input" placeholder="e.g., Nairobi, Westlands" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Property Type <span class="required">*</span></label>
+                        <select class="form-select" required>
+                            <option value="">Select Type</option>
+                            <option value="residential">Residential</option>
+                            <option value="commercial">Commercial</option>
+                            <option value="land">Land</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button class="btn btn-primary">Analyze Market</button>
+                    <button class="btn btn-outline">Reset</button>
+                </div>
+            </div>
+
+            <div id="market-result" style="margin-top: var(--spacing-xl);"></div>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-            <button class="action-btn" onclick="exportAnalytics()">Export Analytics</button>
-            <button class="action-btn" onclick="syncData()">Sync with External Systems</button>
-            <button class="action-btn" onclick="navigateToPageOne()">Go to Main Dashboard</button>
-        </div>
-    </div>
+        <!-- PORTFOLIO TAB -->
+        <div id="portfolio" class="tab-content">
+            <div class="section-header">
+                <span class="emoji">🏘️</span>
+                <h2>Portfolio Optimization</h2>
+            </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Property Address</th>
+                            <th>Type</th>
+                            <th>Tenants</th>
+                            <th>Monthly Rent</th>
+                            <th>Occupancy</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>123 Main Street</strong></td>
+                            <td>Residential</td>
+                            <td>4</td>
+                            <td>KES 48,000</td>
+                            <td>100%</td>
+                            <td><span class="badge badge-success">Optimal</span></td>
+                            <td><button class="btn btn-sm btn-outline">View</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>456 Elm Avenue</strong></td>
+                            <td>Commercial</td>
+                            <td>2</td>
+                            <td>KES 32,000</td>
+                            <td>75%</td>
+                            <td><span class="badge badge-warning">Review</span></td>
+                            <td><button class="btn btn-sm btn-outline">View</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>789 Pine Road</strong></td>
+                            <td>Residential</td>
+                            <td>3</td>
+                            <td>KES 36,000</td>
+                            <td>100%</td>
+                            <td><span class="badge badge-success">Optimal</span></td>
+                            <td><button class="btn btn-sm btn-outline">View</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- FORECASTING TAB -->
+        <div id="forecast" class="tab-content">
+            <div class="section-header">
+                <span class="emoji">💼</span>
+                <h2>Financial Forecasting</h2>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Generate Forecast</h3>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Select Property <span class="required">*</span></label>
+                        <select class="form-select" required>
+                            <option value="">Choose a property</option>
+                            <option value="prop1">123 Main Street</option>
+                            <option value="prop2">456 Elm Avenue</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Forecast Period (Months) <span class="required">*</span></label>
+                        <input type="number" class="form-input" placeholder="12" min="1" max="60" required>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button class="btn btn-primary">Generate Forecast</button>
+                </div>
+            </div>
+
+            <div class="chart-container" style="margin-top: var(--spacing-xl);">
+                <canvas id="forecast-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- TENANTS TAB -->
+        <div id="tenants" class="tab-content">
+            <div class="section-header">
+                <span class="emoji">👥</span>
+                <h2>Tenant Management</h2>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Add New Tenant</h3>
+                    <button class="btn btn-secondary btn-sm">Clear Form</button>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Full Name <span class="required">*</span></label>
+                        <input type="text" class="form-input" placeholder="Tenant name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email <span class="required">*</span></label>
+                        <input type="email" class="form-input" placeholder="tenant@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone <span class="required">*</span></label>
+                        <input type="tel" class="form-input" placeholder="+254 700 000 000" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Monthly Rent <span class="required">*</span></label>
+                        <input type="number" class="form-input" placeholder="KES" required>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button class="btn btn-primary">Add Tenant</button>
+                    <button class="btn btn-outline">Cancel</button>
+                </div>
+            </div>
+
+            <div class="table-container" style="margin-top: var(--spacing-xl);">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Property</th>
+                            <th>Phone</th>
+                            <th>Monthly Rent</th>
+                            <th>Payment Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Alice Johnson</strong></td>
+                            <td>123 Main Street</td>
+                            <td>+254 700 111 222</td>
+                            <td>KES 12,000</td>
+                            <td><span class="badge badge-success">Paid</span></td>
+                            <td><button class="btn btn-sm btn-outline">Edit</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bob Smith</strong></td>
+                            <td>456 Elm Avenue</td>
+                            <td>+254 700 333 444</td>
+                            <td>KES 15,000</td>
+                            <td><span class="badge badge-danger">Overdue</span></td>
+                            <td><button class="btn btn-sm btn-outline">Edit</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- COMPLIANCE TAB -->
+        <div id="compliance" class="tab-content">
+            <div class="section-header">
+                <span class="emoji">⚖️</span>
+                <h2>Compliance Monitoring</h2>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">Fair Housing Compliance Audit</div>
+                        <div class="timeline-date">September 20, 2026</div>
+                        <div style="margin-top: var(--spacing-sm); font-size: 0.9rem;">✅ Property 123 Main Street — Compliant</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">Annual Safety Inspection</div>
+                        <div class="timeline-date">September 15, 2026</div>
+                        <div style="margin-top: var(--spacing-sm); font-size: 0.9rem;">⚠️ Property 456 Elm Avenue — Pending Review</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">Tax Documentation Review</div>
+                        <div class="timeline-date">September 10, 2026</div>
+                        <div style="margin-top: var(--spacing-sm); font-size: 0.9rem;">✅ All properties — Complete</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAYMENTS TAB -->
+        <div id="payments" class="tab-content">
+            <div class="section-header">
+                <span class="emoji">💰</span>
+                <h2>Payment Management</h2>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon gold">💵</div>
+                    <div class="metric-value">KES 125K</div>
+                    <div class="metric-label">Collected (Sep)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon green">⏰</div>
+                    <div class="metric-value">KES 8K</div>
+                    <div class="metric-label">Pending</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Record Payment</h3>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Tenant <span class="required">*</span></label>
+                        <select class="form-select" required>
+                            <option value="">Select Tenant</option>
+                            <option value="tenant1">Alice Johnson</option>
+                            <option value="tenant2">Bob Smith</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Payment Method <span class="required">*</span></label>
+                        <select class="form-select" required>
+                            <option value="">Select Method</option>
+                            <option value="mpesa">M-Pesa</option>
+                            <option value="airtel">Airtel Money</option>
+                            <option value="bank">Bank Transfer</option>
+                            <option value="cash">Cash</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Amount (KES) <span class="required">*</span></label>
+                        <input type="number" class="form-input" placeholder="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Payment Date <span class="required">*</span></label>
+                        <input type="date" class="form-input" required>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button class="btn btn-primary">Record Payment</button>
+                    <button class="btn btn-outline">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAP TAB -->
+        <div id="map" class="tab-content">
+            <div class="section-header">
+                <span class="emoji">🗺️</span>
+                <h2>Property Map</h2>
+            </div>
+
+            <div class="map-container">
+                <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: linear-gradient(135deg, rgba(27, 94, 62, 0.05), rgba(212, 175, 55, 0.05)); color: var(--gray-500);">
+                    🗺️ Interactive map loading...
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Filter Properties</h3>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Property Type</label>
+                        <select class="form-select">
+                            <option value="all">All Properties</option>
+                            <option value="residential">Residential</option>
+                            <option value="commercial">Commercial</option>
+                            <option value="land">Land</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-select">
+                            <option value="all">All Status</option>
+                            <option value="occupied">Occupied</option>
+                            <option value="vacant">Vacant</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- CHART.JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
-        // Sample Data (Extend from Page 1, stored in localStorage)
-        let landlord = JSON.parse(localStorage.getItem('landlordData')) || {
-            name: 'John Doe',
-            email: 'john@example.com',
-            phone: '123-456-7890',
-            properties: [
-                {
-                    id: '1',
-                    address: '123 Main St',
-                    tenants: [
-                        { name: 'Tenant A', email: 'a@example.com', phone: '111-222-3333', rent_amount: 1200, payments: [{ date: new Date(2025, 8, 5), status: 'paid' }] },
-                        { name: 'Tenant B', email: 'b@example.com', phone: '444-555-6666', rent_amount: 1500, payments: [] }
-                    ],
-                    maintenance: [],
-                    renewals: [],
-                    inspections: [],
-                    documents: []
-                },
-                {
-                    id: '2',
-                    address: '456 Elm St',
-                    tenants: [
-                        { name: 'Tenant C', email: 'c@example.com', phone: '777-888-9999', rent_amount: 1000, payments: [{ date: new Date(2025, 8, 10), status: 'paid' }] }
-                    ],
-                    maintenance: [],
-                    renewals: [],
-                    inspections: [],
-                    documents: []
-                }
-            ],
-            communications: []
-        };
-
-        // Calculate Metrics (Reused from Page 1)
-        function calculateMetrics() {
-            const now = new Date(2025, 8, 11); // Fixed date: September 11, 2025
-            const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-            const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
-
-            const properties = landlord.properties;
-            const totalProperties = properties.length;
-            const totalTenants = properties.reduce((sum, prop) => sum + (prop.tenants ? prop.tenants.length : 0), 0);
-            const avgTenantsPerProperty = totalProperties > 0 ? totalTenants / totalProperties : 0;
-
-            let paidTenants = [];
-            let overdueTenants = [];
-            let totalRentCollected = 0;
-            let totalOverdueAmount = 0;
-            let allRentAmounts = [];
-
-            let propertyMetrics = [];
-
-            properties.forEach(prop => {
-                const propTenants = prop.tenants || [];
-                const propTotalTenants = propTenants.length;
-                let propPaidTenants = [];
-                let propOverdueTenants = [];
-                let propRentCollected = 0;
-                let propOverdueAmount = 0;
-                let propRentAmounts = [];
-
-                propTenants.forEach(tenant => {
-                    const rent = tenant.rent_amount || 0;
-                    allRentAmounts.push(rent);
-                    propRentAmounts.push(rent);
-                    const monthlyPayments = (tenant.payments || []).filter(p => p.date >= currentMonthStart && p.date <= currentMonthEnd);
-                    const paidThisMonth = monthlyPayments.some(p => p.status === 'paid');
-
-                    if (paidThisMonth) {
-                        totalRentCollected += rent;
-                        propRentCollected += rent;
-                        paidTenants.push(tenant);
-                        propPaidTenants.push(tenant);
-                    } else {
-                        totalOverdueAmount += rent;
-                        propOverdueAmount += rent;
-                        overdueTenants.push(tenant);
-                        propOverdueTenants.push(tenant);
-                    }
-                });
-
-                const propPaidCount = propPaidTenants.length;
-                const propOverdueCount = propOverdueTenants.length;
-                let propOnTimePct = propTotalTenants > 0 ? (propPaidCount / propTotalTenants) * 100 : 0;
-                let propOverduePct = propTotalTenants > 0 ? (propOverdueCount / propTotalTenants) * 100 : 0;
-                let propAvgRentTenant = propTotalTenants > 0 ? propRentAmounts.reduce((a, b) => a + b, 0) / propTotalTenants : 0;
-                let propHighestRent = propRentAmounts.length > 0 ? Math.max(...propRentAmounts) : 0;
-                let propLowestRent = propRentAmounts.length > 0 ? Math.min(...propRentAmounts) : 0;
-                let propAvgRentPerProp = propRentAmounts.reduce((a, b) => a + b, 0);
-
-                propertyMetrics.push({
-                    property: prop,
-                    paidCount: propPaidCount,
-                    overdueCount: propOverdueCount,
-                    rentCollected: propRentCollected,
-                    overdueAmount: propOverdueAmount,
-                    onTimePct: propOnTimePct,
-                    overduePct: propOverduePct,
-                    avgRentTenant: propAvgRentTenant,
-                    highestRent: propHighestRent,
-                    lowestRent: propLowestRent,
-                    totalTenants: propTotalTenants,
-                    avgRentPerProp: propAvgRentPerProp,
-                    paidTenants: propPaidTenants,
-                    overdueTenants: propOverdueTenants
-                });
-            });
-
-            const totalTenantsOverall = allRentAmounts.length;
-            const paidCount = paidTenants.length;
-            const overdueCount = overdueTenants.length;
-            const onTimePercentage = totalTenantsOverall > 0 ? (paidCount / totalTenantsOverall) * 100 : 0;
-            const overduePercentage = totalTenantsOverall > 0 ? (overdueCount / totalTenantsOverall) * 100 : 0;
-            const avgRentPerTenant = totalTenantsOverall > 0 ? allRentAmounts.reduce((a, b) => a + b, 0) / totalTenantsOverall : 0;
-            const highestRent = allRentAmounts.length > 0 ? Math.max(...allRentAmounts) : 0;
-            const lowestRent = allRentAmounts.length > 0 ? Math.min(...allRentAmounts) : 0;
-
-            return {
-                totalProperties, totalTenants, avgTenantsPerProperty, paidTenants, overdueTenants,
-                totalRentCollected, totalOverdueAmount, allRentAmounts, propertyMetrics,
-                totalTenantsOverall, paidCount, overdueCount, onTimePercentage, overduePercentage,
-                avgRentPerTenant, highestRent, lowestRent
-            };
-        }
-
         // Tab Switching
-        function openTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            document.querySelector(`[onclick="openTab('${tabId}')"]`).classList.add('active');
+        function openTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Remove active class from buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
         }
 
-        // Update Displays
-        function updateDisplays() {
-            const metrics = calculateMetrics();
-
-            // Populate Property Selects
-            const propSelects = [
-                document.getElementById('maint-property-id'),
-                document.getElementById('renew-property-id'),
-                document.getElementById('insp-property-id'),
-                document.getElementById('doc-property-id')
-            ];
-            propSelects.forEach(select => {
-                select.innerHTML = '<option value="">Select Property</option>';
-                landlord.properties.forEach(prop => {
-                    const option = document.createElement('option');
-                    option.value = prop.id;
-                    option.textContent = `${prop.address} (ID: ${prop.id})`;
-                    select.appendChild(option);
-                });
-            });
-
-            // Populate Tenant Select for Renewals
-            document.getElementById('renew-property-id').addEventListener('change', (e) => {
-                const propId = e.target.value;
-                const tenantSelect = document.getElementById('renew-tenant-name');
-                tenantSelect.innerHTML = '<option value="">Select Tenant</option>';
-                const prop = landlord.properties.find(p => p.id === propId);
-                if (prop) {
-                    prop.tenants.forEach(tenant => {
-                        const option = document.createElement('option');
-                        option.value = tenant.name;
-                        option.textContent = tenant.name;
-                        tenantSelect.appendChild(option);
-                    });
-                }
-            });
-
-            // Populate Tenant Select for Communication
-            document.getElementById('comm-recipient').addEventListener('change', (e) => {
-                const value = e.target.value;
-                const tenantSelect = document.getElementById('comm-tenant-name');
-                tenantSelect.style.display = value === 'select' ? 'block' : 'none';
-                if (value === 'select') {
-                    tenantSelect.innerHTML = '<option value="">Select Tenant</option>';
-                    landlord.properties.forEach(prop => {
-                        prop.tenants.forEach(tenant => {
-                            const option = document.createElement('option');
-                            option.value = tenant.name;
-                            option.textContent = `${tenant.name} (${prop.address})`;
-                            tenantSelect.appendChild(option);
-                        });
-                    });
-                }
-            });
-
-            // Maintenance Requests
-            const maintList = document.getElementById('maintenance-list');
-            maintList.innerHTML = '';
-            landlord.properties.forEach(prop => {
-                prop.maintenance.forEach(req => {
-                    const div = document.createElement('div');
-                    div.classList.add('accordion');
-                    div.textContent = `Property: ${prop.address} - ${req.description} (Priority: ${req.priority})`;
-                    div.onclick = () => {
-                        const content = div.nextSibling;
-                        content.style.display = content.style.display === 'block' ? 'none' : 'block';
-                    };
-                    const content = document.createElement('div');
-                    content.classList.add('accordion-content');
-                    content.innerHTML = `Status: ${req.status}<br>Created: ${new Date(req.created).toLocaleDateString()}`;
-                    maintList.appendChild(div);
-                    maintList.appendChild(content);
-                });
-            });
-
-            // Lease Renewals
-            const renewList = document.getElementById('renewal-list');
-            renewList.innerHTML = '';
-            landlord.properties.forEach(prop => {
-                prop.renewals.forEach(renew => {
-                    const div = document.createElement('div');
-                    div.classList.add('accordion');
-                    div.textContent = `Property: ${prop.address} - Tenant: ${renew.tenant}`;
-                    div.onclick = () => {
-                        const content = div.nextSibling;
-                        content.style.display = content.style.display === 'block' ? 'none' : 'block';
-                    };
-                    const content = document.createElement('div');
-                    content.classList.add('accordion-content');
-                    content.innerHTML = `New Rent: $${renew.rent}<br>End Date: ${new Date(renew.endDate).toLocaleDateString()}<br>Status: ${renew.status}`;
-                    renewList.appendChild(div);
-                    renewList.appendChild(content);
-                });
-            });
-
-            // Inspections
-            const inspList = document.getElementById('inspection-list');
-            inspList.innerHTML = '';
-            landlord.properties.forEach(prop => {
-                prop.inspections.forEach(insp => {
-                    const div = document.createElement('div');
-                    div.classList.add('timeline-item');
-                    div.innerHTML = `<strong>${prop.address}</strong><br>Date: ${new Date(insp.date).toLocaleDateString()}<br>Notes: ${insp.notes}`;
-                    inspList.appendChild(div);
-                });
-            });
-
-            // Documents
-            const docList = document.getElementById('document-list');
-            docList.innerHTML = '';
-            landlord.properties.forEach(prop => {
-                prop.documents.forEach(doc => {
-                    const li = document.createElement('li');
-                    li.classList.add('list-item');
-                    li.textContent = `${doc.title} (Property: ${prop.address})`;
-                    docList.appendChild(li);
-                });
-            });
-
-            // Communication History
-            const commList = document.getElementById('communication-list');
-            commList.innerHTML = '';
-            landlord.communications.forEach(comm => {
-                const div = document.createElement('div');
-                div.classList.add('timeline-item');
-                div.innerHTML = `<strong>${comm.subject}</strong><br>Recipient: ${comm.recipient}<br>Message: ${comm.message}<br>Sent: ${new Date(comm.date).toLocaleString()}`;
-                commList.appendChild(div);
-            });
-
-            // Analytics Charts
-            updateAnalytics();
-        }
-
-        // Analytics Charts
-        let rentTrendChart, occupancyChart;
-        function updateAnalytics() {
-            const metrics = calculateMetrics();
-
-            // Rent Trend Chart
-            if (rentTrendChart) rentTrendChart.destroy();
-            const rentCtx = document.getElementById('rent-trend-chart').getContext('2d');
-            rentTrendChart = new Chart(rentCtx, {
-                type: 'line',
+        // Dashboard Chart
+        const dashboardCtx = document.getElementById('dashboard-chart');
+        if (dashboardCtx) {
+            new Chart(dashboardCtx, {
+                type: 'bar',
                 data: {
                     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
                     datasets: [{
-                        label: 'Rent Collected ($)',
-                        data: [5000, 5200, 5100, 5300, 5400, 5500, 5600, 5700, metrics.totalRentCollected],
-                        borderColor: '#3498db',
-                        fill: false
-                    }, {
-                        label: 'Overdue Amount ($)',
-                        data: [500, 600, 550, 400, 450, 300, 350, 400, metrics.totalOverdueAmount],
-                        borderColor: '#e74c3c',
-                        fill: false
+                        label: 'Monthly Collections (KES)',
+                        data: [110000, 115000, 120000, 125000, 122000, 128000, 130000, 132000, 125000],
+                        backgroundColor: 'rgba(27, 94, 62, 0.8)',
+                        borderColor: 'rgba(27, 94, 62, 1)',
+                        borderWidth: 2,
+                        borderRadius: 6,
+                        tension: 0.4
                     }]
                 },
                 options: {
                     responsive: true,
-                    scales: { y: { beginAtZero: true } }
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                font: { family: "'DM Sans', sans-serif", size: 12 },
+                                color: '#374151'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                font: { family: "'DM Sans', sans-serif", size: 11 },
+                                color: '#6B7280'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: { family: "'DM Sans', sans-serif", size: 11 },
+                                color: '#6B7280'
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
                 }
             });
+        }
 
-            // Occupancy Chart
-            if (occupancyChart) occupancyChart.destroy();
-            const occCtx = document.getElementById('occupancy-chart').getContext('2d');
-            occupancyChart = new Chart(occCtx, {
-                type: 'bar',
+        // Forecast Chart
+        const forecastCtx = document.getElementById('forecast-chart');
+        if (forecastCtx) {
+            new Chart(forecastCtx, {
+                type: 'line',
                 data: {
-                    labels: landlord.properties.map(p => p.address),
+                    labels: ['Month 1', 'Month 2', 'Month 3', 'Month 4', 'Month 5', 'Month 6'],
                     datasets: [{
-                        label: 'Occupied Units',
-                        data: landlord.properties.map(p => p.tenants.length),
-                        backgroundColor: '#27ae60'
+                        label: 'Projected Revenue (KES)',
+                        data: [125000, 128000, 131000, 134000, 137000, 140000],
+                        borderColor: 'rgba(27, 94, 62, 1)',
+                        backgroundColor: 'rgba(27, 94, 62, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: 'rgba(212, 175, 55, 1)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5
                     }]
                 },
                 options: {
                     responsive: true,
-                    scales: { y: { beginAtZero: true } }
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                font: { family: "'DM Sans', sans-serif", size: 12 },
+                                color: '#374151'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                font: { family: "'DM Sans', sans-serif", size: 11 },
+                                color: '#6B7280'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: { family: "'DM Sans', sans-serif", size: 11 },
+                                color: '#6B7280'
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
                 }
             });
         }
-
-        // Form Handlers
-        // Maintenance Request
-        document.getElementById('maintenance-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const propId = document.getElementById('maint-property-id').value;
-            const description = document.getElementById('maint-description').value;
-            const priority = document.getElementById('maint-priority').value;
-            const prop = landlord.properties.find(p => p.id === propId);
-            if (prop) {
-                prop.maintenance.push({
-                    description,
-                    priority,
-                    status: 'Open',
-                    created: new Date()
-                });
-                saveData();
-                updateDisplays();
-                e.target.reset();
-                alert('Maintenance request submitted!');
-            }
-        });
-
-        // Lease Renewal
-        document.getElementById('renewal-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const propId = document.getElementById('renew-property-id').value;
-            const tenant = document.getElementById('renew-tenant-name').value;
-            const endDate = document.getElementById('renew-end-date').value;
-            const rent = parseFloat(document.getElementById('renew-rent').value);
-            const prop = landlord.properties.find(p => p.id === propId);
-            if (prop) {
-                prop.renewals.push({
-                    tenant,
-                    endDate: new Date(endDate),
-                    rent,
-                    status: 'Pending'
-                });
-                saveData();
-                updateDisplays();
-                e.target.reset();
-                alert('Lease renewal proposed!');
-            }
-        });
-
-        // Inspection
-        document.getElementById('inspection-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const propId = document.getElementById('insp-property-id').value;
-            const date = document.getElementById('insp-date').value;
-            const notes = document.getElementById('insp-notes').value;
-            const prop = landlord.properties.find(p => p.id === propId);
-            if (prop) {
-                prop.inspections.push({
-                    date: new Date(date),
-                    notes
-                });
-                saveData();
-                updateDisplays();
-                e.target.reset();
-                alert('Inspection scheduled!');
-            }
-        });
-
-        // Document Upload
-        document.getElementById('document-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const propId = document.getElementById('doc-property-id').value;
-            const title = document.getElementById('doc-title').value;
-            const file = document.getElementById('doc-file').files[0];
-            const prop = landlord.properties.find(p => p.id === propId);
-            if (prop && file) {
-                prop.documents.push({
-                    title,
-                    fileName: file.name
-                });
-                saveData();
-                updateDisplays();
-                e.target.reset();
-                alert('Document uploaded!');
-            }
-        });
-
-        // Communication
-        document.getElementById('communication-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const recipient = document.getElementById('comm-recipient').value;
-            const tenantName = document.getElementById('comm-tenant-name').value;
-            const subject = document.getElementById('comm-subject').value;
-            const message = document.getElementById('comm-message').value;
-            const actualRecipient = recipient === 'select' ? tenantName : recipient;
-            landlord.communications.push({
-                recipient: actualRecipient,
-                subject,
-                message,
-                date: new Date()
-            });
-            saveData();
-            updateDisplays();
-            e.target.reset();
-            alert('Message sent!');
-        });
-
-        // Action Buttons
-        function exportAnalytics() {
-            const metrics = calculateMetrics();
-            const report = `
-Analytics Report
-Total Properties: ${metrics.totalProperties}
-Total Tenants: ${metrics.totalTenantsOverall}
-Occupancy Rate: ${((metrics.totalTenantsOverall / (metrics.totalProperties * 10)) * 100).toFixed(1)}% (assuming 10 units/property)
-Rent Collected: $${metrics.totalRentCollected.toFixed(2)}
-Overdue: $${metrics.totalOverdueAmount.toFixed(2)}
-            `;
-            const blob = new Blob([report], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'analytics_report.txt';
-            a.click();
-            URL.revokeObjectURL(url);
-            alert('Analytics exported!');
-        }
-
-        function syncData() {
-            // Simulate sync with external systems
-            alert('Data synced with external systems (simulated).');
-        }
-
-        function navigateToPageOne() {
-            // Placeholder: In a real app, navigate to the main dashboard
-            window.location.href = 'LandlordsManagement.html';
-        }
-
-        // Save Data to localStorage
-        function saveData() {
-            localStorage.setItem('landlordData', JSON.stringify(landlord));
-        }
-
-        // Initial Update
-        updateDisplays();
     </script>
 </body>
 </html>
