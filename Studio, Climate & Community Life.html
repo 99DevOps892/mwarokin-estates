@@ -1,0 +1,2280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mwarokin Estates · Studio, Climate & Community</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       DESIGN TOKENS (consistent with pages 1–14)
+       ============================================================ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy-900: #0b121c;
+      --navy-800: #111b2b;
+      --navy-700: #1a2740;
+      --navy-600: #23334f;
+      --navy-500: #2e405f;
+      --gold-500: #c8972a;
+      --gold-400: #e0b354;
+      --gold-300: #f0cf8a;
+      --gold-200: #f9e9c7;
+      --green-500: #1e8e5c;
+      --green-400: #2bb673;
+      --green-300: #6fcf97;
+      --red-500: #c44536;
+      --red-400: #e05a4f;
+      --amber-500: #e6a017;
+      --amber-400: #f5b83d;
+      --purple-500: #6b4c9a;
+      --purple-400: #8b6bb5;
+      --blue-500: #2c6b9e;
+      --blue-400: #4a8bc2;
+      --teal-500: #1e7a7a;
+      --teal-400: #2ba3a3;
+      --pink-500: #b5447a;
+      --pink-400: #d46b9e;
+      --orange-500: #c4622a;
+      --orange-400: #e0804a;
+      --gray-100: #f8fafc;
+      --gray-200: #eef2f6;
+      --gray-300: #dce3ec;
+      --gray-400: #9aa9bb;
+      --gray-500: #6b7c93;
+      --gray-600: #4f5e74;
+      --gray-700: #334155;
+      --white: #ffffff;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.05), 0 2px 6px rgba(0,0,0,0.03);
+      --shadow-lg: 0 12px 28px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.02);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-serif: 'Playfair Display', Georgia, serif;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--gray-100);
+      color: var(--navy-900);
+      line-height: 1.5;
+      padding: 0 24px 48px;
+      min-height: 100vh;
+    }
+
+    .app-container { max-width: 1440px; margin: 0 auto; }
+
+    /* ============================================================
+       TOP BAR
+       ============================================================ */
+    .top-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 0 28px; flex-wrap: wrap; gap: 20px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; }
+
+    .brand-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--gold-500), var(--gold-400));
+      border-radius: 14px; display: flex; align-items: center; justify-content: center;
+      color: var(--navy-900); font-size: 22px; font-weight: 700;
+      box-shadow: 0 6px 14px rgba(200,151,42,0.25);
+    }
+
+    .brand-text h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+    .brand-text h1 span { font-weight: 300; color: var(--gold-500); }
+    .brand-text .tagline { font-size: 12px; color: var(--gray-500); font-weight: 400; }
+
+    .nav-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+    .nav-link {
+      font-size: 13px; font-weight: 500; color: var(--gray-600);
+      text-decoration: none; padding: 8px 16px; border-radius: 40px;
+      transition: all 0.15s; background: var(--white); box-shadow: var(--shadow-sm);
+    }
+    .nav-link:hover, .nav-link.active { background: var(--navy-800); color: var(--gold-300); }
+
+    .avatar {
+      width: 44px; height: 44px; background: var(--navy-800); color: var(--gold-400);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 16px; border: 2px solid var(--gold-400);
+      box-shadow: var(--shadow-sm); cursor: pointer;
+    }
+
+    /* ============================================================
+       PAGE HEADER
+       ============================================================ */
+    .page-header { margin-bottom: 28px; }
+    .page-header h2 {
+      font-size: 26px; font-weight: 700; letter-spacing: -0.4px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .page-header h2 i { color: var(--gold-500); font-size: 24px; }
+    .page-header p { font-size: 14px; color: var(--gray-500); margin-top: 4px; }
+
+    /* ============================================================
+       SHARED CARD STYLES
+       ============================================================ */
+    .card {
+      background: var(--white); border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200);
+      transition: box-shadow 0.2s; overflow: hidden;
+    }
+    .card:hover { box-shadow: var(--shadow-md); }
+
+    .section-title {
+      font-size: 18px; font-weight: 600; letter-spacing: -0.2px;
+      display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+    }
+    .section-title i { color: var(--gold-500); font-size: 18px; }
+
+    /* ============================================================
+       FEATURE 1: PODCAST & CONTENT STUDIO
+       ============================================================ */
+    .podcast-panel {
+      background: linear-gradient(135deg, #1a0e2d 0%, var(--purple-500) 60%, var(--pink-500) 100%);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin-bottom: 30px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .podcast-panel::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -5%;
+      width: 460px;
+      height: 460px;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .podcast-panel::after {
+      content: '🎙';
+      position: absolute;
+      bottom: -70px;
+      right: 40px;
+      font-size: 240px;
+      color: rgba(255,255,255,0.05);
+      pointer-events: none;
+    }
+
+    .podcast-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .podcast-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .podcast-header h3 i {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      backdrop-filter: blur(10px);
+    }
+
+    .podcast-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+      margin-top: 3px;
+    }
+
+    .podcast-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 40px;
+      background: rgba(196,69,54,0.9);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      backdrop-filter: blur(10px);
+    }
+
+    .podcast-live .pl-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--white);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(255,255,255,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+    }
+
+    .podcast-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 24px;
+    }
+
+    .podcast-stat {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .podcast-stat .ps-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: rgba(255,255,255,0.75);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .podcast-stat .ps-value {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: var(--white);
+    }
+
+    .podcast-stat .ps-sub {
+      font-size: 11px;
+      color: rgba(255,255,255,0.65);
+      margin-top: 3px;
+    }
+
+    .episodes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .episode-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .episode-card:hover {
+      background: rgba(255,255,255,0.12);
+      transform: translateY(-2px);
+    }
+
+    .episode-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .episode-number {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .episode-duration {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gold-300);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .episode-title {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--white);
+      line-height: 1.3;
+    }
+
+    .episode-guest {
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .episode-stats {
+      display: flex;
+      gap: 16px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .episode-stats span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .episode-stats i { color: var(--gold-400); }
+
+    /* ============================================================
+       FEATURE 2: WEATHER & CLIMATE RISK
+       ============================================================ */
+    .climate-panel {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 28px 32px;
+      margin-bottom: 30px;
+    }
+
+    .climate-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 28px;
+      margin-top: 16px;
+    }
+
+    .weather-card {
+      background: linear-gradient(135deg, var(--blue-500) 0%, var(--blue-400) 100%);
+      border-radius: var(--radius-md);
+      padding: 28px 24px;
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .weather-card::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -20%;
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .weather-location {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .weather-main {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .weather-icon-big {
+      font-size: 64px;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
+    }
+
+    .weather-temp {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .weather-temp .wt-value {
+      font-size: 44px;
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1;
+    }
+
+    .weather-temp .wt-desc {
+      font-size: 13px;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .weather-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .weather-detail {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .weather-detail i {
+      color: rgba(255,255,255,0.7);
+      font-size: 14px;
+    }
+
+    .weather-detail .wd-label {
+      color: rgba(255,255,255,0.7);
+    }
+
+    .weather-detail .wd-value {
+      font-weight: 700;
+      margin-left: auto;
+    }
+
+    .climate-risks {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .risk-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      background: var(--gray-100);
+      transition: all 0.15s;
+    }
+
+    .risk-item:hover { background: var(--gray-200); }
+
+    .risk-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+      color: var(--white);
+    }
+
+    .risk-icon.flood { background: linear-gradient(135deg, var(--blue-500), var(--blue-400)); }
+    .risk-icon.drought { background: linear-gradient(135deg, var(--orange-500), var(--orange-400)); }
+    .risk-icon.wind { background: linear-gradient(135deg, var(--teal-500), var(--teal-400)); }
+    .risk-icon.heat { background: linear-gradient(135deg, var(--red-500), var(--red-400)); }
+
+    .risk-info { flex: 1; min-width: 0; }
+    .risk-name {
+      font-weight: 700;
+      font-size: 13.5px;
+      color: var(--navy-900);
+    }
+    .risk-desc {
+      font-size: 11.5px;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    .risk-level {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 30px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+
+    .risk-level.low { background: #e6f5ee; color: var(--green-500); }
+    .risk-level.medium { background: #fff8e5; color: var(--amber-500); }
+    .risk-level.high { background: #fdeceb; color: var(--red-500); }
+
+    /* ============================================================
+       FEATURE 3: BIRTHDAY & LIFE EVENTS ENGINE
+       ============================================================ */
+    .events-engine-panel {
+      background: linear-gradient(135deg, var(--pink-500) 0%, var(--pink-400) 50%, var(--gold-400) 100%);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin-bottom: 30px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .events-engine-panel::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -5%;
+      width: 460px;
+      height: 460px;
+      background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .events-engine-panel::after {
+      content: '🎂';
+      position: absolute;
+      bottom: -70px;
+      right: 40px;
+      font-size: 240px;
+      color: rgba(255,255,255,0.08);
+      pointer-events: none;
+    }
+
+    .events-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .events-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .events-header h3 i {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      backdrop-filter: blur(10px);
+    }
+
+    .events-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.85);
+      margin-top: 3px;
+    }
+
+    .events-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 24px;
+    }
+
+    .event-stat {
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .event-stat .evs-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: rgba(255,255,255,0.85);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .event-stat .evs-value {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: var(--white);
+    }
+
+    .events-list-horizontal {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .event-celebration-card {
+      min-width: 260px;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .event-celebration-card:hover {
+      background: rgba(255,255,255,0.22);
+      transform: translateY(-2px);
+    }
+
+    .event-celebration-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .event-celebration-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--white);
+      flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+
+    .event-celebration-info { flex: 1; min-width: 0; }
+    .event-celebration-name {
+      font-weight: 700;
+      font-size: 13.5px;
+      color: var(--white);
+    }
+    .event-celebration-property {
+      font-size: 11px;
+      color: rgba(255,255,255,0.75);
+    }
+
+    .event-badge {
+      padding: 4px 10px;
+      border-radius: 30px;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      background: rgba(255,255,255,0.25);
+      color: var(--white);
+      white-space: nowrap;
+    }
+
+    .event-detail {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .event-detail i { color: var(--gold-200); }
+
+    .event-action-btn {
+      padding: 9px 16px;
+      border-radius: 30px;
+      border: none;
+      background: var(--white);
+      color: var(--pink-500);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-sans);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .event-action-btn:hover { transform: scale(1.03); }
+
+    /* ============================================================
+       FEATURE 4: MEDITATION & MINDFULNESS RETREATS
+       ============================================================ */
+    .meditation-panel {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 28px 32px;
+      margin-bottom: 30px;
+    }
+
+    .meditation-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 28px;
+      margin-top: 16px;
+    }
+
+    .meditation-hero {
+      background: linear-gradient(135deg, #0a3a3a 0%, var(--teal-500) 100%);
+      border-radius: var(--radius-md);
+      padding: 32px 24px;
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .meditation-hero::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      right: -30%;
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .meditation-lotus {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
+      position: relative;
+      z-index: 1;
+      border: 2px solid rgba(255,255,255,0.25);
+    }
+
+    .meditation-lotus::after {
+      content: '';
+      position: absolute;
+      inset: -12px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.15);
+      animation: meditationRing 3s infinite;
+    }
+
+    @keyframes meditationRing {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.3); opacity: 0; }
+    }
+
+    .meditation-hero h4 {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .meditation-hero p {
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.8);
+      position: relative;
+      z-index: 1;
+      line-height: 1.6;
+    }
+
+    .meditation-session {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
+      color: var(--gold-200);
+    }
+
+    .meditation-play {
+      padding: 12px 28px;
+      border-radius: 40px;
+      border: none;
+      background: var(--white);
+      color: var(--teal-500);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-sans);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    }
+
+    .meditation-play:hover { transform: scale(1.04); }
+
+    .retreats-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .retreat-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 18px;
+      background: var(--gray-100);
+      border-radius: var(--radius-md);
+      transition: all 0.15s;
+      flex-wrap: wrap;
+    }
+
+    .retreat-card:hover { background: var(--gray-200); transform: translateX(3px); }
+
+    .retreat-image {
+      width: 60px;
+      height: 60px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .retreat-image.mountain { background: linear-gradient(135deg, var(--blue-500), var(--blue-400)); }
+    .retreat-image.beach { background: linear-gradient(135deg, var(--teal-500), var(--teal-400)); }
+    .retreat-image.forest { background: linear-gradient(135deg, var(--green-500), var(--green-400)); }
+    .retreat-image.desert { background: linear-gradient(135deg, var(--orange-500), var(--orange-400)); }
+
+    .retreat-info { flex: 1; min-width: 160px; }
+    .retreat-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--navy-900);
+    }
+    .retreat-meta {
+      font-size: 11.5px;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    .retreat-price {
+      text-align: right;
+    }
+
+    .retreat-price .rp-value {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--teal-500);
+    }
+    .retreat-price .rp-label {
+      font-size: 10px;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .retreat-action {
+      padding: 8px 16px;
+      border-radius: 30px;
+      border: none;
+      background: var(--navy-800);
+      color: var(--gold-300);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-sans);
+    }
+
+    .retreat-action:hover { background: var(--navy-700); }
+
+    /* ============================================================
+       FEATURE 5: SECRET SANTA & GIFT EXCHANGE
+       ============================================================ */
+    .santa-panel {
+      background: linear-gradient(135deg, #7a1a1a 0%, var(--red-500) 50%, var(--green-500) 100%);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin-bottom: 30px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .santa-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(2px 2px at 10% 20%, rgba(255,255,255,0.8), transparent),
+        radial-gradient(2px 2px at 30% 60%, rgba(255,255,255,0.7), transparent),
+        radial-gradient(2px 2px at 70% 30%, rgba(255,255,255,0.75), transparent),
+        radial-gradient(2px 2px at 85% 70%, rgba(255,255,255,0.7), transparent),
+        radial-gradient(2px 2px at 50% 85%, rgba(255,255,255,0.75), transparent),
+        radial-gradient(2px 2px at 20% 90%, rgba(255,255,255,0.7), transparent);
+      animation: twinkle 3s infinite alternate;
+      pointer-events: none;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    .santa-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .santa-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .santa-header h3 i {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      backdrop-filter: blur(10px);
+    }
+
+    .santa-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.85);
+      margin-top: 3px;
+    }
+
+    .santa-days {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 22px;
+      border-radius: 40px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .santa-days .sd-value {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: var(--gold-200);
+      line-height: 1;
+    }
+
+    .santa-days .sd-label {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      font-weight: 700;
+      opacity: 0.9;
+    }
+
+    .santa-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 24px;
+    }
+
+    .santa-stat {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .santa-stat .ss-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: rgba(255,255,255,0.85);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .santa-stat .ss-value {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: var(--white);
+    }
+
+    .santa-participants {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .santa-participant {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: all 0.15s;
+    }
+
+    .santa-participant:hover {
+      background: rgba(255,255,255,0.2);
+      transform: translateY(-2px);
+    }
+
+    .santa-participant-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .santa-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--white);
+      flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+
+    .santa-participant-info { flex: 1; min-width: 0; }
+    .santa-participant-name {
+      font-weight: 700;
+      font-size: 13.5px;
+      color: var(--white);
+    }
+    .santa-participant-property {
+      font-size: 11px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .santa-wishlist {
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 10px;
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.9);
+      line-height: 1.5;
+    }
+
+    .santa-wishlist strong {
+      color: var(--gold-200);
+      display: block;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 3px;
+    }
+
+    .santa-action {
+      padding: 8px 14px;
+      border-radius: 30px;
+      border: none;
+      background: var(--white);
+      color: var(--red-500);
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-sans);
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .santa-action:hover { transform: scale(1.03); }
+
+    /* ============================================================
+       FEATURE 6: STORYTELLING & BOOK PUBLISHER
+       ============================================================ */
+    .story-panel {
+      background: linear-gradient(135deg, #2d1b4e 0%, var(--purple-500) 100%);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin-bottom: 30px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .story-panel::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -5%;
+      width: 460px;
+      height: 460px;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .story-panel::after {
+      content: '📖';
+      position: absolute;
+      bottom: -70px;
+      right: 40px;
+      font-size: 240px;
+      color: rgba(255,255,255,0.05);
+      pointer-events: none;
+    }
+
+    .story-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .story-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .story-header h3 i {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      backdrop-filter: blur(10px);
+    }
+
+    .story-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+      margin-top: 3px;
+    }
+
+    .story-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 24px;
+    }
+
+    .story-stat {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .story-stat .sts-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: rgba(255,255,255,0.75);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .story-stat .sts-value {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: var(--white);
+    }
+
+    .story-stat .sts-value.gold { color: var(--gold-300); }
+
+    .book-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .book-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
+      display: flex;
+      gap: 16px;
+    }
+
+    .book-card:hover {
+      background: rgba(255,255,255,0.12);
+      transform: translateY(-2px);
+    }
+
+    .book-cover {
+      width: 60px;
+      height: 84px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+      box-shadow: 4px 4px 12px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    .book-cover.memoir { background: linear-gradient(135deg, var(--gold-500), var(--gold-400)); color: var(--navy-900); }
+    .book-cover.guide { background: linear-gradient(135deg, var(--blue-500), var(--blue-400)); color: var(--white); }
+    .book-cover.coffee { background: linear-gradient(135deg, var(--purple-500), var(--purple-400)); color: var(--white); }
+    .book-cover.journal { background: linear-gradient(135deg, var(--green-500), var(--green-400)); color: var(--white); }
+
+    .book-cover::after {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: rgba(0,0,0,0.15);
+      border-radius: 2px;
+    }
+
+    .book-info { flex: 1; min-width: 0; }
+    .book-title {
+      font-weight: 700;
+      font-size: 13.5px;
+      color: var(--white);
+      line-height: 1.3;
+    }
+    .book-subtitle {
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.7);
+      margin-top: 3px;
+      line-height: 1.4;
+    }
+    .book-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 10.5px;
+      color: rgba(255,255,255,0.6);
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .book-meta span { display: flex; align-items: center; gap: 4px; }
+    .book-meta i { color: var(--gold-400); }
+
+    .book-status {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      background: var(--green-500);
+      color: var(--white);
+    }
+
+    /* ============================================================
+       FEATURE 7: TIME BANK & VOLUNTEER HOURS
+       ============================================================ */
+    .timebank-panel {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 28px 32px;
+      margin-bottom: 30px;
+    }
+
+    .timebank-hero {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 24px 28px;
+      background: linear-gradient(135deg, var(--green-500) 0%, var(--teal-500) 100%);
+      border-radius: var(--radius-md);
+      color: var(--white);
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .timebank-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .timebank-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+      backdrop-filter: blur(10px);
+    }
+
+    .timebank-text {
+      flex: 1;
+      min-width: 200px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .timebank-text h4 {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      margin-bottom: 4px;
+    }
+
+    .timebank-text p {
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.5;
+    }
+
+    .timebank-balance {
+      text-align: right;
+      position: relative;
+      z-index: 1;
+    }
+
+    .timebank-balance .tb-value {
+      font-size: 40px;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      line-height: 1;
+      color: var(--gold-200);
+    }
+
+    .timebank-balance .tb-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      font-weight: 700;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+
+    .volunteer-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 28px;
+    }
+
+    .opportunities-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .opportunity {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: var(--gray-100);
+      border-radius: var(--radius-md);
+      transition: all 0.15s;
+      flex-wrap: wrap;
+    }
+
+    .opportunity:hover { background: var(--gray-200); transform: translateX(3px); }
+
+    .opportunity-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+      color: var(--white);
+    }
+
+    .opportunity-icon.edu { background: linear-gradient(135deg, var(--blue-500), var(--blue-400)); }
+    .opportunity-icon.env { background: linear-gradient(135deg, var(--green-500), var(--green-400)); }
+    .opportunity-icon.health { background: linear-gradient(135deg, var(--red-500), var(--red-400)); }
+    .opportunity-icon.community { background: linear-gradient(135deg, var(--purple-500), var(--purple-400)); }
+
+    .opportunity-info { flex: 1; min-width: 160px; }
+    .opportunity-title {
+      font-weight: 700;
+      font-size: 13.5px;
+      color: var(--navy-900);
+    }
+    .opportunity-meta {
+      font-size: 11.5px;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    .opportunity-hours {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--green-500);
+      white-space: nowrap;
+    }
+
+    .opportunity-btn {
+      padding: 7px 14px;
+      border-radius: 30px;
+      border: none;
+      background: var(--navy-800);
+      color: var(--gold-300);
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-sans);
+      white-space: nowrap;
+    }
+
+    .opportunity-btn:hover { background: var(--navy-700); }
+
+    .leaderboard-tb {
+      background: var(--gray-100);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+
+    .leaderboard-tb h4 {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--gray-600);
+      margin-bottom: 14px;
+    }
+
+    .tb-leader {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .tb-leader:last-child { border-bottom: none; }
+
+    .tb-rank {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 11.5px;
+      flex-shrink: 0;
+      background: var(--white);
+      color: var(--gray-600);
+    }
+
+    .tb-rank.gold { background: var(--gold-500); color: var(--white); }
+    .tb-rank.silver { background: #9ba9bb; color: var(--white); }
+    .tb-rank.bronze { background: #cd7f32; color: var(--white); }
+
+    .tb-leader-info { flex: 1; min-width: 0; }
+    .tb-leader-name {
+      font-weight: 700;
+      font-size: 12.5px;
+      color: var(--navy-900);
+    }
+    .tb-leader-detail {
+      font-size: 10.5px;
+      color: var(--gray-500);
+    }
+
+    .tb-leader-hours {
+      font-weight: 800;
+      font-size: 13px;
+      color: var(--green-500);
+    }
+
+    /* ============================================================
+       FOOTER
+       ============================================================ */
+    .page-footer {
+      text-align: center;
+      padding: 32px 0 16px;
+      font-size: 12px;
+      color: var(--gray-400);
+      border-top: 1px solid var(--gray-200);
+      margin-top: 20px;
+    }
+    .page-footer a { color: var(--gold-500); text-decoration: none; }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 1200px) {
+      .podcast-stats { grid-template-columns: repeat(2, 1fr); }
+      .climate-grid { grid-template-columns: 1fr; }
+      .events-stats { grid-template-columns: repeat(2, 1fr); }
+      .meditation-grid { grid-template-columns: 1fr; }
+      .santa-stats { grid-template-columns: repeat(2, 1fr); }
+      .story-stats { grid-template-columns: repeat(2, 1fr); }
+      .volunteer-grid { grid-template-columns: 1fr; }
+      .episodes-grid { grid-template-columns: 1fr; }
+      .book-list { grid-template-columns: 1fr; }
+      .santa-participants { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      body { padding: 0 16px 32px; }
+      .top-bar { flex-direction: column; align-items: flex-start; }
+      .nav-actions { width: 100%; justify-content: space-between; }
+      .podcast-panel { padding: 24px 20px; }
+      .events-engine-panel { padding: 24px 20px; }
+      .santa-panel { padding: 24px 20px; }
+      .story-panel { padding: 24px 20px; }
+      .podcast-stats { grid-template-columns: 1fr; }
+      .events-stats { grid-template-columns: 1fr; }
+      .santa-stats { grid-template-columns: 1fr; }
+      .story-stats { grid-template-columns: 1fr; }
+      .podcast-header { flex-direction: column; align-items: flex-start; }
+      .events-header { flex-direction: column; align-items: flex-start; }
+      .santa-header { flex-direction: column; align-items: flex-start; }
+      .story-header { flex-direction: column; align-items: flex-start; }
+      .weather-main { flex-direction: column; align-items: flex-start; }
+      .timebank-hero { flex-direction: column; text-align: center; }
+      .timebank-balance { text-align: center; }
+    }
+    @media (max-width: 480px) {
+      .climate-risks { gap: 10px; }
+      .opportunities-list { gap: 10px; }
+      .book-card { flex-direction: column; }
+    }
+
+    /* ============================================================
+       ANIMATIONS
+       ============================================================ */
+    .fade-in { animation: fadeIn 0.4s ease forwards; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- ============================================================
+         TOP BAR
+         ============================================================ -->
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-icon">⬡</div>
+        <div class="brand-text">
+          <h1>Mwarokin <span>Estates</span></h1>
+          <div class="tagline">Advanced Payments · Page 15</div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <a href="#" class="nav-link"><i class="fas fa-chart-pie"></i> Dashboard</a>
+        <a href="#" class="nav-link"><i class="fas fa-file-invoice"></i> Invoices</a>
+        <a href="#" class="nav-link active"><i class="fas fa-podcast"></i> Studio</a>
+        <div class="avatar" title="Landlord Admin">AD</div>
+      </div>
+    </header>
+
+    <!-- ============================================================
+         PAGE HEADER
+         ============================================================ -->
+    <div class="page-header">
+      <h2><i class="fas fa-podcast"></i> Studio, Climate & Community Life</h2>
+      <p>Podcast studio, climate risk, birthdays, wellness retreats, gift exchange, book publishing, and time banking.</p>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 1: PODCAST & CONTENT STUDIO
+         ============================================================ -->
+    <div class="podcast-panel fade-in">
+      <div class="podcast-header">
+        <div>
+          <h3><i class="fas fa-microphone-alt"></i> Landlord Podcast & Content Studio</h3>
+          <p>Record, publish, and monetize your own property investment podcast. Studio-quality audio, AI editing, and audience analytics.</p>
+        </div>
+        <div class="podcast-live">
+          <span class="pl-dot"></span>
+          Recording Now
+        </div>
+      </div>
+      <div class="podcast-stats" id="podcastStats">
+        <!-- Injected via JS -->
+      </div>
+      <div class="episodes-grid" id="episodesGrid">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 2: WEATHER & CLIMATE RISK
+         ============================================================ -->
+    <div class="climate-panel fade-in">
+      <div class="section-title"><i class="fas fa-cloud-sun-rain"></i> Property Weather & Climate Risk Index</div>
+      <p style="font-size:13px;color:var(--gray-500);">Real-time weather monitoring and long-term climate risk assessment for every property.</p>
+      <div class="climate-grid">
+        <div class="weather-card">
+          <div class="weather-location"><i class="fas fa-map-marker-alt"></i> Nairobi, Kenya</div>
+          <div class="weather-main">
+            <div class="weather-icon-big">⛅</div>
+            <div class="weather-temp">
+              <div class="wt-value">24°C</div>
+              <div class="wt-desc">Partly cloudy · Feels like 26°C</div>
+            </div>
+          </div>
+          <div class="weather-details">
+            <div class="weather-detail">
+              <i class="fas fa-tint"></i>
+              <span class="wd-label">Humidity</span>
+              <span class="wd-value">62%</span>
+            </div>
+            <div class="weather-detail">
+              <i class="fas fa-wind"></i>
+              <span class="wd-label">Wind</span>
+              <span class="wd-value">12 km/h</span>
+            </div>
+            <div class="weather-detail">
+              <i class="fas fa-sun"></i>
+              <span class="wd-label">UV Index</span>
+              <span class="wd-value">7 (High)</span>
+            </div>
+            <div class="weather-detail">
+              <i class="fas fa-eye"></i>
+              <span class="wd-label">Visibility</span>
+              <span class="wd-value">10 km</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="climate-risks" id="climateRisks">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 3: BIRTHDAY & LIFE EVENTS ENGINE
+         ============================================================ -->
+    <div class="events-engine-panel fade-in">
+      <div class="events-header">
+        <div>
+          <h3><i class="fas fa-birthday-cake"></i> Tenant Birthday & Life Events Engine</h3>
+          <p>Never miss a moment that matters. Automated greetings, gift suggestions, and celebration reminders for every tenant.</p>
+        </div>
+      </div>
+      <div class="events-stats" id="eventsStats">
+        <!-- Injected via JS -->
+      </div>
+      <div class="events-list-horizontal" id="eventsListHorizontal">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 4: MEDITATION & MINDFULNESS RETREATS
+         ============================================================ -->
+    <div class="meditation-panel fade-in">
+      <div class="section-title"><i class="fas fa-spa"></i> Landlord Meditation & Mindfulness Retreats</div>
+      <p style="font-size:13px;color:var(--gray-500);">Exclusive wellness retreats and daily guided meditations designed for property professionals.</p>
+      <div class="meditation-grid">
+        <div class="meditation-hero">
+          <div class="meditation-lotus">🧘</div>
+          <h4>Today's Guided Session</h4>
+          <p>Calm Your Portfolio · A 15-minute guided meditation to reduce financial stress and gain clarity.</p>
+          <div class="meditation-session">
+            <i class="fas fa-headphones"></i> 15 min · Narrated by Amina
+          </div>
+          <button class="meditation-play" onclick="alert('🧘 Starting meditation session...\\n\\nCalm Your Portfolio · 15 minutes')">
+            <i class="fas fa-play"></i> Play Session
+          </button>
+        </div>
+
+        <div class="retreats-list" id="retreatsList">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 5: SECRET SANTA & GIFT EXCHANGE
+         ============================================================ -->
+    <div class="santa-panel fade-in">
+      <div class="santa-header">
+        <div>
+          <h3><i class="fas fa-gifts"></i> Property Secret Santa & Gift Exchange</h3>
+          <p>Organize gift exchanges within your community. Anonymous matching, wishlists, and delivery tracking.</p>
+        </div>
+        <div class="santa-days">
+          <div>
+            <div class="sd-value">24</div>
+            <div class="sd-label">Days to Christmas</div>
+          </div>
+          <i class="fas fa-tree" style="font-size:28px;color:var(--green-300);"></i>
+        </div>
+      </div>
+      <div class="santa-stats" id="santaStats">
+        <!-- Injected via JS -->
+      </div>
+      <div class="santa-participants" id="santaParticipants">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 6: STORYTELLING & BOOK PUBLISHER
+         ============================================================ -->
+    <div class="story-panel fade-in">
+      <div class="story-header">
+        <div>
+          <h3><i class="fas fa-book-open"></i> Landlord Storytelling & Book Publisher</h3>
+          <p>Turn your property journey into a published memoir, guide, or coffee-table book. AI-assisted writing and print-on-demand.</p>
+        </div>
+      </div>
+      <div class="story-stats" id="storyStats">
+        <!-- Injected via JS -->
+      </div>
+      <div class="book-list" id="bookList">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 7: TIME BANK & VOLUNTEER HOURS
+         ============================================================ -->
+    <div class="timebank-panel fade-in">
+      <div class="section-title"><i class="fas fa-clock"></i> Mwarokin Time Bank & Volunteer Hours</div>
+      <p style="font-size:13px;color:var(--gray-500);">Earn time credits by volunteering in your community. Trade hours for services from other landlords.</p>
+
+      <div class="timebank-hero">
+        <div class="timebank-icon"><i class="fas fa-hands-helping"></i></div>
+        <div class="timebank-text">
+          <h4>Your Time Bank Balance</h4>
+          <p>Every hour you give is an hour you can receive. Time credits never expire and can be traded across the entire Mwarokin network.</p>
+        </div>
+        <div class="timebank-balance">
+          <div class="tb-value">42 hrs</div>
+          <div class="tb-label">Available Credits</div>
+        </div>
+      </div>
+
+      <div class="volunteer-grid">
+        <div>
+          <div class="section-title" style="font-size:14px;margin-bottom:12px;"><i class="fas fa-search"></i> Volunteer Opportunities</div>
+          <div class="opportunities-list" id="opportunitiesList">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+
+        <div class="leaderboard-tb">
+          <h4><i class="fas fa-trophy"></i> Top Time Bankers</h4>
+          <div id="timebankLeaderboard">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <div class="page-footer">
+      <p>Mwarokin Estates · Studio, Climate & Community Life · &copy; 2025 · <a href="#">Privacy</a> · <a href="#">Terms</a></p>
+    </div>
+  </div>
+
+  <script>
+    /* ============================================================
+       MOCK DATA – PAGE 15 FEATURES
+       ============================================================ */
+
+    // Feature 1: Podcast
+    const podcastStats = [
+      { label: 'Total Listeners', value: '12,480', sub: 'Across all episodes' },
+      { label: 'Episodes Published', value: '42', sub: 'Weekly releases' },
+      { label: 'Avg. Rating', value: '4.8★', sub: '320 reviews' },
+      { label: 'Monthly Revenue', value: 'KSh 48K', sub: 'From sponsorships' }
+    ];
+
+    const episodes = [
+      { number: 'EP 042', title: 'Building Wealth Through Rental Properties in Kenya', guest: 'Guest: Grace Wanjiku · Landlord', duration: '42 min', plays: '2,840', likes: 184 },
+      { number: 'EP 041', title: 'The Truth About Tenant Screening', guest: 'Guest: Amina Hassan · Property Manager', duration: '35 min', plays: '1,920', likes: 142 },
+      { number: 'EP 040', title: 'KRA Tax Tips Every Landlord Should Know', guest: 'Guest: CPA David Ochieng', duration: '48 min', plays: '3,420', likes: 256 },
+      { number: 'EP 039', title: 'From Zero to KSh 100M Portfolio', guest: 'Guest: Sarah Kilonzo · Investor', duration: '52 min', plays: '4,180', likes: 328 },
+      { number: 'EP 038', title: 'Smart Home Tech for Kenyan Landlords', guest: 'Guest: Tech Expert Brian Kamau', duration: '28 min', plays: '1,640', likes: 98 },
+      { number: 'EP 037', title: 'Handling Difficult Tenants with Grace', guest: 'Guest: Lucy Wambui · Mediator', duration: '38 min', plays: '2,240', likes: 168 }
+    ];
+
+    // Feature 2: Climate Risks
+    const climateRisks = [
+      { type: 'flood', icon: 'fa-water', name: 'Flood Risk', desc: 'Kilimani Court · Moderate drainage capacity', level: 'medium' },
+      { type: 'drought', icon: 'fa-sun', name: 'Drought Risk', desc: 'South B Apartments · Water storage adequate', level: 'low' },
+      { type: 'wind', icon: 'fa-wind', name: 'Wind/Storm Risk', desc: 'Westlands Heights · Roof reinforced', level: 'low' },
+      { type: 'heat', icon: 'fa-temperature-high', name: 'Heat Stress Risk', desc: 'Lavington Suites · HVAC maintained', level: 'medium' },
+      { type: 'flood', icon: 'fa-water', name: 'Coastal Flood Risk', desc: 'Nyali Beach Resort · Elevated foundation', level: 'high' }
+    ];
+
+    // Feature 3: Birthdays & Life Events
+    const eventsStats = [
+      { label: 'Birthdays This Month', value: '12', sub: 'April 2025' },
+      { label: 'Anniversaries', value: '8', sub: 'Tenancy milestones' },
+      { label: 'New Babies', value: '3', sub: 'Last 60 days' },
+      { label: 'Greetings Sent', value: '184', sub: 'YTD automated' }
+    ];
+
+    const celebrations = [
+      { initials: 'JW', name: 'John Wachira', property: 'Kilimani Court · 3B', type: 'Birthday', badge: 'Today 🎂', detail: 'Turning 38 today', color: '#c8972a' },
+      { initials: 'MN', name: 'Mary Njoki', property: 'Westlands Heights · 5A', type: 'Anniversary', badge: '2 yrs', detail: '2 years at Westlands', color: '#b5447a' },
+      { initials: 'BK', name: 'Brian Kamau', property: 'South B Apartments · 12', type: 'Birthday', badge: 'Apr 22', detail: 'Turning 34 in 3 days', color: '#2c6b9e' },
+      { initials: 'LM', name: 'Lucy Muthoni', property: 'Lavington Suites · 7C', type: 'New Baby', badge: '🎉 Girl', detail: 'Welcomed baby girl Zara', color: '#6b4c9a' },
+      { initials: 'TM', name: 'Tom Mboya', property: 'Eastleigh Plaza · 4D', type: 'Birthday', badge: 'Apr 28', detail: 'Turning 45 next week', color: '#1e8e5c' }
+    ];
+
+    // Feature 4: Retreats
+    const retreats = [
+      { image: 'mountain', icon: 'fa-mountain', name: 'Mount Kenya Mindfulness Retreat', meta: '3 days · May 15-18, 2025 · 12 spots left', price: 'KSh 48,000', priceLabel: 'per person' },
+      { image: 'beach', icon: 'fa-umbrella-beach', name: 'Diani Beach Wellness Retreat', meta: '4 days · Jun 5-9, 2025 · 8 spots left', price: 'KSh 62,000', priceLabel: 'per person' },
+      { image: 'forest', icon: 'fa-tree', name: 'Kakamega Forest Silent Retreat', meta: '2 days · May 28-30, 2025 · 6 spots left', price: 'KSh 32,000', priceLabel: 'per person' },
+      { image: 'desert', icon: 'fa-sun', name: 'Chalbi Desert Star Gazing', meta: '3 days · Jul 12-15, 2025 · 15 spots left', price: 'KSh 55,000', priceLabel: 'per person' }
+    ];
+
+    // Feature 5: Secret Santa
+    const santaStats = [
+      { label: 'Participants', value: '42', sub: 'Across 6 properties' },
+      { label: 'Gifts Exchanged', value: '38', sub: 'Last year' },
+      { label: 'Avg. Gift Value', value: 'KSh 2,400', sub: 'Suggested budget' },
+      { label: 'Happiness Score', value: '96%', sub: 'Post-event survey' }
+    ];
+
+    const santaParticipants = [
+      { initials: 'JW', name: 'John Wachira', property: 'Kilimani Court · 3B', wishlist: 'Wireless headphones, books on real estate', color: '#c8972a' },
+      { initials: 'MN', name: 'Mary Njoki', property: 'Westlands Heights · 5A', wishlist: 'Spa voucher, scented candles', color: '#b5447a' },
+      { initials: 'BK', name: 'Brian Kamau', property: 'South B Apartments · 12', wishlist: 'Smart watch, running shoes', color: '#2c6b9e' },
+      { initials: 'LM', name: 'Lucy Muthoni', property: 'Lavington Suites · 7C', wishlist: 'Coffee maker, art supplies', color: '#6b4c9a' },
+      { initials: 'TM', name: 'Tom Mboya', property: 'Eastleigh Plaza · 4D', wishlist: 'Power tools, BBQ grill', color: '#1e8e5c' },
+      { initials: 'SK', name: 'Sarah Kilonzo', property: 'Runda Gardens · 2A', wishlist: 'Yoga mat, travel journal', color: '#c4622a' }
+    ];
+
+    // Feature 6: Books
+    const storyStats = [
+      { label: 'Published Books', value: '3', sub: 'Available on Amazon' },
+      { label: 'Copies Sold', value: '2,840', sub: 'Across all titles' },
+      { label: 'Total Royalties', value: 'KSh 384K', sub: 'Lifetime earnings' },
+      { label: 'Reader Rating', value: '4.7★', sub: 'From 420 reviews' }
+    ];
+
+    const books = [
+      { cover: 'memoir', icon: 'fa-book', title: 'From Kilimani to Millions', subtitle: 'A Kenyan landlord\'s journey from one unit to a 12-property portfolio', meta: ['284 pages', '2024', '4.8★'], status: 'Bestseller' },
+      { cover: 'guide', icon: 'fa-graduation-cap', title: 'The Kenyan Landlord\'s Handbook', subtitle: 'Everything you need to know about property management, tax, and tenant relations', meta: ['342 pages', '2025', '4.9★'], status: 'New' },
+      { cover: 'coffee', icon: 'fa-camera', title: 'Portraits of Nairobi', subtitle: 'A coffee-table book featuring stunning architecture from Kenya\'s capital', meta: ['148 pages', '2024', '4.6★'], status: null },
+      { cover: 'journal', icon: 'fa-pen', title: 'My Landlord Journal', subtitle: 'A guided journal to document your property investment journey', meta: ['192 pages', '2025', '4.7★'], status: 'New' }
+    ];
+
+    // Feature 7: Time Bank
+    const opportunities = [
+      { icon: 'fa-book', type: 'edu', title: 'Teach Financial Literacy to Tenants', meta: 'Community Hall · Saturdays · 2 hrs/week', hours: '+2 hrs' },
+      { icon: 'fa-tree', type: 'env', title: 'Community Tree Planting Day', meta: 'Lavington Green Park · Apr 22 · 4 hrs', hours: '+4 hrs' },
+      { icon: 'fa-heartbeat', type: 'health', title: 'Free Health Camp Volunteer', meta: 'South B Clinic · Apr 28 · 6 hrs', hours: '+6 hrs' },
+      { icon: 'fa-users', type: 'community', title: 'Mentor Young Tenants', meta: 'Remote or in-person · 2 hrs/week', hours: '+2 hrs' },
+      { icon: 'fa-utensils', type: 'community', title: 'Community Kitchen Cook-off', meta: 'Runda Gardens · May 5 · 3 hrs', hours: '+3 hrs' }
+    ];
+
+    const timebankLeaders = [
+      { rank: 1, initials: 'AH', name: 'Amina Hassan', detail: 'South B Apartments', hours: 128 },
+      { rank: 2, initials: 'GW', name: 'Grace Wanjiku', detail: 'Kilimani Court', hours: 96 },
+      { rank: 3, initials: 'DO', name: 'David Ochieng', detail: 'Eastleigh Plaza', hours: 84 },
+      { rank: 4, initials: 'SK', name: 'Sarah Kilonzo', detail: 'Runda Gardens', hours: 62 },
+      { rank: 5, initials: 'JM', name: 'James Mwangi', detail: 'Westlands Heights', hours: 54 }
+    ];
+
+    /* ============================================================
+       RENDER: PODCAST
+       ============================================================ */
+    function renderPodcast() {
+      const statsContainer = document.getElementById('podcastStats');
+      if (statsContainer) {
+        statsContainer.innerHTML = '';
+        podcastStats.forEach(s => {
+          const div = document.createElement('div');
+          div.className = 'podcast-stat';
+          div.innerHTML = `
+            <div class="ps-label">${s.label}</div>
+            <div class="ps-value">${s.value}</div>
+            <div class="ps-sub">${s.sub}</div>
+          `;
+          statsContainer.appendChild(div);
+        });
+      }
+
+      const grid = document.getElementById('episodesGrid');
+      if (grid) {
+        grid.innerHTML = '';
+        episodes.forEach(e => {
+          const card = document.createElement('div');
+          card.className = 'episode-card';
+          card.innerHTML = `
+            <div class="episode-top">
+              <span class="episode-number">${e.number}</span>
+              <span class="episode-duration"><i class="fas fa-clock"></i> ${e.duration}</span>
+            </div>
+            <div>
+              <div class="episode-title">${e.title}</div>
+              <div class="episode-guest">${e.guest}</div>
+            </div>
+            <div class="episode-stats">
+              <span><i class="fas fa-play-circle"></i> ${e.plays} plays</span>
+              <span><i class="fas fa-heart"></i> ${e.likes}</span>
+            </div>
+          `;
+          card.addEventListener('click', () => alert(`🎧 Playing ${e.number}: ${e.title}`));
+          grid.appendChild(card);
+        });
+      }
+    }
+
+    /* ============================================================
+       RENDER: CLIMATE RISKS
+       ============================================================ */
+    function renderClimate() {
+      const container = document.getElementById('climateRisks');
+      if (!container) return;
+      container.innerHTML = '';
+
+      climateRisks.forEach(r => {
+        const div = document.createElement('div');
+        div.className = 'risk-item';
+        div.innerHTML = `
+          <div class="risk-icon ${r.type}"><i class="fas ${r.icon}"></i></div>
+          <div class="risk-info">
+            <div class="risk-name">${r.name}</div>
+            <div class="risk-desc">${r.desc}</div>
+          </div>
+          <span class="risk-level ${r.level}">${r.level}</span>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    /* ============================================================
+       RENDER: BIRTHDAYS
+       ============================================================ */
+    function renderEvents() {
+      const statsContainer = document.getElementById('eventsStats');
+      if (statsContainer) {
+        statsContainer.innerHTML = '';
+        eventsStats.forEach(s => {
+          const div = document.createElement('div');
+          div.className = 'event-stat';
+          div.innerHTML = `
+            <div class="evs-label">${s.label}</div>
+            <div class="evs-value">${s.value}</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:3px;">${s.sub}</div>
+          `;
+          statsContainer.appendChild(div);
+        });
+      }
+
+      const listContainer = document.getElementById('eventsListHorizontal');
+      if (listContainer) {
+        listContainer.innerHTML = '';
+        celebrations.forEach(c => {
+          const div = document.createElement('div');
+          div.className = 'event-celebration-card';
+          div.innerHTML = `
+            <div class="event-celebration-top">
+              <div class="event-celebration-avatar" style="background:${c.color};">${c.initials}</div>
+              <div class="event-celebration-info">
+                <div class="event-celebration-name">${c.name}</div>
+                <div class="event-celebration-property">${c.property}</div>
+              </div>
+              <span class="event-badge">${c.badge}</span>
+            </div>
+            <div class="event-detail">
+              <i class="fas fa-${c.type === 'Birthday' ? 'birthday-cake' : c.type === 'Anniversary' ? 'heart' : 'baby'}"></i>
+              ${c.detail}
+            </div>
+            <button class="event-action-btn" onclick="alert('🎉 Sending greetings to ${c.name}!')">
+              <i class="fas fa-paper-plane"></i> Send Greeting
+            </button>
+          `;
+          listContainer.appendChild(div);
+        });
+      }
+    }
+
+    /* ============================================================
+       RENDER: RETREATS
+       ============================================================ */
+    function renderRetreats() {
+      const container = document.getElementById('retreatsList');
+      if (!container) return;
+      container.innerHTML = '';
+
+      retreats.forEach(r => {
+        const div = document.createElement('div');
+        div.className = 'retreat-card';
+        div.innerHTML = `
+          <div class="retreat-image ${r.image}"><i class="fas ${r.icon}"></i></div>
+          <div class="retreat-info">
+            <div class="retreat-name">${r.name}</div>
+            <div class="retreat-meta">${r.meta}</div>
+          </div>
+          <div class="retreat-price">
+            <div class="rp-value">${r.price}</div>
+            <div class="rp-label">${r.priceLabel}</div>
+          </div>
+          <button class="retreat-action" onclick="alert('🧘 Reserving spot at ${r.name}')">Reserve</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    /* ============================================================
+       RENDER: SECRET SANTA
+       ============================================================ */
+    function renderSanta() {
+      const statsContainer = document.getElementById('santaStats');
+      if (statsContainer) {
+        statsContainer.innerHTML = '';
+        santaStats.forEach(s => {
+          const div = document.createElement('div');
+          div.className = 'santa-stat';
+          div.innerHTML = `
+            <div class="ss-label">${s.label}</div>
+            <div class="ss-value">${s.value}</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:3px;">${s.sub}</div>
+          `;
+          statsContainer.appendChild(div);
+        });
+      }
+
+      const container = document.getElementById('santaParticipants');
+      if (container) {
+        container.innerHTML = '';
+        santaParticipants.forEach(p => {
+          const div = document.createElement('div');
+          div.className = 'santa-participant';
+          div.innerHTML = `
+            <div class="santa-participant-top">
+              <div class="santa-avatar" style="background:${p.color};">${p.initials}</div>
+              <div class="santa-participant-info">
+                <div class="santa-participant-name">${p.name}</div>
+                <div class="santa-participant-property">${p.property}</div>
+              </div>
+            </div>
+            <div class="santa-wishlist">
+              <strong>Wishlist</strong>
+              ${p.wishlist}
+            </div>
+            <button class="santa-action" onclick="alert('🎁 Matched with ${p.name}\\n\\nYou can now purchase a gift from their wishlist.')">
+              <i class="fas fa-gift"></i> Give Gift
+            </button>
+          `;
+          container.appendChild(div);
+        });
+      }
+    }
+
+    /* ============================================================
+       RENDER: STORY / BOOKS
+       ============================================================ */
+    function renderBooks() {
+      const statsContainer = document.getElementById('storyStats');
+      if (statsContainer) {
+        statsContainer.innerHTML = '';
+        storyStats.forEach(s => {
+          const div = document.createElement('div');
+          div.className = 'story-stat';
+          div.innerHTML = `
+            <div class="sts-label">${s.label}</div>
+            <div class="sts-value ${s.label === 'Total Royalties' ? 'gold' : ''}">${s.value}</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:3px;">${s.sub}</div>
+          `;
+          statsContainer.appendChild(div);
+        });
+      }
+
+      const container = document.getElementById('bookList');
+      if (container) {
+        container.innerHTML = '';
+        books.forEach(b => {
+          const div = document.createElement('div');
+          div.className = 'book-card';
+          div.innerHTML = `
+            <div class="book-cover ${b.cover}" style="position:relative;">
+              <i class="fas ${b.icon}"></i>
+              ${b.status ? `<span class="book-status">${b.status}</span>` : ''}
+            </div>
+            <div class="book-info">
+              <div class="book-title">${b.title}</div>
+              <div class="book-subtitle">${b.subtitle}</div>
+              <div class="book-meta">
+                <span><i class="fas fa-file-alt"></i> ${b.meta[0]}</span>
+                <span><i class="fas fa-calendar"></i> ${b.meta[1]}</span>
+                <span><i class="fas fa-star"></i> ${b.meta[2]}</span>
+              </div>
+            </div>
+          `;
+          div.addEventListener('click', () => alert(`📖 Opening "${b.title}"`));
+          container.appendChild(div);
+        });
+      }
+    }
+
+    /* ============================================================
+       RENDER: TIME BANK
+       ============================================================ */
+    function renderTimebank() {
+      const oppContainer = document.getElementById('opportunitiesList');
+      if (oppContainer) {
+        oppContainer.innerHTML = '';
+        opportunities.forEach(o => {
+          const div = document.createElement('div');
+          div.className = 'opportunity';
+          div.innerHTML = `
+            <div class="opportunity-icon ${o.type}"><i class="fas ${o.icon}"></i></div>
+            <div class="opportunity-info">
+              <div class="opportunity-title">${o.title}</div>
+              <div class="opportunity-meta">${o.meta}</div>
+            </div>
+            <span class="opportunity-hours">${o.hours}</span>
+            <button class="opportunity-btn" onclick="alert('✅ Signing up for: ${o.title}')">Sign Up</button>
+          `;
+          oppContainer.appendChild(div);
+        });
+      }
+
+      const leaderContainer = document.getElementById('timebankLeaderboard');
+      if (leaderContainer) {
+        leaderContainer.innerHTML = '';
+        timebankLeaders.forEach(l => {
+          const rankClass = l.rank === 1 ? 'gold' : l.rank === 2 ? 'silver' : l.rank === 3 ? 'bronze' : '';
+          const div = document.createElement('div');
+          div.className = 'tb-leader';
+          div.innerHTML = `
+            <div class="tb-rank ${rankClass}">${l.rank}</div>
+            <div class="tb-leader-info">
+              <div class="tb-leader-name">${l.name}</div>
+              <div class="tb-leader-detail">${l.detail}</div>
+            </div>
+            <div class="tb-leader-hours">${l.hours} hrs</div>
+          `;
+          leaderContainer.appendChild(div);
+        });
+      }
+    }
+
+    /* ============================================================
+       INIT PAGE 15
+       ============================================================ */
+    function init() {
+      renderPodcast();
+      renderClimate();
+      renderEvents();
+      renderRetreats();
+      renderSanta();
+      renderBooks();
+      renderTimebank();
+      console.log('🎙 Mwarokin Estates · Studio, Climate & Community Life (Page 15) loaded');
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

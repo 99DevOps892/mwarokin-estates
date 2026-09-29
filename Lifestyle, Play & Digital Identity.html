@@ -1,0 +1,2270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mwarokin Estates · Lifestyle, Play & Digital Identity</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       DESIGN TOKENS (consistent with pages 1–15)
+       ============================================================ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy-900: #0b121c;
+      --navy-800: #111b2b;
+      --navy-700: #1a2740;
+      --navy-600: #23334f;
+      --navy-500: #2e405f;
+      --gold-500: #c8972a;
+      --gold-400: #e0b354;
+      --gold-300: #f0cf8a;
+      --gold-200: #f9e9c7;
+      --green-500: #1e8e5c;
+      --green-400: #2bb673;
+      --green-300: #6fcf97;
+      --red-500: #c44536;
+      --red-400: #e05a4f;
+      --amber-500: #e6a017;
+      --amber-400: #f5b83d;
+      --purple-500: #6b4c9a;
+      --purple-400: #8b6bb5;
+      --blue-500: #2c6b9e;
+      --blue-400: #4a8bc2;
+      --teal-500: #1e7a7a;
+      --teal-400: #2ba3a3;
+      --pink-500: #b5447a;
+      --pink-400: #d46b9e;
+      --orange-500: #c4622a;
+      --orange-400: #e0804a;
+      --gray-100: #f8fafc;
+      --gray-200: #eef2f6;
+      --gray-300: #dce3ec;
+      --gray-400: #9aa9bb;
+      --gray-500: #6b7c93;
+      --gray-600: #4f5e74;
+      --gray-700: #334155;
+      --white: #ffffff;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.05), 0 2px 6px rgba(0,0,0,0.03);
+      --shadow-lg: 0 12px 28px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.02);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-serif: 'Playfair Display', Georgia, serif;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--gray-100);
+      color: var(--navy-900);
+      line-height: 1.5;
+      padding: 0 24px 48px;
+      min-height: 100vh;
+    }
+
+    .app-container { max-width: 1440px; margin: 0 auto; }
+
+    /* ============================================================
+       TOP BAR
+       ============================================================ */
+    .top-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 0 28px; flex-wrap: wrap; gap: 20px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; }
+
+    .brand-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--gold-500), var(--gold-400));
+      border-radius: 14px; display: flex; align-items: center; justify-content: center;
+      color: var(--navy-900); font-size: 22px; font-weight: 700;
+      box-shadow: 0 6px 14px rgba(200,151,42,0.25);
+    }
+
+    .brand-text h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+    .brand-text h1 span { font-weight: 300; color: var(--gold-500); }
+    .brand-text .tagline { font-size: 12px; color: var(--gray-500); font-weight: 400; }
+
+    .nav-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+    .nav-link {
+      font-size: 13px; font-weight: 500; color: var(--gray-600);
+      text-decoration: none; padding: 8px 16px; border-radius: 40px;
+      transition: all 0.15s; background: var(--white); box-shadow: var(--shadow-sm);
+    }
+    .nav-link:hover, .nav-link.active { background: var(--navy-800); color: var(--gold-300); }
+
+    .avatar {
+      width: 44px; height: 44px; background: var(--navy-800); color: var(--gold-400);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 16px; border: 2px solid var(--gold-400);
+      box-shadow: var(--shadow-sm); cursor: pointer;
+    }
+
+    /* ============================================================
+       PAGE HEADER
+       ============================================================ */
+    .page-header { margin-bottom: 28px; }
+    .page-header h2 {
+      font-size: 26px; font-weight: 700; letter-spacing: -0.4px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .page-header h2 i { color: var(--gold-500); font-size: 24px; }
+    .page-header p { font-size: 14px; color: var(--gray-500); margin-top: 4px; }
+
+    /* ============================================================
+       SHARED CARD STYLES
+       ============================================================ */
+    .card {
+      background: var(--white); border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200);
+      transition: box-shadow 0.2s; overflow: hidden;
+    }
+    .card:hover { box-shadow: var(--shadow-md); }
+
+    .section-title {
+      font-size: 18px; font-weight: 600; letter-spacing: -0.2px;
+      display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+    }
+    .section-title i { color: var(--gold-500); font-size: 18px; }
+
+    /* ============================================================
+       FEATURE 1: CHESS & STRATEGY CLUB
+       ============================================================ */
+    .chess-panel {
+      background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-700) 60%, var(--gold-500) 100%);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin-bottom: 30px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chess-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 30px, transparent 30px, transparent 60px);
+      pointer-events: none;
+    }
+
+    .chess-panel::after {
+      content: '♛';
+      position: absolute;
+      bottom: -70px;
+      right: 40px;
+      font-size: 240px;
+      color: rgba(255,255,255,0.06);
+      pointer-events: none;
+    }
+
+    .chess-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .chess-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chess-header h3 i {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      backdrop-filter: blur(10px);
+    }
+
+    .chess-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+      margin-top: 3px;
+    }
+
+    .chess-rank-badge {
+      padding: 12px 22px;
+      border-radius: 40px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      text-align: center;
+    }
+
+    .chess-rank-badge .crb-value {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: var(--gold-300);
+      line-height: 1;
+    }
+
+    .chess-rank-badge .crb-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.85);
+      margin-top: 4px;
+    }
+
+    .chess-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 24px;
+    }
+
+    .chess-stat {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .chess-stat .cs-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: rgba(255,255,255,0.75);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .chess-stat .cs-value {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: var(--white);
+    }
+
+    .chess-stat .cs-sub {
+      font-size: 11px;
+      color: rgba(255,255,255,0.65);
+      margin-top: 3px;
+    }
+
+    .matches-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .match-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .match-card:hover {
+      background: rgba(255,255,255,0.12);
+      transform: translateY(-2px);
+    }
+
+    .match-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .match-round {
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--gold-300);
+    }
+
+    .match-status {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 30px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .match-status.live { background: rgba(196,69,54,0.3); color: #fca5a5; }
+    .match-status.upcoming { background: rgba(44,107,158,0.3); color: #93c5fd; }
+    .match-status.completed { background: rgba(43,182,115,0.3); color: #a7f3d0; }
+
+    .match-players {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .match-player {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .match-player-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 11px;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .match-player-name {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--white);
+      flex: 1;
+    }
+
+    .match-player-rating {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--gold-300);
+      font-family: 'SF Mono', monospace;
+    }
+
+    .match-player.winner .match-player-name { color: var(--green-300); }
+    .match-player.winner .match-player-rating { color: var(--green-300); }
+
+    .match-detail {
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* ============================================================
+       FEATURE 2: NFT & DIGITAL TWIN REGISTRY
+       ============================================================ */
+    .nft-panel {
+      background: linear-gradient(135deg, #0a1a3a 0%, var(--blue-500) 60%, var(--purple-500) 100%);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin-bottom: 30px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nft-panel::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -5%;
+      width: 460px;
+      height: 460px;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .nft-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .nft-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nft-header h3 i {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--gold-500), var(--gold-400));
+      color: var(--navy-900);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+    }
+
+    .nft-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.75);
+      margin-top: 3px;
+    }
+
+    .nft-chain-badge {
+      padding: 10px 20px;
+      border-radius: 40px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.18);
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nft-chain-badge i { color: var(--gold-300); }
+
+    .nft-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .nft-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .nft-card:hover {
+      background: rgba(255,255,255,0.12);
+      transform: translateY(-2px);
+    }
+
+    .nft-visual {
+      height: 120px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nft-visual.nairobi { background: linear-gradient(135deg, var(--gold-500), var(--orange-500)); }
+    .nft-visual.mombasa { background: linear-gradient(135deg, var(--teal-500), var(--blue-500)); }
+    .nft-visual.kisumu { background: linear-gradient(135deg, var(--green-500), var(--teal-500)); }
+    .nft-visual.nakuru { background: linear-gradient(135deg, var(--red-500), var(--pink-500)); }
+
+    .nft-visual::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px);
+    }
+
+    .nft-id-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 3px 10px;
+      border-radius: 30px;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
+      font-family: 'SF Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--gold-300);
+      letter-spacing: 0.5px;
+    }
+
+    .nft-title {
+      font-weight: 700;
+      font-size: 14.5px;
+      color: var(--white);
+    }
+
+    .nft-meta {
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .nft-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .nft-stat .ns-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: rgba(255,255,255,0.55);
+      font-weight: 700;
+    }
+
+    .nft-stat .ns-value {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--white);
+      margin-top: 2px;
+      font-family: 'SF Mono', monospace;
+    }
+
+    .nft-stat .ns-value.gold { color: var(--gold-300); }
+
+    .nft-action {
+      padding: 9px 16px;
+      border-radius: 30px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.1);
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-sans);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      backdrop-filter: blur(10px);
+    }
+
+    .nft-action:hover { background: rgba(255,255,255,0.2); }
+
+    /* ============================================================
+       FEATURE 3: COOKING & RECIPE EXCHANGE
+       ============================================================ */
+    .cooking-panel {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 28px 32px;
+      margin-bottom: 30px;
+    }
+
+    .cooking-hero {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 24px 28px;
+      background: linear-gradient(135deg, #7a1a1a 0%, var(--orange-500) 100%);
+      border-radius: var(--radius-md);
+      color: var(--white);
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .cooking-hero-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      flex-shrink: 0;
+      backdrop-filter: blur(10px);
+    }
+
+    .cooking-hero-text {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .cooking-hero-text h4 {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      margin-bottom: 4px;
+    }
+
+    .cooking-hero-text p {
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.5;
+    }
+
+    .cooking-recipes-count {
+      text-align: right;
+    }
+
+    .cooking-recipes-count .crc-value {
+      font-size: 40px;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      line-height: 1;
+      color: var(--gold-200);
+    }
+
+    .cooking-recipes-count .crc-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      font-weight: 700;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+
+    .recipes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .recipe-card {
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .recipe-card:hover {
+      border-color: var(--gold-400);
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-2px);
+    }
+
+    .recipe-image {
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 56px;
+      position: relative;
+    }
+
+    .recipe-image.ugali { background: linear-gradient(135deg, #f5e6c8, #e8d4a0); }
+    .recipe-image.pilau { background: linear-gradient(135deg, #d4a373, #b5804f); }
+    .recipe-image.sukuma { background: linear-gradient(135deg, #6b8e23, #4a6b1a); }
+    .recipe-image.chapati { background: linear-gradient(135deg, #e8c07a, #d4a15a); }
+    .recipe-image.nyama { background: linear-gradient(135deg, #8b3a3a, #6b2525); }
+    .recipe-image.tea { background: linear-gradient(135deg, #c87a3a, #a85a1a); }
+
+    .recipe-time-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 4px 12px;
+      border-radius: 30px;
+      background: rgba(255,255,255,0.95);
+      color: var(--navy-900);
+      font-size: 10.5px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .recipe-body {
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .recipe-title {
+      font-weight: 700;
+      font-size: 14.5px;
+      color: var(--navy-900);
+      line-height: 1.3;
+    }
+
+    .recipe-author {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .recipe-author-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 800;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .recipe-author-name {
+      font-size: 11.5px;
+      color: var(--gray-500);
+      font-weight: 500;
+    }
+
+    .recipe-tags {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .recipe-tag {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 30px;
+      background: var(--gray-100);
+      color: var(--gray-600);
+    }
+
+    .recipe-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 10px;
+      border-top: 1px solid var(--gray-200);
+      margin-top: auto;
+    }
+
+    .recipe-rating {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gold-500);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .recipe-btn {
+      padding: 6px 14px;
+      border-radius: 30px;
+      border: none;
+      background: var(--orange-500);
+      color: var(--white);
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-sans);
+    }
+
+    .recipe-btn:hover { background: var(--orange-400); }
+
+    /* ============================================================
+       FEATURE 4: ASTROLOGY & FORTUNE
+       ============================================================ */
+    .astrology-panel {
+      background: linear-gradient(135deg, #1a0e2d 0%, var(--purple-500) 60%, var(--pink-500) 100%);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin-bottom: 30px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .astrology-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(2px 2px at 15% 25%, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1.5px 1.5px at 45% 15%, rgba(255,255,255,0.6), transparent),
+        radial-gradient(2.5px 2.5px at 75% 35%, rgba(200,151,42,0.8), transparent),
+        radial-gradient(2px 2px at 30% 65%, rgba(255,255,255,0.5), transparent),
+        radial-gradient(3px 3px at 85% 75%, rgba(107,76,154,0.8), transparent),
+        radial-gradient(1.5px 1.5px at 60% 85%, rgba(255,255,255,0.6), transparent),
+        radial-gradient(2px 2px at 20% 90%, rgba(200,151,42,0.6), transparent);
+      pointer-events: none;
+    }
+
+    .astrology-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .astrology-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .astrology-header h3 i {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      backdrop-filter: blur(10px);
+    }
+
+    .astrology-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.75);
+      margin-top: 3px;
+    }
+
+    .astrology-zodiac-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 22px;
+      border-radius: 40px;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    .astrology-zodiac-badge .azb-icon {
+      font-size: 32px;
+    }
+
+    .astrology-zodiac-badge .azb-info {
+      text-align: left;
+    }
+
+    .astrology-zodiac-badge .azb-sign {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+    }
+
+    .astrology-zodiac-badge .azb-date {
+      font-size: 10.5px;
+      color: rgba(255,255,255,0.75);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      font-weight: 600;
+    }
+
+    .astrology-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .astrology-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .astrology-card:hover {
+      background: rgba(255,255,255,0.12);
+      transform: translateY(-2px);
+    }
+
+    .astrology-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .astrology-card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(200,151,42,0.2);
+      color: var(--gold-300);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .astrology-card-title {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--white);
+      letter-spacing: -0.2px;
+    }
+
+    .astrology-card-subtitle {
+      font-size: 11px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .astrology-card-content {
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.6;
+    }
+
+    .astrology-card-content strong {
+      color: var(--gold-300);
+      font-weight: 700;
+    }
+
+    .astrology-score {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .astrology-score-bar {
+      flex: 1;
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 40px;
+      overflow: hidden;
+    }
+
+    .astrology-score-fill {
+      height: 100%;
+      border-radius: 40px;
+      background: linear-gradient(90deg, var(--gold-500), var(--gold-300));
+    }
+
+    .astrology-score-value {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--gold-300);
+      font-family: 'SF Mono', monospace;
+    }
+
+    /* ============================================================
+       FEATURE 5: PET MANAGEMENT
+       ============================================================ */
+    .pets-panel {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 28px 32px;
+      margin-bottom: 30px;
+    }
+
+    .pets-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .pets-stat {
+      padding: 18px 20px;
+      border-radius: var(--radius-md);
+      background: var(--gray-100);
+      border-left: 3px solid var(--gold-500);
+    }
+
+    .pets-stat .pst-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--gray-500);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .pets-stat .pst-value {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: var(--navy-900);
+    }
+
+    .pets-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .pet-card {
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .pet-card:hover {
+      border-color: var(--gold-400);
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-2px);
+    }
+
+    .pet-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .pet-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      flex-shrink: 0;
+      color: var(--white);
+    }
+
+    .pet-avatar.dog { background: linear-gradient(135deg, var(--orange-500), var(--gold-500)); }
+    .pet-avatar.cat { background: linear-gradient(135deg, var(--purple-500), var(--pink-500)); }
+    .pet-avatar.bird { background: linear-gradient(135deg, var(--blue-500), var(--teal-500)); }
+    .pet-avatar.fish { background: linear-gradient(135deg, var(--teal-500), var(--blue-400)); }
+
+    .pet-info { flex: 1; min-width: 0; }
+    .pet-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--navy-900);
+    }
+    .pet-breed {
+      font-size: 11.5px;
+      color: var(--gray-500);
+    }
+
+    .pet-owner {
+      padding: 4px 10px;
+      border-radius: 30px;
+      background: var(--gray-100);
+      color: var(--gray-600);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      flex-shrink: 0;
+    }
+
+    .pet-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding-top: 12px;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .pet-detail .pd-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--gray-500);
+      font-weight: 600;
+    }
+
+    .pet-detail .pd-value {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--navy-900);
+      margin-top: 2px;
+    }
+
+    .pet-detail .pd-value.green { color: var(--green-500); }
+
+    .pet-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .pet-actions button {
+      flex: 1;
+      padding: 7px 12px;
+      border-radius: 30px;
+      border: 1px solid var(--gray-200);
+      background: var(--white);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-sans);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .pet-actions button:hover { background: var(--gray-100); }
+    .pet-actions button.primary { background: var(--navy-800); color: var(--gold-300); border-color: var(--navy-800); }
+
+    /* ============================================================
+       FEATURE 6: KARAOKE & TALENT SHOW
+       ============================================================ */
+    .karaoke-panel {
+      background: linear-gradient(135deg, #1a0e2d 0%, var(--pink-500) 50%, var(--purple-500) 100%);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin-bottom: 30px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .karaoke-panel::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -5%;
+      width: 460px;
+      height: 460px;
+      background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .karaoke-panel::after {
+      content: '🎤';
+      position: absolute;
+      bottom: -70px;
+      right: 40px;
+      font-size: 240px;
+      color: rgba(255,255,255,0.06);
+      pointer-events: none;
+    }
+
+    .karaoke-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .karaoke-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .karaoke-header h3 i {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      backdrop-filter: blur(10px);
+    }
+
+    .karaoke-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+      margin-top: 3px;
+    }
+
+    .karaoke-next-event {
+      padding: 12px 22px;
+      border-radius: 40px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .karaoke-next-event i {
+      font-size: 24px;
+      color: var(--gold-200);
+    }
+
+    .karaoke-next-event .kne-info .kne-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.8);
+    }
+    .karaoke-next-event .kne-info .kne-value {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+    }
+
+    .karaoke-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 28px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .performances-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .performance-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-md);
+      backdrop-filter: blur(10px);
+      transition: all 0.15s;
+    }
+
+    .performance-item:hover {
+      background: rgba(255,255,255,0.12);
+      transform: translateX(3px);
+    }
+
+    .performance-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--white);
+      flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+
+    .performance-info { flex: 1; min-width: 0; }
+    .performance-name {
+      font-weight: 700;
+      font-size: 13.5px;
+      color: var(--white);
+    }
+    .performance-song {
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.7);
+      margin-top: 2px;
+    }
+
+    .performance-score {
+      text-align: right;
+    }
+
+    .performance-score .ps-value {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--gold-300);
+      font-family: 'SF Mono', monospace;
+      line-height: 1;
+    }
+    .performance-score .ps-label {
+      font-size: 9.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.7);
+      margin-top: 2px;
+    }
+
+    .karaoke-trophy {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .karaoke-trophy h4 {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gold-300);
+    }
+
+    .trophy-winner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      background: rgba(200,151,42,0.15);
+      border: 1px solid rgba(200,151,42,0.3);
+      border-radius: var(--radius-sm);
+    }
+
+    .trophy-winner-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-500), var(--gold-400));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: var(--navy-900);
+      flex-shrink: 0;
+    }
+
+    .trophy-winner-info { flex: 1; min-width: 0; }
+    .trophy-winner-name {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--white);
+    }
+    .trophy-winner-song {
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.75);
+      margin-top: 2px;
+    }
+
+    .trophy-winner-score {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--gold-300);
+      font-family: 'SF Mono', monospace;
+    }
+
+    /* ============================================================
+       FEATURE 7: SPORTS LEAGUE
+       ============================================================ */
+    .sports-panel {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 28px 32px;
+      margin-bottom: 30px;
+    }
+
+    .sports-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .sports-stat {
+      padding: 18px 20px;
+      border-radius: var(--radius-md);
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sports-stat.football { background: linear-gradient(135deg, var(--green-500), var(--green-400)); }
+    .sports-stat.basketball { background: linear-gradient(135deg, var(--orange-500), var(--orange-400)); }
+    .sports-stat.athletics { background: linear-gradient(135deg, var(--blue-500), var(--blue-400)); }
+    .sports-stat.swimming { background: linear-gradient(135deg, var(--teal-500), var(--teal-400)); }
+
+    .sports-stat .sst-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      font-weight: 700;
+      opacity: 0.9;
+      margin-bottom: 4px;
+    }
+
+    .sports-stat .sst-value {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+    }
+
+    .sports-stat .sst-sub {
+      font-size: 11px;
+      opacity: 0.85;
+      margin-top: 2px;
+    }
+
+    .league-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--gray-200);
+    }
+
+    .league-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .league-table th {
+      text-align: left;
+      padding: 14px 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--gray-500);
+      background: var(--gray-100);
+      border-bottom: 1px solid var(--gray-200);
+      white-space: nowrap;
+    }
+
+    .league-table td {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--gray-200);
+      color: var(--navy-800);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .league-table tr:last-child td { border-bottom: none; }
+    .league-table tr:hover td { background: #fbfdff; }
+
+    .league-rank {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      font-weight: 800;
+      font-size: 11.5px;
+      background: var(--gray-100);
+      color: var(--gray-600);
+    }
+
+    .league-rank.gold { background: var(--gold-500); color: var(--white); }
+    .league-rank.silver { background: #9ba9bb; color: var(--white); }
+    .league-rank.bronze { background: #cd7f32; color: var(--white); }
+
+    .team-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .team-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 12px;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .team-name {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--navy-900);
+    }
+
+    .team-property {
+      font-size: 11px;
+      color: var(--gray-500);
+    }
+
+    .league-points {
+      font-weight: 800;
+      color: var(--green-500);
+      font-size: 14px;
+    }
+
+    /* ============================================================
+       FOOTER
+       ============================================================ */
+    .page-footer {
+      text-align: center;
+      padding: 32px 0 16px;
+      font-size: 12px;
+      color: var(--gray-400);
+      border-top: 1px solid var(--gray-200);
+      margin-top: 20px;
+    }
+    .page-footer a { color: var(--gold-500); text-decoration: none; }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 1200px) {
+      .chess-stats { grid-template-columns: repeat(2, 1fr); }
+      .nft-grid { grid-template-columns: 1fr; }
+      .recipes-grid { grid-template-columns: 1fr; }
+      .astrology-grid { grid-template-columns: 1fr; }
+      .pets-stats { grid-template-columns: repeat(2, 1fr); }
+      .pets-grid { grid-template-columns: 1fr; }
+      .karaoke-grid { grid-template-columns: 1fr; }
+      .sports-stats { grid-template-columns: repeat(2, 1fr); }
+      .matches-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      body { padding: 0 16px 32px; }
+      .top-bar { flex-direction: column; align-items: flex-start; }
+      .nav-actions { width: 100%; justify-content: space-between; }
+      .chess-panel { padding: 24px 20px; }
+      .nft-panel { padding: 24px 20px; }
+      .astrology-panel { padding: 24px 20px; }
+      .karaoke-panel { padding: 24px 20px; }
+      .chess-stats { grid-template-columns: 1fr; }
+      .pets-stats { grid-template-columns: 1fr; }
+      .sports-stats { grid-template-columns: 1fr; }
+      .chess-header { flex-direction: column; align-items: flex-start; }
+      .nft-header { flex-direction: column; align-items: flex-start; }
+      .astrology-header { flex-direction: column; align-items: flex-start; }
+      .karaoke-header { flex-direction: column; align-items: flex-start; }
+      .cooking-hero { flex-direction: column; text-align: center; }
+      .cooking-recipes-count { text-align: center; }
+    }
+    @media (max-width: 480px) {
+      .pet-details { grid-template-columns: 1fr; }
+      .nft-stats { grid-template-columns: 1fr; }
+      .karaoke-trophy { padding: 16px; }
+    }
+
+    /* ============================================================
+       ANIMATIONS
+       ============================================================ */
+    .fade-in { animation: fadeIn 0.4s ease forwards; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- ============================================================
+         TOP BAR
+         ============================================================ -->
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-icon">⬡</div>
+        <div class="brand-text">
+          <h1>Mwarokin <span>Estates</span></h1>
+          <div class="tagline">Advanced Payments · Page 16</div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <a href="#" class="nav-link"><i class="fas fa-chart-pie"></i> Dashboard</a>
+        <a href="#" class="nav-link"><i class="fas fa-file-invoice"></i> Invoices</a>
+        <a href="#" class="nav-link active"><i class="fas fa-chess"></i> Lifestyle</a>
+        <div class="avatar" title="Landlord Admin">AD</div>
+      </div>
+    </header>
+
+    <!-- ============================================================
+         PAGE HEADER
+         ============================================================ -->
+    <div class="page-header">
+      <h2><i class="fas fa-chess"></i> Lifestyle, Play & Digital Identity</h2>
+      <p>Chess club, NFT registry, cooking exchange, astrology, pet management, karaoke, and sports leagues.</p>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 1: CHESS & STRATEGY CLUB
+         ============================================================ -->
+    <div class="chess-panel fade-in">
+      <div class="chess-header">
+        <div>
+          <h3><i class="fas fa-chess-king"></i> Landlord Chess & Strategy Club</h3>
+          <p>Compete with fellow landlords in weekly chess tournaments. Build strategic thinking for property decisions.</p>
+        </div>
+        <div class="chess-rank-badge">
+          <div class="crb-value">1784</div>
+          <div class="crb-label">Your ELO Rating</div>
+        </div>
+      </div>
+      <div class="chess-stats" id="chessStats">
+        <!-- Injected via JS -->
+      </div>
+      <div class="matches-grid" id="matchesGrid">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 2: NFT & DIGITAL TWIN REGISTRY
+         ============================================================ -->
+    <div class="nft-panel fade-in">
+      <div class="nft-header">
+        <div>
+          <h3><i class="fas fa-cube"></i> Property NFT & Digital Twin Registry</h3>
+          <p>Each property is minted as a unique NFT with a full digital twin — immutable proof of ownership and history.</p>
+        </div>
+        <div class="nft-chain-badge">
+          <i class="fas fa-link"></i> Polygon Mainnet
+        </div>
+      </div>
+      <div class="nft-grid" id="nftGrid">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 3: COOKING & RECIPE EXCHANGE
+         ============================================================ -->
+    <div class="cooking-panel fade-in">
+      <div class="section-title"><i class="fas fa-utensils"></i> Tenant Cooking & Recipe Exchange</div>
+      <div class="cooking-hero">
+        <div class="cooking-hero-icon">🍲</div>
+        <div class="cooking-hero-text">
+          <h4>Share the Taste of Home</h4>
+          <p>Tenants share their favorite recipes — from Kenyan classics to international dishes. Cook, rate, and connect over food.</p>
+        </div>
+        <div class="cooking-recipes-count">
+          <div class="crc-value">248</div>
+          <div class="crc-label">Recipes Shared</div>
+        </div>
+      </div>
+      <div class="recipes-grid" id="recipesGrid">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 4: ASTROLOGY & FORTUNE
+         ============================================================ -->
+    <div class="astrology-panel fade-in">
+      <div class="astrology-header">
+        <div>
+          <h3><i class="fas fa-star-and-crescent"></i> Landlord Astrology & Fortune Insights</h3>
+          <p>Daily horoscopes and financial fortune forecasts aligned with your zodiac sign.</p>
+        </div>
+        <div class="astrology-zodiac-badge">
+          <div class="azb-icon">♌</div>
+          <div class="azb-info">
+            <div class="azb-sign">Leo</div>
+            <div class="azb-date">Jul 23 – Aug 22</div>
+          </div>
+        </div>
+      </div>
+      <div class="astrology-grid" id="astrologyGrid">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 5: PET MANAGEMENT
+         ============================================================ -->
+    <div class="pets-panel fade-in">
+      <div class="section-title"><i class="fas fa-paw"></i> Property Pet Management</div>
+      <p style="font-size:13px;color:var(--gray-500);margin-bottom:20px;">Track pets across your properties — registrations, vaccinations, and community pet events.</p>
+      <div class="pets-stats" id="petsStats">
+        <!-- Injected via JS -->
+      </div>
+      <div class="pets-grid" id="petsGrid">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 6: KARAOKE & TALENT SHOW
+         ============================================================ -->
+    <div class="karaoke-panel fade-in">
+      <div class="karaoke-header">
+        <div>
+          <h3><i class="fas fa-microphone-lines"></i> Landlord Karaoke & Talent Show</h3>
+          <p>Showcase your hidden talents at quarterly karaoke nights. Vote, perform, and win prizes.</p>
+        </div>
+        <div class="karaoke-next-event">
+          <i class="fas fa-calendar-star"></i>
+          <div class="kne-info">
+            <div class="kne-label">Next Event</div>
+            <div class="kne-value">Apr 26 · 7 PM</div>
+          </div>
+        </div>
+      </div>
+      <div class="karaoke-grid">
+        <div>
+          <div class="section-title" style="font-size:14px;margin-bottom:12px;color:var(--white);"><i class="fas fa-list"></i> Recent Performances</div>
+          <div class="performances-list" id="performancesList">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+        <div class="karaoke-trophy">
+          <h4><i class="fas fa-trophy"></i> Last Event Champion</h4>
+          <div class="trophy-winner">
+            <div class="trophy-winner-avatar">🏆</div>
+            <div class="trophy-winner-info">
+              <div class="trophy-winner-name">Grace Wanjiku</div>
+              <div class="trophy-winner-song">"Hakuna Matata" · Lion King</div>
+            </div>
+            <div class="trophy-winner-score">9.6</div>
+          </div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.75);line-height:1.5;margin-top:8px;">
+            Grace wowed the crowd with her rendition of Hakuna Matata, earning the highest score in Mwarokin history. The bar has been set!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 7: SPORTS LEAGUE
+         ============================================================ -->
+    <div class="sports-panel fade-in">
+      <div class="section-title"><i class="fas fa-futbol"></i> Mwarokin Sports League & Fitness Challenges</div>
+      <p style="font-size:13px;color:var(--gray-500);margin-bottom:20px;">Inter-property sports leagues and monthly fitness challenges to keep our community active and healthy.</p>
+
+      <div class="sports-stats" id="sportsStats">
+        <!-- Injected via JS -->
+      </div>
+
+      <div class="league-table-wrap">
+        <table class="league-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Team</th>
+              <th>Played</th>
+              <th>Wins</th>
+              <th>Draws</th>
+              <th>Losses</th>
+              <th>Points</th>
+            </tr>
+          </thead>
+          <tbody id="leagueBody">
+            <!-- Injected via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <div class="page-footer">
+      <p>Mwarokin Estates · Lifestyle, Play & Digital Identity · &copy; 2025 · <a href="#">Privacy</a> · <a href="#">Terms</a></p>
+    </div>
+  </div>
+
+  <script>
+    /* ============================================================
+       MOCK DATA – PAGE 16 FEATURES
+       ============================================================ */
+
+    // Feature 1: Chess
+    const chessStats = [
+      { label: 'Your Rank', value: '#12', sub: 'Out of 184 players' },
+      { label: 'Win Rate', value: '68%', sub: '142 games played' },
+      { label: 'Best Opening', value: 'Sicilian', sub: 'Defense rating: A+' },
+      { label: 'Tournaments Won', value: '3', sub: '2025 season' }
+    ];
+
+    const matches = [
+      {
+        round: 'Quarter Final', status: 'live',
+        player1: { initials: 'GW', name: 'Grace Wanjiku', rating: 1820, color: '#c8972a' },
+        player2: { initials: 'AH', name: 'Amina Hassan', rating: 1795, color: '#6b4c9a' },
+        detail: 'Move 24 · Grace to move · Time: 8:42'
+      },
+      {
+        round: 'Semi Final', status: 'upcoming',
+        player1: { initials: 'DO', name: 'David Ochieng', rating: 1880, color: '#2c6b9e' },
+        player2: { initials: 'SK', name: 'Sarah Kilonzo', rating: 1750, color: '#b5447a' },
+        detail: 'Scheduled: Apr 20, 2025 · 6 PM'
+      },
+      {
+        round: 'Final', status: 'completed',
+        player1: { initials: 'GW', name: 'Grace Wanjiku', rating: 1820, color: '#c8972a', winner: true },
+        player2: { initials: 'PN', name: 'Peter Njoroge', rating: 1680, color: '#1e8e5c' },
+        detail: 'Grace won in 38 moves · Caro-Kann Defense'
+      }
+    ];
+
+    // Feature 2: NFTs
+    const nfts = [
+      {
+        icon: '🏢', visual: 'nairobi', id: '#MWK-001', name: 'Kilimani Court',
+        meta: 'Minted Feb 2024 · Verified ownership',
+        tokenId: '0x8f3a...c2e1', valuation: 'KSh 128M', blocks: '#52,847,291'
+      },
+      {
+        icon: '🌊', visual: 'mombasa', id: '#MWK-002', name: 'Nyali Beach Resort',
+        meta: 'Minted Jan 2024 · Fractional shares',
+        tokenId: '0x4b9c...d7a3', valuation: 'KSh 320M', blocks: '#52,846,108'
+      },
+      {
+        icon: '🏔', visual: 'kisumu', id: '#MWK-003', name: 'Kisumu Lakefront',
+        meta: 'Minted Mar 2024 · Land title verified',
+        tokenId: '0x2e7f...a9b4', valuation: 'KSh 186M', blocks: '#52,845,002'
+      },
+      {
+        icon: '🦁', visual: 'nakuru', id: '#MWK-004', name: 'Nakuru Business Park',
+        meta: 'Minted Apr 2024 · Commercial property',
+        tokenId: '0x9d1b...f5c8', valuation: 'KSh 240M', blocks: '#52,844,889'
+      }
+    ];
+
+    // Feature 3: Recipes
+    const recipes = [
+      {
+        emoji: '🍚', visual: 'ugali', name: 'Classic Ugali & Sukuma Wiki',
+        author: 'Mary Njoki', initials: 'MN', color: '#b5447a',
+        time: '25 min', tags: ['Kenyan', 'Vegetarian', 'Family'], rating: 4.9, reviews: 142
+      },
+      {
+        emoji: '🍛', visual: 'pilau', name: 'Coastal Beef Pilau',
+        author: 'Amina Hassan', initials: 'AH', color: '#6b4c9a',
+        time: '55 min', tags: ['Swahili', 'Spiced', 'Festive'], rating: 4.8, reviews: 98
+      },
+      {
+        emoji: '🥬', visual: 'sukuma', name: 'Creamed Sukuma Wiki',
+        author: 'John Wachira', initials: 'JW', color: '#c8972a',
+        time: '20 min', tags: ['Kenyan', 'Quick', 'Healthy'], rating: 4.7, reviews: 76
+      },
+      {
+        emoji: '🫓', visual: 'chapati', name: 'Soft Layered Chapati',
+        author: 'Lucy Muthoni', initials: 'LM', color: '#6b4c9a',
+        time: '40 min', tags: ['Kenyan', 'Breakfast', 'Baking'], rating: 5.0, reviews: 204
+      },
+      {
+        emoji: '🥩', visual: 'nyama', name: 'Nyama Choma with Kachumbari',
+        author: 'Brian Kamau', initials: 'BK', color: '#2c6b9e',
+        time: '1.5 hrs', tags: ['Kenyan', 'BBQ', 'Weekend'], rating: 4.9, reviews: 168
+      },
+      {
+        emoji: '☕', visual: 'tea', name: 'Kenyan Chai ya Tangawizi',
+        author: 'Sarah Kilonzo', initials: 'SK', color: '#b5447a',
+        time: '10 min', tags: ['Kenyan', 'Beverage', 'Ginger'], rating: 4.8, reviews: 88
+      }
+    ];
+
+    // Feature 4: Astrology
+    const astrologyInsights = [
+      {
+        icon: 'fa-coins', title: 'Financial Fortune', subtitle: 'Today · Apr 19, 2025',
+        content: 'Jupiter aligns with your natal sun, bringing <strong>financial clarity</strong>. Excellent day for property negotiations and reviewing mortgage rates.',
+        score: 88
+      },
+      {
+        icon: 'fa-handshake', title: 'Tenant Relations', subtitle: 'This week',
+        content: 'Mercury retrograde ends tomorrow. Expect <strong>improved communication</strong> with tenants. Best days for difficult conversations: Tue & Thu.',
+        score: 72
+      },
+      {
+        icon: 'fa-home', title: 'Property Growth', subtitle: 'This month',
+        content: 'Venus in Taurus favors <strong>real estate investments</strong>. Consider expanding your portfolio between Apr 22–30 when opportunities peak.',
+        score: 92
+      },
+      {
+        icon: 'fa-heart', title: 'Personal Wellness', subtitle: 'Today',
+        content: 'Moon in Cancer asks you to <strong>prioritize rest</strong>. Take breaks between meetings. Avoid major decisions after 6 PM.',
+        score: 65
+      }
+    ];
+
+    // Feature 5: Pets
+    const petsStats = [
+      { label: 'Registered Pets', value: '84', sub: 'Across all properties' },
+      { label: 'Dogs', value: '38', sub: 'Largest category' },
+      { label: 'Cats', value: '32', sub: 'Community favorites' },
+      { label: 'Others', value: '14', sub: 'Birds, fish, rabbits' }
+    ];
+
+    const pets = [
+      { emoji: '🐕', type: 'dog', name: 'Simba', breed: 'German Shepherd · 3 yrs', owner: 'John Wachira', property: 'Kilimani Court · 3B', vaccinated: true, license: 'PET-KC-0142' },
+      { emoji: '🐱', type: 'cat', name: 'Malaika', breed: 'Tabby · 2 yrs', owner: 'Mary Njoki', property: 'Westlands Heights · 5A', vaccinated: true, license: 'PET-WH-0088' },
+      { emoji: '🦜', type: 'bird', name: 'Tweety', breed: 'African Grey · 5 yrs', owner: 'Amina Hassan', property: 'South B Apartments · 12', vaccinated: true, license: 'PET-SB-0056' },
+      { emoji: '🐠', type: 'fish', name: 'Bubbles', breed: 'Goldfish · 1 yr', owner: 'Brian Kamau', property: 'South B Apartments · 12', vaccinated: false, license: 'PET-SB-0057' },
+      { emoji: '🐕', type: 'dog', name: 'Rex', breed: 'Labrador · 4 yrs', owner: 'Lucy Muthoni', property: 'Lavington Suites · 7C', vaccinated: true, license: 'PET-LS-0144' },
+      { emoji: '🐈', type: 'cat', name: 'Zuri', breed: 'Persian · 3 yrs', owner: 'Sarah Kilonzo', property: 'Runda Gardens · 2A', vaccinated: true, license: 'PET-RG-0032' }
+    ];
+
+    // Feature 6: Karaoke
+    const performances = [
+      { initials: 'GW', name: 'Grace Wanjiku', song: '"Hakuna Matata" · Lion King', score: 9.6, color: '#c8972a' },
+      { initials: 'JM', name: 'James Mwangi', song: '"Bohemian Rhapsody" · Queen', score: 8.8, color: '#2c6b9e' },
+      { initials: 'AH', name: 'Amina Hassan', song: '"Kiss From a Rose" · Seal', score: 9.2, color: '#6b4c9a' },
+      { initials: 'DO', name: 'David Ochieng', song: '"Hallelujah" · Leonard Cohen', score: 8.4, color: '#2c6b9e' },
+      { initials: 'PN', name: 'Peter Njoroge', song: '"Sultans of Swing" · Dire Straits', score: 7.9, color: '#1e8e5c' },
+      { initials: 'MN', name: 'Mary Njoki', song: '"Waka Waka" · Shakira', score: 9.0, color: '#b5447a' }
+    ];
+
+    // Feature 7: Sports
+    const sportsStats = [
+      { sport: 'football', label: 'Football League', value: '12', sub: 'Active teams' },
+      { sport: 'basketball', label: 'Basketball', value: '8', sub: 'Teams registered' },
+      { sport: 'athletics', label: 'Running Club', value: '62', sub: 'Active members' },
+      { sport: 'swimming', label: 'Swimming', value: '24', sub: 'Monthly swimmers' }
+    ];
+
+    const leagueStandings = [
+      { rank: 1, initials: 'KC', name: 'Kilimani Court FC', property: 'Kilimani Court', color: '#c8972a', played: 12, wins: 10, draws: 1, losses: 1, points: 31 },
+      { rank: 2, initials: 'WH', name: 'Westlands Warriors', property: 'Westlands Heights', color: '#6b4c9a', played: 12, wins: 9, draws: 2, losses: 1, points: 29 },
+      { rank: 3, initials: 'SB', name: 'South B United', property: 'South B Apartments', color: '#2c6b9e', played: 12, wins: 8, draws: 2, losses: 2, points: 26 },
+      { rank: 4, initials: 'LS', name: 'Lavington Lions', property: 'Lavington Suites', color: '#b5447a', played: 12, wins: 7, draws: 3, losses: 2, points: 24 },
+      { rank: 5, initials: 'RG', name: 'Runda Rangers', property: 'Runda Gardens', color: '#1e8e5c', played: 12, wins: 6, draws: 3, losses: 3, points: 21 },
+      { rank: 6, initials: 'EP', name: 'Eastleigh Eagles', property: 'Eastleigh Plaza', color: '#c4622a', played: 12, wins: 5, draws: 4, losses: 3, points: 19 }
+    ];
+
+    /* ============================================================
+       RENDER: CHESS
+       ============================================================ */
+    function renderChess() {
+      const statsContainer = document.getElementById('chessStats');
+      if (statsContainer) {
+        statsContainer.innerHTML = '';
+        chessStats.forEach(s => {
+          const div = document.createElement('div');
+          div.className = 'chess-stat';
+          div.innerHTML = `
+            <div class="cs-label">${s.label}</div>
+            <div class="cs-value">${s.value}</div>
+            <div class="cs-sub">${s.sub}</div>
+          `;
+          statsContainer.appendChild(div);
+        });
+      }
+
+      const grid = document.getElementById('matchesGrid');
+      if (grid) {
+        grid.innerHTML = '';
+        matches.forEach(m => {
+          const p2Winner = m.player2.winner;
+          const div = document.createElement('div');
+          div.className = 'match-card';
+          div.innerHTML = `
+            <div class="match-top">
+              <span class="match-round">${m.round}</span>
+              <span class="match-status ${m.status}">${m.status}</span>
+            </div>
+            <div class="match-players">
+              <div class="match-player ${m.player1.winner ? 'winner' : ''}">
+                <div class="match-player-avatar" style="background:${m.player1.color};">${m.player1.initials}</div>
+                <span class="match-player-name">${m.player1.name}</span>
+                <span class="match-player-rating">${m.player1.rating}</span>
+              </div>
+              <div class="match-player ${p2Winner ? 'winner' : ''}">
+                <div class="match-player-avatar" style="background:${m.player2.color};">${m.player2.initials}</div>
+                <span class="match-player-name">${m.player2.name}</span>
+                <span class="match-player-rating">${m.player2.rating}</span>
+              </div>
+            </div>
+            <div class="match-detail"><i class="fas fa-info-circle"></i> ${m.detail}</div>
+          `;
+          grid.appendChild(div);
+        });
+      }
+    }
+
+    /* ============================================================
+       RENDER: NFT
+       ============================================================ */
+    function renderNFT() {
+      const grid = document.getElementById('nftGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      nfts.forEach(n => {
+        const div = document.createElement('div');
+        div.className = 'nft-card';
+        div.innerHTML = `
+          <div class="nft-visual ${n.visual}">
+            <span style="position:relative;z-index:1;">${n.icon}</span>
+            <span class="nft-id-badge">${n.id}</span>
+          </div>
+          <div>
+            <div class="nft-title">${n.name}</div>
+            <div class="nft-meta">${n.meta}</div>
+          </div>
+          <div class="nft-stats">
+            <div class="nft-stat">
+              <div class="ns-label">Token ID</div>
+              <div class="ns-value">${n.tokenId}</div>
+            </div>
+            <div class="nft-stat">
+              <div class="ns-label">Valuation</div>
+              <div class="ns-value gold">${n.valuation}</div>
+            </div>
+            <div class="nft-stat">
+              <div class="ns-label">Block</div>
+              <div class="ns-value">${n.blocks}</div>
+            </div>
+            <div class="nft-stat">
+              <div class="ns-label">Standard</div>
+              <div class="ns-value">ERC-721</div>
+            </div>
+          </div>
+          <button class="nft-action" onclick="alert('🔗 Viewing on-chain details for ${n.name}\\n\\nToken: ${n.tokenId}')">
+            <i class="fas fa-external-link-alt"></i> View on Polygonscan
+          </button>
+        `;
+        grid.appendChild(div);
+      });
+    }
+
+    /* ============================================================
+       RENDER: RECIPES
+       ============================================================ */
+    function renderRecipes() {
+      const grid = document.getElementById('recipesGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      recipes.forEach(r => {
+        const div = document.createElement('div');
+        div.className = 'recipe-card';
+        div.innerHTML = `
+          <div class="recipe-image ${r.visual}">
+            <span>${r.emoji}</span>
+            <span class="recipe-time-badge"><i class="fas fa-clock"></i> ${r.time}</span>
+          </div>
+          <div class="recipe-body">
+            <div class="recipe-title">${r.name}</div>
+            <div class="recipe-author">
+              <div class="recipe-author-avatar" style="background:${r.color};">${r.initials}</div>
+              <span class="recipe-author-name">by ${r.author}</span>
+            </div>
+            <div class="recipe-tags">
+              ${r.tags.map(t => `<span class="recipe-tag">${t}</span>`).join('')}
+            </div>
+            <div class="recipe-footer">
+              <div class="recipe-rating"><i class="fas fa-star"></i> ${r.rating} <span style="font-weight:500;color:var(--gray-500);font-size:11px;">(${r.reviews})</span></div>
+              <button class="recipe-btn" onclick="alert('📖 Opening recipe: ${r.name}')">View Recipe</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(div);
+      });
+    }
+
+    /* ============================================================
+       RENDER: ASTROLOGY
+       ============================================================ */
+    function renderAstrology() {
+      const grid = document.getElementById('astrologyGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      astrologyInsights.forEach(a => {
+        const div = document.createElement('div');
+        div.className = 'astrology-card';
+        div.innerHTML = `
+          <div class="astrology-card-header">
+            <div class="astrology-card-icon"><i class="fas ${a.icon}"></i></div>
+            <div>
+              <div class="astrology-card-title">${a.title}</div>
+              <div class="astrology-card-subtitle">${a.subtitle}</div>
+            </div>
+          </div>
+          <div class="astrology-card-content">${a.content}</div>
+          <div class="astrology-score">
+            <div class="astrology-score-bar">
+              <div class="astrology-score-fill" style="width:${a.score}%"></div>
+            </div>
+            <div class="astrology-score-value">${a.score}%</div>
+          </div>
+        `;
+        grid.appendChild(div);
+      });
+    }
+
+    /* ============================================================
+       RENDER: PETS
+       ============================================================ */
+    function renderPets() {
+      const statsContainer = document.getElementById('petsStats');
+      if (statsContainer) {
+        statsContainer.innerHTML = '';
+        petsStats.forEach(s => {
+          const div = document.createElement('div');
+          div.className = 'pets-stat';
+          div.innerHTML = `
+            <div class="pst-label">${s.label}</div>
+            <div class="pst-value">${s.value}</div>
+            <div style="font-size:11px;color:var(--gray-500);margin-top:2px;">${s.sub}</div>
+          `;
+          statsContainer.appendChild(div);
+        });
+      }
+
+      const grid = document.getElementById('petsGrid');
+      if (grid) {
+        grid.innerHTML = '';
+        pets.forEach(p => {
+          const div = document.createElement('div');
+          div.className = 'pet-card';
+          div.innerHTML = `
+            <div class="pet-top">
+              <div class="pet-avatar ${p.type}">${p.emoji}</div>
+              <div class="pet-info">
+                <div class="pet-name">${p.name}</div>
+                <div class="pet-breed">${p.breed}</div>
+              </div>
+              <span class="pet-owner">${p.license}</span>
+            </div>
+            <div class="pet-details">
+              <div class="pet-detail">
+                <div class="pd-label">Owner</div>
+                <div class="pd-value">${p.owner}</div>
+              </div>
+              <div class="pet-detail">
+                <div class="pd-label">Property</div>
+                <div class="pd-value">${p.property.split(' · ')[0]}</div>
+              </div>
+              <div class="pet-detail">
+                <div class="pd-label">Vaccination</div>
+                <div class="pd-value ${p.vaccinated ? 'green' : ''}">${p.vaccinated ? '✓ Up to date' : 'Pending'}</div>
+              </div>
+              <div class="pet-detail">
+                <div class="pd-label">License</div>
+                <div class="pd-value">${p.license}</div>
+              </div>
+            </div>
+            <div class="pet-actions">
+              <button onclick="alert('📋 Viewing health record for ${p.name}')"><i class="fas fa-file-medical"></i> Records</button>
+              <button class="primary" onclick="alert('💬 Contacting ${p.owner}')"><i class="fas fa-comment"></i> Contact</button>
+            </div>
+          `;
+          grid.appendChild(div);
+        });
+      }
+    }
+
+    /* ============================================================
+       RENDER: KARAOKE
+       ============================================================ */
+    function renderKaraoke() {
+      const container = document.getElementById('performancesList');
+      if (!container) return;
+      container.innerHTML = '';
+
+      performances.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'performance-item';
+        div.innerHTML = `
+          <div class="performance-avatar" style="background:${p.color};">${p.initials}</div>
+          <div class="performance-info">
+            <div class="performance-name">${p.name}</div>
+            <div class="performance-song">${p.song}</div>
+          </div>
+          <div class="performance-score">
+            <div class="ps-value">${p.score.toFixed(1)}</div>
+            <div class="ps-label">Score</div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    /* ============================================================
+       RENDER: SPORTS
+       ============================================================ */
+    function renderSports() {
+      const statsContainer = document.getElementById('sportsStats');
+      if (statsContainer) {
+        statsContainer.innerHTML = '';
+        sportsStats.forEach(s => {
+          const div = document.createElement('div');
+          div.className = `sports-stat ${s.sport}`;
+          div.innerHTML = `
+            <div class="sst-label">${s.label}</div>
+            <div class="sst-value">${s.value}</div>
+            <div class="sst-sub">${s.sub}</div>
+          `;
+          statsContainer.appendChild(div);
+        });
+      }
+
+      const tbody = document.getElementById('leagueBody');
+      if (tbody) {
+        tbody.innerHTML = '';
+        leagueStandings.forEach(t => {
+          const rankClass = t.rank === 1 ? 'gold' : t.rank === 2 ? 'silver' : t.rank === 3 ? 'bronze' : '';
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><span class="league-rank ${rankClass}">${t.rank}</span></td>
+            <td>
+              <div class="team-info">
+                <div class="team-avatar" style="background:${t.color};">${t.initials}</div>
+                <div>
+                  <div class="team-name">${t.name}</div>
+                  <div class="team-property">${t.property}</div>
+                </div>
+              </div>
+            </td>
+            <td>${t.played}</td>
+            <td>${t.wins}</td>
+            <td>${t.draws}</td>
+            <td>${t.losses}</td>
+            <td class="league-points">${t.points}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    }
+
+    /* ============================================================
+       INIT PAGE 16
+       ============================================================ */
+    function init() {
+      renderChess();
+      renderNFT();
+      renderRecipes();
+      renderAstrology();
+      renderPets();
+      renderKaraoke();
+      renderSports();
+      console.log('♟ Mwarokin Estates · Lifestyle, Play & Digital Identity (Page 16) loaded');
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

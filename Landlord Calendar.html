@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwarokin Estates · Landlord Calendar</title>
+    <!-- Google Fonts & Font Awesome for premium feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f6f9fc;
+            font-family: 'Inter', sans-serif;
+            color: #1e293b;
+            padding: 2rem 1.5rem;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        .dashboard {
+            max-width: 1440px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Header section */
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+        }
+
+        .brand h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #0b2b3c;
+        }
+
+        .brand .estate-tag {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #2c7a7b;
+            background: #e6fffa;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            display: inline-block;
+            margin-top: 0.25rem;
+        }
+
+        .month-selector {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 60px;
+            box-shadow: 0 4px 12px rgba(0, 20, 30, 0.04);
+            border: 1px solid #e2e8f0;
+            gap: 0.75rem;
+        }
+
+        .month-selector i {
+            color: #2c7a7b;
+            font-size: 1rem;
+        }
+
+        .month-selector span {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #0b2b3c;
+            padding: 0.2rem 0.4rem;
+        }
+
+        .month-selector .nav-btn {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 30px;
+            transition: 0.2s;
+        }
+
+        .month-selector .nav-btn:hover {
+            background: #f1f5f9;
+            color: #0b2b3c;
+        }
+
+        /* Summary cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem 1.5rem 1.25rem 1.5rem;
+            box-shadow: 0 8px 24px rgba(0, 30, 40, 0.04);
+            border: 1px solid #edf2f7;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 12px 28px rgba(0, 40, 50, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .stat-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #5b6e7f;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        .stat-title i {
+            font-size: 1.1rem;
+            color: #2c7a7b;
+            width: 1.25rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: #0b2b3c;
+            line-height: 1.2;
+        }
+
+        .stat-sub {
+            font-size: 0.85rem;
+            color: #6b7e8f;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .stat-sub i {
+            font-size: 0.75rem;
+        }
+
+        .positive {
+            color: #0f7b6b;
+        }
+
+        .warning {
+            color: #c2410c;
+        }
+
+        /* Table section */
+        .table-section {
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 30px rgba(0, 20, 30, 0.04);
+            border: 1px solid #edf2f7;
+            overflow: hidden;
+            padding: 0.25rem 0 0.25rem 0;
+        }
+
+        .table-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 1.75rem 0.75rem 1.75rem;
+        }
+
+        .table-header h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #0b2b3c;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .table-header h2 i {
+            color: #2c7a7b;
+            font-size: 1.2rem;
+        }
+
+        .filter-badge {
+            background: #f1f5f9;
+            border-radius: 40px;
+            padding: 0.4rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #334e68;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .filter-badge i {
+            font-size: 0.75rem;
+            color: #2c7a7b;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 0 0.25rem 0.5rem 0.25rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+
+        th {
+            text-align: left;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #5e7385;
+            background: #fafdff;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+            color: #1e2a3a;
+            font-weight: 500;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #fafdff;
+        }
+
+        .landlord-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            background: #0b2b3c;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+        }
+
+        .landlord-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .landlord-name {
+            font-weight: 600;
+            color: #0b2b3c;
+        }
+
+        .property {
+            font-size: 0.75rem;
+            color: #6b7e8f;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-top: 2px;
+        }
+
+        .property i {
+            font-size: 0.65rem;
+            color: #2c7a7b;
+        }
+
+        .amount {
+            font-weight: 600;
+            color: #0b2b3c;
+        }
+
+        .amount-paid {
+            color: #0f7b6b;
+            font-weight: 600;
+        }
+
+        .amount-due {
+            color: #b45309;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.9rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            width: fit-content;
+        }
+
+        .status-paid {
+            background: #e6fffa;
+            color: #0f7b6b;
+            border: 1px solid #b2f5ea;
+        }
+
+        .status-pending {
+            background: #fff7e6;
+            color: #b45309;
+            border: 1px solid #fde68a;
+        }
+
+        .status-due {
+            background: #fff0f0;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .action-btn {
+            background: transparent;
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #2c7a7b;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .action-btn i {
+            font-size: 0.7rem;
+        }
+
+        .action-btn:hover {
+            background: #0b2b3c;
+            border-color: #0b2b3c;
+            color: white;
+        }
+
+        /* No results message */
+        .no-results {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #6b7e8f;
+            font-weight: 500;
+            display: none;
+        }
+
+        .no-results i {
+            font-size: 2rem;
+            color: #b8c9d9;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* Footer note */
+        .footer-note {
+            display: flex;
+            justify-content: flex-end;
+            font-size: 0.8rem;
+            color: #8499aa;
+            padding: 0.25rem 0.75rem;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-note i {
+            color: #2c7a7b;
+        }
+
+        /* Responsive */
+        @media (max-width: 700px) {
+            body { padding: 1rem; }
+            .brand h1 { font-size: 1.5rem; }
+            .stat-value { font-size: 1.6rem; }
+            th, td { padding: 0.9rem 1rem; }
+            .table-header { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .month-selector { width: 100%; justify-content: space-between; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header -->
+        <div class="header">
+            <div class="brand">
+                <h1>Mwarokin Estates</h1>
+                <div class="estate-tag">
+                    <i class="fas fa-building" style="margin-right: 0.3rem;"></i> Landlord Payment Hub
+                </div>
+            </div>
+            <div class="month-selector">
+                <button class="nav-btn" id="prevMonthBtn" aria-label="Previous month"><i class="fas fa-chevron-left"></i></button>
+                <span id="currentMonthDisplay">June 2025</span>
+                <button class="nav-btn" id="nextMonthBtn" aria-label="Next month"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+
+        <!-- Summary Stats (dynamic) -->
+        <div class="stats-grid" id="statsGrid">
+            <!-- populated via JS -->
+        </div>
+
+        <!-- Payments Table -->
+        <div class="table-section">
+            <div class="table-header">
+                <h2><i class="fas fa-file-invoice-dollar"></i> Landlord payment details</h2>
+                <div class="filter-badge">
+                    <i class="fas fa-filter"></i> Monthly view · <span id="tableMonthLabel">June 2025</span>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table id="paymentsTable">
+                    <thead>
+                        <tr>
+                            <th>Landlord & Property</th>
+                            <th>Service</th>
+                            <th>Amount (KES)</th>
+                            <th>Paid (KES)</th>
+                            <th>Due / Pending</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- JS will populate rows -->
+                    </tbody>
+                </table>
+                <div class="no-results" id="noResults">
+                    <i class="fas fa-inbox"></i>
+                    No payment records for this month.
+                </div>
+            </div>
+            <div class="footer-note">
+                <i class="fas fa-sync-alt"></i> Live data · Updated daily
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ---------- DATA ----------
+            // Landlords attached to properties with monthly payment details
+            // Base dataset: each landlord has a monthly record keyed by 'YYYY-MM'
+            const landlords = [
+                {
+                    id: 1,
+                    name: 'James Mwangi',
+                    property: 'Kilimani Heights, Unit 4B',
+                    service: 'Property management',
+                    amount: 45000,
+                    payments: {
+                        '2025-04': { paid: 45000, due: 0, pending: 0, status: 'paid' },
+                        '2025-05': { paid: 45000, due: 0, pending: 0, status: 'paid' },
+                        '2025-06': { paid: 30000, due: 15000, pending: 0, status: 'pending' },
+                        '2025-07': { paid: 0, due: 45000, pending: 0, status: 'due' }
+                    }
+                },
+                {
+                    id: 2,
+                    name: 'Grace Wanjiku',
+                    property: 'Westlands Grove, Villa 12',
+                    service: 'Maintenance & security',
+                    amount: 62000,
+                    payments: {
+                        '2025-04': { paid: 62000, due: 0, pending: 0, status: 'paid' },
+                        '2025-05': { paid: 62000, due: 0, pending: 0, status: 'paid' },
+                        '2025-06': { paid: 62000, due: 0, pending: 0, status: 'paid' },
+                        '2025-07': { paid: 20000, due: 42000, pending: 0, status: 'pending' }
+                    }
+                },
+                {
+                    id: 3,
+                    name: 'Peter Njoroge',
+                    property: 'Lavington Edge, Apt 7',
+                    service: 'Utilities & garbage',
+                    amount: 38000,
+                    payments: {
+                        '2025-04': { paid: 38000, due: 0, pending: 0, status: 'paid' },
+                        '2025-05': { paid: 20000, due: 18000, pending: 0, status: 'pending' },
+                        '2025-06': { paid: 0, due: 38000, pending: 0, status: 'due' },
+                        '2025-07': { paid: 0, due: 0, pending: 38000, status: 'pending' } // pending (future)
+                    }
+                },
+                {
+                    id: 4,
+                    name: 'Amina Hassan',
+                    property: 'Parklands Residency, Suite 9',
+                    service: 'Full facility mgmt',
+                    amount: 55000,
+                    payments: {
+                        '2025-04': { paid: 55000, due: 0, pending: 0, status: 'paid' },
+                        '2025-05': { paid: 55000, due: 0, pending: 0, status: 'paid' },
+                        '2025-06': { paid: 55000, due: 0, pending: 0, status: 'paid' },
+                        '2025-07': { paid: 0, due: 55000, pending: 0, status: 'due' }
+                    }
+                },
+                {
+                    id: 5,
+                    name: 'David Ochieng',
+                    property: 'Karen Breeze, House 3',
+                    service: 'Landscaping & repairs',
+                    amount: 72000,
+                    payments: {
+                        '2025-04': { paid: 72000, due: 0, pending: 0, status: 'paid' },
+                        '2025-05': { paid: 72000, due: 0, pending: 0, status: 'paid' },
+                        '2025-06': { paid: 40000, due: 32000, pending: 0, status: 'pending' },
+                        '2025-07': { paid: 0, due: 72000, pending: 0, status: 'due' }
+                    }
+                },
+                {
+                    id: 6,
+                    name: 'Mercy Kamau',
+                    property: 'Runda Meadows, Villa 8',
+                    service: 'Security & maintenance',
+                    amount: 48000,
+                    payments: {
+                        '2025-04': { paid: 48000, due: 0, pending: 0, status: 'paid' },
+                        '2025-05': { paid: 48000, due: 0, pending: 0, status: 'paid' },
+                        '2025-06': { paid: 48000, due: 0, pending: 0, status: 'paid' },
+                        '2025-07': { paid: 0, due: 48000, pending: 0, status: 'due' }
+                    }
+                }
+            ];
+
+            // ---------- STATE ----------
+            // Current selected month (default June 2025)
+            let currentYear = 2025;
+            let currentMonth = 5; // 0-indexed: 5 = June
+
+            // Available months we have data for (just for navigation limits)
+            const minYear = 2025, minMonth = 3; // April 2025 (0-index: 3)
+            const maxYear = 2025, maxMonth = 6; // July 2025 (0-index: 6)
+
+            // ---------- DOM REFS ----------
+            const statsGrid = document.getElementById('statsGrid');
+            const tableBody = document.getElementById('tableBody');
+            const noResultsDiv = document.getElementById('noResults');
+            const currentMonthDisplay = document.getElementById('currentMonthDisplay');
+            const tableMonthLabel = document.getElementById('tableMonthLabel');
+            const prevMonthBtn = document.getElementById('prevMonthBtn');
+            const nextMonthBtn = document.getElementById('nextMonthBtn');
+
+            // ---------- HELPERS ----------
+            function getMonthKey(year, month) {
+                // month is 0-indexed
+                const m = (month + 1).toString().padStart(2, '0');
+                return `${year}-${m}`;
+            }
+
+            function formatMonthYear(year, month) {
+                const date = new Date(year, month, 1);
+                return date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+            }
+
+            function formatKES(amount) {
+                if (amount === undefined || amount === null) return '0';
+                return amount.toLocaleString('en-KE');
+            }
+
+            // Get aggregated stats for current month
+            function getStatsForMonth(year, month) {
+                const monthKey = getMonthKey(year, month);
+                let totalBilled = 0;
+                let totalPaid = 0;
+                let totalDue = 0;
+                let totalPending = 0;
+
+                landlords.forEach(landlord => {
+                    const record = landlord.payments[monthKey];
+                    if (record) {
+                        totalBilled += landlord.amount;
+                        totalPaid += record.paid || 0;
+                        totalDue += record.due || 0;
+                        totalPending += record.pending || 0;
+                    } else {
+                        // if no record, treat as due (full amount)
+                        totalBilled += landlord.amount;
+                        totalDue += landlord.amount;
+                    }
+                });
+
+                return { totalBilled, totalPaid, totalDue, totalPending };
+            }
+
+            // Render stats cards
+            function renderStats() {
+                const { totalBilled, totalPaid, totalDue, totalPending } = getStatsForMonth(currentYear, currentMonth);
+                const paidPercentage = totalBilled > 0 ? Math.round((totalPaid / totalBilled) * 100) : 0;
+
+                statsGrid.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-title"><i class="fas fa-file-invoice"></i> Total billed</div>
+                        <div class="stat-value">KES ${formatKES(totalBilled)}</div>
+                        <div class="stat-sub"><i class="fas fa-calendar-alt"></i> ${formatMonthYear(currentYear, currentMonth)}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title"><i class="fas fa-check-circle"></i> Total paid</div>
+                        <div class="stat-value" style="color: #0f7b6b;">KES ${formatKES(totalPaid)}</div>
+                        <div class="stat-sub positive"><i class="fas fa-arrow-up"></i> ${paidPercentage}% of billed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title"><i class="fas fa-exclamation-triangle"></i> Due amount</div>
+                        <div class="stat-value" style="color: #b45309;">KES ${formatKES(totalDue)}</div>
+                        <div class="stat-sub warning"><i class="fas fa-clock"></i> Outstanding</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title"><i class="fas fa-hourglass-half"></i> Pending</div>
+                        <div class="stat-value" style="color: #2c7a7b;">KES ${formatKES(totalPending)}</div>
+                        <div class="stat-sub"><i class="fas fa-hourglass-start"></i> Awaiting confirmation</div>
+                    </div>
+                `;
+            }
+
+            // Render table for current month
+            function renderTable() {
+                const monthKey = getMonthKey(currentYear, currentMonth);
+                let rowsHtml = '';
+                let hasAnyRecord = false;
+
+                landlords.forEach(landlord => {
+                    const record = landlord.payments[monthKey] || { paid: 0, due: landlord.amount, pending: 0, status: 'due' };
+                    const amount = landlord.amount;
+                    const paid = record.paid || 0;
+                    const due = record.due || 0;
+                    const pending = record.pending || 0;
+                    const status = record.status || (due > 0 ? 'due' : (paid < amount ? 'pending' : 'paid'));
+
+                    // Determine badge class
+                    let badgeClass = 'status-paid';
+                    let statusText = 'Paid';
+                    let statusIcon = 'fa-check-circle';
+
+                    if (status === 'pending') {
+                        badgeClass = 'status-pending';
+                        statusText = 'Pending';
+                        statusIcon = 'fa-clock';
+                    } else if (status === 'due') {
+                        badgeClass = 'status-due';
+                        statusText = 'Due';
+                        statusIcon = 'fa-exclamation-circle';
+                    } else if (status === 'paid') {
+                        badgeClass = 'status-paid';
+                        statusText = 'Paid';
+                        statusIcon = 'fa-check-circle';
+                    }
+
+                    // For display: if due >0 show due amount, else if pending>0 show pending.
+                    let duePendingDisplay = '';
+                    if (due > 0) {
+                        duePendingDisplay = `<span class="amount-due">KES ${formatKES(due)} due</span>`;
+                    } else if (pending > 0) {
+                        duePendingDisplay = `<span style="color: #b45309;">KES ${formatKES(pending)} pending</span>`;
+                    } else {
+                        duePendingDisplay = `<span style="color: #0f7b6b;">—</span>`;
+                    }
+
+                    // Initials for avatar
+                    const initials = landlord.name.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase();
+
+                    rowsHtml += `
+                        <tr>
+                            <td>
+                                <div class="landlord-cell">
+                                    <div class="avatar">${initials}</div>
+                                    <div class="landlord-info">
+                                        <span class="landlord-name">${landlord.name}</span>
+                                        <span class="property"><i class="fas fa-map-pin"></i> ${landlord.property}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>${landlord.service}</td>
+                            <td class="amount">KES ${formatKES(amount)}</td>
+                            <td class="amount-paid">KES ${formatKES(paid)}</td>
+                            <td>${duePendingDisplay}</td>
+                            <td>
+                                <span class="status-badge ${badgeClass}">
+                                    <i class="fas ${statusIcon}"></i> ${statusText}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="action-btn" data-id="${landlord.id}" data-month="${monthKey}">
+                                    <i class="fas fa-receipt"></i> Details
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    hasAnyRecord = true;
+                });
+
+                if (hasAnyRecord) {
+                    tableBody.innerHTML = rowsHtml;
+                    noResultsDiv.style.display = 'none';
+                } else {
+                    tableBody.innerHTML = '';
+                    noResultsDiv.style.display = 'block';
+                }
+
+                // Attach listeners to action buttons (for demo, show an alert)
+                document.querySelectorAll('.action-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const landlordId = btn.dataset.id;
+                        const month = btn.dataset.month;
+                        const landlord = landlords.find(l => l.id == landlordId);
+                        if (landlord) {
+                            const record = landlord.payments[month] || { paid: 0, due: landlord.amount, pending: 0 };
+                            alert(`📄 Payment details\n\nLandlord: ${landlord.name}\nProperty: ${landlord.property}\nMonth: ${formatMonthYear(currentYear, currentMonth)}\nService: ${landlord.service}\nAmount: KES ${formatKES(landlord.amount)}\nPaid: KES ${formatKES(record.paid || 0)}\nDue: KES ${formatKES(record.due || 0)}\nPending: KES ${formatKES(record.pending || 0)}`);
+                        }
+                    });
+                });
+            }
+
+            // Update month display and all UI
+            function refreshUI() {
+                const monthName = formatMonthYear(currentYear, currentMonth);
+                currentMonthDisplay.textContent = monthName;
+                tableMonthLabel.textContent = monthName;
+                renderStats();
+                renderTable();
+
+                // Disable/ enable nav buttons based on range
+                if (currentYear === minYear && currentMonth === minMonth) {
+                    prevMonthBtn.disabled = true;
+                    prevMonthBtn.style.opacity = '0.4';
+                } else {
+                    prevMonthBtn.disabled = false;
+                    prevMonthBtn.style.opacity = '1';
+                }
+
+                if (currentYear === maxYear && currentMonth === maxMonth) {
+                    nextMonthBtn.disabled = true;
+                    nextMonthBtn.style.opacity = '0.4';
+                } else {
+                    nextMonthBtn.disabled = false;
+                    nextMonthBtn.style.opacity = '1';
+                }
+            }
+
+            // Navigation handlers
+            function goToPrevMonth() {
+                if (currentYear === minYear && currentMonth === minMonth) return;
+                if (currentMonth === 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                } else {
+                    currentMonth--;
+                }
+                refreshUI();
+            }
+
+            function goToNextMonth() {
+                if (currentYear === maxYear && currentMonth === maxMonth) return;
+                if (currentMonth === 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                } else {
+                    currentMonth++;
+                }
+                refreshUI();
+            }
+
+            // Initialize
+            function init() {
+                // Set default to June 2025 (5)
+                currentYear = 2025;
+                currentMonth = 5;
+
+                prevMonthBtn.addEventListener('click', goToPrevMonth);
+                nextMonthBtn.addEventListener('click', goToNextMonth);
+
+                // Initial render
+                refreshUI();
+            }
+
+            init();
+        })();
+    </script>
+</body>
+</html>

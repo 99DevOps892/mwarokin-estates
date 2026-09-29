@@ -1,0 +1,2256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mwarokin Estates · Hobbies, Heritage & Hobbies</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       DESIGN TOKENS (consistent with pages 1–17)
+       ============================================================ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy-900: #0b121c;
+      --navy-800: #111b2b;
+      --navy-700: #1a2740;
+      --navy-600: #23334f;
+      --navy-500: #2e405f;
+      --gold-500: #c8972a;
+      --gold-400: #e0b354;
+      --gold-300: #f0cf8a;
+      --gold-200: #f9e9c7;
+      --green-500: #1e8e5c;
+      --green-400: #2bb673;
+      --green-300: #6fcf97;
+      --red-500: #c44536;
+      --red-400: #e05a4f;
+      --amber-500: #e6a017;
+      --amber-400: #f5b83d;
+      --purple-500: #6b4c9a;
+      --purple-400: #8b6bb5;
+      --blue-500: #2c6b9e;
+      --blue-400: #4a8bc2;
+      --teal-500: #1e7a7a;
+      --teal-400: #2ba3a3;
+      --pink-500: #b5447a;
+      --pink-400: #d46b9e;
+      --orange-500: #c4622a;
+      --orange-400: #e0804a;
+      --gray-100: #f8fafc;
+      --gray-200: #eef2f6;
+      --gray-300: #dce3ec;
+      --gray-400: #9aa9bb;
+      --gray-500: #6b7c93;
+      --gray-600: #4f5e74;
+      --gray-700: #334155;
+      --white: #ffffff;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.05), 0 2px 6px rgba(0,0,0,0.03);
+      --shadow-lg: 0 12px 28px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.02);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-serif: 'Playfair Display', Georgia, serif;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--gray-100);
+      color: var(--navy-900);
+      line-height: 1.5;
+      padding: 0 24px 48px;
+      min-height: 100vh;
+    }
+
+    .app-container { max-width: 1440px; margin: 0 auto; }
+
+    /* ============================================================
+       TOP BAR
+       ============================================================ */
+    .top-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 0 28px; flex-wrap: wrap; gap: 20px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; }
+
+    .brand-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--gold-500), var(--gold-400));
+      border-radius: 14px; display: flex; align-items: center; justify-content: center;
+      color: var(--navy-900); font-size: 22px; font-weight: 700;
+      box-shadow: 0 6px 14px rgba(200,151,42,0.25);
+    }
+
+    .brand-text h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+    .brand-text h1 span { font-weight: 300; color: var(--gold-500); }
+    .brand-text .tagline { font-size: 12px; color: var(--gray-500); font-weight: 400; }
+
+    .nav-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+    .nav-link {
+      font-size: 13px; font-weight: 500; color: var(--gray-600);
+      text-decoration: none; padding: 8px 16px; border-radius: 40px;
+      transition: all 0.15s; background: var(--white); box-shadow: var(--shadow-sm);
+    }
+    .nav-link:hover, .nav-link.active { background: var(--navy-800); color: var(--gold-300); }
+
+    .avatar {
+      width: 44px; height: 44px; background: var(--navy-800); color: var(--gold-400);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 16px; border: 2px solid var(--gold-400);
+      box-shadow: var(--shadow-sm); cursor: pointer;
+    }
+
+    /* ============================================================
+       PAGE HEADER
+       ============================================================ */
+    .page-header { margin-bottom: 28px; }
+    .page-header h2 {
+      font-size: 26px; font-weight: 700; letter-spacing: -0.4px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .page-header h2 i { color: var(--gold-500); font-size: 24px; }
+    .page-header p { font-size: 14px; color: var(--gray-500); margin-top: 4px; }
+
+    /* ============================================================
+       SHARED CARD STYLES
+       ============================================================ */
+    .card {
+      background: var(--white); border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200);
+      transition: box-shadow 0.2s; overflow: hidden;
+    }
+    .card:hover { box-shadow: var(--shadow-md); }
+
+    .section-title {
+      font-size: 18px; font-weight: 600; letter-spacing: -0.2px;
+      display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+    }
+    .section-title i { color: var(--gold-500); font-size: 18px; }
+
+    /* ============================================================
+       FEATURE 1: PHOTOGRAPHY & VISUAL STORYTELLING
+       ============================================================ */
+    .photo-panel {
+      background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, var(--blue-500) 100%);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin-bottom: 30px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .photo-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(2px 2px at 10% 20%, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1.5px 1.5px at 40% 60%, rgba(200,151,42,0.6), transparent),
+        radial-gradient(2px 2px at 75% 30%, rgba(255,255,255,0.5), transparent),
+        radial-gradient(1.5px 1.5px at 85% 80%, rgba(44,107,158,0.8), transparent);
+      pointer-events: none;
+    }
+
+    .photo-panel::after {
+      content: '📸';
+      position: absolute;
+      bottom: -70px;
+      right: 40px;
+      font-size: 240px;
+      color: rgba(255,255,255,0.05);
+      pointer-events: none;
+    }
+
+    .photo-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .photo-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .photo-header h3 i {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--blue-500), var(--blue-400));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+    }
+
+    .photo-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.75);
+      margin-top: 3px;
+    }
+
+    .photo-contest {
+      padding: 12px 22px;
+      border-radius: 40px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.15);
+      text-align: center;
+    }
+
+    .photo-contest .pc-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      font-weight: 700;
+      color: var(--gold-300);
+    }
+    .photo-contest .pc-value {
+      font-size: 14px;
+      font-weight: 800;
+      margin-top: 2px;
+      letter-spacing: -0.2px;
+    }
+
+    .photo-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 24px;
+    }
+
+    .photo-stat {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .photo-stat .ps-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: rgba(255,255,255,0.7);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .photo-stat .ps-value {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: var(--white);
+    }
+
+    .photo-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .photo-card {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      position: relative;
+      aspect-ratio: 4/3;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .photo-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+    }
+
+    .photo-canvas {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 52px;
+      position: relative;
+    }
+
+    .photo-canvas.skyline { background: linear-gradient(180deg, #1a1a2e 0%, #2d1b4e 40%, var(--gold-400) 100%); }
+    .photo-canvas.sunset { background: linear-gradient(180deg, var(--purple-500) 0%, var(--pink-500) 50%, var(--orange-400) 100%); }
+    .photo-canvas.garden { background: linear-gradient(180deg, var(--blue-400) 0%, var(--green-400) 60%, var(--green-500) 100%); }
+    .photo-canvas.interior { background: linear-gradient(180deg, #d4a373 0%, #8b6d3a 100%); }
+    .photo-canvas.people { background: linear-gradient(135deg, var(--pink-500), var(--orange-500)); }
+    .photo-canvas.abstract { background: linear-gradient(135deg, var(--purple-500), var(--blue-500)); }
+
+    .photo-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 30px 14px 12px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.85));
+      color: var(--white);
+    }
+
+    .photo-caption-title {
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
+
+    .photo-caption-author {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .photo-caption-likes {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--gold-300);
+      font-weight: 700;
+    }
+
+    /* ============================================================
+       FEATURE 2: BIRD WATCHING & WILDLIFE
+       ============================================================ */
+    .wildlife-panel {
+      background: linear-gradient(135deg, #0a2e1a 0%, var(--green-500) 60%, var(--teal-500) 100%);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin-bottom: 30px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .wildlife-panel::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -5%;
+      width: 460px;
+      height: 460px;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .wildlife-panel::after {
+      content: '🦜';
+      position: absolute;
+      bottom: -70px;
+      right: 40px;
+      font-size: 240px;
+      color: rgba(255,255,255,0.05);
+      pointer-events: none;
+    }
+
+    .wildlife-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .wildlife-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .wildlife-header h3 i {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      backdrop-filter: blur(10px);
+    }
+
+    .wildlife-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+      margin-top: 3px;
+    }
+
+    .wildlife-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 24px;
+    }
+
+    .wildlife-stat {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .wildlife-stat .ws-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: rgba(255,255,255,0.75);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .wildlife-stat .ws-value {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: var(--white);
+    }
+
+    .species-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .species-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .species-card:hover {
+      background: rgba(255,255,255,0.12);
+      transform: translateY(-2px);
+    }
+
+    .species-emoji {
+      font-size: 38px;
+      flex-shrink: 0;
+    }
+
+    .species-info { flex: 1; min-width: 0; }
+    .species-name {
+      font-weight: 700;
+      font-size: 13.5px;
+      color: var(--white);
+    }
+    .species-latin {
+      font-size: 11px;
+      font-style: italic;
+      color: rgba(255,255,255,0.65);
+      margin-top: 2px;
+    }
+
+    .species-sightings {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 30px;
+      background: rgba(200,151,42,0.25);
+      color: var(--gold-300);
+      white-space: nowrap;
+    }
+
+    /* ============================================================
+       FEATURE 3: POETRY & SPOKEN WORD
+       ============================================================ */
+    .poetry-panel {
+      background: linear-gradient(135deg, #2d1b1b 0%, #5a2d1a 50%, var(--gold-500) 100%);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin-bottom: 30px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .poetry-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 28px);
+      pointer-events: none;
+    }
+
+    .poetry-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .poetry-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .poetry-header h3 i {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      backdrop-filter: blur(10px);
+    }
+
+    .poetry-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+      margin-top: 3px;
+    }
+
+    .poetry-open-mic {
+      padding: 12px 22px;
+      border-radius: 40px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .poetry-open-mic i {
+      font-size: 22px;
+      color: var(--gold-200);
+    }
+
+    .poetry-open-mic .pom-info .pom-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.8);
+    }
+    .poetry-open-mic .pom-info .pom-value {
+      font-size: 13.5px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+    }
+
+    .poems-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .poem-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+    }
+
+    .poem-card:hover {
+      background: rgba(255,255,255,0.12);
+      transform: translateY(-3px);
+    }
+
+    .poem-card::before {
+      content: '"';
+      position: absolute;
+      top: 8px;
+      right: 18px;
+      font-size: 80px;
+      color: rgba(200,151,42,0.15);
+      font-family: serif;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .poem-title {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+      color: var(--gold-200);
+      position: relative;
+      z-index: 1;
+    }
+
+    .poem-body {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 13.5px;
+      color: rgba(255,255,255,0.9);
+      line-height: 1.7;
+      white-space: pre-line;
+      position: relative;
+      z-index: 1;
+    }
+
+    .poem-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      position: relative;
+      z-index: 1;
+    }
+
+    .poem-author {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .poem-author-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .poem-author-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .poem-likes {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gold-300);
+    }
+
+    /* ============================================================
+       FEATURE 4: LANGUAGE EXCHANGE & CULTURAL BRIDGE
+       ============================================================ */
+    .language-panel {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 28px 32px;
+      margin-bottom: 30px;
+    }
+
+    .language-hero {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 24px 28px;
+      background: linear-gradient(135deg, var(--blue-500) 0%, var(--purple-500) 50%, var(--pink-500) 100%);
+      border-radius: var(--radius-md);
+      color: var(--white);
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .language-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 15% 40%, rgba(255,255,255,0.15) 0%, transparent 40%),
+        radial-gradient(circle at 85% 60%, rgba(255,255,255,0.1) 0%, transparent 40%);
+    }
+
+    .language-hero-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+      backdrop-filter: blur(10px);
+    }
+
+    .language-hero-text {
+      flex: 1;
+      min-width: 200px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .language-hero-text h4 {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      margin-bottom: 4px;
+    }
+
+    .language-hero-text p {
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.5;
+    }
+
+    .language-stats-hero {
+      display: flex;
+      gap: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .lang-stat-hero .lsh-value {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: -0.6px;
+      line-height: 1;
+      color: var(--gold-200);
+    }
+
+    .lang-stat-hero .lsh-label {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      font-weight: 700;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+
+    .exchange-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .exchange-card {
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .exchange-card:hover {
+      border-color: var(--purple-400);
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-2px);
+    }
+
+    .exchange-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .exchange-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .exchange-info { flex: 1; min-width: 0; }
+    .exchange-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--navy-900);
+    }
+    .exchange-property {
+      font-size: 11.5px;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    .exchange-langs {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      background: var(--gray-100);
+      border-radius: var(--radius-sm);
+    }
+
+    .exchange-lang {
+      flex: 1;
+      text-align: center;
+    }
+
+    .exchange-lang .el-flag {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .exchange-lang .el-name {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+    .exchange-lang .el-label {
+      font-size: 9.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--gray-500);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .exchange-arrow {
+      color: var(--gold-500);
+      font-size: 16px;
+    }
+
+    .exchange-proficiency {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: var(--gray-600);
+    }
+
+    .exchange-proficiency .ep-level {
+      font-weight: 700;
+      color: var(--green-500);
+    }
+
+    .exchange-btn {
+      padding: 9px 16px;
+      border-radius: 30px;
+      border: none;
+      background: var(--navy-800);
+      color: var(--gold-300);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-sans);
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .exchange-btn:hover { background: var(--navy-700); }
+
+    /* ============================================================
+       FEATURE 5: HISTORICAL SOCIETY & HERITAGE TRAIL
+       ============================================================ */
+    .heritage-panel {
+      background: linear-gradient(135deg, #2d1b1b 0%, #5a3a1a 50%, var(--gold-500) 100%);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin-bottom: 30px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .heritage-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 10px);
+      pointer-events: none;
+    }
+
+    .heritage-panel::after {
+      content: '🏛';
+      position: absolute;
+      bottom: -70px;
+      right: 40px;
+      font-size: 240px;
+      color: rgba(255,255,255,0.05);
+      pointer-events: none;
+    }
+
+    .heritage-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .heritage-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .heritage-header h3 i {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      backdrop-filter: blur(10px);
+    }
+
+    .heritage-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+      margin-top: 3px;
+    }
+
+    .heritage-trail-badge {
+      padding: 12px 22px;
+      border-radius: 40px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .heritage-trail-badge i {
+      font-size: 22px;
+      color: var(--gold-200);
+    }
+
+    .heritage-trail-badge .htb-info .htb-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.8);
+    }
+    .heritage-trail-badge .htb-info .htb-value {
+      font-size: 13.5px;
+      font-weight: 800;
+    }
+
+    .heritage-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 28px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .heritage-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .heritage-item {
+      display: flex;
+      gap: 16px;
+      padding: 16px 18px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-md);
+      backdrop-filter: blur(10px);
+      transition: all 0.15s;
+    }
+
+    .heritage-item:hover {
+      background: rgba(255,255,255,0.12);
+      transform: translateX(4px);
+    }
+
+    .heritage-year {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--gold-300);
+      letter-spacing: -0.6px;
+      line-height: 1;
+      flex-shrink: 0;
+      min-width: 72px;
+      font-family: var(--font-serif);
+    }
+
+    .heritage-info { flex: 1; min-width: 0; }
+    .heritage-title {
+      font-weight: 700;
+      font-size: 13.5px;
+      color: var(--white);
+    }
+    .heritage-desc {
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.75);
+      margin-top: 3px;
+      line-height: 1.5;
+    }
+
+    .heritage-badge {
+      font-size: 9.5px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 30px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      align-self: flex-start;
+      background: rgba(200,151,42,0.25);
+      color: var(--gold-300);
+    }
+
+    .heritage-map {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .heritage-map h4 {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gold-300);
+    }
+
+    .trail-stop {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .trail-stop:last-child { border-bottom: none; }
+
+    .trail-number {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(200,151,42,0.2);
+      color: var(--gold-300);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .trail-stop-info { flex: 1; min-width: 0; }
+    .trail-stop-name {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--white);
+    }
+    .trail-stop-meta {
+      font-size: 10.5px;
+      color: rgba(255,255,255,0.65);
+      margin-top: 2px;
+    }
+
+    .trail-stop-status {
+      font-size: 16px;
+      color: var(--gold-300);
+    }
+
+    /* ============================================================
+       FEATURE 6: BOARD GAME & TABLETOP CLUB
+       ============================================================ */
+    .boardgame-panel {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 28px 32px;
+      margin-bottom: 30px;
+    }
+
+    .boardgame-hero {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 24px 28px;
+      background: linear-gradient(135deg, var(--orange-500) 0%, var(--red-500) 50%, var(--purple-500) 100%);
+      border-radius: var(--radius-md);
+      color: var(--white);
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .boardgame-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.12) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(255,255,255,0.08) 0%, transparent 40%);
+    }
+
+    .boardgame-hero-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+      backdrop-filter: blur(10px);
+    }
+
+    .boardgame-hero-text {
+      flex: 1;
+      min-width: 200px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .boardgame-hero-text h4 {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      margin-bottom: 4px;
+    }
+
+    .boardgame-hero-text p {
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.5;
+    }
+
+    .boardgame-stats-hero {
+      display: flex;
+      gap: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .bg-stat-hero .bsh-value {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: -0.6px;
+      line-height: 1;
+      color: var(--gold-200);
+    }
+
+    .bg-stat-hero .bsh-label {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      font-weight: 700;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .game-card {
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .game-card:hover {
+      border-color: var(--gold-400);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-3px);
+    }
+
+    .game-cover {
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 56px;
+      position: relative;
+    }
+
+    .game-cover.strategy { background: linear-gradient(135deg, var(--navy-700), var(--blue-500)); }
+    .game-cover.party { background: linear-gradient(135deg, var(--pink-500), var(--orange-500)); }
+    .game-cover.family { background: linear-gradient(135deg, var(--green-500), var(--teal-500)); }
+    .game-cover.classic { background: linear-gradient(135deg, var(--gold-500), var(--orange-500)); }
+    .game-cover.card { background: linear-gradient(135deg, var(--purple-500), var(--red-500)); }
+    .game-cover.rpg { background: linear-gradient(135deg, #2d1b4e, var(--purple-500)); }
+
+    .game-players-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 4px 12px;
+      border-radius: 30px;
+      background: rgba(255,255,255,0.95);
+      color: var(--navy-900);
+      font-size: 10.5px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .game-body {
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .game-title {
+      font-weight: 700;
+      font-size: 14.5px;
+      color: var(--navy-900);
+      line-height: 1.3;
+    }
+
+    .game-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 11.5px;
+      color: var(--gray-500);
+      flex-wrap: wrap;
+    }
+
+    .game-meta span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .game-meta i { color: var(--gold-500); }
+
+    .game-difficulty {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 30px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      align-self: flex-start;
+    }
+
+    .game-difficulty.easy { background: #e6f5ee; color: var(--green-500); }
+    .game-difficulty.medium { background: #fff8e5; color: var(--amber-500); }
+    .game-difficulty.hard { background: #fdeceb; color: var(--red-500); }
+
+    .game-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 10px;
+      border-top: 1px solid var(--gray-200);
+      margin-top: auto;
+    }
+
+    .game-players {
+      font-size: 11.5px;
+      color: var(--gray-500);
+    }
+
+    .game-btn {
+      padding: 6px 14px;
+      border-radius: 30px;
+      border: none;
+      background: var(--navy-800);
+      color: var(--gold-300);
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-sans);
+    }
+
+    .game-btn:hover { background: var(--navy-700); }
+
+    /* ============================================================
+       FEATURE 7: OBSERVATORY & ASTRONOMY NIGHTS
+       ============================================================ */
+    .observatory-panel {
+      background: radial-gradient(ellipse at top, #1a1a3e 0%, #0a0a1a 70%);
+      border-radius: var(--radius-lg);
+      padding: 40px 36px;
+      margin-bottom: 30px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+      min-height: 400px;
+    }
+
+    .observatory-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(2px 2px at 12% 18%, rgba(255,255,255,0.9), transparent),
+        radial-gradient(1.5px 1.5px at 35% 8%, rgba(255,255,255,0.7), transparent),
+        radial-gradient(2.5px 2.5px at 68% 22%, rgba(200,151,42,0.9), transparent),
+        radial-gradient(2px 2px at 82% 45%, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1.5px 1.5px at 22% 55%, rgba(255,255,255,0.8), transparent),
+        radial-gradient(3px 3px at 55% 38%, rgba(107,76,154,0.9), transparent),
+        radial-gradient(1.5px 1.5px at 90% 25%, rgba(255,255,255,0.7), transparent),
+        radial-gradient(2px 2px at 8% 78%, rgba(200,151,42,0.7), transparent),
+        radial-gradient(2.5px 2.5px at 72% 72%, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1.5px 1.5px at 45% 88%, rgba(255,255,255,0.6), transparent),
+        radial-gradient(2px 2px at 95% 60%, rgba(44,107,158,0.8), transparent),
+        radial-gradient(1.5px 1.5px at 60% 12%, rgba(255,255,255,0.5), transparent);
+      pointer-events: none;
+      animation: twinkle 4s infinite alternate;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.6; }
+      100% { opacity: 1; }
+    }
+
+    .observatory-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .observatory-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .observatory-header h3 i {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--purple-500), var(--blue-500));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+    }
+
+    .observatory-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+      margin-top: 3px;
+    }
+
+    .observatory-next-event {
+      padding: 12px 22px;
+      border-radius: 40px;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .observatory-next-event i {
+      font-size: 24px;
+      color: var(--gold-300);
+    }
+
+    .observatory-next-event .one-info .one-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.75);
+    }
+    .observatory-next-event .one-info .one-value {
+      font-size: 13.5px;
+      font-weight: 800;
+    }
+
+    .observatory-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 24px;
+    }
+
+    .observatory-stat {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .observatory-stat .os-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: rgba(255,255,255,0.65);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .observatory-stat .os-value {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: var(--white);
+    }
+
+    .celestial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .celestial-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+      text-align: center;
+    }
+
+    .celestial-card:hover {
+      background: rgba(255,255,255,0.08);
+      transform: translateY(-3px);
+      border-color: rgba(200,151,42,0.3);
+    }
+
+    .celestial-orb {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .celestial-orb.moon { background: radial-gradient(circle at 35% 35%, #f0f0f0, #9ba9bb); box-shadow: 0 0 30px rgba(220,220,220,0.4); }
+    .celestial-orb.mars { background: radial-gradient(circle at 35% 35%, #e05a4f, #7a1a1a); box-shadow: 0 0 30px rgba(224,90,79,0.5); }
+    .celestial-orb.jupiter { background: radial-gradient(circle at 35% 35%, #e0b354, #8b6d3a); box-shadow: 0 0 30px rgba(224,179,84,0.5); }
+    .celestial-orb.venus { background: radial-gradient(circle at 35% 35%, #f5e6c8, #b8860b); box-shadow: 0 0 30px rgba(245,230,200,0.5); }
+    .celestial-orb.saturn { background: radial-gradient(circle at 35% 35%, #d4a373, #5a3a1a); box-shadow: 0 0 30px rgba(212,163,115,0.5); }
+    .celestial-orb.station { background: radial-gradient(circle at 35% 35%, #4a8bc2, #2c6b9e); box-shadow: 0 0 30px rgba(74,139,194,0.5); }
+
+    .celestial-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--white);
+    }
+
+    .celestial-meta {
+      font-size: 11px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.4;
+    }
+
+    .celestial-visibility {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 30px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .celestial-visibility.visible { background: rgba(43,182,115,0.25); color: #a7f3d0; }
+    .celestial-visibility.best { background: rgba(200,151,42,0.25); color: var(--gold-300); }
+    .celestial-visibility.low { background: rgba(196,69,54,0.3); color: #fca5a5; }
+
+    /* ============================================================
+       FOOTER
+       ============================================================ */
+    .page-footer {
+      text-align: center;
+      padding: 32px 0 16px;
+      font-size: 12px;
+      color: var(--gray-400);
+      border-top: 1px solid var(--gray-200);
+      margin-top: 20px;
+    }
+    .page-footer a { color: var(--gold-500); text-decoration: none; }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 1200px) {
+      .photo-stats { grid-template-columns: repeat(2, 1fr); }
+      .photo-gallery { grid-template-columns: repeat(2, 1fr); }
+      .wildlife-stats { grid-template-columns: repeat(2, 1fr); }
+      .species-grid { grid-template-columns: 1fr; }
+      .poems-grid { grid-template-columns: 1fr; }
+      .exchange-grid { grid-template-columns: 1fr; }
+      .heritage-grid { grid-template-columns: 1fr; }
+      .games-grid { grid-template-columns: 1fr; }
+      .observatory-stats { grid-template-columns: repeat(2, 1fr); }
+      .celestial-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      body { padding: 0 16px 32px; }
+      .top-bar { flex-direction: column; align-items: flex-start; }
+      .nav-actions { width: 100%; justify-content: space-between; }
+      .photo-panel { padding: 24px 20px; }
+      .wildlife-panel { padding: 24px 20px; }
+      .poetry-panel { padding: 24px 20px; }
+      .heritage-panel { padding: 24px 20px; }
+      .observatory-panel { padding: 28px 20px; }
+      .photo-stats { grid-template-columns: 1fr; }
+      .wildlife-stats { grid-template-columns: 1fr; }
+      .observatory-stats { grid-template-columns: 1fr; }
+      .photo-header { flex-direction: column; align-items: flex-start; }
+      .wildlife-header { flex-direction: column; align-items: flex-start; }
+      .poetry-header { flex-direction: column; align-items: flex-start; }
+      .heritage-header { flex-direction: column; align-items: flex-start; }
+      .observatory-header { flex-direction: column; align-items: flex-start; }
+      .language-hero { flex-direction: column; text-align: center; }
+      .language-stats-hero { justify-content: center; }
+      .boardgame-hero { flex-direction: column; text-align: center; }
+      .boardgame-stats-hero { justify-content: center; }
+    }
+    @media (max-width: 480px) {
+      .photo-gallery { grid-template-columns: 1fr; }
+      .exchange-langs { flex-direction: column; gap: 8px; }
+      .exchange-arrow { transform: rotate(90deg); }
+    }
+
+    /* ============================================================
+       ANIMATIONS
+       ============================================================ */
+    .fade-in { animation: fadeIn 0.4s ease forwards; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- ============================================================
+         TOP BAR
+         ============================================================ -->
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-icon">⬡</div>
+        <div class="brand-text">
+          <h1>Mwarokin <span>Estates</span></h1>
+          <div class="tagline">Advanced Payments · Page 18</div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <a href="#" class="nav-link"><i class="fas fa-chart-pie"></i> Dashboard</a>
+        <a href="#" class="nav-link"><i class="fas fa-file-invoice"></i> Invoices</a>
+        <a href="#" class="nav-link active"><i class="fas fa-camera"></i> Hobbies</a>
+        <div class="avatar" title="Landlord Admin">AD</div>
+      </div>
+    </header>
+
+    <!-- ============================================================
+         PAGE HEADER
+         ============================================================ -->
+    <div class="page-header">
+      <h2><i class="fas fa-camera"></i> Hobbies, Heritage & Hobbies</h2>
+      <p>Photography, wildlife, poetry, language exchange, heritage, board games, and astronomy.</p>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 1: PHOTOGRAPHY & VISUAL STORYTELLING
+         ============================================================ -->
+    <div class="photo-panel fade-in">
+      <div class="photo-header">
+        <div>
+          <h3><i class="fas fa-camera-retro"></i> Landlord Photography & Visual Storytelling</h3>
+          <p>Capture the beauty of your properties and the stories of your community through the lens.</p>
+        </div>
+        <div class="photo-contest">
+          <div class="pc-label">Monthly Contest</div>
+          <div class="pc-value">"Golden Hour Estates"</div>
+        </div>
+      </div>
+      <div class="photo-stats" id="photoStats">
+        <!-- Injected via JS -->
+      </div>
+      <div class="photo-gallery" id="photoGallery">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 2: BIRD WATCHING & WILDLIFE
+         ============================================================ -->
+    <div class="wildlife-panel fade-in">
+      <div class="wildlife-header">
+        <div>
+          <h3><i class="fas fa-dove"></i> Property Bird Watching & Wildlife Sanctuary</h3>
+          <p>Turn your estate gardens into certified wildlife sanctuaries. Track, photograph, and protect local species.</p>
+        </div>
+      </div>
+      <div class="wildlife-stats" id="wildlifeStats">
+        <!-- Injected via JS -->
+      </div>
+      <div class="species-grid" id="speciesGrid">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 3: POETRY & SPOKEN WORD
+         ============================================================ -->
+    <div class="poetry-panel fade-in">
+      <div class="poetry-header">
+        <div>
+          <h3><i class="fas fa-feather-alt"></i> Landlord Poetry & Spoken Word</h3>
+          <p>Express the soul of property ownership through verse. Monthly open mic nights and published anthologies.</p>
+        </div>
+        <div class="poetry-open-mic">
+          <i class="fas fa-microphone"></i>
+          <div class="pom-info">
+            <div class="pom-label">Next Open Mic</div>
+            <div class="pom-value">May 3 · 7 PM</div>
+          </div>
+        </div>
+      </div>
+      <div class="poems-grid" id="poemsGrid">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 4: LANGUAGE EXCHANGE
+         ============================================================ -->
+    <div class="language-panel fade-in">
+      <div class="section-title"><i class="fas fa-language"></i> Tenant Language Exchange & Cultural Bridge</div>
+      <div class="language-hero">
+        <div class="language-hero-icon">🌍</div>
+        <div class="language-hero-text">
+          <h4>Connect Through Language</h4>
+          <p>Tenants teach their native languages to neighbors in exchange for learning new ones. Breaking barriers, one conversation at a time.</p>
+        </div>
+        <div class="language-stats-hero">
+          <div class="lang-stat-hero">
+            <div class="lsh-value">84</div>
+            <div class="lsh-label">Participants</div>
+          </div>
+          <div class="lang-stat-hero">
+            <div class="lsh-value">16</div>
+            <div class="lsh-label">Languages</div>
+          </div>
+          <div class="lang-stat-hero">
+            <div class="lsh-value">248</div>
+            <div class="lsh-label">Exchanges</div>
+          </div>
+        </div>
+      </div>
+      <div class="exchange-grid" id="exchangeGrid">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 5: HISTORICAL SOCIETY & HERITAGE
+         ============================================================ -->
+    <div class="heritage-panel fade-in">
+      <div class="heritage-header">
+        <div>
+          <h3><i class="fas fa-landmark"></i> Property Historical Society & Heritage Trail</h3>
+          <p>Discover and preserve the history of your properties and the communities that built them.</p>
+        </div>
+        <div class="heritage-trail-badge">
+          <i class="fas fa-route"></i>
+          <div class="htb-info">
+            <div class="htb-label">Heritage Trail</div>
+            <div class="htb-value">6 Stops · 2.4 km</div>
+          </div>
+        </div>
+      </div>
+      <div class="heritage-grid">
+        <div class="heritage-timeline" id="heritageTimeline">
+          <!-- Injected via JS -->
+        </div>
+        <div class="heritage-map">
+          <h4><i class="fas fa-map-signs"></i> Trail Stops</h4>
+          <div id="trailStops">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 6: BOARD GAME & TABLETOP CLUB
+         ============================================================ -->
+    <div class="boardgame-panel fade-in">
+      <div class="section-title"><i class="fas fa-dice"></i> Landlord Board Game & Tabletop Club</div>
+      <div class="boardgame-hero">
+        <div class="boardgame-hero-icon">🎲</div>
+        <div class="boardgame-hero-text">
+          <h4>Strategy, Laughter & Community</h4>
+          <p>Weekly game nights across properties. From chess to Catan, from Monopoly to Dungeons & Dragons — there's a seat for everyone.</p>
+        </div>
+        <div class="boardgame-stats-hero">
+          <div class="bg-stat-hero">
+            <div class="bsh-value">68</div>
+            <div class="bsh-label">Members</div>
+          </div>
+          <div class="bg-stat-hero">
+            <div class="bsh-value">84</div>
+            <div class="bsh-label">Games Owned</div>
+          </div>
+          <div class="bg-stat-hero">
+            <div class="bsh-value">12</div>
+            <div class="bsh-label">Weekly Meetups</div>
+          </div>
+        </div>
+      </div>
+      <div class="games-grid" id="gamesGrid">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 7: OBSERVATORY & ASTRONOMY
+         ============================================================ -->
+    <div class="observatory-panel fade-in">
+      <div class="observatory-header">
+        <div>
+          <h3><i class="fas fa-meteor"></i> Mwarokin Observatory & Astronomy Nights</h3>
+          <p>Discover the cosmos from your own rooftop. Monthly stargazing events with telescopes and expert guidance.</p>
+        </div>
+        <div class="observatory-next-event">
+          <i class="fas fa-moon"></i>
+          <div class="one-info">
+            <div class="one-label">Next Stargazing</div>
+            <div class="one-value">May 5 · 8 PM · Rooftop</div>
+          </div>
+        </div>
+      </div>
+      <div class="observatory-stats" id="observatoryStats">
+        <!-- Injected via JS -->
+      </div>
+      <div class="celestial-grid" id="celestialGrid">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <div class="page-footer">
+      <p>Mwarokin Estates · Hobbies, Heritage & Hobbies · &copy; 2025 · <a href="#">Privacy</a> · <a href="#">Terms</a></p>
+    </div>
+  </div>
+
+  <script>
+    /* ============================================================
+       MOCK DATA – PAGE 18 FEATURES
+       ============================================================ */
+
+    // Feature 1: Photography
+    const photoStats = [
+      { label: 'Photos Shared', value: '1,840', sub: 'This month' },
+      { label: 'Photographers', value: '62', sub: 'Active members' },
+      { label: 'Contest Entries', value: '184', sub: 'April 2025' },
+      { label: 'Winning Photos', value: '12', sub: 'Featured gallery' }
+    ];
+
+    const photos = [
+      { emoji: '🌇', type: 'skyline', title: 'Kilimani at Dusk', author: 'Grace Wanjiku', initials: 'GW', likes: 248 },
+      { emoji: '🌅', type: 'sunset', title: 'Lavington Sunset', author: 'Amina Hassan', initials: 'AH', likes: 184 },
+      { emoji: '🌳', type: 'garden', title: 'Runda Gardens Morning', author: 'Sarah Kilonzo', initials: 'SK', likes: 156 },
+      { emoji: '🛋', type: 'interior', title: 'Warm Living Room', author: 'Mary Njoki', initials: 'MN', likes: 142 },
+      { emoji: '👨‍👩‍👧', type: 'people', title: 'Community Day', author: 'John Wachira', initials: 'JW', likes: 312 },
+      { emoji: '🎨', type: 'abstract', title: 'Mural in Progress', author: 'Brian Kamau', initials: 'BK', likes: 178 }
+    ];
+
+    // Feature 2: Wildlife
+    const wildlifeStats = [
+      { label: 'Species Recorded', value: '48', sub: 'Across all properties' },
+      { label: 'Bird Sightings', value: '1,240', sub: 'YTD observations' },
+      { label: 'Sanctuary Certified', value: '3', sub: 'Properties' },
+      { label: 'Nesting Boxes', value: '84', sub: 'Installed' }
+    ];
+
+    const species = [
+      { emoji: '🦜', name: 'African Grey Parrot', latin: 'Psittacus erithacus', sightings: 42 },
+      { emoji: '🦉', name: 'Spotted Eagle-Owl', latin: 'Bubo africanus', sightings: 28 },
+      { emoji: '🕊', name: 'Laughing Dove', latin: 'Spilopelia senegalensis', sightings: 86 },
+      { emoji: '🦅', name: 'Black Kite', latin: 'Milvus migrans', sightings: 64 },
+      { emoji: '🐦', name: 'Superb Starling', latin: 'Lamprotornis superbus', sightings: 124 },
+      { emoji: '🦆', name: 'Egyptian Goose', latin: 'Alopochen aegyptiaca', sightings: 38 },
+      { emoji: '🦋', name: 'African Monarch', latin: 'Danaus chrysippus', sightings: 96 },
+      { emoji: '🦎', name: 'Tropical House Gecko', latin: 'Hemidactylus mabouia', sightings: 54 }
+    ];
+
+    // Feature 3: Poetry
+    const poems = [
+      {
+        title: 'The Landlord\'s Lament',
+        body: 'The pipes do leak, the tenants call,\nThe rent is late, the roof may fall.\nBut in the quiet of the night,\nI see the homes I\'ve made just right.',
+        author: 'Grace Wanjiku', initials: 'GW', color: '#c8972a', likes: 48
+      },
+      {
+        title: 'Concrete and Dreams',
+        body: 'Bricks and mortar, sweat and tears,\nA vision built across the years.\nEach door a story, each window a song,\nA place where strangers learn to belong.',
+        author: 'David Ochieng', initials: 'DO', color: '#2c6b9e', likes: 62
+      },
+      {
+        title: 'Nairobi Morning',
+        body: 'The matatu horns begin to sing,\nThe kettle whistles, the phones all ring.\nIn my estate, the day awakes,\nWith coffee brewing and fresh-baked cakes.',
+        author: 'Mary Njoki', initials: 'MN', color: '#b5447a', likes: 56
+      }
+    ];
+
+    // Feature 4: Language Exchange
+    const exchanges = [
+      {
+        initials: 'JW', name: 'John Wachira', property: 'Kilimani Court · 3B', color: '#c8972a',
+        teaching: { flag: '🇰🇪', name: 'Kiswahili', label: 'Teaching' },
+        learning: { flag: '🇫🇷', name: 'French', label: 'Learning' },
+        level: 'Intermediate', available: true
+      },
+      {
+        initials: 'AH', name: 'Amina Hassan', property: 'South B Apartments · 12', color: '#6b4c9a',
+        teaching: { flag: '🇸🇦', name: 'Arabic', label: 'Teaching' },
+        learning: { flag: '🇰🇪', name: 'Kikuyu', label: 'Learning' },
+        level: 'Beginner', available: true
+      },
+      {
+        initials: 'MN', name: 'Mary Njoki', property: 'Westlands Heights · 5A', color: '#b5447a',
+        teaching: { flag: '🇬🇧', name: 'English', label: 'Teaching' },
+        learning: { flag: '🇪🇸', name: 'Spanish', label: 'Learning' },
+        level: 'Advanced', available: false
+      },
+      {
+        initials: 'DO', name: 'David Ochieng', property: 'Eastleigh Plaza · 4D', color: '#2c6b9e',
+        teaching: { flag: '🇰🇪', name: 'Dholuo', label: 'Teaching' },
+        learning: { flag: '🇩🇪', name: 'German', label: 'Learning' },
+        level: 'Intermediate', available: true
+      }
+    ];
+
+    // Feature 5: Heritage
+    const heritageTimeline = [
+      { year: '1928', title: 'Kilimani Court Origins', desc: 'Built during the colonial era as a residential compound for railway workers.', badge: 'Heritage Site' },
+      { year: '1963', title: 'Independence Transition', desc: 'Property transferred to Kenyan ownership, becoming a symbol of post-independence aspirations.', badge: 'Historical' },
+      { year: '1985', title: 'Westlands Heights Built', desc: 'One of the first multi-story apartment complexes in Westlands, setting a new standard.', badge: 'Landmark' },
+      { year: '2018', title: 'Mwarokin Estates Founded', desc: 'Founded to professionally manage heritage properties with modern standards.', badge: 'Modern Era' },
+      { year: '2025', title: 'Heritage Trail Established', desc: 'Officially launched 6-stop heritage trail documenting our collective property history.', badge: 'Current' }
+    ];
+
+    const trailStops = [
+      { number: 1, name: 'Kilimani Court Gate', meta: 'Original 1928 gatehouse', completed: true },
+      { number: 2, name: 'The Railway Cottage', meta: 'Restored workers\' residence', completed: true },
+      { number: 3, name: 'Independence Plaque', meta: '1963 commemorative marker', completed: true },
+      { number: 4, name: 'Westlands Tower', meta: 'First high-rise apartment', completed: false },
+      { number: 5, name: 'Mwarokin Archive Room', meta: 'Historical documents museum', completed: false },
+      { number: 6, name: 'Heritage Garden', meta: 'Native plants collection', completed: false }
+    ];
+
+    // Feature 6: Board Games
+    const games = [
+      { emoji: '♟', type: 'strategy', title: 'Chess', players: '2 players', duration: '30-60 min', difficulty: 'hard', owned: 12 },
+      { emoji: '🎲', type: 'family', title: 'Settlers of Catan', players: '3-4 players', duration: '60-90 min', difficulty: 'medium', owned: 8 },
+      { emoji: '🏠', type: 'classic', title: 'Monopoly Kenya Edition', players: '2-6 players', duration: '90-180 min', difficulty: 'easy', owned: 14 },
+      { emoji: '🃏', type: 'card', title: 'Cards Against Humanity', players: '4-8 players', duration: '30-60 min', difficulty: 'easy', owned: 6 },
+      { emoji: '🐉', type: 'rpg', title: 'Dungeons & Dragons', players: '3-6 players', duration: '2-4 hrs', difficulty: 'hard', owned: 4 },
+      { emoji: '🧩', type: 'party', title: 'Codenames', players: '4-8 players', duration: '15-30 min', difficulty: 'medium', owned: 10 }
+    ];
+
+    // Feature 7: Observatory
+    const observatoryStats = [
+      { label: 'Club Members', value: '42', sub: 'Amateur astronomers' },
+      { label: 'Stargazing Nights', value: '18', sub: 'Since 2024' },
+      { label: 'Photos Captured', value: '284', sub: 'Astrophotography' },
+      { label: 'Telescopes Owned', value: '8', sub: 'Community equipment' }
+    ];
+
+    const celestialBodies = [
+      { emoji: '🌕', type: 'moon', name: 'Full Moon', meta: 'April 23, 2025', visibility: 'best' },
+      { emoji: '♂️', type: 'mars', name: 'Mars', meta: 'Visible at 9 PM', visibility: 'visible' },
+      { emoji: '♃', type: 'jupiter', name: 'Jupiter', meta: 'With 4 Galilean moons', visibility: 'best' },
+      { emoji: '♀️', type: 'venus', name: 'Venus', meta: 'Evening star', visibility: 'visible' },
+      { emoji: '♄', type: 'saturn', name: 'Saturn', meta: 'Rings visible', visibility: 'low' },
+      { emoji: '🛰', type: 'station', name: 'ISS Pass', meta: 'Apr 22 · 7:42 PM', visibility: 'best' }
+    ];
+
+    /* ============================================================
+       RENDER: PHOTOGRAPHY
+       ============================================================ */
+    function renderPhotography() {
+      const statsContainer = document.getElementById('photoStats');
+      if (statsContainer) {
+        statsContainer.innerHTML = '';
+        photoStats.forEach(s => {
+          const div = document.createElement('div');
+          div.className = 'photo-stat';
+          div.innerHTML = `
+            <div class="ps-label">${s.label}</div>
+            <div class="ps-value">${s.value}</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:3px;">${s.sub}</div>
+          `;
+          statsContainer.appendChild(div);
+        });
+      }
+
+      const gallery = document.getElementById('photoGallery');
+      if (gallery) {
+        gallery.innerHTML = '';
+        photos.forEach(p => {
+          const div = document.createElement('div');
+          div.className = 'photo-card';
+          div.innerHTML = `
+            <div class="photo-canvas ${p.type}">
+              <span style="position:relative;z-index:1;">${p.emoji}</span>
+            </div>
+            <div class="photo-caption">
+              <div class="photo-caption-title">${p.title}</div>
+              <div class="photo-caption-author">
+                <span>by ${p.author}</span>
+                <span class="photo-caption-likes"><i class="fas fa-heart"></i> ${p.likes}</span>
+              </div>
+            </div>
+          `;
+          div.addEventListener('click', () => alert(`📸 Viewing: ${p.title}\\n\\nBy ${p.author}`));
+          gallery.appendChild(div);
+        });
+      }
+    }
+
+    /* ============================================================
+       RENDER: WILDLIFE
+       ============================================================ */
+    function renderWildlife() {
+      const statsContainer = document.getElementById('wildlifeStats');
+      if (statsContainer) {
+        statsContainer.innerHTML = '';
+        wildlifeStats.forEach(s => {
+          const div = document.createElement('div');
+          div.className = 'wildlife-stat';
+          div.innerHTML = `
+            <div class="ws-label">${s.label}</div>
+            <div class="ws-value">${s.value}</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.65);margin-top:3px;">${s.sub}</div>
+          `;
+          statsContainer.appendChild(div);
+        });
+      }
+
+      const grid = document.getElementById('speciesGrid');
+      if (grid) {
+        grid.innerHTML = '';
+        species.forEach(sp => {
+          const div = document.createElement('div');
+          div.className = 'species-card';
+          div.innerHTML = `
+            <span class="species-emoji">${sp.emoji}</span>
+            <div class="species-info">
+              <div class="species-name">${sp.name}</div>
+              <div class="species-latin">${sp.latin}</div>
+            </div>
+            <span class="species-sightings">${sp.sightings}</span>
+          `;
+          grid.appendChild(div);
+        });
+      }
+    }
+
+    /* ============================================================
+       RENDER: POETRY
+       ============================================================ */
+    function renderPoetry() {
+      const grid = document.getElementById('poemsGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      poems.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'poem-card';
+        div.innerHTML = `
+          <div class="poem-title">${p.title}</div>
+          <div class="poem-body">${p.body}</div>
+          <div class="poem-footer">
+            <div class="poem-author">
+              <div class="poem-author-avatar" style="background:${p.color};">${p.initials}</div>
+              <span class="poem-author-name">${p.author}</span>
+            </div>
+            <div class="poem-likes"><i class="fas fa-heart"></i> ${p.likes}</div>
+          </div>
+        `;
+        grid.appendChild(div);
+      });
+    }
+
+    /* ============================================================
+       RENDER: LANGUAGE EXCHANGE
+       ============================================================ */
+    function renderLanguage() {
+      const grid = document.getElementById('exchangeGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      exchanges.forEach(e => {
+        const div = document.createElement('div');
+        div.className = 'exchange-card';
+        div.innerHTML = `
+          <div class="exchange-top">
+            <div class="exchange-avatar" style="background:${e.color};">${e.initials}</div>
+            <div class="exchange-info">
+              <div class="exchange-name">${e.name}</div>
+              <div class="exchange-property">${e.property}</div>
+            </div>
+          </div>
+          <div class="exchange-langs">
+            <div class="exchange-lang">
+              <div class="el-flag">${e.teaching.flag}</div>
+              <div class="el-name">${e.teaching.name}</div>
+              <div class="el-label">${e.teaching.label}</div>
+            </div>
+            <div class="exchange-arrow"><i class="fas fa-exchange-alt"></i></div>
+            <div class="exchange-lang">
+              <div class="el-flag">${e.learning.flag}</div>
+              <div class="el-name">${e.learning.name}</div>
+              <div class="el-label">${e.learning.label}</div>
+            </div>
+          </div>
+          <div class="exchange-proficiency">
+            <span>Level: <span class="ep-level">${e.level}</span></span>
+            <span style="color:${e.available ? 'var(--green-500)' : 'var(--gray-500)'};font-weight:700;font-size:11px;">
+              ${e.available ? '● Available' : '● Busy'}
+            </span>
+          </div>
+          <button class="exchange-btn" onclick="alert('💬 Connecting with ${e.name} for language exchange')">
+            <i class="fas fa-comment"></i> Start Exchange
+          </button>
+        `;
+        grid.appendChild(div);
+      });
+    }
+
+    /* ============================================================
+       RENDER: HERITAGE
+       ============================================================ */
+    function renderHeritage() {
+      const timeline = document.getElementById('heritageTimeline');
+      if (timeline) {
+        timeline.innerHTML = '';
+        heritageTimeline.forEach(h => {
+          const div = document.createElement('div');
+          div.className = 'heritage-item';
+          div.innerHTML = `
+            <div class="heritage-year">${h.year}</div>
+            <div class="heritage-info">
+              <div class="heritage-title">${h.title}</div>
+              <div class="heritage-desc">${h.desc}</div>
+            </div>
+            <span class="heritage-badge">${h.badge}</span>
+          `;
+          timeline.appendChild(div);
+        });
+      }
+
+      const stops = document.getElementById('trailStops');
+      if (stops) {
+        stops.innerHTML = '';
+        trailStops.forEach(s => {
+          const div = document.createElement('div');
+          div.className = 'trail-stop';
+          div.innerHTML = `
+            <div class="trail-number">${s.number}</div>
+            <div class="trail-stop-info">
+              <div class="trail-stop-name">${s.name}</div>
+              <div class="trail-stop-meta">${s.meta}</div>
+            </div>
+            <div class="trail-stop-status">
+              <i class="fas fa-${s.completed ? 'check-circle' : 'circle'}"></i>
+            </div>
+          `;
+          stops.appendChild(div);
+        });
+      }
+    }
+
+    /* ============================================================
+       RENDER: BOARD GAMES
+       ============================================================ */
+    function renderBoardGames() {
+      const grid = document.getElementById('gamesGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      games.forEach(g => {
+        const div = document.createElement('div');
+        div.className = 'game-card';
+        div.innerHTML = `
+          <div class="game-cover ${g.type}">
+            <span style="position:relative;z-index:1;">${g.emoji}</span>
+            <span class="game-players-badge"><i class="fas fa-users"></i> ${g.players}</span>
+          </div>
+          <div class="game-body">
+            <div class="game-title">${g.title}</div>
+            <div class="game-meta">
+              <span><i class="fas fa-clock"></i> ${g.duration}</span>
+              <span><i class="fas fa-cubes"></i> ${g.owned} owned</span>
+            </div>
+            <span class="game-difficulty ${g.difficulty}">${g.difficulty}</span>
+            <div class="game-footer">
+              <span class="game-players">${g.players}</span>
+              <button class="game-btn" onclick="alert('🎲 Joining game night for ${g.title}')">Join</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(div);
+      });
+    }
+
+    /* ============================================================
+       RENDER: OBSERVATORY
+       ============================================================ */
+    function renderObservatory() {
+      const statsContainer = document.getElementById('observatoryStats');
+      if (statsContainer) {
+        statsContainer.innerHTML = '';
+        observatoryStats.forEach(s => {
+          const div = document.createElement('div');
+          div.className = 'observatory-stat';
+          div.innerHTML = `
+            <div class="os-label">${s.label}</div>
+            <div class="os-value">${s.value}</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:3px;">${s.sub}</div>
+          `;
+          statsContainer.appendChild(div);
+        });
+      }
+
+      const grid = document.getElementById('celestialGrid');
+      if (grid) {
+        grid.innerHTML = '';
+        celestialBodies.forEach(c => {
+          const visibilityLabel = c.visibility === 'best' ? 'Best Viewing' : c.visibility === 'visible' ? 'Visible' : 'Low Visibility';
+          const div = document.createElement('div');
+          div.className = 'celestial-card';
+          div.innerHTML = `
+            <div class="celestial-orb ${c.type}">${c.emoji}</div>
+            <div class="celestial-name">${c.name}</div>
+            <div class="celestial-meta">${c.meta}</div>
+            <span class="celestial-visibility ${c.visibility}">${visibilityLabel}</span>
+          `;
+          grid.appendChild(div);
+        });
+      }
+    }
+
+    /* ============================================================
+       INIT PAGE 18
+       ============================================================ */
+    function init() {
+      renderPhotography();
+      renderWildlife();
+      renderPoetry();
+      renderLanguage();
+      renderHeritage();
+      renderBoardGames();
+      renderObservatory();
+      console.log('📸 Mwarokin Estates · Hobbies, Heritage & Hobbies (Page 18) loaded');
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

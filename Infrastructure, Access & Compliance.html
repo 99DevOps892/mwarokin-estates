@@ -1,0 +1,2231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mwarokin Estates · Infrastructure, Access & Compliance</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       DESIGN TOKENS (consistent with pages 1–11)
+       ============================================================ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy-900: #0b121c;
+      --navy-800: #111b2b;
+      --navy-700: #1a2740;
+      --navy-600: #23334f;
+      --navy-500: #2e405f;
+      --gold-500: #c8972a;
+      --gold-400: #e0b354;
+      --gold-300: #f0cf8a;
+      --gold-200: #f9e9c7;
+      --green-500: #1e8e5c;
+      --green-400: #2bb673;
+      --green-300: #6fcf97;
+      --red-500: #c44536;
+      --red-400: #e05a4f;
+      --amber-500: #e6a017;
+      --amber-400: #f5b83d;
+      --purple-500: #6b4c9a;
+      --purple-400: #8b6bb5;
+      --blue-500: #2c6b9e;
+      --blue-400: #4a8bc2;
+      --teal-500: #1e7a7a;
+      --teal-400: #2ba3a3;
+      --pink-500: #b5447a;
+      --pink-400: #d46b9e;
+      --orange-500: #c4622a;
+      --orange-400: #e0804a;
+      --gray-100: #f8fafc;
+      --gray-200: #eef2f6;
+      --gray-300: #dce3ec;
+      --gray-400: #9aa9bb;
+      --gray-500: #6b7c93;
+      --gray-600: #4f5e74;
+      --gray-700: #334155;
+      --white: #ffffff;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.05), 0 2px 6px rgba(0,0,0,0.03);
+      --shadow-lg: 0 12px 28px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.02);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-serif: 'Playfair Display', Georgia, serif;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--gray-100);
+      color: var(--navy-900);
+      line-height: 1.5;
+      padding: 0 24px 48px;
+      min-height: 100vh;
+    }
+
+    .app-container { max-width: 1440px; margin: 0 auto; }
+
+    /* ============================================================
+       TOP BAR
+       ============================================================ */
+    .top-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 0 28px; flex-wrap: wrap; gap: 20px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; }
+
+    .brand-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--gold-500), var(--gold-400));
+      border-radius: 14px; display: flex; align-items: center; justify-content: center;
+      color: var(--navy-900); font-size: 22px; font-weight: 700;
+      box-shadow: 0 6px 14px rgba(200,151,42,0.25);
+    }
+
+    .brand-text h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+    .brand-text h1 span { font-weight: 300; color: var(--gold-500); }
+    .brand-text .tagline { font-size: 12px; color: var(--gray-500); font-weight: 400; }
+
+    .nav-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+    .nav-link {
+      font-size: 13px; font-weight: 500; color: var(--gray-600);
+      text-decoration: none; padding: 8px 16px; border-radius: 40px;
+      transition: all 0.15s; background: var(--white); box-shadow: var(--shadow-sm);
+    }
+    .nav-link:hover, .nav-link.active { background: var(--navy-800); color: var(--gold-300); }
+
+    .avatar {
+      width: 44px; height: 44px; background: var(--navy-800); color: var(--gold-400);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 16px; border: 2px solid var(--gold-400);
+      box-shadow: var(--shadow-sm); cursor: pointer;
+    }
+
+    /* ============================================================
+       PAGE HEADER
+       ============================================================ */
+    .page-header { margin-bottom: 28px; }
+    .page-header h2 {
+      font-size: 26px; font-weight: 700; letter-spacing: -0.4px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .page-header h2 i { color: var(--gold-500); font-size: 24px; }
+    .page-header p { font-size: 14px; color: var(--gray-500); margin-top: 4px; }
+
+    /* ============================================================
+       SHARED CARD STYLES
+       ============================================================ */
+    .card {
+      background: var(--white); border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200);
+      transition: box-shadow 0.2s; overflow: hidden;
+    }
+    .card:hover { box-shadow: var(--shadow-md); }
+
+    .section-title {
+      font-size: 18px; font-weight: 600; letter-spacing: -0.2px;
+      display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+    }
+    .section-title i { color: var(--gold-500); font-size: 18px; }
+
+    /* ============================================================
+       FEATURE 1: MOBILE MONEY AGENTS NETWORK
+       ============================================================ */
+    .agents-hero {
+      background: linear-gradient(135deg, var(--green-500) 0%, var(--green-400) 50%, var(--teal-400) 100%);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin-bottom: 30px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .agents-hero::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -5%;
+      width: 460px;
+      height: 460px;
+      background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .agents-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .agents-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .agents-header h3 i {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      backdrop-filter: blur(10px);
+    }
+
+    .agents-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.85);
+      margin-top: 3px;
+    }
+
+    .agents-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .agents-stat {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .agents-stat .as-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: rgba(255,255,255,0.8);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .agents-stat .as-value {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: var(--white);
+    }
+
+    .agents-stat .as-sub {
+      font-size: 11px;
+      color: rgba(255,255,255,0.7);
+      margin-top: 3px;
+    }
+
+    .agents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .agent-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 20px;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+    }
+
+    .agent-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+      border-color: var(--green-400);
+    }
+
+    .agent-card.available::before {
+      content: '';
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--green-400);
+      box-shadow: 0 0 0 4px rgba(43,182,115,0.2);
+    }
+
+    .agent-card.busy::before {
+      content: '';
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--amber-400);
+      box-shadow: 0 0 0 4px rgba(245,184,61,0.2);
+    }
+
+    .agent-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .agent-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 17px;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .agent-info { flex: 1; min-width: 0; }
+    .agent-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--navy-900);
+    }
+    .agent-id {
+      font-size: 11px;
+      font-family: 'SF Mono', monospace;
+      color: var(--gray-500);
+      letter-spacing: 0.3px;
+    }
+
+    .agent-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 12px 0;
+      border-top: 1px solid var(--gray-200);
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .agent-detail .ad-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--gray-500);
+      font-weight: 600;
+    }
+
+    .agent-detail .ad-value {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy-900);
+      margin-top: 2px;
+    }
+
+    .agent-detail .ad-value.green { color: var(--green-500); }
+
+    .agent-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .agent-actions button {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 30px;
+      border: 1px solid var(--gray-200);
+      background: var(--white);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: var(--font-sans);
+    }
+
+    .agent-actions button:hover {
+      background: var(--gray-100);
+      border-color: var(--gray-400);
+    }
+
+    .agent-actions button.primary {
+      background: linear-gradient(135deg, var(--green-500), var(--green-400));
+      color: var(--white);
+      border-color: transparent;
+    }
+
+    /* ============================================================
+       FEATURE 2: CONSTRUCTION CAMERAS
+       ============================================================ */
+    .cameras-panel {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 24px 28px;
+      margin-bottom: 30px;
+    }
+
+    .cameras-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+      margin-top: 16px;
+    }
+
+    .camera-card {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--navy-900);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s;
+    }
+
+    .camera-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .camera-feed {
+      position: relative;
+      height: 200px;
+      background: linear-gradient(135deg, #1a2740, #0b121c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .camera-feed::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 4px);
+      pointer-events: none;
+    }
+
+    .camera-feed-content {
+      text-align: center;
+      color: var(--gold-300);
+      position: relative;
+      z-index: 1;
+    }
+
+    .camera-feed-content i {
+      font-size: 44px;
+      opacity: 0.5;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .camera-feed-content .cfc-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    .camera-live {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 30px;
+      background: rgba(196,69,54,0.95);
+      color: var(--white);
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      z-index: 2;
+    }
+
+    .camera-live .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--white);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(255,255,255,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+    }
+
+    .camera-timestamp {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(0,0,0,0.6);
+      color: var(--white);
+      font-size: 10px;
+      font-weight: 600;
+      font-family: 'SF Mono', monospace;
+      z-index: 2;
+      backdrop-filter: blur(8px);
+    }
+
+    .camera-info {
+      padding: 16px 18px;
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .camera-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--navy-900);
+    }
+
+    .camera-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: var(--gray-500);
+    }
+
+    .camera-progress {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--green-500);
+    }
+
+    .camera-progress-bar {
+      height: 4px;
+      background: var(--gray-200);
+      border-radius: 40px;
+      overflow: hidden;
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    .camera-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green-500), var(--green-400));
+      border-radius: 40px;
+      transition: width 0.5s ease;
+    }
+
+    /* ============================================================
+       FEATURE 3: SMART LOCK & ACCESS CONTROL
+       ============================================================ */
+    .locks-layout {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 24px;
+      margin-bottom: 30px;
+    }
+
+    .locks-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 24px 28px;
+    }
+
+    .lock-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .lock-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: var(--gray-100);
+      border-radius: var(--radius-md);
+      transition: all 0.15s;
+      flex-wrap: wrap;
+    }
+
+    .lock-item:hover {
+      background: var(--gray-200);
+    }
+
+    .lock-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+
+    .lock-icon.locked { background: #e6f5ee; color: var(--green-500); }
+    .lock-icon.unlocked { background: #fdeceb; color: var(--red-500); }
+    .lock-icon.offline { background: var(--gray-200); color: var(--gray-500); }
+
+    .lock-info { flex: 1; min-width: 150px; }
+    .lock-name {
+      font-weight: 700;
+      font-size: 13.5px;
+      color: var(--navy-900);
+    }
+    .lock-location {
+      font-size: 11.5px;
+      color: var(--gray-500);
+    }
+
+    .lock-battery {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+
+    .lock-battery .lb-bar {
+      width: 40px;
+      height: 8px;
+      border-radius: 3px;
+      background: var(--gray-200);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .lock-battery .lb-fill {
+      height: 100%;
+      border-radius: 3px;
+    }
+
+    .lock-battery .lb-fill.high { background: var(--green-500); }
+    .lock-battery .lb-fill.medium { background: var(--amber-500); }
+    .lock-battery .lb-fill.low { background: var(--red-500); }
+
+    .lock-toggle {
+      width: 46px;
+      height: 26px;
+      border-radius: 40px;
+      background: var(--gray-300);
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+
+    .lock-toggle.on { background: var(--green-500); }
+
+    .lock-toggle::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--white);
+      transition: left 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .lock-toggle.on::after { left: 23px; }
+
+    .access-log {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+      max-height: 380px;
+      overflow-y: auto;
+    }
+
+    .access-log-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--gray-100);
+      transition: all 0.15s;
+    }
+
+    .access-log-item:hover { background: var(--gray-200); }
+
+    .access-log-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .access-log-icon.granted { background: #e6f5ee; color: var(--green-500); }
+    .access-log-icon.denied { background: #fdeceb; color: var(--red-500); }
+    .access-log-icon.temp { background: #fff8e5; color: var(--amber-500); }
+
+    .access-log-info { flex: 1; min-width: 0; }
+    .access-log-name {
+      font-weight: 700;
+      font-size: 12.5px;
+      color: var(--navy-900);
+    }
+    .access-log-meta {
+      font-size: 11px;
+      color: var(--gray-500);
+    }
+
+    .access-log-time {
+      font-size: 10.5px;
+      color: var(--gray-500);
+      font-family: 'SF Mono', monospace;
+      white-space: nowrap;
+    }
+
+    /* ============================================================
+       FEATURE 4: TENANT CREDIT BUILDING
+       ============================================================ */
+    .credit-build-hero {
+      background: linear-gradient(135deg, var(--blue-500) 0%, var(--purple-500) 100%);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin-bottom: 30px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .credit-build-hero::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -5%;
+      width: 460px;
+      height: 460px;
+      background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .cb-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .cb-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .cb-header h3 i {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      backdrop-filter: blur(10px);
+    }
+
+    .cb-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+      margin-top: 3px;
+    }
+
+    .cb-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cb-stat {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .cb-stat .cs-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: rgba(255,255,255,0.75);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .cb-stat .cs-value {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: var(--white);
+    }
+
+    .cb-stat .cs-value.green { color: var(--green-300); }
+
+    .credit-build-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .cb-tenant-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 20px 22px;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .cb-tenant-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+      border-color: var(--blue-400);
+    }
+
+    .cb-tenant-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .cb-tenant-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .cb-tenant-info { flex: 1; min-width: 0; }
+    .cb-tenant-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--navy-900);
+    }
+    .cb-tenant-property {
+      font-size: 11.5px;
+      color: var(--gray-500);
+    }
+
+    .cb-score-badge {
+      text-align: center;
+    }
+
+    .cb-score-badge .csb-value {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -0.8px;
+      color: var(--blue-500);
+      line-height: 1;
+    }
+
+    .cb-score-badge .csb-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      letter-spacing: 0.3px;
+    }
+
+    .cb-metrics {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px 0;
+      border-top: 1px solid var(--gray-200);
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .cb-metric {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .cb-metric-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gray-600);
+    }
+
+    .cb-metric-bar {
+      height: 6px;
+      background: var(--gray-200);
+      border-radius: 40px;
+      overflow: hidden;
+    }
+
+    .cb-metric-fill {
+      height: 100%;
+      border-radius: 40px;
+      transition: width 0.5s ease;
+    }
+
+    .cb-metric-fill.green { background: var(--green-500); }
+    .cb-metric-fill.blue { background: var(--blue-500); }
+    .cb-metric-fill.gold { background: var(--gold-500); }
+    .cb-metric-fill.red { background: var(--red-500); }
+
+    .cb-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .cb-actions button {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 30px;
+      border: 1px solid var(--gray-200);
+      background: var(--white);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: var(--font-sans);
+    }
+
+    .cb-actions button:hover {
+      background: var(--gray-100);
+      border-color: var(--gray-400);
+    }
+
+    .cb-actions button.primary {
+      background: linear-gradient(135deg, var(--blue-500), var(--purple-500));
+      color: var(--white);
+      border-color: transparent;
+    }
+
+    /* ============================================================
+       FEATURE 5: EMERGENCY RESPONSE CENTER
+       ============================================================ */
+    .emergency-panel {
+      background: linear-gradient(135deg, #7a1a1a 0%, var(--red-500) 100%);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin-bottom: 30px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .emergency-panel::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -5%;
+      width: 460px;
+      height: 460px;
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .emergency-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .emergency-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .emergency-header h3 i {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      backdrop-filter: blur(10px);
+      animation: alertPulse 2s infinite;
+    }
+
+    @keyframes alertPulse {
+      0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
+      70% { box-shadow: 0 0 0 12px rgba(255,255,255,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+    }
+
+    .emergency-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.85);
+      margin-top: 3px;
+    }
+
+    .emergency-hotlines {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 24px;
+    }
+
+    .hotline {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .hotline:hover {
+      background: rgba(255,255,255,0.2);
+      transform: translateY(-2px);
+    }
+
+    .hotline-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .hotline-info { flex: 1; min-width: 0; }
+    .hotline-name {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--white);
+    }
+    .hotline-number {
+      font-size: 12px;
+      font-family: 'SF Mono', monospace;
+      font-weight: 700;
+      color: rgba(255,255,255,0.9);
+      margin-top: 2px;
+    }
+
+    .emergency-incidents {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .emergency-incidents h4 {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 12px;
+    }
+
+    .incident-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      font-size: 12.5px;
+    }
+
+    .incident-item:last-child { border-bottom: none; }
+
+    .incident-status {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .incident-status.active { background: var(--amber-400); animation: pulse 1.5s infinite; }
+    .incident-status.resolved { background: var(--green-400); }
+    .incident-status.closed { background: rgba(255,255,255,0.4); }
+
+    .incident-text { flex: 1; color: rgba(255,255,255,0.9); }
+    .incident-time { font-size: 10.5px; color: rgba(255,255,255,0.6); font-family: 'SF Mono', monospace; }
+
+    /* ============================================================
+       FEATURE 6: PROPERTY TAX APPEALS
+       ============================================================ */
+    .tax-appeals-panel {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 28px 32px;
+      margin-bottom: 30px;
+    }
+
+    .appeals-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 20px;
+      margin-top: 16px;
+    }
+
+    .appeal-card {
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .appeal-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+
+    .appeal-card.draft::before { background: var(--gray-400); }
+    .appeal-card.submitted::before { background: var(--blue-500); }
+    .appeal-card.review::before { background: var(--amber-500); }
+    .appeal-card.won::before { background: var(--green-500); }
+    .appeal-card.lost::before { background: var(--red-500); }
+
+    .appeal-card:hover {
+      box-shadow: var(--shadow-sm);
+      border-color: var(--gold-400);
+      transform: translateY(-2px);
+    }
+
+    .appeal-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .appeal-id {
+      font-family: 'SF Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gray-500);
+      letter-spacing: 0.5px;
+    }
+
+    .appeal-status {
+      padding: 4px 12px;
+      border-radius: 30px;
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: capitalize;
+      letter-spacing: 0.3px;
+    }
+
+    .appeal-status.draft { background: var(--gray-100); color: var(--gray-600); }
+    .appeal-status.submitted { background: #e9eff9; color: var(--blue-500); }
+    .appeal-status.review { background: #fff8e5; color: var(--amber-500); }
+    .appeal-status.won { background: #e6f5ee; color: var(--green-500); }
+    .appeal-status.lost { background: #fdeceb; color: var(--red-500); }
+
+    .appeal-property {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--navy-900);
+      line-height: 1.3;
+    }
+
+    .appeal-reason {
+      font-size: 12px;
+      color: var(--gray-500);
+      line-height: 1.5;
+    }
+
+    .appeal-financials {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding: 14px 0;
+      border-top: 1px solid var(--gray-200);
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .appeal-financial .af-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--gray-500);
+      font-weight: 600;
+    }
+
+    .appeal-financial .af-value {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--navy-900);
+      margin-top: 2px;
+    }
+
+    .appeal-financial .af-value.green { color: var(--green-500); }
+    .appeal-financial .af-value.red { color: var(--red-500); }
+    .appeal-financial .af-value.gold { color: var(--gold-500); }
+
+    .appeal-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .appeal-actions button {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 30px;
+      border: 1px solid var(--gray-200);
+      background: var(--white);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: var(--font-sans);
+    }
+
+    .appeal-actions button:hover {
+      background: var(--gray-100);
+      border-color: var(--gray-400);
+    }
+
+    .appeal-actions button.primary {
+      background: var(--navy-800);
+      color: var(--gold-300);
+      border-color: var(--navy-800);
+    }
+
+    /* ============================================================
+       FEATURE 7: PARTNER API HUB
+       ============================================================ */
+    .api-panel {
+      background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-700) 100%);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin-bottom: 30px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .api-panel::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -5%;
+      width: 460px;
+      height: 460px;
+      background: radial-gradient(circle, rgba(200,151,42,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .api-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .api-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .api-header h3 i {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--gold-500), var(--gold-400));
+      color: var(--navy-900);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+    }
+
+    .api-header p {
+      font-size: 13px;
+      color: var(--gray-400);
+      margin-top: 3px;
+    }
+
+    .api-key-display {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 18px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--radius-md);
+      backdrop-filter: blur(10px);
+      font-family: 'SF Mono', monospace;
+      font-size: 12px;
+      color: var(--gold-300);
+      letter-spacing: 0.5px;
+    }
+
+    .api-key-display i {
+      color: var(--gold-500);
+      cursor: pointer;
+    }
+
+    .api-endpoints {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 24px;
+    }
+
+    .api-endpoint {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      backdrop-filter: blur(10px);
+      transition: all 0.15s;
+      cursor: pointer;
+    }
+
+    .api-endpoint:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(200,151,42,0.3);
+      transform: translateY(-2px);
+    }
+
+    .api-endpoint-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .api-method {
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      font-family: 'SF Mono', monospace;
+    }
+
+    .api-method.get { background: rgba(43,182,115,0.2); color: var(--green-300); }
+    .api-method.post { background: rgba(44,107,158,0.3); color: var(--blue-400); }
+    .api-method.put { background: rgba(200,151,42,0.2); color: var(--gold-300); }
+    .api-method.delete { background: rgba(196,69,54,0.2); color: var(--red-400); }
+
+    .api-endpoint-name {
+      font-size: 11.5px;
+      color: var(--gray-400);
+      font-weight: 600;
+    }
+
+    .api-endpoint-path {
+      font-family: 'SF Mono', monospace;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+
+    .api-endpoint-desc {
+      font-size: 11.5px;
+      color: var(--gray-500);
+      line-height: 1.4;
+    }
+
+    .api-usage {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .api-usage-item {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      backdrop-filter: blur(10px);
+    }
+
+    .api-usage-item .au-label {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--gray-400);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .api-usage-item .au-value {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: var(--white);
+    }
+
+    .api-usage-item .au-value.gold { color: var(--gold-300); }
+    .api-usage-item .au-value.green { color: var(--green-300); }
+
+    /* ============================================================
+       FOOTER
+       ============================================================ */
+    .page-footer {
+      text-align: center;
+      padding: 32px 0 16px;
+      font-size: 12px;
+      color: var(--gray-400);
+      border-top: 1px solid var(--gray-200);
+      margin-top: 20px;
+    }
+    .page-footer a { color: var(--gold-500); text-decoration: none; }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 1200px) {
+      .agents-stats { grid-template-columns: repeat(2, 1fr); }
+      .cb-stats { grid-template-columns: repeat(2, 1fr); }
+      .locks-layout { grid-template-columns: 1fr; }
+      .emergency-hotlines { grid-template-columns: repeat(2, 1fr); }
+      .api-usage { grid-template-columns: 1fr; }
+      .agents-grid { grid-template-columns: 1fr; }
+      .cameras-grid { grid-template-columns: 1fr; }
+      .credit-build-grid { grid-template-columns: 1fr; }
+      .appeals-grid { grid-template-columns: 1fr; }
+      .api-endpoints { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      body { padding: 0 16px 32px; }
+      .top-bar { flex-direction: column; align-items: flex-start; }
+      .nav-actions { width: 100%; justify-content: space-between; }
+      .agents-hero { padding: 24px 20px; }
+      .credit-build-hero { padding: 24px 20px; }
+      .emergency-panel { padding: 24px 20px; }
+      .api-panel { padding: 24px 20px; }
+      .agents-stats { grid-template-columns: 1fr; }
+      .cb-stats { grid-template-columns: 1fr; }
+      .emergency-hotlines { grid-template-columns: 1fr; }
+      .agents-header { flex-direction: column; align-items: flex-start; }
+      .api-header { flex-direction: column; align-items: flex-start; }
+      .api-key-display { width: 100%; }
+      .api-key-display span { overflow: hidden; text-overflow: ellipsis; }
+    }
+    @media (max-width: 480px) {
+      .agent-details { grid-template-columns: 1fr; }
+      .appeal-financials { grid-template-columns: 1fr; }
+    }
+
+    /* ============================================================
+       ANIMATIONS
+       ============================================================ */
+    .fade-in { animation: fadeIn 0.4s ease forwards; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- ============================================================
+         TOP BAR
+         ============================================================ -->
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-icon">⬡</div>
+        <div class="brand-text">
+          <h1>Mwarokin <span>Estates</span></h1>
+          <div class="tagline">Advanced Payments · Page 12</div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <a href="#" class="nav-link"><i class="fas fa-chart-pie"></i> Dashboard</a>
+        <a href="#" class="nav-link"><i class="fas fa-file-invoice"></i> Invoices</a>
+        <a href="#" class="nav-link active"><i class="fas fa-network-wired"></i> Infrastructure</a>
+        <div class="avatar" title="Landlord Admin">AD</div>
+      </div>
+    </header>
+
+    <!-- ============================================================
+         PAGE HEADER
+         ============================================================ -->
+    <div class="page-header">
+      <h2><i class="fas fa-network-wired"></i> Infrastructure, Access & Compliance</h2>
+      <p>Agent networks, construction cameras, smart locks, credit building, emergency response, tax appeals, and partner APIs.</p>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 1: MOBILE MONEY AGENTS NETWORK
+         ============================================================ -->
+    <div class="agents-hero fade-in">
+      <div class="agents-header">
+        <div>
+          <h3><i class="fas fa-mobile-alt"></i> Mobile Money Agents Network</h3>
+          <p>M-Pesa agents located across your properties for in-person cash deposits and withdrawals.</p>
+        </div>
+      </div>
+      <div class="agents-stats" id="agentsStats">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <div class="agents-grid" id="agentsGrid">
+      <!-- Injected via JS -->
+    </div>
+
+    <!-- ============================================================
+         FEATURE 2: CONSTRUCTION CAMERAS
+         ============================================================ -->
+    <div class="cameras-panel fade-in">
+      <div class="section-title"><i class="fas fa-video"></i> Construction Progress Cameras</div>
+      <p style="font-size:13px;color:var(--gray-500);">
+        Live 24/7 camera feeds from active construction sites. Time-lapse recordings available for each project phase.
+      </p>
+      <div class="cameras-grid" id="camerasGrid">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 3: SMART LOCK & ACCESS CONTROL
+         ============================================================ -->
+    <div class="locks-layout">
+      <div class="locks-card fade-in">
+        <div class="section-title"><i class="fas fa-lock"></i> Smart Lock & Access Control</div>
+        <p style="font-size:13px;color:var(--gray-500);">
+          Remotely manage electronic locks and door access across all properties.
+        </p>
+        <div class="lock-list" id="lockList">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <div class="locks-card fade-in">
+        <div class="section-title"><i class="fas fa-history"></i> Recent Access Log</div>
+        <div class="access-log" id="accessLog">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 4: TENANT CREDIT BUILDING
+         ============================================================ -->
+    <div class="credit-build-hero fade-in">
+      <div class="cb-header">
+        <div>
+          <h3><i class="fas fa-chart-line"></i> Tenant Credit Building Program</h3>
+          <p>Help tenants build formal credit history by reporting their rent payments to credit bureaus.</p>
+        </div>
+      </div>
+      <div class="cb-stats" id="cbStats">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <div class="credit-build-grid" id="creditBuildGrid">
+      <!-- Injected via JS -->
+    </div>
+
+    <!-- ============================================================
+         FEATURE 5: EMERGENCY RESPONSE CENTER
+         ============================================================ -->
+    <div class="emergency-panel fade-in">
+      <div class="emergency-header">
+        <div>
+          <h3><i class="fas fa-exclamation-triangle"></i> Emergency Response Center</h3>
+          <p>24/7 emergency hotlines and real-time incident tracking for all your properties.</p>
+        </div>
+      </div>
+      <div class="emergency-hotlines" id="emergencyHotlines">
+        <!-- Injected via JS -->
+      </div>
+      <div class="emergency-incidents">
+        <h4><i class="fas fa-list"></i> Recent Incidents</h4>
+        <div id="incidentsList">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 6: PROPERTY TAX APPEALS
+         ============================================================ -->
+    <div class="tax-appeals-panel fade-in">
+      <div class="section-title"><i class="fas fa-file-invoice"></i> Property Tax Appeals Assistant</div>
+      <p style="font-size:13px;color:var(--gray-500);">
+        Track property tax valuations and file appeals when assessments seem unfair. Supported for all Kenyan counties.
+      </p>
+      <div class="appeals-grid" id="appealsGrid">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 7: PARTNER API HUB
+         ============================================================ -->
+    <div class="api-panel fade-in">
+      <div class="api-header">
+        <div>
+          <h3><i class="fas fa-code"></i> Mwarokin Partner API Hub</h3>
+          <p>Build custom integrations with the Mwarokin Estates platform. Full REST API with webhooks.</p>
+        </div>
+        <div class="api-key-display">
+          <i class="fas fa-key"></i>
+          <span id="apiKeyValue">mwk_live_sk_4f8a2c9d1e6b3a7f5c8d2e9b4a1f7c3d</span>
+          <i class="fas fa-copy" onclick="alert('📋 API key copied to clipboard')"></i>
+        </div>
+      </div>
+      <div class="api-endpoints" id="apiEndpoints">
+        <!-- Injected via JS -->
+      </div>
+      <div class="api-usage" id="apiUsage">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <div class="page-footer">
+      <p>Mwarokin Estates · Infrastructure, Access & Compliance · &copy; 2025 · <a href="#">Privacy</a> · <a href="#">Terms</a></p>
+    </div>
+  </div>
+
+  <script>
+    /* ============================================================
+       MOCK DATA – PAGE 12 FEATURES
+       ============================================================ */
+
+    // Feature 1: Agents
+    const agentStats = [
+      { label: 'Active Agents', value: '18', sub: 'Across 6 properties' },
+      { label: 'Transactions Today', value: '142', sub: 'KSh 1.28M processed' },
+      { label: 'Avg. Wait Time', value: '3 min', sub: 'Live queue: 2 people' },
+      { label: 'Success Rate', value: '99.2%', sub: 'Last 30 days' }
+    ];
+
+    const agents = [
+      { initials: 'JM', name: 'James Mwangi', id: 'AGT-KC-001', property: 'Kilimani Court', location: 'Main Gate', float: 'KSh 85,000', transactions: 42, status: 'available', color: '#1e8e5c' },
+      { initials: 'GW', name: 'Grace Wanjiku', id: 'AGT-WH-002', property: 'Westlands Heights', location: 'Block A Lobby', float: 'KSh 62,000', transactions: 28, status: 'available', color: '#c8972a' },
+      { initials: 'AH', name: 'Amina Hassan', id: 'AGT-SB-003', property: 'South B Apartments', location: 'Gate 2', float: 'KSh 120,000', transactions: 36, status: 'busy', color: '#6b4c9a' },
+      { initials: 'PN', name: 'Peter Njoroge', id: 'AGT-LS-004', property: 'Lavington Suites', location: 'East Wing', float: 'KSh 78,000', transactions: 24, status: 'available', color: '#2c6b9e' },
+      { initials: 'SK', name: 'Sarah Kilonzo', id: 'AGT-EP-005', property: 'Eastleigh Plaza', location: 'Ground Floor', float: 'KSh 145,000', transactions: 52, status: 'available', color: '#b5447a' },
+      { initials: 'DO', name: 'David Ochieng', id: 'AGT-RG-006', property: 'Runda Gardens', location: 'Clubhouse', float: 'KSh 54,000', transactions: 18, status: 'busy', color: '#c4622a' }
+    ];
+
+    // Feature 2: Cameras
+    const cameras = [
+      { name: 'Kilimani Court · Site A', icon: 'fa-hard-hat', progress: 62, phase: 'Electrical & Plumbing', lastUpdate: 'Live · 2 sec ago' },
+      { name: 'South B Apartments · Site B', icon: 'fa-tools', progress: 34, phase: 'Foundation Work', lastUpdate: 'Live · 3 sec ago' },
+      { name: 'Lavington Suites · Expansion', icon: 'fa-building', progress: 88, phase: 'Interior Finishing', lastUpdate: 'Live · 1 sec ago' }
+    ];
+
+    // Feature 3: Locks
+    const locks = [
+      { name: 'Main Gate', location: 'Kilimani Court', icon: 'fa-door-closed', state: 'locked', battery: 87, level: 'high' },
+      { name: 'Block A Entry', location: 'Westlands Heights', icon: 'fa-door-open', state: 'unlocked', battery: 62, level: 'medium' },
+      { name: 'Unit 3B Door', location: 'Kilimani Court', icon: 'fa-door-closed', state: 'locked', battery: 94, level: 'high' },
+      { name: 'Parking Gate', location: 'South B Apartments', icon: 'fa-warehouse', state: 'locked', battery: 28, level: 'low' },
+      { name: 'Unit 5A Door', location: 'Westlands Heights', icon: 'fa-door-closed', state: 'locked', battery: 74, level: 'high' },
+      { name: 'Server Room', location: 'Lavington Suites', icon: 'fa-server', state: 'offline', battery: 0, level: 'low' }
+    ];
+
+    const accessLog = [
+      { initials: 'GW', name: 'Grace Wanjiku', action: 'Unlocked Main Gate', location: 'Kilimani Court', time: '14:32:18', status: 'granted' },
+      { initials: 'JW', name: 'John Wachira', action: 'Entered Unit 3B', location: 'Kilimani Court', time: '14:15:02', status: 'granted' },
+      { initials: 'MN', name: 'Mary Njoki', action: 'Unlocked Block A', location: 'Westlands Heights', time: '13:48:44', status: 'granted' },
+      { initials: 'UN', name: 'Unknown Visitor', action: 'Access Attempt', location: 'South B Apartments', time: '13:22:11', status: 'denied' },
+      { initials: 'BK', name: 'Brian Kamau', action: 'Temporary Access', location: 'Eastleigh Plaza', time: '12:55:30', status: 'temp' },
+      { initials: 'LM', name: 'Lucy Muthoni', action: 'Exited Property', location: 'Lavington Suites', time: '12:30:45', status: 'granted' },
+      { initials: 'GW', name: 'Grace Wanjiku', action: 'Unlocked Main Gate', location: 'Kilimani Court', time: '11:58:22', status: 'granted' }
+    ];
+
+    // Feature 4: Credit Building
+    const cbStats = [
+      { label: 'Enrolled Tenants', value: '184', color: '' },
+      { label: 'Avg. Score Increase', value: '+42', color: 'green' },
+      { label: 'Bureau Reports', value: '2,208', color: '' },
+      { label: 'Default Rate', value: '1.2%', color: 'green' }
+    ];
+
+    const cbTenants = [
+      {
+        initials: 'JW', name: 'John Wachira', property: 'Kilimani Court · 3B',
+        score: 742, color: '#c8972a',
+        metrics: [
+          { label: 'Payment History', score: 95, color: 'green' },
+          { label: 'Credit Utilization', score: 68, color: 'gold' },
+          { label: 'Length of History', score: 72, color: 'blue' },
+          { label: 'Credit Mix', score: 55, color: 'gold' }
+        ]
+      },
+      {
+        initials: 'MN', name: 'Mary Njoki', property: 'Westlands Heights · 5A',
+        score: 785, color: '#6b4c9a',
+        metrics: [
+          { label: 'Payment History', score: 98, color: 'green' },
+          { label: 'Credit Utilization', score: 78, color: 'blue' },
+          { label: 'Length of History', score: 82, color: 'green' },
+          { label: 'Credit Mix', score: 72, color: 'blue' }
+        ]
+      },
+      {
+        initials: 'BK', name: 'Brian Kamau', property: 'South B Apartments · 12',
+        score: 618, color: '#2c6b9e',
+        metrics: [
+          { label: 'Payment History', score: 72, color: 'gold' },
+          { label: 'Credit Utilization', score: 55, color: 'gold' },
+          { label: 'Length of History', score: 48, color: 'red' },
+          { label: 'Credit Mix', score: 42, color: 'red' }
+        ]
+      },
+      {
+        initials: 'LM', name: 'Lucy Muthoni', property: 'Lavington Suites · 7C',
+        score: 812, color: '#b5447a',
+        metrics: [
+          { label: 'Payment History', score: 100, color: 'green' },
+          { label: 'Credit Utilization', score: 85, color: 'green' },
+          { label: 'Length of History', score: 88, color: 'green' },
+          { label: 'Credit Mix', score: 78, color: 'blue' }
+        ]
+      }
+    ];
+
+    // Feature 5: Emergency
+    const hotlines = [
+      { icon: 'fa-fire-extinguisher', name: 'Fire Emergency', number: '020 222 2181' },
+      { icon: 'fa-user-shield', name: 'Security Control', number: '0800 722 723' },
+      { icon: 'fa-ambulance', name: 'Medical Emergency', number: '1199' },
+      { icon: 'fa-tools', name: 'Plumbing Emergency', number: '0709 555 111' }
+    ];
+
+    const incidents = [
+      { status: 'active', text: 'Water leak reported · Kilimani Court · Unit 4A', time: '14:18' },
+      { status: 'active', text: 'Security alert · South B Apartments · Gate 2', time: '13:42' },
+      { status: 'resolved', text: 'Power outage · Westlands Heights · Block A', time: '12:15' },
+      { status: 'resolved', text: 'Fire alarm test · Lavington Suites · Wing B', time: '11:30' },
+      { status: 'closed', text: 'Elevator maintenance · Eastleigh Plaza', time: 'Yesterday' }
+    ];
+
+    // Feature 6: Tax Appeals
+    const taxAppeals = [
+      {
+        id: 'TXA-2025-0142', property: 'Kilimani Court', status: 'review',
+        reason: 'County valuation 18% above comparable properties in the area',
+        current: 'KSh 128,000,000', proposed: 'KSh 108,000,000',
+        savings: 'KSh 240,000/yr'
+      },
+      {
+        id: 'TXA-2025-0138', property: 'South B Apartments', status: 'submitted',
+        reason: 'Property categorized as commercial instead of residential',
+        current: 'KSh 74,200,000', proposed: 'KSh 74,200,000',
+        savings: 'KSh 186,000/yr'
+      },
+      {
+        id: 'TXA-2025-0129', property: 'Westlands Heights', status: 'won',
+        reason: 'Valuation error corrected by county assessor',
+        current: 'KSh 96,500,000', proposed: 'KSh 88,000,000',
+        savings: 'KSh 142,000/yr'
+      },
+      {
+        id: 'TXA-2025-0151', property: 'Lavington Suites', status: 'draft',
+        reason: 'Preparing appeal for proposed 2026 valuation increase',
+        current: 'KSh 186,000,000', proposed: 'KSh 168,000,000',
+        savings: 'KSh 320,000/yr'
+      }
+    ];
+
+    // Feature 7: API
+    const apiEndpoints = [
+      { method: 'GET', path: '/v1/properties', name: 'List Properties', desc: 'Retrieve all properties with pagination' },
+      { method: 'GET', path: '/v1/tenants', name: 'List Tenants', desc: 'Fetch tenant records and lease info' },
+      { method: 'POST', path: '/v1/payments', name: 'Create Payment', desc: 'Initiate rent or utility payment' },
+      { method: 'GET', path: '/v1/payments/:id', name: 'Get Payment', desc: 'Retrieve payment details by ID' },
+      { method: 'PUT', path: '/v1/leases/:id', name: 'Update Lease', desc: 'Modify lease terms and rent' },
+      { method: 'DELETE', path: '/v1/tenants/:id', name: 'Delete Tenant', desc: 'Remove tenant from system' },
+      { method: 'POST', path: '/v1/webhooks', name: 'Create Webhook', desc: 'Subscribe to real-time events' },
+      { method: 'GET', path: '/v1/reports/collection', name: 'Collection Report', desc: 'Generate monthly collection report' }
+    ];
+
+    const apiUsage = [
+      { label: 'API Calls (30d)', value: '284,120', color: '' },
+      { label: 'Avg. Response Time', value: '82ms', color: 'green' },
+      { label: 'Uptime SLA', value: '99.98%', color: 'gold' }
+    ];
+
+    /* ============================================================
+       RENDER: AGENTS
+       ============================================================ */
+    function renderAgents() {
+      const statsContainer = document.getElementById('agentsStats');
+      if (statsContainer) {
+        statsContainer.innerHTML = '';
+        agentStats.forEach(s => {
+          const div = document.createElement('div');
+          div.className = 'agents-stat';
+          div.innerHTML = `
+            <div class="as-label">${s.label}</div>
+            <div class="as-value">${s.value}</div>
+            <div class="as-sub">${s.sub}</div>
+          `;
+          statsContainer.appendChild(div);
+        });
+      }
+
+      const grid = document.getElementById('agentsGrid');
+      if (grid) {
+        grid.innerHTML = '';
+        agents.forEach(a => {
+          const card = document.createElement('div');
+          card.className = `agent-card ${a.status} fade-in`;
+          card.innerHTML = `
+            <div class="agent-top">
+              <div class="agent-avatar" style="background:${a.color};">${a.initials}</div>
+              <div class="agent-info">
+                <div class="agent-name">${a.name}</div>
+                <div class="agent-id">${a.id}</div>
+              </div>
+            </div>
+            <div class="agent-details">
+              <div class="agent-detail">
+                <div class="ad-label">Property</div>
+                <div class="ad-value">${a.property}</div>
+              </div>
+              <div class="agent-detail">
+                <div class="ad-label">Location</div>
+                <div class="ad-value">${a.location}</div>
+              </div>
+              <div class="agent-detail">
+                <div class="ad-label">Float Balance</div>
+                <div class="ad-value green">${a.float}</div>
+              </div>
+              <div class="agent-detail">
+                <div class="ad-label">Transactions</div>
+                <div class="ad-value">${a.transactions} today</div>
+              </div>
+            </div>
+            <div class="agent-actions">
+              <button onclick="alert('🗺️ Viewing agent location on map')"><i class="fas fa-map-marker-alt"></i> Map</button>
+              <button class="primary" onclick="alert('💬 Starting chat with ${a.name}')"><i class="fas fa-comments"></i> Chat</button>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      }
+    }
+
+    /* ============================================================
+       RENDER: CAMERAS
+       ============================================================ */
+    function renderCameras() {
+      const grid = document.getElementById('camerasGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      cameras.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'camera-card fade-in';
+        card.innerHTML = `
+          <div class="camera-feed">
+            <span class="camera-live"><span class="live-dot"></span> Live</span>
+            <span class="camera-timestamp" id="ts-${c.name.replace(/\s/g, '')}">${new Date().toLocaleTimeString('en-KE', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+            <div class="camera-feed-content">
+              <i class="fas ${c.icon}"></i>
+              <div class="cfc-label">${c.phase}</div>
+            </div>
+          </div>
+          <div class="camera-info">
+            <div class="camera-name">${c.name}</div>
+            <div class="camera-meta">
+              <span><i class="fas fa-signal"></i> 1080p · 30fps</span>
+              <span>${c.lastUpdate}</span>
+            </div>
+            <div>
+              <div class="camera-progress">
+                <span>Progress: ${c.progress}%</span>
+              </div>
+              <div class="camera-progress-bar">
+                <div class="camera-progress-fill" style="width:${c.progress}%"></div>
+              </div>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    /* ============================================================
+       RENDER: LOCKS & ACCESS LOG
+       ============================================================ */
+    function renderLocks() {
+      const list = document.getElementById('lockList');
+      if (list) {
+        list.innerHTML = '';
+        locks.forEach(l => {
+          const iconClass = l.state === 'locked' ? 'locked' : l.state === 'unlocked' ? 'unlocked' : 'offline';
+          const div = document.createElement('div');
+          div.className = 'lock-item';
+          div.innerHTML = `
+            <div class="lock-icon ${iconClass}"><i class="fas ${l.icon}"></i></div>
+            <div class="lock-info">
+              <div class="lock-name">${l.name}</div>
+              <div class="lock-location"><i class="fas fa-map-marker-alt"></i> ${l.location}</div>
+            </div>
+            <div class="lock-battery">
+              <div class="lb-bar"><div class="lb-fill ${l.level}" style="width:${l.battery}%"></div></div>
+              <span>${l.battery}%</span>
+            </div>
+            <div class="lock-toggle ${l.state === 'locked' ? 'on' : ''}"></div>
+          `;
+          const toggle = div.querySelector('.lock-toggle');
+          toggle.addEventListener('click', () => {
+            const isOn = toggle.classList.toggle('on');
+            const iconEl = div.querySelector('.lock-icon');
+            iconEl.className = `lock-icon ${isOn ? 'locked' : 'unlocked'}`;
+            alert(`🔐 ${l.name} is now ${isOn ? 'LOCKED' : 'UNLOCKED'}`);
+          });
+          list.appendChild(div);
+        });
+      }
+
+      const logContainer = document.getElementById('accessLog');
+      if (logContainer) {
+        logContainer.innerHTML = '';
+        accessLog.forEach(a => {
+          const div = document.createElement('div');
+          div.className = 'access-log-item';
+          div.innerHTML = `
+            <div class="access-log-icon ${a.status}"><i class="fas ${a.status === 'granted' ? 'fa-check' : a.status === 'denied' ? 'fa-times' : 'fa-clock'}"></i></div>
+            <div class="access-log-info">
+              <div class="access-log-name">${a.name}</div>
+              <div class="access-log-meta">${a.action} · ${a.location}</div>
+            </div>
+            <div class="access-log-time">${a.time}</div>
+          `;
+          logContainer.appendChild(div);
+        });
+      }
+    }
+
+    /* ============================================================
+       RENDER: CREDIT BUILDING
+       ============================================================ */
+    function renderCreditBuild() {
+      const statsContainer = document.getElementById('cbStats');
+      if (statsContainer) {
+        statsContainer.innerHTML = '';
+        cbStats.forEach(s => {
+          const div = document.createElement('div');
+          div.className = 'cb-stat';
+          div.innerHTML = `
+            <div class="cs-label">${s.label}</div>
+            <div class="cs-value ${s.color}">${s.value}</div>
+          `;
+          statsContainer.appendChild(div);
+        });
+      }
+
+      const grid = document.getElementById('creditBuildGrid');
+      if (grid) {
+        grid.innerHTML = '';
+        cbTenants.forEach(t => {
+          const card = document.createElement('div');
+          card.className = 'cb-tenant-card fade-in';
+          card.innerHTML = `
+            <div class="cb-tenant-top">
+              <div class="cb-tenant-avatar" style="background:${t.color};">${t.initials}</div>
+              <div class="cb-tenant-info">
+                <div class="cb-tenant-name">${t.name}</div>
+                <div class="cb-tenant-property">${t.property}</div>
+              </div>
+              <div class="cb-score-badge">
+                <div class="csb-value">${t.score}</div>
+                <div class="csb-label">Score</div>
+              </div>
+            </div>
+            <div class="cb-metrics">
+              ${t.metrics.map(m => `
+                <div class="cb-metric">
+                  <div class="cb-metric-header">
+                    <span>${m.label}</span>
+                    <span>${m.score}%</span>
+                  </div>
+                  <div class="cb-metric-bar">
+                    <div class="cb-metric-fill ${m.color}" style="width:${m.score}%"></div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+            <div class="cb-actions">
+              <button onclick="alert('📊 View credit report for ${t.name}')"><i class="fas fa-file-alt"></i> Report</button>
+              <button class="primary" onclick="alert('📤 Reporting rent payment to credit bureau')"><i class="fas fa-upload"></i> Report</button>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      }
+    }
+
+    /* ============================================================
+       RENDER: EMERGENCY
+       ============================================================ */
+    function renderEmergency() {
+      const hotlinesContainer = document.getElementById('emergencyHotlines');
+      if (hotlinesContainer) {
+        hotlinesContainer.innerHTML = '';
+        hotlines.forEach(h => {
+          const div = document.createElement('div');
+          div.className = 'hotline';
+          div.innerHTML = `
+            <div class="hotline-icon"><i class="fas ${h.icon}"></i></div>
+            <div class="hotline-info">
+              <div class="hotline-name">${h.name}</div>
+              <div class="hotline-number">${h.number}</div>
+            </div>
+          `;
+          div.addEventListener('click', () => alert(`📞 Calling ${h.name} at ${h.number}...`));
+          hotlinesContainer.appendChild(div);
+        });
+      }
+
+      const incidentsContainer = document.getElementById('incidentsList');
+      if (incidentsContainer) {
+        incidentsContainer.innerHTML = '';
+        incidents.forEach(i => {
+          const div = document.createElement('div');
+          div.className = 'incident-item';
+          div.innerHTML = `
+            <div class="incident-status ${i.status}"></div>
+            <div class="incident-text">${i.text}</div>
+            <div class="incident-time">${i.time}</div>
+          `;
+          incidentsContainer.appendChild(div);
+        });
+      }
+    }
+
+    /* ============================================================
+       RENDER: TAX APPEALS
+       ============================================================ */
+    function renderAppeals() {
+      const grid = document.getElementById('appealsGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      taxAppeals.forEach(a => {
+        const card = document.createElement('div');
+        card.className = `appeal-card ${a.status} fade-in`;
+        const statusLabel = a.status === 'review' ? 'Under Review' : a.status.charAt(0).toUpperCase() + a.status.slice(1);
+        card.innerHTML = `
+          <div class="appeal-top">
+            <div class="appeal-id">${a.id}</div>
+            <span class="appeal-status ${a.status}">${statusLabel}</span>
+          </div>
+          <div class="appeal-property">${a.property}</div>
+          <div class="appeal-reason">${a.reason}</div>
+          <div class="appeal-financials">
+            <div class="appeal-financial">
+              <div class="af-label">Current Valuation</div>
+              <div class="af-value red">${a.current}</div>
+            </div>
+            <div class="appeal-financial">
+              <div class="af-label">Proposed</div>
+              <div class="af-value green">${a.proposed}</div>
+            </div>
+            <div class="appeal-financial">
+              <div class="af-label">Status</div>
+              <div class="af-value">${statusLabel}</div>
+            </div>
+            <div class="appeal-financial">
+              <div class="af-label">Potential Savings</div>
+              <div class="af-value gold">${a.savings}</div>
+            </div>
+          </div>
+          <div class="appeal-actions">
+            <button onclick="alert('📄 Viewing appeal ${a.id}')"><i class="fas fa-eye"></i> View</button>
+            ${a.status === 'draft' ? `<button class="primary" onclick="alert('📤 Submitting appeal to county assessor')"><i class="fas fa-paper-plane"></i> Submit</button>` : `<button class="primary" onclick="alert('💬 Contacting county assessor')"><i class="fas fa-comments"></i> Follow Up</button>`}
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    /* ============================================================
+       RENDER: API
+       ============================================================ */
+    function renderAPI() {
+      const endpointsContainer = document.getElementById('apiEndpoints');
+      if (endpointsContainer) {
+        endpointsContainer.innerHTML = '';
+        apiEndpoints.forEach(e => {
+          const div = document.createElement('div');
+          div.className = 'api-endpoint';
+          div.innerHTML = `
+            <div class="api-endpoint-top">
+              <span class="api-method ${e.method.toLowerCase()}">${e.method}</span>
+              <span class="api-endpoint-name">${e.name}</span>
+            </div>
+            <div class="api-endpoint-path">${e.path}</div>
+            <div class="api-endpoint-desc">${e.desc}</div>
+          `;
+          div.addEventListener('click', () => alert(`📖 API Documentation: ${e.method} ${e.path}\\n\\n${e.desc}`));
+          endpointsContainer.appendChild(div);
+        });
+      }
+
+      const usageContainer = document.getElementById('apiUsage');
+      if (usageContainer) {
+        usageContainer.innerHTML = '';
+        apiUsage.forEach(u => {
+          const div = document.createElement('div');
+          div.className = 'api-usage-item';
+          div.innerHTML = `
+            <div class="au-label">${u.label}</div>
+            <div class="au-value ${u.color}">${u.value}</div>
+          `;
+          usageContainer.appendChild(div);
+        });
+      }
+    }
+
+    /* ============================================================
+       LIVE CAMERA TIMESTAMPS
+       ============================================================ */
+    function startCameraTimestamps() {
+      setInterval(() => {
+        const now = new Date().toLocaleTimeString('en-KE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        document.querySelectorAll('.camera-timestamp').forEach(el => {
+          el.textContent = now;
+        });
+      }, 1000);
+    }
+
+    /* ============================================================
+       INIT PAGE 12
+       ============================================================ */
+    function init() {
+      renderAgents();
+      renderCameras();
+      renderLocks();
+      renderCreditBuild();
+      renderEmergency();
+      renderAppeals();
+      renderAPI();
+      startCameraTimestamps();
+      console.log('🔌 Mwarokin Estates · Infrastructure, Access & Compliance (Page 12) loaded');
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

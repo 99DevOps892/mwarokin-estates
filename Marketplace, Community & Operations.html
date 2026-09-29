@@ -1,0 +1,2348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mwarokin Estates · Marketplace, Community & Operations</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       DESIGN TOKENS (consistent with pages 1–10)
+       ============================================================ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy-900: #0b121c;
+      --navy-800: #111b2b;
+      --navy-700: #1a2740;
+      --navy-600: #23334f;
+      --navy-500: #2e405f;
+      --gold-500: #c8972a;
+      --gold-400: #e0b354;
+      --gold-300: #f0cf8a;
+      --gold-200: #f9e9c7;
+      --green-500: #1e8e5c;
+      --green-400: #2bb673;
+      --green-300: #6fcf97;
+      --red-500: #c44536;
+      --red-400: #e05a4f;
+      --amber-500: #e6a017;
+      --amber-400: #f5b83d;
+      --purple-500: #6b4c9a;
+      --purple-400: #8b6bb5;
+      --blue-500: #2c6b9e;
+      --blue-400: #4a8bc2;
+      --teal-500: #1e7a7a;
+      --teal-400: #2ba3a3;
+      --pink-500: #b5447a;
+      --pink-400: #d46b9e;
+      --orange-500: #c4622a;
+      --orange-400: #e0804a;
+      --gray-100: #f8fafc;
+      --gray-200: #eef2f6;
+      --gray-300: #dce3ec;
+      --gray-400: #9aa9bb;
+      --gray-500: #6b7c93;
+      --gray-600: #4f5e74;
+      --gray-700: #334155;
+      --white: #ffffff;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.05), 0 2px 6px rgba(0,0,0,0.03);
+      --shadow-lg: 0 12px 28px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.02);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-serif: 'Playfair Display', Georgia, serif;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--gray-100);
+      color: var(--navy-900);
+      line-height: 1.5;
+      padding: 0 24px 48px;
+      min-height: 100vh;
+    }
+
+    .app-container { max-width: 1440px; margin: 0 auto; }
+
+    /* ============================================================
+       TOP BAR
+       ============================================================ */
+    .top-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 0 28px; flex-wrap: wrap; gap: 20px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; }
+
+    .brand-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--gold-500), var(--gold-400));
+      border-radius: 14px; display: flex; align-items: center; justify-content: center;
+      color: var(--navy-900); font-size: 22px; font-weight: 700;
+      box-shadow: 0 6px 14px rgba(200,151,42,0.25);
+    }
+
+    .brand-text h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+    .brand-text h1 span { font-weight: 300; color: var(--gold-500); }
+    .brand-text .tagline { font-size: 12px; color: var(--gray-500); font-weight: 400; }
+
+    .nav-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+    .nav-link {
+      font-size: 13px; font-weight: 500; color: var(--gray-600);
+      text-decoration: none; padding: 8px 16px; border-radius: 40px;
+      transition: all 0.15s; background: var(--white); box-shadow: var(--shadow-sm);
+    }
+    .nav-link:hover, .nav-link.active { background: var(--navy-800); color: var(--gold-300); }
+
+    .avatar {
+      width: 44px; height: 44px; background: var(--navy-800); color: var(--gold-400);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 16px; border: 2px solid var(--gold-400);
+      box-shadow: var(--shadow-sm); cursor: pointer;
+    }
+
+    /* ============================================================
+       PAGE HEADER
+       ============================================================ */
+    .page-header { margin-bottom: 28px; }
+    .page-header h2 {
+      font-size: 26px; font-weight: 700; letter-spacing: -0.4px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .page-header h2 i { color: var(--gold-500); font-size: 24px; }
+    .page-header p { font-size: 14px; color: var(--gray-500); margin-top: 4px; }
+
+    /* ============================================================
+       SHARED CARD STYLES
+       ============================================================ */
+    .card {
+      background: var(--white); border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200);
+      transition: box-shadow 0.2s; overflow: hidden;
+    }
+    .card:hover { box-shadow: var(--shadow-md); }
+
+    .card-header {
+      padding: 20px 24px 12px; display: flex; align-items: center;
+      justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .card-header h2 {
+      font-size: 17px; font-weight: 600; letter-spacing: -0.2px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .card-header h2 i { color: var(--gold-500); font-size: 17px; }
+
+    .section-title {
+      font-size: 18px; font-weight: 600; letter-spacing: -0.2px;
+      display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+    }
+    .section-title i { color: var(--gold-500); font-size: 18px; }
+
+    /* ============================================================
+       FEATURE 1: MARKETPLACE & SERVICES DIRECTORY
+       ============================================================ */
+    .marketplace-panel {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 28px 32px;
+      margin-bottom: 30px;
+    }
+
+    .marketplace-filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      padding: 6px;
+      background: var(--gray-100);
+      border-radius: 40px;
+      width: fit-content;
+    }
+
+    .mp-filter {
+      padding: 8px 18px;
+      border-radius: 40px;
+      border: none;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-sans);
+    }
+
+    .mp-filter.active {
+      background: var(--navy-800);
+      color: var(--gold-300);
+    }
+
+    .mp-filter:hover:not(.active) {
+      background: var(--white);
+    }
+
+    .vendors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .vendor-card {
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--white);
+    }
+
+    .vendor-card:hover {
+      border-color: var(--gold-400);
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-2px);
+    }
+
+    .vendor-card-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .vendor-card-logo {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+      color: var(--white);
+    }
+
+    .vendor-card-logo.plumbing { background: linear-gradient(135deg, var(--blue-500), var(--blue-400)); }
+    .vendor-card-logo.electrical { background: linear-gradient(135deg, var(--amber-500), var(--amber-400)); }
+    .vendor-card-logo.cleaning { background: linear-gradient(135deg, var(--teal-500), var(--teal-400)); }
+    .vendor-card-logo.security { background: linear-gradient(135deg, var(--navy-700), var(--navy-500)); }
+    .vendor-card-logo.landscaping { background: linear-gradient(135deg, var(--green-500), var(--green-400)); }
+    .vendor-card-logo.hvac { background: linear-gradient(135deg, var(--red-500), var(--red-400)); }
+
+    .vendor-card-info { flex: 1; min-width: 0; }
+    .vendor-card-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--navy-900);
+    }
+    .vendor-card-category {
+      font-size: 11.5px;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    .vendor-card-rating {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--amber-500);
+    }
+
+    .vendor-card-rating i { font-size: 12px; }
+    .vendor-card-rating .rating-count {
+      color: var(--gray-500);
+      font-weight: 500;
+      font-size: 11px;
+      margin-left: 2px;
+    }
+
+    .vendor-card-desc {
+      font-size: 12px;
+      color: var(--gray-500);
+      line-height: 1.5;
+    }
+
+    .vendor-card-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .vendor-tag {
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 30px;
+      background: var(--gray-100);
+      color: var(--gray-600);
+    }
+
+    .vendor-tag.verified {
+      background: #e6f5ee;
+      color: var(--green-500);
+    }
+
+    .vendor-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 12px;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .vendor-price {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--navy-900);
+    }
+
+    .vendor-price small {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--gray-500);
+    }
+
+    .vendor-btn {
+      padding: 7px 16px;
+      border-radius: 30px;
+      border: none;
+      background: var(--navy-800);
+      color: var(--gold-300);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-sans);
+    }
+
+    .vendor-btn:hover {
+      background: var(--navy-700);
+      transform: scale(1.04);
+    }
+
+    /* ============================================================
+       FEATURE 2: LISTING SYNDICATION HUB
+       ============================================================ */
+    .syndication-panel {
+      background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-700) 100%);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin-bottom: 30px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .syndication-panel::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -5%;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(200,151,42,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .synd-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .synd-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .synd-header h3 i {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--gold-500), var(--gold-400));
+      color: var(--navy-900);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+    }
+
+    .synd-header p {
+      font-size: 13px;
+      color: var(--gray-400);
+      margin-top: 3px;
+    }
+
+    .synd-channels {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .synd-channel {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .synd-channel:hover {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(200,151,42,0.3);
+      transform: translateY(-2px);
+    }
+
+    .synd-channel-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .synd-channel-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: var(--gold-300);
+    }
+
+    .synd-toggle {
+      width: 40px;
+      height: 22px;
+      border-radius: 40px;
+      background: rgba(255,255,255,0.15);
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .synd-toggle.on { background: var(--green-500); }
+
+    .synd-toggle::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--white);
+      transition: left 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .synd-toggle.on::after { left: 21px; }
+
+    .synd-channel-name {
+      font-weight: 700;
+      font-size: 13.5px;
+      color: var(--white);
+    }
+
+    .synd-channel-stats {
+      display: flex;
+      gap: 16px;
+      font-size: 11px;
+      color: var(--gray-400);
+    }
+
+    .synd-channel-stats .sc-stat {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .synd-channel-stats .sc-stat i { color: var(--gold-400); }
+
+    /* ============================================================
+       FEATURE 3: UTILITY PREPAID TOKEN VENDING
+       ============================================================ */
+    .vending-panel {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 28px 32px;
+      margin-bottom: 30px;
+    }
+
+    .vend-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 28px;
+      margin-top: 16px;
+    }
+
+    .vend-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .vend-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .vend-input-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-600);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .vend-input-group input,
+    .vend-input-group select {
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--gray-200);
+      font-size: 14px;
+      font-family: var(--font-sans);
+      background: var(--white);
+      transition: all 0.15s;
+      color: var(--navy-900);
+      outline: none;
+    }
+
+    .vend-input-group input:focus,
+    .vend-input-group select:focus {
+      border-color: var(--gold-400);
+      box-shadow: 0 0 0 3px rgba(200,151,42,0.15);
+    }
+
+    .vend-quick-amounts {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .quick-amount {
+      padding: 7px 14px;
+      border-radius: 30px;
+      border: 1px solid var(--gray-200);
+      background: var(--white);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-sans);
+    }
+
+    .quick-amount:hover {
+      border-color: var(--gold-400);
+      color: var(--navy-900);
+    }
+
+    .quick-amount.active {
+      background: var(--gold-500);
+      color: var(--navy-900);
+      border-color: var(--gold-500);
+    }
+
+    .vend-summary-card {
+      background: linear-gradient(135deg, var(--teal-500) 0%, var(--teal-400) 100%);
+      border-radius: var(--radius-md);
+      padding: 24px 26px;
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .vend-summary-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .vend-summary-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: rgba(255,255,255,0.75);
+      font-weight: 700;
+    }
+
+    .vend-summary-value {
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1;
+      position: relative;
+      z-index: 1;
+    }
+
+    .vend-summary-value small {
+      font-size: 15px;
+      font-weight: 600;
+      opacity: 0.8;
+      margin-left: 4px;
+    }
+
+    .vend-summary-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      position: relative;
+      z-index: 1;
+    }
+
+    .vsb-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    .vsb-row .vsb-label { color: rgba(255,255,255,0.8); }
+    .vsb-row .vsb-value { font-weight: 700; }
+
+    .vend-token-display {
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 10px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-align: center;
+      color: var(--white);
+      margin-top: 4px;
+      border: 1px dashed rgba(255,255,255,0.3);
+      position: relative;
+      z-index: 1;
+    }
+
+    .vend-submit-btn {
+      width: 100%;
+      justify-content: center;
+      padding: 13px 28px;
+      border-radius: 40px;
+      border: none;
+      background: var(--white);
+      color: var(--teal-500);
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--font-sans);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .vend-submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    /* ============================================================
+       FEATURE 4: TENANT COMMUNITY BOARD
+       ============================================================ */
+    .community-layout {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 24px;
+      margin-bottom: 30px;
+    }
+
+    .community-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 24px 28px;
+    }
+
+    .post-composer {
+      background: var(--gray-100);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .post-composer-top {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .composer-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-500), var(--gold-400));
+      color: var(--navy-900);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .post-composer input {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: 40px;
+      border: 1px solid var(--gray-200);
+      font-size: 13.5px;
+      font-family: var(--font-sans);
+      outline: none;
+      transition: border 0.15s;
+      background: var(--white);
+    }
+
+    .post-composer input:focus {
+      border-color: var(--gold-400);
+    }
+
+    .post-composer-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      margin-left: 52px;
+    }
+
+    .composer-action {
+      padding: 6px 14px;
+      border-radius: 30px;
+      border: none;
+      background: var(--white);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-sans);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .composer-action:hover {
+      background: var(--gray-200);
+      color: var(--navy-800);
+    }
+
+    .composer-action i { color: var(--gold-500); }
+
+    .post-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .post-item {
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .post-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .post-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 13px;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .post-author {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .post-author-name {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--navy-900);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .post-author-badge {
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 20px;
+      background: #e9eff9;
+      color: var(--blue-500);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .post-author-badge.landlord {
+      background: #fdf6e7;
+      color: var(--gold-500);
+    }
+
+    .post-time {
+      font-size: 11px;
+      color: var(--gray-500);
+    }
+
+    .post-content {
+      font-size: 13px;
+      color: var(--navy-800);
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .post-content strong { color: var(--navy-900); font-weight: 700; }
+
+    .post-reactions {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--gray-500);
+    }
+
+    .post-reaction {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+
+    .post-reaction:hover { color: var(--gold-500); }
+    .post-reaction i { font-size: 13px; }
+
+    .events-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .event-item {
+      display: flex;
+      gap: 14px;
+      padding: 14px 16px;
+      background: var(--gray-100);
+      border-radius: var(--radius-md);
+      transition: all 0.15s;
+      cursor: pointer;
+    }
+
+    .event-item:hover {
+      background: var(--gray-200);
+      transform: translateX(3px);
+    }
+
+    .event-date {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 1px solid var(--gray-200);
+    }
+
+    .event-date .ed-month {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--red-500);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .event-date .ed-day {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--navy-900);
+      line-height: 1;
+    }
+
+    .event-info { flex: 1; min-width: 0; }
+    .event-name {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--navy-900);
+    }
+    .event-meta {
+      font-size: 11px;
+      color: var(--gray-500);
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ============================================================
+       FEATURE 5: LEASE RENEWAL ENGINE
+       ============================================================ */
+    .renewal-panel {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 28px 32px;
+      margin-bottom: 30px;
+    }
+
+    .renewal-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .renewal-stat {
+      padding: 18px 20px;
+      border-radius: var(--radius-md);
+      background: var(--gray-100);
+      border-left: 3px solid var(--blue-500);
+    }
+
+    .renewal-stat.gold { border-left-color: var(--gold-500); }
+    .renewal-stat.green { border-left-color: var(--green-500); }
+    .renewal-stat.red { border-left-color: var(--red-500); }
+
+    .renewal-stat .rs-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--gray-500);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .renewal-stat .rs-value {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: var(--navy-900);
+    }
+
+    .renewal-stat .rs-value.green { color: var(--green-500); }
+    .renewal-stat .rs-value.gold { color: var(--gold-500); }
+    .renewal-stat .rs-value.red { color: var(--red-500); }
+
+    .renewal-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .renewal-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 18px;
+      background: var(--gray-100);
+      border-radius: var(--radius-md);
+      transition: all 0.15s;
+      flex-wrap: wrap;
+    }
+
+    .renewal-item:hover {
+      background: var(--gray-200);
+    }
+
+    .renewal-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .renewal-info { flex: 1; min-width: 160px; }
+    .renewal-tenant {
+      font-weight: 700;
+      font-size: 13.5px;
+      color: var(--navy-900);
+    }
+    .renewal-property {
+      font-size: 11.5px;
+      color: var(--gray-500);
+    }
+
+    .renewal-lease-info {
+      display: flex;
+      gap: 20px;
+      font-size: 11.5px;
+    }
+
+    .renewal-lease-info .rli-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .renewal-lease-info .rli-item .rli-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      letter-spacing: 0.3px;
+      font-weight: 600;
+    }
+
+    .renewal-lease-info .rli-item .rli-value {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+
+    .renewal-status {
+      padding: 4px 12px;
+      border-radius: 30px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .renewal-status.expiring { background: #fff8e5; color: var(--amber-500); }
+    .renewal-status.urgent { background: #fdeceb; color: var(--red-500); }
+    .renewal-status.renewed { background: #e6f5ee; color: var(--green-500); }
+
+    .renewal-action {
+      padding: 7px 16px;
+      border-radius: 30px;
+      border: none;
+      background: var(--navy-800);
+      color: var(--gold-300);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-sans);
+      white-space: nowrap;
+    }
+
+    .renewal-action:hover { background: var(--navy-700); }
+
+    /* ============================================================
+       FEATURE 6: INSURANCE CLAIMS PORTAL
+       ============================================================ */
+    .claims-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .claim-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 22px;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .claim-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+    }
+
+    .claim-card.submitted::before { background: var(--blue-500); }
+    .claim-card.under-review::before { background: var(--amber-500); }
+    .claim-card.approved::before { background: var(--green-500); }
+    .claim-card.rejected::before { background: var(--red-500); }
+
+    .claim-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .claim-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .claim-id {
+      font-family: 'SF Mono', monospace;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--gray-500);
+      letter-spacing: 0.5px;
+    }
+
+    .claim-status {
+      padding: 4px 12px;
+      border-radius: 30px;
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: capitalize;
+      letter-spacing: 0.3px;
+    }
+
+    .claim-status.submitted { background: #e9eff9; color: var(--blue-500); }
+    .claim-status.under-review { background: #fff8e5; color: var(--amber-500); }
+    .claim-status.approved { background: #e6f5ee; color: var(--green-500); }
+    .claim-status.rejected { background: #fdeceb; color: var(--red-500); }
+
+    .claim-title {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--navy-900);
+      line-height: 1.3;
+    }
+
+    .claim-property {
+      font-size: 12px;
+      color: var(--gray-500);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .claim-property i { color: var(--gold-500); }
+
+    .claim-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding: 14px 0;
+      border-top: 1px solid var(--gray-200);
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .claim-detail .cd-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--gray-500);
+      font-weight: 600;
+    }
+
+    .claim-detail .cd-value {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy-900);
+      margin-top: 2px;
+    }
+
+    .claim-detail .cd-value.green { color: var(--green-500); }
+    .claim-detail .cd-value.gold { color: var(--gold-500); }
+
+    .claim-timeline {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 2px;
+    }
+
+    .claim-timeline-step {
+      flex: 1;
+      height: 4px;
+      border-radius: 40px;
+      background: var(--gray-200);
+      transition: background 0.3s;
+    }
+
+    .claim-timeline-step.done { background: var(--green-500); }
+    .claim-timeline-step.active { background: var(--amber-500); }
+
+    .claim-timeline-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--gray-500);
+      font-weight: 600;
+      margin-top: 6px;
+    }
+
+    .claim-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .claim-actions button {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 30px;
+      border: 1px solid var(--gray-200);
+      background: var(--white);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: var(--font-sans);
+    }
+
+    .claim-actions button:hover {
+      background: var(--gray-100);
+      border-color: var(--gray-400);
+    }
+
+    .claim-actions button.primary {
+      background: var(--navy-800);
+      color: var(--gold-300);
+      border-color: var(--navy-800);
+    }
+
+    /* ============================================================
+       FEATURE 7: BENCHMARKING & PEER ANALYTICS
+       ============================================================ */
+    .benchmark-hero {
+      background: linear-gradient(135deg, var(--purple-500) 0%, var(--pink-500) 100%);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin-bottom: 30px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .benchmark-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .bench-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .bench-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .bench-header h3 i {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      backdrop-filter: blur(10px);
+    }
+
+    .bench-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+      margin-top: 3px;
+    }
+
+    .bench-percentile {
+      padding: 12px 22px;
+      border-radius: 40px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      text-align: center;
+    }
+
+    .bench-percentile .bp-value {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+    }
+
+    .bench-percentile .bp-label {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      font-weight: 700;
+      opacity: 0.9;
+    }
+
+    .bench-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .bench-metric {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .bench-metric .bm-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: rgba(255,255,255,0.75);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .bench-metric .bm-value {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+
+    .bench-metric .bm-compare {
+      margin-top: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .bm-compare.above { color: #a7f3d0; }
+    .bm-compare.below { color: #fecaca; }
+    .bm-compare.equal { color: rgba(255,255,255,0.7); }
+
+    .bench-charts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 30px;
+    }
+
+    .bench-chart-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 24px 28px;
+    }
+
+    .comparison-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .comparison-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .comparison-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-600);
+    }
+
+    .comparison-header .ch-you { color: var(--navy-900); font-weight: 800; }
+
+    .comparison-bar-track {
+      height: 22px;
+      background: var(--gray-200);
+      border-radius: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .comparison-bar-fill {
+      height: 100%;
+      border-radius: 40px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transition: width 0.6s ease;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 10px;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--white);
+    }
+
+    .comparison-bar-fill.you { background: linear-gradient(90deg, var(--gold-500), var(--gold-400)); }
+    .comparison-bar-fill.peer { background: linear-gradient(90deg, var(--gray-500), var(--gray-400)); }
+
+    .comparison-legend {
+      display: flex;
+      gap: 20px;
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--gray-600);
+    }
+
+    .comparison-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+    }
+
+    .legend-swatch.you { background: linear-gradient(90deg, var(--gold-500), var(--gold-400)); }
+    .legend-swatch.peer { background: linear-gradient(90deg, var(--gray-500), var(--gray-400)); }
+
+    /* ============================================================
+       FOOTER
+       ============================================================ */
+    .page-footer {
+      text-align: center;
+      padding: 32px 0 16px;
+      font-size: 12px;
+      color: var(--gray-400);
+      border-top: 1px solid var(--gray-200);
+      margin-top: 20px;
+    }
+    .page-footer a { color: var(--gold-500); text-decoration: none; }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 1200px) {
+      .community-layout { grid-template-columns: 1fr; }
+      .vend-grid { grid-template-columns: 1fr; }
+      .bench-charts { grid-template-columns: 1fr; }
+      .bench-metrics { grid-template-columns: repeat(2, 1fr); }
+      .vendors-grid { grid-template-columns: 1fr; }
+      .claims-grid { grid-template-columns: 1fr; }
+      .renewal-stats { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 700px) {
+      body { padding: 0 16px 32px; }
+      .top-bar { flex-direction: column; align-items: flex-start; }
+      .nav-actions { width: 100%; justify-content: space-between; }
+      .syndication-panel { padding: 24px 20px; }
+      .benchmark-hero { padding: 24px 20px; }
+      .bench-header { flex-direction: column; align-items: flex-start; }
+      .bench-metrics { grid-template-columns: 1fr; }
+      .renewal-stats { grid-template-columns: 1fr; }
+      .renewal-item { flex-direction: column; align-items: flex-start; }
+      .renewal-lease-info { flex-wrap: wrap; }
+    }
+    @media (max-width: 480px) {
+      .vend-quick-amounts { flex-direction: column; }
+      .post-composer-actions { margin-left: 0; flex-wrap: wrap; }
+    }
+
+    /* ============================================================
+       ANIMATIONS
+       ============================================================ */
+    .fade-in { animation: fadeIn 0.4s ease forwards; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- ============================================================
+         TOP BAR
+         ============================================================ -->
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-icon">⬡</div>
+        <div class="brand-text">
+          <h1>Mwarokin <span>Estates</span></h1>
+          <div class="tagline">Advanced Payments · Page 11</div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <a href="#" class="nav-link"><i class="fas fa-chart-pie"></i> Dashboard</a>
+        <a href="#" class="nav-link"><i class="fas fa-file-invoice"></i> Invoices</a>
+        <a href="#" class="nav-link active"><i class="fas fa-store"></i> Marketplace</a>
+        <div class="avatar" title="Landlord Admin">AD</div>
+      </div>
+    </header>
+
+    <!-- ============================================================
+         PAGE HEADER
+         ============================================================ -->
+    <div class="page-header">
+      <h2><i class="fas fa-store"></i> Marketplace, Community & Operations</h2>
+      <p>Service providers, listing syndication, prepaid tokens, tenant community, lease renewals, insurance claims, and peer benchmarking.</p>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 1: MARKETPLACE & SERVICES DIRECTORY
+         ============================================================ -->
+    <div class="marketplace-panel fade-in">
+      <div class="section-title"><i class="fas fa-tools"></i> Marketplace & Services Directory</div>
+      <p style="font-size:13px;color:var(--gray-500);margin-bottom:16px;">
+        Verified service providers ready to handle your property needs. All vendors are vetted, insured, and rated.
+      </p>
+
+      <div class="marketplace-filters" id="marketplaceFilters">
+        <button class="mp-filter active" data-cat="all">All Vendors</button>
+        <button class="mp-filter" data-cat="plumbing">Plumbing</button>
+        <button class="mp-filter" data-cat="electrical">Electrical</button>
+        <button class="mp-filter" data-cat="cleaning">Cleaning</button>
+        <button class="mp-filter" data-cat="security">Security</button>
+        <button class="mp-filter" data-cat="landscaping">Landscaping</button>
+        <button class="mp-filter" data-cat="hvac">HVAC</button>
+      </div>
+
+      <div class="vendors-grid" id="vendorsGrid">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 2: LISTING SYNDICATION HUB
+         ============================================================ -->
+    <div class="syndication-panel fade-in">
+      <div class="synd-header">
+        <div>
+          <h3><i class="fas fa-broadcast-tower"></i> Listing Syndication Hub</h3>
+          <p>Publish your vacant units to multiple platforms with one click. Track views and inquiries in real time.</p>
+        </div>
+      </div>
+      <div class="synd-channels" id="syndChannels">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 3: UTILITY PREPAID TOKEN VENDING
+         ============================================================ -->
+    <div class="vending-panel fade-in">
+      <div class="section-title"><i class="fas fa-bolt"></i> Utility Prepaid Token Vending</div>
+      <p style="font-size:13px;color:var(--gray-500);">
+        Sell prepaid electricity, water, and gas tokens directly to tenants. Tokens are generated instantly and delivered via SMS.
+      </p>
+      <div class="vend-grid">
+        <div class="vend-form">
+          <div class="vend-input-group">
+            <label>Select Tenant</label>
+            <select id="vendTenant">
+              <option>John Wachira · Kilimani Court · 3B</option>
+              <option>Mary Njoki · Westlands Heights · 5A</option>
+              <option>Brian Kamau · South B Apartments · 12</option>
+              <option>Lucy Muthoni · Lavington Suites · 7C</option>
+            </select>
+          </div>
+          <div class="vend-input-group">
+            <label>Utility Type</label>
+            <select id="vendUtility">
+              <option value="electricity">⚡ Electricity (KPLC)</option>
+              <option value="water">💧 Water (Nairobi Water)</option>
+              <option value="gas">🔥 Gas (ProGas)</option>
+            </select>
+          </div>
+          <div class="vend-input-group">
+            <label>Amount (KES)</label>
+            <input type="number" id="vendAmount" value="1000" placeholder="Enter amount" />
+          </div>
+          <div class="vend-input-group">
+            <label>Quick Amount</label>
+            <div class="vend-quick-amounts" id="quickAmounts">
+              <button class="quick-amount" data-amt="500">KSh 500</button>
+              <button class="quick-amount active" data-amt="1000">KSh 1,000</button>
+              <button class="quick-amount" data-amt="2000">KSh 2,000</button>
+              <button class="quick-amount" data-amt="5000">KSh 5,000</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="vend-summary-card">
+          <div>
+            <div class="vend-summary-label">Token Value</div>
+            <div class="vend-summary-value" id="vendValue">KSh 1,000<small>KES</small></div>
+          </div>
+          <div class="vend-summary-breakdown">
+            <div class="vsb-row">
+              <span class="vsb-label">Service Fee (2%)</span>
+              <span class="vsb-value" id="vendFee">KSh 20</span>
+            </div>
+            <div class="vsb-row">
+              <span class="vsb-label">Total Charged</span>
+              <span class="vsb-value" id="vendTotal">KSh 1,020</span>
+            </div>
+            <div class="vsb-row">
+              <span class="vsb-label">Units (approx.)</span>
+              <span class="vsb-value" id="vendUnits">13.5 kWh</span>
+            </div>
+          </div>
+          <div class="vend-token-display" id="vendToken">• • • • • • • • • • • •</div>
+          <button class="vend-submit-btn" id="vendSubmitBtn">
+            <i class="fas fa-bolt"></i> Generate & Send Token
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 4: TENANT COMMUNITY BOARD
+         ============================================================ -->
+    <div class="community-layout">
+      <div class="community-card fade-in">
+        <div class="section-title"><i class="fas fa-comments"></i> Tenant Community Board</div>
+        <div class="post-composer">
+          <div class="post-composer-top">
+            <div class="composer-avatar">AD</div>
+            <input type="text" placeholder="Share an announcement, event, or update with your tenants..." id="postInput" />
+          </div>
+          <div class="post-composer-actions">
+            <button class="composer-action"><i class="fas fa-image"></i> Photo</button>
+            <button class="composer-action"><i class="fas fa-poll"></i> Poll</button>
+            <button class="composer-action" id="postBtn"><i class="fas fa-paper-plane"></i> Post</button>
+          </div>
+        </div>
+        <div class="post-list" id="postList">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <div class="community-card fade-in">
+        <div class="section-title"><i class="fas fa-calendar-alt"></i> Upcoming Events</div>
+        <div class="events-list" id="eventsList">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 5: LEASE RENEWAL ENGINE
+         ============================================================ -->
+    <div class="renewal-panel fade-in">
+      <div class="section-title"><i class="fas fa-file-signature"></i> Smart Lease Renewal Engine</div>
+      <p style="font-size:13px;color:var(--gray-500);margin-bottom:20px;">
+        Automated tracking of lease expirations with smart renewal suggestions based on tenant history and market rates.
+      </p>
+      <div class="renewal-stats" id="renewalStats">
+        <!-- Injected via JS -->
+      </div>
+      <div class="renewal-timeline" id="renewalTimeline">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 6: INSURANCE CLAIMS PORTAL
+         ============================================================ -->
+    <div class="section-title"><i class="fas fa-file-medical-alt"></i> Insurance Claims Portal</div>
+    <div class="claims-grid" id="claimsGrid">
+      <!-- Injected via JS -->
+    </div>
+
+    <!-- ============================================================
+         FEATURE 7: BENCHMARKING & PEER ANALYTICS
+         ============================================================ -->
+    <div class="benchmark-hero fade-in">
+      <div class="bench-header">
+        <div>
+          <h3><i class="fas fa-chart-bar"></i> Portfolio Benchmarking & Peer Analytics</h3>
+          <p>See how your portfolio stacks up against similar landlords in Nairobi and across Kenya.</p>
+        </div>
+        <div class="bench-percentile">
+          <div class="bp-value">Top 12%</div>
+          <div class="bp-label">Of Kenyan Landlords</div>
+        </div>
+      </div>
+      <div class="bench-metrics" id="benchMetrics">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <div class="bench-charts">
+      <div class="bench-chart-card fade-in">
+        <div class="section-title" style="font-size:15px;"><i class="fas fa-balance-scale"></i> You vs. Peer Average</div>
+        <div class="comparison-bars" id="comparisonBars">
+          <!-- Injected via JS -->
+        </div>
+        <div class="comparison-legend">
+          <div class="comparison-legend-item"><div class="legend-swatch you"></div> Your Portfolio</div>
+          <div class="comparison-legend-item"><div class="legend-swatch peer"></div> Peer Average</div>
+        </div>
+      </div>
+
+      <div class="bench-chart-card fade-in">
+        <div class="section-title" style="font-size:15px;"><i class="fas fa-trophy"></i> Your Competitive Advantages</div>
+        <div id="advantagesList">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <div class="page-footer">
+      <p>Mwarokin Estates · Marketplace, Community & Operations · &copy; 2025 · <a href="#">Privacy</a> · <a href="#">Terms</a></p>
+    </div>
+  </div>
+
+  <script>
+    /* ============================================================
+       MOCK DATA – PAGE 11 FEATURES
+       ============================================================ */
+
+    // Feature 1: Vendors
+    const vendors = [
+      { icon: 'fa-wrench', category: 'plumbing', name: 'Plumber Kings Ltd', desc: '24/7 emergency plumbing, pipe repair, and drainage solutions.', rating: 4.9, reviews: 284, price: 'From KSh 2,500', tags: ['Verified', 'Insured', '24/7'], cat: 'Plumbing' },
+      { icon: 'fa-bolt', category: 'electrical', name: 'ElectroLight Kenya', desc: 'Certified electrical installations, wiring, and safety inspections.', rating: 4.8, reviews: 196, price: 'From KSh 3,000', tags: ['Verified', 'EPRA Licensed'], cat: 'Electrical' },
+      { icon: 'fa-broom', category: 'cleaning', name: 'CleanPro Services', desc: 'Professional deep cleaning, post-construction, and move-in/out.', rating: 4.9, reviews: 412, price: 'From KSh 1,500', tags: ['Verified', 'Eco-Friendly'], cat: 'Cleaning' },
+      { icon: 'fa-shield-alt', category: 'security', name: 'SecureGuard Kenya', desc: 'Manned guarding, CCTV installation, and alarm monitoring.', rating: 4.7, reviews: 158, price: 'From KSh 45,000/mo', tags: ['Verified', 'PSRA Licensed'], cat: 'Security' },
+      { icon: 'fa-leaf', category: 'landscaping', name: 'GreenScape Gardens', desc: 'Garden design, lawn maintenance, and tree care services.', rating: 4.8, reviews: 92, price: 'From KSh 5,000', tags: ['Verified', 'Eco-Friendly'], cat: 'Landscaping' },
+      { icon: 'fa-wind', category: 'hvac', name: 'AirCool Systems', desc: 'AC installation, servicing, and ventilation system design.', rating: 4.6, reviews: 124, price: 'From KSh 4,500', tags: ['Verified', 'Certified'], cat: 'HVAC' },
+      { icon: 'fa-wrench', category: 'plumbing', name: 'AquaFix Experts', desc: 'Water pump installation, tank cleaning, and leak detection.', rating: 4.5, reviews: 87, price: 'From KSh 2,000', tags: ['Insured'], cat: 'Plumbing' },
+      { icon: 'fa-broom', category: 'cleaning', name: 'Sparkle Team', desc: 'Residential cleaning, laundry, and fumigation services.', rating: 4.7, reviews: 203, price: 'From KSh 1,200', tags: ['Verified'], cat: 'Cleaning' }
+    ];
+
+    // Feature 2: Syndication Channels
+    const syndChannels = [
+      { icon: 'fa-home', name: 'Mwarokin Estates', enabled: true, views: '12,480', inquiries: '142' },
+      { icon: 'fa-building', name: 'Property24 Kenya', enabled: true, views: '8,920', inquiries: '96' },
+      { icon: 'fa-city', name: 'BuyRentKenya', enabled: true, views: '6,740', inquiries: '78' },
+      { icon: 'fa-globe', name: 'Jumia House', enabled: false, views: '0', inquiries: '0' },
+      { icon: 'fa-search', name: 'Google Rentals', enabled: true, views: '4,210', inquiries: '42' },
+      { icon: 'fa-facebook', name: 'Facebook Marketplace', enabled: true, views: '3,840', inquiries: '36' },
+      { icon: 'fa-instagram', name: 'Instagram Property', enabled: false, views: '0', inquiries: '0' },
+      { icon: 'fa-tiktok', name: 'TikTok Tours', enabled: false, views: '0', inquiries: '0' }
+    ];
+
+    // Feature 4: Community Posts
+    const posts = [
+      {
+        initials: 'GW', name: 'Grace Wanjiku', badge: 'Landlord', badgeType: 'landlord',
+        time: '2 hours ago',
+        content: '📢 Reminder: Water tank cleaning is scheduled for <strong>Saturday, April 19th</strong> from 8 AM to 12 PM. Please store enough water for the day.',
+        likes: 24, comments: 8
+      },
+      {
+        initials: 'JW', name: 'John Wachira', badge: 'Tenant',
+        time: '5 hours ago',
+        content: 'Has anyone else noticed the WiFi being slow in the evenings? Might be worth checking with the ISP. 🤔',
+        likes: 12, comments: 15
+      },
+      {
+        initials: 'AH', name: 'Amina Hassan', badge: 'Landlord', badgeType: 'landlord',
+        time: 'Yesterday',
+        content: '🎉 Welcome to our new tenants at South B Apartments! We\'re excited to have you join our community.',
+        likes: 38, comments: 4
+      },
+      {
+        initials: 'MN', name: 'Mary Njoki', badge: 'Tenant',
+        time: 'Yesterday',
+        content: 'Anyone interested in a weekend football match at the estate grounds? ⚽ Let\'s organize!',
+        likes: 22, comments: 18
+      }
+    ];
+
+    const events = [
+      { month: 'APR', day: '19', name: 'Water Tank Cleaning', meta: '8:00 AM · All Units' },
+      { month: 'APR', day: '22', name: 'Fire Drill & Safety Training', meta: '10:00 AM · Estate Grounds' },
+      { month: 'APR', day: '28', name: 'Community BBQ & Meetup', meta: '4:00 PM · Garden Area' },
+      { month: 'MAY', day: '05', name: 'Estate AGM', meta: '6:00 PM · Community Hall' },
+      { month: 'MAY', day: '12', name: 'Kids Fun Day', meta: '10:00 AM · Playground' }
+    ];
+
+    // Feature 5: Lease Renewals
+    const renewalStats = [
+      { label: 'Expiring in 30 days', value: '8', color: 'red' },
+      { label: 'Expiring in 60 days', value: '14', color: 'gold' },
+      { label: 'Expiring in 90 days', value: '22', color: '' },
+      { label: 'Renewed YTD', value: '48', color: 'green' }
+    ];
+
+    const renewals = [
+      {
+        initials: 'JW', tenant: 'John Wachira', property: 'Kilimani Court · Unit 3B',
+        leaseEnd: 'Apr 30, 2025', currentRent: 'KSh 45,000', suggestedRent: 'KSh 48,500',
+        status: 'urgent', daysLeft: 18, color: '#c8972a'
+      },
+      {
+        initials: 'MN', tenant: 'Mary Njoki', property: 'Westlands Heights · Unit 5A',
+        leaseEnd: 'May 15, 2025', currentRent: 'KSh 38,000', suggestedRent: 'KSh 40,200',
+        status: 'expiring', daysLeft: 33, color: '#6b4c9a'
+      },
+      {
+        initials: 'BK', tenant: 'Brian Kamau', property: 'South B Apartments · Unit 12',
+        leaseEnd: 'May 28, 2025', currentRent: 'KSh 32,000', suggestedRent: 'KSh 34,000',
+        status: 'expiring', daysLeft: 46, color: '#2c6b9e'
+      },
+      {
+        initials: 'LM', tenant: 'Lucy Muthoni', property: 'Lavington Suites · Unit 7C',
+        leaseEnd: 'Jun 10, 2025', currentRent: 'KSh 52,000', suggestedRent: 'KSh 54,500',
+        status: 'expiring', daysLeft: 59, color: '#b5447a'
+      },
+      {
+        initials: 'TM', tenant: 'Tom Mboya', property: 'Eastleigh Plaza · Unit 4D',
+        leaseEnd: 'Apr 15, 2025', currentRent: 'KSh 28,000', suggestedRent: 'KSh 29,800',
+        status: 'renewed', daysLeft: 0, color: '#1e8e5c'
+      }
+    ];
+
+    // Feature 6: Insurance Claims    const claims = [
+      {
+        id: 'CLM-2025-0142', title: 'Water Damage · Burst Pipe', property: 'Kilimani Court · Unit 3B',
+        status: 'under-review', amount: 'KSh 45,000', filed: 'Apr 8, 2025',
+        insurer: 'Jubilee Insurance', step: 2
+      },
+      {
+        id: 'CLM-2025-0138', title: 'Theft · Burglary Attempt', property: 'Westlands Heights · Unit 5A',
+        status: 'approved', amount: 'KSh 82,000', filed: 'Mar 28, 2025',
+        insurer: 'APA Insurance', step: 4
+      },
+      {
+        id: 'CLM-2025-0129', title: 'Fire Damage · Kitchen', property: 'South B Apartments · Unit 12',
+        status: 'submitted', amount: 'KSh 120,000', filed: 'Apr 11, 2025',
+        insurer: 'Britam', step: 1
+      },
+      {
+        id: 'CLM-2025-0119', title: 'Storm Damage · Roof Repair', property: 'Lavington Suites · Unit 7C',
+        status: 'rejected', amount: 'KSh 68,000', filed: 'Mar 15, 2025',
+        insurer: 'CIC Insurance', step: 4
+      }
+    ];
+
+    // Feature 7: Benchmark Metrics
+    const benchMetrics = [
+      { label: 'Rental Yield', value: '8.4%', compare: 'Above avg (+2.1%)', direction: 'above' },
+      { label: 'Occupancy Rate', value: '92%', compare: 'Above avg (+5%)', direction: 'above' },
+      { label: 'Rent Collection', value: '96%', compare: 'Above avg (+8%)', direction: 'above' },
+      { label: 'Maintenance Cost', value: '4.2%', compare: 'Below avg (-1.4%)', direction: 'above' }
+    ];
+
+    const comparisons = [
+      { label: 'Rental Yield', you: 8.4, peer: 6.3, max: 12 },
+      { label: 'Occupancy Rate', you: 92, peer: 87, max: 100 },
+      { label: 'Rent Collection', you: 96, peer: 88, max: 100 },
+      { label: 'Tenant Retention', you: 88, peer: 72, max: 100 },
+      { label: 'Maintenance Efficiency', you: 85, peer: 68, max: 100 }
+    ];
+
+    const advantages = [
+      { icon: 'fa-trophy', color: 'gold', title: 'Top 5% in Rent Collection', desc: 'Your 96% collection rate is exceptional' },
+      { icon: 'fa-chart-line', color: 'green', title: 'Above-Average Yield', desc: '8.4% vs peer average of 6.3%' },
+      { icon: 'fa-users', color: 'blue', title: 'High Tenant Retention', desc: '88% annual retention rate' },
+      { icon: 'fa-tools', color: 'purple', title: 'Efficient Maintenance', desc: 'Lower maintenance cost per unit' }
+    ];
+
+    /* ============================================================
+       HELPERS
+       ============================================================ */
+    function formatKsh(value) {
+      return 'KSh ' + Number(value).toLocaleString('en-KE');
+    }
+
+    /* ============================================================
+       RENDER: VENDORS
+       ============================================================ */
+    function renderVendors(cat = 'all') {
+      const grid = document.getElementById('vendorsGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      const filtered = cat === 'all' ? vendors : vendors.filter(v => v.category === cat);
+
+      filtered.forEach(v => {
+        const card = document.createElement('div');
+        card.className = 'vendor-card fade-in';
+        card.innerHTML = `
+          <div class="vendor-card-top">
+            <div class="vendor-card-logo ${v.category}"><i class="fas ${v.icon}"></i></div>
+            <div class="vendor-card-info">
+              <div class="vendor-card-name">${v.name}</div>
+              <div class="vendor-card-category">${v.cat}</div>
+            </div>
+            <div class="vendor-card-rating">
+              <i class="fas fa-star"></i>
+              ${v.rating}
+              <span class="rating-count">(${v.reviews})</span>
+            </div>
+          </div>
+          <div class="vendor-card-desc">${v.desc}</div>
+          <div class="vendor-card-tags">
+            ${v.tags.map(t => `<span class="vendor-tag ${t === 'Verified' ? 'verified' : ''}">${t === 'Verified' ? '✓ ' : ''}${t}</span>`).join('')}
+          </div>
+          <div class="vendor-card-footer">
+            <div class="vendor-price">${v.price} <small>/ service</small></div>
+            <button class="vendor-btn" onclick="alert('📞 Contacting ${v.name}...\\n\\nThey will reach out within 2 hours.')">Book Now</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function initMarketplaceFilters() {
+      const filters = document.getElementById('marketplaceFilters');
+      if (!filters) return;
+      filters.addEventListener('click', (e) => {
+        const btn = e.target.closest('.mp-filter');
+        if (!btn) return;
+        filters.querySelectorAll('.mp-filter').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderVendors(btn.dataset.cat);
+      });
+    }
+
+    /* ============================================================
+       RENDER: SYNDICATION
+       ============================================================ */
+    function renderSyndication() {
+      const container = document.getElementById('syndChannels');
+      if (!container) return;
+      container.innerHTML = '';
+
+      syndChannels.forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'synd-channel';
+        div.innerHTML = `
+          <div class="synd-channel-top">
+            <div class="synd-channel-logo"><i class="fas ${c.icon}"></i></div>
+            <div class="synd-toggle ${c.enabled ? 'on' : ''}" data-enabled="${c.enabled}"></div>
+          </div>
+          <div>
+            <div class="synd-channel-name">${c.name}</div>
+          </div>
+          <div class="synd-channel-stats">
+            <span class="sc-stat"><i class="fas fa-eye"></i> ${c.views}</span>
+            <span class="sc-stat"><i class="fas fa-envelope"></i> ${c.inquiries}</span>
+          </div>
+        `;
+        const toggle = div.querySelector('.synd-toggle');
+        toggle.addEventListener('click', () => {
+          const isOn = toggle.classList.toggle('on');
+          toggle.dataset.enabled = isOn;
+          alert(`📡 ${c.name} syndication ${isOn ? 'enabled' : 'disabled'}.`);
+        });
+        container.appendChild(div);
+      });
+    }
+
+    /* ============================================================
+       UTILITY TOKEN VENDING
+       ============================================================ */
+    function initVending() {
+      const amountInput = document.getElementById('vendAmount');
+      const utilitySelect = document.getElementById('vendUtility');
+      const tenantSelect = document.getElementById('vendTenant');
+      const quickAmounts = document.querySelectorAll('.quick-amount');
+
+      const vendValue = document.getElementById('vendValue');
+      const vendFee = document.getElementById('vendFee');
+      const vendTotal = document.getElementById('vendTotal');
+      const vendUnits = document.getElementById('vendUnits');
+      const vendToken = document.getElementById('vendToken');
+      const vendSubmitBtn = document.getElementById('vendSubmitBtn');
+
+      if (!amountInput) return;
+
+      const unitsPerKsh = { electricity: 0.0135, water: 0.008, gas: 0.0012 };
+
+      function updateSummary() {
+        const amt = parseFloat(amountInput.value) || 0;
+        const utility = utilitySelect.value;
+        const fee = amt * 0.02;
+        const total = amt + fee;
+        const units = amt * unitsPerKsh[utility];
+
+        vendValue.innerHTML = formatKsh(amt) + '<small>KES</small>';
+        vendFee.textContent = formatKsh(Math.round(fee));
+        vendTotal.textContent = formatKsh(Math.round(total));
+
+        if (utility === 'electricity') vendUnits.textContent = units.toFixed(1) + ' kWh';
+        else if (utility === 'water') vendUnits.textContent = units.toFixed(1) + ' m³';
+        else vendUnits.textContent = units.toFixed(2) + ' kg';
+      }
+
+      function generateToken() {
+        const chars = '0123456789ABCDEF';
+        let token = '';
+        for (let i = 0; i < 20; i++) {
+          if (i > 0 && i % 5 === 0) token += '-';
+          token += chars[Math.floor(Math.random() * chars.length)];
+        }
+        vendToken.textContent = token;
+      }
+
+      amountInput.addEventListener('input', updateSummary);
+      utilitySelect.addEventListener('change', updateSummary);
+
+      quickAmounts.forEach(q => {
+        q.addEventListener('click', () => {
+          quickAmounts.forEach(qa => qa.classList.remove('active'));
+          q.classList.add('active');
+          amountInput.value = q.dataset.amt;
+          updateSummary();
+        });
+      });
+
+      vendSubmitBtn.addEventListener('click', () => {
+        generateToken();
+        const tenant = tenantSelect.value;
+        const amt = amountInput.value;
+        alert(`⚡ Token generated!\\n\\nSent to: ${tenant}\\nAmount: KSh ${amt}\\n\\nToken delivered via SMS.`);
+      });
+
+      updateSummary();
+    }
+
+    /* ============================================================
+       RENDER: COMMUNITY POSTS & EVENTS
+       ============================================================ */
+    function renderCommunity() {
+      const postList = document.getElementById('postList');
+      if (postList) {
+        postList.innerHTML = '';
+        posts.forEach(p => {
+          const div = document.createElement('div');
+          div.className = 'post-item';
+          div.innerHTML = `
+            <div class="post-header">
+              <div class="post-avatar" style="background:${p.badgeType === 'landlord' ? 'linear-gradient(135deg, var(--gold-500), var(--gold-400))' : 'linear-gradient(135deg, var(--blue-500), var(--blue-400))'}; color:${p.badgeType === 'landlord' ? 'var(--navy-900)' : 'white'};">${p.initials}</div>
+              <div class="post-author">
+                <div class="post-author-name">
+                  ${p.name}
+                  <span class="post-author-badge ${p.badgeType === 'landlord' ? 'landlord' : ''}">${p.badge}</span>
+                </div>
+                <div class="post-time">${p.time}</div>
+              </div>
+            </div>
+            <div class="post-content">${p.content}</div>
+            <div class="post-reactions">
+              <div class="post-reaction"><i class="fas fa-heart"></i> ${p.likes}</div>
+              <div class="post-reaction"><i class="fas fa-comment"></i> ${p.comments}</div>
+              <div class="post-reaction"><i class="fas fa-share"></i> Share</div>
+            </div>
+          `;
+          postList.appendChild(div);
+        });
+      }
+
+      const eventsList = document.getElementById('eventsList');
+      if (eventsList) {
+        eventsList.innerHTML = '';
+        events.forEach(e => {
+          const div = document.createElement('div');
+          div.className = 'event-item';
+          div.innerHTML = `
+            <div class="event-date">
+              <div class="ed-month">${e.month}</div>
+              <div class="ed-day">${e.day}</div>
+            </div>
+            <div class="event-info">
+              <div class="event-name">${e.name}</div>
+              <div class="event-meta"><i class="fas fa-clock"></i> ${e.meta}</div>
+            </div>
+          `;
+          eventsList.appendChild(div);
+        });
+      }
+
+      const postBtn = document.getElementById('postBtn');
+      const postInput = document.getElementById('postInput');
+      if (postBtn && postInput) {
+        postBtn.addEventListener('click', () => {
+          const val = postInput.value.trim();
+          if (!val) return alert('Please enter a message first.');
+          alert('📢 Post published to all tenants in your properties!');
+          postInput.value = '';
+        });
+      }
+    }
+
+    /* ============================================================
+       RENDER: RENEWALS
+       ============================================================ */
+    function renderRenewals() {
+      const statsContainer = document.getElementById('renewalStats');
+      if (statsContainer) {
+        statsContainer.innerHTML = '';
+        renewalStats.forEach(s => {
+          const div = document.createElement('div');
+          div.className = `renewal-stat ${s.color}`;
+          div.innerHTML = `
+            <div class="rs-label">${s.label}</div>
+            <div class="rs-value ${s.color}">${s.value}</div>
+          `;
+          statsContainer.appendChild(div);
+        });
+      }
+
+      const timeline = document.getElementById('renewalTimeline');
+      if (timeline) {
+        timeline.innerHTML = '';
+        renewals.forEach(r => {
+          const statusLabel = r.status === 'urgent' ? `${r.daysLeft}d left` : r.status === 'expiring' ? `${r.daysLeft}d left` : 'Renewed';
+          const div = document.createElement('div');
+          div.className = 'renewal-item';
+          div.innerHTML = `
+            <div class="renewal-avatar" style="background:${r.color};">${r.initials}</div>
+            <div class="renewal-info">
+              <div class="renewal-tenant">${r.tenant}</div>
+              <div class="renewal-property">${r.property}</div>
+            </div>
+            <div class="renewal-lease-info">
+              <div class="rli-item">
+                <span class="rli-label">Lease Ends</span>
+                <span class="rli-value">${r.leaseEnd}</span>
+              </div>
+              <div class="rli-item">
+                <span class="rli-label">Current Rent</span>
+                <span class="rli-value">${r.currentRent}</span>
+              </div>
+              <div class="rli-item">
+                <span class="rli-label">Suggested</span>
+                <span class="rli-value" style="color:var(--green-500);">${r.suggestedRent}</span>
+              </div>
+            </div>
+            <span class="renewal-status ${r.status}">${statusLabel}</span>
+            ${r.status !== 'renewed' ? `<button class="renewal-action" onclick="alert('📝 Sending renewal offer to ${r.tenant}...\\n\\nSuggested rent: ${r.suggestedRent}')">Send Offer</button>` : ''}
+          `;
+          timeline.appendChild(div);
+        });
+      }
+    }
+
+    /* ============================================================
+       RENDER: CLAIMS
+       ============================================================ */
+    function renderClaims() {
+      const grid = document.getElementById('claimsGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      claims.forEach(c => {
+        const statusLabel = c.status === 'under-review' ? 'Under Review' : c.status.charAt(0).toUpperCase() + c.status.slice(1);
+        const card = document.createElement('div');
+        card.className = `claim-card ${c.status} fade-in`;
+        card.innerHTML = `
+          <div class="claim-top">
+            <div class="claim-id">${c.id}</div>
+            <span class="claim-status ${c.status}">${statusLabel}</span>
+          </div>
+          <div>
+            <div class="claim-title">${c.title}</div>
+            <div class="claim-property"><i class="fas fa-map-marker-alt"></i> ${c.property}</div>
+          </div>
+          <div class="claim-details">
+            <div class="claim-detail">
+              <div class="cd-label">Claim Amount</div>
+              <div class="cd-value gold">${c.amount}</div>
+            </div>
+            <div class="claim-detail">
+              <div class="cd-label">Filed</div>
+              <div class="cd-value">${c.filed}</div>
+            </div>
+            <div class="claim-detail">
+              <div class="cd-label">Insurer</div>
+              <div class="cd-value">${c.insurer}</div>
+            </div>
+            <div class="claim-detail">
+              <div class="cd-label">Status</div>
+              <div class="cd-value ${c.status === 'approved' ? 'green' : ''}">${statusLabel}</div>
+            </div>
+          </div>
+          <div>
+            <div class="claim-timeline">
+              <div class="claim-timeline-step ${c.step >= 1 ? 'done' : ''}"></div>
+              <div class="claim-timeline-step ${c.step >= 2 ? 'done' : c.step >= 1 ? 'active' : ''}"></div>
+              <div class="claim-timeline-step ${c.step >= 3 ? 'done' : c.step >= 2 ? 'active' : ''}"></div>
+              <div class="claim-timeline-step ${c.step >= 4 ? (c.status === 'approved' ? 'done' : 'active') : ''}"></div>
+            </div>
+            <div class="claim-timeline-labels">
+              <span>Submitted</span>
+              <span>Review</span>
+              <span>Assessment</span>
+              <span>${c.status === 'approved' ? 'Paid' : c.status === 'rejected' ? 'Rejected' : 'Decision'}</span>
+            </div>
+          </div>
+          <div class="claim-actions">
+            <button onclick="alert('📄 Viewing claim ${c.id}')"><i class="fas fa-eye"></i> View</button>
+            <button class="primary" onclick="alert('📤 Uploading documents for ${c.id}')"><i class="fas fa-upload"></i> Upload</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    /* ============================================================
+       RENDER: BENCHMARKING
+       ============================================================ */
+    function renderBenchmark() {
+      const metricsContainer = document.getElementById('benchMetrics');
+      if (metricsContainer) {
+        metricsContainer.innerHTML = '';
+        benchMetrics.forEach(m => {
+          const div = document.createElement('div');
+          div.className = 'bench-metric';
+          div.innerHTML = `
+            <div class="bm-label">${m.label}</div>
+            <div class="bm-value">${m.value}</div>
+            <div class="bm-compare ${m.direction}">
+              <i class="fas fa-arrow-${m.direction === 'above' ? 'up' : 'down'}"></i> ${m.compare}
+            </div>
+          `;
+          metricsContainer.appendChild(div);
+        });
+      }
+
+      const barsContainer = document.getElementById('comparisonBars');
+      if (barsContainer) {
+        barsContainer.innerHTML = '';
+        comparisons.forEach(c => {
+          const youPct = (c.you / c.max) * 100;
+          const peerPct = (c.peer / c.max) * 100;
+          const div = document.createElement('div');
+          div.className = 'comparison-row';
+          div.innerHTML = `
+            <div class="comparison-header">
+              <span>${c.label}</span>
+              <span class="ch-you">You: ${c.you}${c.max === 100 ? '%' : '%'} | Peer: ${c.peer}${c.max === 100 ? '%' : '%'}</span>
+            </div>
+            <div class="comparison-bar-track">
+              <div class="comparison-bar-fill peer" style="width:${peerPct}%;"></div>
+            </div>
+            <div class="comparison-bar-track">
+              <div class="comparison-bar-fill you" style="width:${youPct}%;">${c.you}</div>
+            </div>
+          `;
+          barsContainer.appendChild(div);
+        });
+      }
+
+      const advantagesContainer = document.getElementById('advantagesList');
+      if (advantagesContainer) {
+        advantagesContainer.innerHTML = '';
+        advantages.forEach(a => {
+          const div = document.createElement('div');
+          div.style.cssText = 'display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--gray-200);';
+          div.innerHTML = `
+            <div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;background:var(--gray-100);color:var(--${a.color}-500);">
+              <i class="fas ${a.icon}"></i>
+            </div>
+            <div style="flex:1;">
+              <div style="font-weight:700;font-size:13px;color:var(--navy-900);">${a.title}</div>
+              <div style="font-size:11.5px;color:var(--gray-500);margin-top:2px;">${a.desc}</div>
+            </div>
+            <i class="fas fa-check-circle" style="color:var(--green-500);font-size:16px;"></i>
+          `;
+          advantagesContainer.appendChild(div);
+        });
+      }
+    }
+
+    /* ============================================================
+       INIT PAGE 11
+       ============================================================ */
+    function init() {
+      renderVendors();
+      initMarketplaceFilters();
+      renderSyndication();
+      initVending();
+      renderCommunity();
+      renderRenewals();
+      renderClaims();
+      renderBenchmark();
+      console.log('🏪 Mwarokin Estates · Marketplace, Community & Operations (Page 11) loaded');
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

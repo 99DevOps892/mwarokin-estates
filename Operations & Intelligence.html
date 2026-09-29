@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mwarokin Estates · Operations & Intelligence</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       DESIGN TOKENS (consistent with pages 1–4)
+       ============================================================ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy-900: #0b121c;
+      --navy-800: #111b2b;
+      --navy-700: #1a2740;
+      --navy-600: #23334f;
+      --navy-500: #2e405f;
+      --gold-500: #c8972a;
+      --gold-400: #e0b354;
+      --gold-300: #f0cf8a;
+      --gold-200: #f9e9c7;
+      --green-500: #1e8e5c;
+      --green-400: #2bb673;
+      --green-300: #6fcf97;
+      --red-500: #c44536;
+      --red-400: #e05a4f;
+      --amber-500: #e6a017;
+      --amber-400: #f5b83d;
+      --purple-500: #6b4c9a;
+      --purple-400: #8b6bb5;
+      --blue-500: #2c6b9e;
+      --blue-400: #4a8bc2;
+      --teal-500: #1e7a7a;
+      --teal-400: #2ba3a3;
+      --pink-500: #b5447a;
+      --pink-400: #d46b9e;
+      --gray-100: #f8fafc;
+      --gray-200: #eef2f6;
+      --gray-300: #dce3ec;
+      --gray-400: #9aa9bb;
+      --gray-500: #6b7c93;
+      --gray-600: #4f5e74;
+      --gray-700: #334155;
+      --white: #ffffff;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.05), 0 2px 6px rgba(0,0,0,0.03);
+      --shadow-lg: 0 12px 28px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.02);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-serif: 'Playfair Display', Georgia, serif;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--gray-100);
+      color: var(--navy-900);
+      line-height: 1.5;
+      padding: 0 24px 48px;
+      min-height: 100vh;
+    }
+
+    .app-container { max-width: 1440px; margin: 0 auto; }
+
+    /* ============================================================
+       TOP BAR
+       ============================================================ */
+    .top-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 0 28px; flex-wrap: wrap; gap: 20px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; }
+
+    .brand-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--gold-500), var(--gold-400));
+      border-radius: 14px; display: flex; align-items: center; justify-content: center;
+      color: var(--navy-900); font-size: 22px; font-weight: 700;
+      box-shadow: 0 6px 14px rgba(200,151,42,0.25);
+    }
+
+    .brand-text h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+    .brand-text h1 span { font-weight: 300; color: var(--gold-500); }
+    .brand-text .tagline { font-size: 12px; color: var(--gray-500); font-weight: 400; }
+
+    .nav-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+    .nav-link {
+      font-size: 13px; font-weight: 500; color: var(--gray-600);
+      text-decoration: none; padding: 8px 16px; border-radius: 40px;
+      transition: all 0.15s; background: var(--white); box-shadow: var(--shadow-sm);
+    }
+    .nav-link:hover, .nav-link.active { background: var(--navy-800); color: var(--gold-300); }
+
+    .avatar {
+      width: 44px; height: 44px; background: var(--navy-800); color: var(--gold-400);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 16px; border: 2px solid var(--gold-400);
+      box-shadow: var(--shadow-sm); cursor: pointer;
+    }
+
+    /* ============================================================
+       PAGE HEADER
+       ============================================================ */
+    .page-header { margin-bottom: 28px; }
+    .page-header h2 {
+      font-size: 26px; font-weight: 700; letter-spacing: -0.4px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .page-header h2 i { color: var(--gold-500); font-size: 24px; }
+    .page-header p { font-size: 14px; color: var(--gray-500); margin-top: 4px; }
+
+    /* ============================================================
+       SHARED CARD STYLES
+       ============================================================ */
+    .card {
+      background: var(--white); border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200);
+      transition: box-shadow 0.2s; overflow: hidden;
+    }
+    .card:hover { box-shadow: var(--shadow-md); }
+
+    .card-header {
+      padding: 20px 24px 12px; display: flex; align-items: center;
+      justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .card-header h2 {
+      font-size: 17px; font-weight: 600; letter-spacing: -0.2px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .card-header h2 i { color: var(--gold-500); font-size: 17px; }
+
+    .section-title {
+      font-size: 18px; font-weight: 600; letter-spacing: -0.2px;
+      display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+    }
+    .section-title i { color: var(--gold-500); font-size: 18px; }
+
+    /* ============================================================
+       FEATURE 1: REAL-TIME PAYMENT MONITOR
+       ============================================================ */
+    .realtime-panel {
+      background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-700) 100%);
+      border-radius: var(--radius-lg);
+      padding: 28px 32px;
+      margin-bottom: 30px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .realtime-panel::before {
+      content: '';
+      position: absolute;
+      top: -60%;
+      right: -5%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(30,142,92,0.12) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .realtime-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .realtime-header h3 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .live-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background: var(--green-400);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+      margin-right: 4px;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(43,182,115,0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(43,182,115,0); }
+      100% { box-shadow: 0 0 0 0 rgba(43,182,115,0); }
+    }
+
+    .realtime-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .rt-stat {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      backdrop-filter: blur(10px);
+    }
+
+    .rt-stat .rt-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--gray-400);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .rt-stat .rt-value {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      color: var(--white);
+    }
+
+    .rt-stat .rt-value.green { color: var(--green-300); }
+    .rt-stat .rt-value.gold { color: var(--gold-300); }
+    .rt-stat .rt-value.amber { color: var(--amber-400); }
+
+    .rt-stat .rt-sub {
+      font-size: 11px;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    .rt-feed {
+      margin-top: 22px;
+      max-height: 140px;
+      overflow-y: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .rt-feed-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .rt-feed-item .rf-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .rf-icon.green { background: rgba(30,142,92,0.2); color: var(--green-300); }
+    .rf-icon.gold { background: rgba(200,151,42,0.2); color: var(--gold-300); }
+    .rf-icon.blue { background: rgba(44,107,158,0.2); color: var(--blue-400); }
+
+    .rt-feed-item .rf-text { flex: 1; color: var(--gray-300); }
+    .rt-feed-item .rf-text strong { color: var(--white); font-weight: 600; }
+    .rt-feed-item .rf-time { font-size: 11px; color: var(--gray-500); white-space: nowrap; }
+
+    /* ============================================================
+       FEATURE 2: LOYALTY & REWARDS PROGRAM
+       ============================================================ */
+    .loyalty-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .loyalty-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 22px;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .loyalty-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+    }
+
+    .loyalty-card.bronze::before { background: linear-gradient(90deg, #cd7f32, #e6a45c); }
+    .loyalty-card.silver::before { background: linear-gradient(90deg, #9ba9bb, #c0cdd9); }
+    .loyalty-card.gold::before { background: linear-gradient(90deg, var(--gold-500), var(--gold-300)); }
+    .loyalty-card.platinum::before { background: linear-gradient(90deg, #6b4c9a, #8b6bb5); }
+
+    .loyalty-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .loyalty-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .loyalty-tier {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tier-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: var(--white);
+    }
+
+    .tier-badge.bronze { background: linear-gradient(135deg, #cd7f32, #e6a45c); }
+    .tier-badge.silver { background: linear-gradient(135deg, #9ba9bb, #c0cdd9); }
+    .tier-badge.gold { background: linear-gradient(135deg, var(--gold-500), var(--gold-300)); color: var(--navy-900); }
+    .tier-badge.platinum { background: linear-gradient(135deg, #6b4c9a, #8b6bb5); }
+
+    .tier-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--navy-900);
+      text-transform: capitalize;
+    }
+
+    .tier-sub {
+      font-size: 11px;
+      color: var(--gray-500);
+    }
+
+    .loyalty-points {
+      text-align: right;
+    }
+
+    .loyalty-points .points-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--navy-900);
+    }
+
+    .loyalty-points .points-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .loyalty-progress {
+      margin-top: 4px;
+    }
+
+    .loyalty-progress .lp-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--gray-500);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .loyalty-progress .lp-bar {
+      height: 6px;
+      background: var(--gray-200);
+      border-radius: 40px;
+      overflow: hidden;
+    }
+
+    .loyalty-progress .lp-fill {
+      height: 100%;
+      border-radius: 40px;
+      transition: width 0.4s ease;
+    }
+
+    .lp-fill.bronze { background: linear-gradient(90deg, #cd7f32, #e6a45c); }
+    .lp-fill.silver { background: linear-gradient(90deg, #9ba9bb, #c0cdd9); }
+    .lp-fill.gold { background: linear-gradient(90deg, var(--gold-500), var(--gold-300)); }
+    .lp-fill.platinum { background: linear-gradient(90deg, #6b4c9a, #8b6bb5); }
+
+    .loyalty-perks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .perk-chip {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 30px;
+      background: var(--gray-100);
+      color: var(--gray-600);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .perk-chip i { font-size: 10px; color: var(--gold-500); }
+
+    /* ============================================================
+       FEATURE 3: ESCROW & TRUST ACCOUNT
+       ============================================================ */
+    .escrow-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 24px;
+      margin-bottom: 30px;
+    }
+
+    .escrow-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 24px 28px;
+    }
+
+    .escrow-balance {
+      text-align: center;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--gray-200);
+      margin-bottom: 20px;
+    }
+
+    .escrow-balance .eb-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--gray-500);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .escrow-balance .eb-value {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      color: var(--navy-900);
+    }
+
+    .escrow-balance .eb-value small {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--gray-500);
+    }
+
+    .escrow-balance .eb-change {
+      font-size: 13px;
+      color: var(--green-500);
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    .escrow-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .escrow-meta-item {
+      padding: 12px 16px;
+      background: var(--gray-100);
+      border-radius: var(--radius-md);
+    }
+
+    .escrow-meta-item .emi-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--gray-500);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .escrow-meta-item .emi-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+
+    .escrow-meta-item .emi-value.green { color: var(--green-500); }
+    .escrow-meta-item .emi-value.gold { color: var(--gold-500); }
+
+    .escrow-transactions {
+      margin-top: 20px;
+    }
+
+    .escrow-txn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--gray-200);
+      font-size: 13px;
+    }
+
+    .escrow-txn:last-child { border-bottom: none; }
+
+    .escrow-txn .et-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .escrow-txn .et-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--gray-100);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--navy-600);
+    }
+
+    .escrow-txn .et-desc {
+      font-weight: 600;
+      color: var(--navy-900);
+    }
+
+    .escrow-txn .et-date {
+      font-size: 11px;
+      color: var(--gray-500);
+    }
+
+    .escrow-txn .et-amount {
+      font-weight: 700;
+      color: var(--green-500);
+    }
+
+    .escrow-txn .et-amount.debit {
+      color: var(--red-500);
+    }
+
+    /* ============================================================
+       FEATURE 4: AUTOMATED INVOICE ENGINE
+       ============================================================ */
+    .invoice-engine {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 24px 28px;
+      margin-bottom: 30px;
+    }
+
+    .invoice-rules {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .invoice-rule {
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .invoice-rule:hover {
+      border-color: var(--gold-400);
+      background: #fdf9f0;
+    }
+
+    .invoice-rule .ir-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .invoice-rule .ir-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--navy-900);
+    }
+
+    .invoice-rule .ir-status {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 30px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .invoice-rule .ir-status.active { background: #e6f5ee; color: var(--green-500); }
+    .invoice-rule .ir-status.paused { background: #fff8e5; color: var(--amber-500); }
+
+    .invoice-rule .ir-desc {
+      font-size: 12px;
+      color: var(--gray-500);
+      line-height: 1.5;
+    }
+
+    .invoice-rule .ir-meta {
+      font-size: 11px;
+      color: var(--gray-400);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: auto;
+    }
+
+    .invoice-rule .ir-meta i { color: var(--gold-500); }
+
+    /* ============================================================
+       FEATURE 5: TENANT PAYMENT BEHAVIOR ANALYTICS
+       ============================================================ */
+    .behavior-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+
+    .behavior-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 20px;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .behavior-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .behavior-card .bc-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      background: var(--gray-100);
+      color: var(--navy-700);
+    }
+
+    .behavior-card .bc-icon.green { background: #e6f5ee; color: var(--green-500); }
+    .behavior-card .bc-icon.red { background: #fdeceb; color: var(--red-500); }
+    .behavior-card .bc-icon.amber { background: #fff8e5; color: var(--amber-500); }
+    .behavior-card .bc-icon.blue { background: #e9eff9; color: var(--blue-500); }
+
+    .behavior-card .bc-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .behavior-card .bc-value {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--navy-900);
+    }
+
+    .behavior-card .bc-value small {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-500);
+    }
+
+    .behavior-card .bc-sub {
+      font-size: 12px;
+      color: var(--gray-500);
+    }
+
+    /* ============================================================
+       FEATURE 6: LEGAL & COMPLIANCE CASE TRACKER
+       ============================================================ */
+    .legal-table-wrap {
+      overflow-x: auto;
+      padding: 0 4px 4px;
+      margin-bottom: 30px;
+    }
+
+    table.legal-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .legal-table th {
+      text-align: left;
+      padding: 14px 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--gray-500);
+      border-bottom: 1px solid var(--gray-200);
+      white-space: nowrap;
+    }
+
+    .legal-table td {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--gray-200);
+      color: var(--navy-800);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .legal-table tr:last-child td { border-bottom: none; }
+    .legal-table tr:hover td { background: #fbfdff; }
+
+    .case-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      border-radius: 30px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .case-status.open { background: #fdeceb; color: var(--red-500); }
+    .case-status.progress { background: #fff8e5; color: var(--amber-500); }
+    .case-status.resolved { background: #e6f5ee; color: var(--green-500); }
+    .case-status.closed { background: var(--gray-100); color: var(--gray-500); }
+
+    .case-priority {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .case-priority.high { color: var(--red-500); }
+    .case-priority.medium { color: var(--amber-500); }
+    .case-priority.low { color: var(--green-500); }
+
+    /* ============================================================
+       FEATURE 7: SUSTAINABILITY & ESG REPORTING
+       ============================================================ */
+    .esg-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .esg-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 24px;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .esg-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .esg-card .esg-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .esg-card .esg-icon.env { background: #e6f5ee; color: var(--green-500); }
+    .esg-card .esg-icon.social { background: #e9eff9; color: var(--blue-500); }
+    .esg-card .esg-icon.gov { background: #fdf6e7; color: var(--gold-500); }
+
+    .esg-card .esg-title {
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--navy-900);
+    }
+
+    .esg-card .esg-desc {
+      font-size: 12px;
+      color: var(--gray-500);
+      line-height: 1.5;
+    }
+
+    .esg-metrics {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .esg-metric {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    .esg-metric .em-label { color: var(--gray-600); }
+    .esg-metric .em-value { font-weight: 700; color: var(--navy-900); }
+    .esg-metric .em-value.green { color: var(--green-500); }
+    .esg-metric .em-value.gold { color: var(--gold-500); }
+    .esg-metric .em-value.blue { color: var(--blue-500); }
+
+    .esg-score {
+      text-align: center;
+      padding: 12px;
+      background: var(--gray-100);
+      border-radius: var(--radius-md);
+      margin-top: auto;
+    }
+
+    .esg-score .es-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--gray-500);
+      font-weight: 600;
+    }
+
+    .esg-score .es-value {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--navy-900);
+    }
+
+    .esg-score .es-value small {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-500);
+    }
+
+    /* ============================================================
+       FOOTER
+       ============================================================ */
+    .page-footer {
+      text-align: center;
+      padding: 32px 0 16px;
+      font-size: 12px;
+      color: var(--gray-400);
+      border-top: 1px solid var(--gray-200);
+      margin-top: 20px;
+    }
+    .page-footer a { color: var(--gold-500); text-decoration: none; }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 1200px) {
+      .realtime-stats { grid-template-columns: repeat(2, 1fr); }
+      .escrow-layout { grid-template-columns: 1fr; }
+      .invoice-rules { grid-template-columns: 1fr 1fr; }
+      .behavior-grid { grid-template-columns: repeat(2, 1fr); }
+      .esg-grid { grid-template-columns: 1fr; }
+      .loyalty-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 800px) {
+      .invoice-rules { grid-template-columns: 1fr; }
+      .behavior-grid { grid-template-columns: 1fr; }
+      .escrow-meta { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      body { padding: 0 16px 32px; }
+      .top-bar { flex-direction: column; align-items: flex-start; }
+      .nav-actions { width: 100%; justify-content: space-between; }
+      .realtime-panel { padding: 22px 20px; }
+      .realtime-stats { grid-template-columns: 1fr; }
+      .realtime-header { flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 480px) {
+      .esg-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ============================================================
+       ANIMATIONS
+       ============================================================ */
+    .fade-in { animation: fadeIn 0.4s ease forwards; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- ============================================================
+         TOP BAR
+         ============================================================ -->
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-icon">⬡</div>
+        <div class="brand-text">
+          <h1>Mwarokin <span>Estates</span></h1>
+          <div class="tagline">Advanced Payments · Page 5</div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <a href="#" class="nav-link"><i class="fas fa-chart-pie"></i> Dashboard</a>
+        <a href="#" class="nav-link"><i class="fas fa-file-invoice"></i> Invoices</a>
+        <a href="#" class="nav-link active"><i class="fas fa-gem"></i> Premium</a>
+        <div class="avatar" title="Landlord Admin">AD</div>
+      </div>
+    </header>
+
+    <!-- ============================================================
+         PAGE HEADER
+         ============================================================ -->
+    <div class="page-header">
+      <h2><i class="fas fa-gem"></i> Premium Operations & Intelligence</h2>
+      <p>Real-time monitoring, loyalty rewards, escrow management, automated invoicing, tenant analytics, legal tracking, and ESG reporting.</p>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 1: REAL-TIME PAYMENT MONITOR
+         ============================================================ -->
+    <div class="realtime-panel fade-in">
+      <div class="realtime-header">
+        <h3><span class="live-dot"></span> Live Payment Monitor</h3>
+        <div style="font-size:12px;color:var(--gray-400);">
+          <i class="fas fa-sync-alt"></i> Auto-refreshing every 30 seconds
+        </div>
+      </div>
+      <div class="realtime-stats" id="realtimeStats">
+        <!-- Injected via JS -->
+      </div>
+      <div class="rt-feed" id="realtimeFeed">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 2: LOYALTY & REWARDS PROGRAM
+         ============================================================ -->
+    <div class="section-title"><i class="fas fa-crown"></i> Landlord Loyalty & Rewards</div>
+    <div class="loyalty-grid" id="loyaltyGrid">
+      <!-- Injected via JS -->
+    </div>
+
+    <!-- ============================================================
+         FEATURE 3: ESCROW & TRUST ACCOUNT
+         ============================================================ -->
+    <div class="escrow-layout">
+      <div class="escrow-card fade-in">
+        <div class="section-title"><i class="fas fa-shield-alt"></i> Escrow & Trust Account</div>
+        <div class="escrow-balance">
+          <div class="eb-label">Total Escrow Balance</div>
+          <div class="eb-value">KSh 4,285,000 <small>KES</small></div>
+          <div class="eb-change"><i class="fas fa-arrow-up"></i> +12.4% from last month</div>
+        </div>
+        <div class="escrow-meta" id="escrowMeta">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <div class="escrow-card fade-in">
+        <div class="section-title"><i class="fas fa-list"></i> Recent Escrow Transactions</div>
+        <div class="escrow-transactions" id="escrowTransactions">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 4: AUTOMATED INVOICE ENGINE
+         ============================================================ -->
+    <div class="invoice-engine fade-in">
+      <div class="section-title"><i class="fas fa-magic"></i> Automated Invoice Engine</div>
+      <p style="font-size:13px;color:var(--gray-500);margin-bottom:4px;">
+        Rule-based invoice generation that runs on schedule or triggers. All rules are fully configurable.
+      </p>
+      <div class="invoice-rules" id="invoiceRules">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 5: TENANT PAYMENT BEHAVIOR ANALYTICS
+         ============================================================ -->
+    <div class="section-title"><i class="fas fa-user-chart"></i> Tenant Payment Behavior Analytics</div>
+    <div class="behavior-grid" id="behaviorGrid">
+      <!-- Injected via JS -->
+    </div>
+
+    <!-- ============================================================
+         FEATURE 6: LEGAL & COMPLIANCE CASE TRACKER
+         ============================================================ -->
+    <div class="card fade-in" style="margin-bottom:30px;">
+      <div class="card-header">
+        <h2><i class="fas fa-gavel"></i> Legal & Compliance Case Tracker</h2>
+        <div style="font-size:12px;color:var(--gray-500);">
+          <i class="fas fa-lock"></i> Confidential · Attorney-client privileged
+        </div>
+      </div>
+      <div class="legal-table-wrap">
+        <table class="legal-table">
+          <thead>
+            <tr>
+              <th>Case ID</th>
+              <th>Subject</th>
+              <th>Type</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Filed</th>
+              <th>Next Action</th>
+            </tr>
+          </thead>
+          <tbody id="legalBody">
+            <!-- Injected via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 7: SUSTAINABILITY & ESG REPORTING
+         ============================================================ -->
+    <div class="section-title"><i class="fas fa-leaf"></i> Sustainability & ESG Reporting</div>
+    <div class="esg-grid" id="esgGrid">
+      <!-- Injected via JS -->
+    </div>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <div class="page-footer">
+      <p>Mwarokin Estates · Premium Operations & Intelligence · &copy; 2025 · <a href="#">Privacy</a> · <a href="#">Terms</a></p>
+    </div>
+  </div>
+
+  <script>
+    /* ============================================================
+       MOCK DATA – PAGE 5 FEATURES
+       ============================================================ */
+
+    // Feature 1: Real-time monitor
+    const realtimeStats = [
+      { label: 'Collected Today', value: 'KSh 384,500', sub: '+12 transactions', color: 'green' },
+      { label: 'Pending STK Push', value: '8', sub: 'Awaiting tenant approval', color: 'gold' },
+      { label: 'Active Sessions', value: '42', sub: 'Landlords online now', color: '' },
+      { label: 'Avg. Payment Time', value: '2.4 hrs', sub: 'From invoice to receipt', color: 'amber' }
+    ];
+
+    const realtimeFeed = [
+      { icon: 'fa-check-circle', color: 'green', text: '<strong>Grace Wanjiku</strong> paid KSh 240,000 via M-Pesa', time: '2 min ago' },
+      { icon: 'fa-clock', color: 'gold', text: 'STK push sent to <strong>James Mwangi</strong> for KSh 168,000', time: '6 min ago' },
+      { icon: 'fa-sync', color: 'blue', text: 'Bank reconciliation completed for <strong>Equity Bank</strong>', time: '12 min ago' },
+      { icon: 'fa-check-circle', color: 'green', text: '<strong>Amina Hassan</strong> paid KSh 360,000 via bank transfer', time: '18 min ago' },
+      { icon: 'fa-exclamation-triangle', color: 'gold', text: 'Payment reminder sent to <strong>Peter Njoroge</strong>', time: '24 min ago' }
+    ];
+
+    // Feature 2: Loyalty tiers
+    const loyaltyTiers = [
+      {
+        tier: 'bronze', name: 'Bronze', icon: 'fa-medal', initials: 'PN', landlord: 'Peter Njoroge',
+        points: 340, nextTier: 'Silver', nextPoints: 500, progress: 68,
+        perks: ['Priority Support', '5% Fee Discount']
+      },
+      {
+        tier: 'silver', name: 'Silver', icon: 'fa-award', initials: 'JM', landlord: 'James Mwangi',
+        points: 720, nextTier: 'Gold', nextPoints: 1000, progress: 72,
+        perks: ['Priority Support', '10% Fee Discount', 'Free Monthly Report']
+      },
+      {
+        tier: 'gold', name: 'Gold', icon: 'fa-crown', initials: 'GW', landlord: 'Grace Wanjiku',
+        points: 1450, nextTier: 'Platinum', nextPoints: 2000, progress: 72,
+        perks: ['24/7 Support', '15% Fee Discount', 'Dedicated Manager', 'Free KRA Filing']
+      },
+      {
+        tier: 'platinum', name: 'Platinum', icon: 'fa-gem', initials: 'AH', landlord: 'Amina Hassan',
+        points: 2340, nextTier: 'Max', nextPoints: 2340, progress: 100,
+        perks: ['VIP Support', '25% Fee Discount', 'Dedicated Manager', 'Free KRA Filing', 'Custom Reports']
+      }
+    ];
+
+    // Feature 3: Escrow metadata
+    const escrowMeta = [
+      { label: 'Held in Trust', value: 'KSh 3,120,000', color: 'gold' },
+      { label: 'Pending Release', value: 'KSh 1,165,000', color: '' },
+      { label: 'Released (Apr)', value: 'KSh 8,420,000', color: 'green' },
+      { label: 'Disputes Held', value: 'KSh 96,000', color: '' }
+    ];
+
+    const escrowTransactions = [
+      { desc: 'Rent deposit · Kilimani Court', date: 'Apr 12, 2025', amount: '+ KSh 240,000', type: 'credit' },
+      { desc: 'Disbursement · South B Apartments', date: 'Apr 11, 2025', amount: '- KSh 360,000', type: 'debit' },
+      { desc: 'Rent deposit · Lavington Suites', date: 'Apr 11, 2025', amount: '+ KSh 450,000', type: 'credit' },
+      { desc: 'Disbursement · Westlands Heights', date: 'Apr 10, 2025', amount: '- KSh 168,000', type: 'debit' },
+      { desc: 'Security deposit · Runda Gardens', date: 'Apr 9, 2025', amount: '+ KSh 300,000', type: 'credit' }
+    ];
+
+    // Feature 4: Invoice rules
+    const invoiceRules = [
+      { name: 'Monthly Rent Invoices', status: 'active', desc: 'Generates invoices for all active tenancies on the 1st of each month. Includes rent, water, and service charges.', meta: 'Last run: Apr 1, 2025 · 312 invoices' },
+      { name: 'Late Payment Penalty', status: 'active', desc: 'Applies a 2% penalty to any invoice unpaid 5 days after the due date. Auto-generates a new line item.', meta: 'Last run: Apr 10, 2025 · 8 penalties' },
+      { name: 'Service Charge Billing', status: 'active', desc: 'Quarterly billing for common area maintenance, security, and waste management.', meta: 'Next run: May 1, 2025' },
+      { name: 'Utility Reconciliation', status: 'paused', desc: 'Reconciles water and electricity meter readings against actual consumption for accurate billing.', meta: 'Paused by admin · Mar 28, 2025' },
+      { name: 'Annual Escalation', status: 'active', desc: 'Applies annual rent escalation based on CPI + 2% cap to all eligible tenancies.', meta: 'Next run: Jul 1, 2025' },
+      { name: 'Deposit Refund Invoices', status: 'active', desc: 'Generates refund invoices when a tenancy ends, deducting any outstanding charges.', meta: 'Last run: Apr 5, 2025 · 3 refunds' }
+    ];
+
+    // Feature 5: Tenant behavior
+    const behaviorData = [
+      { icon: 'fa-clock', color: 'green', label: 'On-Time Payments', value: '87%', sub: 'Of tenants pay before due date' },
+      { icon: 'fa-hourglass-half', color: 'amber', label: 'Avg. Days Late', value: '4.2', sub: 'Down from 6.8 days last quarter' },
+      { icon: 'fa-exclamation-triangle', color: 'red', label: 'Default Rate', value: '3.1%', sub: '8 tenants in arrears' },
+      { icon: 'fa-mobile-alt', color: 'blue', label: 'Mobile Money Usage', value: '94%', sub: 'Preferred payment method' }
+    ];
+
+    // Feature 6: Legal cases
+    const legalCases = [
+      { id: 'LGL-2025-0142', subject: 'Peter Njoroge · Kasarani Villas', type: 'Rent Arrears Recovery', priority: 'high', status: 'open', filed: 'Mar 15, 2025', next: 'Hearing · Apr 22, 2025' },
+      { id: 'LGL-2025-0138', subject: 'Eastleigh Plaza · Tenant Dispute', type: 'Lease Violation', priority: 'medium', status: 'progress', filed: 'Mar 8, 2025', next: 'Mediation · Apr 18, 2025' },
+      { id: 'LGL-2025-0129', subject: 'Westlands Heights · Deposit Refund', type: 'Security Deposit', priority: 'low', status: 'resolved', filed: 'Feb 22, 2025', next: 'Closed · Mar 30, 2025' },
+      { id: 'LGL-2025-0151', subject: 'South B Apartments · Structural Issue', type: 'Compliance', priority: 'high', status: 'progress', filed: 'Apr 2, 2025', next: 'Inspection · Apr 20, 2025' },
+      { id: 'LGL-2025-0119', subject: 'Kilimani Court · Noise Complaint', type: 'Tenant Conduct', priority: 'low', status: 'closed', filed: 'Jan 28, 2025', next: 'Closed · Feb 15, 2025' }
+    ];
+
+    // Feature 7: ESG
+    const esgData = [
+      {
+        icon: 'fa-leaf', category: 'env', title: 'Environmental',
+        desc: 'Energy efficiency, water conservation, waste management, and carbon footprint reduction.',
+        metrics: [
+          { label: 'Energy Reduction', value: '-18% YoY', color: 'green' },
+          { label: 'Water Saved', value: '2.4M litres', color: 'green' },
+          { label: 'Waste Recycled', value: '68%', color: 'green' },
+          { label: 'Carbon Offset', value: '142 tons', color: 'green' }
+        ],
+        score: 82, scoreLabel: 'Environmental Score'
+      },
+      {
+        icon: 'fa-users', category: 'social', title: 'Social',
+        desc: 'Tenant welfare, community engagement, safety, and affordable housing initiatives.',
+        metrics: [
+          { label: 'Tenant Satisfaction', value: '91%', color: 'blue' },
+          { label: 'Safety Incidents', value: '0', color: 'blue' },
+          { label: 'Community Events', value: '14', color: 'blue' },
+          { label: 'Affordable Units', value: '22%', color: 'blue' }
+        ],
+        score: 78, scoreLabel: 'Social Score'
+      },
+      {
+        icon: 'fa-balance-scale', category: 'gov', title: 'Governance',
+        desc: 'Transparency, ethical practices, regulatory compliance, and anti-corruption measures.',
+        metrics: [
+          { label: 'KRA Compliance', value: '100%', color: 'gold' },
+          { label: 'Board Diversity', value: '45%', color: 'gold' },
+          { label: 'Policy Reviews', value: '6', color: 'gold' },
+          { label: 'Transparency Index', value: 'A+', color: 'gold' }
+        ],
+        score: 88, scoreLabel: 'Governance Score'
+      }
+    ];
+
+    /* ============================================================
+       HELPERS
+       ============================================================ */
+    function formatKsh(value) {
+      return 'KSh ' + Number(value).toLocaleString('en-KE');
+    }
+
+    /* ============================================================
+       RENDER: REAL-TIME STATS & FEED
+       ============================================================ */
+    function renderRealtime() {
+      const statsContainer = document.getElementById('realtimeStats');
+      if (statsContainer) {
+        statsContainer.innerHTML = '';
+        realtimeStats.forEach(s => {
+          const div = document.createElement('div');
+          div.className = 'rt-stat';
+          div.innerHTML = `
+            <div class="rt-label">${s.label}</div>
+            <div class="rt-value ${s.color}">${s.value}</div>
+            <div class="rt-sub">${s.sub}</div>
+          `;
+          statsContainer.appendChild(div);
+        });
+      }
+
+      const feedContainer = document.getElementById('realtimeFeed');
+      if (feedContainer) {
+        feedContainer.innerHTML = '';
+        realtimeFeed.forEach(f => {
+          const div = document.createElement('div');
+          div.className = 'rt-feed-item';
+          div.innerHTML = `
+            <div class="rf-icon ${f.color}"><i class="fas ${f.icon}"></i></div>
+            <div class="rf-text">${f.text}</div>
+            <div class="rf-time">${f.time}</div>
+          `;
+          feedContainer.appendChild(div);
+        });
+      }
+    }
+
+    /* ============================================================
+       RENDER: LOYALTY TIERS
+       ============================================================ */
+    function renderLoyalty() {
+      const grid = document.getElementById('loyaltyGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      loyaltyTiers.forEach(t => {
+        const card = document.createElement('div');
+        card.className = `loyalty-card ${t.tier} fade-in`;
+        card.innerHTML = `
+          <div class="loyalty-top">
+            <div class="loyalty-tier">
+              <div class="tier-badge ${t.tier}"><i class="fas ${t.icon}"></i></div>
+              <div>
+                <div class="tier-name">${t.name} Tier</div>
+                <div class="tier-sub">${t.landlord}</div>
+              </div>
+            </div>
+            <div class="loyalty-points">
+              <div class="points-value">${t.points.toLocaleString()}</div>
+              <div class="points-label">Points</div>
+            </div>
+          </div>
+          <div class="loyalty-progress">
+            <div class="lp-header">
+              <span>Progress to ${t.nextTier}</span>
+              <span>${t.progress}%</span>
+            </div>
+            <div class="lp-bar">
+              <div class="lp-fill ${t.tier}" style="width:${t.progress}%;"></div>
+            </div>
+          </div>
+          <div class="loyalty-perks">
+            ${t.perks.map(p => `<span class="perk-chip"><i class="fas fa-star"></i> ${p}</span>`).join('')}
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    /* ============================================================
+       RENDER: ESCROW META & TRANSACTIONS
+       ============================================================ */
+    function renderEscrow() {
+      const metaContainer = document.getElementById('escrowMeta');
+      if (metaContainer) {
+        metaContainer.innerHTML = '';
+        escrowMeta.forEach(m => {
+          const div = document.createElement('div');
+          div.className = 'escrow-meta-item';
+          div.innerHTML = `
+            <div class="emi-label">${m.label}</div>
+            <div class="emi-value ${m.color}">${m.value}</div>
+          `;
+          metaContainer.appendChild(div);
+        });
+      }
+
+      const txnContainer = document.getElementById('escrowTransactions');
+      if (txnContainer) {
+        txnContainer.innerHTML = '';
+        escrowTransactions.forEach(t => {
+          const div = document.createElement('div');
+          div.className = 'escrow-txn';
+          div.innerHTML = `
+            <div class="et-left">
+              <div class="et-icon"><i class="fas ${t.type === 'credit' ? 'fa-arrow-down' : 'fa-arrow-up'}"></i></div>
+              <div>
+                <div class="et-desc">${t.desc}</div>
+                <div class="et-date">${t.date}</div>
+              </div>
+            </div>
+            <div class="et-amount ${t.type}">${t.amount}</div>
+          `;
+          txnContainer.appendChild(div);
+        });
+      }
+    }
+
+    /* ============================================================
+       RENDER: INVOICE RULES
+       ============================================================ */
+    function renderInvoiceRules() {
+      const container = document.getElementById('invoiceRules');
+      if (!container) return;
+      container.innerHTML = '';
+
+      invoiceRules.forEach(r => {
+        const div = document.createElement('div');
+        div.className = 'invoice-rule';
+        div.innerHTML = `
+          <div class="ir-top">
+            <div class="ir-name">${r.name}</div>
+            <div class="ir-status ${r.status}">${r.status}</div>
+          </div>
+          <div class="ir-desc">${r.desc}</div>
+          <div class="ir-meta"><i class="fas fa-clock"></i> ${r.meta}</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    /* ============================================================
+       RENDER: TENANT BEHAVIOR
+       ============================================================ */
+    function renderBehavior() {
+      const grid = document.getElementById('behaviorGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      behaviorData.forEach(b => {
+        const card = document.createElement('div');
+        card.className = 'behavior-card fade-in';
+        card.innerHTML = `
+          <div class="bc-icon ${b.color}"><i class="fas ${b.icon}"></i></div>
+          <div class="bc-label">${b.label}</div>
+          <div class="bc-value">${b.value}</div>
+          <div class="bc-sub">${b.sub}</div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    /* ============================================================
+       RENDER: LEGAL CASES
+       ============================================================ */
+    function renderLegal() {
+      const tbody = document.getElementById('legalBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      legalCases.forEach(c => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-family:'SF Mono',monospace;font-size:12px;color:var(--gray-500);">${c.id}</td>
+          <td><strong>${c.subject}</strong></td>
+          <td>${c.type}</td>
+          <td><span class="case-priority ${c.priority}"><i class="fas fa-circle" style="font-size:6px;"></i> ${c.priority}</span></td>
+          <td><span class="case-status ${c.status}">${c.status}</span></td>
+          <td>${c.filed}</td>
+          <td style="color:var(--gray-600);">${c.next}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    /* ============================================================
+       RENDER: ESG CARDS
+       ============================================================ */
+    function renderESG() {
+      const grid = document.getElementById('esgGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      esgData.forEach(e => {
+        const card = document.createElement('div');
+        card.className = 'esg-card fade-in';
+        card.innerHTML = `
+          <div class="esg-icon ${e.category}"><i class="fas ${e.icon}"></i></div>
+          <div class="esg-title">${e.title}</div>
+          <div class="esg-desc">${e.desc}</div>
+          <div class="esg-metrics">
+            ${e.metrics.map(m => `
+              <div class="esg-metric">
+                <span class="em-label">${m.label}</span>
+                <span class="em-value ${m.color}">${m.value}</span>
+              </div>
+            `).join('')}
+          </div>
+          <div class="esg-score">
+            <div class="es-label">${e.scoreLabel}</div>
+            <div class="es-value">${e.score}<small>/100</small></div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    /* ============================================================
+       REAL-TIME FEED SIMULATION
+       ============================================================ */
+    function simulateRealtime() {
+      const feed = document.getElementById('realtimeFeed');
+      if (!feed) return;
+
+      const newEvents = [
+        { icon: 'fa-check-circle', color: 'green', text: '<strong>Lucy Wambui</strong> paid KSh 75,000 via M-Pesa', time: 'Just now' },
+        { icon: 'fa-clock', color: 'gold', text: 'STK push sent to <strong>David Ochieng</strong> for KSh 300,000', time: 'Just now' },
+        { icon: 'fa-check-circle', color: 'green', text: '<strong>Michael Kariuki</strong> paid KSh 300,000 via bank transfer', time: 'Just now' },
+        { icon: 'fa-sync', color: 'blue', text: 'Auto-reconciliation completed for 12 transactions', time: 'Just now' }
+      ];
+
+      setInterval(() => {
+        const ev = newEvents[Math.floor(Math.random() * newEvents.length)];
+        const item = document.createElement('div');
+        item.className = 'rt-feed-item';
+        item.innerHTML = `
+          <div class="rf-icon ${ev.color}"><i class="fas ${ev.icon}"></i></div>
+          <div class="rf-text">${ev.text}</div>
+          <div class="rf-time">${ev.time}</div>
+        `;
+        feed.insertBefore(item, feed.firstChild);
+        if (feed.children.length > 8) {
+          feed.removeChild(feed.lastChild);
+        }
+      }, 8000);
+    }
+
+    /* ============================================================
+       INIT PAGE 5
+       ============================================================ */
+    function init() {
+      renderRealtime();
+      renderLoyalty();
+      renderEscrow();
+      renderInvoiceRules();
+      renderBehavior();
+      renderLegal();
+      renderESG();
+      simulateRealtime();
+      console.log('💎 Mwarokin Estates · Premium Operations & Intelligence (Page 5) loaded');
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

@@ -1,0 +1,1999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mwarokin Estates · EcoSystem & Asset Lifecycle</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       DESIGN TOKENS (consistent with pages 1–6)
+       ============================================================ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy-900: #0b121c;
+      --navy-800: #111b2b;
+      --navy-700: #1a2740;
+      --navy-600: #23334f;
+      --navy-500: #2e405f;
+      --gold-500: #c8972a;
+      --gold-400: #e0b354;
+      --gold-300: #f0cf8a;
+      --gold-200: #f9e9c7;
+      --green-500: #1e8e5c;
+      --green-400: #2bb673;
+      --green-300: #6fcf97;
+      --red-500: #c44536;
+      --red-400: #e05a4f;
+      --amber-500: #e6a017;
+      --amber-400: #f5b83d;
+      --purple-500: #6b4c9a;
+      --purple-400: #8b6bb5;
+      --blue-500: #2c6b9e;
+      --blue-400: #4a8bc2;
+      --teal-500: #1e7a7a;
+      --teal-400: #2ba3a3;
+      --pink-500: #b5447a;
+      --pink-400: #d46b9e;
+      --gray-100: #f8fafc;
+      --gray-200: #eef2f6;
+      --gray-300: #dce3ec;
+      --gray-400: #9aa9bb;
+      --gray-500: #6b7c93;
+      --gray-600: #4f5e74;
+      --gray-700: #334155;
+      --white: #ffffff;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.05), 0 2px 6px rgba(0,0,0,0.03);
+      --shadow-lg: 0 12px 28px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.02);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-serif: 'Playfair Display', Georgia, serif;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--gray-100);
+      color: var(--navy-900);
+      line-height: 1.5;
+      padding: 0 24px 48px;
+      min-height: 100vh;
+    }
+
+    .app-container { max-width: 1440px; margin: 0 auto; }
+
+    /* ============================================================
+       TOP BAR
+       ============================================================ */
+    .top-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 0 28px; flex-wrap: wrap; gap: 20px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; }
+
+    .brand-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--gold-500), var(--gold-400));
+      border-radius: 14px; display: flex; align-items: center; justify-content: center;
+      color: var(--navy-900); font-size: 22px; font-weight: 700;
+      box-shadow: 0 6px 14px rgba(200,151,42,0.25);
+    }
+
+    .brand-text h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+    .brand-text h1 span { font-weight: 300; color: var(--gold-500); }
+    .brand-text .tagline { font-size: 12px; color: var(--gray-500); font-weight: 400; }
+
+    .nav-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+    .nav-link {
+      font-size: 13px; font-weight: 500; color: var(--gray-600);
+      text-decoration: none; padding: 8px 16px; border-radius: 40px;
+      transition: all 0.15s; background: var(--white); box-shadow: var(--shadow-sm);
+    }
+    .nav-link:hover, .nav-link.active { background: var(--navy-800); color: var(--gold-300); }
+
+    .avatar {
+      width: 44px; height: 44px; background: var(--navy-800); color: var(--gold-400);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 16px; border: 2px solid var(--gold-400);
+      box-shadow: var(--shadow-sm); cursor: pointer;
+    }
+
+    /* ============================================================
+       PAGE HEADER
+       ============================================================ */
+    .page-header { margin-bottom: 28px; }
+    .page-header h2 {
+      font-size: 26px; font-weight: 700; letter-spacing: -0.4px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .page-header h2 i { color: var(--gold-500); font-size: 24px; }
+    .page-header p { font-size: 14px; color: var(--gray-500); margin-top: 4px; }
+
+    /* ============================================================
+       SHARED CARD STYLES
+       ============================================================ */
+    .card {
+      background: var(--white); border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200);
+      transition: box-shadow 0.2s; overflow: hidden;
+    }
+    .card:hover { box-shadow: var(--shadow-md); }
+
+    .card-header {
+      padding: 20px 24px 12px; display: flex; align-items: center;
+      justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .card-header h2 {
+      font-size: 17px; font-weight: 600; letter-spacing: -0.2px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .card-header h2 i { color: var(--gold-500); font-size: 17px; }
+
+    .section-title {
+      font-size: 18px; font-weight: 600; letter-spacing: -0.2px;
+      display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+    }
+    .section-title i { color: var(--gold-500); font-size: 18px; }
+
+    /* ============================================================
+       FEATURE 1: MOBILE APP PREVIEW
+       ============================================================ */
+    .mobile-showcase {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 32px;
+      margin-bottom: 30px;
+      align-items: center;
+      background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-700) 100%);
+      border-radius: var(--radius-lg);
+      padding: 36px 40px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mobile-showcase::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(200,151,42,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .mobile-text {
+      position: relative;
+      z-index: 1;
+    }
+
+    .mobile-text .mt-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 5px 12px;
+      border-radius: 30px;
+      background: rgba(200,151,42,0.2);
+      color: var(--gold-300);
+      border: 1px solid rgba(200,151,42,0.3);
+      margin-bottom: 16px;
+    }
+
+    .mobile-text h3 {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.6px;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .mobile-text h3 em {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-weight: 400;
+      color: var(--gold-300);
+    }
+
+    .mobile-text p {
+      font-size: 14px;
+      color: var(--gray-300);
+      line-height: 1.6;
+      margin-bottom: 20px;
+      max-width: 420px;
+    }
+
+    .mobile-features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .mobile-feature {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      color: var(--gray-300);
+    }
+
+    .mobile-feature i {
+      color: var(--gold-400);
+      font-size: 14px;
+      width: 18px;
+      text-align: center;
+    }
+
+    .app-store-btns {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .store-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--white);
+      text-decoration: none;
+      transition: all 0.15s;
+      backdrop-filter: blur(10px);
+    }
+
+    .store-btn:hover {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.3);
+    }
+
+    .store-btn i { font-size: 22px; }
+    .store-btn .sb-text { text-align: left; }
+    .store-btn .sb-text .sb-sub {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.7;
+    }
+    .store-btn .sb-text .sb-name {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+
+    /* Phone mockup */
+    .phone-mockup-wrap {
+      display: flex;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .phone-mockup {
+      width: 260px;
+      height: 520px;
+      background: var(--navy-800);
+      border-radius: 36px;
+      border: 8px solid #1a1a1a;
+      position: relative;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.05);
+      overflow: hidden;
+    }
+
+    .phone-notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 24px;
+      background: #1a1a1a;
+      border-radius: 0 0 16px 16px;
+      z-index: 10;
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: var(--gray-100);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      padding-top: 24px;
+    }
+
+    .phone-status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 18px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--navy-900);
+      background: var(--white);
+    }
+
+    .phone-app-header {
+      background: linear-gradient(135deg, var(--navy-900), var(--navy-700));
+      padding: 14px 16px;
+      color: var(--white);
+    }
+
+    .phone-app-header .pah-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .phone-app-header .pah-brand {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .phone-app-header .pah-brand-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      background: var(--gold-500);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: var(--navy-900);
+    }
+
+    .phone-app-header .pah-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--gold-400);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+
+    .phone-app-header .pah-greeting {
+      font-size: 9px;
+      opacity: 0.7;
+    }
+
+    .phone-app-header .pah-balance {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+    }
+
+    .phone-app-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .phone-card {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .phone-card .pc-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--gray-500);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .phone-card .pc-value {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--navy-900);
+    }
+
+    .phone-card .pc-value.green { color: var(--green-500); }
+    .phone-card .pc-value.red { color: var(--red-500); }
+
+    .phone-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .phone-action {
+      background: var(--white);
+      border-radius: 10px;
+      padding: 10px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--navy-700);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .phone-action i {
+      font-size: 14px;
+      color: var(--gold-500);
+    }
+
+    .phone-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 8px 12px;
+      background: var(--white);
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .phone-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 8px;
+      font-weight: 600;
+      color: var(--gray-400);
+    }
+
+    .phone-nav-item.active { color: var(--gold-500); }
+    .phone-nav-item i { font-size: 14px; }
+
+    /* ============================================================
+       FEATURE 2: SMART METER & UTILITY BILLING
+       ============================================================ */
+    .smart-meter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .meter-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 22px;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .meter-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .meter-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .meter-property {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--navy-900);
+    }
+
+    .meter-id {
+      font-size: 11px;
+      color: var(--gray-500);
+      font-family: 'SF Mono', monospace;
+    }
+
+    .meter-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 30px;
+      background: #e6f5ee;
+      color: var(--green-500);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .meter-live .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green-500);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(30,142,92,0.6); }
+      70% { box-shadow: 0 0 0 6px rgba(30,142,92,0); }
+      100% { box-shadow: 0 0 0 0 rgba(30,142,92,0); }
+    }
+
+    .meter-readings {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .meter-reading {
+      padding: 10px 12px;
+      background: var(--gray-100);
+      border-radius: var(--radius-md);
+    }
+
+    .meter-reading .mr-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--gray-500);
+      font-weight: 600;
+    }
+
+    .meter-reading .mr-value {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--navy-900);
+      margin-top: 2px;
+    }
+
+    .meter-reading .mr-value small {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--gray-500);
+    }
+
+    .meter-bar-wrap {
+      margin-top: 4px;
+    }
+
+    .meter-bar-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--gray-500);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .meter-bar {
+      height: 8px;
+      background: var(--gray-200);
+      border-radius: 40px;
+      overflow: hidden;
+    }
+
+    .meter-bar-fill {
+      height: 100%;
+      border-radius: 40px;
+      transition: width 0.5s ease;
+    }
+
+    .meter-bar-fill.water { background: linear-gradient(90deg, var(--blue-500), var(--blue-400)); }
+    .meter-bar-fill.power { background: linear-gradient(90deg, var(--amber-500), var(--amber-400)); }
+    .meter-bar-fill.gas { background: linear-gradient(90deg, var(--red-500), var(--red-400)); }
+
+    .meter-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .meter-actions button {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 30px;
+      border: 1px solid var(--gray-200);
+      background: var(--white);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: var(--font-sans);
+    }
+
+    .meter-actions button:hover {
+      background: var(--gray-100);
+      border-color: var(--gray-400);
+    }
+
+    .meter-actions button.primary {
+      background: var(--navy-800);
+      color: var(--gold-300);
+      border-color: var(--navy-800);
+    }
+
+    /* ============================================================
+       FEATURE 3: RENT-TO-RENT ARBITRAGE MANAGER
+       ============================================================ */
+    .arbitrage-panel {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 24px 28px;
+      margin-bottom: 30px;
+    }
+
+    .arbitrage-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .arb-stat {
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--gray-100);
+      border-left: 3px solid var(--gold-500);
+    }
+
+    .arb-stat .as-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--gray-500);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .arb-stat .as-value {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      color: var(--navy-900);
+    }
+
+    .arb-stat .as-value.green { color: var(--green-500); }
+    .arb-stat .as-value.gold { color: var(--gold-500); }
+
+    .arb-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .arb-table th {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--gray-500);
+      border-bottom: 1px solid var(--gray-200);
+      white-space: nowrap;
+    }
+
+    .arb-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--gray-200);
+      color: var(--navy-800);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .arb-table tr:last-child td { border-bottom: none; }
+    .arb-table tr:hover td { background: #fbfdff; }
+
+    .arb-margin {
+      font-weight: 700;
+    }
+
+    .arb-margin.positive { color: var(--green-500); }
+    .arb-margin.negative { color: var(--red-500); }
+
+    /* ============================================================
+       FEATURE 4: CONSTRUCTION DRAWDOWNS
+       ============================================================ */
+    .construction-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 24px;
+      margin-bottom: 30px;
+    }
+
+    .construction-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 24px 28px;
+    }
+
+    .milestone-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .milestone {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      background: var(--gray-100);
+      transition: all 0.15s;
+      position: relative;
+    }
+
+    .milestone:hover { background: var(--gray-200); }
+
+    .milestone-status {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .milestone-status.complete {
+      background: var(--green-500);
+      color: var(--white);
+    }
+
+    .milestone-status.active {
+      background: var(--gold-500);
+      color: var(--navy-900);
+      box-shadow: 0 0 0 4px rgba(200,151,42,0.2);
+    }
+
+    .milestone-status.pending {
+      background: var(--white);
+      color: var(--gray-400);
+      border: 2px solid var(--gray-300);
+    }
+
+    .milestone-info { flex: 1; }
+    .milestone-name {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--navy-900);
+    }
+    .milestone-date {
+      font-size: 11px;
+      color: var(--gray-500);
+    }
+
+    .milestone-amount {
+      font-weight: 800;
+      font-size: 14px;
+      color: var(--navy-900);
+    }
+
+    .milestone-amount.paid { color: var(--green-500); }
+    .milestone-amount.due { color: var(--amber-500); }
+
+    .construction-summary {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .construction-total {
+      padding: 20px;
+      background: linear-gradient(135deg, #fdf6e7 0%, #f9e9c7 100%);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--gold-200);
+      text-align: center;
+    }
+
+    .construction-total .ct-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--gray-600);
+      font-weight: 600;
+    }
+
+    .construction-total .ct-value {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.6px;
+      color: var(--navy-900);
+      margin-top: 4px;
+    }
+
+    .construction-total .ct-sub {
+      font-size: 12px;
+      color: var(--gray-500);
+      margin-top: 4px;
+    }
+
+    .construction-bar-wrap {
+      margin-top: 4px;
+    }
+
+    .construction-bar {
+      height: 10px;
+      background: var(--gray-200);
+      border-radius: 40px;
+      overflow: hidden;
+    }
+
+    .construction-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold-500), var(--gold-300));
+      border-radius: 40px;
+      transition: width 0.5s ease;
+    }
+
+    /* ============================================================
+       FEATURE 5: EXIT & BUYOUT CALCULATOR
+       ============================================================ */
+    .buyout-panel {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 24px 28px;
+      margin-bottom: 30px;
+    }
+
+    .buyout-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      margin-top: 16px;
+    }
+
+    .buyout-inputs {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .buyout-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .buyout-input-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-600);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .buyout-input-group input,
+    .buyout-input-group select {
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--gray-200);
+      font-size: 14px;
+      font-family: var(--font-sans);
+      background: var(--white);
+      transition: all 0.15s;
+      color: var(--navy-900);
+      outline: none;
+    }
+
+    .buyout-input-group input:focus,
+    .buyout-input-group select:focus {
+      border-color: var(--gold-400);
+      box-shadow: 0 0 0 3px rgba(200,151,42,0.15);
+    }
+
+    .buyout-result {
+      background: linear-gradient(135deg, var(--navy-900), var(--navy-700));
+      border-radius: var(--radius-md);
+      padding: 28px;
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .buyout-result .br-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gray-400);
+      font-weight: 600;
+    }
+
+    .buyout-result .br-value {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      color: var(--gold-300);
+    }
+
+    .buyout-result .br-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+    }
+
+    .buyout-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .buyout-breakdown .bb-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    .buyout-breakdown .bb-row .bb-label { color: var(--gray-400); }
+    .buyout-breakdown .bb-row .bb-value { font-weight: 700; color: var(--white); }
+
+    /* ============================================================
+       FEATURE 6: TENANT RENT INSURANCE
+       ============================================================ */
+    .rent-insurance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .insurance-policy-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 22px;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .insurance-policy-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--teal-500), var(--teal-400));
+    }
+
+    .insurance-policy-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .insurance-policy-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .insurance-policy-tenant {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .insurance-policy-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: var(--teal-500);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .insurance-policy-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--navy-900);
+    }
+
+    .insurance-policy-property {
+      font-size: 11px;
+      color: var(--gray-500);
+    }
+
+    .insurance-policy-status {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 30px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .insurance-policy-status.active { background: #e6f5ee; color: var(--green-500); }
+    .insurance-policy-status.claimed { background: #fff8e5; color: var(--amber-500); }
+    .insurance-policy-status.expired { background: #fdeceb; color: var(--red-500); }
+
+    .insurance-policy-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 12px 0;
+      border-top: 1px solid var(--gray-200);
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .insurance-policy-detail .ipd-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--gray-500);
+      font-weight: 600;
+    }
+
+    .insurance-policy-detail .ipd-value {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy-900);
+      margin-top: 2px;
+    }
+
+    .insurance-policy-detail .ipd-value.green { color: var(--green-500); }
+    .insurance-policy-detail .ipd-value.gold { color: var(--gold-500); }
+
+    .insurance-policy-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .insurance-policy-actions button {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 30px;
+      border: 1px solid var(--gray-200);
+      background: var(--white);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: var(--font-sans);
+    }
+
+    .insurance-policy-actions button:hover {
+      background: var(--gray-100);
+      border-color: var(--gray-400);
+    }
+
+    .insurance-policy-actions button.primary {
+      background: var(--teal-500);
+      color: var(--white);
+      border-color: var(--teal-500);
+    }
+
+    /* ============================================================
+       FEATURE 7: BLOCKCHAIN RECEIPTS
+       ============================================================ */
+    .blockchain-panel {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      padding: 24px 28px;
+      margin-bottom: 30px;
+    }
+
+    .blockchain-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .blockchain-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 30px;
+      background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+      color: var(--purple-500);
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid #d8b4fe;
+    }
+
+    .blockchain-badge i { font-size: 14px; }
+
+    .blockchain-tx-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .blockchain-tx {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: var(--gray-100);
+      border-radius: var(--radius-md);
+      transition: all 0.15s;
+      flex-wrap: wrap;
+    }
+
+    .blockchain-tx:hover {
+      background: var(--gray-200);
+    }
+
+    .blockchain-tx-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--purple-500), var(--purple-400));
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .blockchain-tx-info {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .blockchain-tx-title {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--navy-900);
+    }
+
+    .blockchain-tx-hash {
+      font-family: 'SF Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-500);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .blockchain-tx-hash .hash-copy {
+      cursor: pointer;
+      color: var(--gold-500);
+      font-size: 10px;
+    }
+
+    .blockchain-tx-hash .hash-copy:hover { color: var(--gold-400); }
+
+    .blockchain-tx-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .blockchain-tx-meta .btm-item {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .blockchain-tx-meta .btm-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--gray-500);
+      font-weight: 600;
+    }
+
+    .blockchain-tx-meta .btm-value {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+
+    .blockchain-tx-meta .btm-value.green { color: var(--green-500); }
+
+    .blockchain-tx-verify {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      border-radius: 30px;
+      font-size: 11px;
+      font-weight: 700;
+      background: #e6f5ee;
+      color: var(--green-500);
+      border: 1px solid #a7f3d0;
+    }
+
+    .blockchain-tx-verify i { font-size: 12px; }
+
+    /* ============================================================
+       FOOTER
+       ============================================================ */
+    .page-footer {
+      text-align: center;
+      padding: 32px 0 16px;
+      font-size: 12px;
+      color: var(--gray-400);
+      border-top: 1px solid var(--gray-200);
+      margin-top: 20px;
+    }
+    .page-footer a { color: var(--gold-500); text-decoration: none; }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 1200px) {
+      .mobile-showcase { grid-template-columns: 1fr; text-align: center; }
+      .mobile-text p { margin-left: auto; margin-right: auto; }
+      .mobile-features { justify-content: center; }
+      .app-store-btns { justify-content: center; }
+      .construction-grid { grid-template-columns: 1fr; }
+      .buyout-grid { grid-template-columns: 1fr; }
+      .arbitrage-stats { grid-template-columns: repeat(2, 1fr); }
+      .smart-meter-grid { grid-template-columns: 1fr; }
+      .rent-insurance-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      body { padding: 0 16px 32px; }
+      .top-bar { flex-direction: column; align-items: flex-start; }
+      .nav-actions { width: 100%; justify-content: space-between; }
+      .mobile-showcase { padding: 24px 20px; }
+      .arbitrage-stats { grid-template-columns: 1fr; }
+      .blockchain-tx { flex-direction: column; align-items: flex-start; }
+      .blockchain-tx-meta { width: 100%; justify-content: space-between; }
+      .blockchain-tx-meta .btm-item { align-items: flex-start; }
+    }
+    @media (max-width: 480px) {
+      .mobile-features { grid-template-columns: 1fr; }
+      .buyout-result .br-value { font-size: 28px; }
+      .phone-mockup { transform: scale(0.85); }
+    }
+
+    /* ============================================================
+       ANIMATIONS
+       ============================================================ */
+    .fade-in { animation: fadeIn 0.4s ease forwards; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- ============================================================
+         TOP BAR
+         ============================================================ -->
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-icon">⬡</div>
+        <div class="brand-text">
+          <h1>Mwarokin <span>Estates</span></h1>
+          <div class="tagline">Advanced Payments · Page 7</div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <a href="#" class="nav-link"><i class="fas fa-chart-pie"></i> Dashboard</a>
+        <a href="#" class="nav-link"><i class="fas fa-file-invoice"></i> Invoices</a>
+        <a href="#" class="nav-link active"><i class="fas fa-mobile-alt"></i> Ecosystem</a>
+        <div class="avatar" title="Landlord Admin">AD</div>
+      </div>
+    </header>
+
+    <!-- ============================================================
+         PAGE HEADER
+         ============================================================ -->
+    <div class="page-header">
+      <h2><i class="fas fa-mobile-alt"></i> Ecosystem & Asset Lifecycle</h2>
+      <p>Mobile app, smart utilities, arbitrage, construction draws, buyouts, rent insurance, and blockchain receipts.</p>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 1: MOBILE APP SHOWCASE
+         ============================================================ -->
+    <div class="mobile-showcase fade-in">
+      <div class="mobile-text">
+        <div class="mt-badge"><i class="fas fa-star"></i> New · v2.4 Released</div>
+        <h3>Mwarokin <em>Mobile</em><br/>In Your Pocket</h3>
+        <p>Manage your entire property portfolio from anywhere. Real-time payments, instant notifications, and full financial control — designed for Kenyan landlords.</p>
+        <div class="mobile-features">
+          <div class="mobile-feature"><i class="fas fa-check-circle"></i> Instant M-Pesa payments</div>
+          <div class="mobile-feature"><i class="fas fa-check-circle"></i> Real-time dashboard</div>
+          <div class="mobile-feature"><i class="fas fa-check-circle"></i> Biometric login</div>
+          <div class="mobile-feature"><i class="fas fa-check-circle"></i> Offline receipt access</div>
+          <div class="mobile-feature"><i class="fas fa-check-circle"></i> Push notifications</div>
+          <div class="mobile-feature"><i class="fas fa-check-circle"></i> Kiswahili support</div>
+        </div>
+        <div class="app-store-btns">
+          <a href="#" class="store-btn" onclick="alert('📱 Redirecting to Google Play Store...')">
+            <i class="fab fa-google-play"></i>
+            <div class="sb-text">
+              <div class="sb-sub">Get it on</div>
+              <div class="sb-name">Google Play</div>
+            </div>
+          </a>
+          <a href="#" class="store-btn" onclick="alert('📱 Redirecting to Apple App Store...')">
+            <i class="fab fa-apple"></i>
+            <div class="sb-text">
+              <div class="sb-sub">Download on the</div>
+              <div class="sb-name">App Store</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Phone mockup -->
+      <div class="phone-mockup-wrap">
+        <div class="phone-mockup">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="phone-status-bar">
+              <span>9:41</span>
+              <span><i class="fas fa-signal"></i> <i class="fas fa-wifi"></i> <i class="fas fa-battery-full"></i></span>
+            </div>
+            <div class="phone-app-header">
+              <div class="pah-top">
+                <div class="pah-brand">
+                  <div class="pah-brand-icon">⬡</div>
+                  Mwarokin
+                </div>
+                <div class="pah-avatar">GW</div>
+              </div>
+              <div class="pah-greeting">Good morning, Grace</div>
+              <div class="pah-balance">KSh 1,248,500</div>
+            </div>
+            <div class="phone-app-body">
+              <div class="phone-card">
+                <div class="pc-label">This Month Collected</div>
+                <div class="pc-value green">KSh 240,000</div>
+              </div>
+              <div class="phone-actions">
+                <div class="phone-action"><i class="fas fa-paper-plane"></i> Send</div>
+                <div class="phone-action"><i class="fas fa-file-invoice"></i> Invoice</div>
+                <div class="phone-action"><i class="fas fa-chart-line"></i> Reports</div>
+                <div class="phone-action"><i class="fas fa-users"></i> Tenants</div>
+              </div>
+              <div class="phone-card">
+                <div class="pc-label">Pending Payments</div>
+                <div class="pc-value red">KSh 168,000</div>
+              </div>
+              <div class="phone-card">
+                <div class="pc-label">Occupancy Rate</div>
+                <div class="pc-value">96%</div>
+              </div>
+            </div>
+            <div class="phone-nav">
+              <div class="phone-nav-item active"><i class="fas fa-home"></i> Home</div>
+              <div class="phone-nav-item"><i class="fas fa-wallet"></i> Wallet</div>
+              <div class="phone-nav-item"><i class="fas fa-bell"></i> Alerts</div>
+              <div class="phone-nav-item"><i class="fas fa-user"></i> Profile</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 2: SMART METER & UTILITY BILLING
+         ============================================================ -->
+    <div class="section-title"><i class="fas fa-tachometer-alt"></i> Smart Meter & Utility Billing</div>
+    <div class="smart-meter-grid" id="smartMeterGrid">
+      <!-- Injected via JS -->
+    </div>
+
+    <!-- ============================================================
+         FEATURE 3: RENT-TO-RENT ARBITRAGE MANAGER
+         ============================================================ -->
+    <div class="arbitrage-panel fade-in">
+      <div class="section-title"><i class="fas fa-exchange-alt"></i> Rent-to-Rent Arbitrage Manager</div>
+      <p style="font-size:13px;color:var(--gray-500);margin-bottom:16px;">
+        Track properties where you lease from a head landlord and sublet to tenants. Monitor the spread between head rent and sublet income.
+      </p>
+      <div class="arbitrage-stats" id="arbitrageStats">
+        <!-- Injected via JS -->
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="arb-table">
+          <thead>
+            <tr>
+              <th>Property</th>
+              <th>Head Landlord</th>
+              <th>Head Rent</th>
+              <th>Sublet Income</th>
+              <th>Monthly Spread</th>
+              <th>Units Sublet</th>
+              <th>Lease End</th>
+            </tr>
+          </thead>
+          <tbody id="arbitrageBody">
+            <!-- Injected via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 4: CONSTRUCTION DRAWDOWNS
+         ============================================================ -->
+    <div class="construction-grid">
+      <div class="construction-card fade-in">
+        <div class="section-title"><i class="fas fa-hard-hat"></i> Construction Drawdown Schedule</div>
+        <p style="font-size:12px;color:var(--gray-500);margin-bottom:8px;">
+          Milestone-based funding for the Kilimani Court expansion project.
+        </p>
+        <div class="milestone-list" id="milestoneList">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <div class="construction-card fade-in">
+        <div class="section-title"><i class="fas fa-chart-pie"></i> Project Funding Summary</div>
+        <div class="construction-summary">
+          <div class="construction-total">
+            <div class="ct-label">Total Project Budget</div>
+            <div class="ct-value">KSh 42,800,000</div>
+            <div class="ct-sub">Kilimani Court · 24 new units</div>
+          </div>
+
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray-500);margin-bottom:6px;font-weight:600;">
+              <span>Drawn to Date</span>
+              <span>62%</span>
+            </div>
+            <div class="construction-bar">
+              <div class="construction-bar-fill" style="width:62%"></div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;">
+            <div class="arb-stat" style="border-left-color:var(--green-500);">
+              <div class="as-label">Disbursed</div>
+              <div class="as-value green">KSh 26.5M</div>
+            </div>
+            <div class="arb-stat" style="border-left-color:var(--gold-500);">
+              <div class="as-label">Remaining</div>
+              <div class="as-value gold">KSh 16.3M</div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px;padding:14px 16px;background:var(--gray-100);border-radius:var(--radius-md);">
+            <div style="font-size:12px;color:var(--gray-600);display:flex;align-items:center;gap:8px;">
+              <i class="fas fa-info-circle" style="color:var(--gold-500);"></i>
+              Next drawdown: <strong style="color:var(--navy-900);">KSh 4,200,000</strong> on May 5, 2025
+            </div>
+          </div>
+
+          <button class="btn-plan" style="width:100%;justify-content:center;margin-top:8px;" onclick="alert('📤 Initiating next drawdown request...')">
+            <i class="fas fa-paper-plane"></i> Request Next Drawdown
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 5: EXIT & BUYOUT CALCULATOR
+         ============================================================ -->
+    <div class="buyout-panel fade-in">
+      <div class="section-title"><i class="fas fa-hand-holding-usd"></i> Landlord Exit & Buyout Calculator</div>
+      <p style="font-size:13px;color:var(--gray-500);">
+        Calculate the buyout value if a landlord wishes to exit the management agreement early. Includes remaining contract value, early termination adjustments, and asset valuation.
+      </p>
+      <div class="buyout-grid">
+        <div class="buyout-inputs">
+          <div class="buyout-input-group">
+            <label>Monthly Management Fee</label>
+            <input type="number" id="buyoutFee" value="6500" placeholder="e.g. 6500" />
+          </div>
+          <div class="buyout-input-group">
+            <label>Months Remaining in Contract</label>
+            <input type="number" id="buyoutMonths" value="18" placeholder="e.g. 18" />
+          </div>
+          <div class="buyout-input-group">
+            <label>Property Market Value</label>
+            <input type="number" id="buyoutValue" value="128000000" placeholder="e.g. 128000000" />
+          </div>
+          <div class="buyout-input-group">
+            <label>Early Termination Penalty</label>
+            <select id="buyoutPenalty">
+              <option value="0.15" selected>15% of remaining value</option>
+              <option value="0.10">10% of remaining value</option>
+              <option value="0.20">20% of remaining value</option>
+              <option value="0.05">5% of remaining value</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="buyout-result">
+          <div>
+            <div class="br-label">Total Buyout Value</div>
+            <div class="br-value" id="buyoutTotal">KSh 1,345,500</div>
+          </div>
+          <div class="br-divider"></div>
+          <div class="buyout-breakdown">
+            <div class="bb-row">
+              <span class="bb-label">Remaining Contract Value</span>
+              <span class="bb-value" id="buyoutRemaining">KSh 117,000</span>
+            </div>
+            <div class="bb-row">
+              <span class="bb-label">Early Termination Penalty</span>
+              <span class="bb-value" id="buyoutPenaltyAmount">KSh 17,550</span>
+            </div>
+            <div class="bb-row">
+              <span class="bb-label">Asset Transfer Fee (1%)</span>
+              <span class="bb-value" id="buyoutTransfer">KSh 1,280,000</span>
+            </div>
+            <div class="bb-row" style="padding-top:8px;border-top:1px solid rgba(255,255,255,0.1);margin-top:4px;">
+              <span class="bb-label">Effective Exit Date</span>
+              <span class="bb-value">Immediate</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURE 6: TENANT RENT INSURANCE
+         ============================================================ -->
+    <div class="section-title"><i class="fas fa-user-shield"></i> Tenant Rent Insurance</div>
+    <div class="rent-insurance-grid" id="rentInsuranceGrid">
+      <!-- Injected via JS -->
+    </div>
+
+    <!-- ============================================================
+         FEATURE 7: BLOCKCHAIN-BACKED RECEIPTS
+         ============================================================ -->
+    <div class="blockchain-panel fade-in">
+      <div class="blockchain-header">
+        <div>
+          <div class="section-title" style="margin-bottom:4px;"><i class="fas fa-cube"></i> Blockchain-Backed Receipts</div>
+          <p style="font-size:12px;color:var(--gray-500);">
+            Every payment generates a tamper-proof receipt anchored on the Polygon blockchain. Verifiable by anyone, forever.
+          </p>
+        </div>
+        <div class="blockchain-badge">
+          <i class="fas fa-shield-alt"></i> Polygon Mainnet · Verified
+        </div>
+      </div>
+      <div class="blockchain-tx-list" id="blockchainTxList">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <div class="page-footer">
+      <p>Mwarokin Estates · Ecosystem & Asset Lifecycle · &copy; 2025 · <a href="#">Privacy</a> · <a href="#">Terms</a></p>
+    </div>
+  </div>
+
+  <script>
+    /* ============================================================
+       MOCK DATA – PAGE 7 FEATURES
+       ============================================================ */
+
+    // Feature 2: Smart Meters
+    const smartMeters = [
+      {
+        property: 'Kilimani Court', id: 'MTR-KC-001',
+        water: { reading: '142 m³', usage: 78, cost: 'KSh 14,200' },
+        power: { reading: '2,840 kWh', usage: 62, cost: 'KSh 42,600' },
+        gas: { reading: '86 kg', usage: 45, cost: 'KSh 8,600' }
+      },
+      {
+        property: 'Westlands Heights', id: 'MTR-WH-002',
+        water: { reading: '98 m³', usage: 54, cost: 'KSh 9,800' },
+        power: { reading: '1,920 kWh', usage: 48, cost: 'KSh 28,800' },
+        gas: { reading: '62 kg', usage: 32, cost: 'KSh 6,200' }
+      },
+      {
+        property: 'South B Apartments', id: 'MTR-SB-003',
+        water: { reading: '210 m³', usage: 92, cost: 'KSh 21,000' },
+        power: { reading: '3,640 kWh', usage: 85, cost: 'KSh 54,600' },
+        gas: { reading: '124 kg', usage: 68, cost: 'KSh 12,400' }
+      }
+    ];
+
+    // Feature 3: Arbitrage
+    const arbitrageStats = [
+      { label: 'Total Head Rent', value: 'KSh 480,000', color: '' },
+      { label: 'Total Sublet Income', value: 'KSh 720,000', color: 'green' },
+      { label: 'Monthly Spread', value: 'KSh 240,000', color: 'gold' },
+      { label: 'Active Arbitrage Deals', value: '6', color: '' }
+    ];
+
+    const arbitrageDeals = [
+      { property: 'Kileleshwa Block A', headLandlord: 'Mr. Kariuki', headRent: 80000, subletIncome: 128000, spread: 48000, units: 4, leaseEnd: 'Dec 2026' },
+      { property: 'Ngong Road Villas', headLandlord: 'Mrs. Omondi', headRent: 120000, subletIncome: 186000, spread: 66000, units: 6, leaseEnd: 'Jun 2027' },
+      { property: 'Parklands Court', headLandlord: 'Mr. Shah', headRent: 95000, subletIncome: 142000, spread: 47000, units: 5, leaseEnd: 'Mar 2026' },
+      { property: 'Hurlingham Suites', headLandlord: 'Ms. Wambui', headRent: 110000, subletIncome: 164000, spread: 54000, units: 4, leaseEnd: 'Sep 2027' },
+      { property: 'Lavington Edge', headLandlord: 'Mr. Patel', headRent: 75000, subletIncome: 100000, spread: 25000, units: 3, leaseEnd: 'Jan 2027' }
+    ];
+
+    // Feature 4: Construction Milestones
+    const milestones = [
+      { name: 'Foundation & Excavation', date: 'Completed Jan 15, 2025', amount: 'KSh 8,400,000', status: 'complete' },
+      { name: 'Structural Framework', date: 'Completed Mar 2, 2025', amount: 'KSh 12,600,000', status: 'complete' },
+      { name: 'Roofing & Enclosure', date: 'Completed Apr 8, 2025', amount: 'KSh 5,500,000', status: 'complete' },
+      { name: 'Electrical & Plumbing', date: 'In Progress · Due May 5, 2025', amount: 'KSh 4,200,000', status: 'active' },
+      { name: 'Interior Finishing', date: 'Scheduled · Jun 2025', amount: 'KSh 6,800,000', status: 'pending' },
+      { name: 'Landscaping & Handover', date: 'Scheduled · Aug 2025', amount: 'KSh 5,300,000', status: 'pending' }
+    ];
+
+    // Feature 6: Rent Insurance Policies
+    const rentInsurancePolicies = [
+      {
+        initials: 'JW', tenant: 'John Wachira', property: 'Kilimani Court · 3B',
+        status: 'active', premium: 'KSh 2,400/mo', coverage: 'KSh 540,000',
+        claims: '0', policyNumber: 'RI-2025-0142', nextReview: 'May 15, 2025'
+      },
+      {
+        initials: 'MN', tenant: 'Mary Njoki', property: 'Westlands Heights · 5A',
+        status: 'active', premium: 'KSh 1,800/mo', coverage: 'KSh 456,000',
+        claims: '0', policyNumber: 'RI-2025-0138', nextReview: 'Jun 1, 2025'
+      },
+      {
+        initials: 'BK', tenant: 'Brian Kamau', property: 'South B Apartments · 12',
+        status: 'claimed', premium: 'KSh 1,600/mo', coverage: 'KSh 384,000',
+        claims: '1', policyNumber: 'RI-2025-0129', nextReview: 'Apr 30, 2025'
+      },
+      {
+        initials: 'LM', tenant: 'Lucy Muthoni', property: 'Lavington Suites · 7C',
+        status: 'active', premium: 'KSh 2,800/mo', coverage: 'KSh 672,000',
+        claims: '0', policyNumber: 'RI-2025-0151', nextReview: 'May 22, 2025'
+      }
+    ];
+
+    // Feature 7: Blockchain Transactions
+    const blockchainTx = [
+      { title: 'Rent Payment · Grace Wanjiku', hash: '0x8f3a...c2e1', amount: 'KSh 240,000', block: '#52,847,291', time: '2 hours ago', verified: true },
+      { title: 'Disbursement · Amina Hassan', hash: '0x4b9c...d7a3', amount: 'KSh 360,000', block: '#52,846,108', time: '6 hours ago', verified: true },
+      { title: 'Utility Bill · South B Apartments', hash: '0x2e7f...a9b4', amount: 'KSh 21,000', block: '#52,845,002', time: 'Yesterday', verified: true },
+      { title: 'Rent Payment · Sarah Kilonzo', hash: '0x9d1b...f5c8', amount: 'KSh 450,000', block: '#52,844,889', time: 'Yesterday', verified: true },
+      { title: 'Vendor Payment · Plumber Kings', hash: '0x6a4e...b2d9', amount: 'KSh 48,500', block: '#52,843,721', time: '2 days ago', verified: true }
+    ];
+
+    /* ============================================================
+       HELPERS
+       ============================================================ */
+    function formatKsh(value) {
+      return 'KSh ' + Number(value).toLocaleString('en-KE');
+    }
+
+    /* ============================================================
+       RENDER: SMART METERS
+       ============================================================ */
+    function renderSmartMeters() {
+      const grid = document.getElementById('smartMeterGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      smartMeters.forEach(m => {
+        const card = document.createElement('div');
+        card.className = 'meter-card fade-in';
+        card.innerHTML = `
+          <div class="meter-top">
+            <div>
+              <div class="meter-property">${m.property}</div>
+              <div class="meter-id">${m.id}</div>
+            </div>
+            <span class="meter-live"><span class="live-dot"></span> Live</span>
+          </div>
+
+          <div class="meter-readings">
+            <div class="meter-reading">
+              <div class="mr-label">Water</div>
+              <div class="mr-value">${m.water.reading}</div>
+            </div>
+            <div class="meter-reading">
+              <div class="mr-label">Power</div>
+              <div class="mr-value">${m.power.reading}</div>
+            </div>
+            <div class="meter-reading">
+              <div class="mr-label">Gas</div>
+              <div class="mr-value">${m.gas.reading}</div>
+            </div>
+            <div class="meter-reading">
+              <div class="mr-label">Total Cost</div>
+              <div class="mr-value" style="color:var(--green-500);">KSh ${(
+                parseInt(m.water.cost.replace(/[^0-9]/g, '')) +
+                parseInt(m.power.cost.replace(/[^0-9]/g, '')) +
+                parseInt(m.gas.cost.replace(/[^0-9]/g, ''))
+              ).toLocaleString()}</div>
+            </div>
+          </div>
+
+          <div class="meter-bar-wrap">
+            <div class="meter-bar-header">
+              <span>Water Usage</span>
+              <span>${m.water.usage}%</span>
+            </div>
+            <div class="meter-bar"><div class="meter-bar-fill water" style="width:${m.water.usage}%"></div></div>
+          </div>
+          <div class="meter-bar-wrap">
+            <div class="meter-bar-header">
+              <span>Power Usage</span>
+              <span>${m.power.usage}%</span>
+            </div>
+            <div class="meter-bar"><div class="meter-bar-fill power" style="width:${m.power.usage}%"></div></div>
+          </div>
+          <div class="meter-bar-wrap">
+            <div class="meter-bar-header">
+              <span>Gas Usage</span>
+              <span>${m.gas.usage}%</span>
+            </div>
+            <div class="meter-bar"><div class="meter-bar-fill gas" style="width:${m.gas.usage}%"></div></div>
+          </div>
+
+          <div class="meter-actions">
+            <button onclick="alert('📊 View detailed usage for ${m.property}')"><i class="fas fa-chart-line"></i> Usage</button>
+            <button class="primary" onclick="alert('📤 Send utility bill to tenants of ${m.property}')"><i class="fas fa-paper-plane"></i> Bill</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    /* ============================================================
+       RENDER: ARBITRAGE
+       ============================================================ */
+    function renderArbitrage() {
+      const statsContainer = document.getElementById('arbitrageStats');
+      if (statsContainer) {
+        statsContainer.innerHTML = '';
+        arbitrageStats.forEach(s => {
+          const div = document.createElement('div');
+          div.className = 'arb-stat';
+          div.innerHTML = `
+            <div class="as-label">${s.label}</div>
+            <div class="as-value ${s.color}">${s.value}</div>
+          `;
+          statsContainer.appendChild(div);
+        });
+      }
+
+      const tbody = document.getElementById('arbitrageBody');
+      if (tbody) {
+        tbody.innerHTML = '';
+        arbitrageDeals.forEach(d => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${d.property}</strong></td>
+            <td>${d.headLandlord}</td>
+            <td>${formatKsh(d.headRent)}</td>
+            <td>${formatKsh(d.subletIncome)}</td>
+            <td class="arb-margin positive">+${formatKsh(d.spread)}</td>
+            <td>${d.units} units</td>
+            <td>${d.leaseEnd}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    }
+
+    /* ============================================================
+       RENDER: MILESTONES
+       ============================================================ */
+    function renderMilestones() {
+      const container = document.getElementById('milestoneList');
+      if (!container) return;
+      container.innerHTML = '';
+
+      milestones.forEach(m => {
+        const icon = m.status === 'complete' ? 'fa-check' : m.status === 'active' ? 'fa-hard-hat' : 'fa-clock';
+        const div = document.createElement('div');
+        div.className = 'milestone';
+        div.innerHTML = `
+          <div class="milestone-status ${m.status}"><i class="fas ${icon}"></i></div>
+          <div class="milestone-info">
+            <div class="milestone-name">${m.name}</div>
+            <div class="milestone-date">${m.date}</div>
+          </div>
+          <div class="milestone-amount ${m.status === 'complete' ? 'paid' : m.status === 'active' ? 'due' : ''}">${m.amount}</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    /* ============================================================
+       RENDER: RENT INSURANCE
+       ============================================================ */
+    function renderRentInsurance() {
+      const grid = document.getElementById('rentInsuranceGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      rentInsurancePolicies.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'insurance-policy-card fade-in';
+        card.innerHTML = `
+          <div class="insurance-policy-top">
+            <div class="insurance-policy-tenant">
+              <div class="insurance-policy-avatar">${p.initials}</div>
+              <div>
+                <div class="insurance-policy-name">${p.tenant}</div>
+                <div class="insurance-policy-property">${p.property}</div>
+              </div>
+            </div>
+            <span class="insurance-policy-status ${p.status}">${p.status}</span>
+          </div>
+          <div class="insurance-policy-details">
+            <div class="insurance-policy-detail">
+              <div class="ipd-label">Policy Number</div>
+              <div class="ipd-value">${p.policyNumber}</div>
+            </div>
+            <div class="insurance-policy-detail">
+              <div class="ipd-label">Coverage</div>
+              <div class="ipd-value green">${p.coverage}</div>
+            </div>
+            <div class="insurance-policy-detail">
+              <div class="ipd-label">Monthly Premium</div>
+              <div class="ipd-value gold">${p.premium}</div>
+            </div>
+            <div class="insurance-policy-detail">
+              <div class="ipd-label">Claims Filed</div>
+              <div class="ipd-value">${p.claims}</div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--gray-500);">
+            <i class="fas fa-calendar-check"></i> Next review: ${p.nextReview}
+          </div>
+          <div class="insurance-policy-actions">
+            <button onclick="alert('📄 View policy ${p.policyNumber}')"><i class="fas fa-eye"></i> Policy</button>
+            <button class="primary" onclick="alert('📝 File a claim for ${p.tenant}')"><i class="fas fa-file-medical"></i> Claim</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    /* ============================================================
+       RENDER: BLOCKCHAIN TX
+       ============================================================ */
+    function renderBlockchain() {
+      const container = document.getElementById('blockchainTxList');
+      if (!container) return;
+      container.innerHTML = '';
+
+      blockchainTx.forEach(tx => {
+        const div = document.createElement('div');
+        div.className = 'blockchain-tx';
+        div.innerHTML = `
+          <div class="blockchain-tx-icon"><i class="fas fa-cube"></i></div>
+          <div class="blockchain-tx-info">
+            <div class="blockchain-tx-title">${tx.title}</div>
+            <div class="blockchain-tx-hash">
+              <i class="fas fa-link"></i>
+              ${tx.hash}
+              <span class="hash-copy" onclick="alert('📋 Hash copied: ${tx.hash}')"><i class="fas fa-copy"></i></span>
+            </div>
+          </div>
+          <div class="blockchain-tx-meta">
+            <div class="btm-item">
+              <span class="btm-label">Amount</span>
+              <span class="btm-value green">${tx.amount}</span>
+            </div>
+            <div class="btm-item">
+              <span class="btm-label">Block</span>
+              <span class="btm-value">${tx.block}</span>
+            </div>
+            <div class="btm-item">
+              <span class="btm-label">Time</span>
+              <span class="btm-value" style="color:var(--gray-500);font-weight:500;">${tx.time}</span>
+            </div>
+            ${tx.verified ? `<span class="blockchain-tx-verify"><i class="fas fa-check-circle"></i> Verified</span>` : ''}
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    /* ============================================================
+       BUYOUT CALCULATOR LOGIC
+       ============================================================ */
+    function initBuyoutCalculator() {
+      const feeInput = document.getElementById('buyoutFee');
+      const monthsInput = document.getElementById('buyoutMonths');
+      const valueInput = document.getElementById('buyoutValue');
+      const penaltySelect = document.getElementById('buyoutPenalty');
+
+      const remainingEl = document.getElementById('buyoutRemaining');
+      const penaltyEl = document.getElementById('buyoutPenaltyAmount');
+      const transferEl = document.getElementById('buyoutTransfer');
+      const totalEl = document.getElementById('buyoutTotal');
+
+      if (!feeInput || !monthsInput || !valueInput || !penaltySelect) return;
+
+      function calculate() {
+        const fee = parseFloat(feeInput.value) || 0;
+        const months = parseFloat(monthsInput.value) || 0;
+        const value = parseFloat(valueInput.value) || 0;
+        const penaltyRate = parseFloat(penaltySelect.value) || 0;
+
+        const remaining = fee * months;
+        const penalty = remaining * penaltyRate;
+        const transfer = value * 0.01;
+        const total = remaining + penalty + transfer;
+
+        remainingEl.textContent = formatKsh(remaining);
+        penaltyEl.textContent = formatKsh(penalty);
+        transferEl.textContent = formatKsh(transfer);
+        totalEl.textContent = formatKsh(total);
+      }
+
+      [feeInput, monthsInput, valueInput, penaltySelect].forEach(el => {
+        el.addEventListener('input', calculate);
+        el.addEventListener('change', calculate);
+      });
+
+      calculate();
+    }
+
+    /* ============================================================
+       INIT PAGE 7
+       ============================================================ */
+    function init() {
+      renderSmartMeters();
+      renderArbitrage();
+      renderMilestones();
+      renderRentInsurance();
+      renderBlockchain();
+      initBuyoutCalculator();
+      console.log('📱 Mwarokin Estates · Ecosystem & Asset Lifecycle (Page 7) loaded');
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
