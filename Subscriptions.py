@@ -1,302 +1,574 @@
-**Modern Python Subscription System for Mwarokin Estates**
+Here’s a complete, modern **FastAPI backend** that powers the Mwarokin Estates Subscription Plans page with live multi-currency pricing, cycle discounts, and plan comparison.
 
-Here's a complete, production-ready **FastAPI** backend for the monthly subscription system based on your plans (Msingi, Jengo, Milki, Taifa) with support for landlords, agencies, and internal Mwarokin staff.
-
-### Features Included:
-- User roles: `landlord`, `agency`, `mwarokin_staff`
-- Subscription tiers with monthly & annual billing (20% discount)
-- Transaction fees: **KSh 1 – KSh 5** per transaction (configurable)
-- M-Pesa simulation + real integration stub
-- SQLite/PostgreSQL ready (via SQLAlchemy + Alembic)
-- Modern async code, Pydantic v2, background tasks for billing
-
----
-
-### Project Structure
-```bash
-mwarokin-subscriptions/
-├── main.py
-├── models.py
-├── schemas.py
-├── crud.py
-├── payments.py
-├── config.py
-├── requirements.txt
-└── alembic/          # for migrations
-```
-
----
-
-### 1. `requirements.txt`
-```txt
-fastapi==0.115.*
-uvicorn[standard]
-sqlalchemy==2.0.*
-alembic
-pydantic[email]
-python-dotenv
-httpx
-psycopg2-binary  # for PostgreSQL
-```
-
----
-
-### 2. `config.py`
 ```python
-from pydantic_settings import BaseSettings
+"""
+Mwarokin Estates – Subscription Plans
+Backend API (FastAPI + Pydantic v2)
+Python 3.11+
+"""
 
-class Settings(BaseSettings):
-    DATABASE_URL: str = "sqlite+aiosqlite:///./mwarokin.db"
-    MPESA_CONSUMER_KEY: str = "your_key"
-    MPESA_CONSUMER_SECRET: str = "your_secret"
-    MPESA_SHORTCODE: str = "174379"
-    MPESA_PASSKEY: str = "your_passkey"
-    TRANSACTION_FEE_MIN: int = 1
-    TRANSACTION_FEE_MAX: int = 5
+from __future__ import annotations
 
-    class Config:
-        env_file = ".env"
-
-settings = Settings()
-```
-
----
-
-### 3. `models.py`
-```python
-from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey, Enum
-from sqlalchemy.orm import relationship, declarative_base
 from datetime import datetime
-import enum
+from enum import Enum
+from typing import Annotated, Optional
 
-Base = declarative_base()
+from fastapi import FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
 
-class UserRole(str, enum.Enum):
-    LANDLORD = "landlord"
-    AGENCY = "agency"
-    MWAROKIN_STAFF = "mwarokin_staff"
+# ---------------------------------------------------------------------------
+# App
+# ---------------------------------------------------------------------------
 
-class SubscriptionPlan(str, enum.Enum):
-    MSINGI = "msingi"
-    JENGO = "jengo"
-    MILKI = "milki"
-    TAIFA = "taifa"
+app = FastAPI(
+    title="Mwarokin Estates – Subscription Plans API",
+    description="Plan catalogue, multi-currency pricing, billing-cycle discounts & comparison",
+    version="1.0.0",
+    docs_url="/docs",
+)
 
-class User(Base):
-    __tablename__ = "users"
-    id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True)
-    phone = Column(String, unique=True)
-    first_name = Column(String)
-    last_name = Column(String)
-    role = Column(Enum(UserRole), default=UserRole.LANDLORD)
-    kra_pin = Column(String, nullable=True)
-    estate_name = Column(String, nullable=True)
-    county = Column(String)
-    is_active = Column(Boolean, default=True)
-    
-    subscriptions = relationship("Subscription", back_populates="user")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-class Subscription(Base):
-    __tablename__ = "subscriptions"
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    plan = Column(Enum(SubscriptionPlan))
-    is_annual = Column(Boolean, default=False)
-    status = Column(String, default="trialing")  # trialing, active, past_due, cancelled
-    current_period_start = Column(DateTime, default=datetime.utcnow)
-    current_period_end = Column(DateTime)
-    cancelled_at = Column(DateTime, nullable=True)
-    
-    user = relationship("User", back_populates="subscriptions")
-```
+# ---------------------------------------------------------------------------
+# Domain data (single source of truth)
+# ---------------------------------------------------------------------------
 
----
-
-### 4. `schemas.py`
-```python
-from pydantic import BaseModel, EmailStr
-from datetime import datetime
-from typing import Optional
-from .models import SubscriptionPlan, UserRole
-
-class UserCreate(BaseModel):
-    email: EmailStr
-    phone: str
-    first_name: str
-    last_name: str
-    role: UserRole
-    estate_name: Optional[str] = None
-    county: str
-    kra_pin: Optional[str] = None
-
-class SubscriptionCreate(BaseModel):
-    plan: SubscriptionPlan
-    is_annual: bool = False
-    payment_method: str = "mpesa"  # mpesa, airtel, card
-
-class PlanPricing(BaseModel):
-    monthly_ksh: int
-    annual_ksh: int
-    features: list[str]
-
-PLAN_PRICING = {
-    "msingi": PlanPricing(monthly_ksh=2500, annual_ksh=24000, features=["10 units", "Basic tools"]),
-    "jengo": PlanPricing(monthly_ksh=6500, annual_ksh=62400, features=["50 units", "Caretaker portal"]),
-    "milki": PlanPricing(monthly_ksh=15000, annual_ksh=144000, features=["250 units", "Portfolio management"]),
-    "taifa": PlanPricing(monthly_ksh=45000, annual_ksh=432000, features=["Unlimited", "White-label", "API"]),
+PLANS = {
+    "msingi": {
+        "name": "Msingi",
+        "swahili": "Foundation · Msingi wa Nyumba",
+        "price_ksh": 2500,
+        "popular": False,
+        "description": "For individual landlords. Manage up to 10 units with core tools.",
+        "modules_heading": "Key Modules",
+        "modules": [
+            "🏠 Rent Dashboard",
+            "👤 Tenant Profiles",
+            "📅 Schedule Viewing",
+            "💧 Water Billing",
+            "🗑️ Trash Billing",
+            "🧾 KRA Basic",
+            "💰 Lipa Mdogo",
+            "📱 Mobile App",
+        ],
+        "limits": {
+            "Residential Units": "10",
+            "Landlord Accounts": "1",
+            "Caretakers": "1",
+            "Storage": "5 GB",
+        },
+        "cta": "Get Started",
+    },
+    "jengo": {
+        "name": "Jengo",
+        "swahili": "Building · Jengo Imara",
+        "price_ksh": 6500,
+        "popular": True,
+        "description": "For property managers. 50 units, Lipa Mdogo, caretaker portal.",
+        "modules_heading": "Included Modules",
+        "modules": [
+            "📊 Financial Dashboard",
+            "💰 Advanced Lipa Mdogo",
+            "🔑 Caretaker Portal",
+            "🔧 Renovations",
+            "🗺️ My Neighbourhood",
+            "👵 Elderly Mode",
+            "🧾 KRA Advanced",
+            "📝 Lease Mgmt",
+        ],
+        "limits": {
+            "Residential Units": "50",
+            "Landlord Accounts": "3",
+            "Caretakers": "5",
+            "Storage": "25 GB",
+        },
+        "cta": "Start Free Trial",
+    },
+    "milki": {
+        "name": "Milki",
+        "swahili": "Estate · Milki ya Ardhi",
+        "price_ksh": 15000,
+        "popular": False,
+        "description": "Large estates & property companies. 250 units, security & portfolio.",
+        "modules_heading": "All Jengo + more",
+        "modules": [
+            "🏘️ Residential Zones",
+            "🔒 Security Mgmt",
+            "💬 Communication Centre",
+            "🎨 Design Tools",
+            "💳 Long-term Lipa",
+            "📄 KRA Reports",
+            "📞 Phone Support",
+        ],
+        "limits": {
+            "Residential Units": "250",
+            "Landlord Accounts": "10",
+            "Caretakers": "∞",
+            "Storage": "100 GB",
+        },
+        "cta": "Get Started",
+    },
+    "taifa": {
+        "name": "Taifa",
+        "swahili": "Enterprise · Taifa Kamili",
+        "price_ksh": 45000,
+        "popular": False,
+        "description": "Enterprise-grade. Unlimited units, white-label, API, SLA, dedicated manager.",
+        "modules_heading": "All Milki +",
+        "modules": [
+            "🌟 White Label",
+            "🔗 API Access",
+            "🏦 Multi-currency",
+            "📋 Custom Reports",
+            "⚖️ SLA Guarantee",
+            "🎓 On-site Training",
+        ],
+        "limits": {
+            "Residential Units": "∞",
+            "Landlord Accounts": "∞",
+            "Caretakers": "∞",
+            "Storage": "1 TB+",
+        },
+        "cta": "Contact Sales",
+    },
 }
-```
 
----
+CYCLES = {
+    "monthly": {
+        "label": "Monthly",
+        "months": 1,
+        "discount": 0.00,
+        "unit": "/month",
+        "billed": "Every month",
+        "perk": "<b>Maximum flexibility</b> — pay month to month and cancel anytime.",
+        "perk_short": "Cancel anytime",
+        "badge": "Flexible",
+    },
+    "quarterly": {
+        "label": "Quarterly",
+        "months": 3,
+        "discount": 0.08,
+        "unit": "every 3 months",
+        "billed": "Every 3 months",
+        "perk": "<b>Save 8%</b> — billed every 3 months, plus priority email support.",
+        "perk_short": "Priority email support",
+        "badge": "Save 8%",
+    },
+    "biannual": {
+        "label": "Biannual",
+        "months": 6,
+        "discount": 0.14,
+        "unit": "every 6 months",
+        "billed": "Every 6 months",
+        "perk": "<b>Save 14%</b> — billed every 6 months, plus a free onboarding call.",
+        "perk_short": "Free onboarding call",
+        "badge": "Save 14%",
+    },
+    "annual": {
+        "label": "Annual",
+        "months": 12,
+        "discount": 0.20,
+        "unit": "per year",
+        "billed": "Every 12 months",
+        "perk": "<b>Best value, save 20%</b> — billed yearly, plus free staff training & priority support.",
+        "perk_short": "Free training + priority support",
+        "badge": "Save 20%",
+    },
+}
 
-### 5. `payments.py`
-```python
-import random
-from datetime import datetime, timedelta
-from .models import Subscription
+# Exchange rates relative to KSH (update from a real FX service in production)
+RATES = {
+    "KSH": 1.0,
+    "USD": 0.0077,
+    "EUR": 0.0071,
+}
 
-def calculate_transaction_fee(amount: int) -> int:
-    """KSh 1 to KSh 5 per transaction"""
-    return random.randint(1, 5)
+SYMBOLS = {
+    "KSH": "KSH ",
+    "USD": "$",
+    "EUR": "€",
+}
 
-async def simulate_mpesa_stk_push(phone: str, amount: int, account_ref: str):
-    """Simulate M-Pesa STK Push"""
-    print(f"🟢 STK Push sent to {phone} for KSh {amount}")
-    # In production: call Daraja API
-    return {
-        "status": "success",
-        "checkout_request_id": "ws_CO_123456789",
-        "message": "Payment request sent"
-    }
+# ---------------------------------------------------------------------------
+# Enums & models
+# ---------------------------------------------------------------------------
 
-async def process_subscription_payment(sub: Subscription, amount: int, phone: str):
-    fee = calculate_transaction_fee(amount)
-    total = amount + fee
-    
-    print(f"💰 Processing payment: {amount} + {fee} fee = {total} KSh")
-    
-    # Simulate success
-    success = random.random() > 0.1  # 90% success rate
-    
-    if success:
-        sub.status = "active"
-        sub.current_period_end = datetime.utcnow() + timedelta(days=365 if sub.is_annual else 30)
-        return {"status": "paid", "fee": fee}
-    return {"status": "failed"}
-```
+class PlanKey(str, Enum):
+    msingi = "msingi"
+    jengo = "jengo"
+    milki = "milki"
+    taifa = "taifa"
 
----
 
-### 6. `crud.py`
-```python
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
-from .models import User, Subscription
-from .schemas import UserCreate, SubscriptionCreate
-from datetime import datetime, timedelta
+class CycleKey(str, Enum):
+    monthly = "monthly"
+    quarterly = "quarterly"
+    biannual = "biannual"
+    annual = "annual"
 
-async def create_user(db: AsyncSession, user_in: UserCreate):
-    user = User(**user_in.dict())
-    db.add(user)
-    await db.commit()
-    await db.refresh(user)
-    return user
 
-async def create_subscription(db: AsyncSession, user_id: int, sub_in: SubscriptionCreate):
-    pricing = PLAN_PRICING[sub_in.plan.value]
-    amount = pricing.annual_ksh if sub_in.is_annual else pricing.monthly_ksh
-    
-    sub = Subscription(
-        user_id=user_id,
-        plan=sub_in.plan,
-        is_annual=sub_in.is_annual,
-        status="trialing",
-        current_period_start=datetime.utcnow(),
-        current_period_end=datetime.utcnow() + timedelta(days=14)  # Free trial
+class Currency(str, Enum):
+    KSH = "KSH"
+    USD = "USD"
+    EUR = "EUR"
+
+
+class PriceBreakdown(BaseModel):
+    base: float          # full price before discount (for the cycle period)
+    total: float         # after discount
+    save: float          # amount saved
+    monthly_equivalent: float
+    currency: str
+    symbol: str
+    formatted_monthly: str
+    formatted_total: str
+    formatted_save: str
+    formatted_was: Optional[str] = None  # strikethrough monthly price when discounted
+
+
+class PlanCard(BaseModel):
+    key: str
+    name: str
+    swahili: str
+    popular: bool
+    description: str
+    modules_heading: str
+    modules: list[str]
+    limits: dict[str, str]
+    cta: str
+    price: PriceBreakdown
+    checkout_url: str
+
+
+class CycleInfo(BaseModel):
+    key: str
+    label: str
+    months: int
+    discount: float
+    discount_percent: int
+    unit: str
+    billed: str
+    perk: str
+    perk_short: str
+    badge: str
+
+
+class ComparisonRow(BaseModel):
+    cycle_key: str
+    cycle_label: str
+    billed: str
+    discount_label: str
+    total: float
+    formatted_total: str
+    perk_short: str
+    is_active: bool
+
+
+class PlansResponse(BaseModel):
+    currency: str
+    cycle: str
+    cycle_info: CycleInfo
+    plans: list[PlanCard]
+    comparison: list[ComparisonRow]
+    rates: dict[str, float]
+
+
+class CatalogResponse(BaseModel):
+    plans: dict
+    cycles: dict
+    currencies: list[str]
+    rates: dict[str, float]
+    symbols: dict[str, str]
+
+
+class SelectPlanRequest(BaseModel):
+    plan: PlanKey
+    cycle: CycleKey = CycleKey.monthly
+    currency: Currency = Currency.KSH
+
+
+class SelectPlanResponse(BaseModel):
+    success: bool
+    plan: str
+    cycle: str
+    currency: str
+    checkout_url: str
+    price: PriceBreakdown
+    message: str
+
+
+# ---------------------------------------------------------------------------
+# Pricing engine
+# ---------------------------------------------------------------------------
+
+def convert(amount_ksh: float, currency: str) -> float:
+    rate = RATES.get(currency, 1.0)
+    return amount_ksh * rate
+
+
+def format_money(amount: float, currency: str) -> str:
+    symbol = SYMBOLS.get(currency, "")
+    return f"{symbol}{round(amount):,}"
+
+
+def calc_price(plan_key: str, cycle_key: str, currency: str = "KSH") -> PriceBreakdown:
+    plan = PLANS[plan_key]
+    cycle = CYCLES[cycle_key]
+
+    base_ksh = plan["price_ksh"] * cycle["months"]
+    total_ksh = base_ksh * (1 - cycle["discount"])
+    save_ksh = base_ksh - total_ksh
+    monthly_ksh = total_ksh / cycle["months"]
+
+    base = convert(base_ksh, currency)
+    total = convert(total_ksh, currency)
+    save = convert(save_ksh, currency)
+    monthly = convert(monthly_ksh, currency)
+    was = convert(plan["price_ksh"], currency) if cycle["discount"] > 0 else None
+
+    return PriceBreakdown(
+        base=round(base, 2),
+        total=round(total, 2),
+        save=round(save, 2),
+        monthly_equivalent=round(monthly, 2),
+        currency=currency,
+        symbol=SYMBOLS[currency],
+        formatted_monthly=format_money(monthly, currency),
+        formatted_total=format_money(total, currency),
+        formatted_save=format_money(save, currency),
+        formatted_was=format_money(was, currency) + "/mo" if was is not None else None,
     )
-    db.add(sub)
-    await db.commit()
-    await db.refresh(sub)
-    return sub
-```
 
----
 
-### 7. `main.py` (FastAPI App)
-```python
-from fastapi import FastAPI, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-from .database import get_db, init_db
-from .schemas import UserCreate, SubscriptionCreate
-from .crud import create_user, create_subscription
-from .payments import simulate_mpesa_stk_push, process_subscription_payment
+# ---------------------------------------------------------------------------
+# Endpoints
+# ---------------------------------------------------------------------------
 
-app = FastAPI(title="Mwarokin Estates - Subscription API")
-
-@app.on_event("startup")
-async def startup():
-    await init_db()
-
-@app.post("/users/")
-async def register_user(user_in: UserCreate, db: AsyncSession = Depends(get_db)):
-    user = await create_user(db, user_in)
-    return {"message": "User registered", "user_id": user.id}
-
-@app.post("/subscribe/")
-async def subscribe(user_id: int, sub_in: SubscriptionCreate, db: AsyncSession = Depends(get_db)):
-    sub = await create_subscription(db, user_id, sub_in)
-    
-    # Start 14-day free trial
-    if sub.status == "trialing":
-        return {
-            "message": "🎉 14-day free trial started!",
-            "plan": sub.plan.value,
-            "ends": sub.current_period_end
-        }
-    
-    # After trial - charge
-    pricing = PLAN_PRICING[sub.plan.value]
-    amount = pricing.annual_ksh if sub.is_annual else pricing.monthly_ksh
-    phone = "2547xxxxxxxx"  # from user
-    
-    await simulate_mpesa_stk_push(phone, amount, f"SUB-{sub.id}")
-    payment_result = await process_subscription_payment(sub, amount, phone)
-    
+@app.get("/health")
+def health():
     return {
-        "subscription_id": sub.id,
-        "plan": sub.plan.value,
-        "amount": amount,
-        "transaction_fee": payment_result.get("fee"),
-        "status": payment_result["status"]
+        "status": "ok",
+        "service": "mwarokin-plans",
+        "timestamp": datetime.utcnow().isoformat(),
     }
 
-@app.get("/plans")
-async def get_plans():
-    return PLAN_PRICING
+
+@app.get("/api/v1/catalog", response_model=CatalogResponse)
+def get_catalog():
+    """Full static catalogue – useful for initial page load or offline caching."""
+    return CatalogResponse(
+        plans=PLANS,
+        cycles=CYCLES,
+        currencies=list(RATES.keys()),
+        rates=RATES,
+        symbols=SYMBOLS,
+    )
+
+
+@app.get("/api/v1/plans", response_model=PlansResponse)
+def get_plans(
+    cycle: CycleKey = Query(CycleKey.monthly, description="Billing cycle"),
+    currency: Currency = Query(Currency.KSH, description="Display currency"),
+):
+    """
+    Returns all plan cards with live pricing for the selected cycle + currency,
+    plus the comparison table rows (focused on Jengo as in the UI).
+    """
+    cycle_key = cycle.value
+    cur = currency.value
+    cycle_data = CYCLES[cycle_key]
+
+    cycle_info = CycleInfo(
+        key=cycle_key,
+        label=cycle_data["label"],
+        months=cycle_data["months"],
+        discount=cycle_data["discount"],
+        discount_percent=int(cycle_data["discount"] * 100),
+        unit=cycle_data["unit"],
+        billed=cycle_data["billed"],
+        perk=cycle_data["perk"],
+        perk_short=cycle_data["perk_short"],
+        badge=cycle_data["badge"],
+    )
+
+    cards: list[PlanCard] = []
+    for key, p in PLANS.items():
+        price = calc_price(key, cycle_key, cur)
+        cards.append(
+            PlanCard(
+                key=key,
+                name=p["name"],
+                swahili=p["swahili"],
+                popular=p["popular"],
+                description=p["description"],
+                modules_heading=p["modules_heading"],
+                modules=p["modules"],
+                limits=p["limits"],
+                cta=p["cta"],
+                price=price,
+                checkout_url=f"checkout.html?plan={key}&billing={cycle_key}",
+            )
+        )
+
+    # Comparison table – Jengo across all cycles (matches frontend)
+    comparison: list[ComparisonRow] = []
+    for ck, cv in CYCLES.items():
+        x = calc_price("jengo", ck, cur)
+        comparison.append(
+            ComparisonRow(
+                cycle_key=ck,
+                cycle_label=cv["label"],
+                billed=cv["billed"],
+                discount_label=f"{int(cv['discount']*100)}% off" if cv["discount"] else "—",
+                total=x.total,
+                formatted_total=x.formatted_total,
+                perk_short=cv["perk_short"],
+                is_active=(ck == cycle_key),
+            )
+        )
+
+    return PlansResponse(
+        currency=cur,
+        cycle=cycle_key,
+        cycle_info=cycle_info,
+        plans=cards,
+        comparison=comparison,
+        rates=RATES,
+    )
+
+
+@app.get("/api/v1/plans/{plan_key}")
+def get_single_plan(
+    plan_key: PlanKey,
+    cycle: CycleKey = Query(CycleKey.monthly),
+    currency: Currency = Query(Currency.KSH),
+):
+    """Detailed pricing for one plan."""
+    if plan_key.value not in PLANS:
+        raise HTTPException(status_code=404, detail="Plan not found")
+
+    p = PLANS[plan_key.value]
+    price = calc_price(plan_key.value, cycle.value, currency.value)
+
+    return {
+        "key": plan_key.value,
+        "name": p["name"],
+        "swahili": p["swahili"],
+        "popular": p["popular"],
+        "description": p["description"],
+        "modules": p["modules"],
+        "limits": p["limits"],
+        "cta": p["cta"],
+        "price": price,
+        "cycle": cycle.value,
+        "checkout_url": f"checkout.html?plan={plan_key.value}&billing={cycle.value}",
+    }
+
+
+@app.get("/api/v1/compare")
+def compare_cycles(
+    plan: PlanKey = Query(PlanKey.jengo, description="Plan to compare across cycles"),
+    currency: Currency = Query(Currency.KSH),
+):
+    """Full comparison of every billing cycle for a given plan."""
+    rows = []
+    for ck, cv in CYCLES.items():
+        x = calc_price(plan.value, ck, currency.value)
+        rows.append(
+            {
+                "cycle": ck,
+                "label": cv["label"],
+                "months": cv["months"],
+                "discount_percent": int(cv["discount"] * 100),
+                "billed": cv["billed"],
+                "total": x.total,
+                "monthly_equivalent": x.monthly_equivalent,
+                "save": x.save,
+                "formatted_total": x.formatted_total,
+                "formatted_monthly": x.formatted_monthly,
+                "formatted_save": x.formatted_save,
+                "perk": cv["perk_short"],
+            }
+        )
+    return {
+        "plan": plan.value,
+        "plan_name": PLANS[plan.value]["name"],
+        "currency": currency.value,
+        "rows": rows,
+    }
+
+
+@app.post("/api/v1/select", response_model=SelectPlanResponse)
+def select_plan(body: SelectPlanRequest):
+    """
+    User clicks a CTA → validate selection and return the checkout URL
+    plus the exact price that will be carried into the Configure step.
+    """
+    price = calc_price(body.plan.value, body.cycle.value, body.currency.value)
+    url = f"checkout.html?plan={body.plan.value}&billing={body.cycle.value}&currency={body.currency.value}"
+
+    return SelectPlanResponse(
+        success=True,
+        plan=body.plan.value,
+        cycle=body.cycle.value,
+        currency=body.currency.value,
+        checkout_url=url,
+        price=price,
+        message=f"{PLANS[body.plan.value]['name']} ({CYCLES[body.cycle.value]['label']}) selected at {price.formatted_monthly}/mo",
+    )
+
+
+@app.get("/api/v1/rates")
+def get_rates():
+    """Current FX rates (KSH base). In production, refresh from a live provider."""
+    return {
+        "base": "KSH",
+        "rates": RATES,
+        "symbols": SYMBOLS,
+        "updated_at": datetime.utcnow().isoformat(),
+    }
+
+
+# ---------------------------------------------------------------------------
+# Run
+# ---------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
 ```
 
----
+### Quick start
 
-### Run the App
 ```bash
-pip install -r requirements.txt
-uvicorn main:app --reload
+pip install fastapi uvicorn pydantic
+# save as main.py
+uvicorn main:app --reload --port 8000
 ```
 
----
+### Real functionality
 
-**Next Steps (Production):**
-- Add Celery + Redis for recurring billing
-- Real Daraja M-Pesa integration
-- Webhooks for payment confirmation
-- Stripe/Paystack fallback
-- Role-based access (FastAPI Users or custom JWT)
+| Endpoint | Purpose |
+|----------|---------|
+| `GET /api/v1/catalog` | Full static catalogue (plans, cycles, currencies) |
+| `GET /api/v1/plans?cycle=annual&currency=USD` | All plan cards with live discounted prices |
+| `GET /api/v1/plans/{plan}` | Single plan detail + price |
+| `GET /api/v1/compare?plan=jengo&currency=KSH` | Comparison table for any plan across all cycles |
+| `POST /api/v1/select` | Validate selection → returns checkout URL + exact price |
+| `GET /api/v1/rates` | Current FX rates |
 
-Would you like me to add:
-1. The full database setup (`database.py`)
-2. React/HTMX frontend integration code
-3. Admin dashboard routes
-4. Docker + docker-compose?
+Pricing engine mirrors the frontend exactly:
 
-Just say the word and I'll expand it. 🏘️
+- Monthly equivalent = `(base_price × months × (1 − discount)) / months`
+- Supports **KSH / USD / EUR**
+- Discounts: Quarterly 8 %, Biannual 14 %, Annual 20 %
+- “Most Popular” flag and all module/limit data preserved
+
+The frontend can replace its local `calc()` / `render()` logic with a single call to `/api/v1/plans`.
